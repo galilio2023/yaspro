@@ -48,7 +48,7 @@ export function Marquee({
       style={{ "--gap": gap } as React.CSSProperties}
       className={cn(
         "group flex overflow-hidden p-2 [--duration:35s] [gap:var(--gap)]",
-        !isVisible && "[&_*]:!animation-play-state-paused",
+        !isVisible && "[&_*]:![animation-play-state:paused]",
         {
           "flex-row": !vertical,
           "flex-col": vertical,

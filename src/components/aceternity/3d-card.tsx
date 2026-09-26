@@ -52,8 +52,7 @@ export const CardContainer = ({
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           className={cn(
-            "relative w-full h-full transition-transform duration-300 ease-out will-change-transform",
-            isMouseEntered ? "[transform-style:preserve-3d]" : "",
+            "relative w-full h-full transition-transform duration-300 ease-out will-change-transform [transform-style:preserve-3d]",
             className
           )}
         >
@@ -73,13 +72,10 @@ export const CardBody = ({
   className?: string;
   as?: React.ElementType;
 }) => {
-  const [isMouseEntered] = useMouseEnter();
-
   return (
     <Tag
       className={cn(
-        "h-full w-full",
-        isMouseEntered ? "[transform-style:preserve-3d] [&>*]:[transform-style:preserve-3d]" : "",
+        "h-full w-full [transform-style:preserve-3d] [&>*]:[transform-style:preserve-3d]",
         className
       )}
     >
@@ -128,7 +124,7 @@ export const CardItem = ({
     <Tag
       ref={ref}
       className={cn(
-        isMouseEntered ? "transition-transform duration-200 ease-out" : "",
+        "transition-transform duration-200 ease-out",
         className
       )}
       {...rest}

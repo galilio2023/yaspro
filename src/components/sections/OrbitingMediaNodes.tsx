@@ -35,7 +35,7 @@ export function OrbitingMediaNodes() {
       aria-label="Yas Pro AI Ecosystem interactive telemetry diagram"
       className={cn(
         "relative flex h-[460px] sm:h-[520px] md:h-[560px] w-full items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-[#080614] shadow-[0_20px_60px_rgba(0,0,0,0.8)] select-none group/orbit [transform:translateZ(0)]",
-        !isVisible && "[&_*]:!animation-play-state-paused"
+        !isVisible && "[&_*]:![animation-play-state:paused]"
       )}
     >
       {/* Background Volumetric Glow & Cosmic Nebulae */}

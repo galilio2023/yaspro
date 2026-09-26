@@ -259,6 +259,14 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
     };
     window.addEventListener("mousemove", onMouseMove, { passive: true });
 
+    // Refresh cached rectangle on scroll so coordinates remain accurate while visible
+    const onScroll = () => {
+      if (isVisible) {
+        cachedRect = container.getBoundingClientRect();
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true, capture: true });
+
     // Animation Loop with IntersectionObserver pausing to eliminate offscreen GPU drain
     let animationFrameId: number;
     const clock = new THREE.Clock();
@@ -330,6 +338,7 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
     return () => {
       observer.disconnect();
       window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("scroll", onScroll, true);
       window.removeEventListener("resize", onResize);
       cancelAnimationFrame(animationFrameId);
       if (renderer.domElement && container.contains(renderer.domElement)) {

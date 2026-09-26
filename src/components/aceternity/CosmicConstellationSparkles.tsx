@@ -79,6 +79,14 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
     window.addEventListener("touchmove", handlePointerMove, { passive: true });
     window.addEventListener("touchend", handlePointerLeave, { passive: true });
 
+    // Refresh cached rectangle on scroll so coordinates remain accurate while visible
+    const handleScroll = () => {
+      if (isVisible) {
+        cachedRect = canvas.getBoundingClientRect();
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true, capture: true });
+
     // Place the constellations prominently across the focal area
     const getConstellationCenter = (w: number, h: number) => {
       if (w >= 1024) {
@@ -383,6 +391,7 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleScroll, true);
       window.removeEventListener("mousemove", handlePointerMove);
       window.removeEventListener("mouseleave", handlePointerLeave);
       window.removeEventListener("touchmove", handlePointerMove);
