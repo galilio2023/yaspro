@@ -26,11 +26,21 @@ export function FadeUp({
     const el = ref.current;
     if (!el) return;
 
-    // Start hidden
+    // Check if element is already within viewport on mount to prevent hydration flicker
+    const rect = el.getBoundingClientRect();
+    const isAlreadyInView = rect.top < window.innerHeight && rect.bottom > 0;
+
+    if (isAlreadyInView) {
+      // Element is already in view (e.g. hero/above-the-fold) — keep visible immediately
+      el.style.opacity = "1";
+      el.style.transform = "none";
+      return;
+    }
+
+    // Start hidden for below-the-fold elements
     el.style.opacity = "0";
-    el.style.transform = "translateY(28px)";
-    el.style.transition = `opacity 0.55s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.55s cubic-bezier(0.16,1,0.3,1) ${delay}s`;
-    el.style.willChange = "opacity, transform";
+    el.style.transform = "translateY(24px)";
+    el.style.transition = `opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s`;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -38,12 +48,11 @@ export function FadeUp({
           if (entry.isIntersecting) {
             el.style.opacity = "1";
             el.style.transform = "translateY(0)";
-            el.style.willChange = "auto";
             observer.unobserve(el);
           }
         });
       },
-      { threshold: 0.1, rootMargin: "-40px 0px" }
+      { threshold: 0.05, rootMargin: "0px 0px 80px 0px" }
     );
 
     observer.observe(el);
@@ -70,7 +79,7 @@ interface StaggerContainerProps {
 export function StaggerContainer({
   children,
   className,
-  staggerDelay = 0.08,
+  staggerDelay = 0.06,
   as: Tag = "div",
   role,
 }: StaggerContainerProps) {
@@ -80,12 +89,22 @@ export function StaggerContainer({
     const container = ref.current;
     if (!container) return;
 
+    const rect = container.getBoundingClientRect();
+    const isAlreadyInView = rect.top < window.innerHeight && rect.bottom > 0;
     const items = Array.from(container.children) as HTMLElement[];
+
+    if (isAlreadyInView) {
+      items.forEach((item) => {
+        item.style.opacity = "1";
+        item.style.transform = "none";
+      });
+      return;
+    }
+
     items.forEach((item, i) => {
       item.style.opacity = "0";
-      item.style.transform = "translateY(20px)";
-      item.style.transition = `opacity 0.45s cubic-bezier(0.16,1,0.3,1) ${i * staggerDelay}s, transform 0.45s cubic-bezier(0.16,1,0.3,1) ${i * staggerDelay}s`;
-      item.style.willChange = "opacity, transform";
+      item.style.transform = "translateY(18px)";
+      item.style.transition = `opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${i * staggerDelay}s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${i * staggerDelay}s`;
     });
 
     const observer = new IntersectionObserver(
@@ -95,13 +114,12 @@ export function StaggerContainer({
             items.forEach((item) => {
               item.style.opacity = "1";
               item.style.transform = "translateY(0)";
-              item.style.willChange = "auto";
             });
             observer.unobserve(container);
           }
         });
       },
-      { threshold: 0.05, rootMargin: "-30px 0px" }
+      { threshold: 0.05, rootMargin: "0px 0px 80px 0px" }
     );
 
     observer.observe(container);

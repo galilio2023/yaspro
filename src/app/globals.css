@@ -90,7 +90,6 @@
 /* ─── Base ───────────────────────────────────────────────────────────────── */
 
 html {
-  scroll-behavior: smooth;
   color-scheme: dark;
   overflow-x: hidden;
   max-width: 100%;
@@ -111,13 +110,26 @@ body {
 
 a { color: inherit; text-decoration: none; }
 
-/* ─── Scroll Performance ───────────────────────────────────────────────────── */
+/* ─── Scroll Performance & GPU Containment ─────────────────────────────────── */
 
+/* Native, responsive 60/120Hz scrolling without artificial wheel delay */
+html {
+  scroll-behavior: auto;
+}
 
+/* Sections isolate their compositing context without clipping subpixel borders */
+section {
+  isolation: isolate;
+}
 
-/* All images use lazy loading by default */
-img:not([loading]) {
-  loading: lazy;
+/* Optimize animations on mobile & lower-end devices */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Prevent layout shifts from font loading */

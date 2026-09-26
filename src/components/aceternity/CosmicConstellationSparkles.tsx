@@ -55,15 +55,16 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
     let width = (canvas.width = canvas.offsetWidth || window.innerWidth);
     let height = (canvas.height = canvas.offsetHeight || window.innerHeight);
 
-    // Mouse drift
+    // Mouse drift with cached bounding rect to prevent synchronous layout reflows
     const mouse = { x: -1000, y: -1000, active: false };
+    let cachedRect = canvas.getBoundingClientRect();
 
     const handlePointerMove = (e: MouseEvent | TouchEvent) => {
-      const rect = canvas.getBoundingClientRect();
+      if (!isVisible) return;
       const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
       const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
-      mouse.x = clientX - rect.left;
-      mouse.y = clientY - rect.top;
+      mouse.x = clientX - cachedRect.left;
+      mouse.y = clientY - cachedRect.top;
       mouse.active = true;
     };
 
@@ -223,6 +224,7 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
 
     const handleResize = () => {
       if (!canvas) return;
+      cachedRect = canvas.getBoundingClientRect();
       width = canvas.width = canvas.offsetWidth || window.innerWidth;
       height = canvas.height = canvas.offsetHeight || window.innerHeight;
       camPoints = generateCameraPoints(width, height);
@@ -240,9 +242,14 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
+        const wasVisible = isVisible;
         isVisible = entry.isIntersecting;
         if (isVisible) {
+          cachedRect = canvas.getBoundingClientRect();
           startTime = performance.now() - (elapsedTime % CYCLE_DURATION);
+          if (!wasVisible && !animId) {
+            animId = requestAnimationFrame(render);
+          }
         }
       },
       { threshold: 0.05 }
@@ -256,9 +263,11 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
     const TARGET_FPS_MS = 1000 / 50; // Smooth 50 FPS lock for optimal battery & performance
 
     const render = (now: number) => {
+      if (!isVisible) {
+        animId = 0;
+        return;
+      }
       animId = requestAnimationFrame(render);
-
-      if (!isVisible) return; // Completely idle when scrolled down!
       if (now - lastFrame < TARGET_FPS_MS) return;
       lastFrame = now;
 

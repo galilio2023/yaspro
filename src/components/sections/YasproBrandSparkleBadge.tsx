@@ -18,7 +18,6 @@ export function YasproBrandSparkleBadge({ className = "" }: YasproBrandSparkleBa
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let animId: number;
     let width = (canvas.width = canvas.offsetWidth || 340);
     let height = (canvas.height = canvas.offsetHeight || 60);
 
@@ -45,20 +44,16 @@ export function YasproBrandSparkleBadge({ className = "" }: YasproBrandSparkleBa
     }));
 
     let isVisible = true;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        isVisible = entry.isIntersecting;
-      },
-      { threshold: 0.1 }
-    );
-    observer.observe(canvas);
-
+    let animId: number | null = null;
     let lastTime = 0;
     const FRAME_MS = 1000 / 30; // 30 FPS cap for small badge
 
     const render = (now: number) => {
+      if (!isVisible) {
+        animId = null;
+        return;
+      }
       animId = requestAnimationFrame(render);
-      if (!isVisible) return;
       if (now - lastTime < FRAME_MS) return;
       lastTime = now;
 
@@ -100,12 +95,25 @@ export function YasproBrandSparkleBadge({ className = "" }: YasproBrandSparkleBa
       ctx.globalCompositeOperation = "source-over";
     };
 
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const wasVisible = isVisible;
+        isVisible = entry.isIntersecting;
+        if (isVisible && !wasVisible && !animId) {
+          lastTime = performance.now();
+          animId = requestAnimationFrame(render);
+        }
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(canvas);
+
     animId = requestAnimationFrame(render);
 
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(animId);
+      if (animId) cancelAnimationFrame(animId);
     };
   }, []);
 

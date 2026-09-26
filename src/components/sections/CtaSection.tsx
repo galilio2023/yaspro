@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ArrowRight, Calendar, Video, Sparkles, MapPin } from "lucide-react";
+import { ArrowRight, Calendar, Video, MapPin } from "lucide-react";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import { BorderBeam } from "@/components/magicui/border-beam";

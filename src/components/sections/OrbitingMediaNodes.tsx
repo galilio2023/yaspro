@@ -1,20 +1,42 @@
 "use client";
 
 import React, { useState } from "react";
-import { Cpu, Sparkles, Activity, ShieldCheck } from "lucide-react";
+import { Cpu, Sparkles, Activity } from "lucide-react";
 import { OrbitingCircles } from "@/components/magicui/orbiting-circles";
 import { ORBIT_NODES, OrbitNodeConfig } from "./ecosystem.data";
+import { cn } from "@/lib/utils";
 
 const UNIQUE_RADII = [...new Set(ORBIT_NODES.map((n) => n.radius))];
 
 export function OrbitingMediaNodes() {
   const [hoveredNode, setHoveredNode] = useState<OrbitNodeConfig | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(el);
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div
+      ref={containerRef}
       role="region"
       aria-label="Yas Pro AI Ecosystem interactive telemetry diagram"
-      className="relative flex h-[460px] sm:h-[520px] md:h-[560px] w-full items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-[#080614]/90 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] select-none group/orbit"
+      className={cn(
+        "relative flex h-[460px] sm:h-[520px] md:h-[560px] w-full items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-[#080614] shadow-[0_20px_60px_rgba(0,0,0,0.8)] select-none group/orbit [transform:translateZ(0)]",
+        !isVisible && "[&_*]:!animation-play-state-paused"
+      )}
     >
       {/* Background Volumetric Glow & Cosmic Nebulae */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">

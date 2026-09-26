@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { FadeUp } from "@/components/animations/MotionWrappers";
-import { Badge } from "@/components/ui/badge";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
-import { Cpu, ArrowRight, Sparkles, Terminal } from "lucide-react";
+import { ArrowRight, Terminal } from "lucide-react";
 import { ECOSYSTEM_METRICS } from "./ecosystem.data";
 import { EcosystemMetricCard } from "./EcosystemMetricCard";
 import { OrbitingMediaNodes } from "./OrbitingMediaNodes";
@@ -16,8 +15,18 @@ export function AiEcosystemSection() {
       className="bg-background border-t border-white/5 relative overflow-hidden py-20 lg:py-28"
       background={
         <>
-          <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 size-[650px] bg-brand-purple/15 rounded-full blur-[160px] pointer-events-none" />
-          <div className="absolute top-1/2 right-1/4 -translate-y-1/2 size-[450px] bg-brand-teal/10 rounded-full blur-[140px] pointer-events-none" />
+          <div
+            className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 size-[650px] rounded-full pointer-events-none opacity-20"
+            style={{
+              background: "radial-gradient(circle, rgba(124,58,237,0.35) 0%, transparent 70%)",
+            }}
+          />
+          <div
+            className="absolute top-1/2 right-1/4 -translate-y-1/2 size-[450px] rounded-full pointer-events-none opacity-20"
+            style={{
+              background: "radial-gradient(circle, rgba(6,182,212,0.3) 0%, transparent 70%)",
+            }}
+          />
           {/* Subtle Cyber Grid */}
           <div
             className="absolute inset-0 opacity-[0.03] pointer-events-none"

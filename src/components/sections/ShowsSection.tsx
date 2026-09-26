@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import { Play, Sparkles, X, Eye, Film, Tv, ArrowRight } from "lucide-react";
+import { Play, Sparkles, Eye, Film, Tv, ArrowRight } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -29,7 +29,12 @@ export function ShowsSection() {
       aria-labelledby="shows-title"
       className="bg-background relative overflow-hidden border-t border-white/10"
       background={
-        <div className="absolute top-1/3 left-1/4 size-96 bg-brand-purple/10 rounded-full blur-[140px] pointer-events-none" />
+        <div
+          className="absolute top-1/3 left-1/4 size-96 rounded-full pointer-events-none opacity-20"
+          style={{
+            background: "radial-gradient(circle, rgba(124,58,237,0.3) 0%, transparent 70%)",
+          }}
+        />
       }
     >
       <Container className="relative z-10">

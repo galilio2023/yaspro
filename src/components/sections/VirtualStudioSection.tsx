@@ -11,8 +11,6 @@ import {
   CheckCircle2,
   Crosshair,
   SplitSquareVertical,
-  MonitorPlay,
-  ShieldCheck,
   Video,
   Cpu,
   Layers,
@@ -21,7 +19,6 @@ import {
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
-import { Badge } from "@/components/ui/badge";
 
 export interface VirtualStudioScene {
   id: string;
@@ -167,10 +164,17 @@ export function VirtualStudioSection() {
       background={
         <>
           <div
-            className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[160px] pointer-events-none transition-colors duration-1000 opacity-20"
-            style={{ backgroundColor: activeScene.badgeColor }}
+            className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none transition-all duration-700 opacity-20 will-change-transform"
+            style={{
+              background: `radial-gradient(circle, ${activeScene.badgeColor} 0%, transparent 70%)`,
+            }}
           />
-          <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-brand-cyan/10 rounded-full blur-[120px] pointer-events-none" />
+          <div
+            className="absolute bottom-10 right-10 w-[400px] h-[400px] rounded-full pointer-events-none opacity-25"
+            style={{
+              background: "radial-gradient(circle, rgba(6,182,212,0.3) 0%, transparent 70%)",
+            }}
+          />
         </>
       }
     >
@@ -233,7 +237,6 @@ export function VirtualStudioSection() {
                 src={activeScene.compositeImage}
                 alt={`${activeScene.name} 3D Virtual Production Composite`}
                 fill
-                priority
                 className="object-cover object-center pointer-events-none"
                 sizes="(max-width: 1024px) 100vw, 1024px"
               />
@@ -250,7 +253,6 @@ export function VirtualStudioSection() {
                 src={activeScene.rawImage}
                 alt={`${activeScene.name} Raw Green Screen Soundstage`}
                 fill
-                priority
                 className="object-cover object-center pointer-events-none"
                 sizes="(max-width: 1024px) 100vw, 1024px"
               />

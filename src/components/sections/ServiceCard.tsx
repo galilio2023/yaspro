@@ -2,10 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Camera, Play, Radio, Zap, Sparkles, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Camera, Play, Radio, Zap, CheckCircle2 } from "lucide-react";
 import { CardContainer, CardBody, CardItem } from "@/components/aceternity/3d-card";
 import { BorderBeam } from "@/components/magicui/border-beam";
-import { Badge } from "@/components/ui/badge";
 import type { ServiceItem, ServiceIconName } from "./services.data";
 
 const SERVICE_ICONS: Record<ServiceIconName, typeof Camera> = {
@@ -52,7 +51,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
 
   return (
     <CardContainer className="w-full h-full py-2">
-      <CardBody className="relative group/card rounded-3xl border border-white/10 bg-[#0a0718]/90 backdrop-blur-xl overflow-hidden flex flex-col justify-between h-full transition-all duration-500 hover:border-white/25 hover:shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+      <CardBody className="relative group/card rounded-3xl border border-white/10 bg-[#0a0718] overflow-hidden flex flex-col justify-between h-full transition-colors duration-300 hover:border-white/25 hover:shadow-[0_20px_50px_rgba(0,0,0,0.8)] [transform:translateZ(0)]">
         {/* Subtle Ambient Radial Lighting */}
         <div
           className="pointer-events-none absolute -inset-px opacity-0 group-hover/card:opacity-100 transition-opacity duration-700 rounded-3xl z-10"
