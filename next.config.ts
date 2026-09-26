@@ -4,13 +4,13 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: [
       "lucide-react",
-      "@react-three/drei",
       "framer-motion",
       "three",
-      "gsap",
     ],
   },
   images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 86400,
     remotePatterns: [
       { protocol: "https", hostname: "yasproductions.com" },
       { protocol: "https", hostname: "images.unsplash.com" },

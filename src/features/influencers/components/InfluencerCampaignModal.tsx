@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import { X, Sparkles, CheckCircle2, Send, Building, DollarSign, Calendar } from "lucide-react";
 import { submitInfluencerCampaignRequest } from "@/lib/actions";
 import { InfluencerItem } from "../types";
@@ -33,11 +34,14 @@ const STUDIO_FACILITIES = [
   "On-Location Dubai / GCC",
 ];
 
+const emptySubscribe = () => () => {};
+
 export function InfluencerCampaignModal({
   creator,
   isOpen,
   onClose,
 }: InfluencerCampaignModalProps) {
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -52,7 +56,27 @@ export function InfluencerCampaignModal({
     message: "",
   });
 
-  if (!isOpen) return null;
+  // Lock body scroll and listen for Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = originalOverflow || "";
+    };
+  }, [isOpen, onClose]);
+
+  if (!mounted || !isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,14 +105,18 @@ export function InfluencerCampaignModal({
     }
   };
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="campaign-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-up"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl animate-fade-up select-none"
+      onClick={onClose}
     >
-      <div className="w-full max-w-2xl bg-card border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-brand-purple/20 max-h-[90vh] overflow-y-auto">
+      <div
+        className="w-full max-w-2xl bg-card border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-brand-purple/20 max-h-[90vh] overflow-y-auto select-text"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between pb-5 border-b border-white/10">
           <div className="flex items-center gap-3">
@@ -298,6 +326,7 @@ export function InfluencerCampaignModal({
           </form>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

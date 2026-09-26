@@ -140,15 +140,17 @@ interface StaggerItemProps {
   children: React.ReactNode;
   className?: string;
   as?: ElementType;
+  id?: string;
 }
 
 export function StaggerItem({
   children,
   className,
   as: Tag = "div",
+  id,
 }: StaggerItemProps) {
   return (
-    <Tag className={cn("w-full h-full", className)}>
+    <Tag id={id} className={cn("w-full h-full", className)}>
       {children}
     </Tag>
   );

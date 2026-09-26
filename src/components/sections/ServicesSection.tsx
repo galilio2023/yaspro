@@ -61,7 +61,12 @@ export function ServicesSection() {
           className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch w-full mb-14"
         >
           {SERVICES_DATA.map((svc) => (
-            <StaggerItem as="li" key={svc.id} className="h-full">
+            <StaggerItem
+              as="li"
+              key={svc.id}
+              id={svc.id === "ob-van-broadcast" ? "ob-van" : svc.id}
+              className="h-full scroll-mt-24"
+            >
               <ServiceCard service={svc} />
             </StaggerItem>
           ))}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrappers";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,17 @@ export interface GearExplorerProps {
 export function GearExplorer({
   initialGear = GEAR_DATA,
 }: GearExplorerProps) {
-  const [selectedCategory, setSelectedCategory] = useState<GearCategory>("all");
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category") as GearCategory | null;
+  const validUrlCategory =
+    categoryParam && GEAR_CATEGORIES.some((c) => c.id === categoryParam)
+      ? categoryParam
+      : null;
+
+  const [userCategory, setUserCategory] = useState<GearCategory | null>(null);
+  const selectedCategory = userCategory ?? validUrlCategory ?? "all";
+  const setSelectedCategory = (cat: GearCategory) => setUserCategory(cat);
+
   const [cart, setCart] = useState<string[]>([]);
 
   // Default to 1-day shoot starting today

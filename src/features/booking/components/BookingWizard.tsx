@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import { AlertCircle } from "lucide-react";
 import { WIZARD_STEPS } from "../constants";
 import { useBookingWizard } from "../hooks/useBookingWizard";
 import { BookingProgress } from "./BookingProgress";
@@ -31,6 +32,7 @@ export function BookingWizard() {
     isSubmitting,
     confirmed,
     referenceCode,
+    errorMessage,
     handleSubmit,
   } = useBookingWizard();
 
@@ -63,6 +65,16 @@ export function BookingWizard() {
               stepLabel={currentStepConfig.label}
               sessionTypeLabel={sessionTypeObj?.label}
             />
+
+            {errorMessage && (
+              <div
+                role="alert"
+                className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center gap-3 text-red-300 text-xs sm:text-sm animate-fade-up"
+              >
+                <AlertCircle size={18} className="text-red-400 shrink-0" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
 
             <AnimatePresence mode="wait">
               <motion.div

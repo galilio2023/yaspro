@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MessageSquare, X, ArrowUpRight, Camera, Video, Users } from "lucide-react";
 
 const WHATSAPP_PHONE = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "971554010465";
@@ -28,6 +28,32 @@ const QUICK_INQUIRIES = [
 
 export function WhatsAppConcierge() {
   const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Close when clicking outside or pressing Escape
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
 
   const openWhatsApp = (prefilledText: string) => {
     const encoded = encodeURIComponent(prefilledText);
@@ -37,7 +63,11 @@ export function WhatsAppConcierge() {
   };
 
   return (
-    <aside aria-label="Direct Dubai WhatsApp Concierge" className="fixed bottom-6 right-6 z-50">
+    <aside
+      ref={containerRef}
+      aria-label="Direct Dubai WhatsApp Concierge"
+      className="fixed bottom-6 right-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-24 sm:[[data-has-bottom-cart=true]_&]:bottom-6"
+    >
       {/* Floating Flyout Window */}
       {isOpen && (
         <div

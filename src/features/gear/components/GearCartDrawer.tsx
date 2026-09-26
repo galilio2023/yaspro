@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ShoppingBag,
   ArrowRight,
@@ -15,6 +17,8 @@ import {
 import { formatCurrency } from "@/lib/utils";
 import { GearItem, RentalDateRange, DeliveryMethod } from "../types";
 import { Badge } from "@/components/ui/badge";
+
+const emptySubscribe = () => () => {};
 
 interface GearCartDrawerProps {
   items: GearItem[];
@@ -30,8 +34,41 @@ export function GearCartDrawer({
   onRemoveItem,
   checkoutHref = "/contact",
 }: GearCartDrawerProps) {
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [isOpen, setIsOpen] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("studio_delivery");
+
+  // Lock body scroll and listen for Escape key when breakdown modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = originalOverflow || "";
+    };
+  }, [isOpen]);
+
+  // Signal to global floating widgets (e.g. WhatsApp concierge) that bottom cart bar is active
+  useEffect(() => {
+    if (items.length > 0) {
+      document.body.dataset.hasBottomCart = "true";
+    } else {
+      delete document.body.dataset.hasBottomCart;
+    }
+    return () => {
+      delete document.body.dataset.hasBottomCart;
+    };
+  }, [items.length]);
 
   if (items.length === 0) return null;
 
@@ -44,10 +81,10 @@ export function GearCartDrawer({
 
   return (
     <>
-      {/* Floating Bottom Bar */}
+      {/* Floating Bottom Bar: Centered on desktop, elevated on mobile */}
       <aside
         aria-label="Rental selection summary"
-        className="fixed bottom-6 inset-x-4 max-w-2xl mx-auto z-40 animate-fade-up"
+        className="fixed bottom-4 inset-x-3 sm:bottom-6 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[640px] max-w-2xl z-40 animate-fade-up"
       >
         <div className="rounded-2xl border border-brand-purple/40 bg-black/95 backdrop-blur-2xl p-4 sm:p-5 shadow-2xl shadow-brand-purple/20 flex items-center justify-between gap-4">
           <button
@@ -95,15 +132,19 @@ export function GearCartDrawer({
         </div>
       </aside>
 
-      {/* Expanded Breakdown Modal / Sheet */}
-      {isOpen && (
+      {/* Expanded Breakdown Modal / Sheet (Portaled to document.body) */}
+      {isOpen && mounted && createPortal(
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby="rental-cart-title"
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-up"
+          className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center bg-black/85 backdrop-blur-xl p-4 animate-fade-up select-none"
+          onClick={() => setIsOpen(false)}
         >
-          <div className="w-full max-w-xl max-h-[85vh] bg-card border border-white/15 rounded-3xl p-6 shadow-2xl flex flex-col overflow-hidden">
+          <div
+            className="w-full max-w-xl max-h-[85vh] bg-card border border-white/15 rounded-3xl p-6 shadow-2xl flex flex-col overflow-hidden select-text"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Header */}
             <div className="flex items-center justify-between pb-4 border-b border-white/10">
               <div className="flex items-center gap-2.5">
@@ -138,22 +179,35 @@ export function GearCartDrawer({
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-brand-purple/30 transition-colors"
+                  className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-brand-purple/30 transition-colors gap-3"
                 >
-                  <div className="flex-1 min-w-0 pr-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-white truncate">
-                        {item.name}
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    {item.image && (
+                      <div className="relative size-12 rounded-xl overflow-hidden shrink-0 border border-white/10 bg-black/40">
+                        <Image
+                          src={item.image}
+                          alt={item.name}
+                          fill
+                          sizes="48px"
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0 pr-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-white truncate">
+                          {item.name}
+                        </span>
+                        {item.isKit && (
+                          <Badge variant="cyan" className="text-[9px] px-1.5 py-0 shrink-0">
+                            Kit
+                          </Badge>
+                        )}
+                      </div>
+                      <span className="text-[11px] text-text-muted">
+                        {formatCurrency(item.dailyRate)} / day
                       </span>
-                      {item.isKit && (
-                        <Badge variant="cyan" className="text-[9px] px-2 py-0">
-                          Turnkey Kit
-                        </Badge>
-                      )}
                     </div>
-                    <span className="text-[11px] text-text-muted">
-                      {formatCurrency(item.dailyRate)} / day
-                    </span>
                   </div>
 
                   <div className="flex items-center gap-3">
@@ -262,7 +316,8 @@ export function GearCartDrawer({
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
