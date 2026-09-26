@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MessageSquare, X, ArrowUpRight, Camera, Video, Users } from "lucide-react";
 
 const WHATSAPP_PHONE = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "971554010465";
@@ -28,6 +28,67 @@ const QUICK_INQUIRIES = [
 
 export function WhatsAppConcierge() {
   const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const flyoutRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const triggerButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Close when clicking outside or pressing Escape, manage focus trap and restoration
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Focus the close button when opened
+    const timer = setTimeout(() => {
+      closeButtonRef.current?.focus();
+    }, 50);
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setIsOpen(false);
+        return;
+      }
+
+      if (e.key === "Tab") {
+        if (!flyoutRef.current) return;
+        const focusable = flyoutRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("keydown", handleKeyDown);
+      triggerButtonRef.current?.focus();
+    };
+  }, [isOpen]);
 
   const openWhatsApp = (prefilledText: string) => {
     const encoded = encodeURIComponent(prefilledText);
@@ -37,14 +98,20 @@ export function WhatsAppConcierge() {
   };
 
   return (
-    <aside aria-label="Direct Dubai WhatsApp Concierge" className="fixed bottom-6 right-6 z-50">
+    <aside
+      ref={containerRef}
+      aria-label="Direct Dubai WhatsApp Concierge"
+      className="fixed bottom-6 right-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-24 sm:[[data-has-bottom-cart=true]_&]:bottom-6"
+    >
       {/* Floating Flyout Window */}
       {isOpen && (
         <div
+          ref={flyoutRef}
           role="dialog"
           aria-modal="true"
           aria-labelledby="concierge-heading"
-          className="absolute bottom-16 right-0 w-[340px] sm:w-[380px] bg-secondary border border-white/15 rounded-3xl p-5 shadow-2xl shadow-black/80 backdrop-blur-2xl animate-fade-up"
+          tabIndex={-1}
+          className="absolute bottom-16 right-0 w-[340px] sm:w-[380px] bg-secondary border border-white/15 rounded-3xl p-5 shadow-2xl shadow-black/80 backdrop-blur-2xl animate-fade-up outline-none"
         >
           {/* Header */}
           <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
@@ -66,9 +133,10 @@ export function WhatsAppConcierge() {
             </div>
 
             <button
+              ref={closeButtonRef}
               type="button"
               onClick={() => setIsOpen(false)}
-              className="size-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer"
+              className="size-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
               aria-label="Close concierge"
             >
               <X size={14} />
@@ -86,7 +154,7 @@ export function WhatsAppConcierge() {
                 key={opt.title}
                 type="button"
                 onClick={() => openWhatsApp(opt.text)}
-                className="w-full text-left p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-brand-purple/40 hover:bg-white/[0.06] transition-all duration-200 flex items-center justify-between group cursor-pointer"
+                className="w-full text-left p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-brand-purple/40 hover:bg-white/[0.06] transition-all duration-200 flex items-center justify-between group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
               >
                 <div className="flex items-center gap-3 pr-2">
                   <div className="size-8 rounded-lg bg-brand-purple/15 text-brand-purple-light flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
@@ -111,7 +179,7 @@ export function WhatsAppConcierge() {
             <button
               type="button"
               onClick={() => openWhatsApp("Hello Yas Pro Dubai team, I have a general production inquiry.")}
-              className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 flex items-center justify-center gap-2 shadow-lg shadow-green-500/20 transition-all cursor-pointer"
+              className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-brand-purple via-brand-purple-mid to-brand-teal hover:opacity-95 flex items-center justify-center gap-2 shadow-lg shadow-brand-purple/25 hover:shadow-brand-purple/40 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
             >
               <MessageSquare size={14} />
               <span>Start Custom WhatsApp Chat</span>
@@ -122,19 +190,34 @@ export function WhatsAppConcierge() {
 
       {/* Floating Trigger Button */}
       <button
+        ref={triggerButtonRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="size-14 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center shadow-xl shadow-green-500/30 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer relative group border border-white/20"
+        className="relative size-14 rounded-2xl flex items-center justify-center text-white cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple transition-all duration-300 hover:scale-105 active:scale-95"
         aria-label="Open Dubai WhatsApp Concierge"
       >
-        <span className="absolute -top-1 -right-1 size-3.5 rounded-full bg-emerald-400 border-2 border-black animate-pulse" />
-        {isOpen ? (
-          <X size={24} />
-        ) : (
-          <div className="flex items-center justify-center">
-            <MessageSquare size={24} />
-          </div>
-        )}
+        {/* Ambient Glow Aura matching app theme */}
+        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-brand-purple via-brand-purple-light to-brand-teal blur-md opacity-75 group-hover:opacity-100 transition-opacity" />
+
+        {/* Button Surface: Cosmic Violet to Aurora Cyan gradient with subtle glass border */}
+        <div className="relative size-full rounded-2xl bg-gradient-to-br from-brand-purple via-[#6d28d9] to-brand-teal p-[1px] shadow-2xl shadow-brand-purple/40 flex items-center justify-center overflow-hidden border border-white/20">
+          {/* Subtle inner gloss highlight */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/25 via-transparent to-black/30 pointer-events-none" />
+
+          {isOpen ? (
+            <X size={24} className="relative z-10 transition-transform group-hover:rotate-90 duration-200" />
+          ) : (
+            <div className="relative z-10 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+              <MessageSquare size={24} className="drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]" />
+            </div>
+          )}
+        </div>
+
+        {/* Online Status Live Pip (Green emerald with subtle neon ring) */}
+        <span className="absolute -top-1 -right-1 z-20 flex size-3.5">
+          <span className="absolute inline-flex size-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+          <span className="relative inline-flex size-3.5 rounded-full bg-emerald-500 border-2 border-black" />
+        </span>
       </button>
     </aside>
   );

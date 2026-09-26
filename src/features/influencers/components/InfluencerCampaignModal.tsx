@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import { X, Sparkles, CheckCircle2, Send, Building, DollarSign, Calendar } from "lucide-react";
 import { submitInfluencerCampaignRequest } from "@/lib/actions";
 import { InfluencerItem } from "../types";
@@ -33,13 +34,20 @@ const STUDIO_FACILITIES = [
   "On-Location Dubai / GCC",
 ];
 
+const emptySubscribe = () => () => {};
+
 export function InfluencerCampaignModal({
   creator,
   isOpen,
   onClose,
 }: InfluencerCampaignModalProps) {
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
 
   const [formData, setFormData] = useState({
     brandName: "",
@@ -52,7 +60,54 @@ export function InfluencerCampaignModal({
     message: "",
   });
 
-  if (!isOpen) return null;
+  // Focus management and escape/tab trapping
+  useEffect(() => {
+    if (!isOpen) return;
+
+    triggerRef.current = document.activeElement as HTMLElement | null;
+
+    const timer = setTimeout(() => {
+      closeButtonRef.current?.focus();
+    }, 50);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+
+      if (e.key === "Tab") {
+        const focusableElements = panelRef.current?.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusableElements || focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey && document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = originalOverflow || "";
+      triggerRef.current?.focus();
+    };
+  }, [isOpen, onClose]);
+
+  if (!mounted || !isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,14 +136,19 @@ export function InfluencerCampaignModal({
     }
   };
 
-  return (
+  return createPortal(
     <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="campaign-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-up"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl animate-fade-up select-none"
+      onClick={onClose}
     >
-      <div className="w-full max-w-2xl bg-card border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-brand-purple/20 max-h-[90vh] overflow-y-auto">
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="campaign-modal-title"
+        className="w-full max-w-2xl bg-card border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-brand-purple/20 max-h-[90vh] overflow-y-auto select-text"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between pb-5 border-b border-white/10">
           <div className="flex items-center gap-3">
@@ -111,6 +171,7 @@ export function InfluencerCampaignModal({
           </div>
 
           <button
+            ref={closeButtonRef}
             type="button"
             onClick={onClose}
             className="size-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer"
@@ -298,6 +359,7 @@ export function InfluencerCampaignModal({
           </form>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

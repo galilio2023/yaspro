@@ -10,9 +10,12 @@ export function useBookingWizard() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [referenceCode, setReferenceCode] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const update = (values: Partial<BookingState>) =>
+  const update = (values: Partial<BookingState>) => {
+    setErrorMessage(null);
     setState((prev) => ({ ...prev, ...values }));
+  };
 
   const studio = STUDIOS.find((s) => s.id === state.studioId) || STUDIOS[0];
   const sessionTypeObj = SESSION_TYPES.find((s) => s.id === state.sessionType);
@@ -29,18 +32,50 @@ export function useBookingWizard() {
 
   const total = studioCost + crewCost + gearCost + postCost;
 
-  const nextStep = () => setStep((s) => s + 1);
-  const prevStep = () => setStep((s) => Math.max(1, s - 1));
+  const nextStep = () => {
+    setErrorMessage(null);
+    if (step === 1 && !state.date) {
+      setErrorMessage("Please select a session reservation date before continuing.");
+      return;
+    }
+    setStep((s) => s + 1);
+  };
+
+  const prevStep = () => {
+    setErrorMessage(null);
+    setStep((s) => Math.max(1, s - 1));
+  };
 
   const handleSubmit = async () => {
+    setErrorMessage(null);
+
+    // Validate required contact credentials
+    if (!state.firstName.trim()) {
+      setErrorMessage("Please enter your first name.");
+      return;
+    }
+    if (!state.lastName.trim()) {
+      setErrorMessage("Please enter your last name.");
+      return;
+    }
+    const trimmedEmail = state.email.trim();
+    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setErrorMessage("Please enter a valid contact email address.");
+      return;
+    }
+    if (!state.phone.trim()) {
+      setErrorMessage("Please provide a contact phone or WhatsApp number.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const res = await createBooking({
-        firstName: state.firstName,
-        lastName: state.lastName,
-        email: state.email,
-        phone: state.phone,
-        company: state.company,
+        firstName: state.firstName.trim(),
+        lastName: state.lastName.trim(),
+        email: state.email.trim(),
+        phone: state.phone.trim(),
+        company: state.company?.trim(),
         studioId: state.studioId || "studio-a",
         sessionType: state.sessionType || "video_production",
         scheduledAt: `${state.date}T${state.time || "10:00"}`,
@@ -57,12 +92,19 @@ export function useBookingWizard() {
         totalAmount: total,
       });
 
+      if (res && "success" in res && res.success === false) {
+        throw new Error((res as { message?: string }).message || "Booking reservation failed.");
+      }
+
       setReferenceCode(res.referenceCode || generateBookingReference());
       setConfirmed(true);
     } catch (e) {
       console.error(e);
-      setReferenceCode(generateBookingReference());
-      setConfirmed(true);
+      setErrorMessage(
+        e instanceof Error
+          ? e.message
+          : "Unable to process booking at this time. Please retry or contact our Dubai Concierge on WhatsApp."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -86,6 +128,7 @@ export function useBookingWizard() {
     isSubmitting,
     confirmed,
     referenceCode,
+    errorMessage,
     handleSubmit,
   };
 }

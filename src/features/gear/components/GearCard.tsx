@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Camera, CheckCircle2, Box } from "lucide-react";
 import { formatCurrency, cn } from "@/lib/utils";
 import { GearItem } from "../types";
@@ -27,47 +28,73 @@ export function GearCard({
   const isCompact = variant === "compact";
 
   return (
-    <article className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 flex flex-col justify-between h-full group relative hover:border-brand-purple/40 hover:bg-white/[0.05] transition-all duration-300 shadow-xl shadow-black/20">
+    <article className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-6 flex flex-col justify-between h-full group relative hover:border-brand-purple/40 hover:bg-white/[0.05] transition-all duration-300 shadow-xl shadow-black/20 overflow-hidden">
       <div>
-        {/* Top Badges */}
-        <div className="flex items-center justify-between gap-2 mb-4">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <Badge variant="secondary" className="text-xs font-normal">
+        {/* Product Visual Stage — rendered in both full and compact variants */}
+        <div className="relative w-full aspect-[16/9] mb-4 sm:mb-5 rounded-2xl overflow-hidden bg-black/50 border border-white/10 group-hover:border-brand-purple/30 transition-all duration-300">
+          {item.image ? (
+            <Image
+              src={item.image}
+              alt={item.name}
+              fill
+              sizes={
+                isCompact
+                  ? "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              }
+              className="object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+            />
+          ) : (
+            <div className="flex items-center justify-center size-full bg-gradient-to-br from-white/5 to-white/0">
+              <Camera
+                size={36}
+                className="text-text-muted group-hover:text-brand-purple-light transition-colors"
+              />
+            </div>
+          )}
+
+          {/* Depth vignette */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+
+          {/* Top Badges over image */}
+          <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-1.5 pointer-events-none z-10">
+            <Badge
+              variant="secondary"
+              className="text-[10px] font-normal backdrop-blur-md bg-black/70 border-white/15 text-white/90"
+            >
               {item.categoryLabel}
             </Badge>
-            {item.isKit && (
-              <Badge variant="cyan" className="text-[10px] font-bold uppercase tracking-wider gap-1">
-                <Box size={10} /> Kit
+
+            {item.isPopular && (
+              <Badge
+                variant="gold"
+                className="text-[9.5px] font-bold uppercase tracking-wider backdrop-blur-md"
+              >
+                Popular
               </Badge>
             )}
           </div>
 
-          {item.isPopular && (
-            <Badge
-              variant={isCompact ? "default" : "gold"}
-              className="text-[10px] font-bold uppercase tracking-wider"
-            >
-              Popular
-            </Badge>
+          {/* Turnkey kit badge */}
+          {item.isKit && (
+            <div className="absolute bottom-2.5 left-2.5 pointer-events-none z-10">
+              <Badge
+                variant="cyan"
+                className="text-[9.5px] font-bold uppercase tracking-wider gap-1 backdrop-blur-md bg-black/70 border-brand-cyan/40 text-brand-cyan"
+              >
+                <Box size={10} /> Turnkey Kit
+              </Badge>
+            </div>
           )}
+
+          {/* Category watermark at bottom right */}
+          <span className="absolute bottom-2.5 right-2.5 text-[9px] font-mono text-white/70 uppercase z-10 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm border border-white/10">
+            {item.category}
+          </span>
         </div>
 
-        {/* Visual Camera / Optics Graphic Header (shown in default variant) */}
-        {!isCompact && (
-          <div className="w-full aspect-[16/9] mb-5 rounded-2xl bg-gradient-to-br from-white/5 to-white/0 border border-white/5 flex items-center justify-center relative overflow-hidden group-hover:border-brand-purple/20 transition-colors">
-            <div className="size-24 rounded-full bg-brand-purple/10 blur-xl absolute pointer-events-none group-hover:bg-brand-purple/20 transition-all" />
-            <Camera
-              size={36}
-              className="text-text-muted group-hover:text-brand-purple-light group-hover:scale-110 transition-all duration-300"
-            />
-            <span className="absolute bottom-2.5 right-3 text-[10px] font-mono text-text-ghost uppercase">
-              {item.category}
-            </span>
-          </div>
-        )}
-
         {/* Title */}
-        <h3 className="text-lg font-bold text-white mb-2 font-display group-hover:text-brand-purple-light transition-colors">
+        <h3 className="text-base sm:text-lg font-bold text-white mb-2 font-display group-hover:text-brand-purple-light transition-colors line-clamp-1">
           {item.name}
         </h3>
 
@@ -75,7 +102,7 @@ export function GearCard({
         <p
           className={cn(
             "text-text-secondary text-xs leading-relaxed mb-4",
-            isCompact ? "line-clamp-3" : "line-clamp-2 mb-5"
+            isCompact ? "line-clamp-2" : "line-clamp-2 mb-5"
           )}
         >
           {item.description}

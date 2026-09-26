@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { GearExplorer } from "@/features/gear/components/GearExplorer";
 import { GEAR_DATA } from "@/features/gear/data";
@@ -27,7 +28,9 @@ export default function ShopPage() {
           description="Cinema cameras, anamorphic optics, wireless audio, and turnkey OB van packages. Available for rental across Dubai, Cairo, and Amman."
         />
 
-        <GearExplorer initialGear={GEAR_DATA} />
+        <Suspense fallback={<div className="min-h-[400px]" />}>
+          <GearExplorer initialGear={GEAR_DATA} />
+        </Suspense>
       </Container>
     </Section>
   );

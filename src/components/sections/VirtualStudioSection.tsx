@@ -144,16 +144,24 @@ export function VirtualStudioSection() {
     };
   }, [isDragging, updateSliderFromClientX]);
 
-  // Smooth automatic back-and-forth comparison sweep
+  // Smooth automatic back-and-forth comparison sweep using requestAnimationFrame
   useEffect(() => {
     if (!isAutoWiping) return;
+    let animId: number;
     let angle = 0;
-    const interval = setInterval(() => {
-      angle += 0.035;
+    let lastTime = performance.now();
+
+    const sweep = (time: number) => {
+      const delta = Math.min((time - lastTime) / 1000, 0.1);
+      lastTime = time;
+      angle += delta * 1.15;
       const pos = 50 + Math.sin(angle) * 35;
       setSliderPosition(Math.round(pos * 10) / 10);
-    }, 30);
-    return () => clearInterval(interval);
+      animId = requestAnimationFrame(sweep);
+    };
+
+    animId = requestAnimationFrame(sweep);
+    return () => cancelAnimationFrame(animId);
   }, [isAutoWiping]);
 
   return (

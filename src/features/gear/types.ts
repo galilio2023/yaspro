@@ -11,6 +11,7 @@ export interface GearItem {
   specs: string[];
   description: string;
   isPopular?: boolean;
+  image?: string;
   isKit?: boolean;
   includedInKit?: string[];
   securityDeposit?: number; // Refundable deposit in AED
