@@ -179,7 +179,7 @@ export function WhatsAppConcierge() {
             <button
               type="button"
               onClick={() => openWhatsApp("Hello Yas Pro Dubai team, I have a general production inquiry.")}
-              className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 flex items-center justify-center gap-2 shadow-lg shadow-green-500/20 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+              className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-brand-purple via-brand-purple-mid to-brand-teal hover:opacity-95 flex items-center justify-center gap-2 shadow-lg shadow-brand-purple/25 hover:shadow-brand-purple/40 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
             >
               <MessageSquare size={14} />
               <span>Start Custom WhatsApp Chat</span>
@@ -193,17 +193,31 @@ export function WhatsAppConcierge() {
         ref={triggerButtonRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="size-14 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center shadow-xl shadow-green-500/30 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer relative group border border-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+        className="relative size-14 rounded-2xl flex items-center justify-center text-white cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple transition-all duration-300 hover:scale-105 active:scale-95"
         aria-label="Open Dubai WhatsApp Concierge"
       >
-        <span className="absolute -top-1 -right-1 size-3.5 rounded-full bg-emerald-400 border-2 border-black animate-pulse" />
-        {isOpen ? (
-          <X size={24} />
-        ) : (
-          <div className="flex items-center justify-center">
-            <MessageSquare size={24} />
-          </div>
-        )}
+        {/* Ambient Glow Aura matching app theme */}
+        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-brand-purple via-brand-purple-light to-brand-teal blur-md opacity-75 group-hover:opacity-100 transition-opacity" />
+
+        {/* Button Surface: Cosmic Violet to Aurora Cyan gradient with subtle glass border */}
+        <div className="relative size-full rounded-2xl bg-gradient-to-br from-brand-purple via-[#6d28d9] to-brand-teal p-[1px] shadow-2xl shadow-brand-purple/40 flex items-center justify-center overflow-hidden border border-white/20">
+          {/* Subtle inner gloss highlight */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/25 via-transparent to-black/30 pointer-events-none" />
+
+          {isOpen ? (
+            <X size={24} className="relative z-10 transition-transform group-hover:rotate-90 duration-200" />
+          ) : (
+            <div className="relative z-10 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+              <MessageSquare size={24} className="drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]" />
+            </div>
+          )}
+        </div>
+
+        {/* Online Status Live Pip (Green emerald with subtle neon ring) */}
+        <span className="absolute -top-1 -right-1 z-20 flex size-3.5">
+          <span className="absolute inline-flex size-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+          <span className="relative inline-flex size-3.5 rounded-full bg-emerald-500 border-2 border-black" />
+        </span>
       </button>
     </aside>
   );
