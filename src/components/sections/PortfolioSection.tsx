@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { ArrowRight, Award, Film, X } from "lucide-react";
+import { ArrowRight, Award } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";

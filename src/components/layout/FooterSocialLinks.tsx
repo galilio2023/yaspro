@@ -10,17 +10,18 @@ const SOCIAL_LINKS = [
 
 export function FooterSocialLinks() {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2.5">
       {SOCIAL_LINKS.map((s) => (
         <a
           key={s.label}
           href={s.href}
           target="_blank"
           rel="noopener noreferrer"
+          title={s.label}
           aria-label={s.label}
-          className="size-10 rounded-xl bg-white/5 hover:bg-brand-purple/20 border border-white/10 hover:border-brand-purple/40 flex items-center justify-center text-text-secondary hover:text-white transition-all duration-200"
+          className="size-9 rounded-xl bg-white/[0.04] hover:bg-brand-purple/20 border border-white/[0.08] hover:border-brand-purple/40 flex items-center justify-center text-text-muted hover:text-white hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm"
         >
-          <s.icon size={16} />
+          <s.icon size={15} />
         </a>
       ))}
     </div>

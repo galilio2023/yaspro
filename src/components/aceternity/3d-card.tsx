@@ -21,7 +21,7 @@ export const CardContainer = ({
   const rafRef = useRef<number>(0);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    // Throttle via rAF — prevents layout thrashing on mousemove
+    // Only perform 3D tilt calculation when hovering and on devices that support hover
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(() => {
       const el = containerRef.current;
@@ -52,7 +52,7 @@ export const CardContainer = ({
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           className={cn(
-            "relative w-full h-full transition-transform duration-300 ease-out [transform-style:preserve-3d]",
+            "relative w-full h-full transition-transform duration-300 ease-out will-change-transform [transform-style:preserve-3d]",
             className
           )}
         >
@@ -71,16 +71,18 @@ export const CardBody = ({
   children: React.ReactNode;
   className?: string;
   as?: React.ElementType;
-}) => (
-  <Tag
-    className={cn(
-      "h-full w-full [transform-style:preserve-3d] [&>*]:[transform-style:preserve-3d]",
-      className
-    )}
-  >
-    {children}
-  </Tag>
-);
+}) => {
+  return (
+    <Tag
+      className={cn(
+        "h-full w-full [transform-style:preserve-3d] [&>*]:[transform-style:preserve-3d]",
+        className
+      )}
+    >
+      {children}
+    </Tag>
+  );
+};
 
 export const CardItem = ({
   as: Tag = "div",
@@ -108,19 +110,23 @@ export const CardItem = ({
   const ref = useRef<HTMLDivElement>(null);
   const [isMouseEntered] = useMouseEnter();
 
-  // CSS transition handles the visual, useEffect just flips transform value
   React.useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    el.style.transform = isMouseEntered
-      ? `translateX(${translateX}px) translateY(${translateY}px) translateZ(${translateZ}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg)`
-      : "translateX(0px) translateY(0px) translateZ(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)";
+    if (isMouseEntered) {
+      el.style.transform = `translateX(${translateX}px) translateY(${translateY}px) translateZ(${translateZ}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg)`;
+    } else {
+      el.style.transform = "none";
+    }
   }, [isMouseEntered, translateX, translateY, translateZ, rotateX, rotateY, rotateZ]);
 
   return (
     <Tag
       ref={ref}
-      className={cn("transition-transform duration-200 ease-out", className)}
+      className={cn(
+        "transition-transform duration-200 ease-out",
+        className
+      )}
       {...rest}
     >
       {children}

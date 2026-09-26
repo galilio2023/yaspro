@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useSyncExternalStore } from "react";
 import * as THREE from "three";
+
+const emptySubscribe = () => () => {};
 
 interface RocketAndHexBallCanvasProps {
   className?: string;
@@ -9,10 +11,9 @@ interface RocketAndHexBallCanvasProps {
 
 export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isClient, setIsClient] = useState(false);
+  const isClient = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   useEffect(() => {
-    setIsClient(true);
     const container = containerRef.current;
     if (!container) return;
 
@@ -246,24 +247,35 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
     const starPoints = new THREE.Points(starGeo, starMat);
     scene.add(starPoints);
 
-    // Mouse movement tracking
+    // Mouse movement tracking with cached rect to prevent synchronous layout reflows
     let mouseX = 0;
     let mouseY = 0;
-    const onMouseMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      mouseY = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-    };
-    window.addEventListener("mousemove", onMouseMove);
+    let cachedRect = container.getBoundingClientRect();
 
-    // Animation Loop
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isVisible) return;
+      mouseX = ((e.clientX - cachedRect.left) / (cachedRect.width || 1)) * 2 - 1;
+      mouseY = -(((e.clientY - cachedRect.top) / (cachedRect.height || 1)) * 2 - 1);
+    };
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+
+    // Refresh cached rectangle on scroll so coordinates remain accurate while visible
+    const onScroll = () => {
+      if (isVisible) {
+        cachedRect = container.getBoundingClientRect();
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true, capture: true });
+
+    // Animation Loop with IntersectionObserver pausing to eliminate offscreen GPU drain
     let animationFrameId: number;
-    let clock = new THREE.Clock();
+    const clock = new THREE.Clock();
+    let isVisible = false;
 
     const animate = () => {
+      if (!isVisible) return;
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
-      const delta = clock.getDelta();
 
       // 1. Animate Hex Ball: Continuous 3D tumble & core oscillation
       ballGroup.rotation.y += 0.008;
@@ -292,21 +304,41 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
       renderer.render(scene, camera);
     };
 
-    animate();
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const nowVisible = entry.isIntersecting;
+        if (nowVisible && !isVisible) {
+          cachedRect = container.getBoundingClientRect();
+          isVisible = true;
+          animationFrameId = requestAnimationFrame(animate);
+        } else if (!nowVisible) {
+          isVisible = false;
+          cancelAnimationFrame(animationFrameId);
+        }
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(container);
 
     // Resize handler
     const onResize = () => {
       if (!container) return;
+      cachedRect = container.getBoundingClientRect();
       width = container.clientWidth || 800;
       height = container.clientHeight || 450;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
+      if (isVisible) {
+        renderer.render(scene, camera);
+      }
     };
     window.addEventListener("resize", onResize);
 
     return () => {
+      observer.disconnect();
       window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("scroll", onScroll, true);
       window.removeEventListener("resize", onResize);
       cancelAnimationFrame(animationFrameId);
       if (renderer.domElement && container.contains(renderer.domElement)) {

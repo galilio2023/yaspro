@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
@@ -21,12 +23,32 @@ export function Marquee({
   gap = "1rem",
   ...props
 }: MarqueeProps) {
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = React.useState(true);
+
+  React.useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0, rootMargin: "200px 0px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
+      ref={containerRef}
       {...props}
       style={{ "--gap": gap } as React.CSSProperties}
       className={cn(
         "group flex overflow-hidden p-2 [--duration:35s] [gap:var(--gap)]",
+        !isVisible && "[&_*]:![animation-play-state:paused]",
         {
           "flex-row": !vertical,
           "flex-col": vertical,

@@ -33,7 +33,7 @@ export function ProjectCard({
     <CardContainer className="w-full h-full">
       <CardBody
         as="article"
-        className="relative group/card flex flex-col justify-between h-full rounded-3xl border border-brand-purple/12 bg-card/70 backdrop-blur-xl hover:border-brand-purple/50 hover:bg-brand-purple/5 hover:shadow-2xl hover:shadow-brand-purple/15 transition-all duration-350 overflow-hidden"
+        className="relative group/card flex flex-col justify-between h-full rounded-3xl border border-brand-purple/15 bg-[#0e0c1f] hover:border-brand-purple/50 hover:bg-[#120f26] hover:shadow-2xl hover:shadow-brand-purple/15 transition-colors duration-300 overflow-hidden [transform:translateZ(0)]"
       >
         {isGovernment && (
           <BorderBeam size={220} duration={14} colorFrom="var(--brand-gold)" colorTo="var(--brand-purple)" />

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { FadeUp } from "@/components/animations/MotionWrappers";
-import { ArrowRight, Play, Sparkles } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ArrowRight, Play } from "lucide-react";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import { Section } from "@/components/ui/section";

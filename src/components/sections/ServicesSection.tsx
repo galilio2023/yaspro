@@ -21,8 +21,18 @@ export function ServicesSection() {
       className="bg-background relative overflow-hidden py-20 lg:py-28 border-b border-white/5"
       background={
         <>
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[650px] bg-brand-purple/10 rounded-full blur-[160px] pointer-events-none" />
-          <div className="absolute bottom-0 right-1/4 size-[400px] bg-brand-teal/5 rounded-full blur-[140px] pointer-events-none" />
+          <div
+            className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[650px] rounded-full pointer-events-none opacity-20"
+            style={{
+              background: "radial-gradient(circle, rgba(124,58,237,0.35) 0%, transparent 70%)",
+            }}
+          />
+          <div
+            className="absolute bottom-0 right-1/4 size-[400px] rounded-full pointer-events-none opacity-20"
+            style={{
+              background: "radial-gradient(circle, rgba(6,182,212,0.3) 0%, transparent 70%)",
+            }}
+          />
           {/* Subtle grid texture */}
           <div
             className="absolute inset-0 opacity-[0.03] pointer-events-none"

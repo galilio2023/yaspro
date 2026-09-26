@@ -6,7 +6,6 @@ import {
   Video,
   Flame,
   Globe2,
-  Cpu,
   Zap,
   Layers,
   LucideIcon,

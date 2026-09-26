@@ -5,21 +5,35 @@ import { BrandLogo } from "./BrandLogo";
 import { FooterNavLinks } from "./FooterNavLinks";
 import { BackgroundBeams } from "@/components/aceternity/background-beams";
 
-const PRODUCTION_SERVICES = [
-  { label: "Studio Stage Bookings", href: "/studio-booking" },
-  { label: "OB-VAN Live Broadcast", href: "/#ob-van" },
-  { label: "Equipment Rental", href: "/shop" },
-  { label: "Production Bundles", href: "/shop?category=bundles" },
-  { label: "Virtual Production & VFX", href: "/#services" },
-] as const;
+import {
+  Calendar,
+  Radio,
+  Camera,
+  Layers,
+  Wand2,
+  Users,
+  Tv,
+  Film,
+  Building2,
+  Mail,
+} from "lucide-react";
+import { FooterLinkItem } from "./FooterNavLinks";
 
-const NETWORK_LINKS = [
-  { label: "Influencer Talent Network", href: "/influencers" },
-  { label: "Original Shows & Formats", href: "/#shows" },
-  { label: "Masterpiece Portfolio", href: "/projects" },
-  { label: "About Yas Pro", href: "/about" },
-  { label: "Contact Studios", href: "/contact" },
-] as const;
+const PRODUCTION_SERVICES: readonly FooterLinkItem[] = [
+  { label: "Studio Stage Bookings", href: "/studio-booking", icon: Calendar },
+  { label: "OB-VAN Live Broadcast", href: "/#ob-van", icon: Radio },
+  { label: "Equipment Rental", href: "/shop", icon: Camera },
+  { label: "Production Bundles", href: "/shop?category=bundles", icon: Layers },
+  { label: "Virtual Production & VFX", href: "/#virtual-studio", icon: Wand2 },
+];
+
+const NETWORK_LINKS: readonly FooterLinkItem[] = [
+  { label: "Influencer Talent Network", href: "/influencers", icon: Users },
+  { label: "Original Shows & Formats", href: "/#shows", icon: Tv },
+  { label: "Masterpiece Portfolio", href: "/projects", icon: Film },
+  { label: "About Yas Pro", href: "/about", icon: Building2 },
+  { label: "Contact Studios", href: "/contact", icon: Mail },
+];
 
 const REGIONAL_HUBS: readonly RegionalHub[] = [
   {
@@ -72,7 +86,14 @@ export default function Footer() {
       {/* Massive Luxury Watermark Typography in Background */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 select-none overflow-hidden text-center opacity-[0.03] text-[18vw] font-extrabold tracking-tighter leading-none whitespace-nowrap text-white font-display"
+        className="pointer-events-none absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 select-none overflow-hidden text-center text-[18vw] font-black tracking-tighter leading-none whitespace-nowrap font-display z-0"
+        style={{
+          background: "linear-gradient(180deg, rgba(167, 139, 250, 0.14) 0%, rgba(6, 182, 212, 0.08) 60%, rgba(255, 255, 255, 0.02) 100%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          WebkitTextStroke: "1px rgba(255, 255, 255, 0.08)",
+          textShadow: "0 0 80px rgba(124, 58, 237, 0.15)",
+        }}
       >
         YASPRO
       </div>
