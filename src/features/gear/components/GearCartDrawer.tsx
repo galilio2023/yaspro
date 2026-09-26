@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useSyncExternalStore } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
@@ -38,13 +38,53 @@ export function GearCartDrawer({
   const [isOpen, setIsOpen] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("studio_delivery");
 
-  // Lock body scroll and listen for Escape key when breakdown modal is open
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const triggerButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Automatically close breakdown modal when cart becomes empty
   useEffect(() => {
-    if (!isOpen) return;
+    if (items.length === 0 && isOpen) {
+      setIsOpen(false);
+    }
+  }, [items.length, isOpen]);
+
+  // Lock body scroll and manage focus trap & escape key when breakdown modal is open
+  useEffect(() => {
+    if (!isOpen || items.length === 0) return;
+
+    const timer = setTimeout(() => {
+      closeButtonRef.current?.focus();
+    }, 50);
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        e.preventDefault();
         setIsOpen(false);
+        return;
+      }
+
+      if (e.key === "Tab") {
+        if (!panelRef.current) return;
+        const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
       }
     };
 
@@ -53,10 +93,12 @@ export function GearCartDrawer({
     document.body.style.overflow = "hidden";
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = originalOverflow || "";
+      triggerButtonRef.current?.focus();
     };
-  }, [isOpen]);
+  }, [isOpen, items.length]);
 
   // Signal to global floating widgets (e.g. WhatsApp concierge) that bottom cart bar is active
   useEffect(() => {
@@ -88,9 +130,11 @@ export function GearCartDrawer({
       >
         <div className="rounded-2xl border border-brand-purple/40 bg-black/95 backdrop-blur-2xl p-4 sm:p-5 shadow-2xl shadow-brand-purple/20 flex items-center justify-between gap-4">
           <button
+            ref={triggerButtonRef}
             type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center gap-3 text-left group cursor-pointer"
+            className="flex items-center gap-3 text-left group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple rounded-xl"
+            aria-expanded={isOpen}
           >
             <div className="size-11 rounded-xl bg-brand-purple/20 border border-brand-purple/40 flex items-center justify-center text-brand-purple-light group-hover:scale-105 transition-transform">
               <ShoppingBag size={20} />
@@ -116,14 +160,14 @@ export function GearCartDrawer({
             <button
               type="button"
               onClick={() => setIsOpen(!isOpen)}
-              className="hidden sm:inline-flex px-4 py-2.5 rounded-xl text-xs font-semibold text-text-secondary bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+              className="hidden sm:inline-flex px-4 py-2.5 rounded-xl text-xs font-semibold text-text-secondary bg-white/5 hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
             >
               {isOpen ? "Hide" : "Details"}
             </button>
 
             <Link
               href={`${checkoutHref}?service=gear-rental&items=${items.map((i) => i.id).join(",")}&days=${dateRange.totalDays}`}
-              className="px-5 py-2.5 rounded-xl font-semibold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-purple-light flex items-center gap-2 shadow-lg shadow-brand-purple/25 whitespace-nowrap cursor-pointer hover:opacity-90 transition-opacity"
+              className="px-5 py-2.5 rounded-xl font-semibold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-purple-light flex items-center gap-2 shadow-lg shadow-brand-purple/25 whitespace-nowrap cursor-pointer hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
             >
               <span>Reserve Gear</span>
               <ArrowRight size={14} />
@@ -135,15 +179,19 @@ export function GearCartDrawer({
       {/* Expanded Breakdown Modal / Sheet (Portaled to document.body) */}
       {isOpen && mounted && createPortal(
         <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="rental-cart-title"
           className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center bg-black/85 backdrop-blur-xl p-4 animate-fade-up select-none"
           onClick={() => setIsOpen(false)}
+          aria-hidden="true"
         >
           <div
-            className="w-full max-w-xl max-h-[85vh] bg-card border border-white/15 rounded-3xl p-6 shadow-2xl flex flex-col overflow-hidden select-text"
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="rental-cart-title"
+            tabIndex={-1}
+            className="w-full max-w-xl max-h-[85vh] bg-card border border-white/15 rounded-3xl p-6 shadow-2xl flex flex-col overflow-hidden select-text outline-none"
             onClick={(e) => e.stopPropagation()}
+            aria-hidden="false"
           >
             {/* Header */}
             <div className="flex items-center justify-between pb-4 border-b border-white/10">
@@ -162,9 +210,11 @@ export function GearCartDrawer({
               </div>
 
               <button
+                ref={closeButtonRef}
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="size-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer"
+                className="size-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+                aria-label="Close cart breakdown"
               >
                 <X size={16} />
               </button>
@@ -217,7 +267,7 @@ export function GearCartDrawer({
                     <button
                       type="button"
                       onClick={() => onRemoveItem(item.id)}
-                      className="text-text-muted hover:text-red-400 transition-colors p-1"
+                      className="text-text-muted hover:text-red-400 transition-colors p-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 rounded-lg"
                       aria-label={`Remove ${item.name}`}
                     >
                       <Trash2 size={14} />
@@ -235,7 +285,7 @@ export function GearCartDrawer({
                   <button
                     type="button"
                     onClick={() => setDeliveryMethod("studio_delivery")}
-                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple ${
                       deliveryMethod === "studio_delivery"
                         ? "bg-brand-purple/15 border-brand-purple/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
@@ -249,7 +299,7 @@ export function GearCartDrawer({
                   <button
                     type="button"
                     onClick={() => setDeliveryMethod("courier_dubai")}
-                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple ${
                       deliveryMethod === "courier_dubai"
                         ? "bg-brand-purple/15 border-brand-purple/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
@@ -263,7 +313,7 @@ export function GearCartDrawer({
                   <button
                     type="button"
                     onClick={() => setDeliveryMethod("pickup_hub")}
-                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple ${
                       deliveryMethod === "pickup_hub"
                         ? "bg-brand-purple/15 border-brand-purple/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
@@ -308,7 +358,7 @@ export function GearCartDrawer({
 
                 <Link
                   href={`${checkoutHref}?service=gear-rental&items=${items.map((i) => i.id).join(",")}&days=${dateRange.totalDays}&delivery=${deliveryMethod}`}
-                  className="px-6 py-3 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-purple-light flex items-center gap-2 shadow-lg shadow-brand-purple/30 hover:opacity-90 transition-opacity"
+                  className="px-6 py-3 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-purple-light flex items-center gap-2 shadow-lg shadow-brand-purple/30 hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
                 >
                   <span>Submit Reservation</span>
                   <ArrowRight size={14} />

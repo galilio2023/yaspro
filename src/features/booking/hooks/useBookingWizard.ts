@@ -58,7 +58,8 @@ export function useBookingWizard() {
       setErrorMessage("Please enter your last name.");
       return;
     }
-    if (!state.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email)) {
+    const trimmedEmail = state.email.trim();
+    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
       setErrorMessage("Please enter a valid contact email address.");
       return;
     }

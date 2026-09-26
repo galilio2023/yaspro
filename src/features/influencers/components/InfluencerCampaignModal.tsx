@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useSyncExternalStore } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { X, Sparkles, CheckCircle2, Send, Building, DollarSign, Calendar } from "lucide-react";
 import { submitInfluencerCampaignRequest } from "@/lib/actions";
@@ -45,6 +45,10 @@ export function InfluencerCampaignModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+
   const [formData, setFormData] = useState({
     brandName: "",
     contactName: "",
@@ -56,13 +60,38 @@ export function InfluencerCampaignModal({
     message: "",
   });
 
-  // Lock body scroll and listen for Escape key
+  // Focus management and escape/tab trapping
   useEffect(() => {
     if (!isOpen) return;
+
+    triggerRef.current = document.activeElement as HTMLElement | null;
+
+    const timer = setTimeout(() => {
+      closeButtonRef.current?.focus();
+    }, 50);
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         onClose();
+        return;
+      }
+
+      if (e.key === "Tab") {
+        const focusableElements = panelRef.current?.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusableElements || focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey && document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
       }
     };
 
@@ -71,8 +100,10 @@ export function InfluencerCampaignModal({
     document.body.style.overflow = "hidden";
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = originalOverflow || "";
+      triggerRef.current?.focus();
     };
   }, [isOpen, onClose]);
 
@@ -107,13 +138,14 @@ export function InfluencerCampaignModal({
 
   return createPortal(
     <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="campaign-modal-title"
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl animate-fade-up select-none"
       onClick={onClose}
     >
       <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="campaign-modal-title"
         className="w-full max-w-2xl bg-card border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-brand-purple/20 max-h-[90vh] overflow-y-auto select-text"
         onClick={(e) => e.stopPropagation()}
       >
@@ -139,6 +171,7 @@ export function InfluencerCampaignModal({
           </div>
 
           <button
+            ref={closeButtonRef}
             type="button"
             onClick={onClose}
             className="size-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrappers";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -27,6 +27,12 @@ export function GearExplorer({
       : null;
 
   const [userCategory, setUserCategory] = useState<GearCategory | null>(null);
+
+  // Synchronize category selection when URL search parameter changes
+  useEffect(() => {
+    setUserCategory(null);
+  }, [validUrlCategory]);
+
   const selectedCategory = userCategory ?? validUrlCategory ?? "all";
   const setSelectedCategory = (cat: GearCategory) => setUserCategory(cat);
 

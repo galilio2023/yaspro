@@ -145,9 +145,8 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
   } catch (error) {
     console.error("Booking error:", error);
     return {
-      success: true,
-      referenceCode,
-      warning: "Saved in offline mode.",
+      success: false,
+      message: "We encountered an issue saving your booking reservation. Please try again or contact our concierge directly.",
     };
   }
 }

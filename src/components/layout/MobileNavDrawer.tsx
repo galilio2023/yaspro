@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,14 +29,70 @@ export function MobileNavDrawer({
   navLinks,
 }: MobileNavDrawerProps) {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const triggerElementRef = useRef<HTMLElement | null>(null);
 
-  // Handle escape key and body scroll lock
+  // Auto-close drawer and release scroll lock if viewport resizes to desktop breakpoint
   useEffect(() => {
     if (!isOpen) return;
 
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+    const handleBreakpoint = (e: MediaQueryListEvent | MediaQueryList) => {
+      if (e.matches) {
+        onClose();
+      }
+    };
+
+    if (mediaQuery.matches) {
+      onClose();
+      return;
+    }
+
+    mediaQuery.addEventListener("change", handleBreakpoint);
+    return () => mediaQuery.removeEventListener("change", handleBreakpoint);
+  }, [isOpen, onClose]);
+
+  // Handle focus trap, escape key, and body scroll lock
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Capture the trigger button that had focus before opening
+    triggerElementRef.current = document.activeElement as HTMLElement | null;
+
+    // Move initial focus into the drawer's close button
+    const timer = setTimeout(() => {
+      closeButtonRef.current?.focus();
+    }, 50);
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        e.preventDefault();
         onClose();
+        return;
+      }
+
+      if (e.key === "Tab") {
+        if (!panelRef.current) return;
+        const focusableElements = panelRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
       }
     };
 
@@ -45,8 +101,11 @@ export function MobileNavDrawer({
     document.body.style.overflow = "hidden";
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = originalOverflow || "";
+      // Restore focus to the trigger element when drawer closes
+      triggerElementRef.current?.focus();
     };
   }, [isOpen, onClose]);
 
@@ -69,6 +128,7 @@ export function MobileNavDrawer({
 
           {/* Drawer Menu Panel */}
           <motion.div
+            ref={panelRef}
             role="dialog"
             aria-modal="true"
             aria-label="Navigation Menu"
@@ -84,10 +144,11 @@ export function MobileNavDrawer({
                   Menu
                 </p>
                 <button
+                  ref={closeButtonRef}
                   type="button"
                   onClick={onClose}
                   aria-label="Close menu"
-                  className="p-1 rounded-lg text-text-muted hover:text-white hover:bg-white/10 transition-colors"
+                  className="p-1 rounded-lg text-text-muted hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
                 >
                   <X size={18} />
                 </button>
