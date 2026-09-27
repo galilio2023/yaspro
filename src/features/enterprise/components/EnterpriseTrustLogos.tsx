@@ -51,7 +51,7 @@ export function EnterpriseTrustLogos() {
                   alt={gov.name}
                   width={150}
                   height={50}
-                  className="max-h-full max-w-full object-contain filter group-hover:brightness-110 group-hover:drop-shadow-[0_0_12px_rgba(168,85,247,0.5)] transition-all duration-300"
+                  className="max-h-full max-w-full h-auto w-auto object-contain filter group-hover:brightness-110 group-hover:drop-shadow-[0_0_12px_rgba(168,85,247,0.5)] transition-all duration-300"
                 />
               </div>
               <div className="hidden md:flex flex-col text-left border-l border-white/10 pl-3">
@@ -89,7 +89,7 @@ export function EnterpriseTrustLogos() {
                     alt={brand.name}
                     width={140}
                     height={44}
-                    className="max-h-full max-w-full object-contain filter group-hover:brightness-110 group-hover:drop-shadow-[0_0_12px_rgba(6,182,212,0.5)] transition-all duration-300"
+                    className="max-h-full max-w-full h-auto w-auto object-contain filter group-hover:brightness-110 group-hover:drop-shadow-[0_0_12px_rgba(6,182,212,0.5)] transition-all duration-300"
                   />
                 )}
               </div>
