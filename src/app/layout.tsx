@@ -98,10 +98,6 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <link rel="preconnect" href="https://player.vimeo.com" />
-        <link rel="preconnect" href="https://f.vimeocdn.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://player.vimeo.com" />
-        <link rel="dns-prefetch" href="https://f.vimeocdn.com" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){var w=console.warn;console.warn=function(){var m=arguments[0];if(typeof m==='string'&&(m.indexOf('Multiple instances of Three.js')!==-1||m.indexOf('THREE.Clock: This module has been deprecated')!==-1)){return;}w.apply(console,arguments);};})();`,

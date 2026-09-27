@@ -131,7 +131,7 @@ export function CinemaVideoModal({
           )}
 
           <iframe
-            src={`https://player.vimeo.com/video/${vimeoId}?app_id=122963&autoplay=1&muted=0&playsinline=1&title=0&byline=0&portrait=0`}
+            src={`https://player.vimeo.com/video/${vimeoId}?app_id=122963&autoplay=1&muted=0&playsinline=1&title=0&byline=0&portrait=0&dnt=1`}
             className="absolute inset-0 size-full border-0"
             allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
             referrerPolicy="strict-origin-when-cross-origin"
