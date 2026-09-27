@@ -30,20 +30,20 @@ export function EnterpriseHero({ onOpenRfp }: EnterpriseHeroProps) {
 
       <Container className="relative z-10 max-w-6xl">
         {/* Top Sovereign Status Bar */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-mono font-bold tracking-wide border border-brand-purple/40 bg-brand-purple/10 text-brand-purple-light backdrop-blur-md">
-            <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+        <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-3 mb-8 px-1">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-mono font-bold tracking-wide border border-brand-purple/40 bg-brand-purple/10 text-brand-purple-light backdrop-blur-md">
+            <span className="size-1.5 sm:size-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
             <span>DUBAI SOUNDSTAGE: LIVE GENLOCK</span>
           </div>
 
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-mono font-medium border border-white/10 bg-white/5 text-text-secondary backdrop-blur-md">
-            <Radio size={12} className="text-brand-cyan" />
-            <span>OB-VAN FLEET: DEPLOYMENT READY</span>
+          <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-mono font-medium border border-white/10 bg-white/5 text-text-secondary backdrop-blur-md">
+            <Radio size={12} className="text-brand-cyan shrink-0" />
+            <span>OB-VAN FLEET: DEPLOYED</span>
           </div>
 
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-mono font-medium border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 backdrop-blur-md">
-            <ShieldCheck size={13} className="text-emerald-400" />
-            <span>KSA GAMR MAWTHOOQ CERTIFIED</span>
+          <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-mono font-medium border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 backdrop-blur-md">
+            <ShieldCheck size={12} className="text-emerald-400 shrink-0" />
+            <span>GAMR MAWTHOOQ CERTIFIED</span>
           </div>
         </div>
 
@@ -62,7 +62,7 @@ export function EnterpriseHero({ onOpenRfp }: EnterpriseHeroProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-14 sm:mb-16">
           <button
             onClick={onOpenRfp}
             className="w-full sm:w-auto px-7 py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-brand-purple to-indigo-600 hover:from-brand-purple-light hover:to-indigo-500 text-white shadow-xl shadow-brand-purple/25 flex items-center justify-center gap-2 cursor-pointer transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
@@ -81,10 +81,10 @@ export function EnterpriseHero({ onOpenRfp }: EnterpriseHeroProps) {
           </Link>
         </div>
 
-        {/* Executive KPI Stats Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/10 bg-slate-900/60 backdrop-blur-xl shadow-2xl">
+        {/* Executive KPI Stats Bar: Clean 2x2 grid on mobile, 4-col on desktop without border leakage */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/10 bg-slate-900/60 backdrop-blur-xl shadow-2xl">
           {ENTERPRISE_STATS.map((stat) => (
-            <div key={stat.label} className="p-3 sm:p-4 text-center border-r border-white/5 last:border-r-0">
+            <div key={stat.label} className="p-3 sm:p-4 text-center rounded-xl bg-white/[0.02] lg:bg-transparent border border-white/5 lg:border-none">
               <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-white font-mono tracking-tight mb-1 bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">
                 {stat.value}
               </div>

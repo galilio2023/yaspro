@@ -149,33 +149,34 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
           className="mb-10 text-center"
         />
 
-        {/* ─── 1. Dialect Selector Tabs ─── */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8">
+        {/* ─── 1. Dialect Selector Tabs: Horizontal touch-scrolling on mobile ─── */}
+        <div className="flex items-center justify-start sm:justify-center gap-2 sm:gap-3 mb-8 overflow-x-auto pb-2 scrollbar-none px-1">
           {DIALECT_PRESETS.map((preset) => {
             const isSelected = selectedDialect.id === preset.id;
             return (
               <button
                 key={preset.id}
+                type="button"
                 onClick={() => {
                   setSelectedDialect(preset);
                   setIsPlayingAudio(false);
                 }}
-                className={`px-4 py-2.5 rounded-2xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shadow-sm ${
+                className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shadow-sm shrink-0 ${
                   isSelected
-                    ? "border-brand-purple bg-card ring-2 ring-brand-purple/30 text-white shadow-brand-purple/20"
+                    ? "border-brand-purple bg-card ring-2 ring-brand-purple/30 text-white shadow-brand-purple/20 font-bold"
                     : "border-white/10 bg-slate-900/60 text-text-secondary hover:text-white hover:border-white/20 hover:bg-slate-900"
                 }`}
               >
-                <span className="text-base">{preset.flag}</span>
-                <span>{preset.name}</span>
+                <span className="text-sm sm:text-base">{preset.flag}</span>
+                <span className="whitespace-nowrap">{preset.name}</span>
               </button>
             );
           })}
         </div>
 
         {/* ─── 2. Main Dialect Inspection Card ─── */}
-        <div className="p-6 sm:p-8 rounded-3xl border border-white/10 bg-slate-900/70 backdrop-blur-xl shadow-2xl mb-6">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 border-b border-white/10">
+        <div className="p-5 sm:p-8 rounded-3xl border border-white/10 bg-slate-900/70 backdrop-blur-xl shadow-2xl mb-6">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 pb-6 border-b border-white/10">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xl">{selectedDialect.flag}</span>
@@ -191,30 +192,28 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
               </div>
             </div>
 
-            {/* Telemetry Chips */}
-            <div className="flex flex-wrap items-center gap-4 bg-black/50 p-3.5 rounded-2xl border border-white/5">
-              <div className="text-left">
-                <div className="text-[10px] text-text-muted font-mono uppercase">Lip-Sync Precision</div>
-                <div className="text-sm font-black text-emerald-400 font-mono flex items-center gap-1">
-                  <CheckCircle2 size={13} />
-                  <span>{selectedDialect.lipSyncAccuracy}</span>
+            {/* Telemetry Chips: Responsive Grid */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 bg-black/50 p-3.5 rounded-2xl border border-white/5 divide-x divide-white/10">
+              <div className="text-left pr-2">
+                <div className="text-[9px] sm:text-[10px] text-text-muted font-mono uppercase">Lip-Sync Precision</div>
+                <div className="text-xs sm:text-sm font-black text-emerald-400 font-mono flex items-center gap-1 mt-0.5">
+                  <CheckCircle2 size={13} className="shrink-0" />
+                  <span className="truncate">{selectedDialect.lipSyncAccuracy}</span>
                 </div>
               </div>
 
-              <div className="h-7 w-px bg-white/10" />
-
-              <div className="text-left">
-                <div className="text-[10px] text-text-muted font-mono uppercase">Phase Alignment</div>
-                <div className="text-sm font-black text-brand-cyan font-mono">0.4ms Jitter</div>
+              <div className="text-left pl-3">
+                <div className="text-[9px] sm:text-[10px] text-text-muted font-mono uppercase">Phase Alignment</div>
+                <div className="text-xs sm:text-sm font-black text-brand-cyan font-mono mt-0.5">0.4ms Jitter</div>
               </div>
             </div>
           </div>
 
           {/* Spoken Sample Box with Audio Waveform */}
-          <div className="my-6 p-5 sm:p-6 rounded-2xl bg-black/60 border border-white/10">
-            <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="my-6 p-4 sm:p-6 rounded-2xl bg-black/60 border border-white/10">
+            <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3 mb-4">
               <span className="text-xs font-mono font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
-                <Mic size={13} className="text-brand-purple-light" />
+                <Mic size={13} className="text-brand-purple-light shrink-0" />
                 <span>Culturally Localized Script:</span>
               </span>
 
@@ -222,8 +221,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
               <button
                 type="button"
                 onClick={handleToggleAudio}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-
+                className={`w-full xs:w-auto px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   isPlayingAudio
                     ? "bg-brand-purple text-white shadow-lg shadow-brand-purple/30 animate-pulse"
                     : "bg-white/10 text-white hover:bg-white/15"
@@ -235,7 +233,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
             </div>
 
             {/* Arabic Script Display */}
-            <p className="text-lg sm:text-2xl font-arabic font-bold text-white leading-loose text-right dir-rtl mb-4 selection:bg-brand-purple">
+            <p className="text-base sm:text-2xl font-arabic font-bold text-white leading-loose text-right dir-rtl mb-4 selection:bg-brand-purple">
               &ldquo;{selectedDialect.spokenSample}&rdquo;
             </p>
 
@@ -245,9 +243,9 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
             </p>
 
             {/* Waveform Visualization Bars */}
-            <div className="flex items-center gap-1 h-8 px-2 py-1 bg-slate-950/80 rounded-xl border border-white/5 overflow-hidden">
-              {Array.from({ length: 48 }).map((_, idx) => {
-                const isActive = (idx / 48) * 100 <= simulatedProgress;
+            <div className="flex items-center gap-0.5 sm:gap-1 h-8 px-2 py-1 bg-slate-950/80 rounded-xl border border-white/5 overflow-hidden">
+              {Array.from({ length: 36 }).map((_, idx) => {
+                const isActive = (idx / 36) * 100 <= simulatedProgress;
                 const randomHeight = isPlayingAudio
                   ? 20 + Math.sin(idx * 0.4 + simulatedProgress * 0.2) * 50 + (idx % 3) * 10
                   : 25 + (idx % 4) * 8;
@@ -259,7 +257,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                         ? "bg-gradient-to-t from-brand-purple to-brand-cyan"
                         : "bg-white/10"
                     }`}
-                    style={{ height: `${Math.max(15, Math.min(95, randomHeight))}%` }}
+                    style={{ height: `${Math.min(100, Math.max(15, randomHeight))}%` }}
                   />
                 );
               })}

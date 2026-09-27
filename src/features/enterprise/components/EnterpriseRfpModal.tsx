@@ -149,7 +149,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
   return (
     <div
       onClick={handleBackdropClick}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby={`${fieldId}-title`}
@@ -157,7 +157,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
       <div
         ref={modalPanelRef}
         tabIndex={-1}
-        className="relative w-full max-w-2xl rounded-3xl border border-white/20 bg-slate-950 p-6 sm:p-8 shadow-2xl my-8"
+        className="relative w-full max-w-2xl rounded-3xl border border-white/20 bg-slate-950 p-4 sm:p-8 shadow-2xl my-6 sm:my-8 max-h-[92vh] overflow-y-auto"
       >
         {/* Close Button */}
         <button
