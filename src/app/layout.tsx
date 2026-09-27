@@ -100,7 +100,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var w=console.warn;console.warn=function(){var m=arguments[0];if(typeof m==='string'&&(m.indexOf('Multiple instances of Three.js')!==-1||m.indexOf('THREE.Clock: This module has been deprecated')!==-1)){return;}w.apply(console,arguments);};})();`,
+            __html: `(function(){var w=console.warn;console.warn=function(){var s=Array.prototype.join.call(arguments,' ');if(s.indexOf('Multiple instances of Three.js')!==-1||s.indexOf('updating from')!==-1||s.indexOf('THREE.Clock')!==-1){return;}w.apply(console,arguments);};})();`,
           }}
         />
       </head>
