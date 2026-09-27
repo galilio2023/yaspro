@@ -63,3 +63,44 @@ export const campaignRequestSchema = z.object({
 });
 
 export type CampaignRequestInput = z.infer<typeof campaignRequestSchema>;
+
+export const enterpriseRfpSchema = z.object({
+  organizationName: z.string().trim().min(2, "Organization name is required").max(120),
+  organizationType: z.enum([
+    "government_ministry",
+    "giga_project",
+    "multinational_brand",
+    "telecom_operator",
+    "advertising_agency",
+    "sports_league",
+  ]),
+  contactName: z.string().trim().min(2, "Primary contact name is required").max(100),
+  contactTitle: z.string().trim().max(100).optional().default(""),
+  workEmail: z.string().trim().email("Valid corporate/government email required").max(120),
+  phone: z.string().trim().min(6, "Valid direct phone number required").max(30),
+  country: z.enum(["UAE", "Saudi Arabia", "Egypt", "Jordan", "Qatar", "Kuwait", "International"]),
+  projectScope: z.enum([
+    "virtual_production_xr",
+    "ob_van_live_broadcast",
+    "national_campaign_film",
+    "mawthooq_creator_syndication",
+    "turnkey_enterprise_retainer",
+  ]),
+  targetLocations: z.array(z.string().max(100)).max(20).default([]),
+  estimatedBudget: z.enum([
+    "under_50k",
+    "50k_to_150k",
+    "150k_to_500k",
+    "500k_plus",
+    "custom_annual_retainer",
+  ]),
+  requiresMawthooqCompliance: z.boolean().default(false),
+  requiresObVan: z.boolean().default(false),
+  projectTimeline: z.string().max(100).optional().default(""),
+  selectedCreators: z.array(z.string().max(100)).max(20).default([]),
+  digitalTwinEnvironment: z.string().max(200).optional().default(""),
+  notes: z.string().max(5000).optional().default(""),
+});
+
+export type EnterpriseRfpInput = z.infer<typeof enterpriseRfpSchema>;
+

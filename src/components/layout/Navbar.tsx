@@ -11,12 +11,14 @@ import { MobileNavDrawer, NavLinkItem } from "./MobileNavDrawer";
 
 const NAV_LINKS: readonly NavLinkItem[] = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
+  { label: "Enterprise", href: "/enterprise" },
   { label: "Projects", href: "/projects" },
   { label: "Equipment", href: "/shop" },
   { label: "Influencers", href: "/influencers" },
+  { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
+
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);

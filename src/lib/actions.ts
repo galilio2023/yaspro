@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { bookings, inquiries, users, studios, type SessionType, type InquiryType } from "@/db/schema";
+import { bookings, inquiries, users, studios, enterpriseRfps, type SessionType, type InquiryType } from "@/db/schema";
 import { generateBookingReference } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
@@ -9,10 +9,13 @@ import {
   bookingSubmissionSchema,
   inquirySubmissionSchema,
   campaignRequestSchema,
+  enterpriseRfpSchema,
   type BookingSubmissionInput,
   type InquirySubmissionInput,
   type CampaignRequestInput,
+  type EnterpriseRfpInput,
 } from "./validations";
+
 import { STUDIOS, STUDIO_GEAR_PACKAGES } from "@/features/booking/constants";
 
 /**
@@ -226,4 +229,67 @@ export async function submitInfluencerCampaignRequest(rawInput: unknown): Promis
   }
 }
 
-export { type BookingSubmissionInput, type InquirySubmissionInput, type CampaignRequestInput };
+export async function submitEnterpriseRfp(rawInput: unknown): Promise<ActionResponse<{ referenceCode: string }>> {
+  const parsed = enterpriseRfpSchema.safeParse(rawInput);
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: "Please complete all required fields for the enterprise proposal.",
+      errors: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = parsed.data;
+  const suffix = data.country === "Saudi Arabia" ? "KSA" : data.country === "Egypt" ? "CAI" : "DXB";
+
+  try {
+    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
+      throw new Error("Enterprise RFP database is not configured");
+    }
+
+    // The unique constraint arbitrates concurrent requests; only return an inserted code.
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const referenceCode = `EXP-${Math.floor(1000 + Math.random() * 9000)}-${suffix}`;
+      const [inserted] = await db.insert(enterpriseRfps).values({
+        referenceCode,
+        organizationName: data.organizationName,
+        organizationType: data.organizationType,
+        contactName: data.contactName,
+        contactTitle: data.contactTitle,
+        workEmail: data.workEmail,
+        phone: data.phone,
+        country: data.country,
+        projectScope: data.projectScope,
+        targetLocations: data.targetLocations,
+        estimatedBudget: data.estimatedBudget,
+        requiresMawthooqCompliance: data.requiresMawthooqCompliance,
+        requiresObVan: data.requiresObVan,
+        projectTimeline: data.projectTimeline,
+        selectedCreators: data.selectedCreators,
+        digitalTwinEnvironment: data.digitalTwinEnvironment,
+        notes: data.notes,
+        status: "pending_review",
+      }).onConflictDoNothing({ target: enterpriseRfps.referenceCode })
+        .returning({ referenceCode: enterpriseRfps.referenceCode });
+      if (!inserted) continue;
+
+      revalidatePath("/enterprise");
+      return {
+        success: true,
+        referenceCode,
+        message: `Enterprise RFP ${referenceCode} received. A Senior Executive Producer from Yas Pro will contact you within 4 hours.`,
+        data: { referenceCode },
+      };
+    }
+    throw new Error("Unable to allocate a unique enterprise RFP reference");
+  } catch (error) {
+    console.error("Enterprise RFP error:", error);
+    return {
+      success: false,
+      message: "We could not save your enterprise RFP. Please try again or contact our team directly.",
+    };
+  }
+}
+
+export { type BookingSubmissionInput, type InquirySubmissionInput, type CampaignRequestInput, type EnterpriseRfpInput };
+
