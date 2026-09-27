@@ -68,13 +68,16 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       // 1. Ensure user exists
+      const userId = `usr_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
       const [user] = await db
         .insert(users)
         .values({
+          id: userId,
           name: `${data.firstName} ${data.lastName}`,
           email: data.email,
           phone: data.phone,
           company: data.company,
+          role: "client",
         })
         .onConflictDoUpdate({
           target: users.email,

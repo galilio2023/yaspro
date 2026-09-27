@@ -2,26 +2,56 @@ import type { Metadata } from "next";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { ProjectsExplorer } from "@/features/projects/components/ProjectsExplorer";
 import { PROJECTS_DATA } from "@/features/projects/data";
+import { getCmsProjects } from "@/lib/cms-actions";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Award, Film } from "lucide-react";
 import Link from "next/link";
-
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
+import type { ProjectItem, ProjectCategory } from "@/features/projects/types";
 
 export const metadata: Metadata = {
   title: "Projects & Portfolio",
   description: "Explore Yas Pro productions: Government initiatives, high-profile commercial campaigns, and original digital shows.",
 };
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const cmsProjects = await getCmsProjects();
+
+  const projectsToDisplay: ProjectItem[] = cmsProjects.map((p) => ({
+    id: p.id,
+    slug: p.slug,
+    title: p.title,
+    arabicTitle: p.arabicTitle || undefined,
+    category: (p.category === "government" || p.category === "commercial" || p.category === "shows"
+      ? p.category
+      : "commercial") as ProjectCategory,
+    categoryLabel:
+      p.category === "government"
+        ? "Government"
+        : p.category === "shows"
+        ? "Live Shows & Events"
+        : "Commercial",
+    client: p.client || "",
+    description: p.description || "",
+    tag: p.tag || "Production",
+    views: p.views || "10M+ Views",
+    year: p.year || "2024",
+    image: p.coverImageUrl || "/images/projects/flag-day.jpg",
+    vimeoId: p.videoUrl ? p.videoUrl.split("/").pop() : undefined,
+    deliverables: p.deliverables || [],
+    techStack: p.techStack || [],
+  }));
+
+  const initialProjects = projectsToDisplay.length > 0 ? projectsToDisplay : PROJECTS_DATA;
+
   return (
     <Section id="projects-page" aria-labelledby="projects-title" className="py-12 md:py-20 bg-background">
       <Container>
         <SectionHeader
           headingId="projects-title"
           as="h1"
-          badge="Portfolio &amp; Masterpieces"
+          badge="Portfolio & Masterpieces"
           badgeVariant="default"
           badgeIcon={<Film size={13} />}
           title="Projects That"
@@ -29,7 +59,7 @@ export default function ProjectsPage() {
           description="From official national campaigns to viral series watched by millions across the Middle East. Explore our creative and technical productions."
         />
 
-        <ProjectsExplorer initialProjects={PROJECTS_DATA} />
+        <ProjectsExplorer initialProjects={initialProjects} />
 
         <FadeUp delay={0.2}>
           <div className="mt-16 rounded-3xl border border-brand-purple/30 bg-white/[0.03] backdrop-blur-xl p-8 sm:p-12 text-center relative overflow-hidden">

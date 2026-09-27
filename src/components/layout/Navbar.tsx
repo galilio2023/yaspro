@@ -51,6 +51,13 @@ export default function Navbar() {
           {/* Right Action CTA */}
           <div className="flex items-center gap-2.5">
             <Link
+              href="/login"
+              className="text-xs font-semibold text-slate-300 hover:text-white px-3 py-2 rounded-xl hover:bg-white/5 transition-colors hidden md:inline-flex items-center"
+            >
+              Sign In
+            </Link>
+
+            <Link
               href="/studio-booking"
               className="relative group hidden sm:inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
             >
