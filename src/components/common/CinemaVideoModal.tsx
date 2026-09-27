@@ -135,7 +135,6 @@ export function CinemaVideoModal({
             className="absolute inset-0 size-full border-0"
             allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
             referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
             title={title}
             onLoad={() => {
               setIsLoading(false);
