@@ -44,16 +44,60 @@ export const projectCategoryEnum = pgEnum("project_category", [
   "influencer",
   "event",
   "documentary",
+  "shows",
 ]);
 
-// ─── Users ────────────────────────────────────────────────────────────────────
+// ─── Better Auth & Users ──────────────────────────────────────────────────────
 
 export const users = pgTable("users", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  image: text("image"),
+  role: text("role").notNull().default("client"), // "admin" | "client"
   phone: text("phone"),
   company: text("company"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const sessions = pgTable("sessions", {
+  id: text("id").primaryKey(),
+  expiresAt: timestamp("expires_at").notNull(),
+  token: text("token").notNull().unique(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+});
+
+export const accounts = pgTable("accounts", {
+  id: text("id").primaryKey(),
+  accountId: text("account_id").notNull(),
+  providerId: text("provider_id").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  accessToken: text("access_token"),
+  refreshToken: text("refresh_token"),
+  idToken: text("id_token"),
+  accessTokenExpiresAt: timestamp("access_token_expires_at"),
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+  scope: text("scope"),
+  password: text("password"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const verifications = pgTable("verifications", {
+  id: text("id").primaryKey(),
+  identifier: text("identifier").notNull(),
+  value: text("value").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -77,11 +121,17 @@ export const studios = pgTable("studios", {
 
 export const equipment = pgTable("equipment", {
   id: uuid("id").primaryKey().defaultRandom(),
+  slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
   description: text("description"),
   category: text("category").notNull(),
   dailyRate: decimal("daily_rate", { precision: 10, scale: 2 }).notNull(),
+  securityDeposit: decimal("security_deposit", { precision: 10, scale: 2 }).default("0"),
   imageUrl: text("image_url"),
+  specs: jsonb("specs").$type<string[]>().default([]),
+  isPopular: boolean("is_popular").notNull().default(false),
+  isKit: boolean("is_kit").notNull().default(false),
+  includedInKit: jsonb("included_in_kit").$type<string[]>().default([]),
   isAvailable: boolean("is_available").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -91,7 +141,7 @@ export const equipment = pgTable("equipment", {
 export const bookings = pgTable("bookings", {
   id: uuid("id").primaryKey().defaultRandom(),
   referenceCode: text("reference_code").notNull().unique(),
-  userId: uuid("user_id").references(() => users.id),
+  userId: text("user_id").references(() => users.id),
   studioId: uuid("studio_id").references(() => studios.id),
   sessionType: sessionTypeEnum("session_type").notNull(),
   status: bookingStatusEnum("status").notNull().default("pending"),
@@ -142,11 +192,17 @@ export const projects = pgTable("projects", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: text("title").notNull(),
   slug: text("slug").notNull().unique(),
+  arabicTitle: text("arabic_title"),
   description: text("description"),
   category: projectCategoryEnum("category").notNull(),
   client: text("client"),
   coverImageUrl: text("cover_image_url"),
   videoUrl: text("video_url"),
+  tag: text("tag"),
+  views: text("views"),
+  year: text("year"),
+  deliverables: jsonb("deliverables").$type<string[]>().default([]),
+  techStack: jsonb("tech_stack").$type<string[]>().default([]),
   tags: jsonb("tags").$type<string[]>().default([]),
   isFeatured: boolean("is_featured").notNull().default(false),
   publishedAt: timestamp("published_at"),
@@ -159,13 +215,19 @@ export const influencers = pgTable("influencers", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
+  role: text("role"),
   nationality: text("nationality"),
+  flag: text("flag"),
   bio: text("bio"),
   imageUrl: text("image_url"),
-  totalFollowers: integer("total_followers"),
+  totalFollowers: text("total_followers"),
+  rawFollowers: integer("raw_followers"),
   instagramHandle: text("instagram_handle"),
   youtubeHandle: text("youtube_handle"),
   tiktokHandle: text("tiktok_handle"),
+  collaborations: jsonb("collaborations").$type<string[]>().default([]),
+  signatureProductions: jsonb("signature_productions").$type<string[]>().default([]),
+  demographics: jsonb("demographics").$type<Record<string, unknown>>().default({}),
   isFeatured: boolean("is_featured").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -218,11 +280,15 @@ export type NewUser = typeof users.$inferInsert;
 export type Booking = typeof bookings.$inferSelect;
 export type NewBooking = typeof bookings.$inferInsert;
 export type Studio = typeof studios.$inferSelect;
+export type NewStudio = typeof studios.$inferInsert;
 export type Equipment = typeof equipment.$inferSelect;
+export type NewEquipment = typeof equipment.$inferInsert;
 export type Inquiry = typeof inquiries.$inferSelect;
 export type NewInquiry = typeof inquiries.$inferInsert;
 export type Project = typeof projects.$inferSelect;
+export type NewProject = typeof projects.$inferInsert;
 export type Influencer = typeof influencers.$inferSelect;
+export type NewInfluencer = typeof influencers.$inferInsert;
 export type EnterpriseRfp = typeof enterpriseRfps.$inferSelect;
 export type NewEnterpriseRfp = typeof enterpriseRfps.$inferInsert;
 export type SessionType = (typeof sessionTypeEnum.enumValues)[number];

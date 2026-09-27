@@ -1,8 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins } from "next/font/google";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import { WhatsAppConcierge } from "@/components/common/WhatsAppConcierge";
 import "./globals.css";
 
 const inter = Inter({
@@ -104,21 +101,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="flex flex-col min-h-screen w-full bg-background text-foreground antialiased overflow-x-hidden">
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-brand-purple focus:text-white focus:rounded-md focus:shadow-lg focus:outline-none"
-        >
-          Skip to content
-        </a>
-        <Navbar />
-        <main id="main-content" className="flex-1 w-full flex flex-col items-center">
-          {children}
-        </main>
-        <Footer />
-        <WhatsAppConcierge />
+      <body className="min-h-screen w-full bg-background text-foreground antialiased overflow-x-hidden">
+        {children}
       </body>
     </html>
   );
 }
-
