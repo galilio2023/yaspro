@@ -240,11 +240,17 @@ export async function submitEnterpriseRfp(rawInput: unknown): Promise<ActionResp
   }
 
   const data = parsed.data;
-  const referenceCode = `EXP-${Math.floor(1000 + Math.random() * 9000)}-${data.country === "Saudi Arabia" ? "KSA" : data.country === "Egypt" ? "CAI" : "DXB"}`;
+  const suffix = data.country === "Saudi Arabia" ? "KSA" : data.country === "Egypt" ? "CAI" : "DXB";
 
   try {
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-      await db.insert(enterpriseRfps).values({
+    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
+      throw new Error("Enterprise RFP database is not configured");
+    }
+
+    // The unique constraint arbitrates concurrent requests; only return an inserted code.
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const referenceCode = `EXP-${Math.floor(1000 + Math.random() * 9000)}-${suffix}`;
+      const [inserted] = await db.insert(enterpriseRfps).values({
         referenceCode,
         organizationName: data.organizationName,
         organizationType: data.organizationType,
@@ -263,23 +269,24 @@ export async function submitEnterpriseRfp(rawInput: unknown): Promise<ActionResp
         digitalTwinEnvironment: data.digitalTwinEnvironment,
         notes: data.notes,
         status: "pending_review",
-      });
-    }
+      }).onConflictDoNothing({ target: enterpriseRfps.referenceCode })
+        .returning({ referenceCode: enterpriseRfps.referenceCode });
+      if (!inserted) continue;
 
-    revalidatePath("/enterprise");
-    return {
-      success: true,
-      referenceCode,
-      message: `Enterprise RFP ${referenceCode} received. A Senior Executive Producer from Yas Pro will contact you within 4 hours.`,
-      data: { referenceCode },
-    };
+      revalidatePath("/enterprise");
+      return {
+        success: true,
+        referenceCode,
+        message: `Enterprise RFP ${referenceCode} received. A Senior Executive Producer from Yas Pro will contact you within 4 hours.`,
+        data: { referenceCode },
+      };
+    }
+    throw new Error("Unable to allocate a unique enterprise RFP reference");
   } catch (error) {
     console.error("Enterprise RFP error:", error);
     return {
-      success: true,
-      referenceCode,
-      message: `Enterprise RFP ${referenceCode} received (offline fallback). A Senior Executive Producer will contact you shortly.`,
-      data: { referenceCode },
+      success: false,
+      message: "We could not save your enterprise RFP. Please try again or contact our team directly.",
     };
   }
 }

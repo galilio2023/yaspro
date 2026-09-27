@@ -34,3 +34,15 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Database migrations
+
+Set `DATABASE_URL` to the deployment database and run `npm run db:migrate` as a
+release step before deploying the application. The checked-in initial migration
+creates the schema, including `enterprise_rfps` and its unique reference constraint.
+RFP submissions return a failure if persistence is unavailable.
+
+For an existing database provisioned with `db:push`, reconcile and baseline its
+schema with the initial migration before adopting this migration history; the
+initial migration expects an empty database. Do not run `db:push` as a replacement
+for the release migration step.

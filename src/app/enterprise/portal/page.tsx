@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Lock,
   Download,
   Calendar,
   FileText,
@@ -32,7 +31,7 @@ const SAMPLE_DAILIES: DailyClip[] = [
     timecode: "00:14:22:18",
     camera: "RED V-Raptor XL 8K / Master Prime 35mm",
     status: "APPROVED",
-    watermarkCode: "GOV-CONFIDENTIAL-WATERMARK-DXB-9912",
+    watermarkCode: "DEMO-WATERMARK-DXB-9912",
   },
   {
     id: "clip-02",
@@ -42,7 +41,7 @@ const SAMPLE_DAILIES: DailyClip[] = [
     timecode: "01:08:44:02",
     camera: "High-Speed FPV / Sony FX6 Rig",
     status: "APPROVED",
-    watermarkCode: "GOV-CONFIDENTIAL-WATERMARK-DXB-9912",
+    watermarkCode: "DEMO-WATERMARK-DXB-9912",
   },
   {
     id: "clip-03",
@@ -52,7 +51,7 @@ const SAMPLE_DAILIES: DailyClip[] = [
     timecode: "02:22:15:10",
     camera: "ARRI Alexa 35 / Unreal 5.4 LiveLink",
     status: "PENDING_REVIEW",
-    watermarkCode: "GOV-CONFIDENTIAL-WATERMARK-DXB-9912",
+    watermarkCode: "DEMO-WATERMARK-DXB-9912",
   },
 ];
 
@@ -66,21 +65,21 @@ export default function EnterprisePortalPage() {
       <div className="absolute top-20 left-1/3 w-[600px] h-[400px] bg-brand-purple/10 rounded-full blur-3xl pointer-events-none" />
 
       <Container className="relative z-10 max-w-6xl">
-        {/* Top Sovereign Clearance Bar */}
+        {/* Demo Notice */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl mb-8">
           <div className="flex items-center gap-3">
             <div className="size-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
-              <Lock size={18} />
+              <Video size={18} />
             </div>
             <div>
               <div className="text-xs font-bold text-white flex items-center gap-2">
-                <span>SOVEREIGN AIR-GAPPED MEDIA VAULT</span>
+                <span>ENTERPRISE PORTAL DEMO</span>
                 <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                  ENCRYPTED AES-256
+                  SAMPLE DATA
                 </span>
               </div>
               <div className="text-[11px] text-text-secondary">
-                Saudi PDPL &amp; UAE Federal Data Law Certified • Regional Cloud Residency (Riyadh &amp; Dubai)
+                Public demonstration with sample content. No secure storage or restricted access is provided.
               </div>
             </div>
           </div>
@@ -99,7 +98,7 @@ export default function EnterprisePortalPage() {
             Client Executive Operations &amp; C2C Vault
           </h1>
           <p className="text-xs sm:text-sm text-text-secondary max-w-2xl">
-            Review live multi-camera dailies, track active tender deliverables, and manage guaranteed SLA studio days in real time.
+            Explore sample multi-camera dailies, tender deliverables, and studio reservations.
           </p>
         </div>
 
@@ -161,7 +160,7 @@ export default function EnterprisePortalPage() {
                   <div className="text-sm font-mono text-white tracking-widest rotate-[-15deg] select-none text-center">
                     {activeClip.watermarkCode}
                     <br />
-                    AUTHORIZED MINISTERIAL ACCESS ONLY
+                    DEMO CONTENT — SAMPLE WATERMARK
                   </div>
                 </div>
 
@@ -188,7 +187,7 @@ export default function EnterprisePortalPage() {
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => alert(`Initiating secure download of ${activeClip.title} (ProRes Master 14.8 GB)`)}
+                    onClick={() => alert(`Demo download for ${activeClip.title}. No file will be downloaded.`)}
                     className="px-4 py-2 rounded-xl text-xs font-bold bg-white text-black hover:bg-white/90 flex items-center gap-1.5 transition-colors cursor-pointer"
                   >
                     <Download size={13} />

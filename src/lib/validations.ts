@@ -86,7 +86,7 @@ export const enterpriseRfpSchema = z.object({
     "mawthooq_creator_syndication",
     "turnkey_enterprise_retainer",
   ]),
-  targetLocations: z.array(z.string()).default([]),
+  targetLocations: z.array(z.string().max(100)).max(20).default([]),
   estimatedBudget: z.enum([
     "under_50k",
     "50k_to_150k",
@@ -97,8 +97,8 @@ export const enterpriseRfpSchema = z.object({
   requiresMawthooqCompliance: z.boolean().default(false),
   requiresObVan: z.boolean().default(false),
   projectTimeline: z.string().max(100).optional().default(""),
-  selectedCreators: z.array(z.string()).default([]),
-  digitalTwinEnvironment: z.string().optional().default(""),
+  selectedCreators: z.array(z.string().max(100)).max(20).default([]),
+  digitalTwinEnvironment: z.string().max(200).optional().default(""),
   notes: z.string().max(5000).optional().default(""),
 });
 

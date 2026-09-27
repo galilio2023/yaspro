@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useEffectEvent, useRef, useId } from "react";
 
 import {
   X,
@@ -28,6 +28,12 @@ interface EnterpriseRfpModalProps {
 }
 
 export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseRfpModalProps) {
+  return isOpen ? <EnterpriseRfpDialog onClose={onClose} initialData={initialData} /> : null;
+}
+
+function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalProps, "isOpen">) {
+  const fieldId = useId();
+  const closeDialog = useEffectEvent(onClose);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successResult, setSuccessResult] = useState<{ referenceCode: string; message: string } | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -43,7 +49,7 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
     phone: "",
     country: "UAE",
     projectScope: initialData?.scope || "virtual_production_xr",
-    targetLocations: ["Dubai"],
+    targetLocations: ["Dubai (HQ)"],
     estimatedBudget: "150k_to_500k",
     requiresMawthooqCompliance: Boolean(initialData?.creators && initialData.creators.length > 0),
     requiresObVan: false,
@@ -53,42 +59,46 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
     notes: initialData?.tier ? `Interested in tier: ${initialData.tier}` : "",
   });
 
-  // Synchronize when initialData updates while opening
-  const [prevInitialData, setPrevInitialData] = useState(initialData);
-  if (initialData !== prevInitialData) {
-    setPrevInitialData(initialData);
-    setFormData((prev) => ({
-      ...prev,
-      projectScope: initialData?.scope || prev.projectScope,
-      selectedCreators: initialData?.creators || prev.selectedCreators,
-      digitalTwinEnvironment: initialData?.environment || prev.digitalTwinEnvironment,
-      notes: initialData?.tier ? `Interested in tier: ${initialData.tier}` : prev.notes,
-      requiresMawthooqCompliance:
-        Boolean(initialData?.creators && initialData.creators.length > 0) ||
-        prev.requiresMawthooqCompliance,
-    }));
-  }
-
-
-  // Lock body scroll and handle Escape key
+  // Each opening mounts a fresh dialog, including its form and submission state.
   useEffect(() => {
-    if (!isOpen) return;
+    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const panel = modalPanelRef.current;
+    const focusableElements = () => Array.from(panel?.querySelectorAll<HTMLElement>(
+      'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], [tabindex="0"]'
+    ) ?? []).filter((element) => element.tabIndex >= 0 && element.getClientRects().length > 0);
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") closeDialog();
+      if (e.key !== "Tab") return;
+      const elements = focusableElements();
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (!first) {
+        e.preventDefault();
+        panel?.focus();
+      } else if (!panel?.contains(document.activeElement) || document.activeElement === panel) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+      } else if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    (focusableElements()[0] ?? panel)?.focus();
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = originalOverflow || "";
+      document.body.style.overflow = originalOverflow;
+      previouslyFocused?.focus();
     };
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
+  }, []);
 
   const handleCopyCode = (code: string) => {
     if (navigator?.clipboard) {
@@ -131,9 +141,7 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
     setFormData((prev) => ({
       ...prev,
       targetLocations: prev.targetLocations.includes(loc)
-        ? prev.targetLocations.length > 1
-          ? prev.targetLocations.filter((l) => l !== loc)
-          : prev.targetLocations
+        ? prev.targetLocations.filter((l) => l !== loc)
         : [...prev.targetLocations, loc],
     }));
   };
@@ -144,10 +152,11 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="enterprise-rfp-title"
+      aria-labelledby={`${fieldId}-title`}
     >
       <div
         ref={modalPanelRef}
+        tabIndex={-1}
         className="relative w-full max-w-2xl rounded-3xl border border-white/20 bg-slate-950 p-6 sm:p-8 shadow-2xl my-8"
       >
         {/* Close Button */}
@@ -164,7 +173,7 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
             <div className="size-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 size={32} />
             </div>
-            <h3 id="enterprise-rfp-title" className="text-2xl font-black text-white mb-2">
+            <h3 id={`${fieldId}-title`} className="text-2xl font-black text-white mb-2">
               Enterprise RFP Received
             </h3>
             <p className="text-sm text-text-secondary max-w-md mx-auto mb-6">
@@ -205,7 +214,7 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
                 <Building2 size={12} />
                 <span>CONFIDENTIAL PROCUREMENT INTAKE</span>
               </div>
-              <h2 id="enterprise-rfp-title" className="text-2xl font-black text-white">
+              <h2 id={`${fieldId}-title`} className="text-2xl font-black text-white">
                 Enterprise Production RFP
               </h2>
               <p className="text-xs sm:text-sm text-text-secondary">
@@ -224,10 +233,10 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
             {/* Row 1: Org name & type */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1">
+                <label htmlFor={`${fieldId}-organizationName`} className="block text-xs font-semibold text-text-secondary mb-1">
                   Organization / Entity Name *
                 </label>
-                <input
+                <input id={`${fieldId}-organizationName`}
                   type="text"
                   required
                   placeholder="e.g. Dubai Municipality / Zain Group"
@@ -238,10 +247,10 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1">
+                <label htmlFor={`${fieldId}-organizationType`} className="block text-xs font-semibold text-text-secondary mb-1">
                   Organization Type
                 </label>
-                <select
+                <select id={`${fieldId}-organizationType`}
                   value={formData.organizationType}
                   onChange={(e) =>
                     setFormData({
@@ -264,10 +273,10 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
             {/* Row 2: Contact name & work email */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1">
+                <label htmlFor={`${fieldId}-contactName`} className="block text-xs font-semibold text-text-secondary mb-1">
                   Contact Person & Title *
                 </label>
-                <input
+                <input id={`${fieldId}-contactName`}
                   type="text"
                   required
                   placeholder="e.g. Ahmed Al-Mansoori (Director of Media)"
@@ -278,10 +287,10 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1">
+                <label htmlFor={`${fieldId}-workEmail`} className="block text-xs font-semibold text-text-secondary mb-1">
                   Corporate / Government Email *
                 </label>
-                <input
+                <input id={`${fieldId}-workEmail`}
                   type="email"
                   required
                   placeholder="name@organization.gov.ae"
@@ -295,10 +304,10 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
             {/* Row 3: Phone & Country */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1">
+                <label htmlFor={`${fieldId}-phone`} className="block text-xs font-semibold text-text-secondary mb-1">
                   Direct Phone / WhatsApp *
                 </label>
-                <input
+                <input id={`${fieldId}-phone`}
                   type="tel"
                   required
                   placeholder="+971 50 000 0000"
@@ -309,10 +318,10 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1">
+                <label htmlFor={`${fieldId}-country`} className="block text-xs font-semibold text-text-secondary mb-1">
                   Country / Operating Market
                 </label>
-                <select
+                <select id={`${fieldId}-country`}
                   value={formData.country}
                   onChange={(e) =>
                     setFormData({
@@ -336,10 +345,10 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
             {/* Row 4: Scope & Budget */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1">
+                <label htmlFor={`${fieldId}-projectScope`} className="block text-xs font-semibold text-text-secondary mb-1">
                   Primary Production Scope
                 </label>
-                <select
+                <select id={`${fieldId}-projectScope`}
                   value={formData.projectScope}
                   onChange={(e) =>
                     setFormData({
@@ -358,10 +367,10 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-text-secondary mb-1">
+                <label htmlFor={`${fieldId}-estimatedBudget`} className="block text-xs font-semibold text-text-secondary mb-1">
                   Estimated Budget Range
                 </label>
-                <select
+                <select id={`${fieldId}-estimatedBudget`}
                   value={formData.estimatedBudget}
                   onChange={(e) =>
                     setFormData({
@@ -382,15 +391,16 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
 
             {/* Production Hub Checkboxes */}
             <div>
-              <label className="block text-xs font-semibold text-text-secondary mb-1.5">
+              <div id={`${fieldId}-hubs`} className="block text-xs font-semibold text-text-secondary mb-1.5">
                 Target Production Hubs
-              </label>
-              <div className="flex flex-wrap gap-2">
+              </div>
+              <div role="group" aria-labelledby={`${fieldId}-hubs`} className="flex flex-wrap gap-2">
                 {["Dubai (HQ)", "Riyadh (KSA)", "Cairo", "Amman"].map((loc) => {
                   const isChecked = formData.targetLocations.includes(loc);
                   return (
                     <button
                       key={loc}
+                      aria-pressed={isChecked}
                       type="button"
                       onClick={() => handleLocationToggle(loc)}
                       className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
@@ -440,10 +450,10 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
 
             {/* Notes */}
             <div>
-              <label className="block text-xs font-semibold text-text-secondary mb-1">
+              <label htmlFor={`${fieldId}-notes`} className="block text-xs font-semibold text-text-secondary mb-1">
                 Project Scope Details / Deliverables
               </label>
-              <textarea
+                <textarea id={`${fieldId}-notes`}
                 rows={3}
                 placeholder="Describe your production requirements, creative brief, or tender timeline..."
                 value={formData.notes}
