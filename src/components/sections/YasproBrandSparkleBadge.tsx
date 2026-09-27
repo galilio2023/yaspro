@@ -129,10 +129,29 @@ export function YasproBrandSparkleBadge({ className = "" }: YasproBrandSparkleBa
         className="pointer-events-none absolute inset-0 size-full"
       />
 
-      {/* Brand Icon Badge */}
-      <div className="relative z-10 flex items-center justify-center size-7 rounded-xl bg-gradient-to-tr from-brand-purple to-brand-cyan p-[1px] shadow-sm">
-        <div className="size-full bg-background rounded-[11px] flex items-center justify-center">
-          <Sparkles size={14} className="text-brand-purple-light animate-pulse" />
+      {/* Brand Icon Badge with Sparkles & UAE Flag Ribbon */}
+      <div className="relative z-10 flex items-center gap-1.5">
+        <div className="flex items-center justify-center size-7 rounded-xl bg-gradient-to-tr from-brand-purple to-brand-cyan p-[1px] shadow-sm">
+          <div className="size-full bg-background rounded-[11px] flex items-center justify-center">
+            <Sparkles size={13} className="text-brand-purple-light animate-pulse" />
+          </div>
+        </div>
+
+        {/* Crisp SVG UAE Flag Ribbon */}
+        <div
+          className="flex items-center justify-center h-5 w-7 rounded-[5px] overflow-hidden border border-white/20 shadow-sm shrink-0"
+          title="United Arab Emirates • Dubai Media Hub"
+        >
+          <svg viewBox="0 0 24 16" className="size-full" fill="none">
+            {/* Top Green */}
+            <rect width="24" height="5.33" y="0" fill="#00732f" />
+            {/* Middle White */}
+            <rect width="24" height="5.33" y="5.33" fill="#ffffff" />
+            {/* Bottom Black */}
+            <rect width="24" height="5.33" y="10.66" fill="#000000" />
+            {/* Left Vertical Red */}
+            <rect width="6" height="16" x="0" fill="#ff0000" />
+          </svg>
         </div>
       </div>
 
@@ -143,7 +162,7 @@ export function YasproBrandSparkleBadge({ className = "" }: YasproBrandSparkleBa
         </span>
         <span className="h-3 w-[1px] bg-white/20 inline-block self-center" />
         <span className="text-xs font-medium text-text-secondary tracking-wide">
-          AI Media Hub · UAE · Egypt · Jordan
+          Dubai Media Hub · UAE · GCC
         </span>
       </div>
 

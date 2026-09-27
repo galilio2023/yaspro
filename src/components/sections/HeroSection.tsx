@@ -68,10 +68,45 @@ export default function HeroSection() {
             <HeroStats />
           </FadeUp>
 
-          {/* Right Column: Interactive Spline 3D Scene */}
+          {/* Right Column: Interactive Spline 3D Scene with Cinema HUD & UAE Flag */}
           <div className="lg:col-span-5 relative w-full flex items-center justify-center">
             <div className="relative w-full aspect-[4/3] sm:aspect-square max-w-[500px] rounded-3xl border border-white/10 bg-card/40 backdrop-blur-md overflow-hidden shadow-2xl shadow-brand-purple/10">
               <BorderBeam size={240} duration={12} delay={2} colorFrom="var(--brand-purple)" colorTo="var(--brand-cyan)" />
+
+              {/* Viewfinder Top HUD Pill: UAE Flag + Dubai Studio 4K Broadcast tag */}
+              <div className="absolute top-4 left-4 z-20 flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-black/70 border border-white/15 backdrop-blur-xl shadow-xl shadow-black/50 select-none pointer-events-none">
+                {/* Micro SVG UAE Flag */}
+                <div className="size-fit rounded-[3px] overflow-hidden border border-white/20 shadow-sm flex items-center justify-center">
+                  <svg width="18" height="12" viewBox="0 0 24 16" fill="none">
+                    <rect width="24" height="5.33" y="0" fill="#00732f" />
+                    <rect width="24" height="5.33" y="5.33" fill="#ffffff" />
+                    <rect width="24" height="5.33" y="10.66" fill="#000000" />
+                    <rect width="6" height="16" x="0" fill="#ff0000" />
+                  </svg>
+                </div>
+
+                <div className="flex items-center gap-1.5 font-mono text-[10.5px] uppercase font-bold tracking-wider text-white">
+                  <span>Dubai</span>
+                  <span className="text-white/40">•</span>
+                  <span className="text-brand-purple-light">Studio 4K</span>
+                </div>
+
+                {/* Live Broadcast REC Beacon */}
+                <div className="flex items-center gap-1 pl-1 border-l border-white/15">
+                  <span className="relative flex size-1.5">
+                    <span className="absolute inline-flex size-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                    <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981]" />
+                  </span>
+                  <span className="text-[9px] font-mono tracking-widest text-emerald-400 font-semibold">LIVE</span>
+                </div>
+              </div>
+
+              {/* Viewfinder Bottom Right Spec Tag */}
+              <div className="absolute bottom-4 right-4 z-20 hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-black/60 border border-white/10 backdrop-blur-md text-[9.5px] font-mono text-text-muted select-none pointer-events-none">
+                <span className="size-1.5 rounded-full bg-brand-cyan" />
+                <span>UAE CINEMA CAM • RAW 8K</span>
+              </div>
+
               <SplineScene className="size-full" />
             </div>
           </div>
