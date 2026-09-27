@@ -269,13 +269,13 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
 
     // Animation Loop with IntersectionObserver pausing to eliminate offscreen GPU drain
     let animationFrameId: number;
-    const clock = new THREE.Clock();
+    const startTime = performance.now();
     let isVisible = false;
 
     const animate = () => {
       if (!isVisible) return;
       animationFrameId = requestAnimationFrame(animate);
-      const elapsedTime = clock.getElapsedTime();
+      const elapsedTime = (performance.now() - startTime) * 0.001;
 
       // 1. Animate Hex Ball: Continuous 3D tumble & core oscillation
       ballGroup.rotation.y += 0.008;
