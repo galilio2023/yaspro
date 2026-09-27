@@ -24,6 +24,14 @@ export function CinemaVideoModal({
   client,
 }: CinemaVideoModalProps) {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  // Reset loading state when video changes or opens
+  useEffect(() => {
+    if (isOpen) {
+      setIsLoading(true);
+    }
+  }, [isOpen, vimeoId]);
 
   // Lock body scroll and listen for Escape key
   useEffect(() => {
@@ -48,6 +56,8 @@ export function CinemaVideoModal({
   if (!mounted || !isOpen || !vimeoId) {
     return null;
   }
+
+  const vimeoUrl = `https://vimeo.com/${vimeoId}`;
 
   // Render via React Portal directly into document.body to escape
   // any parent <section> overflow, containment, or transform contexts
@@ -80,25 +90,55 @@ export function CinemaVideoModal({
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close video"
-            className="size-8 sm:size-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer shrink-0 border border-white/10"
-          >
-            <X size={16} />
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Direct Vimeo Fallback Link */}
+            <a
+              href={vimeoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-text-secondary hover:text-white text-[11px] font-mono border border-white/10 transition-colors"
+              title="Open video on Vimeo"
+            >
+              <span>Vimeo Mirror</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
+
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close video"
+              className="size-8 sm:size-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer shrink-0 border border-white/10"
+            >
+              <X size={16} />
+            </button>
+          </div>
         </div>
 
-        {/* 16:9 Aspect Ratio Video Frame */}
-        <div className="relative w-full aspect-video bg-black flex items-center justify-center">
+        {/* 16:9 Aspect Ratio Video Frame with buffering skeleton */}
+        <div className="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden">
+          {/* Buffering/Loading Indicator */}
+          {isLoading && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/90 z-10 gap-3">
+              <div className="size-10 rounded-full border-2 border-brand-purple border-t-transparent animate-spin" />
+              <span className="text-xs font-mono text-text-muted tracking-widest uppercase">
+                Loading 4K Cinema Reel...
+              </span>
+            </div>
+          )}
+
           <iframe
-            src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1&loop=1&autopause=0&muted=0&badge=0&byline=0&portrait=0&title=0&playsinline=1&dnt=1`}
+            src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=0&playsinline=1&title=0&byline=0&portrait=0&transparent=0&dnt=1`}
             className="absolute inset-0 size-full border-0"
-            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
             referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen
+            loading="eager"
             title={title}
+            onLoad={() => setIsLoading(false)}
           />
         </div>
       </div>
