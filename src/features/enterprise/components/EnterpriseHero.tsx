@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { Sparkles, ArrowRight, ShieldCheck, Radio, FileText } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
@@ -72,13 +71,13 @@ export function EnterpriseHero({ onOpenRfp }: EnterpriseHeroProps) {
             <ArrowRight size={15} />
           </button>
 
-          <Link
+          <a
             href="#virtual-simulator"
             className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-bold text-sm bg-white/10 hover:bg-white/15 text-white border border-white/15 hover:border-white/30 flex items-center justify-center gap-2 transition-all duration-200"
           >
             <Sparkles size={16} className="text-brand-cyan" />
             <span>Launch Virtual Stage Simulator</span>
-          </Link>
+          </a>
         </div>
 
         {/* Executive KPI Stats Bar: Clean 2x2 grid on mobile, 4-col on desktop without border leakage */}
