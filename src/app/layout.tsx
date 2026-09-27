@@ -25,7 +25,20 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://yasproductions.com";
+const getSiteUrl = () => {
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    return process.env.NEXT_PUBLIC_APP_URL;
+  }
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  return "https://yaspro-tablawy.vercel.app";
+};
+
+const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -53,12 +66,23 @@ export const metadata: Metadata = {
     title: "Yas Pro | AI Media Hub & Virtual Production Dubai",
     description:
       "Premier Dubai media production house: 4K virtual production soundstages, turnkey cinema camera & lighting rental, MENA creator roster, and live stadium broadcasting.",
+    images: [
+      {
+        url: `${siteUrl}/opengraph-image`,
+        secureUrl: `${siteUrl}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Yas Pro | AI Media Hub & Virtual Production Dubai",
+        type: "image/png",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Yas Pro | AI Media Hub & Virtual Production Dubai",
     description:
       "Premier Dubai media production house: 4K virtual production soundstages, turnkey cinema camera & lighting rental, MENA creator roster, and live stadium broadcasting.",
+    images: [`${siteUrl}/opengraph-image`],
   },
 };
 
