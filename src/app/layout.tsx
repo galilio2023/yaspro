@@ -50,6 +50,15 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteUrl,
     siteName: "Yas Pro | AI Media Hub",
+    title: "Yas Pro | AI Media Hub & Virtual Production Dubai",
+    description:
+      "Premier Dubai media production house: 4K virtual production soundstages, turnkey cinema camera & lighting rental, MENA creator roster, and live stadium broadcasting.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Yas Pro | AI Media Hub & Virtual Production Dubai",
+    description:
+      "Premier Dubai media production house: 4K virtual production soundstages, turnkey cinema camera & lighting rental, MENA creator roster, and live stadium broadcasting.",
   },
 };
 

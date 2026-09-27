@@ -49,19 +49,6 @@ export default function Navbar() {
 
           {/* Right Action CTA */}
           <div className="flex items-center gap-2.5">
-            {/* Language Switcher */}
-            <div className="flex items-center rounded-full border border-white/10 bg-white/5 p-1 text-[11px] font-medium backdrop-blur-md">
-              <span className="px-2.5 py-1 rounded-full bg-brand-purple text-white font-bold shadow-sm cursor-default">
-                EN
-              </span>
-              <span 
-                className="px-2.5 py-1 rounded-full text-text-muted hover:text-white transition-colors cursor-pointer"
-                title="العربية (قريباً لشركاء الخليج)"
-              >
-                العربية
-              </span>
-            </div>
-
             <Button
               asChild
               variant="brand"

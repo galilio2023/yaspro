@@ -185,18 +185,6 @@ export function MobileNavDrawer({
             </div>
 
             <div className="pt-6 border-t border-brand-purple/15 flex flex-col gap-4">
-              <div className="flex items-center justify-between px-2">
-                <span className="text-xs text-text-muted">Language / اللغة</span>
-                <div className="flex items-center rounded-full border border-white/10 bg-white/5 p-0.5 text-xs font-medium">
-                  <span className="px-2.5 py-0.5 rounded-full bg-brand-purple text-white font-bold text-[11px]">
-                    EN
-                  </span>
-                  <span className="px-2.5 py-0.5 rounded-full text-text-muted text-[11px]">
-                    العربية
-                  </span>
-                </div>
-              </div>
-
               <Button
                 asChild
                 variant="brand"
