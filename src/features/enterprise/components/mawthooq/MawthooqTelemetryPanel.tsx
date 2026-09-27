@@ -2,10 +2,10 @@
 
 import React from "react";
 import { FileCheck2, ShieldCheck, ArrowRight, AlertCircle } from "lucide-react";
-import { EnterpriseCreator } from "../../types";
+import { EnterpriseCreatorItem } from "../../types";
 
 interface MawthooqTelemetryPanelProps {
-  selectedCreators: EnterpriseCreator[];
+  selectedCreators: EnterpriseCreatorItem[];
   onOpenAuditModal: () => void;
   onBundleCreators?: (creators: string[]) => void;
 }
@@ -28,7 +28,7 @@ export function MawthooqTelemetryPanel({
     selectedCreators.reduce((acc, c) => acc + c.uaeReachPct, 0) / (selectedCreators.length || 1)
   );
 
-  const totalEstimatedCostAED = selectedCreators.reduce((acc, c) => acc + c.pricingEstAED, 0);
+  const totalEstimatedCostAED = selectedCreators.reduce((acc, c) => acc + c.baseCampaignFeeAED, 0);
 
   return (
     <div className="p-5 sm:p-7 rounded-3xl border border-white/10 bg-slate-950/80 backdrop-blur-xl shadow-2xl">

@@ -44,7 +44,7 @@ export function MawthooqCampaignPlanner({ onBundleCreators }: CampaignPlannerPro
       <Container className="relative z-10 max-w-6xl">
         <SectionHeader
           badge="KSA GAMR Mawthooq & UAE NMC Compliance"
-          badgeVariant="emerald"
+          badgeVariant="cyan"
           badgeIcon={<ShieldCheck size={13} className="text-emerald-400" />}
           title="Sovereign Creator Portfolio &"
           gradientText="Government Mawthooq Synergy"

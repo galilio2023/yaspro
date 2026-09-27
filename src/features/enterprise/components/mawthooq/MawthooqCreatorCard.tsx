@@ -3,10 +3,10 @@
 import React from "react";
 import Image from "next/image";
 import { Check, Plus, ShieldCheck } from "lucide-react";
-import { EnterpriseCreator } from "../../types";
+import { EnterpriseCreatorItem } from "../../types";
 
 interface MawthooqCreatorCardProps {
-  creator: EnterpriseCreator;
+  creator: EnterpriseCreatorItem;
   isSelected: boolean;
   onToggle: () => void;
 }
