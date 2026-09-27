@@ -264,8 +264,8 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
           className="mb-8 sm:mb-10 text-center"
         />
 
-        {/* ─── 1. Dialect Selector Tabs: Horizontal touch-scrolling on mobile ─── */}
-        <div className="flex items-center justify-start sm:justify-center gap-2 sm:gap-3 mb-8 overflow-x-auto pb-2 scrollbar-none px-1">
+        {/* ─── 1. Dialect Selector Tabs: Premium Responsive Grid Cards ─── */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 mb-8">
           {DIALECT_PRESETS.map((preset) => {
             const isSelected = selectedDialect.id === preset.id;
             return (
@@ -273,14 +273,53 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                 key={preset.id}
                 type="button"
                 onClick={() => handleSelectDialect(preset)}
-                className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shadow-sm shrink-0 ${
+                className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden group flex flex-col justify-between ${
                   isSelected
-                    ? "border-brand-purple bg-card ring-2 ring-brand-purple/30 text-white shadow-brand-purple/20 font-bold"
-                    : "border-white/10 bg-slate-900/60 text-text-secondary hover:text-white hover:border-white/20 hover:bg-slate-900"
+                    ? "border-brand-purple bg-gradient-to-b from-card via-card to-brand-purple/15 ring-2 ring-brand-purple/40 shadow-xl shadow-brand-purple/20"
+                    : "border-white/10 bg-slate-900/60 hover:border-white/20 hover:bg-slate-900"
                 }`}
               >
-                <span className="text-sm sm:text-base">{preset.flag}</span>
-                <span className="whitespace-nowrap">{preset.name}</span>
+                {/* Top Row: Flag & Region Pill */}
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xl sm:text-2xl">{preset.flag}</span>
+                  <span
+                    className={`text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-md border ${
+                      isSelected
+                        ? "text-brand-purple-light bg-brand-purple/20 border-brand-purple/40 font-bold"
+                        : "text-text-muted bg-white/5 border-white/10"
+                    }`}
+                  >
+                    {preset.region.split(" ")[0]}
+                  </span>
+                </div>
+
+                {/* Dialect Name & Arabic Script */}
+                <div>
+                  <div
+                    className={`text-xs sm:text-sm font-bold transition-colors line-clamp-1 ${
+                      isSelected ? "text-white" : "text-white/80 group-hover:text-white"
+                    }`}
+                  >
+                    {preset.name.split("(")[0].trim()}
+                  </div>
+                  <div className="text-[10px] sm:text-[11px] font-arabic text-text-secondary mt-0.5 line-clamp-1">
+                    {preset.arabicName}
+                  </div>
+                </div>
+
+                {/* Active Indicator Bar */}
+                <div className="mt-2.5 pt-2 border-t border-white/5 flex items-center justify-between">
+                  <span className="text-[9px] font-mono text-emerald-400 font-bold truncate">
+                    {preset.lipSyncAccuracy.split(" ")[0]} Sync
+                  </span>
+                  <div
+                    className={`size-2 rounded-full transition-all ${
+                      isSelected
+                        ? "bg-brand-purple-light shadow-sm shadow-brand-purple animate-pulse"
+                        : "bg-white/20"
+                    }`}
+                  />
+                </div>
               </button>
             );
           })}
