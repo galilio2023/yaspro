@@ -25,12 +25,21 @@ export function CinemaVideoModal({
 }: CinemaVideoModalProps) {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [hasTimedOut, setHasTimedOut] = React.useState(false);
 
-  // Reset loading state when video changes or opens
+  // Reset loading state when video changes or opens; trigger fallback after 4.5s if blocked
   useEffect(() => {
-    if (isOpen) {
-      setIsLoading(true);
-    }
+    if (!isOpen) return;
+
+    setIsLoading(true);
+    setHasTimedOut(false);
+
+    const timer = setTimeout(() => {
+      setHasTimedOut(true);
+      setIsLoading(false);
+    }, 4500);
+
+    return () => clearTimeout(timer);
   }, [isOpen, vimeoId]);
 
   // Lock body scroll and listen for Escape key
@@ -118,15 +127,45 @@ export function CinemaVideoModal({
           </div>
         </div>
 
-        {/* 16:9 Aspect Ratio Video Frame with buffering skeleton */}
+        {/* 16:9 Aspect Ratio Video Frame with buffering skeleton & Cloudflare Challenge Fallback */}
         <div className="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden">
           {/* Buffering/Loading Indicator */}
-          {isLoading && (
+          {isLoading && !hasTimedOut && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/90 z-10 gap-3">
               <div className="size-10 rounded-full border-2 border-brand-purple border-t-transparent animate-spin" />
               <span className="text-xs font-mono text-text-muted tracking-widest uppercase">
                 Loading 4K Cinema Reel...
               </span>
+            </div>
+          )}
+
+          {/* Cloudflare Turnstile / Network Timeout Fallback Stage */}
+          {hasTimedOut && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/95 z-20 p-6 text-center gap-4 animate-in fade-in">
+              <div className="size-14 rounded-2xl bg-brand-purple/20 border border-brand-purple/40 text-brand-purple-light flex items-center justify-center">
+                <Film size={26} />
+              </div>
+              <div className="max-w-md space-y-1.5">
+                <h5 className="text-base font-bold text-white font-display">
+                  Watch "{title}" on Vimeo
+                </h5>
+                <p className="text-xs text-text-secondary leading-relaxed">
+                  Vimeo's regional network verification requires opening this 4K production reel directly on Vimeo.
+                </p>
+              </div>
+              <a
+                href={vimeoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-cyan shadow-lg shadow-brand-purple/30 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              >
+                <span>Play on Vimeo (4K Master)</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                </svg>
+              </a>
             </div>
           )}
 
@@ -138,7 +177,10 @@ export function CinemaVideoModal({
             allowFullScreen
             loading="eager"
             title={title}
-            onLoad={() => setIsLoading(false)}
+            onLoad={() => {
+              setIsLoading(false);
+              setHasTimedOut(false);
+            }}
           />
         </div>
       </div>
