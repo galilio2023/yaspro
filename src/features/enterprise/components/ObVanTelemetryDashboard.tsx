@@ -37,7 +37,7 @@ const CAMERA_FEEDS: CameraFeed[] = [
     id: 4,
     label: "CAM 04: Diriyah Gate EVS Slow-Motion",
     source: "EVS Super Slow-Mo 4X",
-    image: "/images/virtual-studio/cyber-dubai.jpg",
+    image: "/images/virtual-studio/cyberpunk-composite.jpg",
     status: "ONLINE",
     resolution: "1920x1080 @ 480p",
   },
