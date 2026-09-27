@@ -5,7 +5,6 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Sparkles, MapPin, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export interface NavLinkItem {
@@ -185,17 +184,47 @@ export function MobileNavDrawer({
             </div>
 
             <div className="pt-6 border-t border-brand-purple/15 flex flex-col gap-4">
-              <Button
-                asChild
-                variant="brand"
-                size="lg"
-                className="w-full rounded-2xl gap-2"
+              <Link
+                href="/studio-booking"
+                onClick={onClose}
+                className="relative group w-full flex items-center justify-between px-5 py-3.5 rounded-2xl text-xs font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
               >
-                <Link href="/studio-booking" onClick={onClose}>
-                  <Sparkles size={16} />
-                  <span>Book Studio Session</span>
-                </Link>
-              </Button>
+                {/* Luminous Ambient Halo Glow */}
+                <span className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-teal opacity-60 blur-sm group-hover:opacity-100 group-hover:blur-md transition-all duration-300 pointer-events-none" />
+
+                {/* Shimmer Border Gradient Line */}
+                <span className="absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-purple via-brand-purple-light/80 to-brand-teal p-[1px] pointer-events-none">
+                  <span className="block size-full rounded-2xl bg-[#090616]" />
+                </span>
+
+                {/* Surface Reflection Gloss */}
+                <span className="absolute inset-[1px] rounded-2xl bg-gradient-to-b from-white/10 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+                {/* Left Content: Active Studio Live Beacon + Label */}
+                <div className="relative z-10 flex items-center gap-2.5">
+                  <span className="relative flex size-2 shrink-0">
+                    <span className="absolute inline-flex size-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                    <span className="relative inline-flex size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
+                  </span>
+                  <span className="flex items-center gap-1.5 font-display text-[12px] uppercase tracking-wider text-white group-hover:text-brand-purple-lighter transition-colors">
+                    <Sparkles size={14} className="text-brand-purple-light group-hover:text-brand-cyan transition-colors" />
+                    <span>Book Studio</span>
+                  </span>
+                </div>
+
+                {/* Forward Chevron Affordance */}
+                <svg
+                  viewBox="0 0 16 16"
+                  className="relative z-10 size-3.5 text-text-muted group-hover:text-white group-hover:translate-x-0.5 transition-all duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M6 12l4-4-4-4" />
+                </svg>
+              </Link>
 
               <div className="flex items-center justify-between text-[11px] text-text-ghost px-1">
                 <span className="flex items-center gap-1">
