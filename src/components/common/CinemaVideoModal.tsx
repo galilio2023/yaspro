@@ -26,12 +26,14 @@ export function CinemaVideoModal({
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [isLoading, setIsLoading] = React.useState(true);
 
-  // Reset loading state when video changes or opens
-  useEffect(() => {
+  const [prevVideoKey, setPrevVideoKey] = React.useState(`${isOpen}-${vimeoId}`);
+  if (`${isOpen}-${vimeoId}` !== prevVideoKey) {
+    setPrevVideoKey(`${isOpen}-${vimeoId}`);
     if (isOpen) {
       setIsLoading(true);
     }
-  }, [isOpen, vimeoId]);
+  }
+
 
   // Lock body scroll and listen for Escape key
   useEffect(() => {

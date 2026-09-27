@@ -20,12 +20,14 @@ import {
 import { FooterLinkItem } from "./FooterNavLinks";
 
 const PRODUCTION_SERVICES: readonly FooterLinkItem[] = [
+  { label: "Enterprise Sovereign Solutions", href: "/enterprise", icon: Building2 },
   { label: "Studio Stage Bookings", href: "/studio-booking", icon: Calendar },
-  { label: "OB-VAN Live Broadcast", href: "/#ob-van", icon: Radio },
+  { label: "OB-VAN Live Broadcast", href: "/enterprise#ob-van-command", icon: Radio },
   { label: "Equipment Rental", href: "/shop", icon: Camera },
   { label: "Production Bundles", href: "/shop?category=bundles", icon: Layers },
-  { label: "Virtual Production & VFX", href: "/#virtual-studio", icon: Wand2 },
+  { label: "Virtual Production & VFX", href: "/enterprise#virtual-simulator", icon: Wand2 },
 ];
+
 
 const NETWORK_LINKS: readonly FooterLinkItem[] = [
   { label: "Influencer Talent Network", href: "/influencers", icon: Users },

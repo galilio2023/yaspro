@@ -81,14 +81,16 @@ export function WhatsAppConcierge() {
 
     document.addEventListener("mousedown", handleClickOutside);
     window.addEventListener("keydown", handleKeyDown);
+    const triggerBtn = triggerButtonRef.current;
 
     return () => {
       clearTimeout(timer);
       document.removeEventListener("mousedown", handleClickOutside);
       window.removeEventListener("keydown", handleKeyDown);
-      triggerButtonRef.current?.focus();
+      triggerBtn?.focus();
     };
   }, [isOpen]);
+
 
   const openWhatsApp = (prefilledText: string) => {
     const encoded = encodeURIComponent(prefilledText);

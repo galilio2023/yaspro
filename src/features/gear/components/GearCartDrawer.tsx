@@ -43,11 +43,14 @@ export function GearCartDrawer({
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
 
   // Automatically close breakdown modal when cart becomes empty
-  useEffect(() => {
+  const [prevItemsCount, setPrevItemsCount] = useState(items.length);
+  if (items.length !== prevItemsCount) {
+    setPrevItemsCount(items.length);
     if (items.length === 0 && isOpen) {
       setIsOpen(false);
     }
-  }, [items.length, isOpen]);
+  }
+
 
   // Lock body scroll and manage focus trap & escape key when breakdown modal is open
   useEffect(() => {
@@ -91,14 +94,16 @@ export function GearCartDrawer({
     window.addEventListener("keydown", handleKeyDown);
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    const triggerBtn = triggerButtonRef.current;
 
     return () => {
       clearTimeout(timer);
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = originalOverflow || "";
-      triggerButtonRef.current?.focus();
+      triggerBtn?.focus();
     };
   }, [isOpen, items.length]);
+
 
   // Signal to global floating widgets (e.g. WhatsApp concierge) that bottom cart bar is active
   useEffect(() => {
