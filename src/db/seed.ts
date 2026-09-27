@@ -118,6 +118,7 @@ async function seed() {
     await db
       .insert(schema.equipment)
       .values({
+        slug: gear.id,
         name: gear.name,
         description: gear.description,
         category: gear.category,

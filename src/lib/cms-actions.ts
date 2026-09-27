@@ -20,6 +20,21 @@ import { revalidatePath } from "next/cache";
 import { PROJECTS_DATA } from "@/features/projects/data";
 import { INFLUENCERS_DATA } from "@/features/influencers/data";
 import { GEAR_DATA } from "@/features/gear/data";
+import { z } from "zod";
+import { slugify } from "@/lib/utils";
+
+const uuidSchema = z.string().uuid();
+
+/**
+ * Validates whether an identifier string is a valid UUIDv4.
+ *
+ * @param id - Optional identifier to test.
+ * @returns True if the identifier matches a valid UUID pattern, false otherwise.
+ */
+function isUuid(id?: string): boolean {
+  if (!id) return false;
+  return uuidSchema.safeParse(id).success;
+}
 
 export interface CmsResponse<T = unknown> {
   success: boolean;
@@ -30,6 +45,11 @@ export interface CmsResponse<T = unknown> {
 
 // ─── Metrics & Overview ───────────────────────────────────────────────────────
 
+/**
+ * Aggregates high-level CMS operational statistics across all entities.
+ *
+ * @returns An overview metrics object containing project, influencer, gear, booking, and RFP tallies.
+ */
 export async function getCmsOverviewStats() {
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
@@ -73,6 +93,11 @@ export async function getCmsOverviewStats() {
 
 // ─── Projects CRUD ────────────────────────────────────────────────────────────
 
+/**
+ * Retrieves portfolio projects from the Neon database with automatic fallback to the static catalog.
+ *
+ * @returns Array of projects ordered by creation date.
+ */
 export async function getCmsProjects(): Promise<Project[]> {
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
@@ -109,6 +134,12 @@ export async function getCmsProjects(): Promise<Project[]> {
   }));
 }
 
+/**
+ * Creates or updates a portfolio film record in Neon PostgreSQL.
+ *
+ * @param data - Partial project input with required title and slug.
+ * @returns A CMS response indicating operation success or failure.
+ */
 export async function upsertCmsProject(data: Partial<Project> & { title: string; slug: string }): Promise<CmsResponse> {
   try {
     if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
@@ -133,8 +164,8 @@ export async function upsertCmsProject(data: Partial<Project> & { title: string;
       isFeatured: data.isFeatured ?? true,
     };
 
-    if (data.id && data.id.length > 20) {
-      await db.update(projects).set(payload).where(eq(projects.id, data.id));
+    if (isUuid(data.id)) {
+      await db.update(projects).set(payload).where(eq(projects.id, data.id!));
     } else {
       await db.insert(projects).values(payload).onConflictDoUpdate({
         target: projects.slug,
@@ -151,6 +182,12 @@ export async function upsertCmsProject(data: Partial<Project> & { title: string;
   }
 }
 
+/**
+ * Deletes a portfolio film record from Neon PostgreSQL.
+ *
+ * @param id - UUID of the project to remove.
+ * @returns CMS response confirming deletion.
+ */
 export async function deleteCmsProject(id: string): Promise<CmsResponse> {
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
@@ -166,6 +203,11 @@ export async function deleteCmsProject(id: string): Promise<CmsResponse> {
 
 // ─── Influencers CRUD ─────────────────────────────────────────────────────────
 
+/**
+ * Retrieves the creator and influencer roster from Neon PostgreSQL or catalog fallback.
+ *
+ * @returns Array of influencer profiles.
+ */
 export async function getCmsInfluencers(): Promise<Influencer[]> {
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
@@ -198,6 +240,12 @@ export async function getCmsInfluencers(): Promise<Influencer[]> {
   }));
 }
 
+/**
+ * Creates or updates an influencer record in Neon PostgreSQL.
+ *
+ * @param data - Partial influencer record containing required name and slug.
+ * @returns CMS response confirming status.
+ */
 export async function upsertCmsInfluencer(data: Partial<Influencer> & { name: string; slug: string }): Promise<CmsResponse> {
   try {
     if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
@@ -223,8 +271,8 @@ export async function upsertCmsInfluencer(data: Partial<Influencer> & { name: st
       isFeatured: data.isFeatured ?? true,
     };
 
-    if (data.id && data.id.length > 20) {
-      await db.update(influencers).set(payload).where(eq(influencers.id, data.id));
+    if (isUuid(data.id)) {
+      await db.update(influencers).set(payload).where(eq(influencers.id, data.id!));
     } else {
       await db.insert(influencers).values(payload).onConflictDoUpdate({
         target: influencers.slug,
@@ -242,6 +290,11 @@ export async function upsertCmsInfluencer(data: Partial<Influencer> & { name: st
 
 // ─── Equipment / Gear CRUD ────────────────────────────────────────────────────
 
+/**
+ * Retrieves cinema equipment and rental gear catalog from Neon PostgreSQL.
+ *
+ * @returns Array of gear equipment records.
+ */
 export async function getCmsEquipment(): Promise<Equipment[]> {
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
@@ -254,6 +307,7 @@ export async function getCmsEquipment(): Promise<Equipment[]> {
 
   return GEAR_DATA.map((g) => ({
     id: g.id,
+    slug: g.id,
     name: g.name,
     description: g.description || null,
     category: g.category,
@@ -269,13 +323,22 @@ export async function getCmsEquipment(): Promise<Equipment[]> {
   }));
 }
 
+/**
+ * Creates or updates an equipment catalog item in Neon PostgreSQL with slug conflict resolution.
+ *
+ * @param data - Partial equipment entry with name, dailyRate, category, and optional slug/id.
+ * @returns CMS response confirming equipment upsert.
+ */
 export async function upsertCmsEquipment(data: Partial<Equipment> & { name: string; dailyRate: string; category: string }): Promise<CmsResponse> {
   try {
     if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
       return { success: true, message: "Equipment updated in preview mode." };
     }
 
+    const itemSlug = data.slug || (data.id && !isUuid(data.id) ? data.id : slugify(data.name));
+
     const payload = {
+      slug: itemSlug,
       name: data.name,
       description: data.description || null,
       category: data.category,
@@ -289,10 +352,13 @@ export async function upsertCmsEquipment(data: Partial<Equipment> & { name: stri
       isAvailable: data.isAvailable ?? true,
     };
 
-    if (data.id && data.id.length > 20) {
-      await db.update(equipment).set(payload).where(eq(equipment.id, data.id));
+    if (isUuid(data.id)) {
+      await db.update(equipment).set(payload).where(eq(equipment.id, data.id!));
     } else {
-      await db.insert(equipment).values(payload);
+      await db.insert(equipment).values(payload).onConflictDoUpdate({
+        target: equipment.slug,
+        set: payload,
+      });
     }
 
     revalidatePath("/shop");
@@ -305,6 +371,11 @@ export async function upsertCmsEquipment(data: Partial<Equipment> & { name: stri
 
 // ─── Bookings & RFP Operations ────────────────────────────────────────────────
 
+/**
+ * Retrieves all studio reservations from Neon PostgreSQL.
+ *
+ * @returns Array of booking records ordered by creation date.
+ */
 export async function getCmsBookings(): Promise<Booking[]> {
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
@@ -316,6 +387,13 @@ export async function getCmsBookings(): Promise<Booking[]> {
   return [];
 }
 
+/**
+ * Updates the approval status of a studio booking reservation.
+ *
+ * @param id - UUID of the booking.
+ * @param status - Updated lifecycle status ("pending" | "confirmed" | "cancelled" | "completed").
+ * @returns CMS response confirming status transition.
+ */
 export async function updateBookingStatus(id: string, status: "pending" | "confirmed" | "cancelled" | "completed"): Promise<CmsResponse> {
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
@@ -328,6 +406,11 @@ export async function updateBookingStatus(id: string, status: "pending" | "confi
   }
 }
 
+/**
+ * Retrieves all enterprise tender proposals and RFPs from Neon PostgreSQL.
+ *
+ * @returns Array of Enterprise RFP records ordered by creation date.
+ */
 export async function getCmsEnterpriseRfps(): Promise<EnterpriseRfp[]> {
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
@@ -339,6 +422,13 @@ export async function getCmsEnterpriseRfps(): Promise<EnterpriseRfp[]> {
   return [];
 }
 
+/**
+ * Updates the milestone status of an enterprise tender RFP.
+ *
+ * @param id - UUID of the enterprise proposal.
+ * @param status - New status string (e.g., "approved", "sla_active").
+ * @returns CMS response confirming update.
+ */
 export async function updateEnterpriseRfpStatus(id: string, status: string): Promise<CmsResponse> {
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {

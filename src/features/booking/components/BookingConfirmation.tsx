@@ -34,16 +34,23 @@ export function BookingConfirmation({
         </p>
       </div>
 
-      <div className="mb-6">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
         <a
           href={`https://wa.me/971554010465?text=${encodeURIComponent(
             `Hello Yas Pro Coordinator, my booking reference code is ${referenceCode}. Email: ${email || "provided"}. I would like to confirm production crew arrival and equipment specifications.`
           )}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-xl shadow-emerald-950/40 transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-xl shadow-emerald-950/40 transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
-          <span>Chat with Studio Coordinator on WhatsApp</span>
+          <span>WhatsApp Studio Coordinator</span>
+        </a>
+
+        <a
+          href="/portal"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-semibold text-xs border border-white/10 transition-colors"
+        >
+          <span>View in Client Portal &rarr;</span>
         </a>
       </div>
 

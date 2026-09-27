@@ -121,6 +121,7 @@ export const studios = pgTable("studios", {
 
 export const equipment = pgTable("equipment", {
   id: uuid("id").primaryKey().defaultRandom(),
+  slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
   description: text("description"),
   category: text("category").notNull(),
