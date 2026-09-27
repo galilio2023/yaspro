@@ -6,6 +6,7 @@ import { Lock, Video, FileText, Calendar } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { PortalDailies, type DailyClip } from "@/features/enterprise/components/portal/PortalDailies";
 import { PortalTenders, PortalStages } from "@/features/enterprise/components/portal/PortalTendersAndStages";
+import { PortalTelemetryFeed } from "@/features/enterprise/components/portal/PortalTelemetryFeed";
 
 const SAMPLE_DAILIES: DailyClip[] = [
   {
@@ -42,7 +43,7 @@ const SAMPLE_DAILIES: DailyClip[] = [
 
 export default function EnterprisePortalPage() {
   const [activeClip, setActiveClip] = useState<DailyClip>(SAMPLE_DAILIES[0]);
-  const [activeTab, setActiveTab] = useState<"dailies" | "rfps" | "stages">("dailies");
+  const [activeTab, setActiveTab] = useState<"dailies" | "rfps" | "stages" | "telemetry">("dailies");
 
   return (
     <main className="min-h-screen bg-slate-950 text-white pt-24 sm:pt-28 pb-16 sm:pb-20 selection:bg-brand-purple">
@@ -127,6 +128,19 @@ export default function EnterprisePortalPage() {
             <Calendar size={14} />
             <span>Soundstage Reservations</span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("telemetry")}
+            className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
+              activeTab === "telemetry"
+                ? "bg-brand-purple text-white shadow-md shadow-brand-purple/30 font-bold"
+                : "text-text-secondary hover:text-white bg-white/5"
+            }`}
+          >
+            <Lock size={14} />
+            <span>Live Telemetry Bus</span>
+          </button>
         </div>
 
         {/* TAB 1: Dailies Reviewer */}
@@ -143,6 +157,9 @@ export default function EnterprisePortalPage() {
 
         {/* TAB 3: Soundstage Allocations */}
         {activeTab === "stages" && <PortalStages />}
+
+        {/* TAB 4: Live Telemetry Stream */}
+        {activeTab === "telemetry" && <PortalTelemetryFeed />}
       </Container>
     </main>
   );
