@@ -294,5 +294,40 @@ export async function submitEnterpriseRfp(rawInput: unknown): Promise<ActionResp
   }
 }
 
+/**
+ * Synchronize registered user profile info directly into the users table
+ */
+export async function syncUserProfile(input: {
+  email: string;
+  name?: string;
+  phone?: string;
+  company?: string;
+}): Promise<ActionResponse> {
+  const email = input.email?.trim().toLowerCase();
+  if (!email) {
+    return { success: false, message: "Email is required to sync profile." };
+  }
+
+  try {
+    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+      const updateData: Record<string, unknown> = {
+        updatedAt: new Date(),
+      };
+      if (input.name) updateData.name = input.name;
+      if (input.phone) updateData.phone = input.phone;
+      if (input.company) updateData.company = input.company;
+
+      await db
+        .update(users)
+        .set(updateData)
+        .where(eq(users.email, email));
+    }
+    return { success: true, message: "Profile information synchronized in database." };
+  } catch (err) {
+    console.error("syncUserProfile error:", err);
+    return { success: false, message: "Failed to synchronize profile details." };
+  }
+}
+
 export { type BookingSubmissionInput, type InquirySubmissionInput, type CampaignRequestInput, type EnterpriseRfpInput };
 

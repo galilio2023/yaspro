@@ -104,3 +104,89 @@ export const enterpriseRfpSchema = z.object({
 
 export type EnterpriseRfpInput = z.infer<typeof enterpriseRfpSchema>;
 
+// ─── Real Email & Registration Validation ──────────────────────────────────────
+
+export const DISPOSABLE_OR_FAKE_DOMAINS = new Set([
+  "tempmail.com",
+  "temp-mail.org",
+  "10minutemail.com",
+  "mailinator.com",
+  "guerrillamail.com",
+  "trashmail.com",
+  "yopmail.com",
+  "sharklasers.com",
+  "getairmail.com",
+  "throwawaymail.com",
+  "fake.com",
+  "fakemail.com",
+  "test.com",
+  "testing.com",
+  "asdf.com",
+  "xyz.com",
+  "foo.com",
+  "bar.com",
+  "dummy.com",
+  "sample.com",
+  "nowhere.com",
+  "invalid.com",
+  "dispostable.com",
+  "maildrop.cc",
+  "inboxkitten.com",
+  "mytemp.email",
+]);
+
+export function validateLegitimateEmail(email: string): { isValid: boolean; error?: string } {
+  const trimmed = email.trim().toLowerCase();
+  const basicRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!basicRegex.test(trimmed)) {
+    return {
+      isValid: false,
+      error: "Please enter a properly formatted email address (e.g. name@gmail.com, name@outlook.com, or your business domain).",
+    };
+  }
+
+  const parts = trimmed.split("@");
+  if (parts.length !== 2) {
+    return { isValid: false, error: "Invalid email format." };
+  }
+
+  const [localPart, domainPart] = parts;
+
+  // Block disposable or hallucinated fake domains
+  if (DISPOSABLE_OR_FAKE_DOMAINS.has(domainPart)) {
+    return {
+      isValid: false,
+      error: `The email domain "${domainPart}" is not permitted. Please register with an actual personal email (Gmail, Outlook, Yahoo, etc.) or company domain.`,
+    };
+  }
+
+  // Reject local parts that are obvious hallucinations
+  if (["test", "testing", "asdf", "fake", "dummy", "admin", "null", "undefined"].includes(localPart)) {
+    return {
+      isValid: false,
+      error: "Please enter an active email account rather than a placeholder address.",
+    };
+  }
+
+  return { isValid: true };
+}
+
+export const legitimateEmailSchema = z
+  .string()
+  .trim()
+  .email("Valid email address is required")
+  .max(120)
+  .refine((val) => validateLegitimateEmail(val).isValid, {
+    message: "Disposable, test, or invalid domain emails are not accepted. Please use a real email address (e.g. Gmail, Outlook, or your company domain).",
+  });
+
+export const registerUserSchema = z.object({
+  name: z.string().trim().min(2, "Full name must be at least 2 characters").max(100),
+  email: legitimateEmailSchema,
+  password: z.string().min(8, "Password must be at least 8 characters").max(128),
+  phone: z.string().trim().min(6, "Valid direct phone number is required").max(30),
+  company: z.string().trim().max(100).optional().default(""),
+});
+
+export type RegisterUserInput = z.infer<typeof registerUserSchema>;
+

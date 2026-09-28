@@ -10,6 +10,9 @@ import {
   TrendingUp,
   Server,
   Layers,
+  UserCheck,
+  MessageSquare,
+  Radio,
 } from "lucide-react";
 import { getCmsOverviewStats } from "@/lib/cms-actions";
 
@@ -17,6 +20,68 @@ export default async function AdminDashboardPage() {
   const stats = await getCmsOverviewStats();
 
   const METRIC_CARDS = [
+    {
+      title: "Registered Users",
+      value: stats.totalUsers,
+      badge: `${stats.clientUsers} Clients`,
+      description: "Verified media clients & accounts",
+      href: "/admin/users",
+      icon: UserCheck,
+      color: "from-violet-500/20 to-purple-500/10 border-violet-500/30 text-violet-400",
+    },
+    {
+      title: "Client Leads & Inquiries",
+      value: stats.totalInquiries,
+      badge: `${stats.pendingInquiries || 0} Action Req`,
+      description: "Contact briefs, quotes & RFPs",
+      href: "/admin/inquiries",
+      icon: MessageSquare,
+      color: "from-blue-500/20 to-indigo-500/10 border-blue-500/30 text-blue-400",
+    },
+    {
+      title: "Soundstages & Rates",
+      value: stats.totalStudios,
+      badge: `${stats.activeStudios} Active Stages`,
+      description: "Hourly rates, capacity & amenities",
+      href: "/admin/studios",
+      icon: Layers,
+      color: "from-cyan-500/20 to-teal-500/10 border-cyan-500/30 text-cyan-400",
+    },
+    {
+      title: "Studio Bookings",
+      value: stats.totalBookings,
+      badge: `${stats.pendingBookings} Pending`,
+      description: "Calendar sessions & call sheets",
+      href: "/admin/bookings",
+      icon: CalendarCheck,
+      color: "from-amber-500/20 to-yellow-500/10 border-amber-500/30 text-amber-400",
+    },
+    {
+      title: "Enterprise RFPs & Tenders",
+      value: stats.totalRfps,
+      badge: `${stats.pendingRfps} Review Needed`,
+      description: "Government & VIP broadcast tenders",
+      href: "/admin/rfps",
+      icon: FileSpreadsheet,
+      color: "from-rose-500/20 to-pink-500/10 border-rose-500/30 text-rose-400",
+    },
+    {
+      title: "Broadcast & OB Van",
+      value: "Live Edge",
+      badge: "ST-2110 PTP",
+      description: "Ka-band telemetry & C2C ingest",
+      href: "/admin/broadcast",
+      icon: Radio,
+      color: "from-emerald-500/20 to-green-500/10 border-emerald-500/30 text-emerald-400",
+    },
+    {
+      title: "Gear & Studio Inventory",
+      value: stats.totalGear,
+      description: "Cinema cameras, lighting, & kits",
+      href: "/admin/gear",
+      icon: Camera,
+      color: "from-teal-500/20 to-emerald-500/10 border-teal-500/30 text-teal-400",
+    },
     {
       title: "Projects Portfolio",
       value: stats.totalProjects,
@@ -31,33 +96,7 @@ export default async function AdminDashboardPage() {
       description: "Mawthooq licensed Arab influencers",
       href: "/admin/influencers",
       icon: Users,
-      color: "from-blue-500/20 to-cyan-500/10 border-blue-500/30 text-blue-400",
-    },
-    {
-      title: "Gear & Studio Inventory",
-      value: stats.totalGear,
-      description: "Cinema cameras, lighting, & kits",
-      href: "/admin/gear",
-      icon: Camera,
-      color: "from-emerald-500/20 to-teal-500/10 border-emerald-500/30 text-emerald-400",
-    },
-    {
-      title: "Studio Bookings",
-      value: stats.totalBookings,
-      badge: `${stats.pendingBookings} Pending`,
-      description: "Calendar reservations & sessions",
-      href: "/admin/bookings",
-      icon: CalendarCheck,
-      color: "from-amber-500/20 to-yellow-500/10 border-amber-500/30 text-amber-400",
-    },
-    {
-      title: "Enterprise RFPs & Tenders",
-      value: stats.totalRfps,
-      badge: `${stats.pendingRfps} Review Needed`,
-      description: "Government & VIP broadcast tenders",
-      href: "/admin/rfps",
-      icon: FileSpreadsheet,
-      color: "from-rose-500/20 to-pink-500/10 border-rose-500/30 text-rose-400",
+      color: "from-fuchsia-500/20 to-pink-500/10 border-fuchsia-500/30 text-fuchsia-400",
     },
   ];
 
