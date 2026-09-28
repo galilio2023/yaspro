@@ -23,9 +23,18 @@ export function ContactForm() {
 
   const initialGearData = useMemo(() => {
     if (!isGearRental) return null;
+
+    // Validate days strictly: accept only a fully parsed positive integer
+    const isStrictPositiveInt = /^[1-9]\d*$/.test(daysRaw.trim());
+    if (!isStrictPositiveInt) return null;
+    const days = parseInt(daysRaw, 10);
+
     const itemIds = itemsRaw.split(",").filter(Boolean);
-    const days = parseInt(daysRaw, 10) || 1;
     const resolvedItems = GEAR_DATA.filter((g) => itemIds.includes(g.id));
+
+    // Do not present unknown equipment as a reservation: require at least one resolved item
+    if (resolvedItems.length === 0) return null;
+
     const itemNames = resolvedItems.map((g) => g.name);
     const dayRateSum = resolvedItems.reduce((acc, curr) => acc + curr.dailyRate, 0);
     const deliveryCost = delivery === "courier_dubai" ? 250 : 0;
@@ -49,7 +58,8 @@ export function ContactForm() {
     };
   }, [isGearRental, itemsRaw, daysRaw, delivery]);
 
-  const [inquiryType, setInquiryType] = useState(() => (isGearRental ? "technical_support" : "general"));
+  const hasValidGearData = Boolean(initialGearData);
+  const [inquiryType, setInquiryType] = useState(() => (hasValidGearData ? "technical_support" : "general"));
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -131,7 +141,8 @@ export function ContactForm() {
           <button
             type="button"
             onClick={() => setGearBanner(null)}
-            className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+            aria-label="Dismiss equipment reservation summary"
+            className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
           >
             <X size={14} />
           </button>

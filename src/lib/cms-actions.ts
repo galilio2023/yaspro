@@ -48,7 +48,8 @@ function isUuid(id?: string): boolean {
  * In production/connected database environments, throws an error if user lacks admin role.
  */
 async function requireAdmin() {
-  if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
+  const isPreview = !process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx");
+  if (isPreview && process.env.NODE_ENV !== "production") {
     return;
   }
   try {
@@ -532,6 +533,7 @@ export async function updateEnterpriseRfpStatus(id: string, status: string): Pro
  * @returns Array of User records ordered by creation date.
  */
 export async function getCmsUsers(): Promise<User[]> {
+  await requireAdmin();
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       const records = await db.select().from(users).orderBy(desc(users.createdAt));
@@ -659,6 +661,7 @@ export async function deleteCmsUser(userId: string): Promise<CmsResponse> {
  * @returns Array of Inquiry records ordered by creation date.
  */
 export async function getCmsInquiries(): Promise<Inquiry[]> {
+  await requireAdmin();
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       return await db.select().from(inquiries).orderBy(desc(inquiries.createdAt));
@@ -861,6 +864,7 @@ export async function dispatchTelemetryEvent(event: {
   summary: string;
 }): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     revalidatePath("/enterprise/portal");
     revalidatePath("/admin/broadcast");
     return {

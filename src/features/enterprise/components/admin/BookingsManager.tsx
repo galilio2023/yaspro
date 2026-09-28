@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   CalendarCheck,
   CheckCircle2,
@@ -24,7 +24,54 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
   const [callSheetBookingId, setCallSheetBookingId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
 
+  const modalRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+
   const callSheetBooking = bookingList.find((b) => b.id === callSheetBookingId) || null;
+
+  // Manage keyboard focus trap and restoration for the Call Sheet modal
+  useEffect(() => {
+    if (!callSheetBooking) return;
+
+    // Move focus into the modal
+    modalRef.current?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setCallSheetBookingId(null);
+        return;
+      }
+
+      if (e.key === "Tab" && modalRef.current) {
+        const focusable = modalRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+
+        const firstElement = focusable[0];
+        const lastElement = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      // Restore focus to trigger button
+      triggerRef.current?.focus();
+    };
+  }, [callSheetBooking]);
 
   const handleStatusChange = async (
     id: string,
@@ -214,7 +261,10 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                       <div className="flex items-center justify-end gap-1.5 flex-wrap">
                         <button
                           type="button"
-                          onClick={() => setCallSheetBookingId(b.id)}
+                          onClick={(e) => {
+                            triggerRef.current = e.currentTarget;
+                            setCallSheetBookingId(b.id);
+                          }}
                           className="px-2 py-1 rounded bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 text-[11px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
                           title="Generate Printable Call Sheet"
                         >
@@ -280,14 +330,27 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                 box-shadow: none !important;
                 border: none !important;
                 background: white !important;
-                color: black !important;
+                color: #0f172a !important;
+              }
+              #call-sheet-printable * {
+                color: #0f172a !important;
+                border-color: #cbd5e1 !important;
+                background-color: transparent !important;
               }
               #call-sheet-printable .no-print {
                 display: none !important;
               }
             }
           `}</style>
-          <div id="call-sheet-printable" className="relative w-full max-w-2xl p-6 sm:p-8 rounded-3xl bg-slate-900 border border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div
+            ref={modalRef}
+            id="call-sheet-printable"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="call-sheet-modal-title"
+            tabIndex={-1}
+            className="relative w-full max-w-2xl p-6 sm:p-8 rounded-3xl bg-slate-900 border border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto focus:outline-none"
+          >
             {/* Modal Controls */}
             <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6 no-print">
               <div className="flex items-center gap-2">
@@ -295,7 +358,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                   Y
                 </div>
                 <div>
-                  <h2 className="text-base font-bold text-white">Production Call Sheet</h2>
+                  <h2 id="call-sheet-modal-title" className="text-base font-bold text-white">Production Call Sheet</h2>
                   <span className="text-[10px] font-mono text-purple-400">
                     REF: {callSheetBooking.referenceCode}
                   </span>
@@ -314,10 +377,27 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                 <button
                   type="button"
                   onClick={() => setCallSheetBookingId(null)}
+                  aria-label="Close Call Sheet"
                   className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
                 >
                   <X size={16} />
                 </button>
+              </div>
+            </div>
+
+            {/* Print Header (Visible on Paper / Print Only) */}
+            <div className="hidden print:block pb-4 border-b border-slate-300 mb-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-lg font-bold text-slate-900">YasPro Production Call Sheet</h1>
+                  <p className="text-xs text-slate-600">Yas Pro Soundstage Facilities &bull; Dubai Studio City</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs font-mono font-bold text-slate-900 block">
+                    REF: {callSheetBooking.referenceCode}
+                  </span>
+                  <span className="text-[10px] text-slate-500">Official Production Schedule</span>
+                </div>
               </div>
             </div>
 

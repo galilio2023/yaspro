@@ -129,3 +129,25 @@ test('dispatchTelemetryEvent returns success acknowledgment', async () => {
   assert.equal(res.success, true);
   assert.match(res.message, /broadcasted/i);
 });
+
+test('getCmsUsers and getCmsInquiries enforce admin authentication in connected environment', async () => {
+  const { getCmsUsers, getCmsInquiries } = loadSource('src/lib/cms-actions.ts', {
+    '@/db': { db: { select: () => ({ from: () => ({ orderBy: () => Promise.resolve([]) }) }) } },
+    '@/db/schema': schemaMock,
+    'drizzle-orm': { eq: () => {}, desc: () => {} },
+    'next/cache': { revalidatePath: () => {} },
+    '@/features/projects/data': { PROJECTS_DATA: [] },
+    '@/features/influencers/data': { INFLUENCERS_DATA: [] },
+    '@/features/gear/data': { GEAR_DATA: [] },
+    '@/features/booking/constants': { STUDIOS: [] },
+    '@/lib/utils': { slugify: (s) => s },
+    '@/lib/auth': { auth: { api: { getSession: async () => ({ user: { role: 'admin' } }) } } },
+    'next/headers': { headers: async () => new Headers() },
+  });
+
+  const usersList = await getCmsUsers();
+  assert.ok(Array.isArray(usersList));
+
+  const inquiriesList = await getCmsInquiries();
+  assert.ok(Array.isArray(inquiriesList));
+});

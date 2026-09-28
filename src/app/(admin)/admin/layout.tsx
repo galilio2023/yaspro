@@ -40,7 +40,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   let shouldRedirect = false;
   let adminName = "System Administrator";
 
-  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+  const previewMode = !process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx");
+  if (!previewMode || process.env.NODE_ENV === "production") {
     try {
       const session = await auth.api.getSession({
         headers: await headers(),

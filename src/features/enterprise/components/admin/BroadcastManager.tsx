@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Radio,
   Send,
@@ -70,6 +70,17 @@ export function BroadcastManager() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [dispatchedFeed, setDispatchedFeed] = useState<TelemetryEventItem[]>(INITIAL_DISPATCHED_FEED);
 
+  const feedbackTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Clear timer on component unmount
+  useEffect(() => {
+    return () => {
+      if (feedbackTimerRef.current) {
+        clearTimeout(feedbackTimerRef.current);
+      }
+    };
+  }, []);
+
   const handleDispatch = async (eventData: {
     source: string;
     type: TelemetryType;
@@ -86,16 +97,27 @@ export function BroadcastManager() {
     try {
       const res = await dispatchTelemetryEvent(eventData);
       if (res.success) {
+        const dispatchTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
         setDispatchedFeed((prev) => [
           {
             id: `ev-${prev.length + 1}`,
             ...eventData,
-            timestamp: "Just now",
+            timestamp: dispatchTime,
           },
           ...prev,
         ]);
+
+        // Clear existing feedback timer before setting a new one
+        if (feedbackTimerRef.current) {
+          clearTimeout(feedbackTimerRef.current);
+        }
+
         setFeedback("Event dispatched to sovereign edge relays!");
-        setTimeout(() => setFeedback(null), 3500);
+        feedbackTimerRef.current = setTimeout(() => {
+          setFeedback(null);
+          feedbackTimerRef.current = null;
+        }, 3500);
+
         setSummary("");
       } else {
         alert(res.error || "Failed to dispatch event");
