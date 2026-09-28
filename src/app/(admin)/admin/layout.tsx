@@ -18,6 +18,8 @@ import {
   Radio,
 } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Admin CMS | Yas Productions",
   description: "Enterprise content & operations management backed by Neon PostgreSQL and Drizzle ORM.",
