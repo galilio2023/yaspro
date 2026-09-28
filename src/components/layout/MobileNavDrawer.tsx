@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Sparkles, MapPin, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { IyasProIcon } from "@/components/ui/IyasProIcon";
 
 export interface NavLinkItem {
   label: string;
@@ -138,16 +139,19 @@ export function MobileNavDrawer({
             className="lg:hidden fixed inset-y-0 right-0 w-full max-w-xs bg-secondary/98 backdrop-blur-2xl border-l border-brand-purple/20 z-[75] flex flex-col justify-between p-7 overflow-y-auto shadow-2xl shadow-brand-purple/30"
           >
             <div className="flex flex-col gap-1.5">
-              <div className="flex items-center justify-between mb-4 px-2">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-text-ghost font-mono">
-                  Menu
-                </p>
+              <div className="flex items-center justify-between mb-5 px-1 pb-3 border-b border-white/10">
+                <div className="flex items-center gap-2">
+                  <IyasProIcon size={16} idPrefix="drawer-logo" className="filter drop-shadow-[0_0_6px_rgba(167,139,250,0.6)]" />
+                  <span className="font-extrabold text-sm tracking-wide text-white font-display">
+                    iYAS<span className="text-brand-purple-light">PRO</span>
+                  </span>
+                </div>
                 <button
                   ref={closeButtonRef}
                   type="button"
                   onClick={onClose}
                   aria-label="Close menu"
-                  className="p-1 rounded-lg text-text-muted hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+                  className="p-1.5 rounded-lg text-text-muted hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
                 >
                   <X size={18} />
                 </button>

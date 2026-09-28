@@ -13,6 +13,7 @@ import {
 import { updateBookingStatus, updateBookingPaymentStatus } from "@/lib/cms-actions";
 import type { Booking } from "@/db/schema";
 import { formatCurrency } from "@/lib/utils";
+import { IyasProIcon } from "@/components/ui/IyasProIcon";
 
 interface BookingsManagerProps {
   initialBookings: Booking[];
@@ -353,12 +354,15 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
           >
             {/* Modal Controls */}
             <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6 no-print">
-              <div className="flex items-center gap-2">
-                <div className="size-7 rounded-lg bg-purple-600 flex items-center justify-center text-white font-bold text-xs">
-                  Y
+              <div className="flex items-center gap-2.5">
+                <div className="size-8 rounded-xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-white font-bold text-xs shadow-md">
+                  <IyasProIcon size={16} idPrefix="callsheet-emblem" />
                 </div>
                 <div>
-                  <h2 id="call-sheet-modal-title" className="text-base font-bold text-white">Production Call Sheet</h2>
+                  <h2 id="call-sheet-modal-title" className="text-base font-bold text-white flex items-center gap-1.5">
+                    <span>iYASPRO</span>
+                    <span className="text-purple-400 font-normal">Call Sheet</span>
+                  </h2>
                   <span className="text-[10px] font-mono text-purple-400">
                     REF: {callSheetBooking.referenceCode}
                   </span>

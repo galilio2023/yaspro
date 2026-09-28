@@ -97,7 +97,7 @@ export default function Footer() {
           textShadow: "0 0 80px rgba(124, 58, 237, 0.15)",
         }}
       >
-        YASPRO
+        iYASPRO
       </div>
 
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 relative z-10">

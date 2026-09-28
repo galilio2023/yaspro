@@ -17,6 +17,7 @@ import {
   Layers,
   Radio,
 } from "lucide-react";
+import { IyasProIcon } from "@/components/ui/IyasProIcon";
 
 export const dynamic = "force-dynamic";
 
@@ -69,14 +70,17 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div>
           {/* Logo / Brand */}
           <div className="flex items-center justify-between pb-6 border-b border-white/10">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="size-8 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center font-bold text-white text-sm shadow-lg shadow-purple-500/20">
-                Y
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <div className="size-9 rounded-xl bg-gradient-to-tr from-purple-600 via-purple-700 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/25 border border-purple-400/30">
+                <IyasProIcon size={18} idPrefix="admin-emblem" className="filter drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]" />
               </div>
               <div>
-                <span className="font-bold tracking-tight text-white group-hover:text-purple-400 transition-colors">
-                  YasPro CMS
-                </span>
+                <div className="flex items-center">
+                  <span className="font-extrabold tracking-tight text-white group-hover:text-purple-300 transition-colors">
+                    iYASPRO
+                  </span>
+                  <span className="ml-1 text-xs font-bold text-purple-400">CMS</span>
+                </div>
                 <span className="block text-[10px] text-purple-400 font-mono tracking-wider uppercase">
                   Neon • Drizzle
                 </span>

@@ -75,21 +75,18 @@ export default async function Image() {
                 border: "1.5px solid rgba(196, 181, 253, 0.4)",
               }}
             >
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <svg width="24" height="34" viewBox="0 0 24 34" fill="none">
+                {/* Candle Flame */}
                 <path
-                  d="M7 8 L16 17 L25 8"
-                  stroke="#ffffff"
-                  strokeWidth="3.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  d="M12 1.2 C12.8 3.5 15.6 5.8 15.6 7.6 C15.6 9.8 14 10.8 12 10.8 C10 10.8 8.4 9.8 8.4 7.6 C8.4 5.8 11.2 3.5 12 1.2 Z"
+                  fill="#f59e0b"
                 />
-                <path
-                  d="M16 17 L16 26"
-                  stroke="#ffffff"
-                  strokeWidth="3.2"
-                  strokeLinecap="round"
-                />
-                <circle cx="16" cy="17" r="2.5" fill="#67e8f9" />
+                <circle cx="12" cy="7.5" r="2" fill="#ffffff" />
+                {/* Wick */}
+                <path d="M12 10.5 V13.5" stroke="#1e1b4b" strokeWidth="1.2" />
+                {/* Candle Body */}
+                <rect x="9" y="14" width="6" height="17" rx="3" fill="#818cf8" />
+                <ellipse cx="12" cy="14" rx="3" ry="1.2" fill="#c4b5fd" />
               </svg>
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
@@ -100,9 +97,24 @@ export default async function Image() {
                   letterSpacing: "-0.02em",
                   color: "#ffffff",
                   display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
                 }}
               >
-                YAS PRO
+                <svg width="20" height="28" viewBox="0 0 24 34" fill="none">
+                  {/* Candle Flame */}
+                  <path
+                    d="M12 1.2 C12.8 3.5 15.6 5.8 15.6 7.6 C15.6 9.8 14 10.8 12 10.8 C10 10.8 8.4 9.8 8.4 7.6 C8.4 5.8 11.2 3.5 12 1.2 Z"
+                    fill="#f59e0b"
+                  />
+                  <circle cx="12" cy="7.5" r="2" fill="#ffffff" />
+                  {/* Candle Wick */}
+                  <path d="M12 10.5 V13.5" stroke="#475569" strokeWidth="1.2" />
+                  {/* Candle Body */}
+                  <rect x="9" y="14" width="6" height="17" rx="3" fill="#818cf8" />
+                  <ellipse cx="12" cy="14" rx="3" ry="1.2" fill="#c4b5fd" />
+                </svg>
+                <span>YAS PRO</span>
               </div>
               <div
                 style={{

@@ -2,6 +2,7 @@
 
 import React, { useId, useEffect, useRef } from "react";
 import { Sparkles } from "lucide-react";
+import { IyasProIcon } from "@/components/ui/IyasProIcon";
 
 interface YasproBrandSparkleBadgeProps {
   className?: string;
@@ -137,11 +138,16 @@ export function YasproBrandSparkleBadge({ className = "" }: YasproBrandSparkleBa
       </div>
 
       {/* Brand Typography */}
-      <div className="relative z-10 flex items-baseline gap-2">
+      <div className="relative z-10 flex items-center gap-1.5">
+        <IyasProIcon
+          size={14}
+          idPrefix="badge-logo"
+          className="filter drop-shadow-[0_0_6px_rgba(167,139,250,0.6)]"
+        />
         <span className="font-extrabold text-base tracking-wider bg-gradient-to-r from-white via-brand-purple-light to-brand-cyan bg-clip-text text-transparent drop-shadow-sm font-display">
           YASPRO
         </span>
-        <span className="h-3 w-[1px] bg-white/20 inline-block self-center" />
+        <span className="h-3 w-[1px] bg-white/20 inline-block self-center mx-1" />
         <span className="text-xs font-medium text-text-secondary tracking-wide">
           AI Media Hub · UAE · Egypt · Jordan
         </span>
