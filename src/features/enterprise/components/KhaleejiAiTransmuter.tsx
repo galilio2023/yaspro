@@ -15,6 +15,7 @@ import {
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { LipSyncMeshVisualizer } from "./portal/LipSyncMeshVisualizer";
+import { transmuteScript } from "@/lib/ai/dialect-engine";
 
 interface DialectPreset {
   id: string;
@@ -114,10 +115,18 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
   const [playbackProgress, setPlaybackProgress] = useState(0);
   const [activeWordIndex, setActiveWordIndex] = useState(-1);
   const [selectedTone, setSelectedTone] = useState(selectedDialect.preferredTones[0]);
+  
+  // Custom Live Script Transmuter States
+  const [activeTab, setActiveTab] = useState<"preset" | "custom">("preset");
+  const [customScriptInput, setCustomScriptInput] = useState("");
+  const [isTransmuting, setIsTransmuting] = useState(false);
+  const [transmutedOutput, setTransmutedOutput] = useState<string | null>(null);
+  const [culturalExplanation, setCulturalExplanation] = useState<string | null>(null);
 
   const animationFrameRef = useRef<number | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const words = selectedDialect.spokenSample.split(" ");
+  const activeScript = transmutedOutput || selectedDialect.spokenSample;
+  const words = activeScript.split(" ");
 
   // Real Web Speech API + Web Audio Synthesizer Hook
   const stopAudio = () => {
@@ -177,7 +186,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
 
     if (hasSpeech) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(selectedDialect.spokenSample);
+      const utterance = new SpeechSynthesisUtterance(activeScript);
       utterance.lang = selectedDialect.langCode;
       utterance.rate = selectedTone === "Authoritative" ? 0.9 : selectedTone === "Punchy" ? 1.15 : 1.0;
       utterance.pitch = selectedTone === "Warm" ? 0.95 : 1.05;
@@ -246,6 +255,23 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
     stopAudio();
     setSelectedDialect(preset);
     setSelectedTone(preset.preferredTones[0]);
+    setTransmutedOutput(null);
+    setCulturalExplanation(null);
+  };
+
+  const handleTransmuteCustomScript = async () => {
+    if (!customScriptInput.trim()) return;
+    setIsTransmuting(true);
+    stopAudio();
+    try {
+      const res = await transmuteScript(customScriptInput, selectedDialect.id, selectedTone);
+      setTransmutedOutput(res.transmutedArabic);
+      setCulturalExplanation(res.englishExplanation);
+    } catch {
+      // Keep existing output on error
+    } finally {
+      setIsTransmuting(false);
+    }
   };
 
   return (
@@ -261,8 +287,95 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
           title="Autonomous Multi-Dialect"
           gradientText="Arabic Voice & Lip-Sync Studio"
           description="Shoot your commercial once in Dubai or Cairo. Deploy across Saudi Arabia, UAE, Kuwait, and Egypt with authentic regional Arabic dialect transmutation and sub-millimeter lip re-targeting."
-          className="mb-8 sm:mb-10 text-center"
+          className="mb-6 sm:mb-8 text-center"
         />
+
+        {/* ─── Mode Tabs: Preset Showcase vs Custom Live Transmuter ─── */}
+        <div className="flex justify-center mb-6">
+          <div className="inline-flex p-1 rounded-xl bg-white/5 border border-white/10">
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab("preset");
+                setTransmutedOutput(null);
+                setCulturalExplanation(null);
+                stopAudio();
+              }}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                activeTab === "preset"
+                  ? "bg-brand-purple text-white shadow-sm"
+                  : "text-text-muted hover:text-white"
+              }`}
+            >
+              Standard Dialect Presets
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab("custom");
+                stopAudio();
+              }}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                activeTab === "custom"
+                  ? "bg-brand-purple text-white shadow-sm"
+                  : "text-text-muted hover:text-white"
+              }`}
+            >
+              <Sparkles size={13} className="text-brand-gold" />
+              <span>Live Script AI Transmuter</span>
+            </button>
+          </div>
+        </div>
+
+        {/* ─── Live Custom Script Input Deck ─── */}
+        {activeTab === "custom" && (
+          <div className="p-5 rounded-2xl bg-gradient-to-r from-brand-purple/15 via-slate-900 to-brand-cyan/10 border border-brand-purple/30 mb-8 backdrop-blur-md">
+            <label className="block text-xs font-mono font-bold text-white mb-2 flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Sparkles size={14} className="text-brand-gold" />
+                <span>Enter English or Arabic Brand Copy to Localize:</span>
+              </span>
+              <span className="text-[10px] text-brand-cyan">Neural Adapter Ready</span>
+            </label>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="text"
+                value={customScriptInput}
+                onChange={(e) => setCustomScriptInput(e.target.value)}
+                placeholder="e.g. 'Our new energy drink gives you wings and power for your workout here in Riyadh!'"
+                className="flex-1 bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-brand-purple"
+                onKeyDown={(e) => e.key === "Enter" && handleTransmuteCustomScript()}
+              />
+              <button
+                type="button"
+                onClick={handleTransmuteCustomScript}
+                disabled={isTransmuting || !customScriptInput.trim()}
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-purple to-indigo-600 text-white font-bold text-xs flex items-center justify-center gap-2 hover:opacity-95 disabled:opacity-50 cursor-pointer shadow-lg shadow-brand-purple/30 shrink-0"
+              >
+                {isTransmuting ? (
+                  <span className="animate-pulse">Transmuting Dialect...</span>
+                ) : (
+                  <>
+                    <Sparkles size={14} />
+                    <span>Transmute into {selectedDialect.name.split(" ")[0]}</span>
+                  </>
+                )}
+              </button>
+            </div>
+            {customScriptInput.trim() === "" && (
+              <div className="mt-2 text-[11px] text-text-muted">
+                Try quick sample:{" "}
+                <button
+                  type="button"
+                  onClick={() => setCustomScriptInput("الإنتاج هنا ممتاز جداً ونريد تصوير الإعلان الآن بدون قلق")}
+                  className="text-brand-purple-light hover:underline font-arabic text-xs"
+                >
+                  &ldquo;الإنتاج هنا ممتاز جداً ونريد تصوير الإعلان الآن بدون قلق&rdquo;
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ─── 1. Dialect Selector Tabs: Premium Responsive Grid Cards ─── */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 mb-8">
@@ -474,7 +587,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                   Linguistic &amp; Cultural Calibration:
                 </div>
                 <div className="text-xs text-text-secondary mt-0.5 leading-relaxed">
-                  {selectedDialect.culturalNote}
+                  {culturalExplanation || selectedDialect.culturalNote}
                 </div>
               </div>
             </div>

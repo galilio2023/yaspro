@@ -112,7 +112,9 @@ export function AiBriefPitchModal({
     setRecommendation(null);
   };
 
-  const handleGeneratePitch = (e: React.FormEvent) => {
+  const [appliedIds, setAppliedIds] = useState<{ studioId: string; gearId: string; hours: number } | null>(null);
+
+  const handleGeneratePitch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!briefPrompt.trim()) return;
 
@@ -122,80 +124,121 @@ export function AiBriefPitchModal({
 
     setIsGenerating(true);
     setRecommendation(null);
+    setAppliedIds(null);
 
-    // Real-time client heuristic brief parsing (AI Assistant simulation)
-    timerRef.current = setTimeout(() => {
-      const lower = briefPrompt.toLowerCase();
-      let res: BriefRecommendation;
+    try {
+      const res = await fetch("/api/ai/proposal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brief: briefPrompt, timelineDays: 1 }),
+      });
 
-      const isXr =
-        lower.includes("xr") ||
-        lower.includes("unreal") ||
-        lower.includes("virtual") ||
-        lower.includes("cgi") ||
-        lower.includes("scifi") ||
-        lower.includes("led volume");
+      if (res.ok) {
+        const data = await res.json();
+        const p = data.proposal;
+        if (p) {
+          let gearPkg = "sony-multicam";
+          if (p.recommendedGear.some((g: { id: string }) => g.id.includes("arri"))) {
+            gearPkg = "arri-commercial";
+          } else if (p.recommendedGear.some((g: { id: string }) => g.id.includes("mic") || g.id.includes("sennheiser"))) {
+            gearPkg = "podcast-mics";
+          }
 
-      const isPodcast =
-        lower.includes("podcast") ||
-        lower.includes("interview") ||
-        lower.includes("talk") ||
-        lower.includes("dialogue");
+          const hours = 6;
+          setAppliedIds({
+            studioId: p.recommendedStudio.id || "studio-a",
+            gearId: gearPkg,
+            hours,
+          });
 
-      // Resolve XR requirements first so complex/mixed briefs retain the necessary LED stage
-      if (isXr && isPodcast) {
-        res = {
-          recommendedStudio: "Studio XR — Virtual Production Stage",
-          recommendedGear: "ARRI Alexa Mini LF + 4-Person Podcast Mic Suite",
-          estimatedHours: 6,
-          crewRoleRecommendation: "VP Unreal Operator + Lead Audio Engineer",
-          rationale: "Hybrid virtual production with multi-guest broadcast podcast acoustics and dynamic virtual sets.",
-        };
-      } else if (isXr) {
-        res = {
-          recommendedStudio: "Studio XR — Virtual Production Stage",
-          recommendedGear: "ARRI Alexa Mini LF Cinema Package",
-          estimatedHours: 8,
-          crewRoleRecommendation: "VP Unreal Operator + Optical Genlock Camera Tech",
-          rationale: "Requires 270° Micro-LED volume, Unreal 5.4 LiveSync tracking, and large format cinema primes.",
-        };
-      } else if (isPodcast) {
-        res = {
-          recommendedStudio: "Studio B — Podcast Suite",
-          recommendedGear: "4-Person Shure SM7B Acoustic Mic Suite",
-          estimatedHours: 3,
-          crewRoleRecommendation: "Audio Engineer & Live Cam Switcher Operator",
-          rationale: "Optimized for broadcast vocal acoustics, 4K multi-cam cuts, and rapid turnaround dailies.",
-        };
-      } else {
-        res = {
-          recommendedStudio: "Studio A — Main Stage",
-          recommendedGear: "Sony FX6 3-Cam 4K Studio Package",
-          estimatedHours: 4,
-          crewRoleRecommendation: "Gaffer & Studio Camera Operator",
-          rationale: "Versatile 200 sqm soundstage with motorized lighting grid, perfect for commercial shoots and high-end video campaigns.",
-        };
+          setRecommendation({
+            recommendedStudio: p.recommendedStudio.name,
+            recommendedGear: p.recommendedGear.map((g: { name: string }) => g.name).join(" + "),
+            estimatedHours: hours,
+            crewRoleRecommendation: "Lead Director + Unreal Engine / Studio Operator + Sound Recordist",
+            rationale: `${p.campaignConcept} ${p.recommendedStudio.reason}`,
+          });
+          setIsGenerating(false);
+          return;
+        }
       }
+    } catch {
+      // Fall through to heuristic
+    }
 
-      setRecommendation(res);
-      setIsGenerating(false);
-    }, 600);
+    // Client-side heuristic fallback
+    const lower = briefPrompt.toLowerCase();
+    let res: BriefRecommendation;
+    let studioId = "studio-a";
+    let gearId = "sony-multicam";
+    const hours = 4;
+
+    const isXr =
+      lower.includes("xr") ||
+      lower.includes("unreal") ||
+      lower.includes("virtual") ||
+      lower.includes("cgi") ||
+      lower.includes("scifi") ||
+      lower.includes("led volume");
+
+    const isPodcast =
+      lower.includes("podcast") ||
+      lower.includes("interview") ||
+      lower.includes("talk") ||
+      lower.includes("dialogue");
+
+    if (isXr && isPodcast) {
+      studioId = "studio-xr";
+      gearId = "arri-commercial";
+      res = {
+        recommendedStudio: "Studio XR — Virtual Production Stage",
+        recommendedGear: "ARRI Alexa Mini LF + 4-Person Podcast Mic Suite",
+        estimatedHours: 6,
+        crewRoleRecommendation: "VP Unreal Operator + Lead Audio Engineer",
+        rationale: "Hybrid virtual production with multi-guest broadcast podcast acoustics and dynamic virtual sets.",
+      };
+    } else if (isXr) {
+      studioId = "studio-xr";
+      gearId = "arri-commercial";
+      res = {
+        recommendedStudio: "Studio XR — Virtual Production Stage",
+        recommendedGear: "ARRI Alexa Mini LF Cinema Package",
+        estimatedHours: 8,
+        crewRoleRecommendation: "VP Unreal Operator + Optical Genlock Camera Tech",
+        rationale: "Requires 270° Micro-LED volume, Unreal 5.4 LiveSync tracking, and large format cinema primes.",
+      };
+    } else if (isPodcast) {
+      studioId = "studio-b";
+      gearId = "podcast-mics";
+      res = {
+        recommendedStudio: "Studio B — Podcast Suite",
+        recommendedGear: "4-Person Shure SM7B Acoustic Mic Suite",
+        estimatedHours: 3,
+        crewRoleRecommendation: "Audio Engineer & Live Cam Switcher Operator",
+        rationale: "Optimized for broadcast vocal acoustics, 4K multi-cam cuts, and rapid turnaround dailies.",
+      };
+    } else {
+      res = {
+        recommendedStudio: "Studio A — Main Stage",
+        recommendedGear: "Sony FX6 3-Cam 4K Studio Package",
+        estimatedHours: 4,
+        crewRoleRecommendation: "Gaffer & Studio Camera Operator",
+        rationale: "Versatile 200 sqm soundstage with motorized lighting grid, perfect for commercial shoots and high-end video campaigns.",
+      };
+    }
+
+    setAppliedIds({ studioId, gearId, hours });
+    setRecommendation(res);
+    setIsGenerating(false);
   };
 
   const handleApply = () => {
     if (!recommendation) return;
-    let studioId = "studio-a";
-    let gearId = "sony-multicam";
+    const targetStudio = appliedIds?.studioId || "studio-a";
+    const targetGear = appliedIds?.gearId || "sony-multicam";
+    const targetHours = appliedIds?.hours || recommendation.estimatedHours || 4;
 
-    if (recommendation.recommendedStudio.includes("XR")) {
-      studioId = "studio-xr";
-      gearId = "arri-commercial";
-    } else if (recommendation.recommendedStudio.includes("Podcast")) {
-      studioId = "studio-b";
-      gearId = "podcast-mics";
-    }
-
-    onApplyPreset(studioId, gearId, recommendation.estimatedHours);
+    onApplyPreset(targetStudio, targetGear, targetHours);
     onClose();
   };
 

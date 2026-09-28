@@ -13,10 +13,13 @@ import {
   Calendar,
   X,
   Trash2,
+  Sparkles,
+  Plus,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { GearItem, RentalDateRange, DeliveryMethod } from "../types";
 import { Badge } from "@/components/ui/badge";
+import { getGearRecommendations } from "../lib/gear-rules";
 
 const emptySubscribe = () => () => {};
 
@@ -24,6 +27,7 @@ interface GearCartDrawerProps {
   items: GearItem[];
   dateRange: RentalDateRange;
   onRemoveItem: (id: string) => void;
+  onAddItem?: (item: GearItem) => void;
   onClearCart: () => void;
   checkoutHref?: string;
 }
@@ -32,6 +36,7 @@ export function GearCartDrawer({
   items,
   dateRange,
   onRemoveItem,
+  onAddItem,
   checkoutHref = "/contact",
 }: GearCartDrawerProps) {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
@@ -125,6 +130,8 @@ export function GearCartDrawer({
   const deliveryFee = deliveryMethod === "courier_dubai" ? 250 : 0;
   const grandTotal = rentalSubtotal + deliveryFee;
   const totalDeposit = items.reduce((acc, curr) => acc + (curr.securityDeposit || curr.dailyRate * 1.5), 0);
+
+  const smartRecommendations = getGearRecommendations(items.map((i) => i.id));
 
   return (
     <>
@@ -280,6 +287,55 @@ export function GearCartDrawer({
                   </div>
                 </div>
               ))}
+
+              {/* Smart Production Assistant Recommendations */}
+              {smartRecommendations.length > 0 && (
+                <div className="p-3.5 rounded-2xl bg-gradient-to-r from-brand-purple/15 to-brand-cyan/10 border border-brand-purple/30 my-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Sparkles size={14} className="text-brand-gold animate-pulse" />
+                    <span className="text-xs font-bold text-white font-display">
+                      Smart Production Assistant: Recommended Essentials
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    {smartRecommendations.map((rec) => (
+                      <div
+                        key={rec.recommendedItem.id}
+                        className="flex items-center justify-between p-2.5 rounded-xl bg-black/60 border border-white/10 gap-3"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-white truncate">
+                              {rec.recommendedItem.name}
+                            </span>
+                            <Badge variant={rec.badge === "Essential" ? "purple" : "cyan"} className="text-[8px] px-1.5 py-0">
+                              {rec.badge}
+                            </Badge>
+                          </div>
+                          <p className="text-[10px] text-text-muted line-clamp-1 mt-0.5">
+                            {rec.reason}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-[11px] font-mono text-brand-purple-light font-bold">
+                            +{formatCurrency(rec.recommendedItem.dailyRate)}/d
+                          </span>
+                          {onAddItem && (
+                            <button
+                              type="button"
+                              onClick={() => onAddItem(rec.recommendedItem)}
+                              className="px-2.5 py-1 rounded-lg bg-brand-purple hover:bg-brand-purple-light text-white text-[10px] font-bold flex items-center gap-1 transition-all cursor-pointer shadow-sm"
+                            >
+                              <Plus size={11} />
+                              <span>Add</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Delivery Method Options */}
               <div className="pt-4">

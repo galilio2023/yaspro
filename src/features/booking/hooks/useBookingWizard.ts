@@ -1,17 +1,62 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { generateBookingReference } from "@/lib/utils";
 import { createBooking } from "@/lib/actions";
 import { BookingState } from "../types";
 import { INITIAL_BOOKING_STATE, SESSION_TYPES, STUDIOS, STUDIO_GEAR_PACKAGES } from "../constants";
 
 export function useBookingWizard() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(1);
   const [state, setState] = useState<BookingState>(INITIAL_BOOKING_STATE);
+  const [isAiConfigured, setIsAiConfigured] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [referenceCode, setReferenceCode] = useState("");
   const [bookingId, setBookingId] = useState<string | undefined>(undefined);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Sync state with URL search parameters on initial mount or query change
+  useEffect(() => {
+    if (!searchParams) return;
+
+    const studioParam = searchParams.get("studio");
+    const gearParam = searchParams.get("gear");
+    const sessionTypeParam = searchParams.get("sessionType");
+    const shootDaysParam = searchParams.get("shootDays");
+    const hoursParam = searchParams.get("hours");
+    const aiFlag = searchParams.get("aiConfigured");
+
+    const updates: Partial<BookingState> = {};
+
+    if (studioParam && STUDIOS.some((s) => s.id === studioParam)) {
+      updates.studioId = studioParam;
+    }
+    if (gearParam && STUDIO_GEAR_PACKAGES.some((g) => g.id === gearParam)) {
+      updates.selectedGearPackage = gearParam;
+    }
+    if (sessionTypeParam && SESSION_TYPES.some((s) => s.id === sessionTypeParam)) {
+      updates.sessionType = sessionTypeParam;
+    }
+    if (shootDaysParam) {
+      const days = parseInt(shootDaysParam, 10);
+      if (!isNaN(days) && days > 0) {
+        updates.durationHours = Math.min(days * 8, 24);
+      }
+    } else if (hoursParam) {
+      const h = parseInt(hoursParam, 10);
+      if (!isNaN(h) && h > 0) {
+        updates.durationHours = Math.min(Math.max(1, h), 24);
+      }
+    }
+
+    if (Object.keys(updates).length > 0) {
+      setState((prev) => ({ ...prev, ...updates }));
+      if (aiFlag === "true" || aiFlag === "1") {
+        setIsAiConfigured(true);
+      }
+    }
+  }, [searchParams]);
 
   const update = (values: Partial<BookingState>) => {
     setErrorMessage(null);
@@ -134,6 +179,8 @@ export function useBookingWizard() {
     referenceCode,
     bookingId,
     errorMessage,
+    isAiConfigured,
+    setIsAiConfigured,
     handleSubmit,
   };
 }

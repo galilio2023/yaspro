@@ -37,6 +37,8 @@ export function BookingWizard() {
     referenceCode,
     bookingId,
     errorMessage,
+    isAiConfigured,
+    setIsAiConfigured,
     handleSubmit,
   } = useBookingWizard();
 
@@ -59,6 +61,7 @@ export function BookingWizard() {
       selectedGearPackage: gearPackageId,
       durationHours: hours,
     });
+    setIsAiConfigured(true);
   };
 
   return (
@@ -90,6 +93,29 @@ export function BookingWizard() {
           </div>
 
           <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 sm:p-10 shadow-xl shadow-black/20">
+            {isAiConfigured && (
+              <div className="mb-6 p-4 rounded-2xl bg-brand-purple/15 border border-brand-purple/30 flex items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2.5">
+                  <div className="size-7 rounded-lg bg-brand-purple/30 flex items-center justify-center text-brand-purple-light shrink-0">
+                    <Sparkles size={14} className="animate-pulse" />
+                  </div>
+                  <div>
+                    <div className="text-white font-bold">Configured by AI Production Copilot</div>
+                    <div className="text-text-muted text-[11px]">
+                      Soundstage ({studio?.name}), gear package, and session hours have been automatically synchronized with your blueprint.
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAiConfigured(false)}
+                  className="text-text-muted hover:text-white text-[11px] underline shrink-0 cursor-pointer"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
+
             <BookingStepHeader
               currentStep={step}
               totalSteps={WIZARD_STEPS.length}

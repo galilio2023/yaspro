@@ -9,8 +9,13 @@ import {
   Copy,
   Check,
   Coins,
+  Sparkles,
+  AlertTriangle,
+  FileCheck,
+  Send,
 } from "lucide-react";
 import { ENTERPRISE_CREATORS } from "../data";
+import type { MawthooqAuditReport } from "@/lib/ai/mawthooq-auditor";
 
 interface MawthooqAuditorModalProps {
   isOpen: boolean;
@@ -24,12 +29,48 @@ export function MawthooqAuditorModal({
   creatorSlugs = ["aboflah", "noor-stars"],
 }: MawthooqAuditorModalProps) {
   const [copiedCertificate, setCopiedCertificate] = useState(false);
-  const [activeTab, setActiveTab] = useState<"certificate" | "escrow" | "safety">("certificate");
+  const [activeTab, setActiveTab] = useState<"certificate" | "audit" | "safety" | "escrow">("certificate");
 
   const [certificateId] = useState("GAMR-MWQ-882910-KSA");
   const [auditTimestamp] = useState("2026-09-27");
 
+  // Script Auditor state
+  const [scriptInput, setScriptInput] = useState(
+    "#إعلان تجاري - تجربة تصوير سينمائي استثنائية في استوديوهات ياس برو بالرياض مع طاقم تصوير وطني معتمد. احجز باقتك الآن بخصم رسمي."
+  );
+  const [isAuditing, setIsAuditing] = useState(false);
+  const [auditReport, setAuditReport] = useState<MawthooqAuditReport | null>(null);
+  const [auditError, setAuditError] = useState<string | null>(null);
+
   if (!isOpen) return null;
+
+  const handleRunAudit = async (customText?: string) => {
+    const textToScan = customText || scriptInput;
+    if (!textToScan.trim()) return;
+    setIsAuditing(true);
+    setAuditError(null);
+    try {
+      const res = await fetch("/api/ai/mawthooq-audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          scriptOrCopy: textToScan,
+          targetMarket: "KSA",
+          creatorMawthooqNumber: certificateId,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.report) {
+        setAuditReport(data.report);
+      } else {
+        setAuditError(data.error || "Failed to complete audit.");
+      }
+    } catch {
+      setAuditError("Network error contacting Mawthooq compliance server.");
+    } finally {
+      setIsAuditing(false);
+    }
+  };
 
   const auditedCreators = ENTERPRISE_CREATORS.filter((c) =>
     creatorSlugs.includes(c.id) || creatorSlugs.includes(c.slug)
@@ -85,10 +126,10 @@ export function MawthooqAuditorModal({
         </div>
 
         {/* Tab Controls */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-white/10 mb-6">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-white/10 mb-6 overflow-x-auto">
           <button
             onClick={() => setActiveTab("certificate")}
-            className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === "certificate"
                 ? "bg-emerald-500 text-black shadow-md font-bold"
                 : "text-text-secondary hover:text-white"
@@ -97,24 +138,35 @@ export function MawthooqAuditorModal({
             Digital Certificate
           </button>
           <button
+            onClick={() => setActiveTab("audit")}
+            className={`flex-1 min-w-[120px] py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              activeTab === "audit"
+                ? "bg-emerald-500 text-black shadow-md font-bold"
+                : "text-text-secondary hover:text-white"
+            }`}
+          >
+            <Sparkles size={13} className={activeTab === "audit" ? "text-black" : "text-emerald-400"} />
+            <span>AI Script Auditor</span>
+          </button>
+          <button
             onClick={() => setActiveTab("safety")}
-            className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === "safety"
                 ? "bg-emerald-500 text-black shadow-md font-bold"
                 : "text-text-secondary hover:text-white"
             }`}
           >
-            Brand Safety &amp; Disclosures
+            Brand Safety
           </button>
           <button
             onClick={() => setActiveTab("escrow")}
-            className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === "escrow"
                 ? "bg-emerald-500 text-black shadow-md font-bold"
                 : "text-text-secondary hover:text-white"
             }`}
           >
-            Smart Escrow (SARIE/Aani)
+            Smart Escrow
           </button>
         </div>
 
@@ -202,6 +254,184 @@ export function MawthooqAuditorModal({
                 <span>Done</span>
               </button>
             </div>
+          </div>
+        )}
+
+        {/* TAB: AI Script & Copy Auditor */}
+        {activeTab === "audit" && (
+          <div className="space-y-4 animate-fade-in">
+            {/* Input Card */}
+            <div className="p-4 rounded-2xl bg-slate-900 border border-white/10 space-y-3">
+              <label className="text-xs font-mono font-bold text-text-muted uppercase flex items-center justify-between">
+                <span className="flex items-center gap-1.5 text-emerald-400">
+                  <FileCheck size={14} />
+                  <span>Script / Ad Copy Regulatory Scanner</span>
+                </span>
+                <span className="text-[10px] text-text-muted">Target: KSA GAMR / Mawthooq</span>
+              </label>
+
+              <textarea
+                rows={3}
+                value={scriptInput}
+                onChange={(e) => setScriptInput(e.target.value)}
+                placeholder="Paste promotional caption, script dialogue, or campaign brief..."
+                className="w-full bg-black/60 border border-white/15 rounded-xl p-3 text-xs sm:text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-emerald-500 resize-none font-mono"
+              />
+
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                {/* Presets */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const sample = "#إعلان تجاري - تجربة تصوير سينمائي استثنائية في استوديوهات ياس برو بالرياض مع طاقم تصوير وطني معتمد. احجز باقتك الآن بخصم رسمي.";
+                      setScriptInput(sample);
+                      handleRunAudit(sample);
+                    }}
+                    className="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-pointer"
+                  >
+                    ✓ Compliant Sample (#إعلان)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const sample = "فرصة العمر! تداول عملات رقمية وفوركس مع سحب فوري بدون شروط واربح سيارة مجاناً. أفضل منصة في العالم!";
+                      setScriptInput(sample);
+                      handleRunAudit(sample);
+                    }}
+                    className="text-[11px] px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 cursor-pointer"
+                  >
+                    ⚠️ High-Risk Sample
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleRunAudit()}
+                  disabled={isAuditing || !scriptInput.trim()}
+                  className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-50 cursor-pointer shrink-0"
+                >
+                  {isAuditing ? (
+                    <span className="animate-pulse">Scanning GAMR Rules...</span>
+                  ) : (
+                    <>
+                      <Send size={13} />
+                      <span>Scan Copy</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {auditError && (
+                <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-center gap-2">
+                  <AlertTriangle size={14} className="text-red-400 shrink-0" />
+                  <span>{auditError}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Audit Results */}
+            {auditReport && (
+              <div className="space-y-3.5 p-4 rounded-2xl bg-black/50 border border-emerald-500/30">
+                {/* Score Header */}
+                <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-900 border border-white/10">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`size-12 rounded-xl flex items-center justify-center font-mono font-black text-lg ${
+                        auditReport.status === "compliant"
+                          ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
+                          : auditReport.status === "warning"
+                          ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
+                          : "bg-red-500/20 text-red-400 border border-red-500/40"
+                      }`}
+                    >
+                      {auditReport.complianceScore}%
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`text-xs font-bold uppercase font-mono px-2 py-0.5 rounded ${
+                            auditReport.status === "compliant"
+                              ? "bg-emerald-500/10 text-emerald-400"
+                              : auditReport.status === "warning"
+                              ? "bg-amber-500/10 text-amber-400"
+                              : "bg-red-500/10 text-red-400"
+                          }`}
+                        >
+                          {auditReport.status === "compliant"
+                            ? "GCAM Cleared & Certified"
+                            : auditReport.status === "warning"
+                            ? "Action Required: Revisions Recommended"
+                            : "Violation Detected: Do Not Publish"}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-text-muted mt-0.5">
+                        {auditReport.disclosureStatus.hasMandatoryDisclosure
+                          ? `Mandatory tag verified (${auditReport.disclosureStatus.detectedDisclosureTags.join(", ")})`
+                          : "Missing mandatory disclosure hashtag (#إعلان)"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <span className="text-[10px] font-mono text-emerald-400/80 bg-emerald-500/5 px-2.5 py-1 rounded-md border border-emerald-500/10">
+                    {auditReport.isAiGenerated ? "Gemini Multimodal AI" : "Deterministic GAMR Engine"}
+                  </span>
+                </div>
+
+                {/* Flagged Phrases */}
+                {auditReport.flaggedTerms.length > 0 && (
+                  <div className="p-3 rounded-xl bg-red-950/20 border border-red-500/30 space-y-2">
+                    <span className="text-xs font-mono font-bold text-red-400 flex items-center gap-1.5">
+                      <AlertTriangle size={13} />
+                      <span>Flagged Phrases ({auditReport.flaggedTerms.length})</span>
+                    </span>
+                    <div className="space-y-1.5">
+                      {auditReport.flaggedTerms.map((f, i) => (
+                        <div
+                          key={i}
+                          className="p-2 rounded-lg bg-black/60 border border-red-500/20 text-xs flex flex-col gap-1"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-mono font-bold text-red-300">"{f.term}"</span>
+                            {f.suggestedReplacement && (
+                              <span className="text-[11px] text-emerald-400">
+                                Suggestion: <strong className="font-mono">{f.suggestedReplacement}</strong>
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-text-muted">{f.reason}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Checklist */}
+                <div className="space-y-1.5">
+                  <span className="text-[11px] font-mono font-bold text-text-secondary uppercase">
+                    Regulatory Checklist
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    {auditReport.regulatoryChecks.map((c, i) => (
+                      <div
+                        key={i}
+                        className="p-2 rounded-lg bg-black/40 border border-white/5 flex items-start gap-2"
+                      >
+                        {c.passed ? (
+                          <CheckCircle2 size={14} className="text-emerald-400 shrink-0 mt-0.5" />
+                        ) : (
+                          <AlertTriangle size={14} className="text-amber-400 shrink-0 mt-0.5" />
+                        )}
+                        <div>
+                          <div className="font-bold text-white text-[11px]">{c.checkName}</div>
+                          <p className="text-[10px] text-text-muted leading-tight mt-0.5">{c.explanation}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

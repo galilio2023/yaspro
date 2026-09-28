@@ -1,9 +1,9 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import BookingWizard from "@/components/booking/BookingWizard";
 import { SectionHeader } from "@/components/ui/section-header";
-import { Video } from "lucide-react";
+import { Video, Sparkles } from "lucide-react";
 import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
-
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 
@@ -44,6 +44,18 @@ const STUDIO_BOOKING_SCHEMA = {
   },
 };
 
+function BookingWizardLoading() {
+  return (
+    <div className="w-full min-h-[400px] flex flex-col items-center justify-center p-12 text-center border border-white/5 rounded-3xl bg-white/[0.01]">
+      <div className="size-12 rounded-2xl bg-brand-purple/20 border border-brand-purple/30 flex items-center justify-center text-brand-purple-light mb-4 animate-pulse">
+        <Sparkles size={22} />
+      </div>
+      <p className="text-sm font-semibold text-white">Initializing Soundstage Engine...</p>
+      <p className="text-xs text-text-muted mt-1">Calibrating schedule and packages</p>
+    </div>
+  );
+}
+
 export default function StudioBookingPage() {
   return (
     <Section id="booking-page" aria-labelledby="booking-title" className="py-12 md:py-20 bg-background">
@@ -60,7 +72,9 @@ export default function StudioBookingPage() {
           description="Secure your session in minutes. Fully customizable setups with professional crew, AI-enhanced post-production, and secure Ziina payment."
         />
 
-        <BookingWizard />
+        <Suspense fallback={<BookingWizardLoading />}>
+          <BookingWizard />
+        </Suspense>
       </Container>
     </Section>
   );
