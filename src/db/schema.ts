@@ -8,6 +8,7 @@ import {
   pgEnum,
   uuid,
   jsonb,
+  index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -62,36 +63,48 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const sessions = pgTable("sessions", {
-  id: text("id").primaryKey(),
-  expiresAt: timestamp("expires_at").notNull(),
-  token: text("token").notNull().unique(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  ipAddress: text("ip_address"),
-  userAgent: text("user_agent"),
-  userId: text("user_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-});
+export const sessions = pgTable(
+  "sessions",
+  {
+    id: text("id").primaryKey(),
+    expiresAt: timestamp("expires_at").notNull(),
+    token: text("token").notNull().unique(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    index("sessions_user_id_idx").on(table.userId),
+  ]
+);
 
-export const accounts = pgTable("accounts", {
-  id: text("id").primaryKey(),
-  accountId: text("account_id").notNull(),
-  providerId: text("provider_id").notNull(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  accessToken: text("access_token"),
-  refreshToken: text("refresh_token"),
-  idToken: text("id_token"),
-  accessTokenExpiresAt: timestamp("access_token_expires_at"),
-  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
-  scope: text("scope"),
-  password: text("password"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+export const accounts = pgTable(
+  "accounts",
+  {
+    id: text("id").primaryKey(),
+    accountId: text("account_id").notNull(),
+    providerId: text("provider_id").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    accessToken: text("access_token"),
+    refreshToken: text("refresh_token"),
+    idToken: text("id_token"),
+    accessTokenExpiresAt: timestamp("access_token_expires_at"),
+    refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+    scope: text("scope"),
+    password: text("password"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("accounts_user_id_idx").on(table.userId),
+  ]
+);
 
 export const verifications = pgTable("verifications", {
   id: text("id").primaryKey(),
@@ -138,53 +151,68 @@ export const equipment = pgTable("equipment", {
 
 // ─── Bookings ─────────────────────────────────────────────────────────────────
 
-export const bookings = pgTable("bookings", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  referenceCode: text("reference_code").notNull().unique(),
-  userId: text("user_id").references(() => users.id),
-  studioId: uuid("studio_id").references(() => studios.id),
-  sessionType: sessionTypeEnum("session_type").notNull(),
-  status: bookingStatusEnum("status").notNull().default("pending"),
+export const bookings = pgTable(
+  "bookings",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    referenceCode: text("reference_code").notNull().unique(),
+    userId: text("user_id").references(() => users.id),
+    studioId: uuid("studio_id").references(() => studios.id),
+    sessionType: sessionTypeEnum("session_type").notNull(),
+    status: bookingStatusEnum("status").notNull().default("pending"),
 
-  // Schedule
-  scheduledAt: timestamp("scheduled_at").notNull(),
-  durationHours: integer("duration_hours").notNull().default(1),
-  headcount: integer("headcount").notNull().default(1),
+    // Schedule
+    scheduledAt: timestamp("scheduled_at").notNull(),
+    durationHours: integer("duration_hours").notNull().default(1),
+    headcount: integer("headcount").notNull().default(1),
 
-  // Extras
-  equipmentIds: jsonb("equipment_ids").$type<string[]>().default([]),
-  propsNotes: text("props_notes"),
-  crewNotes: text("crew_notes"),
-  specialRequests: text("special_requests"),
+    // Extras
+    equipmentIds: jsonb("equipment_ids").$type<string[]>().default([]),
+    propsNotes: text("props_notes"),
+    crewNotes: text("crew_notes"),
+    specialRequests: text("special_requests"),
 
-  // Post-production
-  needsEditing: boolean("needs_editing").default(false),
-  needsColorGrading: boolean("needs_color_grading").default(false),
-  needsSoundMastering: boolean("needs_sound_mastering").default(false),
+    // Post-production
+    needsEditing: boolean("needs_editing").default(false),
+    needsColorGrading: boolean("needs_color_grading").default(false),
+    needsSoundMastering: boolean("needs_sound_mastering").default(false),
 
-  // Payment
-  totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
-  currency: text("currency").notNull().default("AED"),
-  paymentStatus: text("payment_status").notNull().default("unpaid"),
-  paymentReference: text("payment_reference"),
+    // Payment
+    totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+    currency: text("currency").notNull().default("AED"),
+    paymentStatus: text("payment_status").notNull().default("unpaid"),
+    paymentReference: text("payment_reference"),
 
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("bookings_studio_schedule_idx").on(table.studioId, table.status, table.scheduledAt),
+    index("bookings_user_id_idx").on(table.userId),
+    index("bookings_created_at_idx").on(table.createdAt),
+  ]
+);
 
 // ─── Inquiries ────────────────────────────────────────────────────────────────
 
-export const inquiries = pgTable("inquiries", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  phone: text("phone"),
-  company: text("company"),
-  inquiryType: inquiryTypeEnum("inquiry_type").notNull().default("general"),
-  message: text("message").notNull(),
-  isResolved: boolean("is_resolved").notNull().default(false),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+export const inquiries = pgTable(
+  "inquiries",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    phone: text("phone"),
+    company: text("company"),
+    inquiryType: inquiryTypeEnum("inquiry_type").notNull().default("general"),
+    message: text("message").notNull(),
+    isResolved: boolean("is_resolved").notNull().default(false),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("inquiries_created_at_idx").on(table.createdAt),
+    index("inquiries_resolved_idx").on(table.isResolved),
+  ]
+);
 
 // ─── Projects ─────────────────────────────────────────────────────────────────
 
@@ -234,29 +262,36 @@ export const influencers = pgTable("influencers", {
 
 // ─── Enterprise RFPs & Sovereign Operations ──────────────────────────────────
 
-export const enterpriseRfps = pgTable("enterprise_rfps", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  referenceCode: text("reference_code").notNull().unique(),
-  organizationName: text("organization_name").notNull(),
-  organizationType: text("organization_type").notNull().default("enterprise"),
-  contactName: text("contact_name").notNull(),
-  contactTitle: text("contact_title"),
-  workEmail: text("work_email").notNull(),
-  phone: text("phone").notNull(),
-  country: text("country").notNull().default("UAE"),
-  projectScope: text("project_scope").notNull(),
-  targetLocations: jsonb("target_locations").$type<string[]>().default([]),
-  estimatedBudget: text("estimated_budget").notNull(),
-  requiresMawthooqCompliance: boolean("requires_mawthooq_compliance").notNull().default(false),
-  requiresObVan: boolean("requires_ob_van").notNull().default(false),
-  projectTimeline: text("project_timeline"),
-  selectedCreators: jsonb("selected_creators").$type<string[]>().default([]),
-  digitalTwinEnvironment: text("digital_twin_environment"),
-  notes: text("notes"),
-  status: text("status").notNull().default("pending_review"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+export const enterpriseRfps = pgTable(
+  "enterprise_rfps",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    referenceCode: text("reference_code").notNull().unique(),
+    organizationName: text("organization_name").notNull(),
+    organizationType: text("organization_type").notNull().default("enterprise"),
+    contactName: text("contact_name").notNull(),
+    contactTitle: text("contact_title"),
+    workEmail: text("work_email").notNull(),
+    phone: text("phone").notNull(),
+    country: text("country").notNull().default("UAE"),
+    projectScope: text("project_scope").notNull(),
+    targetLocations: jsonb("target_locations").$type<string[]>().default([]),
+    estimatedBudget: text("estimated_budget").notNull(),
+    requiresMawthooqCompliance: boolean("requires_mawthooq_compliance").notNull().default(false),
+    requiresObVan: boolean("requires_ob_van").notNull().default(false),
+    projectTimeline: text("project_timeline"),
+    selectedCreators: jsonb("selected_creators").$type<string[]>().default([]),
+    digitalTwinEnvironment: text("digital_twin_environment"),
+    notes: text("notes"),
+    status: text("status").notNull().default("pending_review"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("rfps_created_at_idx").on(table.createdAt),
+    index("rfps_status_idx").on(table.status),
+  ]
+);
 
 // ─── Relations ────────────────────────────────────────────────────────────────
 
