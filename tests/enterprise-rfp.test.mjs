@@ -63,6 +63,10 @@ function actionHarness(results, env = { DATABASE_URL: 'postgresql://test:local@l
       checkIdempotency: () => true,
       getClientIdentifier: async () => '127.0.0.1',
     },
+    '@/lib/notifications': {
+      sendBookingConfirmationNotification: async () => {},
+      sendInquiryNotification: async () => {},
+    },
   }, { process: { env }, Math: { floor: Math.floor, random: () => (random++ % 10) / 10 } });
   return { submit: submitEnterpriseRfp, inserts, revalidated };
 }

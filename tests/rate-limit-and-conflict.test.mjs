@@ -122,6 +122,10 @@ test('createBooking rejects studio double-booking when schedule overlaps', async
     '@/lib/rate-limit': rateLimitMod,
     'next/headers': { headers: async () => new Headers() },
     '@/lib/auth': { auth: { api: { getSession: async () => null } } },
+    '@/lib/notifications': {
+      sendBookingConfirmationNotification: async () => {},
+      sendInquiryNotification: async () => {},
+    },
   });
 
   // Attempt to book overlapping time: 15:00 to 17:00 (inside 14:00 to 18:00 window)

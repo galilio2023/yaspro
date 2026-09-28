@@ -6,6 +6,7 @@ import { generateBookingReference } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { eq, and, inArray } from "drizzle-orm";
 import { checkRateLimit, checkIdempotency, getClientIdentifier } from "@/lib/rate-limit";
+import { sendBookingConfirmationNotification, sendInquiryNotification } from "@/lib/notifications";
 import {
   bookingSubmissionSchema,
   inquirySubmissionSchema,
@@ -193,6 +194,25 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
         .returning();
 
       revalidatePath("/studio-booking");
+
+      // Dispatch automated Call Sheet notification
+      try {
+        await sendBookingConfirmationNotification(
+          {
+            referenceCode,
+            totalAmount: calculatedTotal.toFixed(2),
+            scheduledAt: new Date(data.scheduledAt || Date.now()),
+            durationHours: data.durationHours,
+            sessionType: data.sessionType,
+            propsNotes: data.propsNotes,
+            specialRequests: data.specialRequests,
+          },
+          data.email
+        );
+      } catch (notifyErr) {
+        console.error("Booking notification dispatch error:", notifyErr);
+      }
+
       return {
         success: true,
         referenceCode,
@@ -262,6 +282,21 @@ export async function submitInquiry(rawInput: unknown): Promise<ActionResponse> 
     }
 
     revalidatePath("/contact");
+
+    // Dispatch automated lead notification to studio operations
+    try {
+      await sendInquiryNotification({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        company: data.company,
+        inquiryType: data.inquiryType,
+        message: data.message,
+      });
+    } catch (notifyErr) {
+      console.error("Inquiry notification error:", notifyErr);
+    }
+
     return {
       success: true,
       message: "Thank you! Our production team will contact you within 24 hours.",

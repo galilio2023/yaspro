@@ -32,6 +32,7 @@ export function BookingWizard() {
     isSubmitting,
     confirmed,
     referenceCode,
+    bookingId,
     errorMessage,
     handleSubmit,
   } = useBookingWizard();
@@ -41,6 +42,8 @@ export function BookingWizard() {
       <BookingConfirmation
         referenceCode={referenceCode}
         email={state.email}
+        bookingId={bookingId}
+        totalAmount={total}
       />
     );
   }
