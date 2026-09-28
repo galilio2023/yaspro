@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { ProjectsExplorer } from "@/features/projects/components/ProjectsExplorer";
 import { PROJECTS_DATA } from "@/features/projects/data";
-import { getCmsProjects } from "@/lib/cms-actions";
+import { getCachedProjects } from "@/lib/cached-queries";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Award, Film } from "lucide-react";
 import Link from "next/link";
@@ -10,13 +10,15 @@ import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import type { ProjectItem, ProjectCategory } from "@/features/projects/types";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Projects & Portfolio",
   description: "Explore Yas Pro productions: Government initiatives, high-profile commercial campaigns, and original digital shows.",
 };
 
 export default async function ProjectsPage() {
-  const cmsProjects = await getCmsProjects();
+  const cmsProjects = await getCachedProjects();
 
   const projectsToDisplay: ProjectItem[] = cmsProjects.map((p) => ({
     id: p.id,

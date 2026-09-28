@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { InfluencersExplorer } from "@/features/influencers/components/InfluencersExplorer";
 import { INFLUENCERS_DATA } from "@/features/influencers/data";
-import { getCmsInfluencers } from "@/lib/cms-actions";
+import { getCachedInfluencers } from "@/lib/cached-queries";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Users } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import type { InfluencerItem, CreatorDemographics } from "@/features/influencers/types";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Influencer Hub",
@@ -14,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function InfluencersPage() {
-  const cmsInfluencers = await getCmsInfluencers();
+  const cmsInfluencers = await getCachedInfluencers();
 
   const creatorsToDisplay: InfluencerItem[] = cmsInfluencers.map((inf) => ({
     id: inf.id,

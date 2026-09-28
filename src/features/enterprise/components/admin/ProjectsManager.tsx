@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Film, Plus, Trash2, Edit3, CheckCircle, ExternalLink, Save, X } from "lucide-react";
 import { upsertCmsProject, deleteCmsProject } from "@/lib/cms-actions";
+import { AdminImageUploader } from "@/components/admin/AdminImageUploader";
 import type { Project } from "@/db/schema";
 
 interface ProjectsManagerProps {
@@ -14,6 +15,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
   const [projectList, setProjectList] = useState<Project[]>(initialProjects);
   const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
   const handleOpenNew = () => {
@@ -196,14 +198,17 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
               </div>
 
               <div>
-                <label className="block text-slate-300 font-medium mb-1">Cover Image URL</label>
-                <input
-                  type="text"
+                <AdminImageUploader
+                  label="Project Cover Artwork & Stills"
                   value={editingProject.coverImageUrl || ""}
-                  onChange={(e) =>
-                    setEditingProject({ ...editingProject, coverImageUrl: e.target.value })
+                  onUploadingChange={setIsUploadingCover}
+                  onChange={(url) =>
+                    setEditingProject((prev) => {
+                      if (!prev) return null;
+                      return { ...prev, coverImageUrl: url };
+                    })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500"
+                  helperText="Upload official film key art or production stills (JPG, PNG, WEBP up to 10MB)"
                 />
               </div>
 
@@ -229,10 +234,10 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isUploadingCover}
                   className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-semibold flex items-center gap-2 disabled:opacity-50"
                 >
-                  <Save size={14} /> Save to Neon DB
+                  <Save size={14} /> {isUploadingCover ? "Uploading Asset..." : "Save to Neon DB"}
                 </button>
               </div>
             </form>
