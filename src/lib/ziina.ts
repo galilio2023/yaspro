@@ -40,16 +40,20 @@ export async function createZiinaPaymentIntent(
     }
 
     const ziinaApiKey = process.env.ZIINA_API_KEY;
-    const amountInFils = Math.round(amountAed * 100);
+    const isSimulateEnabled = process.env.ZIINA_SIMULATE === "true" || process.env.NODE_ENV === "test";
 
-    // If live Ziina API key is available in production, generate real payment intent
+    // 1. Live Ziina API Key branch
     if (ziinaApiKey && !ziinaApiKey.includes("ziina_xxx")) {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://yaspro.ae";
+      const amountInFils = Math.round(amountAed * 100);
+      const idempotencyKey = `ziina-${bookingId || referenceCode}-${paymentType}-${amountInFils}`;
+
       const response = await fetch("https://api.ziina.com/v1/payment_intent", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${ziinaApiKey}`,
           "Content-Type": "application/json",
+          "Idempotency-Key": idempotencyKey,
         },
         body: JSON.stringify({
           amount: amountInFils,
@@ -63,53 +67,76 @@ export async function createZiinaPaymentIntent(
             paymentType,
           },
         }),
+        signal: AbortSignal.timeout(10000),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Ziina API error response:", response.status, errorText);
+        return {
+          success: false,
+          error: `Ziina payment gateway returned status ${response.status}. Please retry.`,
+        };
+      }
 
       const data = await response.json();
 
-      if (response.ok && data.redirect_url) {
+      if (data.redirect_url) {
         return {
           success: true,
           paymentUrl: data.redirect_url,
           paymentIntentId: data.id,
         };
       }
-    }
 
-    // Default fast seamless settlement (Direct UAE Card / Apple Pay / Ziina simulation)
-    const transactionId = `ZIINA_${Date.now()}_${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-    const targetStatus = paymentType === "deposit" ? "deposit_paid" : "paid";
-
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-      const updateData = {
-        paymentStatus: targetStatus,
-        paymentReference: transactionId,
-        status: "confirmed" as const,
-        updatedAt: new Date(),
+      return {
+        success: false,
+        error: "Failed to generate redirect URL from Ziina response.",
       };
-
-      if (bookingId && bookingId.length > 20) {
-        await db.update(bookings).set(updateData).where(eq(bookings.id, bookingId));
-      } else {
-        await db.update(bookings).set(updateData).where(eq(bookings.referenceCode, referenceCode));
-      }
-
-      try {
-        updateTag("studios");
-      } catch (e) {
-        console.warn("Cache tag update notice:", e);
-      }
     }
 
-    revalidatePath("/admin/bookings");
-    revalidatePath("/portal");
-    revalidatePath("/studio-booking");
+    // 2. Explicit simulation branch (allowed only with ZIINA_SIMULATE=true or in test environments)
+    if (isSimulateEnabled) {
+      const transactionId = `ZIINA_SIM_${Date.now()}_${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+      const targetStatus = paymentType === "deposit" ? "deposit_paid" : "paid";
 
+      if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+        const updateData = {
+          paymentStatus: targetStatus,
+          paymentReference: transactionId,
+          status: "confirmed" as const,
+          updatedAt: new Date(),
+        };
+
+        if (bookingId && bookingId.length > 20) {
+          await db.update(bookings).set(updateData).where(eq(bookings.id, bookingId));
+        } else {
+          await db.update(bookings).set(updateData).where(eq(bookings.referenceCode, referenceCode));
+        }
+
+        try {
+          updateTag("studios");
+        } catch (e) {
+          console.warn("Cache tag update notice:", e);
+        }
+      }
+
+      revalidatePath("/admin/bookings");
+      revalidatePath("/portal");
+      revalidatePath("/studio-booking");
+
+      return {
+        success: true,
+        transactionId,
+        paymentStatus: targetStatus,
+        message: `Ziina UAE Simulation of AED ${amountAed.toLocaleString()} completed successfully. Transaction ID: ${transactionId}.`,
+      };
+    }
+
+    // 3. In production without API key and without explicit simulation flag, do not mark as paid
     return {
-      success: true,
-      transactionId,
-      paymentStatus: targetStatus,
-      message: `Ziina UAE Payment of AED ${amountAed.toLocaleString()} completed successfully. Transaction ID: ${transactionId}.`,
+      success: false,
+      error: "Ziina payment configuration is missing. Please contact Yas Productions support.",
     };
   } catch (error) {
     console.error("createZiinaPaymentIntent error:", error);

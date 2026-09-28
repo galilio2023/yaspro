@@ -15,6 +15,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
   const [projectList, setProjectList] = useState<Project[]>(initialProjects);
   const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
   const handleOpenNew = () => {
@@ -200,8 +201,12 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                 <AdminImageUploader
                   label="Project Cover Artwork & Stills"
                   value={editingProject.coverImageUrl || ""}
+                  onUploadingChange={setIsUploadingCover}
                   onChange={(url) =>
-                    setEditingProject({ ...editingProject, coverImageUrl: url })
+                    setEditingProject((prev) => {
+                      if (!prev) return null;
+                      return { ...prev, coverImageUrl: url };
+                    })
                   }
                   helperText="Upload official film key art or production stills (JPG, PNG, WEBP up to 10MB)"
                 />
@@ -229,10 +234,10 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isUploadingCover}
                   className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-semibold flex items-center gap-2 disabled:opacity-50"
                 >
-                  <Save size={14} /> Save to Neon DB
+                  <Save size={14} /> {isUploadingCover ? "Uploading Asset..." : "Save to Neon DB"}
                 </button>
               </div>
             </form>

@@ -17,13 +17,13 @@ function loadSource(file, mocks = {}, globals = {}) {
     exports,
     require: (name) => Object.hasOwn(mocks, name) ? mocks[name] : loadDependency(name),
     console: { error() {}, log() {}, warn() {} },
-    process: { env: { DATABASE_URL: 'postgresql://test:local@localhost/db' } },
+    process: { env: { DATABASE_URL: 'postgresql://test:local@localhost/db', NODE_ENV: 'test', ZIINA_SIMULATE: 'true' } },
     ...globals,
   });
   return exports;
 }
 
-test('createZiinaPaymentIntent generates authenticated UAE transaction and updates booking', async () => {
+test('createZiinaPaymentIntent generates authenticated UAE transaction when simulation is enabled', async () => {
   let updatedBooking = null;
 
   const mockDb = {
@@ -58,7 +58,36 @@ test('createZiinaPaymentIntent generates authenticated UAE transaction and updat
 
   assert.equal(res.success, true);
   assert.equal(res.paymentStatus, 'deposit_paid');
-  assert.ok(res.transactionId.startsWith('ZIINA_'));
+  assert.ok(res.transactionId.startsWith('ZIINA_SIM_'));
   assert.equal(updatedBooking.paymentStatus, 'deposit_paid');
   assert.equal(updatedBooking.paymentReference, res.transactionId);
+});
+
+test('createZiinaPaymentIntent returns error and does NOT update database in production without key', async () => {
+  let dbUpdateCalled = false;
+
+  const mockDb = {
+    update: () => {
+      dbUpdateCalled = true;
+      return { set: () => ({ where: () => Promise.resolve() }) };
+    },
+  };
+
+  const { createZiinaPaymentIntent } = loadSource(
+    'src/lib/ziina.ts',
+    {
+      '@/db': { db: mockDb },
+      '@/db/schema': { bookings: { id: Symbol('id'), referenceCode: Symbol('referenceCode') } },
+      'drizzle-orm': { eq: () => {} },
+      'next/cache': { revalidatePath: () => {}, updateTag: () => {} },
+    },
+    {
+      process: { env: { NODE_ENV: 'production', DATABASE_URL: 'postgresql://real@host/db' } },
+    }
+  );
+
+  const res = await createZiinaPaymentIntent('booking-123', 500, 'full', 'YAS-BK-123');
+  assert.equal(res.success, false);
+  assert.match(res.error, /configuration is missing/i);
+  assert.equal(dbUpdateCalled, false);
 });

@@ -149,13 +149,9 @@ export async function getCmsOverviewStats() {
  * @returns Array of projects ordered by creation date.
  */
 export async function getCmsProjects(): Promise<Project[]> {
-  try {
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-      const records = await db.select().from(projects).orderBy(desc(projects.createdAt));
-      if (records && records.length > 0) return records;
-    }
-  } catch (e) {
-    console.error("getCmsProjects DB error:", e);
+  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    const records = await db.select().from(projects).orderBy(desc(projects.createdAt));
+    if (records && records.length > 0) return records;
   }
 
   // Fallback to static catalog converted to Project type
@@ -262,13 +258,9 @@ export async function deleteCmsProject(id: string): Promise<CmsResponse> {
  * @returns Array of influencer profiles.
  */
 export async function getCmsInfluencers(): Promise<Influencer[]> {
-  try {
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-      const records = await db.select().from(influencers).orderBy(desc(influencers.createdAt));
-      if (records && records.length > 0) return records;
-    }
-  } catch (e) {
-    console.error("getCmsInfluencers DB error:", e);
+  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    const records = await db.select().from(influencers).orderBy(desc(influencers.createdAt));
+    if (records && records.length > 0) return records;
   }
 
   return INFLUENCERS_DATA.map((inf) => ({
@@ -351,13 +343,9 @@ export async function upsertCmsInfluencer(data: Partial<Influencer> & { name: st
  * @returns Array of gear equipment records.
  */
 export async function getCmsEquipment(): Promise<Equipment[]> {
-  try {
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-      const records = await db.select().from(equipment).orderBy(desc(equipment.createdAt));
-      if (records && records.length > 0) return records;
-    }
-  } catch (e) {
-    console.error("getCmsEquipment DB error:", e);
+  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    const records = await db.select().from(equipment).orderBy(desc(equipment.createdAt));
+    if (records && records.length > 0) return records;
   }
 
   return GEAR_DATA.map((g) => ({
@@ -763,13 +751,9 @@ export async function deleteCmsInquiry(id: string): Promise<CmsResponse> {
  * @returns Array of Studio records.
  */
 export async function getCmsStudios(): Promise<Studio[]> {
-  try {
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-      const records = await db.select().from(studios).orderBy(desc(studios.createdAt));
-      if (records && records.length > 0) return records;
-    }
-  } catch (e) {
-    console.error("getCmsStudios error:", e);
+  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    const records = await db.select().from(studios).orderBy(desc(studios.createdAt));
+    if (records && records.length > 0) return records;
   }
 
   // Fallback to STUDIOS catalog converted to Studio schema format

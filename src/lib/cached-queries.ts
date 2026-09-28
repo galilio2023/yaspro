@@ -43,11 +43,10 @@ export const getCachedProjects = unstable_cache(
 export async function getCachedProjectBySlug(slug: string): Promise<ProjectItem | null> {
   const fetcher = unstable_cache(
     async (targetSlug: string): Promise<ProjectItem | null> => {
-      try {
-        if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-          const record = await db.query.projects.findFirst({
-            where: eq(projects.slug, targetSlug),
-          });
+      if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+        const record = await db.query.projects.findFirst({
+          where: eq(projects.slug, targetSlug),
+        });
           if (record) {
             return {
               id: record.id,
@@ -75,9 +74,6 @@ export async function getCachedProjectBySlug(slug: string): Promise<ProjectItem 
             };
           }
         }
-      } catch (err) {
-        console.error("getCachedProjectBySlug DB error:", err);
-      }
 
       const staticItem = PROJECTS_DATA.find((p) => p.slug === targetSlug);
       return staticItem || null;
@@ -112,12 +108,26 @@ export const getCachedInfluencers = unstable_cache(
 export async function getCachedInfluencerBySlug(slug: string): Promise<InfluencerItem | null> {
   const fetcher = unstable_cache(
     async (targetSlug: string): Promise<InfluencerItem | null> => {
-      try {
-        if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-          const record = await db.query.influencers.findFirst({
-            where: eq(influencers.slug, targetSlug),
-          });
+      if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+        const record = await db.query.influencers.findFirst({
+          where: eq(influencers.slug, targetSlug),
+        });
           if (record) {
+            const rawDemo = record.demographics as Record<string, unknown> | null;
+            let validatedDemo: CreatorDemographics | undefined = undefined;
+
+            if (
+              rawDemo &&
+              Array.isArray(rawDemo.topCountries) &&
+              typeof rawDemo.primaryAgeGroup === "string" &&
+              typeof rawDemo.genderSplit === "object" &&
+              rawDemo.genderSplit !== null &&
+              "male" in rawDemo.genderSplit &&
+              "female" in rawDemo.genderSplit
+            ) {
+              validatedDemo = rawDemo as unknown as CreatorDemographics;
+            }
+
             return {
               id: record.id,
               slug: record.slug,
@@ -134,13 +144,10 @@ export async function getCachedInfluencerBySlug(slug: string): Promise<Influence
               avatar: record.imageUrl || "/images/influencers/aboflah.jpg",
               collaborations: record.collaborations || [],
               signatureProductions: record.signatureProductions || [],
-              demographics: record.demographics as unknown as CreatorDemographics,
+              demographics: validatedDemo,
             };
           }
         }
-      } catch (err) {
-        console.error("getCachedInfluencerBySlug DB error:", err);
-      }
 
       const staticItem = INFLUENCERS_DATA.find((i) => i.slug === targetSlug);
       return staticItem || null;

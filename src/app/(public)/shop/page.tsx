@@ -42,6 +42,7 @@ export default async function ShopPage() {
     isKit: g.isKit,
     includedInKit: g.includedInKit || [],
     image: g.imageUrl || "/images/gear/arri-alexa-mini-lf.jpg",
+    isAvailable: g.isAvailable,
   }));
 
   const initialGear = gearToDisplay.length > 0 ? gearToDisplay : GEAR_DATA;
@@ -64,7 +65,7 @@ export default async function ShopPage() {
         },
         priceCurrency: "AED",
         price: gear.dailyRate.toString(),
-        availability: "https://schema.org/InStock",
+        availability: gear.isAvailable !== false ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       })),
     },
   };

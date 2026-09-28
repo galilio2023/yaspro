@@ -7,6 +7,7 @@ import { Upload, X, Loader2, CheckCircle2, Image as ImageIcon } from "lucide-rea
 interface AdminImageUploaderProps {
   value?: string | null;
   onChange: (url: string) => void;
+  onUploadingChange?: (isUploading: boolean) => void;
   label?: string;
   helperText?: string;
 }
@@ -14,6 +15,7 @@ interface AdminImageUploaderProps {
 export function AdminImageUploader({
   value,
   onChange,
+  onUploadingChange,
   label = "Cover Image / Media Asset",
   helperText = "Drag & drop or click to upload PNG, JPG, or WEBP (up to 10MB)",
 }: AdminImageUploaderProps) {
@@ -22,9 +24,14 @@ export function AdminImageUploader({
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const setUploadingState = (uploading: boolean) => {
+    setIsUploading(uploading);
+    onUploadingChange?.(uploading);
+  };
+
   const handleUploadFile = async (file: File) => {
     setError(null);
-    setIsUploading(true);
+    setUploadingState(true);
 
     try {
       const formData = new FormData();
@@ -45,7 +52,7 @@ export function AdminImageUploader({
     } catch (err) {
       setError((err as Error).message);
     } finally {
-      setIsUploading(false);
+      setUploadingState(false);
     }
   };
 
@@ -119,12 +126,21 @@ export function AdminImageUploader({
         </div>
       ) : (
         <div
+          role="button"
+          tabIndex={0}
+          aria-label="Upload media file"
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              fileInputRef.current?.click();
+            }
+          }}
+          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/50 ${
             dragActive
               ? "border-purple-500 bg-purple-500/10"
               : "border-white/15 hover:border-white/30 bg-white/[0.02]"

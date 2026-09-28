@@ -86,12 +86,15 @@ test('POST /api/webhooks/production handles payment.completed and reconciles boo
   });
 
   const request = {
-    json: async () => ({
+    text: async () => JSON.stringify({
       event: 'payment.completed',
       referenceCode: 'YAS-BK-999',
       paymentReference: 'PAY-STRIPE-777',
       customerEmail: 'producer@dubaimedia.ae',
     }),
+    headers: {
+      get: () => null,
+    },
   };
 
   const response = await POST(request);
@@ -126,7 +129,10 @@ test('POST /api/webhooks/production rejects missing event identifier', async () 
   });
 
   const request = {
-    json: async () => ({}),
+    text: async () => JSON.stringify({}),
+    headers: {
+      get: () => null,
+    },
   };
 
   const response = await POST(request);

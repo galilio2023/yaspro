@@ -15,6 +15,7 @@ export interface GearItem {
   isKit?: boolean;
   includedInKit?: string[];
   securityDeposit?: number; // Refundable deposit in AED
+  isAvailable?: boolean;
 }
 
 export interface RentalDateRange {
