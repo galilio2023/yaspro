@@ -1,5 +1,8 @@
 import React from "react";
 import Link from "next/link";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 import {
   LayoutDashboard,
   Film,
@@ -8,9 +11,14 @@ import {
   CalendarCheck,
   FileSpreadsheet,
   ArrowUpRight,
-  ShieldCheck,
   Database,
+  UserCheck,
+  MessageSquare,
+  Layers,
+  Radio,
 } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Admin CMS | Yas Productions",
@@ -19,14 +27,41 @@ export const metadata = {
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/projects", label: "Projects CMS", icon: Film },
-  { href: "/admin/influencers", label: "Creators CMS", icon: Users },
-  { href: "/admin/gear", label: "Gear & Equipment", icon: Camera },
+  { href: "/admin/users", label: "Users & Accounts", icon: UserCheck },
+  { href: "/admin/inquiries", label: "Inquiries & Leads", icon: MessageSquare },
+  { href: "/admin/studios", label: "Soundstages & Rates", icon: Layers },
   { href: "/admin/bookings", label: "Studio Bookings", icon: CalendarCheck },
   { href: "/admin/rfps", label: "Enterprise RFPs", icon: FileSpreadsheet },
+  { href: "/admin/broadcast", label: "Broadcast & OB Van", icon: Radio },
+  { href: "/admin/gear", label: "Gear & Equipment", icon: Camera },
+  { href: "/admin/projects", label: "Projects CMS", icon: Film },
+  { href: "/admin/influencers", label: "Creators CMS", icon: Users },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  let shouldRedirect = false;
+  let adminName = "System Administrator";
+
+  const previewMode = !process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx");
+  if (!previewMode || process.env.NODE_ENV === "production") {
+    try {
+      const session = await auth.api.getSession({
+        headers: await headers(),
+      });
+      if (!session || (session.user as { role?: string }).role !== "admin") {
+        shouldRedirect = true;
+      } else {
+        adminName = session.user.name || "Administrator";
+      }
+    } catch (err) {
+      console.error("Admin layout auth check error:", err);
+      shouldRedirect = true;
+    }
+  }
+
+  if (shouldRedirect) {
+    redirect("/login?error=admin_required");
+  }
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row antialiased selection:bg-purple-600 selection:text-white">
       {/* Sidebar */}
@@ -80,14 +115,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           <div className="flex items-center justify-between mt-4 text-xs text-slate-500">
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck size={14} className="text-emerald-400" />
-              Admin Access Active
+            <span className="flex items-center gap-1.5 text-slate-300 font-medium truncate max-w-[130px]" title={adminName}>
+              <UserCheck size={14} className="text-emerald-400 shrink-0" />
+              {adminName}
             </span>
             <Link
               href="/"
               target="_blank"
-              className="flex items-center gap-1 text-purple-400 hover:text-purple-300"
+              className="flex items-center gap-1 text-purple-400 hover:text-purple-300 shrink-0"
             >
               Public Site <ArrowUpRight size={12} />
             </Link>

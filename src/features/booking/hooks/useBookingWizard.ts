@@ -10,6 +10,7 @@ export function useBookingWizard() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [referenceCode, setReferenceCode] = useState("");
+  const [bookingId, setBookingId] = useState<string | undefined>(undefined);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const update = (values: Partial<BookingState>) => {
@@ -97,6 +98,9 @@ export function useBookingWizard() {
       }
 
       setReferenceCode(res.referenceCode || generateBookingReference());
+      if (res.data?.bookingId) {
+        setBookingId(res.data.bookingId);
+      }
       setConfirmed(true);
     } catch (e) {
       console.error(e);
@@ -128,6 +132,7 @@ export function useBookingWizard() {
     isSubmitting,
     confirmed,
     referenceCode,
+    bookingId,
     errorMessage,
     handleSubmit,
   };

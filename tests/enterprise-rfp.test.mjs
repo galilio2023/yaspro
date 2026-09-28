@@ -56,6 +56,17 @@ function actionHarness(results, env = { DATABASE_URL: 'postgresql://test:local@l
     '@/db': { db }, '@/db/schema': { enterpriseRfps: table }, '@/lib/utils': {},
     'next/cache': { revalidatePath: (value) => revalidated.push(value) },
     './validations': { enterpriseRfpSchema }, '@/features/booking/constants': {},
+    '@/lib/auth': { auth: { api: { getSession: async () => null } } },
+    'next/headers': { headers: async () => new Headers() },
+    '@/lib/rate-limit': {
+      checkRateLimit: () => ({ allowed: true, remaining: 10, resetInMs: 60000 }),
+      checkIdempotency: () => true,
+      getClientIdentifier: async () => '127.0.0.1',
+    },
+    '@/lib/notifications': {
+      sendBookingConfirmationNotification: async () => {},
+      sendInquiryNotification: async () => {},
+    },
   }, { process: { env }, Math: { floor: Math.floor, random: () => (random++ % 10) / 10 } });
   return { submit: submitEnterpriseRfp, inserts, revalidated };
 }
@@ -120,7 +131,10 @@ test('success waits for the insert to finish', async () => {
   const h = actionHarness([(value) => new Promise((resolve) => { finish = () => resolve([value]); })]);
   let returned = false;
   const pending = h.submit(validInput).then((value) => { returned = true; return value; });
-  await Promise.resolve();
+  // Allow the async submit steps (rate limit, validation, db setup) to reach returning()
+  while (!finish) {
+    await new Promise((r) => setTimeout(r, 5));
+  }
   assert.equal(returned, false);
   assert.equal(h.revalidated.length, 0);
   finish();
