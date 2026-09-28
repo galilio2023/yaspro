@@ -75,11 +75,13 @@ export function ProjectsExplorer({
         />
       )}
 
-      {/* Vimeo Cinema Modal (Rendered via Portal into document.body) */}
+      {/* Cinema Modal (Rendered via Portal into document.body) */}
       <CinemaVideoModal
-        isOpen={Boolean(selectedProject?.vimeoId)}
+        isOpen={Boolean(selectedProject?.vimeoId || selectedProject?.videoUrl)}
         onClose={() => setSelectedProject(null)}
         vimeoId={selectedProject?.vimeoId}
+        videoUrl={selectedProject?.videoUrl}
+        posterImage={selectedProject?.image}
         title={selectedProject?.title || ""}
         client={selectedProject?.client}
       />

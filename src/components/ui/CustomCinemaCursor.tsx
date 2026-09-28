@@ -15,8 +15,9 @@ export function CustomCinemaCursor() {
   const cursorY = useSpring(-100, springConfig);
 
   useEffect(() => {
-    // Only enable on non-touch pointer devices
-    if (!window.matchMedia("(pointer: fine)").matches) {
+    // Only enable on non-touch pointer devices and if reduced motion is not preferred
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!window.matchMedia("(pointer: fine)").matches || prefersReducedMotion) {
       return;
     }
 

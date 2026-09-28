@@ -76,11 +76,13 @@ export function ProjectHeroStage({ project }: ProjectHeroStageProps) {
         </div>
       </div>
 
-      {/* Vimeo Cinema Modal (Rendered via Portal into document.body) */}
+      {/* Cinema Modal (Rendered via Portal into document.body) */}
       <CinemaVideoModal
-        isOpen={isPlaying && Boolean(project.vimeoId)}
+        isOpen={isPlaying && Boolean(project.vimeoId || project.videoUrl)}
         onClose={() => setIsPlaying(false)}
         vimeoId={project.vimeoId}
+        videoUrl={project.videoUrl}
+        posterImage={project.image}
         title={project.title}
         client={project.client}
       />

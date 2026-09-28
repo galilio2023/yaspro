@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Sparkles, CheckCircle2, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -25,33 +25,147 @@ export function AiBriefPitchModal({
   const [isGenerating, setIsGenerating] = useState(false);
   const [recommendation, setRecommendation] = useState<BriefRecommendation | null>(null);
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const triggerElementRef = useRef<HTMLElement | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Focus trap, Escape key handling, and restore focus to trigger
+  useEffect(() => {
+    if (!isOpen) return;
+
+    triggerElementRef.current = document.activeElement as HTMLElement | null;
+
+    // Focus first focusable element or dialog
+    const focusTimer = setTimeout(() => {
+      if (dialogRef.current) {
+        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length > 0) {
+          focusable[0].focus();
+        } else {
+          dialogRef.current.focus();
+        }
+      }
+    }, 50);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+
+      if (e.key === "Tab" && dialogRef.current) {
+        const focusable = Array.from(
+          dialogRef.current.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        );
+
+        if (focusable.length === 0) return;
+
+        const firstElement = focusable[0];
+        const lastElement = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      clearTimeout(focusTimer);
+      window.removeEventListener("keydown", handleKeyDown);
+      if (triggerElementRef.current) {
+        triggerElementRef.current.focus();
+      }
+    };
+  }, [isOpen, onClose]);
+
+  // Clean up any pending timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
+
   if (!isOpen) return null;
+
+  const handlePromptChange = (val: string) => {
+    setBriefPrompt(val);
+    // Invalidate pending generation and clear existing recommendations
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    setIsGenerating(false);
+    setRecommendation(null);
+  };
 
   const handleGeneratePitch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!briefPrompt.trim()) return;
 
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
     setIsGenerating(true);
+    setRecommendation(null);
+
     // Real-time client heuristic brief parsing (AI Assistant simulation)
-    setTimeout(() => {
+    timerRef.current = setTimeout(() => {
       const lower = briefPrompt.toLowerCase();
       let res: BriefRecommendation;
 
-      if (lower.includes("podcast") || lower.includes("interview") || lower.includes("talk")) {
+      const isXr =
+        lower.includes("xr") ||
+        lower.includes("unreal") ||
+        lower.includes("virtual") ||
+        lower.includes("cgi") ||
+        lower.includes("scifi") ||
+        lower.includes("led volume");
+
+      const isPodcast =
+        lower.includes("podcast") ||
+        lower.includes("interview") ||
+        lower.includes("talk") ||
+        lower.includes("dialogue");
+
+      // Resolve XR requirements first so complex/mixed briefs retain the necessary LED stage
+      if (isXr && isPodcast) {
         res = {
-          recommendedStudio: "Studio B — Podcast Suite",
-          recommendedGear: "4-Person Shure SM7B Acoustic Mic Suite",
-          estimatedHours: 3,
-          crewRoleRecommendation: "Audio Engineer & Live Cam Switcher Operator",
-          rationale: "Optimized for broadcast vocal acoustics, 4K multi-cam cuts, and rapid turnaround dailies.",
+          recommendedStudio: "Studio XR — Virtual Production Stage",
+          recommendedGear: "ARRI Alexa Mini LF + 4-Person Podcast Mic Suite",
+          estimatedHours: 6,
+          crewRoleRecommendation: "VP Unreal Operator + Lead Audio Engineer",
+          rationale: "Hybrid virtual production with multi-guest broadcast podcast acoustics and dynamic virtual sets.",
         };
-      } else if (lower.includes("xr") || lower.includes("unreal") || lower.includes("virtual") || lower.includes("cgi") || lower.includes("scifi")) {
+      } else if (isXr) {
         res = {
           recommendedStudio: "Studio XR — Virtual Production Stage",
           recommendedGear: "ARRI Alexa Mini LF Cinema Package",
           estimatedHours: 8,
           crewRoleRecommendation: "VP Unreal Operator + Optical Genlock Camera Tech",
           rationale: "Requires 270° Micro-LED volume, Unreal 5.4 LiveSync tracking, and large format cinema primes.",
+        };
+      } else if (isPodcast) {
+        res = {
+          recommendedStudio: "Studio B — Podcast Suite",
+          recommendedGear: "4-Person Shure SM7B Acoustic Mic Suite",
+          estimatedHours: 3,
+          crewRoleRecommendation: "Audio Engineer & Live Cam Switcher Operator",
+          rationale: "Optimized for broadcast vocal acoustics, 4K multi-cam cuts, and rapid turnaround dailies.",
         };
       } else {
         res = {
@@ -86,8 +200,19 @@ export function AiBriefPitchModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-xl p-6 sm:p-8 rounded-3xl bg-slate-900 border border-white/10 shadow-2xl text-white">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+      onClick={onClose}
+    >
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ai-pitch-assistant-title"
+        tabIndex={-1}
+        className="relative w-full max-w-xl p-6 sm:p-8 rounded-3xl bg-slate-900 border border-white/10 shadow-2xl text-white outline-none"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
           <div className="flex items-center gap-2.5">
             <div className="size-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/25">
@@ -95,7 +220,9 @@ export function AiBriefPitchModal({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold font-display">AI Production Pitch Assistant</h3>
+                <h3 id="ai-pitch-assistant-title" className="text-base font-bold font-display">
+                  AI Production Pitch Assistant
+                </h3>
                 <Badge variant="cyan" className="text-[9px] uppercase tracking-wider">
                   BETA
                 </Badge>
@@ -109,6 +236,7 @@ export function AiBriefPitchModal({
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close AI Pitch Assistant"
             className="text-slate-400 hover:text-white text-xs font-mono px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
           >
             ✕
@@ -118,13 +246,14 @@ export function AiBriefPitchModal({
         {/* Input prompt */}
         <form onSubmit={handleGeneratePitch} className="space-y-4 mb-5">
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-300">
+            <label htmlFor="ai-brief-textarea" className="text-xs font-medium text-slate-300">
               Project Vision or Campaign Summary
             </label>
             <textarea
+              id="ai-brief-textarea"
               rows={3}
               value={briefPrompt}
-              onChange={(e) => setBriefPrompt(e.target.value)}
+              onChange={(e) => handlePromptChange(e.target.value)}
               placeholder="e.g. Shooting a 4-episode tech founder podcast with 3 hosts in Dubai, or a luxury automotive commercial with an Unreal virtual desert backdrop..."
               className="w-full p-3.5 rounded-xl bg-black/60 border border-white/10 text-white placeholder:text-slate-500 text-xs leading-relaxed focus:outline-none focus:border-brand-purple"
             />

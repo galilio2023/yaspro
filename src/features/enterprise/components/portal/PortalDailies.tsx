@@ -95,10 +95,13 @@ export function PortalDailies({
   const currentAnnotations = annotations[activeClip.id] || [];
 
   const handleToggleApproval = () => {
-    setClipStatus((prev) => ({
-      ...prev,
-      [activeClip.id]: prev[activeClip.id] === "APPROVED" ? "PENDING_REVIEW" : "APPROVED",
-    }));
+    setClipStatus((prev) => {
+      const current = prev[activeClip.id] || activeClip.status;
+      return {
+        ...prev,
+        [activeClip.id]: current === "APPROVED" ? "PENDING_REVIEW" : "APPROVED",
+      };
+    });
   };
 
   const handleAddAnnotation = (e: React.FormEvent) => {
@@ -127,10 +130,12 @@ export function PortalDailies({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
         {/* Main Cinema Player */}
         <div className="lg:col-span-8 space-y-4">
-          <div
-            className="relative aspect-video rounded-3xl overflow-hidden border border-white/20 bg-black shadow-2xl group cursor-pointer"
+          <button
+            type="button"
+            className="relative aspect-video w-full rounded-3xl overflow-hidden border border-white/20 bg-black shadow-2xl group cursor-pointer block text-left p-0"
             onClick={() => setIsPlaying((prev) => !prev)}
             data-cursor={isPlaying ? "PAUSE" : "PLAY"}
+            aria-label={isPlaying ? "Pause video take" : "Play video take"}
           >
             <Image
               src={activeClip.thumbnail}
@@ -182,7 +187,7 @@ export function PortalDailies({
                 <span>{activeClip.duration}</span>
               </div>
             </div>
-          </div>
+          </button>
 
           {/* Clip Metadata Bar & One-Click Review Actions */}
           <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -242,15 +247,18 @@ export function PortalDailies({
               const isSelected = activeClip.id === clip.id;
               const status = clipStatus[clip.id] || clip.status;
               return (
-                <div
+                <button
                   key={clip.id}
+                  type="button"
                   onClick={() => onSelectClip(clip)}
-                  className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-center gap-3 ${
+                  className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-center gap-3 text-left w-full ${
                     isSelected
                       ? "border-brand-purple bg-card ring-2 ring-brand-purple/30 shadow-lg shadow-brand-purple/10"
                       : "border-white/10 bg-slate-900/60 hover:bg-slate-900"
                   }`}
                   data-cursor="SWITCH TAKE"
+                  aria-pressed={isSelected}
+                  aria-label={`Select take ${clip.title}`}
                 >
                   <div className="relative size-16 rounded-xl overflow-hidden shrink-0 border border-white/10">
                     <Image
@@ -281,7 +289,7 @@ export function PortalDailies({
                       </span>
                     </div>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>

@@ -21,8 +21,10 @@ export function ProjectCard({
     project.views?.includes("50M") ||
     project.views?.includes("60M");
 
+  const hasVideo = Boolean(project.vimeoId || project.videoUrl);
+
   const handleReelClick = (e: React.MouseEvent) => {
-    if (onWatchReel && project.vimeoId) {
+    if (onWatchReel && hasVideo) {
       e.preventDefault();
       e.stopPropagation();
       onWatchReel(project);
@@ -44,7 +46,7 @@ export function ProjectCard({
           <div
             onClick={handleReelClick}
             className={`block relative w-full aspect-[16/9] overflow-hidden bg-secondary group/thumb ${
-              onWatchReel && project.vimeoId ? "cursor-pointer" : ""
+              onWatchReel && hasVideo ? "cursor-pointer" : ""
             }`}
           >
             {project.image ? (
@@ -152,7 +154,7 @@ export function ProjectCard({
           <span className="text-xs text-text-ghost font-medium">
             {project.year ? `Yas Production · ${project.year}` : "Yas Original"}
           </span>
-          {project.vimeoId ? (
+          {hasVideo ? (
             <button
               type="button"
               onClick={handleReelClick}

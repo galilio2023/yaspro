@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Float, Grid } from "@react-three/drei";
 import { Layers, Check } from "lucide-react";
@@ -50,7 +50,13 @@ const PRESETS: StagePreset[] = [
   },
 ];
 
-function VirtualStage3DModel({ preset }: { preset: StagePreset }) {
+function VirtualStage3DModel({
+  preset,
+  reducedMotion = false,
+}: {
+  preset: StagePreset;
+  reducedMotion?: boolean;
+}) {
   return (
     <group>
       {/* Soundstage Floor Grid */}
@@ -86,16 +92,22 @@ function VirtualStage3DModel({ preset }: { preset: StagePreset }) {
         const angle = (i / preset.lightingRigs) * Math.PI - Math.PI / 2;
         const x = Math.cos(angle) * 2;
         const z = Math.sin(angle) * 2;
-        return (
+        const fixtureMesh = (
+          <mesh position={[x, 2, z]}>
+            <boxGeometry args={[0.4, 0.15, 0.25]} />
+            <meshStandardMaterial
+              color="#ffffff"
+              emissive="#ffffff"
+              emissiveIntensity={1.2}
+            />
+          </mesh>
+        );
+
+        return reducedMotion ? (
+          <group key={i}>{fixtureMesh}</group>
+        ) : (
           <Float key={i} speed={2} rotationIntensity={0.1} floatIntensity={0.2}>
-            <mesh position={[x, 2, z]}>
-              <boxGeometry args={[0.4, 0.15, 0.25]} />
-              <meshStandardMaterial
-                color="#ffffff"
-                emissive="#ffffff"
-                emissiveIntensity={1.2}
-              />
-            </mesh>
+            {fixtureMesh}
           </Float>
         );
       })}
@@ -121,6 +133,16 @@ function VirtualStage3DModel({ preset }: { preset: StagePreset }) {
 
 export function VirtualStageConfigurator() {
   const [activePreset, setActivePreset] = useState<StagePreset>(PRESETS[0]);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, []);
 
   return (
     <div className="rounded-3xl border border-white/10 bg-slate-900/60 backdrop-blur-xl overflow-hidden shadow-2xl mb-8">
@@ -153,6 +175,7 @@ export function VirtualStageConfigurator() {
               <button
                 key={p.id}
                 type="button"
+                aria-pressed={isSelected}
                 onClick={() => setActivePreset(p)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   isSelected
@@ -161,7 +184,7 @@ export function VirtualStageConfigurator() {
                 }`}
               >
                 {isSelected && <Check size={12} />}
-                <span>{p.name.split(" ")[0]}</span>
+                <span>{p.name}</span>
               </button>
             );
           })}
@@ -179,10 +202,10 @@ export function VirtualStageConfigurator() {
             maxPolarAngle={Math.PI / 2.05}
             minDistance={3}
             maxDistance={8}
-            autoRotate
+            autoRotate={!prefersReducedMotion}
             autoRotateSpeed={0.8}
           />
-          <VirtualStage3DModel preset={activePreset} />
+          <VirtualStage3DModel preset={activePreset} reducedMotion={prefersReducedMotion} />
         </Canvas>
 
         {/* Floating HUD Telemetry */}
@@ -210,7 +233,7 @@ export function VirtualStageConfigurator() {
 
       {/* Detail description */}
       <div className="p-4 bg-white/[0.02] border-t border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-        <p className="text-text-secondary leading-relaxed">
+        <p className="text-text-secondary leading-relaxed" aria-live="polite">
           {activePreset.description}
         </p>
         <span className="text-brand-cyan font-mono text-[11px] shrink-0 font-bold">

@@ -17,7 +17,7 @@ export function proxy(request: NextRequest) {
   const isAuthRoute =
     pathname.startsWith("/login") || pathname.startsWith("/register");
   const isProtectedRoute =
-    pathname.startsWith("/portal");
+    pathname.startsWith("/portal") || pathname.startsWith("/enterprise/portal");
   const isAdminRoute =
     pathname.startsWith("/admin");
 
