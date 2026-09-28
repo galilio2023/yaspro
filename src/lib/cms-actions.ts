@@ -20,7 +20,7 @@ import {
   type Inquiry,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { PROJECTS_DATA } from "@/features/projects/data";
 import { INFLUENCERS_DATA } from "@/features/influencers/data";
 import { GEAR_DATA } from "@/features/gear/data";
@@ -225,6 +225,8 @@ export async function upsertCmsProject(data: Partial<Project> & { title: string;
 
     revalidatePath("/projects");
     revalidatePath("/admin/projects");
+    updateTag("projects");
+    updateTag(`project:${data.slug}`);
     return { success: true, message: "Project updated successfully in Neon DB." };
   } catch (error) {
     console.error("upsertCmsProject error:", error);
@@ -245,6 +247,7 @@ export async function deleteCmsProject(id: string): Promise<CmsResponse> {
     }
     revalidatePath("/projects");
     revalidatePath("/admin/projects");
+    updateTag("projects");
     return { success: true, message: "Project deleted." };
   } catch (error) {
     return { success: false, error: (error as Error).message };
@@ -332,6 +335,8 @@ export async function upsertCmsInfluencer(data: Partial<Influencer> & { name: st
 
     revalidatePath("/influencers");
     revalidatePath("/admin/influencers");
+    updateTag("influencers");
+    updateTag(`influencer:${data.slug}`);
     return { success: true, message: "Creator updated successfully in Neon DB." };
   } catch (error) {
     return { success: false, error: (error as Error).message };
@@ -413,6 +418,7 @@ export async function upsertCmsEquipment(data: Partial<Equipment> & { name: stri
 
     revalidatePath("/shop");
     revalidatePath("/admin/gear");
+    updateTag("gear");
     return { success: true, message: "Equipment saved to Neon DB catalog." };
   } catch (error) {
     return { success: false, error: (error as Error).message };
@@ -818,6 +824,7 @@ export async function upsertCmsStudio(
 
     revalidatePath("/admin/studios");
     revalidatePath("/studio-booking");
+    updateTag("studios");
     return { success: true, message: "Studio details updated in Neon DB." };
   } catch (error) {
     return { success: false, error: (error as Error).message };

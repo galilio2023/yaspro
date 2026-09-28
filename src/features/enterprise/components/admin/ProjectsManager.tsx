@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Film, Plus, Trash2, Edit3, CheckCircle, ExternalLink, Save, X } from "lucide-react";
 import { upsertCmsProject, deleteCmsProject } from "@/lib/cms-actions";
+import { AdminImageUploader } from "@/components/admin/AdminImageUploader";
 import type { Project } from "@/db/schema";
 
 interface ProjectsManagerProps {
@@ -196,14 +197,13 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
               </div>
 
               <div>
-                <label className="block text-slate-300 font-medium mb-1">Cover Image URL</label>
-                <input
-                  type="text"
+                <AdminImageUploader
+                  label="Project Cover Artwork & Stills"
                   value={editingProject.coverImageUrl || ""}
-                  onChange={(e) =>
-                    setEditingProject({ ...editingProject, coverImageUrl: e.target.value })
+                  onChange={(url) =>
+                    setEditingProject({ ...editingProject, coverImageUrl: url })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500"
+                  helperText="Upload official film key art or production stills (JPG, PNG, WEBP up to 10MB)"
                 />
               </div>
 
