@@ -41,6 +41,7 @@ export default async function ProjectsPage() {
     year: p.year || "2024",
     image: p.coverImageUrl || "/images/projects/flag-day.jpg",
     vimeoId: p.videoUrl ? p.videoUrl.split("/").pop() : undefined,
+    videoUrl: p.videoUrl || undefined,
     deliverables: p.deliverables || [],
     techStack: p.techStack || [],
   }));

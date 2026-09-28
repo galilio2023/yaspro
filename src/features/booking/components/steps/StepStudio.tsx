@@ -4,9 +4,23 @@ import type { WizardStepProps } from "../../types";
 import { STUDIOS } from "../../constants";
 import { Check } from "lucide-react";
 
+import { VirtualStageConfigurator } from "../VirtualStageConfigurator";
+
 export function StepStudio({ state, update }: WizardStepProps) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <VirtualStageConfigurator />
+
+      <div className="flex items-center justify-between">
+        <label className="block text-xs uppercase tracking-wider font-semibold text-text-secondary">
+          Select Dedicated Soundstage or Suite
+        </label>
+        <span className="text-[11px] text-brand-purple-light font-mono">
+          Includes Green Room &amp; High-Speed Fiber
+        </span>
+      </div>
+
+      <div className="space-y-3">
       {STUDIOS.map((s) => {
         const isSelected = state.studioId === s.id;
 
@@ -58,6 +72,7 @@ export function StepStudio({ state, update }: WizardStepProps) {
           </button>
         );
       })}
+      </div>
     </div>
   );
 }

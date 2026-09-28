@@ -187,7 +187,7 @@ export function MobileNavDrawer({
               })}
             </div>
 
-            <div className="pt-6 border-t border-brand-purple/15 flex flex-col gap-4">
+            <div className="pt-6 border-t border-brand-purple/15 flex flex-col gap-3">
               <Link
                 href="/studio-booking"
                 onClick={onClose}
@@ -204,12 +204,8 @@ export function MobileNavDrawer({
                 {/* Surface Reflection Gloss */}
                 <span className="absolute inset-[1px] rounded-2xl bg-gradient-to-b from-white/10 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-                {/* Left Content: Active Studio Live Beacon + Label */}
-                <div className="relative z-10 flex items-center gap-2.5">
-                  <span className="relative flex size-2 shrink-0">
-                    <span className="absolute inline-flex size-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-                    <span className="relative inline-flex size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-                  </span>
+                {/* Left Content: Label */}
+                <div className="relative z-10 flex items-center gap-2">
                   <span className="flex items-center gap-1.5 font-display text-[12px] uppercase tracking-wider text-white group-hover:text-brand-purple-lighter transition-colors">
                     <Sparkles size={14} className="text-brand-purple-light group-hover:text-brand-cyan transition-colors" />
                     <span>Book Studio</span>
@@ -229,6 +225,39 @@ export function MobileNavDrawer({
                   <path d="M6 12l4-4-4-4" />
                 </svg>
               </Link>
+
+              {/* Mobile Quick Access: Client Vault & Sign In */}
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <Link
+                  href="/enterprise/portal"
+                  onClick={onClose}
+                  className="py-2.5 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-semibold text-center text-slate-200 transition-colors"
+                >
+                  Client Vault
+                </Link>
+                <Link
+                  href="/login"
+                  onClick={onClose}
+                  className="py-2.5 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-semibold text-center text-slate-200 transition-colors"
+                >
+                  Sign In
+                </Link>
+              </div>
+
+              {/* Utility Pages */}
+              <div className="flex items-center justify-around py-2 border-t border-white/5 text-xs text-slate-400">
+                <Link href="/" onClick={onClose} className="hover:text-white transition-colors">
+                  Home
+                </Link>
+                <span>•</span>
+                <Link href="/about" onClick={onClose} className="hover:text-white transition-colors">
+                  About
+                </Link>
+                <span>•</span>
+                <Link href="/contact" onClick={onClose} className="hover:text-white transition-colors">
+                  Contact
+                </Link>
+              </div>
 
               <div className="flex items-center justify-between text-[11px] text-text-ghost px-1">
                 <span className="flex items-center gap-1">

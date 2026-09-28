@@ -8,7 +8,8 @@ export interface ShowItem {
   description: string;
   badge?: string;
   tags: string[];
-  vimeoId: string;
+  vimeoId?: string;
+  videoUrl?: string;
   thumbnail: string;
   posterBg: string;
 }

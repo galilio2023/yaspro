@@ -16,7 +16,7 @@ export function NavLinks({ links, className }: NavLinksProps) {
   return (
     <nav
       className={cn(
-        "hidden lg:flex items-center gap-0.5 p-1 rounded-2xl border border-brand-purple/15 bg-background/60 backdrop-blur-xl shadow-inner shadow-brand-purple/5",
+        "hidden lg:flex items-center gap-1",
         className
       )}
     >
@@ -30,10 +30,10 @@ export function NavLinks({ links, className }: NavLinksProps) {
             key={link.href}
             href={link.href}
             className={cn(
-              "relative px-4 py-2 text-[11px] uppercase tracking-widest font-bold rounded-xl transition-all duration-200",
+              "relative px-3.5 py-1.5 text-[12px] font-medium tracking-tight rounded-full transition-all duration-200",
               isActive
-                ? "text-white bg-gradient-brand shadow-md shadow-brand-purple/40"
-                : "text-text-secondary hover:text-white hover:bg-white/5"
+                ? "text-white bg-white/10 font-semibold"
+                : "text-slate-300/80 hover:text-white hover:bg-white/[0.06]"
             )}
           >
             {link.label}

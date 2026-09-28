@@ -23,7 +23,7 @@ export function FooterCtaBanner() {
         {/* Left Column: Copy & Live Status */}
         <div className="max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] border border-white/10 text-xs text-brand-purple-light font-medium mb-4 backdrop-blur-md">
-            <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="size-2 rounded-full bg-emerald-400" />
             <span>Now Booking Q3 &amp; Q4 2026 Productions</span>
           </div>
 

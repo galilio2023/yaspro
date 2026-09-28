@@ -191,9 +191,11 @@ export function ShowsSection() {
 
       {/* Vimeo Video Modal (Rendered via Portal into document.body) */}
       <CinemaVideoModal
-        isOpen={Boolean(selectedShow?.vimeoId)}
+        isOpen={Boolean(selectedShow?.vimeoId || selectedShow?.videoUrl)}
         onClose={() => setSelectedShow(null)}
         vimeoId={selectedShow?.vimeoId}
+        videoUrl={selectedShow?.videoUrl}
+        posterImage={selectedShow?.thumbnail}
         title={selectedShow?.title || ""}
         subtitle={selectedShow?.arabicTitle}
       />

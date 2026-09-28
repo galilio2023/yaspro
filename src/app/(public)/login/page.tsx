@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
 import { Lock, Mail, ArrowRight, AlertCircle, ShieldCheck } from "lucide-react";
+import { IyasProIcon } from "@/components/ui/IyasProIcon";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -44,8 +45,8 @@ export default function LoginPage() {
 
       <div className="relative z-10 w-full max-w-md p-8 sm:p-10 rounded-3xl bg-slate-900/80 border border-white/10 backdrop-blur-2xl shadow-2xl">
         <div className="text-center mb-8">
-          <div className="size-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center font-bold text-white text-lg shadow-xl shadow-purple-500/25 mx-auto mb-4">
-            Y
+          <div className="flex items-center justify-center mx-auto mb-4">
+            <IyasProIcon size={44} idPrefix="login-candle" className="filter drop-shadow-[0_2px_12px_rgba(245,158,11,0.45)]" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-white font-display">
             Welcome to Yas Pro

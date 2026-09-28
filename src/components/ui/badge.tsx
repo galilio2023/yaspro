@@ -22,7 +22,7 @@ const badgeVariants = cva(
         purple:
           "border border-brand-purple-mid/40 bg-brand-purple/20 text-brand-purple-lighter",
         live:
-          "border border-green-500/40 bg-green-500/15 text-green-300 animate-pulse",
+          "border border-green-500/40 bg-green-500/15 text-green-300",
       },
     },
     defaultVariants: { variant: "default" },

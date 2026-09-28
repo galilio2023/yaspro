@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Calendar, Clock, Users, Camera, ShieldCheck, Box, Sparkles, CreditCard, Zap } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,10 @@ export function BookingSummary({
   sessionTypeObj,
   total,
 }: BookingSummaryProps) {
+  const [currency, setCurrency] = useState<"AED" | "USD">("AED");
+  const exchangeRate = currency === "USD" ? 0.272 : 1;
+  const displayTotal = total * exchangeRate;
+
   const selectedGear = STUDIO_GEAR_PACKAGES.find(
     (g) => g.id === state.selectedGearPackage
   );
@@ -29,9 +34,31 @@ export function BookingSummary({
       <div className="rounded-3xl border border-brand-purple/20 bg-card/70 backdrop-blur-xl p-6 sm:p-8 shadow-2xl shadow-brand-purple/10">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 mb-5 border-b border-brand-purple/15">
-          <h4 className="text-text-primary font-bold text-sm uppercase tracking-wider font-display">
-            Session Breakdown
-          </h4>
+          <div className="flex items-center gap-2">
+            <h4 className="text-text-primary font-bold text-sm uppercase tracking-wider font-display">
+              Session Breakdown
+            </h4>
+            <div className="flex items-center bg-black/40 rounded-lg p-0.5 border border-white/10 text-[10px] font-mono">
+              <button
+                type="button"
+                onClick={() => setCurrency("AED")}
+                className={`px-1.5 py-0.5 rounded cursor-pointer ${
+                  currency === "AED" ? "bg-brand-purple text-white font-bold" : "text-slate-400 hover:text-white"
+                }`}
+              >
+                AED
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrency("USD")}
+                className={`px-1.5 py-0.5 rounded cursor-pointer ${
+                  currency === "USD" ? "bg-brand-purple text-white font-bold" : "text-slate-400 hover:text-white"
+                }`}
+              >
+                USD
+              </button>
+            </div>
+          </div>
           <Badge variant="live" className="text-[10px]">
             <Zap size={10} /> Live Quote
           </Badge>
@@ -113,7 +140,7 @@ export function BookingSummary({
                 WebkitTextFillColor: "transparent",
               }}
             >
-              {formatCurrency(total)}
+              {formatCurrency(displayTotal, currency)}
             </span>
           </div>
         </div>
@@ -127,10 +154,7 @@ export function BookingSummary({
           rel="noopener noreferrer"
           className="w-full mb-4 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs tracking-wide shadow-lg shadow-emerald-950/40 transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-          </span>
+          <span className="size-2 rounded-full bg-white"></span>
           Instant WhatsApp Booking Hold
         </a>
 

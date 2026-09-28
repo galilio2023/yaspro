@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Search, ShieldCheck, User, Globe, AlertCircle } from "lucide-react";
 import { lookupEnterpriseRfp, type EnterpriseRfpLookupResult } from "@/lib/portal-actions";
+import { VirtualStageConfigurator } from "@/features/booking/components/VirtualStageConfigurator";
 
 export function PortalTenders() {
   const [searchInput, setSearchInput] = useState("");
@@ -151,7 +152,10 @@ export function PortalTenders() {
 
 export function PortalStages() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+    <div className="space-y-6 mb-8">
+      <VirtualStageConfigurator />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
       <div className="p-4 sm:p-5 rounded-2xl border border-white/10 bg-slate-900/60">
         <div className="text-xs font-mono text-brand-purple-light uppercase mb-1">DUBAI MAIN STAGE A</div>
         <div className="text-base sm:text-lg font-bold text-white mb-2">850 m² Acoustic Volume</div>
@@ -177,6 +181,7 @@ export function PortalStages() {
           12x Sony HDC-4300 • Dual EVS XT-VIA • Encrypted Ka/Ku Uplink
         </div>
         <div className="text-xs font-mono text-brand-gold font-bold">● Standby Status: UAE &amp; KSA Ready</div>
+      </div>
       </div>
     </div>
   );

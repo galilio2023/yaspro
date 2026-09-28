@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins } from "next/font/google";
+import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -114,7 +115,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen w-full bg-background text-foreground antialiased overflow-x-hidden">
-        {children}
+        <SmoothScrollProvider>{children}</SmoothScrollProvider>
       </body>
     </html>
   );

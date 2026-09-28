@@ -286,7 +286,7 @@ export function BroadcastManager() {
         <div className="lg:col-span-7 p-6 rounded-3xl bg-slate-900/60 border border-white/10 shadow-xl space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="size-2.5 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="size-2.5 rounded-full bg-emerald-400" />
               <h3 className="font-bold text-white text-sm">
                 Sovereign Relay Event Log
               </h3>

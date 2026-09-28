@@ -11,12 +11,13 @@ export function Container({
   children,
   ...props
 }: ContainerProps) {
+  const Comp = Component as React.ComponentType<React.HTMLAttributes<HTMLElement>> | "div" | "section" | "article" | "main" | "aside" | "header" | "footer";
   return (
-    <Component
+    <Comp
       className={cn("w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8", className)}
       {...props}
     >
       {children}
-    </Component>
+    </Comp>
   );
 }

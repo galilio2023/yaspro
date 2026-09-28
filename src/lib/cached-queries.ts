@@ -69,6 +69,7 @@ export async function getCachedProjectBySlug(slug: string): Promise<ProjectItem 
               year: record.year || "2024",
               image: record.coverImageUrl || "/images/projects/flag-day.jpg",
               vimeoId: record.videoUrl ? record.videoUrl.split("/").pop() : undefined,
+              videoUrl: record.videoUrl || undefined,
               deliverables: record.deliverables || [],
               techStack: record.techStack || [],
             };

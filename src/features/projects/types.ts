@@ -13,6 +13,7 @@ export interface ProjectItem {
   views: string;
   image?: string;
   vimeoId?: string;
+  videoUrl?: string;
   year?: string;
   deliverables?: string[];
   techStack?: string[];

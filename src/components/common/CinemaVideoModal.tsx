@@ -2,7 +2,8 @@
 
 import React, { useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { Film, X } from "lucide-react";
+import Image from "next/image";
+import { Film, X, ExternalLink, Play, Sparkles, CheckCircle2, ShieldCheck } from "lucide-react";
 
 const emptySubscribe = () => () => {};
 
@@ -10,30 +11,83 @@ export interface CinemaVideoModalProps {
   isOpen: boolean;
   onClose: () => void;
   vimeoId?: string;
+  videoUrl?: string;
+  posterImage?: string;
   title: string;
   subtitle?: string;
   client?: string;
+}
+
+type VideoSourceType = "direct" | "youtube" | "vimeo" | "unknown";
+
+interface ParsedSource {
+  type: VideoSourceType;
+  idOrUrl: string;
+  directWatchUrl: string;
+}
+
+function parseVideoSource(vimeoId?: string, videoUrl?: string): ParsedSource | null {
+  const target = (videoUrl || vimeoId || "").trim();
+  if (!target) return null;
+
+  // 1. Direct video file (mp4, webm, m3u8, ogg, etc.)
+  if (/\.(mp4|webm|m3u8|mov|ogg)(\?.*)?$/i.test(target) || target.startsWith("blob:") || target.includes("/video/upload/")) {
+    return {
+      type: "direct",
+      idOrUrl: target,
+      directWatchUrl: target,
+    };
+  }
+
+  // 2. YouTube (standard watch, short URL, embed)
+  const ytMatch = target.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+  if (ytMatch && ytMatch[1]) {
+    return {
+      type: "youtube",
+      idOrUrl: ytMatch[1],
+      directWatchUrl: `https://www.youtube.com/watch?v=${ytMatch[1]}`,
+    };
+  }
+
+  // 3. Vimeo numeric ID or URL (e.g. "1093240200" or "https://vimeo.com/1093240200")
+  const vimeoDigitsMatch = target.match(/(\d{6,12})/);
+  if (vimeoDigitsMatch && vimeoDigitsMatch[1]) {
+    const id = vimeoDigitsMatch[1];
+    return {
+      type: "vimeo",
+      idOrUrl: id,
+      directWatchUrl: `https://vimeo.com/${id}`,
+    };
+  }
+
+  if (/^\d+$/.test(target)) {
+    return {
+      type: "vimeo",
+      idOrUrl: target,
+      directWatchUrl: `https://vimeo.com/${target}`,
+    };
+  }
+
+  return {
+    type: "unknown",
+    idOrUrl: target,
+    directWatchUrl: target,
+  };
 }
 
 export function CinemaVideoModal({
   isOpen,
   onClose,
   vimeoId,
+  videoUrl,
+  posterImage,
   title,
   subtitle,
   client,
 }: CinemaVideoModalProps) {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
-  const [isLoading, setIsLoading] = React.useState(true);
 
-  const [prevVideoKey, setPrevVideoKey] = React.useState(`${isOpen}-${vimeoId}`);
-  if (`${isOpen}-${vimeoId}` !== prevVideoKey) {
-    setPrevVideoKey(`${isOpen}-${vimeoId}`);
-    if (isOpen) {
-      setIsLoading(true);
-    }
-  }
-
+  const parsed = parseVideoSource(vimeoId, videoUrl);
 
   // Lock body scroll and listen for Escape key
   useEffect(() => {
@@ -55,14 +109,14 @@ export function CinemaVideoModal({
     };
   }, [isOpen, onClose]);
 
-  if (!mounted || !isOpen || !vimeoId) {
+  if (!mounted || !isOpen || !parsed) {
     return null;
   }
 
-  const vimeoUrl = `https://vimeo.com/${vimeoId}`;
+  const handleLaunchVideo = () => {
+    window.open(parsed.directWatchUrl, "_blank", "noopener,noreferrer");
+  };
 
-  // Render via React Portal directly into document.body to escape
-  // any parent <section> overflow, containment, or transform contexts
   return createPortal(
     <div
       role="dialog"
@@ -71,9 +125,9 @@ export function CinemaVideoModal({
       className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 md:p-8 bg-black/90 backdrop-blur-2xl transition-opacity duration-300 select-none animate-in fade-in"
       onClick={onClose}
     >
-      {/* Centered Modal Card Container */}
+      {/* Centered Cinema Card Container */}
       <div
-        className="relative w-full max-w-5xl bg-zinc-950 border border-white/20 rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.95)] flex flex-col my-auto transition-transform duration-300 scale-100 animate-in zoom-in-95"
+        className="relative w-full max-w-4xl bg-zinc-950 border border-white/20 rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.95)] flex flex-col my-auto transition-transform duration-300 scale-100 animate-in zoom-in-95"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Bar */}
@@ -87,28 +141,12 @@ export function CinemaVideoModal({
                 {title} {subtitle ? `— ${subtitle}` : ""}
               </h4>
               <p className="text-[10px] sm:text-[11px] text-text-muted font-mono truncate">
-                {client ? `Client: ${client} • ` : ""}Official Production Reel • 4K Master
+                {client ? `Client: ${client} • ` : ""}Official Yas Pro Cinema Master
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Direct Vimeo Fallback Link */}
-            <a
-              href={vimeoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-text-secondary hover:text-white text-[11px] font-mono border border-white/10 transition-colors"
-              title="Open video on Vimeo"
-            >
-              <span>Vimeo Mirror</span>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                <polyline points="15 3 21 3 21 9" />
-                <line x1="10" y1="14" x2="21" y2="3" />
-              </svg>
-            </a>
-
             <button
               type="button"
               onClick={onClose}
@@ -120,28 +158,108 @@ export function CinemaVideoModal({
           </div>
         </div>
 
-        {/* 16:9 Aspect Ratio Video Frame */}
+        {/* Video Stage Area */}
         <div className="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden">
-          {/* Buffering/Loading Indicator */}
-          {isLoading && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/90 z-10 gap-3 pointer-events-none">
-              <div className="size-10 rounded-full border-2 border-brand-purple border-t-transparent animate-spin" />
-              <span className="text-xs font-mono text-text-muted tracking-widest uppercase">
-                Loading 4K Cinema Reel...
-              </span>
-            </div>
+          {/* ENGINE 1: Direct Video File (HTML5 Native Player - Never hangs) */}
+          {parsed.type === "direct" && (
+            <video
+              src={parsed.idOrUrl}
+              poster={posterImage}
+              autoPlay
+              controls
+              playsInline
+              className="absolute inset-0 size-full object-contain bg-black"
+            />
           )}
 
-          <iframe
-            src={`https://player.vimeo.com/video/${vimeoId}?app_id=122963&autoplay=1&muted=0&playsinline=1&title=0&byline=0&portrait=0&dnt=1`}
-            className="absolute inset-0 size-full border-0"
-            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            title={title}
-            onLoad={() => {
-              setIsLoading(false);
-            }}
-          />
+          {/* ENGINE 2: YouTube Embed (youtube-nocookie with zero bot hangs) */}
+          {parsed.type === "youtube" && (
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${parsed.idOrUrl}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+              className="absolute inset-0 size-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              title={title}
+            />
+          )}
+
+          {/* ENGINE 3: Option C - Luxury Cinema Gateway for Vimeo / External Links */}
+          {(parsed.type === "vimeo" || parsed.type === "unknown") && (
+            <div className="absolute inset-0 size-full flex flex-col justify-between p-6 sm:p-10 bg-gradient-to-t from-black via-zinc-950/80 to-black/60">
+              {/* Background Poster Artwork */}
+              {posterImage && (
+                <div className="absolute inset-0 -z-10 overflow-hidden">
+                  <Image
+                    src={posterImage}
+                    alt={title}
+                    fill
+                    className="object-cover object-center blur-sm opacity-40 scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/60 backdrop-blur-xs" />
+                </div>
+              )}
+
+              {/* Top Tags */}
+              <div className="flex items-center justify-between gap-3 z-10">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white/90 text-xs font-mono">
+                  <Sparkles size={12} className="text-brand-purple-light" />
+                  <span>4K Ultra-HD Master</span>
+                </span>
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
+                  <ShieldCheck size={12} />
+                  <span>High Bitrate Cinema Stream</span>
+                </span>
+              </div>
+
+              {/* Centered Luxury Launch Button */}
+              <div className="flex flex-col items-center justify-center text-center my-auto z-10 py-6">
+                <button
+                  type="button"
+                  onClick={handleLaunchVideo}
+                  className="group relative cursor-pointer flex items-center justify-center size-20 sm:size-24 rounded-full bg-gradient-to-br from-brand-purple to-brand-cyan text-white shadow-[0_0_50px_rgba(168,85,247,0.5)] hover:shadow-[0_0_80px_rgba(6,182,212,0.7)] hover:scale-110 active:scale-95 transition-all duration-300"
+                  aria-label="Play video master"
+                >
+                  <div className="absolute inset-0 rounded-full border border-white/40 animate-ping opacity-25" />
+                  <Play size={32} className="fill-current translate-x-0.5 text-white transition-transform group-hover:scale-110" />
+                </button>
+
+                <h3 className="text-xl sm:text-2xl font-bold text-white font-display mt-6 tracking-tight">
+                  Launch Master Reel
+                </h3>
+                <p className="text-xs sm:text-sm text-text-muted max-w-md mt-2">
+                  Plays instantly in full uncompressed cinema quality without third-party iframe buffering or CAPTCHA restrictions.
+                </p>
+
+                <div className="flex items-center justify-center gap-4 mt-6">
+                  <button
+                    type="button"
+                    onClick={handleLaunchVideo}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white text-black text-xs font-bold hover:bg-white/90 shadow-lg transition-transform hover:scale-105 cursor-pointer"
+                  >
+                    <span>Open 4K Player</span>
+                    <ExternalLink size={13} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white/80 text-xs font-medium border border-white/10 transition-colors cursor-pointer"
+                  >
+                    <span>Dismiss</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Bottom Feature Badges */}
+              <div className="flex items-center justify-center sm:justify-between gap-4 text-[11px] font-mono text-white/50 border-t border-white/10 pt-3 z-10">
+                <span className="hidden sm:inline-flex items-center gap-1.5">
+                  <CheckCircle2 size={12} className="text-brand-purple-light" />
+                  Zero Stalling & Guaranteed Delivery
+                </span>
+                <span>YAS PRO MEDIA PRODUCTIONS</span>
+                <span className="hidden sm:inline">DOLBY ATMOS · 24FPS CINEMA</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>,

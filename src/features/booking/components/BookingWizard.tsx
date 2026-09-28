@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Sparkles } from "lucide-react";
 import { WIZARD_STEPS } from "../constants";
 import { useBookingWizard } from "../hooks/useBookingWizard";
 import { BookingProgress } from "./BookingProgress";
@@ -9,6 +10,7 @@ import { BookingSummary } from "./BookingSummary";
 import { BookingConfirmation } from "./BookingConfirmation";
 import { BookingStepHeader } from "./BookingStepHeader";
 import { BookingStepNavigation } from "./BookingStepNavigation";
+import { AiBriefPitchModal } from "./AiBriefPitchModal";
 
 import { StepDatetime } from "./steps/StepDatetime";
 import { StepSessionType } from "./steps/StepSessionType";
@@ -19,6 +21,7 @@ import { StepPostProduction } from "./steps/StepPostProduction";
 import { StepContact } from "./steps/StepContact";
 
 export function BookingWizard() {
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const {
     step,
     setStep,
@@ -50,16 +53,41 @@ export function BookingWizard() {
 
   const currentStepConfig = WIZARD_STEPS[step - 1];
 
+  const handleApplyAiPreset = (studioId: string, gearPackageId: string, hours: number) => {
+    update({
+      studioId,
+      selectedGearPackage: gearPackageId,
+      durationHours: hours,
+    });
+  };
+
   return (
     <div className="w-full">
+      <AiBriefPitchModal
+        isOpen={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        onApplyPreset={handleApplyAiPreset}
+      />
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         {/* Left Column (8 cols): Step Navigation & Content */}
         <div className="lg:col-span-8 flex flex-col gap-6">
-          <BookingProgress
-            steps={WIZARD_STEPS}
-            currentStep={step}
-            onStepClick={setStep}
-          />
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <BookingProgress
+              steps={WIZARD_STEPS}
+              currentStep={step}
+              onStepClick={setStep}
+            />
+
+            <button
+              type="button"
+              onClick={() => setIsAiModalOpen(true)}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-brand-purple to-brand-cyan hover:opacity-95 text-white flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-brand-purple/20 shrink-0 self-end sm:self-auto"
+            >
+              <Sparkles size={13} />
+              <span>AI Pitch Assistant</span>
+            </button>
+          </div>
 
           <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 sm:p-10 shadow-xl shadow-black/20">
             <BookingStepHeader
@@ -108,7 +136,7 @@ export function BookingWizard() {
           </div>
         </div>
 
-        {/* Right Column (4 cols, sticky): Live Session Summary Card */}
+        {/* Right Column (4 cols): Sticky Live Summary Quote */}
         <BookingSummary
           state={state}
           studio={studio}
@@ -119,5 +147,3 @@ export function BookingWizard() {
     </div>
   );
 }
-
-export default BookingWizard;
