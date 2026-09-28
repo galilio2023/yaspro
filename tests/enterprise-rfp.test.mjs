@@ -56,6 +56,8 @@ function actionHarness(results, env = { DATABASE_URL: 'postgresql://test:local@l
     '@/db': { db }, '@/db/schema': { enterpriseRfps: table }, '@/lib/utils': {},
     'next/cache': { revalidatePath: (value) => revalidated.push(value) },
     './validations': { enterpriseRfpSchema }, '@/features/booking/constants': {},
+    '@/lib/auth': { auth: { api: { getSession: async () => null } } },
+    'next/headers': { headers: async () => new Headers() },
   }, { process: { env }, Math: { floor: Math.floor, random: () => (random++ % 10) / 10 } });
   return { submit: submitEnterpriseRfp, inserts, revalidated };
 }

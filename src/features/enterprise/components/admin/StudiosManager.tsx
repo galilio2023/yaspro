@@ -76,7 +76,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
         if (exists) {
           return prev.map((s) => (s.slug === slug ? ({ ...s, ...editingStudio, slug } as Studio) : s));
         }
-        return [{ ...editingStudio, slug, id: `stu-${Date.now()}` } as Studio, ...prev];
+        return [{ ...editingStudio, slug, id: editingStudio.id || slug } as Studio, ...prev];
       });
       setFeedback("Studio details successfully saved to database.");
       setTimeout(() => setFeedback(null), 3000);

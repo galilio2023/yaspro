@@ -58,6 +58,8 @@ test('updateInquiryStatus updates resolved state with database mock', async () =
     '@/features/gear/data': { GEAR_DATA: [] },
     '@/features/booking/constants': { STUDIOS: [] },
     '@/lib/utils': { slugify: (s) => s },
+    '@/lib/auth': { auth: { api: { getSession: async () => ({ user: { role: 'admin' } }) } } },
+    'next/headers': { headers: async () => new Headers() },
   });
 
   const res = await updateInquiryStatus('inq-123', true);
@@ -92,6 +94,8 @@ test('updateBookingPaymentStatus updates paymentStatus and reference code', asyn
     '@/features/gear/data': { GEAR_DATA: [] },
     '@/features/booking/constants': { STUDIOS: [] },
     '@/lib/utils': { slugify: (s) => s },
+    '@/lib/auth': { auth: { api: { getSession: async () => ({ user: { role: 'admin' } }) } } },
+    'next/headers': { headers: async () => new Headers() },
   });
 
   const res = await updateBookingPaymentStatus('book-99', 'paid', 'STRIPE_CH_991823');
@@ -111,6 +115,8 @@ test('dispatchTelemetryEvent returns success acknowledgment', async () => {
     '@/features/gear/data': { GEAR_DATA: [] },
     '@/features/booking/constants': { STUDIOS: [] },
     '@/lib/utils': { slugify: (s) => s },
+    '@/lib/auth': { auth: { api: { getSession: async () => ({ user: { role: 'admin' } }) } } },
+    'next/headers': { headers: async () => new Headers() },
   });
 
   const res = await dispatchTelemetryEvent({

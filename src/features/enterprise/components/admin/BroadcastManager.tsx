@@ -24,24 +24,7 @@ interface TelemetryEventItem {
   timestamp: string;
 }
 
-const INITIAL_DISPATCHED_FEED: TelemetryEventItem[] = [
-  {
-    id: "ev-01",
-    source: "OB-VAN MERCEDES 01",
-    type: "OB_VAN_GPS",
-    level: "info",
-    summary: "High-power Starlink & O3b Ka-band link locked at 1.2 Gbps uplink from Riyadh Boulevard stage.",
-    timestamp: "10:45:00 AM",
-  },
-  {
-    id: "ev-02",
-    source: "DUBAI STAGE A",
-    type: "GENLOCK_SYNC",
-    level: "success",
-    summary: "Disguise vx4+ media servers genlocked with ARRI Alexa 35 at 24.000 fps (SMPTE ST 2059-2 PTP).",
-    timestamp: "10:43:30 AM",
-  },
-];
+const INITIAL_DISPATCHED_FEED: TelemetryEventItem[] = [];
 
 const PRESET_EVENTS = [
   {
@@ -93,29 +76,35 @@ export function BroadcastManager() {
     level: SeverityLevel;
     summary: string;
   }) => {
+    if (isSubmitting) return;
     if (!eventData.summary.trim()) {
       alert("Please provide an event description.");
       return;
     }
 
     setIsSubmitting(true);
-    const res = await dispatchTelemetryEvent(eventData);
-    if (res.success) {
-      setDispatchedFeed((prev) => [
-        {
-          id: `ev-${prev.length + 1}`,
-          ...eventData,
-          timestamp: "Just now",
-        },
-        ...prev,
-      ]);
-      setFeedback("Event dispatched to sovereign edge relays!");
-      setTimeout(() => setFeedback(null), 3500);
-      setSummary("");
-    } else {
-      alert(res.error || "Failed to dispatch event");
+    try {
+      const res = await dispatchTelemetryEvent(eventData);
+      if (res.success) {
+        setDispatchedFeed((prev) => [
+          {
+            id: `ev-${prev.length + 1}`,
+            ...eventData,
+            timestamp: "Just now",
+          },
+          ...prev,
+        ]);
+        setFeedback("Event dispatched to sovereign edge relays!");
+        setTimeout(() => setFeedback(null), 3500);
+        setSummary("");
+      } else {
+        alert(res.error || "Failed to dispatch event");
+      }
+    } catch (err) {
+      alert((err as Error).message || "An unexpected error occurred while dispatching event");
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   return (
@@ -152,6 +141,7 @@ export function BroadcastManager() {
               <button
                 key={idx}
                 type="button"
+                disabled={isSubmitting}
                 onClick={() =>
                   handleDispatch({
                     source: preset.source,
@@ -160,7 +150,7 @@ export function BroadcastManager() {
                     summary: preset.summary,
                   })
                 }
-                className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-cyan-500/40 hover:bg-slate-900 transition-all text-left group cursor-pointer"
+                className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-cyan-500/40 hover:bg-slate-900 transition-all text-left group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="size-8 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center">

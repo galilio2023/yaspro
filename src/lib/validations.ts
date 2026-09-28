@@ -161,7 +161,7 @@ export function validateLegitimateEmail(email: string): { isValid: boolean; erro
   }
 
   // Reject local parts that are obvious hallucinations
-  if (["test", "testing", "asdf", "fake", "dummy", "admin", "null", "undefined"].includes(localPart)) {
+  if (["test", "testing", "asdf", "fake", "dummy", "null", "undefined"].includes(localPart)) {
     return {
       isValid: false,
       error: "Please enter an active email account rather than a placeholder address.",

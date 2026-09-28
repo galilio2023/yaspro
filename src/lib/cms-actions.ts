@@ -27,6 +27,8 @@ import { GEAR_DATA } from "@/features/gear/data";
 import { STUDIOS } from "@/features/booking/constants";
 import { z } from "zod";
 import { slugify } from "@/lib/utils";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
 const uuidSchema = z.string().uuid();
 
@@ -39,6 +41,34 @@ const uuidSchema = z.string().uuid();
 function isUuid(id?: string): boolean {
   if (!id) return false;
   return uuidSchema.safeParse(id).success;
+}
+
+/**
+ * Enforces admin authorization on sensitive state-changing CMS mutations.
+ * In production/connected database environments, throws an error if user lacks admin role.
+ */
+async function requireAdmin() {
+  if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
+    return;
+  }
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    if (!session || (session.user as { role?: string })?.role !== "admin") {
+      throw new Error("Unauthorized: Admin credentials required for this operation.");
+    }
+    return session;
+  } catch (err) {
+    if ((err as Error).message?.includes("Unauthorized")) {
+      throw err;
+    }
+    // If headers() is unavailable (e.g. unit test runner environment), allow if not prod
+    if (process.env.NODE_ENV === "test") {
+      return;
+    }
+    throw new Error("Unauthorized: Admin credentials required for this operation.");
+  }
 }
 
 export interface CmsResponse<T = unknown> {
@@ -439,6 +469,7 @@ export async function updateBookingPaymentStatus(
   paymentReference?: string
 ): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       const updatePayload: { paymentStatus: string; updatedAt: Date; paymentReference?: string } = {
         paymentStatus,
@@ -560,6 +591,7 @@ export async function getCmsUsers(): Promise<User[]> {
  */
 export async function updateUserRole(userId: string, role: "admin" | "client"): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       await db.update(users).set({ role, updatedAt: new Date() }).where(eq(users.id, userId));
     }
@@ -572,7 +604,7 @@ export async function updateUserRole(userId: string, role: "admin" | "client"): 
 }
 
 /**
- * Updates a user's profile details.
+ * Updates a user's profile details with an explicit allowlist of safe fields.
  *
  * @param userId - ID of the user record.
  * @param data - User fields to update.
@@ -580,8 +612,16 @@ export async function updateUserRole(userId: string, role: "admin" | "client"): 
  */
 export async function updateUserProfile(userId: string, data: Partial<User>): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-      await db.update(users).set({ ...data, updatedAt: new Date() }).where(eq(users.id, userId));
+      const { name, phone, company, image } = data;
+      const safeData: Record<string, unknown> = { updatedAt: new Date() };
+      if (name !== undefined) safeData.name = name;
+      if (phone !== undefined) safeData.phone = phone;
+      if (company !== undefined) safeData.company = company;
+      if (image !== undefined) safeData.image = image;
+
+      await db.update(users).set(safeData).where(eq(users.id, userId));
     }
     revalidatePath("/admin/users");
     revalidatePath("/admin");
@@ -599,6 +639,7 @@ export async function updateUserProfile(userId: string, data: Partial<User>): Pr
  */
 export async function deleteCmsUser(userId: string): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       await db.delete(users).where(eq(users.id, userId));
     }
@@ -673,6 +714,7 @@ export async function getCmsInquiries(): Promise<Inquiry[]> {
  */
 export async function updateInquiryStatus(id: string, isResolved: boolean): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       await db.update(inquiries).set({ isResolved }).where(eq(inquiries.id, id));
     }
@@ -692,6 +734,7 @@ export async function updateInquiryStatus(id: string, isResolved: boolean): Prom
  */
 export async function deleteCmsInquiry(id: string): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       await db.delete(inquiries).where(eq(inquiries.id, id));
     }
@@ -745,6 +788,7 @@ export async function upsertCmsStudio(
   data: Partial<Studio> & { name: string; slug: string; hourlyRate: string }
 ): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
       return { success: true, message: "Studio updated in preview mode." };
     }
@@ -786,6 +830,7 @@ export async function upsertCmsStudio(
  */
 export async function toggleStudioActiveStatus(id: string, isActive: boolean): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       if (isUuid(id)) {
         await db.update(studios).set({ isActive }).where(eq(studios.id, id));

@@ -294,21 +294,27 @@ export async function submitEnterpriseRfp(rawInput: unknown): Promise<ActionResp
   }
 }
 
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+
 /**
  * Synchronize registered user profile info directly into the users table
  */
 export async function syncUserProfile(input: {
-  email: string;
+  email?: string;
   name?: string;
   phone?: string;
   company?: string;
 }): Promise<ActionResponse> {
-  const email = input.email?.trim().toLowerCase();
-  if (!email) {
-    return { success: false, message: "Email is required to sync profile." };
-  }
-
   try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user?.id) {
+      return { success: false, message: "Unauthorized. Active session required." };
+    }
+
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       const updateData: Record<string, unknown> = {
         updatedAt: new Date(),
@@ -320,7 +326,7 @@ export async function syncUserProfile(input: {
       await db
         .update(users)
         .set(updateData)
-        .where(eq(users.email, email));
+        .where(eq(users.id, session.user.id));
     }
     return { success: true, message: "Profile information synchronized in database." };
   } catch (err) {

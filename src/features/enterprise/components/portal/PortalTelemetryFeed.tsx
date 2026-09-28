@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useTransition } from "react";
+import React, { useEffect, useState, useRef, useTransition } from "react";
 import { Radio, RefreshCw } from "lucide-react";
 import { getLiveTelemetryFeed, type ProductionTelemetryEvent } from "@/lib/portal-actions";
 
@@ -8,12 +8,16 @@ export function PortalTelemetryFeed() {
   const [events, setEvents] = useState<ProductionTelemetryEvent[]>([]);
   const [isLiveStreaming, setIsLiveStreaming] = useState(true);
   const [isPending, startTransition] = useTransition();
+  const sequenceRef = useRef(0);
 
   const fetchTelemetry = React.useCallback(() => {
+    const currentSeq = ++sequenceRef.current;
     startTransition(async () => {
       try {
         const feed = await getLiveTelemetryFeed();
-        setEvents(feed);
+        if (currentSeq === sequenceRef.current) {
+          setEvents(feed);
+        }
       } catch (e) {
         console.error(e);
       }
@@ -42,8 +46,8 @@ export function PortalTelemetryFeed() {
           <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
             Sovereign Relay Bus &amp; SMPTE 2110 IP Ingest
           </span>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            {isLiveStreaming ? "LIVE SYNC 10s" : "PAUSED"}
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            {isLiveStreaming ? "SIMULATED TELEMETRY 10s" : "PAUSED"}
           </span>
         </div>
 

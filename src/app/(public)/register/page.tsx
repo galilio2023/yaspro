@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/lib/auth-client";
 import { syncUserProfile } from "@/lib/actions";
-import { validateLegitimateEmail } from "@/lib/validations";
+import { registerUserSchema } from "@/lib/validations";
 import { User, Mail, Lock, Building, Phone, ArrowRight, AlertCircle, ShieldCheck } from "lucide-react";
 
 export default function RegisterPage() {
@@ -22,40 +22,47 @@ export default function RegisterPage() {
     e.preventDefault();
     setErrorMsg(null);
 
-    // 1. Enforce legitimate email validation (anti-hallucination / anti-disposable)
-    const emailCheck = validateLegitimateEmail(email);
-    if (!emailCheck.isValid) {
-      setErrorMsg(emailCheck.error || "Please provide a valid active email address.");
+    // 1. Validate complete registration payload with registerUserSchema
+    const parseResult = registerUserSchema.safeParse({
+      name,
+      email,
+      password,
+      phone,
+      company: company || undefined,
+    });
+
+    if (!parseResult.success) {
+      setErrorMsg(parseResult.error.issues[0]?.message || "Please verify your registration information.");
       return;
     }
 
-    // 2. Validate phone number
-    if (!phone.trim() || phone.trim().length < 5) {
-      setErrorMsg("Please provide a valid direct phone or WhatsApp number.");
-      return;
-    }
-
+    const validData = parseResult.data;
     setIsLoading(true);
 
     try {
       const res = await signUp.email({
-        email: email.trim().toLowerCase(),
-        password,
-        name: name.trim(),
-        company: company.trim(),
-        phone: phone.trim(),
+        email: validData.email,
+        password: validData.password,
+        name: validData.name,
+        company: validData.company || "",
+        phone: validData.phone,
       } as unknown as { email: string; password: string; name: string });
 
       if (res.error) {
         setErrorMsg(res.error.message || "Failed to create account.");
       } else {
-        // Guarantee synchronization of additional fields into Neon PostgreSQL
-        await syncUserProfile({
-          email: email.trim().toLowerCase(),
-          name: name.trim(),
-          phone: phone.trim(),
-          company: company.trim(),
+        // Guarantee synchronization of additional profile fields into Neon PostgreSQL
+        const syncRes = await syncUserProfile({
+          email: validData.email,
+          name: validData.name,
+          phone: validData.phone,
+          company: validData.company || "",
         });
+
+        if (!syncRes.success) {
+          setErrorMsg(syncRes.message || "Account created, but profile setup could not be completed. Please try signing in.");
+          return;
+        }
 
         router.push("/portal");
         router.refresh();

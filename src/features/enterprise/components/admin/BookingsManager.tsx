@@ -20,40 +20,64 @@ interface BookingsManagerProps {
 
 export function BookingsManager({ initialBookings }: BookingsManagerProps) {
   const [bookingList, setBookingList] = useState<Booking[]>(initialBookings);
-  const [updatingId, setUpdatingId] = useState<string | null>(null);
-  const [callSheetBooking, setCallSheetBooking] = useState<Booking | null>(null);
+  const [updatingIds, setUpdatingIds] = useState<Set<string>>(new Set());
+  const [callSheetBookingId, setCallSheetBookingId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
+
+  const callSheetBooking = bookingList.find((b) => b.id === callSheetBookingId) || null;
 
   const handleStatusChange = async (
     id: string,
     newStatus: "pending" | "confirmed" | "cancelled" | "completed"
   ) => {
-    setUpdatingId(id);
-    const res = await updateBookingStatus(id, newStatus);
-    if (res.success) {
-      setBookingList((prev) =>
-        prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
-      );
-      setFeedback(`Booking marked as ${newStatus}`);
-      setTimeout(() => setFeedback(null), 3000);
+    setUpdatingIds((prev) => new Set(prev).add(id));
+    try {
+      const res = await updateBookingStatus(id, newStatus);
+      if (res.success) {
+        setBookingList((prev) =>
+          prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
+        );
+        setFeedback(`Booking marked as ${newStatus}`);
+        setTimeout(() => setFeedback(null), 3000);
+      } else {
+        alert(res.error || "Failed to update booking status.");
+      }
+    } catch (err) {
+      alert((err as Error).message || "An error occurred while updating status.");
+    } finally {
+      setUpdatingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
     }
-    setUpdatingId(null);
   };
 
   const handlePaymentStatusChange = async (
     id: string,
     paymentStatus: "unpaid" | "deposit_paid" | "paid" | "refunded"
   ) => {
-    setUpdatingId(id);
-    const res = await updateBookingPaymentStatus(id, paymentStatus);
-    if (res.success) {
-      setBookingList((prev) =>
-        prev.map((b) => (b.id === id ? { ...b, paymentStatus } : b))
-      );
-      setFeedback(`Payment updated to ${paymentStatus.replace("_", " ")}`);
-      setTimeout(() => setFeedback(null), 3000);
+    setUpdatingIds((prev) => new Set(prev).add(id));
+    try {
+      const res = await updateBookingPaymentStatus(id, paymentStatus);
+      if (res.success) {
+        setBookingList((prev) =>
+          prev.map((b) => (b.id === id ? { ...b, paymentStatus } : b))
+        );
+        setFeedback(`Payment updated to ${paymentStatus.replace("_", " ")}`);
+        setTimeout(() => setFeedback(null), 3000);
+      } else {
+        alert(res.error || "Failed to update payment status.");
+      }
+    } catch (err) {
+      alert((err as Error).message || "An error occurred while updating payment.");
+    } finally {
+      setUpdatingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
     }
-    setUpdatingId(null);
   };
 
   return (
@@ -134,14 +158,14 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
 
                     {/* Amount */}
                     <td className="py-3.5 px-4 font-semibold text-white font-mono">
-                      {formatCurrency(Number(b.totalAmount))}
+                      {formatCurrency(Number(b.totalAmount), b.currency || "AED")}
                     </td>
 
                     {/* Payment Reconciliation */}
                     <td className="py-3.5 px-4">
                       <select
                         value={b.paymentStatus || "unpaid"}
-                        disabled={updatingId === b.id}
+                        disabled={updatingIds.has(b.id)}
                         onChange={(e) =>
                           handlePaymentStatusChange(
                             b.id,
@@ -190,7 +214,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                       <div className="flex items-center justify-end gap-1.5 flex-wrap">
                         <button
                           type="button"
-                          onClick={() => setCallSheetBooking(b)}
+                          onClick={() => setCallSheetBookingId(b.id)}
                           className="px-2 py-1 rounded bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 text-[11px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
                           title="Generate Printable Call Sheet"
                         >
@@ -200,27 +224,27 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
 
                         <button
                           type="button"
-                          disabled={updatingId === b.id}
+                          disabled={updatingIds.has(b.id)}
                           onClick={() => handleStatusChange(b.id, "confirmed")}
-                          className="px-2 py-1 rounded bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 text-[11px] font-medium transition-colors cursor-pointer"
+                          className="px-2 py-1 rounded bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
                         >
                           Confirm
                         </button>
 
                         <button
                           type="button"
-                          disabled={updatingId === b.id}
+                          disabled={updatingIds.has(b.id)}
                           onClick={() => handleStatusChange(b.id, "completed")}
-                          className="px-2 py-1 rounded bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 text-[11px] font-medium transition-colors cursor-pointer"
+                          className="px-2 py-1 rounded bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
                         >
                           Complete
                         </button>
 
                         <button
                           type="button"
-                          disabled={updatingId === b.id}
+                          disabled={updatingIds.has(b.id)}
                           onClick={() => handleStatusChange(b.id, "cancelled")}
-                          className="px-2 py-1 rounded bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 text-[11px] font-medium transition-colors cursor-pointer"
+                          className="px-2 py-1 rounded bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
                         >
                           Cancel
                         </button>
@@ -236,10 +260,36 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
 
       {/* Production Call Sheet Modal (Print Ready) */}
       {callSheetBooking && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="relative w-full max-w-2xl p-6 sm:p-8 rounded-3xl bg-slate-900 border border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 print:p-0 print:static print:bg-transparent print:z-auto">
+          <style jsx global>{`
+            @media print {
+              body * {
+                visibility: hidden;
+              }
+              #call-sheet-printable, #call-sheet-printable * {
+                visibility: visible;
+              }
+              #call-sheet-printable {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100% !important;
+                max-width: 100% !important;
+                max-height: none !important;
+                overflow: visible !important;
+                box-shadow: none !important;
+                border: none !important;
+                background: white !important;
+                color: black !important;
+              }
+              #call-sheet-printable .no-print {
+                display: none !important;
+              }
+            }
+          `}</style>
+          <div id="call-sheet-printable" className="relative w-full max-w-2xl p-6 sm:p-8 rounded-3xl bg-slate-900 border border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto">
             {/* Modal Controls */}
-            <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
+            <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6 no-print">
               <div className="flex items-center gap-2">
                 <div className="size-7 rounded-lg bg-purple-600 flex items-center justify-center text-white font-bold text-xs">
                   Y
@@ -263,7 +313,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setCallSheetBooking(null)}
+                  onClick={() => setCallSheetBookingId(null)}
                   className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
                 >
                   <X size={16} />
@@ -332,7 +382,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                   </span>
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-white text-sm font-mono">
-                      {formatCurrency(Number(callSheetBooking.totalAmount))}
+                      {formatCurrency(Number(callSheetBooking.totalAmount), callSheetBooking.currency || "AED")}
                     </span>
                     <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
                       {callSheetBooking.paymentStatus || "UNPAID"}
@@ -381,15 +431,24 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                 </div>
               </div>
 
-              {/* Production Notes */}
+              {/* Production Notes & Directives */}
               {(callSheetBooking.propsNotes || callSheetBooking.specialRequests) && (
-                <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2">
+                <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">
                   <span className="text-[10px] text-slate-500 uppercase font-mono block">
-                    Special Studio Directives &amp; Props
+                    Special Studio Directives &amp; Production Notes
                   </span>
-                  <p className="text-xs text-slate-300">
-                    {callSheetBooking.propsNotes || callSheetBooking.specialRequests}
-                  </p>
+                  {callSheetBooking.propsNotes && (
+                    <div>
+                      <span className="text-[10px] text-purple-400 font-mono block font-semibold">Props &amp; Staging:</span>
+                      <p className="text-xs text-slate-300 mt-0.5">{callSheetBooking.propsNotes}</p>
+                    </div>
+                  )}
+                  {callSheetBooking.specialRequests && (
+                    <div>
+                      <span className="text-[10px] text-purple-400 font-mono block font-semibold">Special Client Requests:</span>
+                      <p className="text-xs text-slate-300 mt-0.5">{callSheetBooking.specialRequests}</p>
+                    </div>
+                  )}
                 </div>
               )}
 

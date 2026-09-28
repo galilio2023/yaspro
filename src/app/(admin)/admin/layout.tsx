@@ -52,6 +52,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       }
     } catch (err) {
       console.error("Admin layout auth check error:", err);
+      shouldRedirect = true;
     }
   }
 
