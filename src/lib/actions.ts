@@ -4,7 +4,8 @@ import { db } from "@/db";
 import { bookings, inquiries, users, studios, enterpriseRfps, type SessionType, type InquiryType } from "@/db/schema";
 import { generateBookingReference } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
+import { checkRateLimit, checkIdempotency, getClientIdentifier } from "@/lib/rate-limit";
 import {
   bookingSubmissionSchema,
   inquirySubmissionSchema,
@@ -52,6 +53,18 @@ export type ActionResponse<T = unknown> = {
 };
 
 export async function createBooking(rawInput: unknown): Promise<ActionResponse<{ bookingId?: string }>> {
+  const clientId = await getClientIdentifier();
+
+  // 1. Rate limit by client IP: max 5 booking attempts per 10 minutes
+  const rateLimit = checkRateLimit(`booking:${clientId}`, 5, 10 * 60 * 1000);
+  if (!rateLimit.allowed) {
+    const minutesLeft = Math.ceil(rateLimit.resetInMs / 60000);
+    return {
+      success: false,
+      message: `Too many booking requests. Please wait ${minutesLeft} minute${minutesLeft > 1 ? "s" : ""} before submitting another reservation.`,
+    };
+  }
+
   const parsed = bookingSubmissionSchema.safeParse(rawInput);
   if (!parsed.success) {
     return {
@@ -62,12 +75,80 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
   }
 
   const data = parsed.data;
+
+  // 2. Idempotency guard: block duplicate identical submission from same email & studio within 60 seconds
+  const idempotencyKey = `booking:${data.email.toLowerCase()}:${data.studioId}:${data.scheduledAt}`;
+  if (!checkIdempotency(idempotencyKey, 60_000)) {
+    return {
+      success: false,
+      message: "A booking with these details is already being processed. Please check your email or wait a moment.",
+    };
+  }
+
   const referenceCode = generateBookingReference();
   const calculatedTotal = calculateServerPrice(data);
 
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-      // 1. Ensure user exists
+      // 3. Resolve studio by slug (letting Postgres manage all UUIDs)
+      const selectedSlug = data.studioId || "studio-a";
+      let studioRecord = await db.query.studios.findFirst({
+        where: eq(studios.slug, selectedSlug),
+      });
+
+      // If the studio record does not exist yet, provision it without passing an id (Postgres auto-generates uuid)
+      if (!studioRecord) {
+        const fallbackStudioMeta = STUDIOS.find((s) => s.id === selectedSlug) || STUDIOS[0];
+        const [inserted] = await db
+          .insert(studios)
+          .values({
+            slug: selectedSlug,
+            name: fallbackStudioMeta.name,
+            hourlyRate: fallbackStudioMeta.rate.toFixed(2),
+            capacity: 20,
+            isActive: true,
+          })
+          .returning();
+        studioRecord = inserted;
+      }
+
+      // 4. Overlap & Conflict Check: Prevent double-booking for the same studio stage
+      if (studioRecord?.id) {
+        const requestedStart = new Date(data.scheduledAt || Date.now());
+        const requestedEnd = new Date(requestedStart.getTime() + data.durationHours * 60 * 60 * 1000);
+
+        // Fetch active bookings for this studio
+        const existingBookings = await db
+          .select({
+            id: bookings.id,
+            scheduledAt: bookings.scheduledAt,
+            durationHours: bookings.durationHours,
+            status: bookings.status,
+          })
+          .from(bookings)
+          .where(
+            and(
+              eq(bookings.studioId, studioRecord.id),
+              inArray(bookings.status, ["confirmed", "pending"])
+            )
+          );
+
+        // Check if any existing active booking overlaps with [requestedStart, requestedEnd]
+        const hasConflict = existingBookings.some((b) => {
+          const bookedStart = new Date(b.scheduledAt);
+          const bookedEnd = new Date(bookedStart.getTime() + b.durationHours * 60 * 60 * 1000);
+          return requestedStart < bookedEnd && requestedEnd > bookedStart;
+        });
+
+        if (hasConflict) {
+          return {
+            success: false,
+            message: `This soundstage (${studioRecord.name || selectedSlug}) is already reserved during your selected time window. Please select an alternate time slot or choose another studio.`,
+          };
+        }
+      }
+
+      // 5. Ensure user exists
       const userId = `usr_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
       const [user] = await db
         .insert(users)
@@ -90,29 +171,7 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
         })
         .returning();
 
-      // 2. Resolve studio by slug (letting Postgres manage all UUIDs)
-      const selectedSlug = data.studioId || "studio-a";
-      let studioRecord = await db.query.studios.findFirst({
-        where: eq(studios.slug, selectedSlug),
-      });
-
-      // If the studio record does not exist yet, provision it without passing an id (Postgres auto-generates uuid)
-      if (!studioRecord) {
-        const fallbackStudioMeta = STUDIOS.find((s) => s.id === selectedSlug) || STUDIOS[0];
-        const [inserted] = await db
-          .insert(studios)
-          .values({
-            slug: selectedSlug,
-            name: fallbackStudioMeta.name,
-            hourlyRate: fallbackStudioMeta.rate.toFixed(2),
-            capacity: 20,
-            isActive: true,
-          })
-          .returning();
-        studioRecord = inserted;
-      }
-
-      // 3. Create booking with the auto-generated studio UUID
+      // 6. Create booking with the resolved studio UUID
       const [newBooking] = await db
         .insert(bookings)
         .values({
@@ -158,6 +217,18 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
 }
 
 export async function submitInquiry(rawInput: unknown): Promise<ActionResponse> {
+  const clientId = await getClientIdentifier();
+
+  // Rate limit: max 5 inquiries per 10 minutes per IP
+  const rateLimit = checkRateLimit(`inquiry:${clientId}`, 5, 10 * 60 * 1000);
+  if (!rateLimit.allowed) {
+    const minutesLeft = Math.ceil(rateLimit.resetInMs / 60000);
+    return {
+      success: false,
+      message: `Too many inquiry requests. Please wait ${minutesLeft} minute${minutesLeft > 1 ? "s" : ""} before submitting another message.`,
+    };
+  }
+
   const parsed = inquirySubmissionSchema.safeParse(rawInput);
   if (!parsed.success) {
     return {
@@ -168,6 +239,15 @@ export async function submitInquiry(rawInput: unknown): Promise<ActionResponse> 
   }
 
   const data = parsed.data;
+
+  // Idempotency: block duplicate identical inquiry from same email within 60s
+  const idempotencyKey = `inquiry:${data.email.toLowerCase()}:${data.inquiryType}:${data.message.slice(0, 50)}`;
+  if (!checkIdempotency(idempotencyKey, 60_000)) {
+    return {
+      success: false,
+      message: "Your inquiry is already being processed by our team. Please wait a few moments.",
+    };
+  }
 
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
@@ -196,6 +276,18 @@ export async function submitInquiry(rawInput: unknown): Promise<ActionResponse> 
 }
 
 export async function submitInfluencerCampaignRequest(rawInput: unknown): Promise<ActionResponse> {
+  const clientId = await getClientIdentifier();
+
+  // Rate limit: max 5 campaign briefs per 10 minutes per IP
+  const rateLimit = checkRateLimit(`campaign:${clientId}`, 5, 10 * 60 * 1000);
+  if (!rateLimit.allowed) {
+    const minutesLeft = Math.ceil(rateLimit.resetInMs / 60000);
+    return {
+      success: false,
+      message: `Too many collaboration requests. Please wait ${minutesLeft} minute${minutesLeft > 1 ? "s" : ""} before submitting another brief.`,
+    };
+  }
+
   const parsed = campaignRequestSchema.safeParse(rawInput);
   if (!parsed.success) {
     return {
@@ -206,6 +298,15 @@ export async function submitInfluencerCampaignRequest(rawInput: unknown): Promis
   }
 
   const data = parsed.data;
+
+  // Idempotency: block duplicate identical campaign request within 60s
+  const idempotencyKey = `campaign:${data.email.toLowerCase()}:${data.creatorId}:${data.brandName.toLowerCase()}`;
+  if (!checkIdempotency(idempotencyKey, 60_000)) {
+    return {
+      success: false,
+      message: "A collaboration request for this brand and creator is already submitted. Our talent team is reviewing it.",
+    };
+  }
 
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
@@ -233,6 +334,18 @@ export async function submitInfluencerCampaignRequest(rawInput: unknown): Promis
 }
 
 export async function submitEnterpriseRfp(rawInput: unknown): Promise<ActionResponse<{ referenceCode: string }>> {
+  const clientId = await getClientIdentifier();
+
+  // Rate limit: max 3 enterprise RFPs per 15 minutes per IP
+  const rateLimit = checkRateLimit(`enterprise:${clientId}`, 3, 15 * 60 * 1000);
+  if (!rateLimit.allowed) {
+    const minutesLeft = Math.ceil(rateLimit.resetInMs / 60000);
+    return {
+      success: false,
+      message: `Too many enterprise RFP submissions. Please wait ${minutesLeft} minute${minutesLeft > 1 ? "s" : ""} before submitting another tender request.`,
+    };
+  }
+
   const parsed = enterpriseRfpSchema.safeParse(rawInput);
   if (!parsed.success) {
     return {
@@ -243,6 +356,15 @@ export async function submitEnterpriseRfp(rawInput: unknown): Promise<ActionResp
   }
 
   const data = parsed.data;
+
+  // Idempotency: block duplicate identical enterprise RFP within 60s
+  const idempotencyKey = `enterprise:${data.workEmail.toLowerCase()}:${data.organizationName.toLowerCase()}:${data.projectScope}`;
+  if (!checkIdempotency(idempotencyKey, 60_000)) {
+    return {
+      success: false,
+      message: "An enterprise RFP for this organization and scope is already being evaluated. Please check your inbox for confirmation.",
+    };
+  }
   const suffix = data.country === "Saudi Arabia" ? "KSA" : data.country === "Egypt" ? "CAI" : "DXB";
 
   try {
