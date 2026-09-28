@@ -61,7 +61,7 @@ export function OrbitingMediaNodes() {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-emerald-400 font-semibold flex items-center gap-1">
-            <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="size-1.5 rounded-full bg-emerald-400" />
             LIVE // 0.18ms LATENCY
           </span>
         </div>

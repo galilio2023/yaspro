@@ -10,7 +10,6 @@ export interface BrandLogoProps {
 }
 
 export function BrandLogo({
-  showIndicator = true,
   className,
   href = "/",
   size = "default",
@@ -41,14 +40,6 @@ export function BrandLogo({
           <span className={cn("font-extrabold tracking-tight font-display bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-cyan bg-clip-text text-transparent ml-0.5", isLarge ? "text-2xl" : "text-xl")}>
             PRO
           </span>
-
-          {/* Live Studio Availability Indicator */}
-          {showIndicator && (
-            <span className="relative flex size-2 ml-2">
-              <span className="absolute inline-flex size-full rounded-full bg-brand-cyan opacity-75 animate-ping" />
-              <span className="relative inline-flex size-2 rounded-full bg-brand-cyan shadow-[0_0_6px_#06b6d4]" />
-            </span>
-          )}
         </div>
 
         {/* Subtitle */}

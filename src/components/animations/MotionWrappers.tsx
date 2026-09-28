@@ -60,6 +60,7 @@ export function FadeUp({
   }, [delay]);
 
   return (
+    // @ts-expect-error dynamic polymorphic JSX tag
     <Tag ref={ref} className={cn("w-full", className)}>
       {children}
     </Tag>
@@ -127,6 +128,7 @@ export function StaggerContainer({
   }, [staggerDelay]);
 
   return (
+    // @ts-expect-error dynamic polymorphic JSX tag
     <Tag ref={ref} role={role} className={className}>
       {children}
     </Tag>
@@ -150,6 +152,7 @@ export function StaggerItem({
   id,
 }: StaggerItemProps) {
   return (
+    // @ts-expect-error dynamic polymorphic JSX tag
     <Tag id={id} className={cn("w-full h-full", className)}>
       {children}
     </Tag>

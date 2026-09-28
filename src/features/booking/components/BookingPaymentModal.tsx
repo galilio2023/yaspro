@@ -51,6 +51,7 @@ export function BookingPaymentModal({
         );
 
         if (res.paymentUrl) {
+          // eslint-disable-next-line react-hooks/immutability
           window.location.href = res.paymentUrl;
           return;
         }

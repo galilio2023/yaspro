@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FooterHubCard, RegionalHub } from "./FooterHubCard";
 import { FooterSocialLinks } from "./FooterSocialLinks";
 import { BrandLogo } from "./BrandLogo";
+import { IyasProIcon } from "@/components/ui/IyasProIcon";
 import { FooterNavLinks } from "./FooterNavLinks";
 import { BackgroundBeams } from "@/components/aceternity/background-beams";
 
@@ -88,16 +89,25 @@ export default function Footer() {
       {/* Massive Luxury Watermark Typography in Background */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 select-none overflow-hidden text-center text-[18vw] font-black tracking-tighter leading-none whitespace-nowrap font-display z-0"
-        style={{
-          background: "linear-gradient(180deg, rgba(167, 139, 250, 0.14) 0%, rgba(6, 182, 212, 0.08) 60%, rgba(255, 255, 255, 0.02) 100%)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          WebkitTextStroke: "1px rgba(255, 255, 255, 0.08)",
-          textShadow: "0 0 80px rgba(124, 58, 237, 0.15)",
-        }}
+        className="pointer-events-none absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 select-none overflow-hidden flex items-center justify-center gap-2 sm:gap-4 font-black tracking-tighter leading-none whitespace-nowrap font-display z-0 opacity-15"
       >
-        iYASPRO
+        <IyasProIcon
+          size="16vw"
+          idPrefix="footer-bg-candle"
+          className="filter drop-shadow-[0_0_60px_rgba(245,158,11,0.5)] -translate-y-3"
+        />
+        <span
+          className="text-[17vw] tracking-tighter"
+          style={{
+            background: "linear-gradient(180deg, rgba(167, 139, 250, 0.9) 0%, rgba(6, 182, 212, 0.6) 60%, rgba(255, 255, 255, 0.2) 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            WebkitTextStroke: "1px rgba(255, 255, 255, 0.15)",
+            textShadow: "0 0 80px rgba(124, 58, 237, 0.25)",
+          }}
+        >
+          YASPRO
+        </span>
       </div>
 
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 relative z-10">
@@ -169,7 +179,7 @@ export default function Footer() {
             </Link>
 
             <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[11px]">
-              <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="size-1.5 rounded-full bg-emerald-400" />
               <span>All 4 Soundstages Online</span>
             </span>
           </div>

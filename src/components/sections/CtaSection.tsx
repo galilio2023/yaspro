@@ -60,7 +60,7 @@ export function CtaSection({
         <FadeUp>
           {/* Live status badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-wider font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 mb-6 backdrop-blur-md">
-            <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="size-2 rounded-full bg-emerald-400" />
             Now Booking Q3 &amp; Q4 2026 Productions
           </div>
 

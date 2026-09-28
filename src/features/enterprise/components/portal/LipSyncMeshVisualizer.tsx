@@ -45,7 +45,7 @@ export function LipSyncMeshVisualizer({
       {/* Top Header */}
       <div className="flex items-center justify-between gap-2 mb-3">
         <div className="flex items-center gap-2">
-          <span className={`size-2 rounded-full ${isPlaying ? "bg-emerald-400 animate-ping" : "bg-white/30"}`} />
+          <span className={`size-2 rounded-full ${isPlaying ? "bg-emerald-400" : "bg-white/30"}`} />
           <span className="text-[11px] font-mono font-bold text-white uppercase tracking-wider">
             Neural Viseme Tracker
           </span>

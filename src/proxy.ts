@@ -17,12 +17,22 @@ export function proxy(request: NextRequest) {
   const isAuthRoute =
     pathname.startsWith("/login") || pathname.startsWith("/register");
   const isProtectedRoute =
-    pathname.startsWith("/portal") || pathname.startsWith("/enterprise/portal");
+    pathname.startsWith("/portal");
+  const isAdminRoute =
+    pathname.startsWith("/admin");
 
   // Redirect authenticated users away from /login & /register
   if (isAuthRoute && sessionToken) {
     const redirectUrl = request.nextUrl.searchParams.get("callbackUrl") || "/portal";
     return NextResponse.redirect(new URL(redirectUrl, request.url));
+  }
+
+  // Redirect unauthenticated users away from admin dashboard
+  if (isAdminRoute && !sessionToken && process.env.NODE_ENV === "production") {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    loginUrl.searchParams.set("error", "admin_required");
+    return NextResponse.redirect(loginUrl);
   }
 
   // Redirect unauthenticated users away from protected client & enterprise portals

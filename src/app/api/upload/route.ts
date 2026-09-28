@@ -77,7 +77,7 @@ export async function POST(request: Request) {
             { status: 401 }
           );
         }
-      } catch (authErr) {
+      } catch {
         return NextResponse.json(
           { success: false, error: "Unauthorized: Admin credentials required." },
           { status: 401 }

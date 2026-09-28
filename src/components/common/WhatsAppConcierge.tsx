@@ -122,7 +122,7 @@ export function WhatsAppConcierge() {
                 <div className="size-9 rounded-xl bg-green-500/20 border border-green-500/40 flex items-center justify-center text-green-400">
                   <MessageSquare size={18} />
                 </div>
-                <span className="absolute -top-1 -right-1 size-3 rounded-full bg-green-500 border-2 border-black animate-pulse" />
+                <span className="absolute -top-1 -right-1 size-2.5 rounded-full bg-green-500 border-2 border-black" />
               </div>
               <div>
                 <h3 id="concierge-heading" className="text-sm font-bold text-white font-display">
@@ -215,10 +215,9 @@ export function WhatsAppConcierge() {
           )}
         </div>
 
-        {/* Online Status Live Pip (Green emerald with subtle neon ring) */}
-        <span className="absolute -top-1 -right-1 z-20 flex size-3.5">
-          <span className="absolute inline-flex size-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-          <span className="relative inline-flex size-3.5 rounded-full bg-emerald-500 border-2 border-black" />
+        {/* Online Status Live Pip */}
+        <span className="absolute -top-0.5 -right-0.5 z-20 flex size-3">
+          <span className="size-3 rounded-full bg-emerald-500 border-2 border-black" />
         </span>
       </button>
     </aside>

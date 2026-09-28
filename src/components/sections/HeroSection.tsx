@@ -92,11 +92,8 @@ export default function HeroSection() {
                 </div>
 
                 {/* Live Broadcast REC Beacon */}
-                <div className="flex items-center gap-1 pl-1 border-l border-white/15">
-                  <span className="relative flex size-1.5">
-                    <span className="absolute inline-flex size-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-                    <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981]" />
-                  </span>
+                <div className="flex items-center gap-1.5 pl-1.5 border-l border-white/15">
+                  <span className="size-1.5 rounded-full bg-emerald-400" />
                   <span className="text-[9px] font-mono tracking-widest text-emerald-400 font-semibold">LIVE</span>
                 </div>
               </div>

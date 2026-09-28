@@ -72,15 +72,16 @@ export const CardBody = ({
   className?: string;
   as?: React.ElementType;
 }) => {
+  const Comp = Tag as React.ComponentType<React.HTMLAttributes<HTMLElement>> | "div";
   return (
-    <Tag
+    <Comp
       className={cn(
         "h-full w-full [transform-style:preserve-3d] [&>*]:[transform-style:preserve-3d]",
         className
       )}
     >
       {children}
-    </Tag>
+    </Comp>
   );
 };
 
@@ -120,8 +121,10 @@ export const CardItem = ({
     }
   }, [isMouseEntered, translateX, translateY, translateZ, rotateX, rotateY, rotateZ]);
 
+  const Comp = Tag as React.ComponentType<Record<string, unknown>> | "div";
+
   return (
-    <Tag
+    <Comp
       ref={ref}
       className={cn(
         "transition-transform duration-200 ease-out",
@@ -130,7 +133,7 @@ export const CardItem = ({
       {...rest}
     >
       {children}
-    </Tag>
+    </Comp>
   );
 };
 

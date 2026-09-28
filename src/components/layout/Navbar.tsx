@@ -9,16 +9,13 @@ import { BrandLogo } from "./BrandLogo";
 import { NavLinks } from "./NavLinks";
 import { MobileNavDrawer, NavLinkItem } from "./MobileNavDrawer";
 
+// Streamlined Apple/Tesla curated pillars (4 core pillars, noise-free)
 const NAV_LINKS: readonly NavLinkItem[] = [
-  { label: "Home", href: "/" },
-  { label: "Enterprise", href: "/enterprise" },
-  { label: "Projects", href: "/projects" },
-  { label: "Equipment", href: "/shop" },
-  { label: "Influencers", href: "/influencers" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
+  { label: "Productions", href: "/projects" },
+  { label: "Soundstages", href: "/enterprise" },
+  { label: "Gear Rental", href: "/shop" },
+  { label: "Creators", href: "/influencers" },
 ];
-
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +23,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => setScrolled(window.scrollY > 15);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -36,30 +33,41 @@ export default function Navbar() {
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
         scrolled
-          ? "bg-black/80 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/40"
-          : "bg-background/60 backdrop-blur-md border-b border-white/5"
+          ? "bg-black/75 backdrop-blur-2xl border-b border-white/[0.08] shadow-lg shadow-black/30"
+          : "bg-black/30 backdrop-blur-md border-b border-white/[0.04]"
       )}
     >
       <nav className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-18 lg:h-20">
-          {/* Brand Logo */}
+        <div className="flex items-center justify-between h-16 lg:h-18">
+          {/* Left: Brand Identity */}
           <BrandLogo />
 
-          {/* Desktop Navigation Links */}
+          {/* Center: Curated Minimalist Pillars */}
           <NavLinks links={NAV_LINKS} />
 
-          {/* Right Action CTA */}
-          <div className="flex items-center gap-2.5">
+          {/* Right: Focused Action Hierarchy (Clean Apple/Tesla aesthetics) */}
+          <div className="flex items-center gap-3">
+            {/* Discreet Client Vault Link */}
+            <Link
+              href="/enterprise/portal"
+              className="text-[12px] font-medium text-slate-300/80 hover:text-white px-2.5 py-1.5 rounded-full hover:bg-white/[0.06] transition-all hidden md:inline-flex items-center gap-1.5"
+            >
+              <span className="size-1.5 rounded-full bg-brand-cyan/80 animate-pulse" />
+              <span>Client Vault</span>
+            </Link>
+
+            {/* Quiet Sign In */}
             <Link
               href="/login"
-              className="text-xs font-semibold text-slate-300 hover:text-white px-3 py-2 rounded-xl hover:bg-white/5 transition-colors hidden md:inline-flex items-center"
+              className="text-[12px] font-medium text-slate-300/80 hover:text-white px-2.5 py-1.5 rounded-full hover:bg-white/[0.06] transition-all hidden md:inline-flex items-center"
             >
               Sign In
             </Link>
 
+            {/* Primary Action: Signature Luminous Halo & Shimmer Button */}
             <Link
               href="/studio-booking"
-              className="relative group hidden sm:inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+              className="relative group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
             >
               {/* Luminous Ambient Halo Glow */}
               <span className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-teal opacity-50 blur-sm group-hover:opacity-100 group-hover:blur-md transition-all duration-300 pointer-events-none" />
@@ -71,12 +79,6 @@ export default function Navbar() {
 
               {/* Surface Reflection Gloss */}
               <span className="absolute inset-[1px] rounded-xl bg-gradient-to-b from-white/10 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
-
-              {/* Active Studio Live Beacon */}
-              <span className="relative flex size-2 shrink-0">
-                <span className="absolute inline-flex size-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-                <span className="relative inline-flex size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-              </span>
 
               {/* Label & Icon */}
               <span className="relative z-10 flex items-center gap-1.5 font-display text-[12px] uppercase tracking-wider text-white group-hover:text-brand-purple-lighter transition-colors">
@@ -98,13 +100,14 @@ export default function Navbar() {
               </svg>
             </Link>
 
+            {/* Clean Mobile Hamburger Trigger */}
             <button
               type="button"
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2.5 rounded-xl border border-white/10 text-white bg-white/5 hover:bg-white/10 transition-colors"
+              className="lg:hidden p-2 rounded-full border border-white/10 text-white bg-white/5 hover:bg-white/10 transition-colors"
               aria-label="Toggle menu"
             >
-              {isOpen ? <X size={20} /> : <Menu size={20} />}
+              {isOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
         </div>

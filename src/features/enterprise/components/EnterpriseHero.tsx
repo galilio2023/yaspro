@@ -31,7 +31,7 @@ export function EnterpriseHero({ onOpenRfp }: EnterpriseHeroProps) {
         {/* Top Sovereign Status Bar */}
         <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-3 mb-8 px-1">
           <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-mono font-bold tracking-wide border border-brand-purple/40 bg-brand-purple/10 text-brand-purple-light backdrop-blur-md">
-            <span className="size-1.5 sm:size-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            <span className="size-1.5 sm:size-2 rounded-full bg-emerald-400 shrink-0" />
             <span>DUBAI SOUNDSTAGE: LIVE GENLOCK</span>
           </div>
 
