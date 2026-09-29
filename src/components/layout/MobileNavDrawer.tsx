@@ -8,6 +8,7 @@ import { ArrowRight, Sparkles, MapPin, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { IyasProIcon } from "@/components/ui/IyasProIcon";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useSession } from "@/lib/auth-client";
 
 export interface NavLinkItem {
   label: string;
@@ -32,6 +33,7 @@ export function MobileNavDrawer({
 }: MobileNavDrawerProps) {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const { t, isArabic } = useLanguage();
+  const { data: session } = useSession();
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const triggerElementRef = useRef<HTMLElement | null>(null);
@@ -138,7 +140,6 @@ export function MobileNavDrawer({
             initial={{ opacity: 0, x: isArabic ? "-100%" : "100%" }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: isArabic ? "-100%" : "100%" }}
-            style={{ ["--drawer-x" as string]: typeof document !== "undefined" && document.documentElement.dir === "rtl" ? "-100%" : "100%" }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             className="lg:hidden fixed inset-y-0 end-0 w-[85vw] max-w-xs bg-secondary/98 backdrop-blur-2xl border-s border-brand-purple/20 z-[75] flex flex-col justify-between p-5 sm:p-7 overflow-y-auto shadow-2xl shadow-brand-purple/30"
           >
@@ -228,22 +229,35 @@ export function MobileNavDrawer({
                 💬 {t("nav.whatsApp")} Hotline
               </a>
 
-              {/* Portal + Sign In */}
-              <div className="grid grid-cols-2 gap-2">
-                <Link
-                  href="/portal"
-                  onClick={onClose}
-                  className="py-2.5 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-semibold text-center text-slate-200 transition-colors"
-                >
-                  {t("nav.portal")}
-                </Link>
-                <Link
-                  href="/login"
-                  onClick={onClose}
-                  className="py-2.5 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-semibold text-center text-slate-200 transition-colors"
-                >
-                  {t("nav.signIn")}
-                </Link>
+              {/* Portal / Sign In */}
+              <div className="w-full">
+                {session?.user ? (
+                  <Link
+                    href="/portal"
+                    onClick={onClose}
+                    className="w-full py-2.5 px-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs font-semibold text-center text-emerald-300 flex items-center justify-center gap-2 transition-colors"
+                  >
+                    <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>{session.user.name} ({t("nav.portal")})</span>
+                  </Link>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link
+                      href="/portal"
+                      onClick={onClose}
+                      className="py-2.5 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-semibold text-center text-slate-200 transition-colors"
+                    >
+                      {t("nav.portal")}
+                    </Link>
+                    <Link
+                      href="/login"
+                      onClick={onClose}
+                      className="py-2.5 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-semibold text-center text-slate-200 transition-colors"
+                    >
+                      {t("nav.signIn")}
+                    </Link>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center justify-between text-[11px] text-text-ghost px-1">

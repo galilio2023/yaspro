@@ -107,9 +107,11 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
     setCurrentPage(0); // eslint-disable-line
   }, [searchQuery, filterType, filterStatus]);
 
+  const pageCount = Math.max(1, Math.ceil(filteredInquiries.length / PAGE_SIZE));
+  const safePage = Math.min(currentPage, pageCount - 1);
   const paginatedInquiries = filteredInquiries.slice(
-    currentPage * PAGE_SIZE,
-    (currentPage + 1) * PAGE_SIZE
+    safePage * PAGE_SIZE,
+    (safePage + 1) * PAGE_SIZE
   );
 
   const totalInquiries = filteredInquiries.length;
@@ -337,22 +339,22 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
       {totalInquiries > PAGE_SIZE && (
         <div className="flex items-center justify-between px-4 py-3 border border-white/10 rounded-2xl bg-white/[0.01] text-xs text-slate-400">
           <span>
-            Showing {currentPage * PAGE_SIZE + 1}–{Math.min((currentPage + 1) * PAGE_SIZE, totalInquiries)} of {totalInquiries}
+            Showing {safePage * PAGE_SIZE + 1}–{Math.min((safePage + 1) * PAGE_SIZE, totalInquiries)} of {totalInquiries}
           </span>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
-              disabled={currentPage === 0}
+              disabled={safePage === 0}
               className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
               Previous
             </button>
-            <span className="font-mono text-slate-300">{currentPage + 1} / {Math.ceil(totalInquiries / PAGE_SIZE)}</span>
+            <span className="font-mono text-slate-300">{safePage + 1} / {pageCount}</span>
             <button
               type="button"
-              onClick={() => setCurrentPage((p) => Math.min(Math.ceil(totalInquiries / PAGE_SIZE) - 1, p + 1))}
-              disabled={currentPage >= Math.ceil(totalInquiries / PAGE_SIZE) - 1}
+              onClick={() => setCurrentPage((p) => Math.min(pageCount - 1, p + 1))}
+              disabled={safePage >= pageCount - 1}
               className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
               Next
