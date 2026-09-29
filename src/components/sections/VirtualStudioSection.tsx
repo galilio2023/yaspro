@@ -92,14 +92,22 @@ export function VirtualStudioSection() {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Mouse / Touch drag handler for Before/After split
+  const rafDragRef = useRef<number | null>(null);
+
+  // Mouse / Touch drag handler for Before/After split with rAF throttling
   const updateSliderFromClientX = useCallback((clientX: number) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const clampedX = Math.max(0, Math.min(rect.width, x));
-    const percentage = (clampedX / rect.width) * 100;
-    setSliderPosition(Math.round(percentage * 10) / 10);
+    if (rafDragRef.current !== null) {
+      cancelAnimationFrame(rafDragRef.current);
+    }
+    rafDragRef.current = requestAnimationFrame(() => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const clampedX = Math.max(0, Math.min(rect.width, x));
+      const percentage = (clampedX / rect.width) * 100;
+      setSliderPosition(Math.round(percentage * 10) / 10);
+      rafDragRef.current = null;
+    });
   }, []);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -127,12 +135,16 @@ export function VirtualStudioSection() {
 
     const handleEnd = () => {
       setIsDragging(false);
+      if (rafDragRef.current !== null) {
+        cancelAnimationFrame(rafDragRef.current);
+        rafDragRef.current = null;
+      }
     };
 
     if (isDragging) {
-      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mousemove", handleMouseMove, { passive: true });
       window.addEventListener("mouseup", handleEnd);
-      window.addEventListener("touchmove", handleTouchMove);
+      window.addEventListener("touchmove", handleTouchMove, { passive: true });
       window.addEventListener("touchend", handleEnd);
     }
 
@@ -141,12 +153,34 @@ export function VirtualStudioSection() {
       window.removeEventListener("mouseup", handleEnd);
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleEnd);
+      if (rafDragRef.current !== null) {
+        cancelAnimationFrame(rafDragRef.current);
+        rafDragRef.current = null;
+      }
     };
   }, [isDragging, updateSliderFromClientX]);
 
+  const [isSectionVisible, setIsSectionVisible] = useState<boolean>(true);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  // Pause auto-sweep animation when section is off-screen
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSectionVisible(entry.isIntersecting);
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   // Smooth automatic back-and-forth comparison sweep using requestAnimationFrame
   useEffect(() => {
-    if (!isAutoWiping) return;
+    if (!isAutoWiping || !isSectionVisible) return;
     let animId: number;
     let angle = 0;
     let lastTime = performance.now();
@@ -162,10 +196,11 @@ export function VirtualStudioSection() {
 
     animId = requestAnimationFrame(sweep);
     return () => cancelAnimationFrame(animId);
-  }, [isAutoWiping]);
+  }, [isAutoWiping, isSectionVisible]);
 
   return (
     <Section
+      ref={sectionRef}
       id="virtual-studio"
       aria-labelledby="virtual-studio-title"
       className="bg-secondary border-t border-white/10 relative overflow-hidden !py-12 md:!py-16"
@@ -199,14 +234,14 @@ export function VirtualStudioSection() {
         />
 
         {/* ─── 1. COMPACT SCENE SELECTOR TABS ─── */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-5">
+        <div className="flex items-center justify-start sm:justify-center gap-2 sm:gap-3 mb-5 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
           {VIRTUAL_SCENES.map((scene) => {
             const isSelected = activeScene.id === scene.id;
             return (
               <button
                 key={scene.id}
                 onClick={() => setActiveScene(scene)}
-                className={`px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all flex items-center gap-2.5 cursor-pointer shadow-sm ${
+                className={`px-3.5 py-2.5 sm:py-2 rounded-xl border text-xs font-semibold transition-all flex items-center gap-2.5 cursor-pointer shadow-sm shrink-0 whitespace-nowrap min-h-[44px] sm:min-h-0 ${
                   isSelected
                     ? "border-brand-purple ring-2 ring-brand-purple/30 bg-card text-white shadow-brand-purple/10"
                     : "border-white/10 bg-card/60 text-text-secondary hover:text-white hover:border-white/20 hover:bg-card/90"
@@ -237,7 +272,7 @@ export function VirtualStudioSection() {
             ref={containerRef}
             onMouseDown={handleMouseDown}
             onTouchStart={handleTouchStart}
-            className="relative w-full aspect-[16/9] sm:aspect-[21/10] md:aspect-[16/9] cursor-ew-resize group"
+            className="relative w-full aspect-[16/9] sm:aspect-[21/10] md:aspect-[16/9] cursor-ew-resize group [touch-action:pan-y]"
           >
             {/* UNDER LAYER (RIGHT SIDE): Photorealistic 3D Virtual Scene */}
             <div className="absolute inset-0 size-full">
@@ -324,11 +359,11 @@ export function VirtualStudioSection() {
         </div>
 
         {/* ─── 3. INTEGRATED BOTTOM CONTROLS & PRODUCTION ACTIONS ─── */}
-        <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-3 p-3 sm:p-4 bg-card/90 rounded-xl sm:rounded-2xl border border-white/10 mb-5 sm:mb-6">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-between gap-3 p-3 sm:p-4 bg-card/90 rounded-xl sm:rounded-2xl border border-white/10 mb-5 sm:mb-6">
+          <div className="flex items-center justify-between sm:justify-start gap-2">
             <button
               onClick={() => setIsAutoWiping(!isAutoWiping)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              className={`px-3.5 py-2 sm:py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer min-h-[40px] sm:min-h-0 ${
                 isAutoWiping
                   ? "bg-brand-cyan text-black shadow-lg shadow-brand-cyan/20"
                   : "bg-white/10 text-white hover:bg-white/15"
@@ -337,10 +372,53 @@ export function VirtualStudioSection() {
               {isAutoWiping ? <Pause size={12} /> : <Play size={12} />}
               <span>{isAutoWiping ? "Pause Sweep" : "Auto-Sweep"}</span>
             </button>
+
+            {/* Quick Preset Buttons on Mobile (horizontal scrolling pills) */}
+            <div className="flex sm:hidden items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
+              <button
+                onClick={() => {
+                  setIsAutoWiping(false);
+                  setSliderPosition(100);
+                }}
+                className={`px-2.5 py-2 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap cursor-pointer min-h-[40px] ${
+                  sliderPosition >= 98
+                    ? "bg-emerald-600 text-white shadow"
+                    : "text-text-secondary hover:text-white bg-white/5"
+                }`}
+              >
+                100% Green
+              </button>
+              <button
+                onClick={() => {
+                  setIsAutoWiping(false);
+                  setSliderPosition(50);
+                }}
+                className={`px-2.5 py-2 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap cursor-pointer min-h-[40px] ${
+                  sliderPosition > 40 && sliderPosition < 60
+                    ? "bg-brand-purple text-white shadow"
+                    : "text-text-secondary hover:text-white bg-white/5"
+                }`}
+              >
+                50/50
+              </button>
+              <button
+                onClick={() => {
+                  setIsAutoWiping(false);
+                  setSliderPosition(0);
+                }}
+                className={`px-2.5 py-2 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap cursor-pointer min-h-[40px] ${
+                  sliderPosition <= 2
+                    ? "btn-brand shadow"
+                    : "text-text-secondary hover:text-white bg-white/5"
+                }`}
+              >
+                100% 3D
+              </button>
+            </div>
           </div>
 
-          {/* Quick Preset Buttons */}
-          <div className="flex items-center gap-1.5">
+          {/* Quick Preset Buttons (Desktop) */}
+          <div className="hidden sm:flex items-center gap-1.5">
             <button
               onClick={() => {
                 setIsAutoWiping(false);
@@ -383,10 +461,10 @@ export function VirtualStudioSection() {
           </div>
 
           {/* CTA Link */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <Link
               href="/studio-booking"
-              className="btn-brand py-1.5 px-4 rounded-xl flex items-center gap-1.5 text-xs font-bold shadow-md hover:shadow-brand-purple/20 transition-all"
+              className="btn-brand w-full sm:w-auto py-2.5 sm:py-1.5 px-4 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold shadow-md hover:shadow-brand-purple/20 transition-all min-h-[40px] sm:min-h-0"
             >
               <span>Book Virtual Stage</span>
               <ArrowRight size={13} />

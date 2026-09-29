@@ -74,10 +74,13 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
       mouse.y = -1000;
     };
 
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
     window.addEventListener("mousemove", handlePointerMove, { passive: true });
     window.addEventListener("mouseleave", handlePointerLeave, { passive: true });
-    window.addEventListener("touchmove", handlePointerMove, { passive: true });
-    window.addEventListener("touchend", handlePointerLeave, { passive: true });
+    if (!isTouch) {
+      window.addEventListener("touchmove", handlePointerMove, { passive: true });
+      window.addEventListener("touchend", handlePointerLeave, { passive: true });
+    }
 
     // Refresh cached rectangle on scroll so coordinates remain accurate while visible
     const handleScroll = () => {
@@ -178,9 +181,10 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
 
       oCtx.restore();
 
+      const isMobile = w < 768;
       const imgData = oCtx.getImageData(0, 0, w, h).data;
       const points: { x: number; y: number }[] = [];
-      const step = 4;
+      const step = isMobile ? 6 : 4;
       for (let y = 0; y < h; y += step) {
         for (let x = 0; x < w; x += step) {
           const idx = (y * w + x) * 4;
@@ -194,9 +198,10 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
 
     let camPoints = generateCameraPoints(width, height);
 
-    // Optimized particle count: 500 particles on mobile, 750 on desktop
+    // Optimized particle count: 200 particles on mobile, 750 on desktop
+    const isMobileDevice = width < 768 || (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches);
     const targetCount = camPoints.length;
-    const ambientCount = width < 768 ? 200 : 350;
+    const ambientCount = isMobileDevice ? 80 : 350;
     const totalCount = targetCount + ambientCount;
 
     const particles: Particle[] = [];
@@ -246,6 +251,13 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
     };
     window.addEventListener("resize", handleResize, { passive: true });
 
+    const CYCLE_DURATION = 20000;
+    let startTime = performance.now();
+    let elapsedTime = 0;
+    let lastFrame = 0;
+    // 30 FPS target on touch/mobile devices saves heavy main-thread churn; 50 FPS on desktop
+    const TARGET_FPS_MS = isMobileDevice ? 1000 / 30 : 1000 / 50;
+
     // PAUSE ANIMATION COMPLETELY WHEN SCROLLED PAST HERO (IntersectionObserver)
     const observer = new IntersectionObserver(
       (entries) => {
@@ -263,12 +275,6 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
       { threshold: 0.05 }
     );
     observer.observe(canvas);
-
-    const CYCLE_DURATION = 20000;
-    let startTime = performance.now();
-    let elapsedTime = 0;
-    let lastFrame = 0;
-    const TARGET_FPS_MS = 1000 / 50; // Smooth 50 FPS lock for optimal battery & performance
 
     const render = (now: number) => {
       if (!isVisible) {

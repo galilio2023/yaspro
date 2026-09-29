@@ -6,12 +6,20 @@ import { OrbitingCircles } from "@/components/magicui/orbiting-circles";
 import { ORBIT_NODES, OrbitNodeConfig } from "./ecosystem.data";
 import { cn } from "@/lib/utils";
 
-const UNIQUE_RADII = [...new Set(ORBIT_NODES.map((n) => n.radius))];
-
 export function OrbitingMediaNodes() {
   const [hoveredNode, setHoveredNode] = useState<OrbitNodeConfig | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile, { passive: true });
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   React.useEffect(() => {
     const el = containerRef.current;
@@ -27,6 +35,9 @@ export function OrbitingMediaNodes() {
 
     return () => observer.disconnect();
   }, []);
+
+  const scaleFactor = isMobile ? 0.72 : 1;
+  const uniqueRadii = [...new Set(ORBIT_NODES.map((n) => Math.round(n.radius * scaleFactor)))];
 
   return (
     <div
@@ -115,7 +126,7 @@ export function OrbitingMediaNodes() {
         />
 
         {/* Orbit Tracks */}
-        {UNIQUE_RADII.map((r, idx) => (
+        {uniqueRadii.map((r, idx) => (
           <g key={r}>
             {/* Primary Track Circle */}
             <circle
@@ -176,11 +187,12 @@ export function OrbitingMediaNodes() {
       {ORBIT_NODES.map((node) => {
         const Icon = node.icon;
         const isHovered = hoveredNode?.id === node.id;
+        const scaledRadius = Math.round(node.radius * scaleFactor);
 
         return (
           <OrbitingCircles
             key={node.id}
-            radius={node.radius}
+            radius={scaledRadius}
             duration={node.duration}
             delay={node.delay}
             reverse={node.reverse}

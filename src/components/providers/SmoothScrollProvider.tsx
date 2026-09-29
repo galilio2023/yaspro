@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { CustomCinemaCursor } from "@/components/ui/CustomCinemaCursor";
 
 export function SmoothScrollProvider({
@@ -8,13 +8,10 @@ export function SmoothScrollProvider({
 }: {
   children: React.ReactNode;
 }) {
-  useEffect(() => {
-    // Enable native smooth momentum scrolling
-    if (typeof document !== "undefined") {
-      document.documentElement.style.scrollBehavior = "smooth";
-    }
-  }, []);
-
+  // NOTE: We intentionally do NOT override scroll-behavior here.
+  // globals.css already sets `html { scroll-behavior: auto; }` which is correct:
+  // — It enables the browser's native 60/120Hz momentum scrolling on iOS/Android.
+  // — Setting `smooth` via JS would fight iOS rubber-band physics and degrade FPS.
   return (
     <>
       <CustomCinemaCursor />
