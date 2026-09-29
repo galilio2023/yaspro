@@ -51,7 +51,7 @@ const aiKitMatcherModule = loadSource('src/lib/ai/ai-kit-matcher.ts', {
 // Tests for Mawthooq Auditor
 test('Mawthooq Auditor: clears fully compliant ad copy with #إعلان and Mawthooq license', async () => {
   const report = await mawthooqAuditorModule.auditMawthooqCompliance({
-    scriptOrCopy: '#إعلان - احجز تصوير إعلانك التجاري في استوديوهات ياس برو المتطورة في الرياض بأفضل تقنيات الإنتاج الافتراضي.',
+    scriptOrCopy: '#إعلان - احجز تصوير إعلانك التجاري في استوديوهات Yas Pro المتطورة في الرياض بأفضل تقنيات الإنتاج الافتراضي.',
     targetMarket: 'KSA',
     creatorMawthooqNumber: 'GAMR-MWQ-882910-KSA',
   });

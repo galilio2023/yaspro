@@ -276,8 +276,10 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
     );
     observer.observe(canvas);
 
+    let isModalOpen = false;
+
     const render = (now: number) => {
-      if (!isVisible) {
+      if (!isVisible || isModalOpen) {
         animId = 0;
         return;
       }
@@ -385,7 +387,7 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
     animId = requestAnimationFrame(render);
 
     const handleVisibility = () => {
-      if (document.hidden) {
+      if (document.hidden || isModalOpen) {
         cancelAnimationFrame(animId);
       } else {
         startTime = performance.now() - (elapsedTime % CYCLE_DURATION);
@@ -393,6 +395,19 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
       }
     };
     document.addEventListener("visibilitychange", handleVisibility);
+
+    // Pause canvas particle loop when a video modal is open to free CPU/GPU
+    const handleCinemaOpen = () => {
+      isModalOpen = true;
+      cancelAnimationFrame(animId);
+    };
+    const handleCinemaClose = () => {
+      isModalOpen = false;
+      startTime = performance.now() - (elapsedTime % CYCLE_DURATION);
+      animId = requestAnimationFrame(render);
+    };
+    window.addEventListener("yaspro:cinema-modal-open", handleCinemaOpen);
+    window.addEventListener("yaspro:cinema-modal-close", handleCinemaClose);
 
     return () => {
       observer.disconnect();
@@ -403,6 +418,8 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
       window.removeEventListener("touchmove", handlePointerMove);
       window.removeEventListener("touchend", handlePointerLeave);
       document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("yaspro:cinema-modal-open", handleCinemaOpen);
+      window.removeEventListener("yaspro:cinema-modal-close", handleCinemaClose);
       cancelAnimationFrame(animId);
     };
   }, []);

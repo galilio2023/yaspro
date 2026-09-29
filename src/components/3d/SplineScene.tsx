@@ -81,7 +81,17 @@ export function SplineScene({
     );
     observer.observe(el);
 
-    return () => observer.disconnect();
+    // Pause WebGL rendering whenever a Cinema Video Modal is open to free GPU
+    const handleCinemaOpen = () => setIsVisible(false);
+    const handleCinemaClose = () => setIsVisible(true);
+    window.addEventListener("yaspro:cinema-modal-open", handleCinemaOpen);
+    window.addEventListener("yaspro:cinema-modal-close", handleCinemaClose);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("yaspro:cinema-modal-open", handleCinemaOpen);
+      window.removeEventListener("yaspro:cinema-modal-close", handleCinemaClose);
+    };
   }, []);
 
   return (
@@ -97,20 +107,21 @@ export function SplineScene({
         <SplineFallback />
       ) : !hasError ? (
         <Suspense fallback={<SplineFallback />}>
-          <div
-            className={cn(
-              "size-full transition-opacity duration-700",
-              isLoaded ? "opacity-100" : "opacity-0",
-              !isVisible && "pointer-events-none invisible"
-            )}
-          >
-            <Spline
-              scene={scene}
-              onLoad={() => setIsLoaded(true)}
-              onError={() => setHasError(true)}
-            />
-          </div>
-          {!isLoaded && (
+          {isVisible ? (
+            <div
+              className={cn(
+                "size-full transition-opacity duration-700",
+                isLoaded ? "opacity-100" : "opacity-0"
+              )}
+            >
+              <Spline
+                scene={scene}
+                onLoad={() => setIsLoaded(true)}
+                onError={() => setHasError(true)}
+              />
+            </div>
+          ) : null}
+          {(!isLoaded || !isVisible) && (
             <div className="absolute inset-0 flex items-center justify-center">
               <SplineFallback />
             </div>

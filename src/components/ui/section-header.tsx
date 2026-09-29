@@ -55,10 +55,10 @@ export function SectionHeader({
           {badge && (
             <Badge
               variant={badgeVariant}
-              className="px-3 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest gap-1.5 max-w-full truncate"
+              className="px-3 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest gap-1.5 max-w-full"
             >
               {badgeIcon}
-              <span className="truncate">{badge}</span>
+              <span>{badge}</span>
             </Badge>
           )}
 
@@ -70,7 +70,7 @@ export function SectionHeader({
         {/* Heading */}
         <HeadingTag
           id={headingId}
-          className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-text-primary tracking-tight font-display leading-[1.12] mb-4 sm:mb-5 text-balance"
+          className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-text-primary tracking-tight font-display leading-[1.12] rtl:leading-[1.3] mb-4 sm:mb-5 text-balance"
         >
           {title}{" "}
           {gradientText && (

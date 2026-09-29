@@ -4,6 +4,7 @@
     "soundstages": "Soundstages",
     "gear": "Gear Rental",
     "creators": "Creators",
+    "enterprise": "Enterprise",
     "about": "About",
     "contact": "Contact",
     "portal": "Portal",
@@ -176,7 +177,40 @@
     "teamBadge": "Executive Leadership",
     "teamTitle": "Our",
     "teamGradient": "Leadership",
-    "teamDesc": "Experienced media directors, broadcast engineers, and digital innovators leading Yas Pro forward."
+    "teamDesc": "Experienced media directors, broadcast engineers, and digital innovators leading Yas Pro forward.",
+    "heritageBadge": "A Decade of Excellence",
+    "heritageTitle": "From Dubai Roots to Pan-Arab Broadcast Leader",
+    "heritageDesc": "Since our 2015 UAE accreditation, we have engineered world-class media solutions for federal ministries, global networks, and top creators.",
+    "milestones": {
+      "m2015": {
+        "year": "2015",
+        "title": "Official UAE License & Launch",
+        "desc": "Accredited by the UAE National Media Council (NMC) with our first broadcast soundstages in Dubai."
+      },
+      "m2019": {
+        "year": "2019",
+        "title": "Regional Hubs Expansion",
+        "desc": "Inaugurated dedicated post-production in Cairo and regional production base in Amman."
+      },
+      "m2023": {
+        "year": "2023",
+        "title": "Outside Broadcast Mobile Fleet",
+        "desc": "Deployed 4K HDR OB-VAN command vehicles for major sports tournaments and live summits."
+      },
+      "m2026": {
+        "year": "2026",
+        "title": "AI Neural Workflows & Virtual Stage",
+        "desc": "Real-time Unreal Engine 5.4 LED virtual production, neural dubbing, and sovereign media retainers."
+      }
+    },
+    "cta": {
+      "badge": "Visit Our Facilities",
+      "title": "Experience Yas Pro",
+      "titleGradient": "In Person",
+      "desc": "Schedule a private walk-through of our Dubai 4K soundstages, podcast suites, and live OB-VAN command center.",
+      "bookTour": "Schedule Private Studio Tour",
+      "talkTeam": "Consult Executive Producers"
+    }
   },
   "contact": {
     "badge": "Direct Inquiries",
@@ -226,6 +260,82 @@
       "requestVan": "Request Van",
       "simulate": "Simulate 8s Live Highlight Post",
       "processing": "Ingesting Multi-Cam Feed..."
+    }
+  },
+  "portal": {
+    "accountBadge": "Production Client Account",
+    "welcome": "Welcome, {name}",
+    "subtitle": "Track your studio booking sessions, equipment rentals, watermarked 4K dailies, and billing history.",
+    "bookSession": "Book New Session",
+    "signOut": "Sign Out",
+    "companyAccount": "Company Account",
+    "independent": "Independent Creator / Agency",
+    "verifiedEmail": "Verified Email",
+    "contactPhone": "Contact Phone",
+    "notProvided": "Not Provided",
+    "hotline": "Studio Dispatch Hotline",
+    "cards": {
+      "dailies": {
+        "title": "4K Dailies & Video Review",
+        "description": "Stream rough cuts, color-graded sequences, and timecoded reviews directly from our Dubai cloud ingest storage.",
+        "status": "0 Active Screening Rooms",
+        "action": "Enter Screening Room"
+      },
+      "schedule": {
+        "title": "Studio Calendar & Call Sheets",
+        "description": "View booked studio dates, crew call sheets, lighting setup diagrams, and OB-VAN dispatch timelines.",
+        "status": "Dubai Hub Stage A",
+        "action": "Check Stage Availability"
+      },
+      "billing": {
+        "title": "Equipment Leases & Invoices",
+        "description": "Download verified VAT tax invoices (UAE FTA compliant), camera rental bonds, and contract master agreements.",
+        "status": "0 Invoices Pending",
+        "action": "Browse Inventory"
+      }
+    },
+    "sessions": {
+      "title": "Active Production Sessions",
+      "sync": "Auto-synced with Neon DB",
+      "empty": "No active shoot in progress right now. Ready for your next commercial, podcast, or film?",
+      "scheduleCta": "Schedule your next shoot now →"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome to Yas Pro",
+      "subtitle": "Sign in to access your productions, dailies, or CMS dashboard.",
+      "emailLabel": "Corporate Email",
+      "emailPlaceholder": "name@company.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••••••",
+      "submitBtn": "Sign In to Account",
+      "submittingBtn": "Signing in...",
+      "noAccount": "Don't have a production account?",
+      "registerLink": "Register here",
+      "securityBadge": "Protected by Better Auth with Argon2 password hashing."
+    },
+    "register": {
+      "title": "Create Production Account",
+      "subtitle": "Access enterprise dailies, reserve studios, and manage rental gear with Yas Pro.",
+      "accountTypeLabel": "Account Type",
+      "accountTypeCreator": "Individual Creator / Filmmaker",
+      "accountTypeEnterprise": "Enterprise / Government / Agency",
+      "fullNameLabel": "Full Name",
+      "fullNamePlaceholder": "e.g. Tariq Mansoor",
+      "companyLabel": "Company / Agency",
+      "companyPlaceholder": "e.g. Dubai Media Agency",
+      "emailLabel": "Work Email",
+      "emailPlaceholder": "name@company.com",
+      "phoneLabel": "Direct Phone",
+      "phonePlaceholder": "+971 50 000 0000",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Minimum 8 characters",
+      "submitBtn": "Complete Registration",
+      "submittingBtn": "Creating account...",
+      "hasAccount": "Already registered with Yas Pro?",
+      "loginLink": "Sign in",
+      "securityBadge": "Connected directly to Neon PostgreSQL database."
     }
   }
 }

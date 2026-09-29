@@ -3,7 +3,7 @@
 import { StaggerContainer, StaggerItem } from "@/components/animations/MotionWrappers";
 import { TEAM_MEMBERS } from "../data";
 import { SectionHeader } from "@/components/ui/section-header";
-import { Users } from "lucide-react";
+import { Users, Award, Shield } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface TeamGridProps {
@@ -14,7 +14,7 @@ export function TeamGrid({ headingId }: TeamGridProps) {
   const { t, isArabic } = useLanguage();
 
   return (
-    <div>
+    <div className="mb-20 sm:mb-28">
       <SectionHeader
         headingId={headingId}
         badge={t("about.teamBadge")}
@@ -25,20 +25,44 @@ export function TeamGrid({ headingId }: TeamGridProps) {
         description={t("about.teamDesc")}
       />
 
-      <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
+      <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
         {TEAM_MEMBERS.map((member) => (
           <StaggerItem as="article" key={member.role} className="h-full">
-            <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-8 flex flex-col justify-between h-full hover:border-brand-purple/40 hover:bg-white/[0.06] transition-all duration-300">
+            <div className="rounded-3xl border border-white/10 bg-[#0b081b]/90 backdrop-blur-xl p-6 sm:p-7 flex flex-col justify-between h-full hover:border-brand-purple/50 hover:bg-[#100c26] transition-all duration-300 group shadow-xl shadow-black/30">
               <div>
-                <span className="text-xs font-semibold text-brand-purple-light uppercase tracking-wider block mb-2 font-mono">
-                  {isArabic && member.arRole ? member.arRole : member.role}
-                </span>
-                <h3 className="text-xl font-bold text-white mb-3 font-display">
-                  {isArabic && member.arName ? member.arName : member.name}
-                </h3>
-                <p className="text-text-secondary text-sm leading-relaxed">
-                  {isArabic && member.arFocus ? member.arFocus : member.focus}
+                {/* Header: Monogram Avatar + Department Tag */}
+                <div className="flex items-center justify-between gap-3 mb-5">
+                  <div className={`size-12 sm:size-14 rounded-2xl bg-gradient-to-tr ${member.gradient} p-[1.5px] shadow-lg shadow-black/50 group-hover:scale-105 transition-transform`}>
+                    <div className="size-full bg-[#0a0718] rounded-[14px] flex items-center justify-center font-mono font-bold text-sm sm:text-base text-white font-latin" dir="ltr">
+                      {member.initials}
+                    </div>
+                  </div>
+
+                  <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-brand-purple-light">
+                    {isArabic ? member.arDepartment : member.department}
+                  </span>
+                </div>
+
+                <div className="mb-2">
+                  <span className="text-xs font-semibold text-brand-cyan uppercase tracking-wider block font-mono">
+                    {isArabic ? member.arRole : member.role}
+                  </span>
+                  <h3 className="text-xl font-bold text-white font-display mt-0.5 group-hover:text-brand-purple-light transition-colors">
+                    {isArabic ? member.arName : member.name}
+                  </h3>
+                </div>
+
+                <p className="text-text-secondary text-xs sm:text-sm leading-relaxed mt-3">
+                  {isArabic ? member.arFocus : member.focus}
                 </p>
+              </div>
+
+              <div className="mt-6 pt-3 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-text-muted">
+                <span className="flex items-center gap-1 text-slate-400">
+                  <Shield size={12} className="text-emerald-400" />
+                  {isArabic ? "طاقم معتمد" : "Verified Roster"}
+                </span>
+                <span className="font-latin" dir="ltr">YAS PRO CORE</span>
               </div>
             </div>
           </StaggerItem>

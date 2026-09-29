@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getLocale } from "next-intl/server";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { ContactForm } from "@/features/contact/components/ContactForm";
 import { LocationsList } from "@/features/contact/components/LocationsList";
@@ -9,10 +10,17 @@ import { Container } from "@/components/ui/container";
 
 import { Suspense } from "react";
 
-export const metadata: Metadata = {
-  title: "Contact Us",
-  description: "Get in touch with Yas Pro for OB VAN, live broadcast, outdoor filming, studio bookings, or technical support.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const isArabic = locale === "ar";
+
+  return {
+    title: isArabic ? "تواصل معنا" : "Contact Us",
+    description: isArabic
+      ? "تواصل مع استوديوهات Yas Pro لعربات البث المباشر، حجز الاستوديوهات، أو الدعم الفني."
+      : "Get in touch with Yas Pro for OB VAN, live broadcast, outdoor filming, studio bookings, or technical support.",
+  };
+}
 
 export default function ContactPage() {
   return (

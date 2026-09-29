@@ -18,6 +18,7 @@ import {
   Radio,
 } from "lucide-react";
 import { IyasProIcon } from "@/components/ui/IyasProIcon";
+import { AdminMobileNav } from "@/components/admin/AdminMobileNav";
 
 export const dynamic = "force-dynamic";
 
@@ -40,33 +41,25 @@ const NAV_ITEMS = [
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  let shouldRedirect = false;
   let adminName = "System Administrator";
 
-  const previewMode = !process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx");
-  if (!previewMode || process.env.NODE_ENV === "production") {
-    try {
-      const session = await auth.api.getSession({
-        headers: await headers(),
-      });
-      if (!session || (session.user as { role?: string }).role !== "admin") {
-        shouldRedirect = true;
-      } else {
-        adminName = session.user.name || "Administrator";
-      }
-    } catch (err) {
-      console.error("Admin layout auth check error:", err);
-      shouldRedirect = true;
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    if (!session || (session.user as { role?: string }).role !== "admin") {
+      redirect("/login?error=admin_required");
     }
-  }
-
-  if (shouldRedirect) {
+    adminName = session.user.name || "Administrator";
+  } catch (err) {
+    console.error("Admin layout auth check error:", err);
     redirect("/login?error=admin_required");
   }
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row antialiased selection:bg-purple-600 selection:text-white">
-      {/* Sidebar */}
-      <aside className="w-full md:w-64 border-b md:border-b-0 md:border-r border-white/10 bg-slate-900/60 backdrop-blur-xl p-4 sm:p-6 shrink-0 flex flex-col justify-between">
+      <AdminMobileNav adminName={adminName} />
+      {/* Sidebar — desktop only */}
+      <aside className="hidden md:flex w-full md:w-64 border-b md:border-b-0 md:border-r border-white/10 bg-slate-900/60 backdrop-blur-xl p-4 sm:p-6 shrink-0 flex-col justify-between">
         <div>
           {/* Logo / Brand */}
           <div className="flex items-center justify-between pb-6 border-b border-white/10">

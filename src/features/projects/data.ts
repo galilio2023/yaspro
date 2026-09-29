@@ -156,9 +156,9 @@ export const PROJECTS_DATA: ProjectItem[] = [
   },
 ];
 
-export const PROJECT_CATEGORIES: { id: ProjectCategory; label: string }[] = [
-  { id: "all", label: "All Works" },
-  { id: "government", label: "Government & National" },
-  { id: "commercial", label: "TV Commercials & Brands" },
-  { id: "shows", label: "Shows & Events" },
+export const PROJECT_CATEGORIES: { id: ProjectCategory; label: string; arabicLabel?: string }[] = [
+  { id: "all", label: "All Works", arabicLabel: "الكل" },
+  { id: "government", label: "Government & National", arabicLabel: "حكومي ووطني" },
+  { id: "commercial", label: "TV Commercials & Brands", arabicLabel: "إعلانات وتجاري" },
+  { id: "shows", label: "Shows & Events", arabicLabel: "برامج وفعاليات" },
 ];

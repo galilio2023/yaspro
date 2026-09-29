@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import { getLocale } from "next-intl/server";
 import { GearExplorer } from "@/features/gear/components/GearExplorer";
+import { ShopHeroHeader } from "@/features/gear/components/ShopHeroHeader";
 import { GEAR_DATA } from "@/features/gear/data";
 import { getCachedEquipment } from "@/lib/cached-queries";
-import { SectionHeader } from "@/components/ui/section-header";
-import { Camera } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import type { GearItem, GearCategory } from "@/features/gear/types";
@@ -12,10 +12,17 @@ import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Rent Equipment",
-  description: "Rent cinema cameras, lenses, lighting, and turnkey broadcast packages across UAE, Egypt, and Jordan.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const isArabic = locale === "ar";
+
+  return {
+    title: isArabic ? "تأجير المعدات السينمائية" : "Rent Cinema Equipment",
+    description: isArabic
+      ? "استئجار كاميرات سينمائية، عدسات أنامورفيك، معدات إضاءة وعربات بث مباشر متكاملة في دبي، القاهرة، وعَمّان."
+      : "Rent cinema cameras, lenses, lighting, and turnkey broadcast packages across UAE, Egypt, and Jordan.",
+  };
+}
 
 export default async function ShopPage() {
   const cmsEquipment = await getCachedEquipment();
@@ -23,6 +30,7 @@ export default async function ShopPage() {
   const gearToDisplay: GearItem[] = cmsEquipment.map((g) => ({
     id: g.id,
     name: g.name,
+    arabicName: g.arabicName || undefined,
     category: g.category as GearCategory,
     categoryLabel:
       g.category === "cameras"
@@ -38,6 +46,7 @@ export default async function ShopPage() {
     securityDeposit: Number(g.securityDeposit || 0),
     specs: g.specs || [],
     description: g.description || "",
+    arabicDescription: g.arabicDescription || undefined,
     isPopular: g.isPopular,
     isKit: g.isKit,
     includedInKit: g.includedInKit || [],
@@ -74,16 +83,7 @@ export default async function ShopPage() {
     <Section id="shop-page" aria-labelledby="shop-title" className="py-12 md:py-20 bg-background">
       <JsonLd data={GEAR_CATALOG_SCHEMA} />
       <Container>
-        <SectionHeader
-          headingId="shop-title"
-          as="h1"
-          badge="Cinema & Broadcast Gear"
-          badgeVariant="gold"
-          badgeIcon={<Camera size={13} />}
-          title="Rent Professional"
-          gradientText="Equipment"
-          description="Cinema cameras, anamorphic optics, wireless audio, and turnkey OB van packages. Available for rental across Dubai, Cairo, and Amman."
-        />
+        <ShopHeroHeader />
 
         <Suspense fallback={<div className="min-h-[400px]" />}>
           <GearExplorer initialGear={initialGear} />

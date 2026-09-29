@@ -3,6 +3,10 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 
+if (!process.env.BETTER_AUTH_SECRET && process.env.NODE_ENV === "production") {
+  throw new Error("BETTER_AUTH_SECRET environment variable is required in production");
+}
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -40,5 +44,5 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24, // 1 day
   },
   baseURL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-  secret: process.env.BETTER_AUTH_SECRET || "yaspro_production_secret_key_long_entropy_string_99812",
+  secret: process.env.BETTER_AUTH_SECRET,
 });

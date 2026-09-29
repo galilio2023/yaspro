@@ -36,7 +36,7 @@ export function MawthooqAuditorModal({
 
   // Script Auditor state
   const [scriptInput, setScriptInput] = useState(
-    "#إعلان تجاري - تجربة تصوير سينمائي استثنائية في استوديوهات ياس برو بالرياض مع طاقم تصوير وطني معتمد. احجز باقتك الآن بخصم رسمي."
+    "#إعلان تجاري - تجربة تصوير سينمائي استثنائية في استوديوهات Yas Pro بالرياض مع طاقم تصوير وطني معتمد. احجز باقتك الآن بخصم رسمي."
   );
   const [isAuditing, setIsAuditing] = useState(false);
   const [auditReport, setAuditReport] = useState<MawthooqAuditReport | null>(null);
@@ -284,7 +284,7 @@ export function MawthooqAuditorModal({
                   <button
                     type="button"
                     onClick={() => {
-                      const sample = "#إعلان تجاري - تجربة تصوير سينمائي استثنائية في استوديوهات ياس برو بالرياض مع طاقم تصوير وطني معتمد. احجز باقتك الآن بخصم رسمي.";
+                      const sample = "#إعلان تجاري - تجربة تصوير سينمائي استثنائية في استوديوهات Yas Pro بالرياض مع طاقم تصوير وطني معتمد. احجز باقتك الآن بخصم رسمي.";
                       setScriptInput(sample);
                       handleRunAudit(sample);
                     }}

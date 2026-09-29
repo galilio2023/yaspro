@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState } from "react";
 import Link from "next/link";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { ArrowRight, Play } from "lucide-react";
@@ -12,9 +13,11 @@ import { SplineScene } from "@/components/3d/SplineScene";
 import { HeroSparkles } from "./HeroSparkles";
 import { YasproBrandSparkleBadge } from "./YasproBrandSparkleBadge";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { CinemaVideoModal } from "@/components/common/CinemaVideoModal";
 
 export default function HeroSection() {
   const { t, isArabic } = useLanguage();
+  const [isPlayingReel, setIsPlayingReel] = useState(false);
 
   return (
     <Section
@@ -34,7 +37,7 @@ export default function HeroSection() {
 
             <h1
               id="hero-title"
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-6 font-display tracking-tight leading-[1.1] text-balance"
+              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-6 font-display tracking-tight leading-[1.1] rtl:leading-[1.28] text-balance"
             >
               {isArabic ? (
                 // Arabic: fluid phrase with gradient on AI keywords
@@ -69,7 +72,7 @@ export default function HeroSection() {
                 shimmerDuration="2.5s"
                 className="w-full sm:w-auto px-6 sm:px-8 py-3.5 font-semibold text-sm gap-2"
               >
-                <Link href="/studio-booking" className="inline-flex items-center gap-2">
+                <Link href="/studio-booking" className="inline-flex items-center gap-2 whitespace-nowrap">
                   <span>{t("hero.bookStudio")}</span>
                   {/* Forward arrow: points Left in Arabic, Right in English */}
                   <ArrowRight
@@ -79,9 +82,10 @@ export default function HeroSection() {
                 </Link>
               </ShimmerButton>
 
-              <Link
-                href="/projects"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-medium text-sm text-white border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/25 transition-all text-center backdrop-blur-sm"
+              <button
+                type="button"
+                onClick={() => setIsPlayingReel(true)}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-medium text-sm text-white border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/25 transition-all text-center backdrop-blur-sm whitespace-nowrap cursor-pointer"
               >
                 {/* Play triangle: mirrors in Arabic, normal in English */}
                 <Play
@@ -91,7 +95,7 @@ export default function HeroSection() {
                   }`}
                 />
                 <span>{t("hero.watchReel")}</span>
-              </Link>
+              </button>
             </div>
 
             <HeroStats />
@@ -141,6 +145,17 @@ export default function HeroSection() {
           </div>
         </div>
       </Container>
+
+      {/* Hero Showreel Modal */}
+      <CinemaVideoModal
+        isOpen={isPlayingReel}
+        onClose={() => setIsPlayingReel(false)}
+        vimeoId="1093240200"
+        title="Yas Pro — Official Master Showreel"
+        subtitle={isArabic ? "الفيديو التعريفي الرسمي" : "Flagship Production Reel"}
+        posterImage="/images/projects/flag-day.jpg"
+        client="Yas Pro Media Network"
+      />
     </Section>
   );
 }

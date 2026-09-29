@@ -119,15 +119,28 @@ body {
 html[dir="rtl"] body {
   font-family: var(--font-arabic), "Noto Sans Arabic", "Arabic UI Text",
                "Segoe UI", system-ui, sans-serif;
-  line-height: 1.9; /* Arabic glyphs need more vertical breathing room */
+  line-height: 1.6;
+}
+
+/* Prevent letter-spacing from breaking cursive Arabic letter connections */
+html[dir="rtl"] *:not(.font-latin):not(.font-mono):not(code):not(pre) {
+  letter-spacing: normal !important;
+}
+
+/* Ensure Arabic headings and display typography have sufficient vertical breathing room to prevent clipping/overlapping */
+html[dir="rtl"] h1,
+html[dir="rtl"] h2,
+html[dir="rtl"] h3,
+html[dir="rtl"] h4,
+html[dir="rtl"] .font-display {
+  line-height: 1.35 !important;
 }
 
 /* Brand names, tech specs, Latin acronyms — always render LTR inside RTL pages */
 .font-latin {
   font-family: var(--font-sans), "Inter", system-ui, sans-serif;
   direction: ltr;
-  unicode-bidi: embed;
-  display: inline-block;
+  unicode-bidi: isolate;
 }
 
 /* Mono font stays Latin regardless of page direction */
@@ -136,7 +149,7 @@ html[dir="rtl"] code,
 html[dir="rtl"] pre {
   font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
   direction: ltr;
-  unicode-bidi: embed;
+  unicode-bidi: isolate;
 }
 
 a { color: inherit; text-decoration: none; }

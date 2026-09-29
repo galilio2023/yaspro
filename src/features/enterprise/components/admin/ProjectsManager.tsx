@@ -128,9 +128,9 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
             )}
 
             <form onSubmit={handleSave} className="mt-5 space-y-4 text-xs">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Title</label>
+                  <label className="block text-slate-300 font-medium mb-1">Title (English)</label>
                   <input
                     type="text"
                     required
@@ -139,6 +139,19 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                       setEditingProject({ ...editingProject, title: e.target.value })
                     }
                     className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1">Title (Arabic - العنوان العربي)</label>
+                  <input
+                    type="text"
+                    dir="rtl"
+                    placeholder="العنوان بالعربية"
+                    value={editingProject.arabicTitle || ""}
+                    onChange={(e) =>
+                      setEditingProject({ ...editingProject, arabicTitle: e.target.value })
+                    }
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500 font-arabic"
                   />
                 </div>
                 <div>
@@ -195,6 +208,19 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                     className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-medium mb-1">Video Stream URL or Vimeo ID</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 1093240200 or https://vimeo.com/1093240200 or direct MP4 URL"
+                  value={editingProject.videoUrl || ""}
+                  onChange={(e) =>
+                    setEditingProject({ ...editingProject, videoUrl: e.target.value })
+                  }
+                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500 font-mono text-xs"
+                />
               </div>
 
               <div>

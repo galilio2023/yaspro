@@ -62,7 +62,7 @@ export function PortfolioSection({ limit = 6 }: PortfolioSectionProps) {
                   : "bg-white/5 text-text-secondary border-white/10 hover:border-white/20 hover:text-white"
               )}
             >
-              {isArabic && cat.id === "all" ? "الكل" : cat.label}
+              {isArabic ? (cat.arabicLabel || cat.label) : cat.label}
             </button>
           ))}
         </div>
@@ -71,7 +71,11 @@ export function PortfolioSection({ limit = 6 }: PortfolioSectionProps) {
         <ul role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 items-stretch">
           {filteredProjects.map((project, i) => (
             <FadeUp as="li" key={project.id} delay={i * 0.05} className="h-full">
-              <ProjectCard project={project} onWatchReel={(p) => setSelectedProject(p)} />
+              <ProjectCard
+                project={project}
+                priority={i < 6}
+                onWatchReel={(p) => setSelectedProject(p)}
+              />
             </FadeUp>
           ))}
         </ul>

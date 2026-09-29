@@ -314,7 +314,7 @@ export function VirtualStudioSection() {
             </div>
 
             {/* TOP BROADCAST HUD OVERLAYS */}
-            <div className="absolute top-2.5 start-2.5 sm:top-3.5 sm:start-3.5 pointer-events-none flex items-center gap-2">
+            <div className="absolute top-2.5 left-2.5 sm:top-3.5 sm:left-3.5 pointer-events-none flex items-center gap-2">
               <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-brand-teal/40 text-[10px] sm:text-xs font-mono text-brand-teal-light font-latin">
                 <span className="size-1.5 sm:size-2 rounded-full bg-brand-teal" />
                 <span className="font-bold">PHYSICAL STAGE</span>
@@ -323,7 +323,7 @@ export function VirtualStudioSection() {
               </div>
             </div>
 
-            <div className="absolute top-2.5 end-2.5 sm:top-3.5 sm:end-3.5 pointer-events-none flex items-center gap-2">
+            <div className="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 pointer-events-none flex items-center gap-2">
               <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-brand-purple/40 text-[10px] sm:text-xs font-mono text-brand-purple-light font-latin">
                 <Sparkles size={12} className="text-brand-purple-light" />
                 <span className="font-bold">UNREAL 5.4</span>
@@ -333,7 +333,7 @@ export function VirtualStudioSection() {
             </div>
 
             {/* BOTTOM TELEMETRY HUD */}
-            <div className="absolute bottom-2.5 start-2.5 end-2.5 sm:bottom-3 sm:start-3 sm:end-3 flex items-center justify-between pointer-events-none text-[9px] sm:text-[11px] font-mono text-white/80 bg-black/80 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-white/10 font-latin">
+            <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-3 sm:left-3 sm:right-3 flex items-center justify-between pointer-events-none text-[9px] sm:text-[11px] font-mono text-white/80 bg-black/80 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-white/10 font-latin">
               <div className="flex items-center gap-3 sm:gap-5">
                 <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
                   <CheckCircle2 size={12} />

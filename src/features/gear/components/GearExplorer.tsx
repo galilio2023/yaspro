@@ -14,6 +14,7 @@ import { GEAR_DATA, GEAR_CATEGORIES } from "../data";
 import { GearCategory, GearItem, RentalDateRange } from "../types";
 import type { MatchedGearPackage } from "@/lib/ai/ai-kit-matcher";
 import { formatCurrency } from "@/lib/utils";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export interface GearExplorerProps {
   initialGear?: readonly GearItem[];
@@ -90,16 +91,18 @@ export function GearExplorer({
     };
   });
 
+  const { isArabic } = useLanguage();
+
   const categoriesWithOptions: CategoryOption<GearCategory>[] = useMemo(() => {
     return GEAR_CATEGORIES.map((cat) => ({
       id: cat.id as GearCategory,
-      label: cat.label,
+      label: isArabic && cat.arabicLabel ? cat.arabicLabel : cat.label,
       count:
         cat.id === "all"
           ? initialGear.length
           : initialGear.filter((g) => g.category === cat.id).length,
     }));
-  }, [initialGear]);
+  }, [initialGear, isArabic]);
 
   const filteredGear = useMemo(() => {
     return selectedCategory === "all"
@@ -324,16 +327,20 @@ export function GearExplorer({
         </StaggerContainer>
       ) : (
         <EmptyState
-          title="No Equipment Found"
-          description="There are currently no items available in this category. Check back soon or view all rental gear."
+          title={isArabic ? "لا توجد معدات متوفرة حالياً" : "No Equipment Found"}
+          description={
+            isArabic
+              ? "لا توجد عناصر متاحة حالياً في هذه الفئة. يرجى مراجعة الكتالوج الكامل أو التواصل معنا لتوفير طلب خاص."
+              : "There are currently no items available in this category. Check back soon or view all rental gear."
+          }
           action={
             <Button
               variant="outline"
               size="sm"
               onClick={() => setSelectedCategory("all")}
-              className="rounded-xl"
+              className="rounded-xl cursor-pointer"
             >
-              View All Equipment
+              {isArabic ? "عرض كافة المعدات" : "View All Equipment"}
             </Button>
           }
         />

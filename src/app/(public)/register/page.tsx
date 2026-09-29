@@ -7,12 +7,16 @@ import { signUp } from "@/lib/auth-client";
 import { syncUserProfile } from "@/lib/actions";
 import { registerUserSchema } from "@/lib/validations";
 import { User, Mail, Lock, Building, Phone, ArrowRight, AlertCircle, ShieldCheck } from "lucide-react";
+import { IyasProIcon } from "@/components/ui/IyasProIcon";
+import { useTranslations } from "next-intl";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const t = useTranslations("auth.register");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [accountType, setAccountType] = useState<"creator" | "enterprise">("creator");
   const [company, setCompany] = useState("");
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -28,6 +32,7 @@ export default function RegisterPage() {
       email,
       password,
       phone,
+      accountType,
       company: company || undefined,
     });
 
@@ -44,9 +49,7 @@ export default function RegisterPage() {
         email: validData.email,
         password: validData.password,
         name: validData.name,
-        company: validData.company || "",
-        phone: validData.phone,
-      } as unknown as { email: string; password: string; name: string });
+      });
 
       if (res.error) {
         setErrorMsg(res.error.message || "Failed to create account.");
@@ -81,14 +84,14 @@ export default function RegisterPage() {
 
       <div className="relative z-10 w-full max-w-lg mx-auto p-6 sm:p-10 rounded-3xl bg-slate-900/80 border border-white/10 backdrop-blur-2xl shadow-2xl">
         <div className="text-center mb-8">
-          <div className="size-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center font-bold text-white text-lg shadow-xl shadow-purple-500/25 mx-auto mb-4">
-            Y
+          <div className="flex items-center justify-center mx-auto mb-4">
+            <IyasProIcon size={44} idPrefix="register-candle" className="filter drop-shadow-[0_2px_12px_rgba(245,158,11,0.45)]" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-white font-display">
-            Create Production Account
+            {t("title")}
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Access enterprise dailies, reserve studios, and manage rental gear with Yas Pro.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -100,14 +103,48 @@ export default function RegisterPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+          {/* Account Type Selector Tabs */}
+          <div>
+            <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">
+              {t("accountTypeLabel")}
+            </label>
+            <div className="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-white/[0.03] border border-white/10">
+              <button
+                type="button"
+                onClick={() => setAccountType("creator")}
+                className={`py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  accountType === "creator"
+                    ? "bg-purple-600 text-white shadow-md shadow-purple-600/30"
+                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                <User size={14} />
+                <span>{t("accountTypeCreator")}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setAccountType("enterprise")}
+                className={`py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  accountType === "enterprise"
+                    ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/30 font-bold"
+                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                <Building size={14} />
+                <span>{t("accountTypeEnterprise")}</span>
+              </button>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">Full Name</label>
+              <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">{t("fullNameLabel")}</label>
               <div className="relative">
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Tariq Mansoor"
+                  placeholder={t("fullNamePlaceholder")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
@@ -117,28 +154,42 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">Company / Agency</label>
+              <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">
+                {t("companyLabel")}{" "}
+                {accountType === "enterprise" ? (
+                  <span className="text-amber-400">*</span>
+                ) : (
+                  <span className="text-slate-500 text-[10px] font-normal">({t("companyLabel") ? "Optional" : ""})</span>
+                )}
+              </label>
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="e.g. Dubai Media Agency"
+                  required={accountType === "enterprise"}
+                  placeholder={t("companyPlaceholder")}
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
-                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
+                  className={`w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border text-white placeholder:text-slate-500 focus:outline-none transition-colors text-base sm:text-sm ${
+                    accountType === "enterprise"
+                      ? "border-amber-500/40 focus:border-amber-400"
+                      : "border-white/10 focus:border-purple-500"
+                  }`}
                 />
-                <Building size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                <Building size={16} className={`absolute start-3.5 top-1/2 -translate-y-1/2 pointer-events-none ${
+                  accountType === "enterprise" ? "text-amber-400" : "text-slate-400"
+                }`} />
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">Work Email</label>
+              <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">{t("emailLabel")}</label>
               <div className="relative">
                 <input
                   type="email"
                   required
-                  placeholder="name@company.com"
+                  placeholder={t("emailPlaceholder")}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
@@ -148,11 +199,11 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">Direct Phone</label>
+              <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">{t("phoneLabel")}</label>
               <div className="relative">
                 <input
                   type="tel"
-                  placeholder="+971 50 000 0000"
+                  placeholder={t("phonePlaceholder")}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
@@ -163,12 +214,12 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">Password</label>
+            <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">{t("passwordLabel")}</label>
             <div className="relative">
               <input
                 type="password"
                 required
-                placeholder="Minimum 8 characters"
+                placeholder={t("passwordPlaceholder")}
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -183,21 +234,21 @@ export default function RegisterPage() {
             disabled={isLoading}
             className="w-full min-h-[44px] py-3.5 rounded-xl bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:opacity-95 text-white font-semibold text-sm tracking-wide shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 mt-6"
           >
-            {isLoading ? "Creating account..." : "Complete Registration"}
+            {isLoading ? t("submittingBtn") : t("submitBtn")}
             <ArrowRight size={14} className="rtl:rotate-180" />
           </button>
         </form>
 
         <div className="mt-8 pt-6 border-t border-white/10 text-center text-xs text-slate-400">
-          <span>Already registered with Yas Pro? </span>
+          <span>{t("hasAccount")}{" "}</span>
           <Link href="/login" className="text-purple-400 hover:text-purple-300 font-semibold inline-block py-1">
-            Sign in
+            {t("loginLink")}
           </Link>
         </div>
 
         <div className="mt-4 p-3 rounded-xl bg-purple-950/20 border border-purple-800/20 text-[11px] text-slate-400 flex items-center gap-2">
           <ShieldCheck size={14} className="text-emerald-400 shrink-0" />
-          <span>Connected directly to Neon PostgreSQL database.</span>
+          <span>{t("securityBadge")}</span>
         </div>
       </div>
     </div>

@@ -1,4 +1,7 @@
+import React from "react";
 import { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Sovereign Operations & C2C Media Vault | Yas Pro Enterprise",

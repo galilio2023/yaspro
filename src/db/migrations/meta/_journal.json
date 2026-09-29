@@ -15,6 +15,13 @@
       "when": 1790619154318,
       "tag": "0001_lonely_forge",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790719375394,
+      "tag": "0002_lovely_corsair",
+      "breakpoints": true
     }
   ]
 }

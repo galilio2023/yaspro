@@ -41,7 +41,7 @@ export function HeroStats({ stats = DEFAULT_STATS }: HeroStatsProps) {
           >
             {stat.value}
           </dd>
-          <dt className="text-text-muted text-[11px] font-medium uppercase tracking-wider">
+          <dt className="text-text-muted text-[11px] font-medium uppercase tracking-wider rtl:tracking-normal whitespace-nowrap">
             {isArabic ? (stat.arLabel || stat.label) : stat.label}
           </dt>
         </div>

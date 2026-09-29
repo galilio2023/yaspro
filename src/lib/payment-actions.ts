@@ -4,6 +4,8 @@ import { db } from "@/db";
 import { bookings } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
 export interface PaymentProcessingResponse {
   success: boolean;
@@ -29,6 +31,10 @@ export async function processBookingOnlinePayment(
   referenceCode: string
 ): Promise<PaymentProcessingResponse> {
   try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session || (session.user as { role?: string })?.role !== "admin") {
+      return { success: false, error: "Unauthorized: Admin credentials required." };
+    }
     if (!bookingId && !referenceCode) {
       return { success: false, error: "Booking reference is required to process payment." };
     }
