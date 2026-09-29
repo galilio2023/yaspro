@@ -22,7 +22,7 @@ export function InfluencerHighlights({
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
       {/* Signature Productions Card */}
       <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 sm:p-8">
         <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2.5 font-display">
