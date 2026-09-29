@@ -1,6 +1,8 @@
+"use client";
+
 import { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { Sparkles, Send, Check, X, ShieldCheck, Layers, Bot, AlertCircle } from "lucide-react";
+import { Sparkles, X, ShieldCheck, Layers, Bot, AlertCircle } from "lucide-react";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrappers";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";

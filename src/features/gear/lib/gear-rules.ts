@@ -28,7 +28,7 @@ export function getGearRecommendations(cartItemIds: string[]): GearRecommendatio
         });
       }
 
-      const skypanel = GEAR_DATA.find((g) => g.id.includes("skypanel") || g.id.includes("light"));
+      const skypanel = GEAR_DATA.find((g) => g.id.includes("skypanel") || g.id.includes("light") || g.category === "lighting");
       if (skypanel && !cartSet.has(skypanel.id)) {
         recommendations.push({
           triggerItemId: itemId,

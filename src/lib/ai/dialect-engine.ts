@@ -1,6 +1,7 @@
 import { generateObject } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
+import { sanitizePromptInput } from "./sanitize";
 
 export interface DialectTransmutationResult {
   sourceText: string;
@@ -149,8 +150,6 @@ const dialectSchema = z.object({
   culturalResonanceScore: z.number().min(80).max(100).describe("Resonance rating 80-100"),
 });
 
-import { sanitizePromptInput, sanitizeOutputString } from "./sanitize";
-
 /**
  * Intelligent Dialect Transmuter with Google Gemini AI.
  * Handles regional dialect adaptation, cultural honorific injection,
@@ -190,14 +189,15 @@ GUIDELINES:
         model: google("gemini-2.5-flash"),
         schema: dialectSchema,
         prompt,
+        abortSignal: AbortSignal.timeout(20000),
       });
 
       const { object } = result;
-      const sanitizedArabic = sanitizeOutputString(object.transmutedArabic);
-      const sanitizedExplanation = sanitizeOutputString(object.englishExplanation);
-      const sanitizedHonorifics = (object.honorificsUsed || []).map(sanitizeOutputString);
+      const cleanArabic = (object.transmutedArabic || "").trim();
+      const cleanExplanation = (object.englishExplanation || "").trim();
+      const cleanHonorifics = (object.honorificsUsed || []).map((h) => h.trim());
 
-      const words = sanitizedArabic.split(/\s+/);
+      const words = cleanArabic.split(/\s+/);
       const phonemes = words.slice(0, 8).map((w, idx) => ({
         phrase: w,
         phonemes: `/${w.length > 3 ? "a-kh-r" : "w-s-l"}-${idx}/`,
@@ -209,10 +209,10 @@ GUIDELINES:
         dialectId,
         dialectName: rule.name,
         flag: rule.flag,
-        transmutedArabic: sanitizedArabic,
-        englishExplanation: sanitizedExplanation,
+        transmutedArabic: cleanArabic,
+        englishExplanation: cleanExplanation,
         phoneticBreakdown: phonemes,
-        honorificsUsed: sanitizedHonorifics.length > 0 ? sanitizedHonorifics : rule.honorifics.slice(0, 2),
+        honorificsUsed: cleanHonorifics.length > 0 ? cleanHonorifics : rule.honorifics.slice(0, 2),
         resonanceScore: object.culturalResonanceScore,
         recommendedTone: sanitizedTone,
         isAiGenerated: true,

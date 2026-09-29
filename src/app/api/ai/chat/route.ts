@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { checkRateLimit, getClientIdentifier } from "@/lib/rate-limit";
-import { streamText, tool } from "ai";
-import { google } from "@ai-sdk/google";
+import { streamText, tool, stepCountIs } from "ai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { sanitizePromptInput } from "@/lib/ai/sanitize";
 import { matchGearPackage } from "@/lib/ai/ai-kit-matcher";
 import { auditMawthooqCompliance } from "@/lib/ai/mawthooq-auditor";
@@ -12,8 +12,8 @@ import { STUDIOS } from "@/features/booking/constants";
 const messageSchema = z.object({
   messages: z.array(
     z.object({
-      role: z.enum(["user", "assistant", "system"]),
-      content: z.string().max(4000),
+      role: z.literal("user"),
+      content: z.string().min(1).max(4000),
     })
   ).min(1).max(20),
 });
@@ -30,7 +30,16 @@ export async function POST(req: Request) {
       );
     }
 
-    const body = await req.json();
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Malformed or invalid JSON body." },
+        { status: 400 }
+      );
+    }
+
     const parsed = messageSchema.safeParse(body);
 
     if (!parsed.success) {
@@ -44,25 +53,27 @@ export async function POST(req: Request) {
 
     if (!apiKey) {
       // Deterministic fallback response when no API key is provided
-      const lastUserMsg = parsed.data.messages.filter((m) => m.role === "user").pop()?.content || "";
+      const lastUserMsg = parsed.data.messages[parsed.data.messages.length - 1]?.content || "";
       const lower = lastUserMsg.toLowerCase();
 
       let reply = "Marhaban! I am your Yas Pro Production AI Assistant. How can I assist your shoot in Dubai or Riyadh today?";
       if (lower.includes("gear") || lower.includes("camera") || lower.includes("rent")) {
         reply = "Looking for cinema gear? We stock ARRI Alexa Mini LF, RED V-Raptor XL, Sony FX6 kits, and Cooke/Atlas cinema primes. You can use the AI Kit Matcher in our Gear Explorer to bundle a turnkey package with a 12% package discount.";
       } else if (lower.includes("studio") || lower.includes("stage") || lower.includes("xr")) {
-        reply = `We operate 4 soundstages in the GCC:\n- Studio XR (Virtual Production stage with 1.5mm LED volume, AED 22,000/day)\n- Studio A (12,000 sq ft Commercial Cyclorama, AED 14,000/day)\n- Studio B (Broadcast & Podcast Suite, AED 6,500/day)\n- Studio C (Green Screen & VFX Lab, AED 8,500/day).\nWould you like to schedule a booking?`;
+        const studioList = STUDIOS.map((s) => `- ${s.name}: ${s.desc} (Rate: AED ${s.rate}/hr, AED ${s.rate * 8}/day)`).join("\n");
+        reply = `We operate 4 soundstages in the GCC:\n${studioList}\nWould you like to schedule a booking?`;
       } else if (lower.includes("mawthooq") || lower.includes("compliance") || lower.includes("license")) {
         reply = "All our creator partnerships comply with KSA General Commission for Audiovisual Media (GAMR) Mawthooq licensing. You can scan your campaign scripts anytime in our Mawthooq Auditor modal to verify mandatory #إعلان disclosure and avoid regulatory fines.";
       } else if (lower.includes("dialect") || lower.includes("saudi") || lower.includes("emirati") || lower.includes("arabic")) {
         reply = "We offer real-time Khaleeji Dialect Transmutation for commercial copy into authentic Najdi, Emirati, and Hijazi phrasings. You can run scripts through our Dialect Transmuter under Enterprise tools.";
       }
 
-      return NextResponse.json({
-        role: "assistant",
-        content: reply,
+      return new Response(reply, {
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
       });
     }
+
+    const google = createGoogleGenerativeAI({ apiKey });
 
     // Sanitize user messages
     const sanitizedMessages = parsed.data.messages.map((m) => ({
@@ -76,6 +87,7 @@ export async function POST(req: Request) {
 You are professional, deeply knowledgeable about cinema gear (ARRI, RED, Sony, Cooke, Aputure), Khaleeji cultural nuances, and Saudi GAMR/Mawthooq regulations.
 Respond clearly and concisely in either English or Arabic based on the user's language. Use formatting for equipment packages and studio specs.`,
       messages: sanitizedMessages,
+      stopWhen: stepCountIs(3),
       tools: {
         matchGearPackage: tool({
           description: "Match and assemble cinema gear rental packages based on user brief or genre",

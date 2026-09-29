@@ -4,7 +4,7 @@ import { z } from "zod";
 import { GEAR_DATA } from "@/features/gear/data";
 import { INFLUENCERS_DATA } from "@/features/influencers/data";
 import { STUDIOS } from "@/features/booking/constants";
-import { sanitizePromptInput, sanitizeOutputString } from "./sanitize";
+import { sanitizePromptInput } from "./sanitize";
 
 export interface ProductionProposalRequest {
   brief: string;
@@ -156,6 +156,7 @@ Select matching IDs strictly from the catalogs above. For visualShotList, provid
         model: google("gemini-2.5-flash"),
         schema: proposalSchema,
         prompt,
+        abortSignal: AbortSignal.timeout(20000),
       });
 
       const { object } = result;
@@ -174,7 +175,7 @@ Select matching IDs strictly from the catalogs above. For visualShotList, provid
             name: item.name,
             category: item.category,
             dailyRate: item.dailyRate,
-            fitReason: sanitizeOutputString(g.fitReason),
+            fitReason: g.fitReason.trim(),
           };
         })
         .filter((g): g is NonNullable<typeof g> => g !== null);
@@ -190,7 +191,7 @@ Select matching IDs strictly from the catalogs above. For visualShotList, provid
             role: creator.role,
             flag: creator.flag,
             followers: creator.totalFollowers,
-            resonanceReason: sanitizeOutputString(i.resonanceReason),
+            resonanceReason: i.resonanceReason.trim(),
           };
         })
         .filter((i): i is NonNullable<typeof i> => i !== null);
@@ -200,18 +201,25 @@ Select matching IDs strictly from the catalogs above. For visualShotList, provid
       const studioDaily = chosenStudio.rate * 8;
       const estimatedTotalAed = (studioDaily + gearDailySum) * sanitizedDays + 4500;
 
-      // Output sanitization for all model-generated strings
-      const sanitizedConcept = sanitizeOutputString(object.campaignConcept);
-      const sanitizedTone = sanitizeOutputString(object.creativeTone);
-      const sanitizedStudioReason = sanitizeOutputString(object.studioReason);
+      // Plain text trimming for all model-generated strings (React JSX escapes text safely)
+      const sanitizedConcept = object.campaignConcept.trim();
+      const sanitizedTone = object.creativeTone.trim();
+      const sanitizedStudioReason = object.studioReason.trim();
       const sanitizedShotList = object.visualShotList.map((shot) => ({
         shotNumber: shot.shotNumber,
-        description: sanitizeOutputString(shot.description),
-        cameraAngle: sanitizeOutputString(shot.cameraAngle),
-        lightingStyle: sanitizeOutputString(shot.lightingStyle),
+        description: shot.description.trim(),
+        cameraAngle: shot.cameraAngle.trim(),
+        lightingStyle: shot.lightingStyle.trim(),
       }));
 
-      const sanitizedNotes = (object.culturalAdvisoryNotes || []).map(sanitizeOutputString);
+      const sanitizedNotes = (object.culturalAdvisoryNotes || []).map((n) => n.trim());
+
+      const verifiedTalent =
+        matchedInfluencers.length > 0 &&
+        matchedInfluencers.every((inf) => {
+          const creator = INFLUENCERS_DATA.find((c) => c.id === inf.id);
+          return Boolean(creator?.mawthooqLicenseId && creator?.mawthooqStatus?.includes("Verified"));
+        });
 
       return {
         campaignConcept: sanitizedConcept,
@@ -262,18 +270,20 @@ Select matching IDs strictly from the catalogs above. For visualShotList, provid
           },
         ],
         complianceCheck: {
-          mawthooqCertified: true,
-          sovereignCloudCompliant: true,
+          mawthooqCertified: verifiedTalent,
+          sovereignCloudCompliant: false,
           culturalAdvisoryNotes: sanitizedNotes.length > 0 ? sanitizedNotes : [
             "Regional dialect honorifics aligned with local advertising guidelines.",
-            "Mawthooq advertising license verified for all selected talent.",
-            "Production assets archived in GCC sovereign-compliant cloud storage.",
+            verifiedTalent
+              ? "Mawthooq advertising license verified for all selected talent."
+              : "Mawthooq advertising licensing to be confirmed for selected talent prior to broadcast.",
+            "Production assets eligible for GCC sovereign cloud storage archive.",
           ],
         },
         isAiGenerated: true,
       };
-    } catch {
-      // Graceful fallback to deterministic heuristic engine if LLM call fails
+    } catch (error) {
+      console.warn("AI Proposal LLM call failed or timed out, using deterministic fallback:", error);
     }
   }
 
@@ -442,12 +452,23 @@ function generateDeterministicProposal(
       },
     ],
     complianceCheck: {
-      mawthooqCertified: true,
-      sovereignCloudCompliant: true,
+      mawthooqCertified:
+        matchedInfluencers.length > 0 &&
+        matchedInfluencers.every((inf) => {
+          const creator = INFLUENCERS_DATA.find((c) => c.id === inf.id);
+          return Boolean(creator?.mawthooqLicenseId && creator?.mawthooqStatus?.includes("Verified"));
+        }),
+      sovereignCloudCompliant: false,
       culturalAdvisoryNotes: [
         "Regional dialect honorifics aligned with local advertising guidelines.",
-        "Mawthooq advertising license verified for all selected talent.",
-        "Production assets archived in GCC sovereign-compliant cloud storage.",
+        matchedInfluencers.length > 0 &&
+        matchedInfluencers.every((inf) => {
+          const creator = INFLUENCERS_DATA.find((c) => c.id === inf.id);
+          return Boolean(creator?.mawthooqLicenseId && creator?.mawthooqStatus?.includes("Verified"));
+        })
+          ? "Mawthooq advertising license verified for all selected talent."
+          : "Mawthooq advertising licensing to be confirmed for selected talent prior to broadcast.",
+        "Production assets eligible for GCC sovereign cloud storage archive.",
       ],
     },
     isAiGenerated: false,

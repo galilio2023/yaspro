@@ -1,7 +1,7 @@
 import { generateObject } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
-import { sanitizePromptInput, sanitizeOutputString } from "./sanitize";
+import { sanitizePromptInput } from "./sanitize";
 
 export interface MawthooqAuditRequest {
   scriptOrCopy: string;
@@ -119,7 +119,9 @@ function auditDeterministically(req: MawthooqAuditRequest): MawthooqAuditReport 
   const detectedTags: string[] = [];
 
   for (const tag of VALID_DISCLOSURE_TAGS) {
-    if (text.toLowerCase().includes(tag.toLowerCase())) {
+    const escapedTag = tag.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+    const tagRegex = new RegExp(`(?:^|[\\s.,!?])${escapedTag}(?![\\w\\p{L}])`, "iu");
+    if (tagRegex.test(text)) {
       detectedTags.push(tag);
     }
   }
@@ -220,6 +222,12 @@ export async function auditMawthooqCompliance(
 ): Promise<MawthooqAuditReport> {
   const sanitizedInput = sanitizePromptInput(req.scriptOrCopy || "", 4000);
   const targetMarket = req.targetMarket || "KSA";
+  const creatorMawthooqNumber = req.creatorMawthooqNumber
+    ? sanitizePromptInput(req.creatorMawthooqNumber, 64)
+    : undefined;
+  const brandCategory = req.brandCategory
+    ? sanitizePromptInput(req.brandCategory, 100)
+    : undefined;
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
 
   if (apiKey) {
@@ -228,8 +236,8 @@ export async function auditMawthooqCompliance(
 Audit the following commercial advertising copy, video script, or influencer brief.
 
 TARGET REGION: ${targetMarket}
-CREATOR MAWTHOOQ ID: ${req.creatorMawthooqNumber || "Not Provided"}
-BRAND CATEGORY: ${req.brandCategory || "General Commercial"}
+CREATOR MAWTHOOQ ID: ${creatorMawthooqNumber || "Not Provided"}
+BRAND CATEGORY: ${brandCategory || "General Commercial"}
 
 TEXT TO AUDIT:
 """
@@ -246,6 +254,7 @@ Evaluate for:
         model: google("gemini-2.5-flash"),
         schema: auditSchema,
         prompt,
+        abortSignal: AbortSignal.timeout(20000),
       });
 
       const data = result.object;
@@ -254,29 +263,39 @@ Evaluate for:
         status: data.status,
         disclosureStatus: {
           hasMandatoryDisclosure: data.hasMandatoryDisclosure,
-          detectedDisclosureTags: data.detectedDisclosureTags.map(sanitizeOutputString),
-          recommendedDisclosureTag: sanitizeOutputString(data.recommendedDisclosureTag),
+          detectedDisclosureTags: data.detectedDisclosureTags.map((t) => t.trim()),
+          recommendedDisclosureTag: data.recommendedDisclosureTag.trim(),
         },
         regulatoryChecks: data.regulatoryChecks.map((c) => ({
-          checkName: sanitizeOutputString(c.checkName),
+          checkName: c.checkName.trim(),
           passed: c.passed,
           severity: c.severity,
-          explanation: sanitizeOutputString(c.explanation),
+          explanation: c.explanation.trim(),
         })),
         flaggedTerms: data.flaggedTerms.map((f) => ({
-          term: sanitizeOutputString(f.term),
-          reason: sanitizeOutputString(f.reason),
-          suggestedReplacement: f.suggestedReplacement ? sanitizeOutputString(f.suggestedReplacement) : undefined,
+          term: f.term.trim(),
+          reason: f.reason.trim(),
+          suggestedReplacement: f.suggestedReplacement ? f.suggestedReplacement.trim() : undefined,
         })),
-        culturalAdvisory: data.culturalAdvisory.map(sanitizeOutputString),
-        gcamLicensingNotice: sanitizeOutputString(data.gcamLicensingNotice),
+        culturalAdvisory: data.culturalAdvisory.map((a) => a.trim()),
+        gcamLicensingNotice: data.gcamLicensingNotice.trim(),
         isAiGenerated: true,
       };
     } catch {
       // Fallback seamlessly to deterministic engine
-      return auditDeterministically({ ...req, scriptOrCopy: sanitizedInput });
+      return auditDeterministically({
+        ...req,
+        scriptOrCopy: sanitizedInput,
+        creatorMawthooqNumber,
+        brandCategory,
+      });
     }
   }
 
-  return auditDeterministically({ ...req, scriptOrCopy: sanitizedInput });
+  return auditDeterministically({
+    ...req,
+    scriptOrCopy: sanitizedInput,
+    creatorMawthooqNumber,
+    brandCategory,
+  });
 }

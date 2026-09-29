@@ -5,7 +5,7 @@ import Link from "next/link";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
-import { ArrowRight, Terminal, Sparkles, Wand2 } from "lucide-react";
+import { ArrowRight, Terminal, Sparkles } from "lucide-react";
 import { ECOSYSTEM_METRICS } from "./ecosystem.data";
 import { EcosystemMetricCard } from "./EcosystemMetricCard";
 import { OrbitingMediaNodes } from "./OrbitingMediaNodes";

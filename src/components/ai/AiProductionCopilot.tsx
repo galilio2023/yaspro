@@ -12,12 +12,8 @@ import {
   ArrowRight,
   X,
   Wand2,
-  Clock,
-  DollarSign,
   ShieldCheck,
   Building2,
-  Users,
-  ChevronRight,
   Layers,
   Cpu,
 } from "lucide-react";

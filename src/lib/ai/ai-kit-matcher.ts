@@ -1,7 +1,7 @@
 import { GEAR_DATA } from "@/features/gear/data";
 import { GearItem } from "@/features/gear/types";
 import { analyzeGearSelection, GearCompatibilityReport } from "@/features/gear/lib/compatibility";
-import { sanitizePromptInput, sanitizeOutputString } from "./sanitize";
+import { sanitizePromptInput } from "./sanitize";
 import { generateObject } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
@@ -41,7 +41,7 @@ const kitSchema = z.object({
 function matchDeterministically(query: string, maxBudget?: number): MatchedGearPackage {
   const q = query.toLowerCase();
 
-  let matchedItems: { item: GearItem; role: string; whyNeeded: string }[] = [];
+  const matchedItems: { item: GearItem; role: string; whyNeeded: string }[] = [];
   let packageTitle = "Custom Production Rig";
   let rationale = "Balanced cinema kit configured for your shoot parameters.";
   let targetGenre = "Commercial Production";
@@ -193,6 +193,7 @@ Provide a title, genre, rationale, and exact catalog item IDs.`;
         model: google("gemini-2.5-flash"),
         schema: kitSchema,
         prompt,
+        abortSignal: AbortSignal.timeout(20000),
       });
 
       const { packageTitle, rationale, targetGenre, selectedGearIds } = result.object;
@@ -203,8 +204,8 @@ Provide a title, genre, rationale, and exact catalog item IDs.`;
         if (found) {
           matchedItems.push({
             item: found,
-            role: sanitizeOutputString(sel.role),
-            whyNeeded: sanitizeOutputString(sel.whyNeeded),
+            role: (sel.role || "").trim(),
+            whyNeeded: (sel.whyNeeded || "").trim(),
           });
         }
       }
@@ -219,9 +220,9 @@ Provide a title, genre, rationale, and exact catalog item IDs.`;
       const compatibility = analyzeGearSelection(matchedItems.map((m) => m.item.id));
 
       return {
-        packageTitle: sanitizeOutputString(packageTitle),
-        rationale: sanitizeOutputString(rationale),
-        targetGenre: sanitizeOutputString(targetGenre),
+        packageTitle: (packageTitle || "").trim(),
+        rationale: (rationale || "").trim(),
+        targetGenre: (targetGenre || "").trim(),
         items: matchedItems,
         totalDailyRate,
         packageDailyRate,

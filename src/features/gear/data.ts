@@ -143,6 +143,18 @@ export const GEAR_DATA: GearItem[] = [
     description: "Broadcast-grade dialogue pickup with excellent feedback rejection and moisture resistance.",
   },
   {
+    id: "smallhd-cine-7",
+    name: "SmallHD Cine 7 Touchscreen Monitor",
+    category: "bundles",
+    categoryLabel: "Director & Focus Monitor",
+    dailyRate: 450,
+    securityDeposit: 800,
+    image: "/images/gear/smallhd-cine-7.jpg",
+    specs: ["1800 nits Daylight Viewable", "ARRI / RED Camera Control", "Built-in Teradek Bolt 4K RX"],
+    description: "High-bright wireless directors monitor required for critical focus pull and client wireless feed.",
+    isPopular: true,
+  },
+  {
     id: "podcast-studio-bundle",
     name: "4-Person Podcast Gear Bundle",
     category: "bundles",

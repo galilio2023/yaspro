@@ -15,7 +15,6 @@ import {
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { LipSyncMeshVisualizer } from "./portal/LipSyncMeshVisualizer";
-import { transmuteScript } from "@/lib/ai/dialect-engine";
 
 interface DialectPreset {
   id: string;
@@ -259,14 +258,31 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
     setCulturalExplanation(null);
   };
 
+  const selectedDialectRef = useRef(selectedDialect.id);
+  useEffect(() => {
+    selectedDialectRef.current = selectedDialect.id;
+  }, [selectedDialect.id]);
+
   const handleTransmuteCustomScript = async () => {
-    if (!customScriptInput.trim()) return;
+    if (!customScriptInput.trim() || isTransmuting) return;
+    const dialectAtRequest = selectedDialect.id;
     setIsTransmuting(true);
     stopAudio();
     try {
-      const res = await transmuteScript(customScriptInput, selectedDialect.id, selectedTone);
-      setTransmutedOutput(res.transmutedArabic);
-      setCulturalExplanation(res.englishExplanation);
+      const res = await fetch("/api/ai/dialect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: customScriptInput,
+          dialectId: dialectAtRequest,
+          tone: selectedTone,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.result && dialectAtRequest === selectedDialectRef.current) {
+        setTransmutedOutput(data.result.transmutedArabic);
+        setCulturalExplanation(data.result.englishExplanation);
+      }
     } catch {
       // Keep existing output on error
     } finally {
@@ -540,10 +556,12 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                   })}
                 </div>
 
-                {/* English Literal Translation */}
-                <p className="text-xs text-text-secondary italic mb-4">
-                  Literal: &ldquo;{selectedDialect.englishTranslation}&rdquo;
-                </p>
+                {/* English Literal Translation for preset sample */}
+                {!transmutedOutput && (
+                  <p className="text-xs text-text-secondary italic mb-4">
+                    Literal: &ldquo;{selectedDialect.englishTranslation}&rdquo;
+                  </p>
+                )}
               </div>
 
               {/* Waveform Visualization Bars */}

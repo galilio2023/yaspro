@@ -24,10 +24,12 @@ export function AiBriefPitchModal({
   const [briefPrompt, setBriefPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [recommendation, setRecommendation] = useState<BriefRecommendation | null>(null);
+  const [appliedIds, setAppliedIds] = useState<{ studioId: string; gearId: string; hours: number } | null>(null);
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const triggerElementRef = useRef<HTMLElement | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const activeRequestIdRef = useRef<number>(0);
 
   // Focus trap, Escape key handling, and restore focus to trigger
   useEffect(() => {
@@ -103,6 +105,7 @@ export function AiBriefPitchModal({
 
   const handlePromptChange = (val: string) => {
     setBriefPrompt(val);
+    activeRequestIdRef.current += 1;
     // Invalidate pending generation and clear existing recommendations
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -110,9 +113,8 @@ export function AiBriefPitchModal({
     }
     setIsGenerating(false);
     setRecommendation(null);
+    setAppliedIds(null);
   };
-
-  const [appliedIds, setAppliedIds] = useState<{ studioId: string; gearId: string; hours: number } | null>(null);
 
   const handleGeneratePitch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,6 +124,7 @@ export function AiBriefPitchModal({
       clearTimeout(timerRef.current);
     }
 
+    const currentReqId = ++activeRequestIdRef.current;
     setIsGenerating(true);
     setRecommendation(null);
     setAppliedIds(null);
@@ -135,6 +138,7 @@ export function AiBriefPitchModal({
 
       if (res.ok) {
         const data = await res.json();
+        if (currentReqId !== activeRequestIdRef.current) return;
         const p = data.proposal;
         if (p) {
           let gearPkg = "sony-multicam";
@@ -226,6 +230,8 @@ export function AiBriefPitchModal({
         rationale: "Versatile 200 sqm soundstage with motorized lighting grid, perfect for commercial shoots and high-end video campaigns.",
       };
     }
+
+    if (currentReqId !== activeRequestIdRef.current) return;
 
     setAppliedIds({ studioId, gearId, hours });
     setRecommendation(res);

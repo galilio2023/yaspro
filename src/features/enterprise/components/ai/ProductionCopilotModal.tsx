@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Sparkles,
   Bot,
@@ -34,6 +34,69 @@ export function ProductionCopilotModal({
   const [proposal, setProposal] = useState<ProductionProposalResponse | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const triggerElementRef = useRef<HTMLElement | null>(null);
+
+  // Focus trap, Escape key handling, and restore focus to trigger
+  useEffect(() => {
+    if (!isOpen) return;
+
+    triggerElementRef.current = document.activeElement as HTMLElement | null;
+
+    const focusTimer = setTimeout(() => {
+      if (dialogRef.current) {
+        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length > 0) {
+          focusable[0].focus();
+        } else {
+          dialogRef.current.focus();
+        }
+      }
+    }, 50);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+
+      if (e.key === "Tab") {
+        if (!dialogRef.current) return;
+        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+
+        const firstElement = focusable[0];
+        const lastElement = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      clearTimeout(focusTimer);
+      window.removeEventListener("keydown", handleKeyDown);
+      if (triggerElementRef.current) {
+        triggerElementRef.current.focus();
+      }
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleGenerate = async (presetText?: string) => {
@@ -64,8 +127,20 @@ export function ProductionCopilotModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-3xl max-h-[90vh] flex flex-col rounded-3xl border border-brand-purple/40 bg-slate-950 shadow-2xl overflow-hidden text-white">
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="copilot-dialog-title"
+    >
+      <div
+        ref={dialogRef}
+        tabIndex={-1}
+        className="relative w-full max-w-3xl max-h-[90vh] flex flex-col rounded-3xl border border-brand-purple/40 bg-slate-950 shadow-2xl overflow-hidden text-white outline-none"
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-white/10 bg-slate-900/80">
           <div className="flex items-center gap-3">
@@ -74,7 +149,7 @@ export function ProductionCopilotModal({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-display font-bold text-lg text-white">
+                <h3 id="copilot-dialog-title" className="font-display font-bold text-lg text-white">
                   Autonomous Production &amp; RFP Copilot
                 </h3>
                 <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
@@ -89,6 +164,7 @@ export function ProductionCopilotModal({
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close autonomous copilot"
             className="size-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer"
           >
             <X size={16} />

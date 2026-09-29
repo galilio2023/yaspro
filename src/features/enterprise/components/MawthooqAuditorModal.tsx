@@ -392,7 +392,7 @@ export function MawthooqAuditorModal({
                           className="p-2 rounded-lg bg-black/60 border border-red-500/20 text-xs flex flex-col gap-1"
                         >
                           <div className="flex items-center justify-between">
-                            <span className="font-mono font-bold text-red-300">"{f.term}"</span>
+                            <span className="font-mono font-bold text-red-300">&quot;{f.term}&quot;</span>
                             {f.suggestedReplacement && (
                               <span className="text-[11px] text-emerald-400">
                                 Suggestion: <strong className="font-mono">{f.suggestedReplacement}</strong>

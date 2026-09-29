@@ -29,6 +29,8 @@ export const INFLUENCERS_DATA: InfluencerItem[] = [
       engagementRate: "8.2%",
     },
     avatar: "/images/influencers/aboflah.jpg",
+    mawthooqStatus: "Verified & Licensed",
+    mawthooqLicenseId: "MWQ-882910-KSA",
   },
   {
     id: "abir-saghir",
@@ -87,6 +89,8 @@ export const INFLUENCERS_DATA: InfluencerItem[] = [
       engagementRate: "7.4%",
     },
     avatar: "/images/influencers/noor-stars.jpg",
+    mawthooqStatus: "Verified & Licensed",
+    mawthooqLicenseId: "MWQ-551029-KSA",
   },
   {
     id: "narins-beauty",
