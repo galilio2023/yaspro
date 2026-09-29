@@ -122,14 +122,13 @@ export function WhatsAppConcierge() {
                 <div className="size-9 rounded-xl bg-green-500/20 border border-green-500/40 flex items-center justify-center text-green-400">
                   <MessageSquare size={18} />
                 </div>
-                <span className="absolute -top-1 -right-1 size-2.5 rounded-full bg-green-500 border-2 border-black" />
               </div>
               <div>
                 <h3 id="concierge-heading" className="text-sm font-bold text-white font-display">
                   Dubai Studio Concierge
                 </h3>
-                <p className="text-[11px] text-green-400 font-medium flex items-center gap-1">
-                  <span>●</span> <span>Production Dispatch Online</span>
+                <p className="text-[11px] text-green-400 font-medium">
+                  Production Dispatch Online
                 </p>
               </div>
             </div>
@@ -214,11 +213,6 @@ export function WhatsAppConcierge() {
             </div>
           )}
         </div>
-
-        {/* Online Status Live Pip */}
-        <span className="absolute -top-0.5 -right-0.5 z-20 flex size-3">
-          <span className="size-3 rounded-full bg-emerald-500 border-2 border-black" />
-        </span>
       </button>
     </aside>
   );

@@ -32,11 +32,6 @@ export function FloatingCopilotButton() {
               <Sparkles size={11} className="absolute -top-1.5 -right-2 text-brand-gold animate-pulse" />
             </div>
           </div>
-
-          {/* Online AI status pip */}
-          <span className="absolute -top-0.5 -right-0.5 z-20 flex size-3">
-            <span className="size-3 rounded-full bg-brand-cyan border-2 border-black" />
-          </span>
         </button>
       </aside>
 
