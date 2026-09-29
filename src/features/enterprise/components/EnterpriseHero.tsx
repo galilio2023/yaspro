@@ -13,7 +13,7 @@ interface EnterpriseHeroProps {
 
 export function EnterpriseHero({ onOpenRfp, onOpenCopilot }: EnterpriseHeroProps) {
   return (
-    <section className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24 border-b border-white/10 bg-slate-950">
+    <section className="relative overflow-hidden pt-20 pb-10 sm:pt-28 sm:pb-16 lg:pt-36 lg:pb-24 border-b border-white/10 bg-slate-950">
       {/* Background glow effects */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full pointer-events-none opacity-25 bg-gradient-to-tr from-brand-purple via-indigo-600 to-brand-cyan blur-3xl" />
       <div className="absolute -top-10 -right-10 w-[400px] h-[400px] rounded-full pointer-events-none opacity-15 bg-brand-cyan blur-3xl" />

@@ -110,11 +110,11 @@ export default function Footer() {
         </span>
       </div>
 
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 relative z-10">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 relative z-10">
         {/* Main Footer Directory */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-16">
           {/* Column 1: Brand Info & Socials */}
-          <div className="lg:col-span-4 flex flex-col justify-between">
+          <div className="sm:col-span-2 lg:col-span-4 flex flex-col justify-between">
             <div>
               <div className="mb-5">
                 <BrandLogo showIndicator={false} />
@@ -135,24 +135,24 @@ export default function Footer() {
           </div>
 
           {/* Column 2: Production Services */}
-          <div className="lg:col-span-2 sm:col-span-1">
-            <h3 className="text-white font-bold text-xs uppercase tracking-widest font-display mb-5">
+          <div className="col-span-1 lg:col-span-2">
+            <h3 className="text-white font-bold text-xs uppercase tracking-widest font-display mb-4 sm:mb-5">
               Production
             </h3>
             <FooterNavLinks links={PRODUCTION_SERVICES} />
           </div>
 
           {/* Column 3: Network & Formats */}
-          <div className="lg:col-span-2 sm:col-span-1">
-            <h3 className="text-white font-bold text-xs uppercase tracking-widest font-display mb-5">
+          <div className="col-span-1 lg:col-span-2">
+            <h3 className="text-white font-bold text-xs uppercase tracking-widest font-display mb-4 sm:mb-5">
               Network
             </h3>
             <FooterNavLinks links={NETWORK_LINKS} />
           </div>
 
           {/* Column 4: Regional Hubs */}
-          <div className="lg:col-span-4">
-            <div className="flex items-center justify-between mb-5">
+          <div className="sm:col-span-2 lg:col-span-4">
+            <div className="flex items-center justify-between mb-4 sm:mb-5">
               <h3 className="text-white font-bold text-xs uppercase tracking-widest font-display">
                 Regional Studios &amp; Hubs
               </h3>
@@ -167,14 +167,14 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar: Telemetry & Legal */}
-        <div className="mt-16 pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted">
+        <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted text-center sm:text-left">
           <p>© {currentYear} YAS PRO MEDIA LLC. All Rights Reserved.</p>
 
-          <div className="flex flex-wrap items-center justify-center gap-6">
-            <Link href="/privacy-policy" className="hover:text-white transition-colors">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+            <Link href="/privacy-policy" className="hover:text-white transition-colors py-1 min-h-[36px] sm:min-h-0 flex items-center">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="hover:text-white transition-colors">
+            <Link href="/terms" className="hover:text-white transition-colors py-1 min-h-[36px] sm:min-h-0 flex items-center">
               Terms of Service
             </Link>
 

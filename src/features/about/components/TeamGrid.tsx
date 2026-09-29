@@ -20,10 +20,10 @@ export function TeamGrid({ headingId }: TeamGridProps) {
         description="Experienced media directors, broadcast engineers, and digital innovators leading Yas Pro forward."
       />
 
-      <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+      <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
         {TEAM_MEMBERS.map((member) => (
           <StaggerItem as="article" key={member.role} className="h-full">
-            <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 sm:p-8 flex flex-col justify-between h-full hover:border-brand-purple/40 hover:bg-white/[0.06] transition-all duration-300">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-8 flex flex-col justify-between h-full hover:border-brand-purple/40 hover:bg-white/[0.06] transition-all duration-300">
               <div>
                 <span className="text-xs font-semibold text-brand-purple-light uppercase tracking-wider block mb-2 font-mono">
                   {member.role}

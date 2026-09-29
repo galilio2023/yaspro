@@ -81,7 +81,7 @@ export function SplineScene({
     <div
       ref={containerRef}
       className={cn(
-        "relative h-full w-full min-h-[350px] overflow-hidden will-change-transform",
+        "relative h-full w-full max-w-full min-h-[280px] sm:min-h-[350px] overflow-hidden will-change-transform",
         className
       )}
     >

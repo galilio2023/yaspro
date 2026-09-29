@@ -250,7 +250,7 @@ export function AiBriefPitchModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in"
       onClick={onClose}
     >
       <div
@@ -259,7 +259,7 @@ export function AiBriefPitchModal({
         aria-modal="true"
         aria-labelledby="ai-pitch-assistant-title"
         tabIndex={-1}
-        className="relative w-full max-w-xl p-6 sm:p-8 rounded-3xl bg-slate-900 border border-white/10 shadow-2xl text-white outline-none"
+        className="fixed inset-0 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 w-full h-full sm:h-auto sm:max-h-[90vh] sm:w-[90vw] sm:max-w-2xl rounded-none sm:rounded-3xl bg-slate-900 border border-white/10 shadow-2xl text-white outline-none overflow-y-auto p-4 sm:p-6 lg:p-8"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">

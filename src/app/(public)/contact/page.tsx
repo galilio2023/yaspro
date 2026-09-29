@@ -31,7 +31,7 @@ export default function ContactPage() {
           description="Have a production in mind? Reach out to our studios in Dubai, Cairo, or Amman and let's create something extraordinary together."
         />
 
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           <div className="lg:col-span-7">
             <FadeUp>
               <Suspense fallback={<div className="min-h-[400px] rounded-3xl border border-white/10 bg-white/[0.03] animate-pulse" />}>

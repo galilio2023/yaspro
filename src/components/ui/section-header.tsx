@@ -48,17 +48,17 @@ export function SectionHeader({
         {/* Badge + optional action row */}
         <div
           className={cn(
-            "w-full flex items-center gap-3 mb-5",
+            "w-full flex items-center gap-2 sm:gap-3 mb-4 sm:mb-5 flex-wrap",
             isCenter ? "justify-center" : "justify-between"
           )}
         >
           {badge && (
             <Badge
               variant={badgeVariant}
-              className="px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest gap-1.5"
+              className="px-3 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest gap-1.5 max-w-full truncate"
             >
               {badgeIcon}
-              <span>{badge}</span>
+              <span className="truncate">{badge}</span>
             </Badge>
           )}
 
@@ -70,7 +70,7 @@ export function SectionHeader({
         {/* Heading */}
         <HeadingTag
           id={headingId}
-          className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-text-primary tracking-tight font-display leading-[1.12] mb-5"
+          className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-text-primary tracking-tight font-display leading-[1.12] mb-4 sm:mb-5 text-balance"
         >
           {title}{" "}
           {gradientText && (
@@ -85,7 +85,7 @@ export function SectionHeader({
         {description && (
           <p
             className={cn(
-              "text-base sm:text-lg text-text-secondary leading-relaxed max-w-2xl",
+              "text-sm sm:text-base md:text-lg text-text-secondary leading-relaxed max-w-full sm:max-w-2xl",
               isCenter && "mx-auto"
             )}
           >

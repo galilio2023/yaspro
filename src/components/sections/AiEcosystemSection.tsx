@@ -19,7 +19,7 @@ export function AiEcosystemSection() {
       <Section
         id="ai-ecosystem"
         aria-labelledby="ai-ecosystem-title"
-        className="bg-background border-t border-white/5 relative overflow-hidden py-20 lg:py-28"
+        className="bg-background border-t border-white/5 relative overflow-hidden py-12 sm:py-16 lg:py-28"
         background={
           <>
             <div
@@ -124,7 +124,7 @@ export function AiEcosystemSection() {
             </div>
 
             {/* Right Column: High-Tech Orbiting Media Nodes Engine */}
-            <div className="lg:col-span-6 w-full">
+            <div className="lg:col-span-6 w-full max-h-[340px] sm:max-h-[400px] lg:max-h-none overflow-hidden">
               <OrbitingMediaNodes />
             </div>
           </div>

@@ -105,7 +105,7 @@ export function UnifiedFloatingActions() {
       <aside
         ref={containerRef}
         aria-label="Yas Pro Production Assistant and WhatsApp Concierge"
-        className="fixed bottom-6 right-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-24 sm:[[data-has-bottom-cart=true]_&]:bottom-6"
+        className="fixed bottom-20 right-4 sm:bottom-8 sm:right-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-28 sm:[[data-has-bottom-cart=true]_&]:bottom-8 pb-[env(safe-area-inset-bottom,0px)]"
       >
         {/* WhatsApp Concierge Flyout */}
         {isWhatsAppOpen && (
@@ -115,7 +115,7 @@ export function UnifiedFloatingActions() {
             aria-modal="true"
             aria-labelledby="unified-concierge-heading"
             tabIndex={-1}
-            className="absolute bottom-16 right-0 w-[340px] sm:w-[380px] bg-secondary border border-white/15 rounded-3xl p-5 shadow-2xl shadow-black/80 backdrop-blur-2xl animate-fade-up outline-none"
+            className="absolute bottom-16 right-0 w-[calc(100vw-2rem)] max-w-[360px] sm:w-[380px] bg-secondary border border-white/15 rounded-3xl p-4 sm:p-5 shadow-2xl shadow-black/80 backdrop-blur-2xl animate-fade-up outline-none"
           >
             {/* Header */}
             <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
@@ -139,7 +139,7 @@ export function UnifiedFloatingActions() {
                 ref={closeButtonRef}
                 type="button"
                 onClick={() => setIsWhatsAppOpen(false)}
-                className="size-8 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+                className="size-8 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple min-h-[36px] min-w-[36px]"
                 aria-label="Close concierge flyout"
               >
                 <X size={16} />

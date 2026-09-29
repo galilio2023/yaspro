@@ -16,14 +16,14 @@ export default function HeroSection() {
     <Section
       id="hero"
       aria-labelledby="hero-title"
-      className="min-h-[calc(100vh-4.5rem)] flex items-center justify-center py-12 md:py-20 bg-background relative"
+      className="min-h-[calc(100dvh-3.5rem)] sm:min-h-[calc(100dvh-4.5rem)] flex items-center justify-center py-8 sm:py-12 md:py-20 bg-background relative"
     >
       <HeroSparkles />
       <Container className="relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-16 items-center">
           {/* Left Column: Hero Content */}
-          <FadeUp className="lg:col-span-7 flex flex-col items-start text-left">
-            <div className="mb-6 flex justify-start">
+          <FadeUp className="lg:col-span-7 flex flex-col items-center text-center lg:items-start lg:text-left">
+            <div className="mb-6 flex justify-center lg:justify-start">
               <YasproBrandSparkleBadge />
             </div>
 
@@ -39,17 +39,17 @@ export default function HeroSection() {
               Human Creativity
             </h1>
 
-            <p className="text-base sm:text-lg text-text-secondary mb-8 max-w-xl text-balance leading-relaxed">
+            <p className="text-base sm:text-lg text-text-secondary mb-8 max-w-full sm:max-w-xl text-balance leading-relaxed">
               The fastest-growing production network in the Gulf.
               From mobile OB-VAN live broadcasting to AI-powered post-production and tier-one creator soundstages.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-start items-center mb-10 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-10 w-full">
               <ShimmerButton
                 asChild
                 shimmerColor="var(--brand-purple-light)"
                 shimmerDuration="2.5s"
-                className="w-full sm:w-auto px-8 py-3.5 font-semibold text-sm gap-2"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3.5 font-semibold text-sm gap-2"
               >
                 <Link href="/studio-booking">
                   <span>Book a Studio</span>
@@ -69,8 +69,8 @@ export default function HeroSection() {
           </FadeUp>
 
           {/* Right Column: Interactive Spline 3D Scene with Cinema HUD & UAE Flag */}
-          <div className="lg:col-span-5 relative w-full flex items-center justify-center">
-            <div className="relative w-full aspect-[4/3] sm:aspect-square max-w-[500px] rounded-3xl border border-white/10 bg-card/40 backdrop-blur-md overflow-hidden shadow-2xl shadow-brand-purple/10">
+          <div className="lg:col-span-5 relative w-full flex items-center justify-center mt-2 sm:mt-0">
+            <div className="relative w-full aspect-[4/3] sm:aspect-square max-w-xs sm:max-w-sm md:max-w-[400px] lg:max-w-[500px] mx-auto rounded-2xl sm:rounded-3xl border border-white/10 bg-card/40 backdrop-blur-md overflow-hidden shadow-2xl shadow-brand-purple/10">
               <BorderBeam size={240} duration={12} delay={2} colorFrom="var(--brand-purple)" colorTo="var(--brand-cyan)" />
 
               {/* Viewfinder Top HUD Pill: UAE Flag + Dubai Studio 4K Broadcast tag */}

@@ -75,7 +75,7 @@ export function BookingWizard() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         {/* Left Column (8 cols): Step Navigation & Content */}
         <div className="lg:col-span-8 flex flex-col gap-6">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-3">
             <BookingProgress
               steps={WIZARD_STEPS}
               currentStep={step}
@@ -92,7 +92,7 @@ export function BookingWizard() {
             </button>
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 sm:p-10 shadow-xl shadow-black/20">
+          <div className="rounded-2xl sm:rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 sm:p-6 lg:p-10 shadow-xl shadow-black/20">
             {isAiConfigured && (
               <div className="mb-6 p-4 rounded-2xl bg-brand-purple/15 border border-brand-purple/30 flex items-center justify-between gap-3 text-xs">
                 <div className="flex items-center gap-2.5">

@@ -12,7 +12,7 @@ interface EnterpriseTiersProps {
 
 export function EnterpriseTiersSection({ onSelectTier }: EnterpriseTiersProps) {
   return (
-    <section id="enterprise-tiers" className="py-20 bg-background border-b border-white/10 relative overflow-hidden">
+    <section id="enterprise-tiers" className="py-12 sm:py-16 lg:py-28 bg-background border-b border-white/10 relative overflow-hidden">
       <Container className="relative z-10 max-w-6xl">
         <SectionHeader
           badge="Enterprise Retainers & SLA Guarantees"

@@ -23,7 +23,7 @@ export function FooterNavLinks({ links }: FooterNavLinksProps) {
           <li key={`${link.label}-${link.href}`}>
             <Link
               href={link.href}
-              className="group/item flex items-center justify-between py-1 text-sm text-text-secondary hover:text-white transition-all duration-200"
+              className="group/item flex items-center justify-between py-2 sm:py-1 min-h-[40px] sm:min-h-0 text-sm text-text-secondary hover:text-white transition-all duration-200"
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 {Icon && (

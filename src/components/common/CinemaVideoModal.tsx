@@ -122,12 +122,12 @@ export function CinemaVideoModal({
       role="dialog"
       aria-modal="true"
       aria-label={title}
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 md:p-8 bg-black/90 backdrop-blur-2xl transition-opacity duration-300 select-none animate-in fade-in"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-0 sm:p-6 md:p-8 bg-black/95 backdrop-blur-2xl transition-opacity duration-300 select-none animate-in fade-in"
       onClick={onClose}
     >
       {/* Centered Cinema Card Container */}
       <div
-        className="relative w-full max-w-4xl bg-zinc-950 border border-white/20 rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.95)] flex flex-col my-auto transition-transform duration-300 scale-100 animate-in zoom-in-95"
+        className="relative w-full h-full sm:h-auto max-w-5xl bg-zinc-950 border-0 sm:border sm:border-white/20 rounded-none sm:rounded-3xl overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.95)] flex flex-col justify-center sm:justify-start my-auto transition-transform duration-300 scale-100 animate-in zoom-in-95"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Bar */}
@@ -151,9 +151,9 @@ export function CinemaVideoModal({
               type="button"
               onClick={onClose}
               aria-label="Close video"
-              className="size-8 sm:size-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer shrink-0 border border-white/10"
+              className="size-9 sm:size-9 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer shrink-0 border border-white/10"
             >
-              <X size={16} />
+              <X size={18} />
             </button>
           </div>
         </div>
@@ -230,11 +230,11 @@ export function CinemaVideoModal({
                   Plays instantly in full uncompressed cinema quality without third-party iframe buffering or CAPTCHA restrictions.
                 </p>
 
-                <div className="flex items-center justify-center gap-4 mt-6">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 mt-4 sm:mt-6 w-full max-w-xs sm:max-w-none">
                   <button
                     type="button"
                     onClick={handleLaunchVideo}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white text-black text-xs font-bold hover:bg-white/90 shadow-lg transition-transform hover:scale-105 cursor-pointer"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-white text-black text-xs font-bold hover:bg-white/90 shadow-lg transition-transform hover:scale-105 cursor-pointer min-h-[44px] sm:min-h-0"
                   >
                     <span>Open 4K Player</span>
                     <ExternalLink size={13} />
@@ -242,7 +242,7 @@ export function CinemaVideoModal({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white/80 text-xs font-medium border border-white/10 transition-colors cursor-pointer"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white/80 text-xs font-medium border border-white/10 transition-colors cursor-pointer min-h-[44px] sm:min-h-0"
                   >
                     <span>Dismiss</span>
                   </button>

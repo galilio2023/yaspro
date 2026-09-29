@@ -12,7 +12,7 @@ export function EnterpriseTrustLogos() {
   return (
     <section
       aria-label="Government Accreditations & Enterprise Partners"
-      className="relative py-14 sm:py-20 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl overflow-hidden select-none"
+      className="relative py-12 sm:py-16 lg:py-28 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl overflow-hidden select-none"
     >
       {/* Subtle background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[350px] bg-brand-purple/10 rounded-full blur-3xl pointer-events-none" />

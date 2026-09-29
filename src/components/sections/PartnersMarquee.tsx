@@ -6,19 +6,19 @@ export function PartnersMarquee() {
   return (
     <aside
       aria-label="Government and Brand Partners"
-      className="relative w-full py-10 sm:py-14 border-y border-white/5 bg-black/40 backdrop-blur-md overflow-hidden flex flex-col items-center select-none"
+      className="relative w-full py-10 sm:py-14 lg:py-20 border-y border-white/5 bg-black/40 backdrop-blur-md overflow-hidden flex flex-col items-center select-none max-w-full"
     >
       {/* Left & Right Smooth Edge Fade Out Mask */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-24 sm:w-40 bg-gradient-to-r from-background via-background/80 to-transparent z-20" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-24 sm:w-40 bg-gradient-to-l from-background via-background/80 to-transparent z-20" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-40 bg-gradient-to-r from-background via-background/80 to-transparent z-20" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-40 bg-gradient-to-l from-background via-background/80 to-transparent z-20" />
 
       {/* Subtle Section Label */}
-      <div className="mb-6 flex items-center justify-center gap-2">
-        <span className="size-1.5 rounded-full bg-brand-cyan animate-pulse" />
-        <span className="text-[11px] sm:text-xs font-mono uppercase tracking-[0.25em] text-text-muted">
+      <div className="mb-6 flex items-center justify-center gap-2 px-4 text-center">
+        <span className="size-1.5 rounded-full bg-brand-cyan animate-pulse shrink-0" />
+        <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.15em] sm:tracking-[0.25em] text-text-muted">
           Chosen For UAE Government &amp; Global Brand Productions
         </span>
-        <span className="size-1.5 rounded-full bg-brand-purple animate-pulse" />
+        <span className="size-1.5 rounded-full bg-brand-purple animate-pulse shrink-0" />
       </div>
 
       {/* Row 1: Official UAE Government Entities (Pure Logos, Zero Cards) */}

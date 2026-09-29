@@ -26,11 +26,12 @@ export function InfluencerFilters({
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           leftIcon={<Search size={17} />}
+          className="text-base sm:text-sm"
         />
       </div>
 
-      <div className="flex flex-wrap gap-2 w-full md:w-auto items-center">
-        <span className="text-xs text-text-muted mr-1 flex items-center gap-1">
+      <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto scrollbar-none pb-1">
+        <span className="text-xs text-text-muted mr-1 flex items-center gap-1 shrink-0">
           <Globe2 size={13} />
           <span>Region:</span>
         </span>
@@ -40,7 +41,7 @@ export function InfluencerFilters({
             type="button"
             onClick={() => onSelectNationality(nation)}
             className={cn(
-              "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all capitalize cursor-pointer",
+              "px-3.5 py-2 sm:py-1.5 min-h-[44px] sm:min-h-0 rounded-full text-xs font-semibold transition-all capitalize cursor-pointer shrink-0 whitespace-nowrap flex items-center justify-center",
               selectedNationality === nation
                 ? "bg-brand-purple text-white shadow-md shadow-brand-purple/20"
                 : "bg-white/5 text-text-secondary hover:text-white hover:bg-white/10 border border-white/5"

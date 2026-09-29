@@ -102,7 +102,7 @@ export function ProjectCard({
         </CardItem>
 
         {/* Content */}
-        <div className="p-6 flex flex-col flex-1">
+        <div className="p-4 sm:p-6 flex flex-col flex-1">
           <CardItem translateZ={42} className="w-full mb-1">
             <h3 className="text-xl font-bold text-text-primary mb-1 font-display group-hover/card:text-brand-purple-light transition-colors line-clamp-1">
               <Link
@@ -149,7 +149,7 @@ export function ProjectCard({
         {/* Footer */}
         <CardItem
           translateZ={32}
-          className="px-6 pb-6 pt-2 flex items-center justify-between mt-auto w-full border-t border-brand-purple/10"
+          className="px-4 pb-4 sm:px-6 sm:pb-6 pt-3 sm:pt-2 flex items-center justify-between mt-auto w-full border-t border-brand-purple/10"
         >
           <span className="text-xs text-text-ghost font-medium">
             {project.year ? `Yas Production · ${project.year}` : "Yas Original"}
@@ -158,7 +158,7 @@ export function ProjectCard({
             <button
               type="button"
               onClick={handleReelClick}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-purple-mid px-3 py-1.5 rounded-xl bg-brand-purple/10 border border-brand-purple/20 group-hover/card:bg-brand-purple/20 group-hover/card:border-brand-purple/40 hover:!bg-brand-purple hover:!text-white transition-all cursor-pointer shadow-sm"
+              className="inline-flex items-center justify-center min-h-[44px] px-3.5 py-2 sm:min-h-0 sm:py-1.5 sm:px-3 gap-1.5 text-xs font-bold text-brand-purple-mid rounded-xl bg-brand-purple/10 border border-brand-purple/20 group-hover/card:bg-brand-purple/20 group-hover/card:border-brand-purple/40 hover:!bg-brand-purple hover:!text-white transition-all cursor-pointer shadow-sm"
             >
               <Play size={11} className="fill-current text-brand-cyan group-hover/card:text-white" />
               <span>Watch Reel</span>
@@ -166,7 +166,7 @@ export function ProjectCard({
           ) : (
             <Link
               href={`/projects/${project.slug}`}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-purple-mid px-3 py-1.5 rounded-xl bg-brand-purple/10 border border-brand-purple/20 group-hover/card:bg-brand-purple/20 group-hover/card:border-brand-purple/40 transition-all"
+              className="inline-flex items-center justify-center min-h-[44px] px-3.5 py-2 sm:min-h-0 sm:py-1.5 sm:px-3 gap-1.5 text-xs font-bold text-brand-purple-mid rounded-xl bg-brand-purple/10 border border-brand-purple/20 group-hover/card:bg-brand-purple/20 group-hover/card:border-brand-purple/40 transition-all"
             >
               <span>View Case</span>
               <ArrowUpRight size={11} />

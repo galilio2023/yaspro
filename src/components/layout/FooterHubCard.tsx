@@ -97,7 +97,7 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
       <div className="mt-3 pt-2.5 border-t border-white/[0.06] flex items-center justify-between text-[10px]">
         <a
           href={`tel:${hub.phone}`}
-          className="flex items-center gap-1 text-text-muted hover:text-brand-teal-light transition-colors font-medium"
+          className="flex items-center gap-1 text-text-muted hover:text-brand-teal-light transition-colors font-medium py-1"
         >
           <Phone size={10} className="text-brand-cyan" />
           <span>{hub.phone}</span>
@@ -109,7 +109,7 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             title="Open in Maps"
-            className="text-text-muted hover:text-brand-cyan transition-colors flex items-center gap-0.5"
+            className="text-text-muted hover:text-brand-cyan transition-colors flex items-center gap-0.5 py-1 px-1"
           >
             <span>Map</span>
             <ExternalLink size={10} />

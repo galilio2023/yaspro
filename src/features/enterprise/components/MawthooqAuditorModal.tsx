@@ -97,7 +97,7 @@ export function MawthooqAuditorModal({
       aria-modal="true"
       aria-labelledby="mawthooq-modal-title"
     >
-      <div className="relative w-full max-w-2xl rounded-3xl border border-emerald-500/30 bg-slate-950 p-6 sm:p-8 shadow-2xl shadow-emerald-500/10 my-8">
+      <div className="relative w-full h-full sm:h-auto sm:max-h-[90vh] sm:w-[90vw] sm:max-w-3xl rounded-none sm:rounded-3xl border border-emerald-500/30 bg-slate-950 p-6 sm:p-8 shadow-2xl shadow-emerald-500/10 my-0 sm:my-8 overflow-y-auto">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -275,7 +275,7 @@ export function MawthooqAuditorModal({
                 value={scriptInput}
                 onChange={(e) => setScriptInput(e.target.value)}
                 placeholder="Paste promotional caption, script dialogue, or campaign brief..."
-                className="w-full bg-black/60 border border-white/15 rounded-xl p-3 text-xs sm:text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-brand-purple resize-none font-mono"
+                className="w-full bg-black/60 border border-white/15 rounded-xl p-3 text-base sm:text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-brand-purple resize-none font-mono"
               />
 
               <div className="flex flex-wrap items-center justify-between gap-2 pt-1">

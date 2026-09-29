@@ -22,13 +22,13 @@ export function BookingStepNavigation({
   const isLast = currentStep === totalSteps;
 
   return (
-    <div className="flex items-center gap-4 mt-8 pt-6 border-t border-white/10">
+    <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-8 pt-6 border-t border-white/10">
       {!isFirst && (
         <Button
           variant="outline"
           size="default"
           onClick={onPrev}
-          className="rounded-xl px-5 text-xs font-semibold"
+          className="w-full sm:w-auto min-h-[44px] rounded-xl px-5 text-xs font-semibold"
         >
           <ChevronLeft size={16} /> Back
         </Button>
@@ -39,7 +39,7 @@ export function BookingStepNavigation({
           variant="brand"
           size="default"
           onClick={onNext}
-          className="ml-auto rounded-xl px-6 text-xs font-semibold gap-2"
+          className="w-full sm:w-auto min-h-[44px] sm:ml-auto rounded-xl px-6 text-xs font-semibold gap-2"
         >
           <span>Continue</span>
           <ChevronRight size={16} />
@@ -50,7 +50,7 @@ export function BookingStepNavigation({
           size="default"
           onClick={onSubmit}
           disabled={isSubmitting}
-          className="ml-auto rounded-xl px-8 text-xs font-semibold gap-2 shadow-lg shadow-brand-purple/25"
+          className="w-full sm:w-auto min-h-[44px] sm:ml-auto rounded-xl px-8 text-xs font-semibold gap-2 shadow-lg shadow-brand-purple/25"
         >
           {isSubmitting ? (
             <span>Processing Booking...</span>

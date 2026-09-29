@@ -201,7 +201,7 @@ export function GearCartDrawer({
             aria-modal="true"
             aria-labelledby="rental-cart-title"
             tabIndex={-1}
-            className="w-full max-w-xl max-h-[85vh] bg-card border border-white/15 rounded-3xl p-6 shadow-2xl flex flex-col overflow-hidden select-text outline-none"
+            className="w-full sm:max-w-sm max-h-[85vh] bg-card border border-white/15 rounded-3xl p-4 sm:p-6 shadow-2xl flex flex-col overflow-hidden select-text outline-none"
             onClick={(e) => e.stopPropagation()}
             aria-hidden="false"
           >

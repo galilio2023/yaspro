@@ -22,7 +22,7 @@ export function Section({
       id={id}
       aria-labelledby={ariaLabelledby}
       aria-label={ariaLabel}
-      className={cn("relative w-full py-16 md:py-24 overflow-hidden flex flex-col items-center justify-center", className)}
+      className={cn("relative w-full max-w-full py-12 sm:py-16 md:py-24 overflow-hidden flex flex-col items-center justify-center", className)}
       {...props}
     >
       {background && (

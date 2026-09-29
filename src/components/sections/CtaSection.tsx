@@ -42,7 +42,7 @@ export function CtaSection({
     <section
       id="cta"
       aria-labelledby="cta-title"
-      className="relative w-full min-h-[700px] sm:min-h-[780px] flex items-end justify-center overflow-hidden bg-[#03020a]"
+      className="relative w-full min-h-[480px] sm:min-h-[640px] lg:min-h-[780px] flex items-end justify-center overflow-hidden bg-[#03020a] py-12 sm:py-16 lg:py-20"
     >
       {/* ── Layer 0: Full-bleed 3D Scene (lives behind everything) ── */}
       <RocketAndHexBallCanvas className="absolute inset-0 w-full h-full pointer-events-auto" />
@@ -56,10 +56,10 @@ export function CtaSection({
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_80%,rgba(124,58,237,0.15),transparent)]" />
 
       {/* ── Layer 2: Text / CTA Content ── */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 md:pb-28 pt-40 flex flex-col items-center text-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 sm:pb-20 md:pb-28 pt-20 sm:pt-36 flex flex-col items-center text-center">
         <FadeUp>
           {/* Live status badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-wider font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 mb-6 backdrop-blur-md">
+          <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-mono uppercase tracking-wider font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 mb-6 backdrop-blur-md">
             <span className="size-2 rounded-full bg-emerald-400" />
             Now Booking Q3 &amp; Q4 2026 Productions
           </div>
@@ -67,7 +67,7 @@ export function CtaSection({
           {/* Headline */}
           <h2
             id="cta-title"
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 font-display tracking-tight leading-[1.08] text-balance drop-shadow-[0_2px_24px_rgba(0,0,0,0.9)]"
+            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-4 sm:mb-6 font-display tracking-tight leading-[1.08] text-balance drop-shadow-[0_2px_24px_rgba(0,0,0,0.9)] text-center"
           >
             {title}{" "}
             <span className="bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-cyan bg-clip-text text-transparent">
@@ -76,12 +76,12 @@ export function CtaSection({
           </h2>
 
           {/* Sub-copy */}
-          <p className="text-base sm:text-lg text-text-secondary mb-10 max-w-2xl mx-auto text-balance leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg text-text-secondary mb-8 sm:mb-10 max-w-2xl mx-auto text-balance leading-relaxed text-center">
             {description}
           </p>
 
           {/* Hub pills */}
-          <div className="flex items-center justify-center gap-3 mb-10 flex-wrap">
+          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-10 flex-wrap">
             {HUBS.map((hub) => (
               <span
                 key={hub.city}
@@ -94,12 +94,12 @@ export function CtaSection({
           </div>
 
           {/* Action buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full max-w-xs sm:max-w-none mx-auto">
             <ShimmerButton
               asChild
               shimmerColor="var(--brand-purple-light)"
               shimmerDuration="2.5s"
-              className="w-full sm:w-auto px-9 py-4 font-semibold text-sm gap-2 shadow-[0_8px_32px_rgba(124,58,237,0.35)]"
+              className="w-full sm:w-auto px-9 py-4 font-semibold text-sm gap-2 shadow-[0_8px_32px_rgba(124,58,237,0.35)] min-h-[44px] justify-center"
             >
               <Link href={primaryCtaHref}>
                 <Calendar size={15} />
@@ -110,7 +110,7 @@ export function CtaSection({
 
             <Link
               href={secondaryCtaHref}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-sm text-white border border-white/20 bg-white/[0.06] hover:bg-white/10 hover:border-white/30 transition-all text-center backdrop-blur-sm"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-sm text-white border border-white/20 bg-white/[0.06] hover:bg-white/10 hover:border-white/30 transition-all text-center backdrop-blur-sm min-h-[44px]"
             >
               <Video size={15} className="text-brand-cyan" />
               {secondaryCtaText}
