@@ -19,15 +19,21 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
 
     let width = container.clientWidth || 800;
     let height = container.clientHeight || 450;
+    const isMobile = typeof window !== "undefined" && (window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches);
 
     // Scene, Camera, Renderer
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
     camera.position.set(0, 0.2, 5.8);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+    const renderer = new THREE.WebGLRenderer({
+      antialias: !isMobile,
+      alpha: true,
+      powerPreference: "high-performance",
+    });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Cap pixel ratio to 1.2 on mobile to save GPU fill rate and prevent thermal throttling
+    renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1.2) : Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.3;
     container.appendChild(renderer.domElement);
@@ -92,8 +98,8 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
     const coreMesh = new THREE.Mesh(coreGeo, innerCoreMat);
     ballGroup.add(coreMesh);
 
-    // Distributed Hexagonal Holes/Ports around the sphere
-    const hexCount = 36;
+    // Distributed Hexagonal Holes/Ports around the sphere (scaled down on mobile)
+    const hexCount = isMobile ? 18 : 36;
     const phi = Math.PI * (Math.sqrt(5) - 1);
     for (let i = 0; i < hexCount; i++) {
       const y = 1 - (i / (hexCount - 1)) * 2;
@@ -355,7 +361,7 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
         className ??
         "relative w-full h-[260px] sm:h-[300px] md:h-[340px] overflow-hidden flex items-center justify-center pointer-events-auto"
       }
-      style={{ touchAction: "none" }}
+      style={{ touchAction: "pan-y" }}
     >
       {!isClient && <div className="size-full animate-pulse bg-white/[0.02]" />}
     </div>

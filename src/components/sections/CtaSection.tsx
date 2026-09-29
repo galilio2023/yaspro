@@ -45,7 +45,7 @@ export function CtaSection({
       className="relative w-full min-h-[480px] sm:min-h-[640px] lg:min-h-[780px] flex items-end justify-center overflow-hidden bg-[#03020a] py-12 sm:py-16 lg:py-20"
     >
       {/* ── Layer 0: Full-bleed 3D Scene (lives behind everything) ── */}
-      <RocketAndHexBallCanvas className="absolute inset-0 w-full h-full pointer-events-auto" />
+      <RocketAndHexBallCanvas className="absolute inset-0 w-full h-full pointer-events-none md:pointer-events-auto" />
 
       {/* ── Layer 1: Cinematic Gradient Curtain (ensures text legibility) ── */}
       {/* Vertical: strong at bottom so text reads clean, feathers into 3D at top */}

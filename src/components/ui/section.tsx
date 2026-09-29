@@ -8,17 +8,13 @@ export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
   background?: React.ReactNode;
 }
 
-export function Section({
-  id,
-  ariaLabelledby,
-  ariaLabel,
-  background,
-  className,
-  children,
-  ...props
-}: SectionProps) {
+export const Section = React.forwardRef<HTMLElement, SectionProps>(function Section(
+  { id, ariaLabelledby, ariaLabel, background, className, children, ...props },
+  ref
+) {
   return (
     <section
+      ref={ref}
       id={id}
       aria-labelledby={ariaLabelledby}
       aria-label={ariaLabel}
@@ -36,4 +32,6 @@ export function Section({
       {children}
     </section>
   );
-}
+});
+
+Section.displayName = "Section";

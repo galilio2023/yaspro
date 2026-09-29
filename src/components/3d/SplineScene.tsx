@@ -42,6 +42,13 @@ export function SplineScene({
   const [isVisible, setIsVisible] = useState(true);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
+  // Detect touch/coarse-pointer devices (phones/tablets) where Spline
+  // harms performance: ~580 KB runtime + WebGPU/MRT issues on older Android WebViews.
+  // Use a ref so we only read matchMedia once (safe during SSR because window is guarded).
+  const isTouchDevice =
+    typeof window !== "undefined" &&
+    window.matchMedia("(pointer: coarse)").matches;
+
   // Filter out benign Three.js WebGPURenderer MRT compatibility warning
   React.useEffect(() => {
     const originalWarn = console.warn;
@@ -61,7 +68,7 @@ export function SplineScene({
     };
   }, []);
 
-  // Pause Spline rendering overhead when scrolled away from Hero!
+  // Pause Spline rendering overhead when scrolled away from Hero
   React.useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -85,7 +92,10 @@ export function SplineScene({
         className
       )}
     >
-      {!hasError ? (
+      {/* On touch/mobile skip the heavy Spline WebGL runtime; show the fallback orb */}
+      {isTouchDevice ? (
+        <SplineFallback />
+      ) : !hasError ? (
         <Suspense fallback={<SplineFallback />}>
           <div
             className={cn(

@@ -33,8 +33,8 @@ export default function Navbar() {
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
         scrolled
-          ? "bg-black/75 backdrop-blur-2xl border-b border-white/[0.08] shadow-lg shadow-black/30"
-          : "bg-black/30 backdrop-blur-md border-b border-white/[0.04]"
+          ? "bg-black/85 backdrop-blur-md sm:backdrop-blur-2xl border-b border-white/[0.08] shadow-lg shadow-black/30"
+          : "bg-black/40 backdrop-blur-sm sm:backdrop-blur-md border-b border-white/[0.04]"
       )}
     >
       <nav className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

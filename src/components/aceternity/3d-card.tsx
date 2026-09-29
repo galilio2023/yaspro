@@ -21,7 +21,8 @@ export const CardContainer = ({
   const rafRef = useRef<number>(0);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    // Only perform 3D tilt calculation when hovering and on devices that support hover
+    // Only perform 3D tilt calculation when hovering and on pointer devices that support hover
+    if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) return;
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(() => {
       const el = containerRef.current;
