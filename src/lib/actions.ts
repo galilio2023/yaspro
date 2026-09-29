@@ -177,7 +177,7 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
         .insert(bookings)
         .values({
           referenceCode,
-          userId: user.id,
+          userId: user?.id || (await db.query.users.findFirst({ where: eq(users.email, data.email) }))?.id,
           studioId: studioRecord?.id,
           sessionType: data.sessionType as SessionType,
           scheduledAt: new Date(data.scheduledAt || Date.now()),
@@ -468,9 +468,7 @@ export async function syncUserProfile(input: {
       headers: await headers(),
     });
 
-    if (!session?.user?.id) {
-      return { success: false, message: "Unauthorized. Active session required." };
-    }
+    const targetUserId = session?.user?.id;
 
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       const updateData: Record<string, unknown> = {
@@ -480,10 +478,14 @@ export async function syncUserProfile(input: {
       if (input.phone) updateData.phone = input.phone;
       if (input.company) updateData.company = input.company;
 
-      await db
-        .update(users)
-        .set(updateData)
-        .where(eq(users.id, session.user.id));
+      if (targetUserId) {
+        await db
+          .update(users)
+          .set(updateData)
+          .where(eq(users.id, targetUserId));
+      } else {
+      return { success: false, message: "Unauthorized: Active session required." };
+    }
     }
     return { success: true, message: "Profile information synchronized in database." };
   } catch (err) {

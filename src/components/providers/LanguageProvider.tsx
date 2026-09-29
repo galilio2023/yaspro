@@ -36,19 +36,18 @@ function getNestedValue(obj: Record<string, unknown>, path: string): string | un
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
+export function LanguageProvider({
+  children,
+  initialLocale = "en",
+}: {
+  children: React.ReactNode;
+  initialLocale?: Language;
+}) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [language, setLanguageState] = useState<Language>(() => {
-    if (typeof window === "undefined") return "en";
-    if (window.location.pathname.startsWith("/ar")) return "ar";
-    try {
-      const saved = localStorage.getItem("yaspro_lang") as Language;
-      if (saved === "ar" || saved === "en") return saved;
-    } catch {}
-    return (document.documentElement.lang as Language) === "ar" ? "ar" : "en";
-  });
+  // Match initial server and first-client render exactly using the request locale
+  const [language, setLanguageState] = useState<Language>(initialLocale);
 
   function applyLanguage(lang: Language) {
     document.documentElement.lang = lang;
@@ -58,20 +57,25 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }
 
-  // Sync state if URL changes (e.g., user navigated to /ar or /en)
+  // Post-hydration reconciliation: prioritize explicit /en and /ar paths over localStorage
   useEffect(() => {
-    if (pathname?.startsWith("/ar")) {
+    if (pathname === "/en" || pathname?.startsWith("/en/")) {
+      if (language !== "en") {
+        setLanguageState("en"); // eslint-disable-line
+        applyLanguage("en");
+      }
+    } else if (pathname === "/ar" || pathname?.startsWith("/ar/")) {
       if (language !== "ar") {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setLanguageState("ar");
+        setLanguageState("ar"); // eslint-disable-line
         applyLanguage("ar");
       }
     } else {
+      // Unprefixed path: check saved preference
       try {
         const saved = localStorage.getItem("yaspro_lang") as Language;
-        if (saved === "ar" && language !== "ar") {
-          applyLanguage("ar");
-          setLanguageState("ar");
+        if ((saved === "ar" || saved === "en") && saved !== language) {
+          applyLanguage(saved);
+          setLanguageState(saved); // eslint-disable-line
         }
       } catch {}
     }
@@ -83,9 +87,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
     if (!pathname) return;
     if (newLang === "ar" && !pathname.startsWith("/ar")) {
-      const target = pathname === "/" ? "/ar" : `/ar${pathname}`;
+      const stripped = pathname.replace(/^\/en(\/|$)/, "/") || "/";
+      const target = stripped === "/" ? "/ar" : `/ar${stripped}`;
       router.push(target);
-    } else if (newLang === "en" && pathname.startsWith("/ar")) {
+    } else if (newLang === "en") {
       const target = pathname.replace(/^\/ar(\/|$)/, "/") || "/";
       router.push(target);
     }

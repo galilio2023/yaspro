@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Users,
   Search,
@@ -84,6 +84,20 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
 
     return matchesSearch && matchesRole;
   });
+
+  const PAGE_SIZE = 20;
+  const [currentPage, setCurrentPage] = useState(0);
+
+  useEffect(() => {
+    setCurrentPage(0); // eslint-disable-line
+  }, [searchQuery, roleFilter]);
+
+  const paginatedUsers = filteredUsers.slice(
+    currentPage * PAGE_SIZE,
+    (currentPage + 1) * PAGE_SIZE
+  );
+
+  const totalUsers = filteredUsers.length;
 
   const totalClients = usersList.filter((u) => u.role === "client").length;
   const totalAdmins = usersList.filter((u) => u.role === "admin").length;
@@ -193,7 +207,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                   </td>
                 </tr>
               ) : (
-                filteredUsers.map((user) => (
+                paginatedUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-white/[0.02] transition-colors">
                     {/* User and Organization */}
                     <td className="py-3.5 px-4">
@@ -314,6 +328,34 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {totalUsers > PAGE_SIZE && (
+          <div className="flex items-center justify-between px-4 py-3 border-t border-white/10 bg-white/[0.01] text-xs text-slate-400">
+            <span>
+              Showing {currentPage * PAGE_SIZE + 1}–{Math.min((currentPage + 1) * PAGE_SIZE, totalUsers)} of {totalUsers}
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+                disabled={currentPage === 0}
+                className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              >
+                Previous
+              </button>
+              <span className="font-mono text-slate-300">{currentPage + 1} / {Math.ceil(totalUsers / PAGE_SIZE)}</span>
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.min(Math.ceil(totalUsers / PAGE_SIZE) - 1, p + 1))}
+                disabled={currentPage >= Math.ceil(totalUsers / PAGE_SIZE) - 1}
+                className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
