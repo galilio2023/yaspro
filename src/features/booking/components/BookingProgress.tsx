@@ -17,7 +17,7 @@ export function BookingProgress({
     <div
       role="navigation"
       aria-label="Booking steps"
-      className="flex items-center gap-1 p-2 rounded-2xl border border-brand-purple/15 bg-card/60 backdrop-blur-xl overflow-x-auto sm:overflow-visible"
+      className="flex items-center gap-1 p-2 rounded-2xl border border-brand-purple/15 bg-card/60 backdrop-blur-xl overflow-x-auto scrollbar-none"
     >
       {steps.map((s, idx) => {
         const isCurrent = currentStep === s.id;

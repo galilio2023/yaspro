@@ -124,7 +124,7 @@ export function AiEcosystemSection() {
             </div>
 
             {/* Right Column: High-Tech Orbiting Media Nodes Engine */}
-            <div className="lg:col-span-6 w-full max-h-[340px] sm:max-h-[400px] lg:max-h-none overflow-hidden">
+            <div className="lg:col-span-6 w-full overflow-hidden">
               <OrbitingMediaNodes />
             </div>
           </div>

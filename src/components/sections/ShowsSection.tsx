@@ -56,7 +56,7 @@ export function ShowsSection() {
               type="button"
               onClick={() => setActiveCategory(cat)}
               className={cn(
-                "px-4 py-2 min-h-[38px] rounded-full text-xs font-medium transition-all duration-200 cursor-pointer border whitespace-nowrap",
+                "px-4 py-2 min-h-[44px] rounded-full text-xs font-medium transition-all duration-200 cursor-pointer border whitespace-nowrap flex items-center justify-center",
                 activeCategory === cat
                   ? "bg-brand-purple text-white border-brand-purple shadow-lg shadow-brand-purple/30 scale-105"
                   : "bg-white/5 text-text-secondary border-white/10 hover:border-white/20 hover:text-white"
