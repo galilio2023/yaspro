@@ -134,7 +134,7 @@ export function GearExplorer({
 
       {/* AI Production Kit Matcher */}
       <FadeUp delay={0.08}>
-        <div className="mb-8 p-5 sm:p-6 rounded-3xl bg-slate-950/80 border border-brand-purple/30 backdrop-blur-xl shadow-xl shadow-brand-purple/5 relative overflow-hidden">
+        <div className="mb-6 sm:mb-8 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl bg-slate-950/80 border border-brand-purple/30 backdrop-blur-xl shadow-xl shadow-brand-purple/5 relative overflow-hidden">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2.5">
               <div className="size-9 rounded-xl bg-gradient-to-tr from-brand-purple to-brand-cyan flex items-center justify-center shadow-md shadow-brand-purple/20">
@@ -195,7 +195,7 @@ export function GearExplorer({
           </div>
 
           {/* Quick Presets */}
-          <div className="flex flex-wrap items-center gap-1.5 mt-3 pt-3 border-t border-white/5">
+          <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-white/5 overflow-x-auto pb-1 scrollbar-none">
             <span className="text-[11px] text-text-muted">Popular Scenarios:</span>
             {[
               { label: "🎬 Anamorphic Cinema", prompt: "Anamorphic commercial cinema shoot with large format camera and anamorphic glass" },
@@ -311,7 +311,7 @@ export function GearExplorer({
 
       {/* 3. Gear Grid or Empty State */}
       {filteredGear.length > 0 ? (
-        <StaggerContainer as="ul" role="list" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch">
+        <StaggerContainer as="ul" role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 items-stretch">
           {filteredGear.map((item) => (
             <StaggerItem as="li" key={item.id} className="h-full">
               <GearCard

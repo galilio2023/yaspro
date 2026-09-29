@@ -157,7 +157,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
             min={todayStr}
             value={dateRange.pickupDate}
             onChange={(e) => handleDateChange(e.target.value, dateRange.returnDate)}
-            className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-purple transition-colors"
+            className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] text-base sm:text-sm text-white focus:outline-none focus:border-brand-purple transition-colors"
           />
         </div>
 
@@ -175,7 +175,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
             min={dateRange.pickupDate}
             value={dateRange.returnDate}
             onChange={(e) => handleDateChange(dateRange.pickupDate, e.target.value)}
-            className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-purple transition-colors"
+            className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] text-base sm:text-sm text-white focus:outline-none focus:border-brand-purple transition-colors"
           />
         </div>
 

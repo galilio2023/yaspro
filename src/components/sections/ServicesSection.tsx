@@ -18,7 +18,7 @@ export function ServicesSection() {
     <Section
       id="services"
       aria-labelledby="services-title"
-      className="bg-background relative overflow-hidden py-20 lg:py-28 border-b border-white/5"
+      className="bg-background relative overflow-hidden py-12 sm:py-16 lg:py-28 border-b border-white/5"
       background={
         <>
           <div

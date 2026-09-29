@@ -324,7 +324,7 @@ export function VirtualStudioSection() {
         </div>
 
         {/* ─── 3. INTEGRATED BOTTOM CONTROLS & PRODUCTION ACTIONS ─── */}
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-card/90 rounded-2xl border border-white/10 mb-6">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-3 p-3 sm:p-4 bg-card/90 rounded-xl sm:rounded-2xl border border-white/10 mb-5 sm:mb-6">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsAutoWiping(!isAutoWiping)}

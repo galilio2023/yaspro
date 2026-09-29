@@ -28,7 +28,7 @@ export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
       <div className="absolute inset-0 bg-radial from-transparent via-transparent to-black/60 pointer-events-none" />
 
       {/* Top Meta: Nationality & Audience Reach */}
-      <div className="relative z-10 p-5 flex items-center justify-between">
+      <div className="relative z-10 p-4 sm:p-5 flex items-center justify-between">
         <Badge variant="secondary" className="text-[11px] backdrop-blur-md bg-black/50 border border-white/15">
           <span>{creator.flag}</span>
           <span className="ml-1 text-white">{creator.nationality}</span>
@@ -41,7 +41,7 @@ export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
       </div>
 
       {/* Bottom Content: Creator Details & Actions */}
-      <div className="relative z-10 p-5 pt-0 flex flex-col justify-end">
+      <div className="relative z-10 p-4 sm:p-5 pt-0 sm:pt-0 flex flex-col justify-end">
         {/* Creator Name & Niche */}
         <div className="mb-3">
           <h3 className="text-xl sm:text-2xl font-black text-white font-display tracking-tight group-hover:text-brand-purple-light transition-colors line-clamp-1">
@@ -64,7 +64,7 @@ export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
         </p>
 
         {/* Social Channel Links + Profile Link */}
-        <div className="pt-3 border-t border-white/15 flex items-center justify-between">
+        <div className="pt-3 border-t border-white/15 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             {creator.instagram && (
               <a
@@ -72,7 +72,7 @@ export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${creator.name} on Instagram`}
-                className="size-8 rounded-xl bg-black/60 hover:bg-brand-purple/30 border border-white/15 hover:border-brand-purple/50 text-white/80 hover:text-white flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110"
+                className="size-11 sm:size-8 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 rounded-xl bg-black/60 hover:bg-brand-purple/30 border border-white/15 hover:border-brand-purple/50 text-white/80 hover:text-white flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110"
               >
                 <InstagramIcon size={14} />
               </a>
@@ -83,7 +83,7 @@ export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${creator.name} on YouTube`}
-                className="size-8 rounded-xl bg-black/60 hover:bg-red-500/30 border border-white/15 hover:border-red-500/50 text-white/80 hover:text-red-400 flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110"
+                className="size-11 sm:size-8 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 rounded-xl bg-black/60 hover:bg-red-500/30 border border-white/15 hover:border-red-500/50 text-white/80 hover:text-red-400 flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110"
               >
                 <YoutubeIcon size={14} />
               </a>
@@ -94,7 +94,7 @@ export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${creator.name} on TikTok`}
-                className="size-8 rounded-xl bg-black/60 hover:bg-brand-cyan/30 border border-white/15 hover:border-brand-cyan/50 text-white/80 hover:text-brand-cyan flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110"
+                className="size-11 sm:size-8 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 rounded-xl bg-black/60 hover:bg-brand-cyan/30 border border-white/15 hover:border-brand-cyan/50 text-white/80 hover:text-brand-cyan flex items-center justify-center backdrop-blur-md transition-all duration-200 hover:scale-110"
               >
                 <TiktokIcon size={14} />
               </a>
@@ -103,7 +103,7 @@ export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
 
           <Link
             href={`/influencers/${creator.slug}`}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-brand-purple text-white text-xs font-semibold backdrop-blur-md transition-all duration-200 group-hover:scale-105"
+            className="inline-flex items-center justify-center gap-1 min-h-[44px] px-3.5 py-2 sm:min-h-0 sm:py-1.5 sm:px-3 rounded-xl bg-white/10 hover:bg-brand-purple text-white text-xs font-semibold backdrop-blur-md transition-all duration-200 group-hover:scale-105"
           >
             <span>Profile</span>
             <ArrowRight size={12} />

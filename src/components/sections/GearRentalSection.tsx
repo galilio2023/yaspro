@@ -31,7 +31,7 @@ export function GearRentalSection({ limit = 4 }: GearRentalSectionProps) {
           description="Direct rental of high-end ARRI, RED, Sony cinema cameras, motorized lighting grids, and live OB-VAN packages."
         />
 
-        <StaggerContainer as="ul" role="list" className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch w-full">
+        <StaggerContainer as="ul" role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 items-stretch w-full">
           {featuredGear.map((item) => (
             <StaggerItem as="li" key={item.id} className="h-full">
               <GearCard

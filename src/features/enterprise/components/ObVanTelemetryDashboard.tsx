@@ -67,7 +67,7 @@ export function ObVanTelemetryDashboard({ onDispatchVan }: ObVanTelemetryProps) 
   const [activeCam, setActiveCam] = useState<CameraFeed>(CAMERA_FEEDS[0]);
 
   return (
-    <section id="ob-van-telemetry" className="py-16 sm:py-20 bg-background border-b border-white/10 relative overflow-hidden">
+    <section id="ob-van-telemetry" className="py-12 sm:py-16 lg:py-28 bg-background border-b border-white/10 relative overflow-hidden">
       <Container className="relative z-10 max-w-6xl">
         <SectionHeader
           badge="Broadcast Command & Telemetry Matrix"

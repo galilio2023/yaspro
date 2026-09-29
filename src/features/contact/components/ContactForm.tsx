@@ -119,7 +119,7 @@ export function ContactForm() {
   }
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-8 sm:p-10 shadow-2xl">
+    <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-8 md:p-10 shadow-2xl">
       <h2 className="text-white font-bold text-2xl mb-6 font-display">
         Send Us a Message
       </h2>
@@ -142,7 +142,7 @@ export function ContactForm() {
             type="button"
             onClick={() => setGearBanner(null)}
             aria-label="Dismiss equipment reservation summary"
-            className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+            className="p-1 min-h-[44px] min-w-[44px] rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 flex items-center justify-center"
           >
             <X size={14} />
           </button>
@@ -162,33 +162,36 @@ export function ContactForm() {
           onChange={setInquiryType}
         />
 
-        <div className="grid sm:grid-cols-2 gap-4">
-          <FormField label="Full Name" required>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FormField label="Full Name" required className="min-h-[44px]">
             <Input
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Your full name"
+              className="text-base sm:text-sm min-h-[44px]"
             />
           </FormField>
 
-          <FormField label="Email Address" required>
+          <FormField label="Email Address" required className="min-h-[44px]">
             <Input
               required
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@company.com"
+              className="text-base sm:text-sm min-h-[44px]"
             />
           </FormField>
         </div>
 
-        <FormField label="Phone / WhatsApp">
+        <FormField label="Phone / WhatsApp" className="min-h-[44px]">
           <Input
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="+971 50 000 0000"
+            className="text-base sm:text-sm min-h-[44px]"
           />
         </FormField>
 
@@ -199,6 +202,7 @@ export function ContactForm() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Tell us about your production goals, locations, or timeline..."
+            className="text-base sm:text-sm"
           />
         </FormField>
 
@@ -207,7 +211,7 @@ export function ContactForm() {
           variant="brand"
           size="lg"
           disabled={isSubmitting}
-          className="w-full rounded-2xl gap-2 font-semibold shadow-lg shadow-brand-purple/25"
+          className="w-full sm:w-auto min-h-[44px] rounded-2xl gap-2 font-semibold shadow-lg shadow-brand-purple/25"
         >
           {isSubmitting ? (
             <span>Sending Message...</span>

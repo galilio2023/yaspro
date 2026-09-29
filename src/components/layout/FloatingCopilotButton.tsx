@@ -11,7 +11,7 @@ export function FloatingCopilotButton() {
     <>
       <aside
         aria-label="Yas Pro AI Production Copilot"
-        className="fixed bottom-6 right-24 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-24 sm:[[data-has-bottom-cart=true]_&]:bottom-6"
+        className="fixed bottom-20 right-4 sm:bottom-8 sm:right-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-28 sm:[[data-has-bottom-cart=true]_&]:bottom-8 pb-[env(safe-area-inset-bottom,0px)]"
       >
         <button
           type="button"

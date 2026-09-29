@@ -37,7 +37,7 @@ export function MawthooqCampaignPlanner({ onBundleCreators }: CampaignPlannerPro
   );
 
   return (
-    <section id="mawthooq-compliance" className="py-16 sm:py-20 bg-background border-b border-white/10 relative overflow-hidden">
+    <section id="mawthooq-compliance" className="py-12 sm:py-16 lg:py-28 bg-background border-b border-white/10 relative overflow-hidden">
       {/* Background radial gradient */}
       <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-brand-purple/10 rounded-full blur-3xl pointer-events-none" />
 

@@ -75,11 +75,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center p-4 py-16">
+    <div className="min-h-[85vh] flex items-center justify-center p-4 py-12 sm:py-16">
       {/* Ambient Glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[450px] bg-brand-purple/15 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 w-full max-w-lg p-8 sm:p-10 rounded-3xl bg-slate-900/80 border border-white/10 backdrop-blur-2xl shadow-2xl">
+      <div className="relative z-10 w-full max-w-lg mx-auto p-6 sm:p-10 rounded-3xl bg-slate-900/80 border border-white/10 backdrop-blur-2xl shadow-2xl">
         <div className="text-center mb-8">
           <div className="size-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center font-bold text-white text-lg shadow-xl shadow-purple-500/25 mx-auto mb-4">
             Y
@@ -102,7 +102,7 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5">Full Name</label>
+              <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">Full Name</label>
               <div className="relative">
                 <input
                   type="text"
@@ -110,30 +110,30 @@ export default function RegisterPage() {
                   placeholder="e.g. Tariq Mansoor"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-9 pr-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
+                  className="w-full pl-10 pr-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
                 />
-                <User size={16} className="absolute left-3 top-3.5 text-slate-400" />
+                <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5">Company / Agency</label>
+              <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">Company / Agency</label>
               <div className="relative">
                 <input
                   type="text"
                   placeholder="e.g. Dubai Media Agency"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
-                  className="w-full pl-9 pr-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
+                  className="w-full pl-10 pr-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
                 />
-                <Building size={16} className="absolute left-3 top-3.5 text-slate-400" />
+                <Building size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5">Work Email</label>
+              <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">Work Email</label>
               <div className="relative">
                 <input
                   type="email"
@@ -141,29 +141,29 @@ export default function RegisterPage() {
                   placeholder="name@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
+                  className="w-full pl-10 pr-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
                 />
-                <Mail size={16} className="absolute left-3 top-3.5 text-slate-400" />
+                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-300 font-medium mb-1.5">Direct Phone</label>
+              <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">Direct Phone</label>
               <div className="relative">
                 <input
                   type="tel"
                   placeholder="+971 50 000 0000"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full pl-9 pr-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
+                  className="w-full pl-10 pr-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
                 />
-                <Phone size={16} className="absolute left-3 top-3.5 text-slate-400" />
+                <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
             </div>
           </div>
 
           <div>
-            <label className="block text-slate-300 font-medium mb-1.5">Password</label>
+            <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">Password</label>
             <div className="relative">
               <input
                 type="password"
@@ -172,16 +172,16 @@ export default function RegisterPage() {
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-9 pr-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
+                className="w-full pl-10 pr-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
               />
-              <Lock size={16} className="absolute left-3 top-3.5 text-slate-400" />
+              <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             </div>
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:opacity-95 text-white font-semibold text-xs tracking-wide shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 mt-6"
+            className="w-full min-h-[44px] py-3.5 rounded-xl bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:opacity-95 text-white font-semibold text-sm tracking-wide shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 mt-6"
           >
             {isLoading ? "Creating account..." : "Complete Registration"}
             <ArrowRight size={14} />
@@ -190,7 +190,7 @@ export default function RegisterPage() {
 
         <div className="mt-8 pt-6 border-t border-white/10 text-center text-xs text-slate-400">
           <span>Already registered with Yas Pro? </span>
-          <Link href="/login" className="text-purple-400 hover:text-purple-300 font-semibold">
+          <Link href="/login" className="text-purple-400 hover:text-purple-300 font-semibold inline-block py-1">
             Sign in
           </Link>
         </div>

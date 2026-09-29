@@ -14,7 +14,7 @@ export default function InfluencersSection() {
     <Section
       id="influencers"
       aria-labelledby="influencers-title"
-      className="bg-background"
+      className="bg-background py-12 sm:py-16 lg:py-28"
     >
       <Container>
         <SectionHeader
@@ -27,7 +27,7 @@ export default function InfluencersSection() {
           description="Trusted by the biggest creator networks in the Middle East with 400M+ combined audience. From acoustic podcast suites to viral YouTube production and stadium live streaming."
         />
 
-        <StaggerContainer as="ul" role="list" className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch w-full">
+        <StaggerContainer as="ul" role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 items-stretch w-full">
           {featuredInfluencers.map((creator) => (
             <StaggerItem as="li" key={creator.id} className="h-full">
               <InfluencerCard creator={creator} />
@@ -36,10 +36,10 @@ export default function InfluencersSection() {
         </StaggerContainer>
 
         {/* Centered "View All" CTA below grid */}
-        <FadeUp delay={0.15} className="flex justify-center mt-10">
+        <FadeUp delay={0.15} className="flex justify-center mt-8 sm:mt-10 px-4">
           <Link
             href="/influencers"
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-brand-purple/40 text-brand-purple-light hover:bg-brand-purple/10 hover:border-brand-purple transition-all text-xs font-semibold"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 rounded-full border border-brand-purple/40 text-brand-purple-light hover:bg-brand-purple/10 hover:border-brand-purple transition-all text-xs font-semibold min-h-[44px] sm:min-h-0"
           >
             <span>View All 400M+ Creator Roster</span>
             <ArrowRight size={14} />

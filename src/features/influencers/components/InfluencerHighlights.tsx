@@ -22,9 +22,9 @@ export function InfluencerHighlights({
   ];
 
   return (
-    <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
       {/* Signature Productions Card */}
-      <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-8">
+      <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 sm:p-8">
         <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2.5 font-display">
           <div className="size-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple-light">
             <Sparkles size={18} />
@@ -42,7 +42,7 @@ export function InfluencerHighlights({
       </div>
 
       {/* Featured Collaborations Card */}
-      <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-8">
+      <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 sm:p-8">
         <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2.5 font-display">
           <div className="size-8 rounded-xl bg-brand-cyan/20 flex items-center justify-center text-brand-cyan">
             <Award size={18} />
@@ -58,6 +58,6 @@ export function InfluencerHighlights({
           ))}
         </ul>
       </div>
-    </>
+    </div>
   );
 }

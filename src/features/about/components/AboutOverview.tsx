@@ -10,10 +10,10 @@ const SCALE_STATS = [
 
 export function AboutOverview() {
   return (
-    <div className="grid md:grid-cols-2 gap-8 mb-16 items-stretch">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16 items-stretch">
       {/* Philosophy Card */}
       <FadeUp className="h-full">
-        <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-xl shadow-black/20">
+        <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-8 lg:p-10 h-full flex flex-col justify-between shadow-xl shadow-black/20">
           <div>
             <Badge variant="default" className="mb-4">
               Our Philosophy
@@ -37,7 +37,7 @@ export function AboutOverview() {
 
       {/* Scale Card */}
       <FadeUp delay={0.1} className="h-full">
-        <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-xl shadow-black/20">
+        <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-8 lg:p-10 h-full flex flex-col justify-between shadow-xl shadow-black/20">
           <div>
             <Badge variant="cyan" className="mb-4">
               Our Scale
@@ -45,10 +45,10 @@ export function AboutOverview() {
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4 font-display">
               Numbers That Speak For Themselves
             </h2>
-            <div className="grid grid-cols-2 gap-6 my-6">
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 my-6">
               {SCALE_STATS.map((stat) => (
                 <div key={stat.label}>
-                  <div className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-cyan bg-clip-text text-transparent font-display">
+                  <div className="text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-cyan bg-clip-text text-transparent font-display">
                     {stat.value}
                   </div>
                   <div className="text-xs text-text-muted mt-1 font-medium">

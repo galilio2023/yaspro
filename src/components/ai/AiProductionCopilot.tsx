@@ -126,24 +126,24 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-5xl max-h-[92vh] flex flex-col bg-background/95 border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-[80] flex items-center justify-center p-0 sm:p-4 lg:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full h-full sm:h-auto sm:max-h-[90vh] sm:w-[90vw] sm:max-w-5xl flex flex-col bg-background/95 border-0 sm:border sm:border-white/10 rounded-none sm:rounded-3xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/[0.02]">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-brand-purple/20 border border-brand-purple/40 flex items-center justify-center text-brand-purple-light shadow-inner">
-              <Sparkles size={20} className="animate-pulse" />
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-white/10 bg-white/[0.02]">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="size-9 sm:size-10 rounded-xl bg-brand-purple/20 border border-brand-purple/40 flex items-center justify-center text-brand-purple-light shadow-inner shrink-0">
+              <Sparkles size={18} className="animate-pulse" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-lg font-bold text-white font-display">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                <h3 className="text-sm sm:text-lg font-bold text-white font-display truncate">
                   Yas Pro Autonomous Production Copilot
                 </h3>
-                <span className="px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider font-semibold rounded-full bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/30">
-                  Google Gemini Powered
+                <span className="hidden xs:inline-flex px-2 py-0.5 text-[9px] sm:text-[10px] font-mono uppercase tracking-wider font-semibold rounded-full bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/30 shrink-0">
+                  Google Gemini
                 </span>
               </div>
-              <p className="text-xs text-text-secondary">
+              <p className="text-[11px] sm:text-xs text-text-secondary truncate sm:whitespace-normal">
                 Turn briefs into shot lists, matching soundstages, inventory, and Khaleeji dialects
               </p>
             </div>
@@ -151,51 +151,60 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
           <button
             onClick={onClose}
             aria-label="Close dialog"
-            className="p-2 rounded-xl text-text-muted hover:text-white hover:bg-white/10 transition-colors"
+            className="p-2.5 sm:p-2 rounded-xl text-text-muted hover:text-white hover:bg-white/10 transition-colors shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
           >
             <X size={20} />
           </button>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex border-b border-white/10 bg-white/[0.01] px-6 gap-2">
+        <div className="grid grid-cols-3 w-full border-b border-white/10 bg-white/[0.01] px-2 sm:px-6 gap-1 sm:gap-2">
           <button
             onClick={() => setActiveTab("proposal")}
-            className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition-all duration-200 ${
+            className={`flex items-center justify-center gap-1.5 py-3 px-1 sm:px-4 text-center text-xs font-semibold border-b-2 transition-all duration-200 min-h-[44px] ${
               activeTab === "proposal"
                 ? "border-brand-purple text-brand-purple-light"
                 : "border-transparent text-text-secondary hover:text-white"
             }`}
           >
-            <Film size={15} />
-            <span>Creative Brief & Blueprint</span>
+            <Film size={15} className="shrink-0" />
+            <span className="truncate">
+              <span className="hidden sm:inline">Creative Brief &amp; Blueprint</span>
+              <span className="sm:hidden">Brief</span>
+            </span>
           </button>
           <button
             onClick={() => setActiveTab("dialect")}
-            className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition-all duration-200 ${
+            className={`flex items-center justify-center gap-1.5 py-3 px-1 sm:px-4 text-center text-xs font-semibold border-b-2 transition-all duration-200 min-h-[44px] ${
               activeTab === "dialect"
                 ? "border-brand-purple text-brand-purple-light"
                 : "border-transparent text-text-secondary hover:text-white"
             }`}
           >
-            <Languages size={15} />
-            <span>Khaleeji Dialect Transmuter</span>
+            <Languages size={15} className="shrink-0" />
+            <span className="truncate">
+              <span className="hidden sm:inline">Khaleeji Dialect Transmuter</span>
+              <span className="sm:hidden">Dialect</span>
+            </span>
           </button>
           <button
             onClick={() => setActiveTab("gear")}
-            className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition-all duration-200 ${
+            className={`flex items-center justify-center gap-1.5 py-3 px-1 sm:px-4 text-center text-xs font-semibold border-b-2 transition-all duration-200 min-h-[44px] ${
               activeTab === "gear"
                 ? "border-brand-purple text-brand-purple-light"
                 : "border-transparent text-text-secondary hover:text-white"
             }`}
           >
-            <Camera size={15} />
-            <span>Smart Gear Compatibility</span>
+            <Camera size={15} className="shrink-0" />
+            <span className="truncate">
+              <span className="hidden sm:inline">Smart Gear Compatibility</span>
+              <span className="sm:hidden">Gear</span>
+            </span>
           </button>
         </div>
 
         {/* Tab Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
           {/* TAB 1: PRODUCTION PROPOSAL */}
           {activeTab === "proposal" && (
             <div className="space-y-6">
@@ -211,7 +220,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
                       value={brief}
                       onChange={(e) => setBrief(e.target.value)}
                       placeholder="Describe your vision, product, location, or script idea..."
-                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-3 text-sm text-white placeholder-text-muted focus:outline-none focus:border-brand-purple transition-colors resize-none"
+                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-3 text-base sm:text-sm text-white placeholder-text-muted focus:outline-none focus:border-brand-purple transition-colors resize-none"
                     />
                   </div>
 
@@ -226,7 +235,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
                           key={preset.title}
                           type="button"
                           onClick={() => setBrief(preset.text)}
-                          className="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-text-secondary hover:text-white border border-white/5 transition-all text-left"
+                          className="text-[11px] min-h-[36px] sm:min-h-0 px-2.5 py-1.5 sm:py-1 rounded-lg bg-white/5 hover:bg-white/10 text-text-secondary hover:text-white border border-white/5 transition-all text-left"
                         >
                           {preset.title}
                         </button>
@@ -234,7 +243,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
                         Target Market
@@ -242,7 +251,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
                       <select
                         value={targetMarket}
                         onChange={(e) => setTargetMarket(e.target.value)}
-                        className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-brand-purple"
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-purple min-h-[44px] sm:min-h-0"
                       >
                         <option value="GCC / UAE / KSA" className="bg-neutral-900">GCC & Pan-Arab</option>
                         <option value="Saudi Arabia (Riyadh & Jeddah)" className="bg-neutral-900">Saudi Arabia (KSA)</option>
@@ -262,7 +271,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
                         max={14}
                         value={timelineDays}
                         onChange={(e) => setTimelineDays(Number(e.target.value))}
-                        className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-brand-purple"
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-purple min-h-[44px] sm:min-h-0"
                       />
                     </div>
                   </div>
@@ -439,12 +448,12 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
                     value={scriptText}
                     onChange={(e) => setScriptText(e.target.value)}
                     placeholder="Enter script text to localize into authentic Gulf dialect..."
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-3 text-sm text-white placeholder-text-muted focus:outline-none focus:border-brand-purple transition-colors resize-none"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-3 text-base sm:text-sm text-white placeholder-text-muted focus:outline-none focus:border-brand-purple transition-colors resize-none"
                     dir="auto"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
                       Target Dialect
@@ -452,7 +461,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
                     <select
                       value={selectedDialect}
                       onChange={(e) => setSelectedDialect(e.target.value)}
-                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-brand-purple"
+                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-purple min-h-[44px] sm:min-h-0"
                     >
                       <option value="najdi" className="bg-neutral-900">🇸🇦 Najdi (Riyadh)</option>
                       <option value="emirati" className="bg-neutral-900">🇦🇪 Emirati (Dubai / Abu Dhabi)</option>
@@ -469,7 +478,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
                     <select
                       value={scriptTone}
                       onChange={(e) => setScriptTone(e.target.value)}
-                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-brand-purple"
+                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-purple min-h-[44px] sm:min-h-0"
                     >
                       <option value="Prestige" className="bg-neutral-900">Prestige & Luxury</option>
                       <option value="Warm Hospitality" className="bg-neutral-900">Warm Hospitality</option>
@@ -489,7 +498,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
                 <button
                   onClick={handleTransmuteDialect}
                   disabled={isTransmuting}
-                  className="w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl font-semibold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-cyan hover:opacity-95 transition-all shadow-lg disabled:opacity-50"
+                  className="w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl font-semibold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-cyan hover:opacity-95 transition-all shadow-lg disabled:opacity-50 min-h-[44px]"
                 >
                   {isTransmuting ? (
                     <>
@@ -575,7 +584,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
           {/* TAB 3: SMART GEAR COMPATIBILITY */}
           {activeTab === "gear" && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              <div className="lg:col-span-6 space-y-3">
+              <div className="lg:col-span-12 xl:col-span-6 space-y-3">
                 <div className="flex items-center justify-between">
                   <h4 className="text-xs font-bold text-white uppercase tracking-wider">
                     Select Equipment to Test Compatibility
@@ -585,27 +594,27 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
                   </span>
                 </div>
 
-                <div className="space-y-2 max-h-[360px] overflow-y-auto pr-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-[360px] overflow-y-auto pr-1">
                   {GEAR_DATA.map((gear) => {
                     const isSelected = selectedGearIds.includes(gear.id);
                     return (
                       <div
                         key={gear.id}
                         onClick={() => toggleGearItem(gear.id)}
-                        className={`p-3 rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-between ${
+                        className={`p-3 rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-between min-h-[44px] ${
                           isSelected
                             ? "bg-brand-purple/15 border-brand-purple/50 text-white"
                             : "bg-white/[0.02] border-white/5 text-text-secondary hover:border-white/20"
                         }`}
                       >
-                        <div>
-                          <div className="font-semibold text-white">{gear.name}</div>
-                          <div className="text-[11px] text-text-muted">
+                        <div className="min-w-0 mr-2">
+                          <div className="font-semibold text-white truncate">{gear.name}</div>
+                          <div className="text-[11px] text-text-muted truncate">
                             {gear.categoryLabel} • {gear.dailyRate} AED/day
                           </div>
                         </div>
                         <div
-                          className={`size-5 rounded-md border flex items-center justify-center ${
+                          className={`size-5 rounded-md border flex items-center justify-center shrink-0 ${
                             isSelected
                               ? "bg-brand-purple border-brand-purple text-white"
                               : "border-white/20"
@@ -620,7 +629,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
               </div>
 
               {/* Compatibility Inspection Report */}
-              <div className="lg:col-span-6 bg-white/[0.02] border border-white/10 rounded-2xl p-5 flex flex-col justify-between">
+              <div className="lg:col-span-12 xl:col-span-6 bg-white/[0.02] border border-white/10 rounded-2xl p-5 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-white/10 pb-3">
                     <h5 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
@@ -672,7 +681,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
                           <button
                             type="button"
                             onClick={() => toggleGearItem(s.item.id)}
-                            className="px-2.5 py-1 rounded-lg bg-brand-purple/20 hover:bg-brand-purple/40 text-brand-purple-light border border-brand-purple/30 text-[11px] font-semibold transition-all shrink-0"
+                            className="px-2.5 py-1 rounded-lg bg-brand-purple/20 hover:bg-brand-purple/40 text-brand-purple-light border border-brand-purple/30 text-[11px] font-semibold transition-all shrink-0 min-h-[36px]"
                           >
                             + Add to Rig
                           </button>
@@ -688,7 +697,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
                   )}
                 </div>
 
-                <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                   <div className="text-xs text-text-muted">
                     Total Daily Gear:{" "}
                     <span className="text-white font-bold">
@@ -700,7 +709,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
                   </div>
                   <Link
                     href={`/shop?preselect=${selectedGearIds.join(",")}`}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/15 transition-all"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-1.5 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/15 transition-all min-h-[44px] sm:min-h-0"
                   >
                     <span>Proceed to Gear Rental</span>
                     <ArrowRight size={13} />

@@ -49,14 +49,14 @@ export function ShowsSection() {
         />
 
         {/* Category Filter Pills */}
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+        <div className="flex items-center justify-start sm:justify-center gap-2 mb-8 sm:mb-10 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               type="button"
               onClick={() => setActiveCategory(cat)}
               className={cn(
-                "px-4 py-2 rounded-full text-xs font-medium transition-all duration-200 cursor-pointer border",
+                "px-4 py-2 min-h-[44px] rounded-full text-xs font-medium transition-all duration-200 cursor-pointer border whitespace-nowrap flex items-center justify-center",
                 activeCategory === cat
                   ? "bg-brand-purple text-white border-brand-purple shadow-lg shadow-brand-purple/30 scale-105"
                   : "bg-white/5 text-text-secondary border-white/10 hover:border-white/20 hover:text-white"
@@ -68,7 +68,7 @@ export function ShowsSection() {
         </div>
 
         {/* Shows Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 items-stretch">
           {filteredShows.map((show, i) => (
             <FadeUp key={show.id} delay={i * 0.05} className="h-full">
               <div

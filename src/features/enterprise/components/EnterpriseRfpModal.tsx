@@ -157,7 +157,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
       <div
         ref={modalPanelRef}
         tabIndex={-1}
-        className="relative w-full max-w-2xl rounded-3xl border border-white/20 bg-slate-950 p-4 sm:p-8 shadow-2xl my-6 sm:my-8 max-h-[92vh] overflow-y-auto"
+        className="relative w-full h-full sm:h-auto sm:max-h-[90vh] sm:w-[90vw] sm:max-w-3xl rounded-none sm:rounded-3xl border border-white/20 bg-slate-950 p-4 sm:p-8 shadow-2xl my-0 sm:my-8 overflow-y-auto"
       >
         {/* Close Button */}
         <button
@@ -242,7 +242,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                   placeholder="e.g. Dubai Municipality / Zain Group"
                   value={formData.organizationName}
                   onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
                 />
               </div>
 
@@ -258,7 +258,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                       organizationType: e.target.value as EnterpriseRfpInput["organizationType"],
                     })
                   }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
                 >
                   <option value="government_ministry">Government Ministry / Sovereign Authority</option>
                   <option value="giga_project">Giga-Project (NEOM / Diriyah / Red Sea)</option>
@@ -282,7 +282,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                   placeholder="e.g. Ahmed Al-Mansoori (Director of Media)"
                   value={formData.contactName}
                   onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
                 />
               </div>
 
@@ -296,7 +296,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                   placeholder="name@organization.gov.ae"
                   value={formData.workEmail}
                   onChange={(e) => setFormData({ ...formData, workEmail: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
                 />
               </div>
             </div>
@@ -313,7 +313,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                   placeholder="+971 50 000 0000"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
                 />
               </div>
 
@@ -329,7 +329,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                       country: e.target.value as EnterpriseRfpInput["country"],
                     })
                   }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
                 >
                   <option value="UAE">🇦🇪 United Arab Emirates</option>
                   <option value="Saudi Arabia">🇸🇦 Kingdom of Saudi Arabia</option>
@@ -356,7 +356,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                       projectScope: e.target.value as EnterpriseRfpInput["projectScope"],
                     })
                   }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
                 >
                   <option value="virtual_production_xr">HoloTwin™ In-Camera VFX & Virtual Production</option>
                   <option value="ob_van_live_broadcast">OB-VAN Multi-Cam Live Broadcast</option>
@@ -378,7 +378,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                       estimatedBudget: e.target.value as EnterpriseRfpInput["estimatedBudget"],
                     })
                   }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
                 >
                   <option value="50k_to_150k">$50,000 – $150,000 USD (AED 180k–550k)</option>
                   <option value="150k_to_500k">$150,000 – $500,000 USD (AED 550k–1.8M)</option>

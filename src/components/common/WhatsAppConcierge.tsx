@@ -103,7 +103,7 @@ export function WhatsAppConcierge() {
     <aside
       ref={containerRef}
       aria-label="Direct Dubai WhatsApp Concierge"
-      className="fixed bottom-6 right-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-24 sm:[[data-has-bottom-cart=true]_&]:bottom-6"
+      className="fixed bottom-28 right-4 sm:bottom-16 sm:right-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-36 sm:[[data-has-bottom-cart=true]_&]:bottom-16 pb-[env(safe-area-inset-bottom,0px)]"
     >
       {/* Floating Flyout Window */}
       {isOpen && (
@@ -113,7 +113,7 @@ export function WhatsAppConcierge() {
           aria-modal="true"
           aria-labelledby="concierge-heading"
           tabIndex={-1}
-          className="absolute bottom-16 right-0 w-[340px] sm:w-[380px] bg-secondary border border-white/15 rounded-3xl p-5 shadow-2xl shadow-black/80 backdrop-blur-2xl animate-fade-up outline-none"
+          className="absolute bottom-16 right-0 w-[calc(100vw-2rem)] max-w-[360px] sm:w-[380px] bg-secondary border border-white/15 rounded-3xl p-4 sm:p-5 shadow-2xl shadow-black/80 backdrop-blur-2xl animate-fade-up outline-none"
         >
           {/* Header */}
           <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
@@ -137,7 +137,7 @@ export function WhatsAppConcierge() {
               ref={closeButtonRef}
               type="button"
               onClick={() => setIsOpen(false)}
-              className="size-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+              className="size-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple min-h-[36px] min-w-[36px]"
               aria-label="Close concierge"
             >
               <X size={14} />

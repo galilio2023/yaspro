@@ -48,7 +48,7 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
   }, [isProcessingClip]);
 
   return (
-    <section id="ob-van-command" className="py-20 bg-slate-950 border-b border-white/10 relative overflow-hidden">
+    <section id="ob-van-command" className="py-12 sm:py-16 lg:py-28 bg-slate-950 border-b border-white/10 relative overflow-hidden">
       <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-brand-cyan/10 rounded-full blur-3xl pointer-events-none" />
 
       <Container className="relative z-10 max-w-6xl">

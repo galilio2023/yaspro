@@ -19,10 +19,10 @@ export function InfluencerProfileCard({ creator }: InfluencerProfileCardProps) {
 
   return (
     <>
-      <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-8 relative overflow-hidden shadow-2xl shadow-black/40">
+      <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-8 relative overflow-hidden shadow-2xl shadow-black/40">
         <BorderBeam size={220} duration={12} colorFrom="var(--brand-cyan)" colorTo="var(--brand-purple)" />
 
-        <div className="flex items-center gap-5 mb-6">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-5 mb-6">
           <div className="relative shrink-0">
             <div className="size-20 sm:size-24 rounded-3xl bg-gradient-to-br from-brand-purple to-brand-purple-dark flex items-center justify-center text-white font-extrabold text-2xl sm:text-3xl shadow-xl shadow-brand-purple/30 border border-white/20 font-display overflow-hidden relative">
               {creator.avatar ? (
@@ -42,8 +42,8 @@ export function InfluencerProfileCard({ creator }: InfluencerProfileCardProps) {
             </div>
           </div>
 
-          <div>
-            <div className="flex flex-wrap items-center gap-2 mb-2">
+          <div className="flex flex-col items-center sm:items-start">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
               <Badge variant="secondary" className="text-xs">
                 {creator.flag} {creator.nationality}
               </Badge>

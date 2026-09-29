@@ -22,7 +22,7 @@ export function HoloTwinStudioSimulator({ onSelectEnvironmentForRfp }: HoloTwinS
   const [showWireframe, setShowWireframe] = useState<boolean>(false);
 
   return (
-    <section id="virtual-simulator" className="py-16 sm:py-20 bg-slate-950 border-b border-white/10 relative overflow-hidden">
+    <section id="virtual-simulator" className="py-12 sm:py-16 lg:py-28 bg-slate-950 border-b border-white/10 relative overflow-hidden">
       {/* Background accents */}
       <div className="absolute top-1/2 left-0 w-96 h-96 bg-brand-purple/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-cyan/10 rounded-full blur-3xl pointer-events-none" />

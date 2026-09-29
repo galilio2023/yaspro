@@ -29,7 +29,7 @@ export function BookingSummary({
   return (
     <aside
       aria-label="Session summary quote"
-      className="lg:col-span-4 flex flex-col gap-5 lg:sticky lg:top-28"
+      className="lg:col-span-4 flex flex-col gap-5 lg:sticky lg:top-28 pb-4 sm:pb-0 mb-4 lg:mb-0"
     >
       <div className="rounded-3xl border border-brand-purple/20 bg-card/70 backdrop-blur-xl p-6 sm:p-8 shadow-2xl shadow-brand-purple/10">
         {/* Header */}

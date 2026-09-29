@@ -38,7 +38,7 @@ export default function Navbar() {
       )}
     >
       <nav className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-18">
+        <div className="flex items-center justify-between h-14 sm:h-16 lg:h-18">
           {/* Left: Brand Identity */}
           <BrandLogo />
 
@@ -67,7 +67,7 @@ export default function Navbar() {
             {/* Primary Action: Signature Luminous Halo & Shimmer Button */}
             <Link
               href="/studio-booking"
-              className="relative group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+              className="relative group inline-flex items-center gap-2.5 px-3 py-2 sm:px-5 sm:py-2.5 rounded-xl text-xs font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
             >
               {/* Luminous Ambient Halo Glow */}
               <span className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-teal opacity-50 blur-sm group-hover:opacity-100 group-hover:blur-md transition-all duration-300 pointer-events-none" />
@@ -104,7 +104,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2 rounded-full border border-white/10 text-white bg-white/5 hover:bg-white/10 transition-colors"
+              className="lg:hidden p-2.5 rounded-full border border-white/10 text-white bg-white/5 hover:bg-white/10 transition-colors"
               aria-label="Toggle menu"
             >
               {isOpen ? <X size={18} /> : <Menu size={18} />}

@@ -34,19 +34,19 @@ export function OrbitingMediaNodes() {
       role="region"
       aria-label="Yas Pro AI Ecosystem interactive telemetry diagram"
       className={cn(
-        "relative flex h-[460px] sm:h-[520px] md:h-[560px] w-full items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-[#080614] shadow-[0_20px_60px_rgba(0,0,0,0.8)] select-none group/orbit [transform:translateZ(0)]",
+        "relative flex h-[380px] sm:h-[500px] md:h-[560px] w-full max-w-full items-center justify-center overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 bg-[#080614] shadow-[0_20px_60px_rgba(0,0,0,0.8)] select-none group/orbit [transform:translateZ(0)] will-change-transform",
         !isVisible && "[&_*]:![animation-play-state:paused]"
       )}
     >
       {/* Background Volumetric Glow & Cosmic Nebulae */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[380px] rounded-full bg-brand-purple/20 blur-[90px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[220px] rounded-full bg-brand-teal/15 blur-[60px]" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden max-w-full">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[260px] sm:size-[380px] rounded-full bg-brand-purple/20 blur-[80px] sm:blur-[90px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[160px] sm:size-[220px] rounded-full bg-brand-teal/15 blur-[50px] sm:blur-[60px]" />
       </div>
 
       {/* Sweeping Holographic Radar Sweep */}
       <div
-        className="pointer-events-none absolute size-[460px] rounded-full opacity-25 animate-spin-around [animation-duration:14s]"
+        className="pointer-events-none absolute size-[300px] sm:size-[460px] rounded-full opacity-25 animate-spin-around [animation-duration:14s] max-w-full"
         style={{
           background:
             "conic-gradient(from 0deg at 50% 50%, rgba(124,58,237,0) 0deg, rgba(6,182,212,0.18) 320deg, rgba(124,58,237,0.4) 360deg)",
@@ -54,7 +54,7 @@ export function OrbitingMediaNodes() {
       />
 
       {/* Top HUD Telemetry Banner */}
-      <div className="absolute top-4 inset-x-6 flex items-center justify-between pointer-events-none z-30 text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-text-muted border-b border-white/5 pb-2">
+      <div className="absolute top-3 sm:top-4 inset-x-4 sm:inset-x-6 flex items-center justify-between pointer-events-none z-30 text-[9px] sm:text-[11px] font-mono uppercase tracking-wider text-text-muted border-b border-white/5 pb-2">
         <div className="flex items-center gap-2">
           <span className="size-2 rounded-full bg-brand-cyan animate-ping" />
           <span className="text-white/80 font-bold">YAS NEURAL MESH v4.2</span>
