@@ -7,6 +7,7 @@ import { ProjectItem } from "../types";
 import { CardContainer, CardBody, CardItem } from "@/components/aceternity/3d-card";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function ProjectCard({
   project,
@@ -15,6 +16,7 @@ export function ProjectCard({
   project: ProjectItem;
   onWatchReel?: (project: ProjectItem) => void;
 }) {
+  const { isArabic } = useLanguage();
   const isGovernment =
     project.category === "government" ||
     project.tag?.includes("Government") ||
@@ -85,7 +87,7 @@ export function ProjectCard({
             {/* Play button */}
             <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
               <div className="size-13 rounded-full bg-black/55 border border-white/15 backdrop-blur-md flex items-center justify-center text-white shadow-xl group-hover/thumb:scale-115 group-hover/thumb:bg-brand-purple group-hover/thumb:border-brand-purple/80 group-hover/thumb:shadow-brand-purple/50 transition-all duration-350">
-                <Play size={18} className="fill-current translate-x-0.5" />
+                <Play size={18} className="fill-current translate-x-0.5 rtl:-translate-x-0.5" />
               </div>
             </div>
 
@@ -160,16 +162,16 @@ export function ProjectCard({
               onClick={handleReelClick}
               className="inline-flex items-center justify-center min-h-[44px] px-3.5 py-2 sm:min-h-0 sm:py-1.5 sm:px-3 gap-1.5 text-xs font-bold text-brand-purple-mid rounded-xl bg-brand-purple/10 border border-brand-purple/20 group-hover/card:bg-brand-purple/20 group-hover/card:border-brand-purple/40 hover:!bg-brand-purple hover:!text-white transition-all cursor-pointer shadow-sm"
             >
-              <Play size={11} className="fill-current text-brand-cyan group-hover/card:text-white" />
-              <span>Watch Reel</span>
+              <Play size={11} className="fill-current text-brand-cyan group-hover/card:text-white rtl:scale-x-[-1] transition-transform shrink-0" />
+              <span>{isArabic ? "مشاهدة الفيديو" : "Watch Reel"}</span>
             </button>
           ) : (
             <Link
               href={`/projects/${project.slug}`}
               className="inline-flex items-center justify-center min-h-[44px] px-3.5 py-2 sm:min-h-0 sm:py-1.5 sm:px-3 gap-1.5 text-xs font-bold text-brand-purple-mid rounded-xl bg-brand-purple/10 border border-brand-purple/20 group-hover/card:bg-brand-purple/20 group-hover/card:border-brand-purple/40 transition-all"
             >
-              <span>View Case</span>
-              <ArrowUpRight size={11} />
+              <span>{isArabic ? "تفاصيل المشروع" : "View Case"}</span>
+              <ArrowUpRight size={11} className="rtl:rotate-90 rtl:scale-x-[-1]" />
             </Link>
           )}
         </CardItem>

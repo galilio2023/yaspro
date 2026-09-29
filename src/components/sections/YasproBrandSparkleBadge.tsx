@@ -121,6 +121,8 @@ export function YasproBrandSparkleBadge({ className = "" }: YasproBrandSparkleBa
   return (
     <div
       ref={containerRef}
+      dir="ltr"
+      style={{ direction: "ltr" }}
       className={`relative inline-flex items-center gap-3.5 px-4 py-2 rounded-2xl border border-white/15 bg-white/[0.04] backdrop-blur-md overflow-hidden group shadow-lg shadow-brand-purple/10 ${className}`}
     >
       {/* Sparkles Canvas Inside Badge */}
@@ -138,13 +140,13 @@ export function YasproBrandSparkleBadge({ className = "" }: YasproBrandSparkleBa
       </div>
 
       {/* Brand Typography */}
-      <div className="relative z-10 flex items-center gap-1.5">
+      <div className="relative z-10 flex items-center gap-1.5 font-latin" dir="ltr" style={{ direction: "ltr" }}>
         <IyasProIcon
           size={14}
           idPrefix="badge-logo"
-          className="filter drop-shadow-[0_0_6px_rgba(167,139,250,0.6)]"
+          className="filter drop-shadow-[0_0_6px_rgba(167,139,250,0.6)] -translate-y-0.5"
         />
-        <span className="font-extrabold text-base tracking-wider bg-gradient-to-r from-white via-brand-purple-light to-brand-cyan bg-clip-text text-transparent drop-shadow-sm font-display">
+        <span className="font-extrabold text-base tracking-wider bg-gradient-to-r from-white via-brand-purple-light to-brand-cyan bg-clip-text text-transparent drop-shadow-sm font-display font-latin">
           YASPRO
         </span>
         <span className="h-3 w-[1px] bg-white/20 inline-block self-center mx-1" />

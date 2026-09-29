@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface BackButtonProps {
   href: string;
@@ -10,17 +11,20 @@ interface BackButtonProps {
   className?: string;
 }
 
-export function BackButton({ href, label = "Back", className }: BackButtonProps) {
+export function BackButton({ href, label, className }: BackButtonProps) {
+  const { isArabic } = useLanguage();
+  const displayLabel = label || (isArabic ? "رجوع" : "Back");
+
   return (
     <Link
       href={href}
       className={cn(
-        "inline-flex items-center gap-2 text-xs uppercase tracking-wider font-semibold text-text-secondary hover:text-white mb-8 transition-colors p-2 -ml-2 rounded-xl hover:bg-white/5",
+        "inline-flex items-center gap-2 text-xs uppercase tracking-wider font-semibold text-text-secondary hover:text-white mb-8 transition-colors p-2 -ms-2 rounded-xl hover:bg-white/5",
         className
       )}
     >
-      <ArrowLeft size={15} />
-      <span>{label}</span>
+      <ArrowLeft size={15} className="rtl:rotate-180" />
+      <span>{displayLabel}</span>
     </Link>
   );
 }

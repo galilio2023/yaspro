@@ -22,7 +22,7 @@ export default function NotFound() {
           href="/"
           className="inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-full font-semibold text-white transition-all text-sm bg-gradient-to-r from-brand-purple to-brand-purple-light hover:opacity-90 shadow-lg shadow-brand-purple/20"
         >
-          <ArrowLeft size={16} /> Return to Homepage
+          <ArrowLeft size={16} className="rtl:rotate-180" /> Return to Homepage
         </Link>
       </div>
     </div>

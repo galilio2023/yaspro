@@ -77,7 +77,7 @@ export function GearCard({
 
           {/* Turnkey kit badge */}
           {item.isKit && (
-            <div className="absolute bottom-2.5 left-2.5 pointer-events-none z-10">
+            <div className="absolute bottom-2.5 start-2.5 pointer-events-none z-10">
               <Badge
                 variant="cyan"
                 className="text-[9.5px] font-bold uppercase tracking-wider gap-1 backdrop-blur-md bg-black/70 border-brand-cyan/40 text-brand-cyan"
@@ -88,7 +88,7 @@ export function GearCard({
           )}
 
           {/* Category watermark at bottom right */}
-          <span className="absolute bottom-2.5 right-2.5 text-[9px] font-mono text-white/70 uppercase z-10 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm border border-white/10">
+          <span className="absolute bottom-2.5 end-2.5 text-[9px] font-mono text-white/70 uppercase z-10 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm border border-white/10">
             {item.category}
           </span>
         </div>
@@ -145,16 +145,17 @@ export function GearCard({
 
       {/* Pricing & Action Footer */}
       <div className="pt-4 border-t border-white/10 flex items-center justify-between mt-auto">
-        <div>
+        <div className="text-start">
           <div
+            dir="ltr"
             className={cn(
-              "font-bold bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-cyan bg-clip-text text-transparent font-display",
+              "font-bold bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-cyan bg-clip-text text-transparent font-display font-latin text-start",
               isCompact ? "text-base" : "text-xl"
             )}
           >
             {formatCurrency(item.dailyRate)}
           </div>
-          <div className="text-[10px] text-text-muted font-mono flex items-center gap-1.5">
+          <div className="text-[10px] text-text-muted font-mono flex items-center gap-1.5 font-latin" dir="ltr">
             <span>per day / AED</span>
             {item.securityDeposit && (
               <>

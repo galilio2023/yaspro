@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { ContactForm } from "@/features/contact/components/ContactForm";
 import { LocationsList } from "@/features/contact/components/LocationsList";
-import { SectionHeader } from "@/components/ui/section-header";
-import { MessageSquare } from "lucide-react";
+import { ContactHeroHeader } from "@/features/contact/components/ContactHeroHeader";
 
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
@@ -19,17 +18,7 @@ export default function ContactPage() {
   return (
     <Section id="contact-page" aria-labelledby="contact-title" className="py-12 md:py-20 bg-background">
       <Container>
-        <SectionHeader
-          headingId="contact-title"
-          as="h1"
-          align="left"
-          badge="Direct Inquiries"
-          badgeVariant="default"
-          badgeIcon={<MessageSquare size={13} />}
-          title="Let's"
-          gradientText="Talk"
-          description="Have a production in mind? Reach out to our studios in Dubai, Cairo, or Amman and let's create something extraordinary together."
-        />
+        <ContactHeroHeader />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           <div className="lg:col-span-7">

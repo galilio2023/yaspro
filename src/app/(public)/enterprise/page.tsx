@@ -124,7 +124,7 @@ export default function EnterprisePage() {
             >
               <Video size={15} />
               <span>Launch Client Operations Vault</span>
-              <ArrowRight size={14} />
+              <ArrowRight size={14} className="rtl:rotate-180" />
             </Link>
           </div>
         </Container>

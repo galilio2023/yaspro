@@ -41,7 +41,7 @@ export function SectionHeader({
           "w-full mb-12 sm:mb-16 flex flex-col",
           isCenter
             ? "items-center text-center mx-auto max-w-3xl"
-            : "items-start text-left",
+            : "items-start text-start",
           className
         )}
       >

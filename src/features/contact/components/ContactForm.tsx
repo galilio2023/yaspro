@@ -12,8 +12,10 @@ import { ContactSuccess } from "./ContactSuccess";
 import { ContactInquirySelector } from "./ContactInquirySelector";
 import { GEAR_DATA } from "@/features/gear/data";
 import { formatCurrency } from "@/lib/utils";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function ContactForm() {
+  const { t, isArabic } = useLanguage();
   const searchParams = useSearchParams();
   const service = searchParams.get("service");
   const itemsRaw = searchParams.get("items") || "";
@@ -121,7 +123,7 @@ export function ContactForm() {
   return (
     <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-8 md:p-10 shadow-2xl">
       <h2 className="text-white font-bold text-2xl mb-6 font-display">
-        Send Us a Message
+        {t("contact.formTitle")}
       </h2>
 
       {gearBanner && (
@@ -129,11 +131,13 @@ export function ContactForm() {
           <div className="flex items-start gap-2.5">
             <ShoppingBag className="text-brand-purple-light shrink-0 mt-0.5" size={17} />
             <div>
-              <span className="font-bold text-white block">Equipment Reservation Imported</span>
+              <span className="font-bold text-white block">
+                {isArabic ? "تم استيراد حجز المعدات" : "Equipment Reservation Imported"}
+              </span>
               <p className="text-slate-300 text-[11px] mt-0.5">
-                {gearBanner.itemNames.join(", ")} &bull; {gearBanner.days} Day(s) &bull; {gearBanner.delivery}
+                {gearBanner.itemNames.join(", ")} &bull; {gearBanner.days} {isArabic ? "أيام" : "Day(s)"} &bull; {gearBanner.delivery}
               </p>
-              <span className="text-brand-purple-light font-mono text-[11px] font-semibold mt-1 inline-block">
+              <span className="text-brand-purple-light font-mono text-[11px] font-semibold mt-1 inline-block" dir="ltr">
                 Est: {formatCurrency(gearBanner.totalEst)}
               </span>
             </div>
@@ -163,45 +167,45 @@ export function ContactForm() {
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FormField label="Full Name" required className="min-h-[44px]">
+          <FormField label={t("contact.fullName")} required className="min-h-[44px]">
             <Input
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Your full name"
+              placeholder={t("contact.namePlaceholder")}
               className="text-base sm:text-sm min-h-[44px]"
             />
           </FormField>
 
-          <FormField label="Email Address" required className="min-h-[44px]">
+          <FormField label={t("contact.email")} required className="min-h-[44px]">
             <Input
               required
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@company.com"
+              placeholder={t("contact.emailPlaceholder")}
               className="text-base sm:text-sm min-h-[44px]"
             />
           </FormField>
         </div>
 
-        <FormField label="Phone / WhatsApp" className="min-h-[44px]">
+        <FormField label={t("contact.phone")} className="min-h-[44px]">
           <Input
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            placeholder="+971 50 000 0000"
+            placeholder={t("contact.phonePlaceholder")}
             className="text-base sm:text-sm min-h-[44px]"
           />
         </FormField>
 
-        <FormField label="Project Description" required>
+        <FormField label={t("contact.projectDesc")} required>
           <Textarea
             required
             rows={4}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Tell us about your production goals, locations, or timeline..."
+            placeholder={t("contact.projectPlaceholder")}
             className="text-base sm:text-sm"
           />
         </FormField>
@@ -214,10 +218,10 @@ export function ContactForm() {
           className="w-full sm:w-auto min-h-[44px] rounded-2xl gap-2 font-semibold shadow-lg shadow-brand-purple/25"
         >
           {isSubmitting ? (
-            <span>Sending Message...</span>
+            <span>{t("contact.sending")}</span>
           ) : (
             <>
-              <MessageSquare size={17} /> Send Message
+              <MessageSquare size={17} /> {t("contact.sendMessage")}
             </>
           )}
         </Button>

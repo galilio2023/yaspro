@@ -1,13 +1,18 @@
+"use client";
+
+import { useLanguage } from "@/components/providers/LanguageProvider";
+
 export interface HeroStat {
   value: string;
   label: string;
+  arLabel?: string;
 }
 
 const DEFAULT_STATS: readonly HeroStat[] = [
-  { value: "400M+", label: "Combined Reach" },
-  { value: "500+", label: "Projects Delivered" },
-  { value: "3",    label: "Regional Hubs" },
-  { value: "100+", label: "Top Brands" },
+  { value: "400M+", label: "Combined Reach", arLabel: "إجمالي الوصول" },
+  { value: "500+", label: "Projects Delivered", arLabel: "مشروع منجز" },
+  { value: "3", label: "Regional Hubs", arLabel: "مقرات إقليمية" },
+  { value: "100+", label: "Top Brands", arLabel: "علامة تجارية كبرى" },
 ];
 
 interface HeroStatsProps {
@@ -15,12 +20,15 @@ interface HeroStatsProps {
 }
 
 export function HeroStats({ stats = DEFAULT_STATS }: HeroStatsProps) {
+  const { isArabic } = useLanguage();
+
   return (
     <dl className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4 w-full pt-8 border-t border-brand-purple/20">
       {stats.map((stat, i) => (
-        <div key={stat.label} className="flex flex-col items-start gap-0.5">
+        <div key={stat.label} className="flex flex-col items-start text-start gap-0.5">
           <dd
-            className="text-2xl sm:text-3xl font-extrabold font-display"
+            className="text-2xl sm:text-3xl font-extrabold font-display font-latin"
+            dir="ltr"
             style={{
               background:
                 i % 2 === 0
@@ -34,7 +42,7 @@ export function HeroStats({ stats = DEFAULT_STATS }: HeroStatsProps) {
             {stat.value}
           </dd>
           <dt className="text-text-muted text-[11px] font-medium uppercase tracking-wider">
-            {stat.label}
+            {isArabic ? (stat.arLabel || stat.label) : stat.label}
           </dt>
         </div>
       ))}

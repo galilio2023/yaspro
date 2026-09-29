@@ -6,8 +6,10 @@ import { Users, ArrowRight, Sparkles } from "lucide-react";
 import { InstagramIcon, YoutubeIcon, TiktokIcon } from "@/components/icons/SocialIcons";
 import { InfluencerItem } from "../types";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
+  const { isArabic } = useLanguage();
   return (
     <article className="relative group w-full h-[400px] sm:h-[430px] rounded-3xl overflow-hidden border border-white/10 hover:border-brand-purple/50 bg-zinc-950 transition-all duration-500 shadow-xl hover:shadow-2xl hover:shadow-brand-purple/20 flex flex-col justify-between">
       {/* Background Creator Portrait Image */}
@@ -31,7 +33,7 @@ export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
       <div className="relative z-10 p-4 sm:p-5 flex items-center justify-between">
         <Badge variant="secondary" className="text-[11px] backdrop-blur-md bg-black/50 border border-white/15">
           <span>{creator.flag}</span>
-          <span className="ml-1 text-white">{creator.nationality}</span>
+          <span className="ms-1 text-white">{creator.nationality}</span>
         </Badge>
 
         <Badge variant="default" className="text-[11px] font-mono gap-1.5 backdrop-blur-md bg-black/60 border border-brand-purple/40">
@@ -105,8 +107,8 @@ export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
             href={`/influencers/${creator.slug}`}
             className="inline-flex items-center justify-center gap-1 min-h-[44px] px-3.5 py-2 sm:min-h-0 sm:py-1.5 sm:px-3 rounded-xl bg-white/10 hover:bg-brand-purple text-white text-xs font-semibold backdrop-blur-md transition-all duration-200 group-hover:scale-105"
           >
-            <span>Profile</span>
-            <ArrowRight size={12} />
+            <span>{isArabic ? "الملف التعريفي" : "Profile"}</span>
+            <ArrowRight size={12} className="rtl:rotate-180 shrink-0 transition-transform" />
           </Link>
         </div>
       </div>

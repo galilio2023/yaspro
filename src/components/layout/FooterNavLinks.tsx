@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { ArrowUpRight, ChevronRight } from "lucide-react";
 import { LucideIcon } from "lucide-react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export interface FooterLinkItem {
   readonly label: string;
   readonly href: string;
   readonly icon?: LucideIcon;
   readonly isExternal?: boolean;
+  readonly key?: string;
 }
 
 export interface FooterNavLinksProps {
@@ -14,10 +16,13 @@ export interface FooterNavLinksProps {
 }
 
 export function FooterNavLinks({ links }: FooterNavLinksProps) {
+  const { t } = useLanguage();
+
   return (
     <ul className="space-y-2.5">
       {links.map((link) => {
         const Icon = link.icon;
+        const displayLabel = link.key ? t(link.key) : link.label;
 
         return (
           <li key={`${link.label}-${link.href}`}>
@@ -31,20 +36,20 @@ export function FooterNavLinks({ links }: FooterNavLinksProps) {
                     <Icon size={11} />
                   </span>
                 )}
-                <span className="truncate group-hover/item:translate-x-0.5 transition-transform duration-200">
-                  {link.label}
+                <span className="truncate group-hover/item:translate-x-0.5 rtl:group-hover/item:-translate-x-0.5 transition-transform duration-200">
+                  {displayLabel}
                 </span>
               </div>
 
               {link.isExternal ? (
                 <ArrowUpRight
                   size={13}
-                  className="text-text-muted group-hover/item:text-brand-cyan group-hover/item:translate-x-0.5 group-hover/item:-translate-y-0.5 transition-all shrink-0 ml-1.5 opacity-60 group-hover/item:opacity-100"
+                  className="text-text-muted group-hover/item:text-brand-cyan group-hover/item:translate-x-0.5 group-hover/item:-translate-y-0.5 rtl:group-hover/item:-translate-x-0.5 rtl:scale-x-[-1] transition-all shrink-0 ms-1.5 opacity-60 group-hover/item:opacity-100"
                 />
               ) : (
                 <ChevronRight
                   size={13}
-                  className="text-text-muted group-hover/item:text-brand-purple-light group-hover/item:translate-x-1 transition-all shrink-0 ml-1.5 opacity-40 group-hover/item:opacity-100"
+                  className="text-text-muted group-hover/item:text-brand-purple-light group-hover/item:translate-x-1 rtl:group-hover/item:-translate-x-1 rtl:rotate-180 transition-all shrink-0 ms-1.5 opacity-40 group-hover/item:opacity-100"
                 />
               )}
             </Link>

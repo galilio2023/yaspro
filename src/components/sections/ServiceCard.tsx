@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Camera, Play, Radio, Zap, CheckCircle2 } from "lucide-react";
 import { CardContainer, CardBody, CardItem } from "@/components/aceternity/3d-card";
 import { BorderBeam } from "@/components/magicui/border-beam";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import type { ServiceItem, ServiceIconName } from "./services.data";
 
 const SERVICE_ICONS: Record<ServiceIconName, typeof Camera> = {
@@ -46,8 +47,16 @@ export interface ServiceCardProps {
 }
 
 export function ServiceCard({ service }: ServiceCardProps) {
+  const { isArabic } = useLanguage();
   const Icon = SERVICE_ICONS[service.iconName];
   const accents = ACCENT_COLORS[service.iconName];
+
+  const displayTitle = isArabic ? (service.arabicTitle || service.title) : service.title;
+  const displaySubtitle = isArabic ? (service.arabicSubtitle || service.subtitle) : service.subtitle;
+  const displayDescription = isArabic ? (service.arabicDescription || service.description) : service.description;
+  const displayBadge = isArabic ? (service.arabicBadge || service.badge) : service.badge;
+  const displaySpecs = isArabic && service.arabicSpecs ? service.arabicSpecs : service.specs;
+  const displayStatLabel = isArabic ? (service.arabicStatLabel || service.statLabel) : service.statLabel;
 
   return (
     <CardContainer className="w-full h-full py-2">
@@ -64,12 +73,11 @@ export function ServiceCard({ service }: ServiceCardProps) {
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <Image
             src={service.image}
-            alt={service.title}
+            alt={displayTitle}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
             className="object-cover opacity-20 filter grayscale contrast-125 group-hover/card:scale-110 group-hover/card:opacity-35 group-hover/card:grayscale-0 transition-all duration-700 ease-out"
           />
-          {/* Multi-layered cinematic gradient overlays */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0718] via-[#0a0718]/90 to-[#0a0718]/40" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-[#0a0718]" />
         </div>
@@ -86,7 +94,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
         )}
 
         {/* Card Content Container */}
-        <div className="relative z-20 p-6 sm:p-7 flex flex-col h-full justify-between">
+        <div className="relative z-20 p-6 sm:p-7 flex flex-col h-full justify-between text-start">
           <div>
             {/* Top Bar: Icon + Status Badge */}
             <div className="flex items-center justify-between gap-3 mb-6">
@@ -100,7 +108,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
               <CardItem translateZ={30}>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono tracking-wider uppercase border border-white/10 bg-white/5 text-text-secondary backdrop-blur-md">
                   <span className="size-1.5 rounded-full bg-brand-teal" />
-                  {service.badge}
+                  {displayBadge}
                 </span>
               </CardItem>
             </div>
@@ -108,7 +116,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
             {/* Subtitle & Title */}
             <CardItem translateZ={30} className="mb-1">
               <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-brand-purple-light/80 block">
-                {service.subtitle}
+                {displaySubtitle}
               </span>
             </CardItem>
 
@@ -117,7 +125,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
               as="h3"
               className="text-xl sm:text-2xl font-extrabold text-white font-display tracking-tight mb-3 group-hover/card:text-brand-purple-lighter transition-colors duration-300"
             >
-              {service.title}
+              {displayTitle}
             </CardItem>
 
             {/* Description */}
@@ -126,12 +134,12 @@ export function ServiceCard({ service }: ServiceCardProps) {
               as="p"
               className="text-text-secondary text-xs sm:text-sm leading-relaxed mb-6 line-clamp-3 group-hover/card:text-white/80 transition-colors"
             >
-              {service.description}
+              {displayDescription}
             </CardItem>
 
             {/* Tech Specs Badges */}
             <CardItem translateZ={35} className="flex flex-wrap gap-1.5 mb-6">
-              {service.specs.map((spec) => (
+              {displaySpecs.map((spec) => (
                 <span
                   key={spec}
                   className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-mono font-medium text-text-muted bg-white/[0.04] border border-white/5 group-hover/card:border-white/15 group-hover/card:text-text-secondary transition-colors"
@@ -145,12 +153,12 @@ export function ServiceCard({ service }: ServiceCardProps) {
 
           {/* Bottom Card Footer: Key Metric + Interactive Action Link */}
           <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-3 mt-auto">
-            <CardItem translateZ={25} className="flex flex-col">
-              <span className="text-sm font-extrabold font-display text-white group-hover/card:text-brand-cyan transition-colors">
+            <CardItem translateZ={25} className="flex flex-col text-start">
+              <span className="text-sm font-extrabold font-display text-white group-hover/card:text-brand-cyan transition-colors font-latin" dir="ltr">
                 {service.stat}
               </span>
               <span className="text-[10px] uppercase font-mono text-text-muted tracking-wider">
-                {service.statLabel}
+                {displayStatLabel}
               </span>
             </CardItem>
 
@@ -159,10 +167,10 @@ export function ServiceCard({ service }: ServiceCardProps) {
                 href={service.href}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-brand-purple border border-white/15 hover:border-brand-purple transition-all duration-300 shadow-md group/btn"
               >
-                <span>Book Now</span>
+                <span>{isArabic ? "احجز الآن" : "Book Now"}</span>
                 <ArrowRight
                   size={12}
-                  className="transition-transform duration-300 group-hover/btn:translate-x-1"
+                  className="transition-transform duration-300 group-hover/btn:translate-x-1 rtl:group-hover/btn:-translate-x-1 rtl:rotate-180"
                 />
               </Link>
             </CardItem>

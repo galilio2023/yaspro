@@ -96,7 +96,7 @@ export function MawthooqTelemetryPanel({
               className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-brand-purple via-[#6d28d9] to-brand-teal hover:opacity-95 text-white shadow-lg shadow-brand-purple/30 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <span>Bundle Creators into RFP</span>
-              <ArrowRight size={13} strokeWidth={2.5} />
+              <ArrowRight size={13} strokeWidth={2.5} className="rtl:rotate-180" />
             </button>
           )}
         </div>

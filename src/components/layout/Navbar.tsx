@@ -6,18 +6,24 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BrandLogo } from "./BrandLogo";
-import { NavLinks } from "./NavLinks";
 import { MobileNavDrawer, NavLinkItem } from "./MobileNavDrawer";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
-// Streamlined Apple/Tesla curated pillars (4 core pillars, noise-free)
-const NAV_LINKS: readonly NavLinkItem[] = [
-  { label: "Productions", href: "/projects" },
-  { label: "Soundstages", href: "/enterprise" },
-  { label: "Gear Rental", href: "/shop" },
-  { label: "Creators", href: "/influencers" },
+export interface NavItemConfig extends NavLinkItem {
+  key: string;
+}
+
+const NAV_LINKS: readonly NavItemConfig[] = [
+  { key: "nav.productions", label: "Productions", href: "/projects" },
+  { key: "nav.soundstages", label: "Soundstages", href: "/enterprise" },
+  { key: "nav.gear", label: "Gear Rental", href: "/shop" },
+  { key: "nav.creators", label: "Creators", href: "/influencers" },
+  { key: "nav.about", label: "About", href: "/about" },
+  { key: "nav.contact", label: "Contact", href: "/contact" },
 ];
 
 export default function Navbar() {
+  const { language, toggleLanguage, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
@@ -28,6 +34,12 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Auto-close mobile drawer on route change
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsOpen(false);
+  }, [pathname]);
+
   return (
     <header
       className={cn(
@@ -37,75 +49,85 @@ export default function Navbar() {
           : "bg-black/40 backdrop-blur-sm sm:backdrop-blur-md border-b border-white/[0.04]"
       )}
     >
-      <nav className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav
+        className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        aria-label="Main navigation"
+      >
         <div className="flex items-center justify-between h-14 sm:h-16 lg:h-18">
-          {/* Left: Brand Identity */}
+
+          {/* ── Left: Brand ── */}
           <BrandLogo />
 
-          {/* Center: Curated Minimalist Pillars */}
-          <NavLinks links={NAV_LINKS} />
+          {/* ── Center: Desktop Nav Links ── */}
+          <ul className="hidden lg:flex items-center gap-0.5 xl:gap-1" role="list">
+            {NAV_LINKS.map((link) => {
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(link.href);
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className={cn(
+                      "px-2.5 py-1.5 xl:px-3 rounded-lg text-[12px] xl:text-[13px] font-medium transition-all duration-200 whitespace-nowrap",
+                      isActive
+                        ? "text-white bg-white/10"
+                        : "text-slate-400 hover:text-white hover:bg-white/[0.06]"
+                    )}
+                  >
+                    {t(link.key) || link.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
 
-          {/* Right: Focused Action Hierarchy (Clean Apple/Tesla aesthetics) */}
-          <div className="flex items-center gap-3">
-            {/* Discreet Client Vault Link */}
+          {/* ── Right: Action Strip ── */}
+          <div className="flex items-center gap-2">
+
+            {/* Language Toggle */}
+            <button
+              onClick={toggleLanguage}
+              type="button"
+              className="text-[11px] font-bold text-slate-300 hover:text-white px-2.5 py-1.5 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all cursor-pointer font-latin"
+              aria-label="Switch language"
+            >
+              {language === "en" ? "العربية" : "EN"}
+            </button>
+
+            {/* Client Portal — xl+ only */}
             <Link
-              href="/enterprise/portal"
-              className="text-[12px] font-medium text-slate-300/80 hover:text-white px-2.5 py-1.5 rounded-full hover:bg-white/[0.06] transition-all hidden md:inline-flex items-center gap-1.5"
+              href="/portal"
+              className="hidden xl:inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-300/80 hover:text-white px-2.5 py-1.5 rounded-full hover:bg-white/[0.06] transition-all"
             >
               <span className="size-1.5 rounded-full bg-brand-cyan/80 animate-pulse" />
-              <span>Client Vault</span>
+              <span>{t("nav.portal")}</span>
             </Link>
 
-            {/* Quiet Sign In */}
-            <Link
-              href="/login"
-              className="text-[12px] font-medium text-slate-300/80 hover:text-white px-2.5 py-1.5 rounded-full hover:bg-white/[0.06] transition-all hidden md:inline-flex items-center"
-            >
-              Sign In
-            </Link>
-
-            {/* Primary Action: Signature Luminous Halo & Shimmer Button */}
+            {/* Primary CTA: Book Studio */}
             <Link
               href="/studio-booking"
-              className="relative group inline-flex items-center gap-2.5 px-3 py-2 sm:px-5 sm:py-2.5 rounded-xl text-xs font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+              className="relative group inline-flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
             >
-              {/* Luminous Ambient Halo Glow */}
               <span className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-teal opacity-50 blur-sm group-hover:opacity-100 group-hover:blur-md transition-all duration-300 pointer-events-none" />
-
-              {/* Shimmer Border Gradient Line */}
               <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-brand-purple via-brand-purple-light/80 to-brand-teal p-[1px] pointer-events-none">
                 <span className="block size-full rounded-xl bg-[#090616]" />
               </span>
-
-              {/* Surface Reflection Gloss */}
               <span className="absolute inset-[1px] rounded-xl bg-gradient-to-b from-white/10 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
-
-              {/* Label & Icon */}
-              <span className="relative z-10 flex items-center gap-1.5 font-display text-[12px] uppercase tracking-wider text-white group-hover:text-brand-purple-lighter transition-colors">
-                <Sparkles size={13} className="text-brand-purple-light group-hover:text-brand-cyan transition-colors" />
-                <span>Book Studio</span>
+              <span className="relative z-10 flex items-center gap-1.5 font-display text-[11px] sm:text-[12px] uppercase tracking-wider">
+                <Sparkles size={12} className="text-brand-purple-light group-hover:text-brand-cyan transition-colors" />
+                <span>{t("nav.bookStudio")}</span>
               </span>
-
-              {/* Forward Chevron Affordance */}
-              <svg
-                viewBox="0 0 16 16"
-                className="relative z-10 size-3 text-text-muted group-hover:text-white group-hover:translate-x-0.5 transition-all duration-200"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M6 12l4-4-4-4" />
-              </svg>
             </Link>
 
-            {/* Clean Mobile Hamburger Trigger */}
+            {/* Mobile Hamburger */}
             <button
               type="button"
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2.5 rounded-full border border-white/10 text-white bg-white/5 hover:bg-white/10 transition-colors"
-              aria-label="Toggle menu"
+              className="lg:hidden p-2.5 rounded-full border border-white/10 text-white bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+              aria-label="Toggle navigation menu"
+              aria-expanded={isOpen}
             >
               {isOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
@@ -113,7 +135,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Drawer Overlay */}
+      {/* Mobile Drawer */}
       <MobileNavDrawer
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}

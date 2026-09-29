@@ -12,12 +12,14 @@ import { ProjectCard } from "@/features/projects/components/ProjectCard";
 import { ProjectItem, ProjectCategory } from "@/features/projects/types";
 import { CinemaVideoModal } from "@/components/common/CinemaVideoModal";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface PortfolioSectionProps {
   limit?: number;
 }
 
 export function PortfolioSection({ limit = 6 }: PortfolioSectionProps) {
+  const { t, isArabic } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<ProjectCategory>("all");
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
 
@@ -38,12 +40,12 @@ export function PortfolioSection({ limit = 6 }: PortfolioSectionProps) {
       <Container>
         <SectionHeader
           headingId="portfolio-title"
-          badge="Government & Enterprise Portfolio"
+          badge={t("portfolio.badge")}
           badgeVariant="cyan"
           badgeIcon={<Award size={13} />}
-          title="Our Latest"
-          gradientText="Masterpieces"
-          description="High-impact visual narratives, TV commercial campaigns, and nationwide broadcasts produced for leading regional brands and government entities."
+          title={isArabic ? t("portfolio.title") : "Our Latest"}
+          gradientText={isArabic ? t("portfolio.titleGradient") : "Masterpieces"}
+          description={t("portfolio.description")}
         />
 
         {/* Category Filter Pills */}
@@ -60,7 +62,7 @@ export function PortfolioSection({ limit = 6 }: PortfolioSectionProps) {
                   : "bg-white/5 text-text-secondary border-white/10 hover:border-white/20 hover:text-white"
               )}
             >
-              {cat.label}
+              {isArabic && cat.id === "all" ? "الكل" : cat.label}
             </button>
           ))}
         </div>
@@ -80,8 +82,10 @@ export function PortfolioSection({ limit = 6 }: PortfolioSectionProps) {
             href="/projects"
             className="inline-flex items-center gap-2 px-7 py-3 rounded-full border border-brand-purple/40 text-brand-purple-light hover:bg-brand-purple/15 hover:border-brand-purple hover:scale-105 transition-all text-xs font-bold shadow-md shadow-brand-purple/10"
           >
-            <span>View Complete Portfolio ({PROJECTS_DATA.length}+ Projects)</span>
-            <ArrowRight size={14} />
+            <span>
+              {t("portfolio.viewAll")} ({PROJECTS_DATA.length}+ {isArabic ? "عمل" : "Projects"})
+            </span>
+            <ArrowRight size={14} className="rtl:rotate-180 shrink-0 transition-transform" />
           </Link>
         </FadeUp>
       </Container>

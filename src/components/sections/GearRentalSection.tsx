@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, Camera } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -6,12 +8,14 @@ import { Container } from "@/components/ui/container";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrappers";
 import { GEAR_DATA } from "@/features/gear/data";
 import { GearCard } from "@/features/gear/components/GearCard";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface GearRentalSectionProps {
   limit?: number;
 }
 
 export function GearRentalSection({ limit = 4 }: GearRentalSectionProps) {
+  const { t, isArabic } = useLanguage();
   const featuredGear = GEAR_DATA.slice(0, limit);
 
   return (
@@ -23,12 +27,12 @@ export function GearRentalSection({ limit = 4 }: GearRentalSectionProps) {
       <Container>
         <SectionHeader
           headingId="gear-rental-title"
-          badge="Cinema &amp; Broadcast Rental Hub"
+          badge={t("gear.badge")}
           badgeVariant="gold"
           badgeIcon={<Camera size={13} />}
-          title="Turnkey"
-          gradientText="Production Gear"
-          description="Direct rental of high-end ARRI, RED, Sony cinema cameras, motorized lighting grids, and live OB-VAN packages."
+          title={isArabic ? t("gear.title") : "Turnkey"}
+          gradientText={isArabic ? t("gear.titleGradient") : "Production Gear"}
+          description={t("gear.description")}
         />
 
         <StaggerContainer as="ul" role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 items-stretch w-full">
@@ -38,7 +42,7 @@ export function GearRentalSection({ limit = 4 }: GearRentalSectionProps) {
                 item={item}
                 variant="compact"
                 actionHref="/shop"
-                actionLabel="Reserve"
+                actionLabel={isArabic ? "حجز المعدة" : "Reserve"}
               />
             </StaggerItem>
           ))}
@@ -50,8 +54,10 @@ export function GearRentalSection({ limit = 4 }: GearRentalSectionProps) {
             href="/shop"
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-white/15 text-white hover:bg-white/5 transition-all text-xs font-semibold"
           >
-            <span>Explore Full Inventory ({GEAR_DATA.length} Items)</span>
-            <ArrowRight size={14} />
+            <span>
+              {t("gear.exploreInventory")} ({GEAR_DATA.length} {isArabic ? "معدة" : "Items"})
+            </span>
+            <ArrowRight size={14} className="rtl:rotate-180 shrink-0 transition-transform" />
           </Link>
         </FadeUp>
       </Container>

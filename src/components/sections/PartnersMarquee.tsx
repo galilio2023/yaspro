@@ -1,27 +1,37 @@
+"use client";
+
 import Image from "next/image";
 import { Marquee } from "@/components/magicui/marquee";
 import { GOV_LOGOS, BRAND_LOGOS } from "@/features/partners/data";
 
+import { useLanguage } from "@/components/providers/LanguageProvider";
+
 export function PartnersMarquee() {
+  const { isArabic } = useLanguage();
   return (
     <aside
       aria-label="Government and Brand Partners"
+      // dir="ltr" forces logo marquees to always scroll left-to-right — this is
+      // visually correct and expected regardless of the page language direction.
+      dir="ltr"
       className="relative w-full py-10 sm:py-14 lg:py-20 border-y border-white/5 bg-black/40 backdrop-blur-md overflow-hidden flex flex-col items-center select-none max-w-full"
     >
-      {/* Left & Right Smooth Edge Fade Out Mask */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-40 bg-gradient-to-r from-background via-background/80 to-transparent z-20" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-40 bg-gradient-to-l from-background via-background/80 to-transparent z-20" />
+      {/* Edge Fade Masks — logical start/end so they hug the correct sides */}
+      <div className="pointer-events-none absolute inset-y-0 start-0 w-12 sm:w-40 bg-gradient-to-r from-background via-background/80 to-transparent z-20" />
+      <div className="pointer-events-none absolute inset-y-0 end-0 w-12 sm:w-40 bg-gradient-to-l from-background via-background/80 to-transparent z-20" />
 
       {/* Subtle Section Label */}
       <div className="mb-6 flex items-center justify-center gap-2 px-4 text-center">
         <span className="size-1.5 rounded-full bg-brand-cyan animate-pulse shrink-0" />
         <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.15em] sm:tracking-[0.25em] text-text-muted">
-          Chosen For UAE Government &amp; Global Brand Productions
+          {isArabic
+            ? "شريك الإنتاج المعتمد للمؤسسات الحكومية في الإمارات وكبرى العلامات العالمية"
+            : "Chosen For UAE Government & Global Brand Productions"}
         </span>
         <span className="size-1.5 rounded-full bg-brand-purple animate-pulse shrink-0" />
       </div>
 
-      {/* Row 1: Official UAE Government Entities (Pure Logos, Zero Cards) */}
+      {/* Row 1: Official UAE Government Entities */}
       <div className="w-full relative z-10 mb-6 sm:mb-8">
         <Marquee pauseOnHover repeat={4} gap="4rem" className="[--duration:40s] py-2 items-center">
           {GOV_LOGOS.map((gov) => (
@@ -42,7 +52,7 @@ export function PartnersMarquee() {
         </Marquee>
       </div>
 
-      {/* Row 2: Premier Colorful Commercial Brands (Pure Logos, Reverse Scroll) */}
+      {/* Row 2: Premier Commercial Brands (Reverse Scroll) */}
       <div className="w-full relative z-10">
         <Marquee pauseOnHover reverse repeat={4} gap="4.5rem" className="[--duration:42s] py-2 items-center">
           {BRAND_LOGOS.map((brand) => (

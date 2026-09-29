@@ -15,12 +15,14 @@ import {
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { OB_VAN_SPECS } from "../data";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface ObVanProps {
   onReserveObVan?: () => void;
 }
 
 export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
+  const { t } = useLanguage();
   const [isProcessingClip, setIsProcessingClip] = useState<boolean>(false);
   const [clipSeconds, setClipSeconds] = useState<number>(0);
   const [clipDone, setClipDone] = useState<boolean>(false);
@@ -53,12 +55,12 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
 
       <Container className="relative z-10 max-w-6xl">
         <SectionHeader
-          badge="Outside Broadcast & Tactical Mobility"
+          badge={t("enterprise.obVan.badge")}
           badgeVariant="cyan"
           badgeIcon={<Radio size={13} className="text-brand-cyan" />}
-          title="OB-VAN Live Command Fleet &"
-          gradientText="8-Second AI Viral Engine"
-          description="High-density mobile command units for arena sports, government summits, and giga-events across the Gulf. Instant EVS replay and automated AI vertical syndication."
+          title={t("enterprise.obVan.title")}
+          gradientText={t("enterprise.obVan.gradient")}
+          description={t("enterprise.obVan.description")}
           className="mb-10 text-center"
         />
 
@@ -163,12 +165,12 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
                   {isProcessingClip ? (
                     <>
                       <RotateCcw size={14} className="animate-spin" />
-                      <span>Ingesting Multi-Cam Feed...</span>
+                      <span>{t("enterprise.obVan.processing")}</span>
                     </>
                   ) : (
                     <>
                       <Play size={14} fill="currentColor" />
-                      <span>Simulate 8s Live Highlight Post</span>
+                      <span>{t("enterprise.obVan.simulate")}</span>
                     </>
                   )}
                 </button>
@@ -178,8 +180,8 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
                     onClick={onReserveObVan}
                     className="py-3 px-4 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/15 text-white border border-white/15 flex items-center gap-1.5 cursor-pointer transition-all"
                   >
-                    <span>Request Van</span>
-                    <ArrowRight size={13} />
+                    <span>{t("enterprise.obVan.requestVan")}</span>
+                    <ArrowRight size={13} className="rtl:rotate-180" />
                   </button>
                 )}
               </div>

@@ -374,7 +374,7 @@ export function AiBriefPitchModal({
               className="w-full py-2.5 rounded-xl bg-brand-purple hover:bg-brand-purple-light text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer mt-2"
             >
               <span>Apply to Booking Form</span>
-              <ArrowRight size={14} />
+              <ArrowRight size={14} className="rtl:rotate-180" />
             </button>
           </div>
         )}

@@ -1,5 +1,8 @@
+"use client";
+
 import { ChevronLeft, ChevronRight, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export interface BookingStepNavigationProps {
   currentStep: number;
@@ -18,6 +21,7 @@ export function BookingStepNavigation({
   onSubmit,
   isSubmitting = false,
 }: BookingStepNavigationProps) {
+  const { isArabic } = useLanguage();
   const isFirst = currentStep === 1;
   const isLast = currentStep === totalSteps;
 
@@ -28,9 +32,10 @@ export function BookingStepNavigation({
           variant="outline"
           size="default"
           onClick={onPrev}
-          className="w-full sm:w-auto min-h-[44px] rounded-xl px-5 text-xs font-semibold"
+          className="w-full sm:w-auto min-h-[44px] rounded-xl px-5 text-xs font-semibold gap-1.5"
         >
-          <ChevronLeft size={16} /> Back
+          <ChevronLeft size={16} className="rtl:rotate-180" />
+          <span>{isArabic ? "رجوع" : "Back"}</span>
         </Button>
       )}
 
@@ -39,10 +44,10 @@ export function BookingStepNavigation({
           variant="brand"
           size="default"
           onClick={onNext}
-          className="w-full sm:w-auto min-h-[44px] sm:ml-auto rounded-xl px-6 text-xs font-semibold gap-2"
+          className="w-full sm:w-auto min-h-[44px] sm:ms-auto rounded-xl px-6 text-xs font-semibold gap-2"
         >
-          <span>Continue</span>
-          <ChevronRight size={16} />
+          <span>{isArabic ? "متابعة" : "Continue"}</span>
+          <ChevronRight size={16} className="rtl:rotate-180" />
         </Button>
       ) : (
         <Button
@@ -50,13 +55,14 @@ export function BookingStepNavigation({
           size="default"
           onClick={onSubmit}
           disabled={isSubmitting}
-          className="w-full sm:w-auto min-h-[44px] sm:ml-auto rounded-xl px-8 text-xs font-semibold gap-2 shadow-lg shadow-brand-purple/25"
+          className="w-full sm:w-auto min-h-[44px] sm:ms-auto rounded-xl px-8 text-xs font-semibold gap-2 shadow-lg shadow-brand-purple/25"
         >
           {isSubmitting ? (
-            <span>Processing Booking...</span>
+            <span>{isArabic ? "جاري معالجة الحجز..." : "Processing Booking..."}</span>
           ) : (
             <>
-              <CreditCard size={16} /> Complete &amp; Pay
+              <CreditCard size={16} />
+              <span>{isArabic ? "إتمام الحجز والدفع" : "Complete & Pay"}</span>
             </>
           )}
         </Button>
