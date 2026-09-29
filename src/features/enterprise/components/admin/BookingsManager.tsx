@@ -277,7 +277,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                           type="button"
                           disabled={updatingIds.has(b.id)}
                           onClick={() => handleStatusChange(b.id, "confirmed")}
-                          className="px-2 py-1 rounded bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
+                          className="px-2 py-1 rounded bg-brand-teal/20 hover:bg-brand-teal/30 border border-brand-teal/30 text-brand-teal-light text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
                         >
                           Confirm
                         </button>

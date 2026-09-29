@@ -117,7 +117,7 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
                         <button
                           disabled={updatingId === rfp.id}
                           onClick={() => handleStatusChange(rfp.id, "sla_active")}
-                          className="px-2 py-1 rounded bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 text-[11px] font-medium transition-colors"
+                          className="px-2 py-1 rounded bg-brand-teal/20 hover:bg-brand-teal/30 border border-brand-teal/30 text-brand-teal-light text-[11px] font-medium transition-colors cursor-pointer"
                         >
                           Activate SLA
                         </button>

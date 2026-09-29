@@ -83,7 +83,7 @@ export function MawthooqTelemetryPanel({
           <button
             type="button"
             onClick={onOpenAuditModal}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl font-bold text-xs bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-md"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl font-bold text-xs bg-slate-900 hover:bg-slate-800 text-brand-teal-light border border-brand-teal/40 flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-md"
           >
             <ShieldCheck size={14} />
             <span>Verify GAMR Certificate</span>
@@ -93,7 +93,7 @@ export function MawthooqTelemetryPanel({
             <button
               type="button"
               onClick={() => onBundleCreators(selectedCreators.map((c) => c.name))}
-              className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-black shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-brand-purple via-[#6d28d9] to-brand-teal hover:opacity-95 text-white shadow-lg shadow-brand-purple/30 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <span>Bundle Creators into RFP</span>
               <ArrowRight size={13} strokeWidth={2.5} />

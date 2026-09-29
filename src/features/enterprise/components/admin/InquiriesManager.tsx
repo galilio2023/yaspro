@@ -283,7 +283,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-colors w-full justify-center"
+                      className="px-3 py-1.5 rounded-xl bg-brand-teal/20 hover:bg-brand-teal/30 border border-brand-teal/40 text-brand-teal-light text-xs font-semibold flex items-center gap-1.5 transition-colors w-full justify-center"
                     >
                       <span>WhatsApp</span>
                       <ExternalLink size={12} />

@@ -131,7 +131,7 @@ export function MawthooqAuditorModal({
             onClick={() => setActiveTab("certificate")}
             className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === "certificate"
-                ? "bg-emerald-500 text-black shadow-md font-bold"
+                ? "bg-gradient-to-r from-brand-purple to-brand-teal text-white shadow-md shadow-brand-purple/30 font-bold"
                 : "text-text-secondary hover:text-white"
             }`}
           >
@@ -141,18 +141,18 @@ export function MawthooqAuditorModal({
             onClick={() => setActiveTab("audit")}
             className={`flex-1 min-w-[120px] py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
               activeTab === "audit"
-                ? "bg-emerald-500 text-black shadow-md font-bold"
+                ? "bg-gradient-to-r from-brand-purple to-brand-teal text-white shadow-md shadow-brand-purple/30 font-bold"
                 : "text-text-secondary hover:text-white"
             }`}
           >
-            <Sparkles size={13} className={activeTab === "audit" ? "text-black" : "text-emerald-400"} />
+            <Sparkles size={13} className={activeTab === "audit" ? "text-white" : "text-brand-purple-light"} />
             <span>AI Script Auditor</span>
           </button>
           <button
             onClick={() => setActiveTab("safety")}
             className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === "safety"
-                ? "bg-emerald-500 text-black shadow-md font-bold"
+                ? "bg-gradient-to-r from-brand-purple to-brand-teal text-white shadow-md shadow-brand-purple/30 font-bold"
                 : "text-text-secondary hover:text-white"
             }`}
           >
@@ -162,7 +162,7 @@ export function MawthooqAuditorModal({
             onClick={() => setActiveTab("escrow")}
             className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === "escrow"
-                ? "bg-emerald-500 text-black shadow-md font-bold"
+                ? "bg-gradient-to-r from-brand-purple to-brand-teal text-white shadow-md shadow-brand-purple/30 font-bold"
                 : "text-text-secondary hover:text-white"
             }`}
           >
@@ -249,7 +249,7 @@ export function MawthooqAuditorModal({
 
               <button
                 onClick={onClose}
-                className="py-2.5 px-5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="py-2.5 px-5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <span>Done</span>
               </button>
@@ -263,7 +263,7 @@ export function MawthooqAuditorModal({
             {/* Input Card */}
             <div className="p-4 rounded-2xl bg-slate-900 border border-white/10 space-y-3">
               <label className="text-xs font-mono font-bold text-text-muted uppercase flex items-center justify-between">
-                <span className="flex items-center gap-1.5 text-emerald-400">
+                <span className="flex items-center gap-1.5 text-brand-teal">
                   <FileCheck size={14} />
                   <span>Script / Ad Copy Regulatory Scanner</span>
                 </span>
@@ -275,7 +275,7 @@ export function MawthooqAuditorModal({
                 value={scriptInput}
                 onChange={(e) => setScriptInput(e.target.value)}
                 placeholder="Paste promotional caption, script dialogue, or campaign brief..."
-                className="w-full bg-black/60 border border-white/15 rounded-xl p-3 text-xs sm:text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-emerald-500 resize-none font-mono"
+                className="w-full bg-black/60 border border-white/15 rounded-xl p-3 text-xs sm:text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-brand-purple resize-none font-mono"
               />
 
               <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
@@ -288,7 +288,7 @@ export function MawthooqAuditorModal({
                       setScriptInput(sample);
                       handleRunAudit(sample);
                     }}
-                    className="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-pointer"
+                    className="text-[11px] px-2.5 py-1 rounded-lg bg-brand-teal/15 hover:bg-brand-teal/25 text-brand-teal-light border border-brand-teal/40 cursor-pointer transition-colors"
                   >
                     ✓ Compliant Sample (#إعلان)
                   </button>
@@ -309,7 +309,7 @@ export function MawthooqAuditorModal({
                   type="button"
                   onClick={() => handleRunAudit()}
                   disabled={isAuditing || !scriptInput.trim()}
-                  className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-50 cursor-pointer shrink-0"
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-purple to-brand-teal hover:opacity-95 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-brand-purple/25 transition-all disabled:opacity-50 cursor-pointer shrink-0"
                 >
                   {isAuditing ? (
                     <span className="animate-pulse">Scanning GAMR Rules...</span>

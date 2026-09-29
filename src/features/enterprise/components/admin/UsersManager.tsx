@@ -238,7 +238,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                             href={`https://wa.me/${user.phone.replace(/[^0-9]/g, "")}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-1 rounded-md bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-colors"
+                            className="p-1 rounded-md bg-brand-teal/15 text-brand-teal-light hover:bg-brand-teal/25 border border-brand-teal/30 transition-colors"
                             title="Chat on WhatsApp"
                           >
                             <ExternalLink size={11} />

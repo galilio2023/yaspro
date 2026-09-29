@@ -215,7 +215,7 @@ export function PortalDailies({
                 onClick={handleToggleApproval}
                 className={`flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   currentStatus === "APPROVED"
-                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30"
+                    ? "bg-brand-teal/20 text-brand-teal-light border border-brand-teal/40 hover:bg-brand-teal/30"
                     : "bg-brand-purple text-white hover:bg-brand-purple-light shadow-lg shadow-brand-purple/20"
                 }`}
               >

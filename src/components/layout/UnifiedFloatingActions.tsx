@@ -121,7 +121,7 @@ export function UnifiedFloatingActions() {
             <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
               <div className="flex items-center gap-2.5">
                 <div className="relative">
-                  <div className="size-9 rounded-xl bg-green-500/20 border border-green-500/40 flex items-center justify-center text-green-400">
+                  <div className="size-9 rounded-xl bg-brand-teal/20 border border-brand-teal/40 flex items-center justify-center text-brand-teal">
                     <MessageSquare size={18} />
                   </div>
                 </div>
@@ -129,7 +129,7 @@ export function UnifiedFloatingActions() {
                   <h3 id="unified-concierge-heading" className="text-sm font-bold text-white font-display">
                     Dubai Studio Concierge
                   </h3>
-                  <p className="text-[11px] text-green-400 font-medium">
+                  <p className="text-[11px] text-brand-teal-light font-medium">
                     Production Dispatch Online
                   </p>
                 </div>

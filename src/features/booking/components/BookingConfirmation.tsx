@@ -33,7 +33,7 @@ export function BookingConfirmation({
           animate={{ scale: 1 }}
           transition={{ type: "spring", stiffness: 200, damping: 15 }}
         >
-          <CheckCircle className="mx-auto text-green-400 mb-6" size={68} />
+          <CheckCircle className="mx-auto text-brand-teal mb-6" size={68} />
         </motion.div>
         <h2 className="text-3xl font-extrabold text-white mb-2 font-display">
           Booking Confirmed!
@@ -55,7 +55,7 @@ export function BookingConfirmation({
           <span
             className={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${
               paymentStatus === "deposit_paid" || paymentStatus === "paid"
-                ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                ? "bg-brand-teal/20 text-brand-teal-light border-brand-teal/40"
                 : "bg-amber-500/20 text-amber-300 border-amber-500/40"
             }`}
           >

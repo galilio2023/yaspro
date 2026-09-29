@@ -160,7 +160,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                     onClick={() => handleToggleActive(studio)}
                     className={`px-2.5 py-1 rounded-full text-[10px] font-semibold border transition-all cursor-pointer ${
                       studio.isActive
-                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20"
+                        ? "bg-brand-teal/15 text-brand-teal-light border-brand-teal/40 hover:bg-brand-teal/25"
                         : "bg-amber-500/10 text-amber-400 border-amber-500/30 hover:bg-amber-500/20"
                     }`}
                   >

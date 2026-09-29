@@ -232,7 +232,7 @@ export function GearExplorer({
                     <span className="text-[10px] font-mono uppercase tracking-wider text-brand-cyan font-bold bg-brand-cyan/10 px-2 py-0.5 rounded border border-brand-cyan/20">
                       {matchedKit.targetGenre}
                     </span>
-                    <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                    <span className="text-[10px] font-mono text-brand-teal-light bg-brand-teal/15 px-2 py-0.5 rounded border border-brand-teal/30">
                       12% Package Discount
                     </span>
                   </div>
@@ -244,7 +244,7 @@ export function GearExplorer({
                   <div className="text-xs text-text-muted line-through font-mono">
                     {formatCurrency(matchedKit.totalDailyRate)} / day
                   </div>
-                  <div className="text-xl font-bold font-mono text-emerald-400">
+                  <div className="text-xl font-bold font-mono text-brand-teal-light">
                     {formatCurrency(matchedKit.packageDailyRate)}
                     <span className="text-xs font-normal text-text-muted"> / day</span>
                   </div>
@@ -274,7 +274,7 @@ export function GearExplorer({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-white/10">
                 <div className="flex items-center gap-2 text-xs">
                   {matchedKit.compatibility.isCompatible ? (
-                    <div className="flex items-center gap-1.5 text-emerald-400 font-mono">
+                    <div className="flex items-center gap-1.5 text-brand-teal font-mono font-medium">
                       <ShieldCheck size={15} />
                       <span>Optical &amp; Power Compatibility Cleared</span>
                     </div>
@@ -289,7 +289,7 @@ export function GearExplorer({
                 <button
                   type="button"
                   onClick={handleAddAllToCart}
-                  className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-purple via-[#6d28d9] to-brand-teal hover:opacity-95 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-purple/25 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <Layers size={14} />
                   <span>Add Entire Kit to Cart ({matchedKit.items.length} items)</span>

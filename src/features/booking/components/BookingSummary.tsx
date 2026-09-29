@@ -109,7 +109,7 @@ export function BookingSummary({
           {state.needsCrew && (
             <div className="flex justify-between items-center">
               <span className="text-text-secondary">Dedicated Studio Crew:</span>
-              <span className="text-green-400 font-bold">+500 AED</span>
+              <span className="text-brand-teal-light font-bold">+500 AED</span>
             </div>
           )}
 
@@ -152,7 +152,7 @@ export function BookingSummary({
           )}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full mb-4 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs tracking-wide shadow-lg shadow-emerald-950/40 transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="w-full mb-4 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-gradient-to-r from-brand-purple via-[#6d28d9] to-brand-teal hover:opacity-95 text-white font-semibold text-xs tracking-wide shadow-lg shadow-brand-purple/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
           <span className="size-2 rounded-full bg-white"></span>
           Instant WhatsApp Booking Hold
@@ -165,8 +165,8 @@ export function BookingSummary({
               <CreditCard size={13} className="text-brand-purple-mid" />
               <span>Accepted Payment Methods</span>
             </span>
-            <span className="text-green-400 text-[10px] flex items-center gap-1">
-              <span className="size-1.5 rounded-full bg-green-400 inline-block" /> Instant Hold
+            <span className="text-brand-teal-light text-[10px] flex items-center gap-1">
+              <span className="size-1.5 rounded-full bg-brand-teal inline-block" /> Instant Hold
             </span>
           </div>
           <p className="text-[11px] text-text-secondary leading-relaxed">
@@ -175,7 +175,7 @@ export function BookingSummary({
             or Corporate PO for UAE government and broadcast entities.
           </p>
           <div className="flex items-center gap-1.5 text-[10px] text-text-ghost pt-0.5">
-            <ShieldCheck size={12} className="text-green-400 shrink-0" />
+            <ShieldCheck size={12} className="text-brand-teal-light shrink-0" />
             <span>Free cancellation up to 48 hours prior to session.</span>
           </div>
         </div>
