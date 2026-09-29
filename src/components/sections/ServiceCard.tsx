@@ -99,7 +99,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
 
               <CardItem translateZ={30}>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono tracking-wider uppercase border border-white/10 bg-white/5 text-text-secondary backdrop-blur-md">
-                  <span className="size-1.5 rounded-full bg-emerald-400" />
+                  <span className="size-1.5 rounded-full bg-brand-teal" />
                   {service.badge}
                 </span>
               </CardItem>

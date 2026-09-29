@@ -56,7 +56,7 @@ export function LocationsList() {
               href="https://web.whatsapp.com/send?phone=971554010465"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 py-3 px-4 rounded-2xl text-center text-sm font-semibold text-white border border-green-500/30 bg-green-500/10 hover:bg-green-500/20 transition-all flex items-center justify-center gap-2"
+              className="flex-1 py-3 px-4 rounded-2xl text-center text-sm font-semibold text-white border border-brand-teal/40 bg-brand-teal/10 hover:bg-brand-teal/20 transition-all flex items-center justify-center gap-2 text-brand-teal-light hover:text-white shadow-md shadow-brand-teal/10"
             >
               <span>WhatsApp Direct</span>
             </a>

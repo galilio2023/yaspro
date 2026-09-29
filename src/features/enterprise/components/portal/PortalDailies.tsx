@@ -164,7 +164,7 @@ export function PortalDailies({
             {/* Top Overlay Badges */}
             <div className="absolute top-2.5 left-2.5 right-2.5 sm:top-3 sm:left-3 sm:right-3 flex items-center justify-between pointer-events-none">
               <div className="flex items-center gap-2">
-                <span className="bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-mono text-emerald-400 border border-emerald-500/40 font-bold">
+                <span className="bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-mono text-brand-teal-light border border-brand-teal/40 font-bold">
                   PRORES 4444 RAW
                 </span>
                 <span className="bg-black/85 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-mono text-brand-cyan border border-brand-cyan/40">
@@ -193,11 +193,11 @@ export function PortalDailies({
           <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-sm sm:text-base font-bold text-white truncate">{activeClip.title}</h3>
+                <h3 className="text-sm sm:base font-bold text-white truncate">{activeClip.title}</h3>
                 <span
                   className={`text-[10px] font-mono px-2 py-0.5 rounded uppercase font-bold ${
                     currentStatus === "APPROVED"
-                      ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                      ? "bg-brand-teal/15 text-brand-teal-light border border-brand-teal/30"
                       : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
                   }`}
                 >
@@ -215,7 +215,7 @@ export function PortalDailies({
                 onClick={handleToggleApproval}
                 className={`flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   currentStatus === "APPROVED"
-                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30"
+                    ? "bg-brand-teal/20 text-brand-teal-light border border-brand-teal/40 hover:bg-brand-teal/30"
                     : "bg-brand-purple text-white hover:bg-brand-purple-light shadow-lg shadow-brand-purple/20"
                 }`}
               >
@@ -269,7 +269,7 @@ export function PortalDailies({
                       sizes="64px"
                     />
                     {status === "APPROVED" && (
-                      <div className="absolute top-1 right-1 size-3 rounded-full bg-emerald-400 border border-black shadow" />
+                      <div className="absolute top-1 right-1 size-3 rounded-full bg-brand-teal border border-black shadow" />
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -281,7 +281,7 @@ export function PortalDailies({
                       <span
                         className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-semibold ${
                           status === "APPROVED"
-                            ? "text-emerald-400 bg-emerald-500/10"
+                            ? "text-brand-teal-light bg-brand-teal/15 border border-brand-teal/30"
                             : "text-amber-400 bg-amber-500/10"
                         }`}
                       >
@@ -319,7 +319,7 @@ export function PortalDailies({
         <form onSubmit={handleAddAnnotation} className="mb-6 space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-mono text-slate-300">Target Timecode:</span>
-            <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+            <span className="text-xs font-mono font-bold text-brand-teal-light bg-brand-teal/15 px-2 py-0.5 rounded border border-brand-teal/30">
               {activeClip.timecode}
             </span>
             <div className="flex items-center gap-1.5 ml-auto">
@@ -367,7 +367,7 @@ export function PortalDailies({
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 text-[10px]">
+                  <span className="font-mono text-brand-teal-light font-bold bg-brand-teal/15 px-2 py-0.5 rounded border border-brand-teal/30 text-[10px]">
                     TC {ann.timecode}
                   </span>
                   <span className="font-bold text-white">{ann.author}</span>

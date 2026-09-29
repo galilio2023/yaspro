@@ -90,8 +90,8 @@ export function HoloTwinViewport({
 
       {/* Top Right Live Telemetry */}
       <div className="absolute top-3 right-3 sm:top-4 sm:right-4 flex items-center gap-1.5 sm:gap-2 pointer-events-none">
-        <div className="bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-emerald-500/40 text-[10px] sm:text-xs font-mono text-emerald-400 flex items-center gap-1 sm:gap-1.5">
-          <CheckCircle2 size={12} className="shrink-0" />
+        <div className="bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-brand-teal/40 text-[10px] sm:text-xs font-mono text-brand-teal-light flex items-center gap-1 sm:gap-1.5">
+          <CheckCircle2 size={12} className="shrink-0 text-brand-teal" />
           <span className="font-bold">120 FPS</span>
           <span className="text-white/40 hidden sm:inline">|</span>
           <span className="text-white/90 hidden sm:inline">1.8ms</span>

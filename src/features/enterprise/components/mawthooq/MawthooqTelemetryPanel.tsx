@@ -34,8 +34,8 @@ export function MawthooqTelemetryPanel({
     <div className="p-5 sm:p-7 rounded-3xl border border-white/10 bg-slate-950/80 backdrop-blur-xl shadow-2xl">
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 pb-6 border-b border-white/10">
         <div>
-          <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-emerald-400 mb-2">
-            <FileCheck2 size={14} className="shrink-0" />
+          <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-brand-teal-light mb-2">
+            <FileCheck2 size={14} className="shrink-0 text-brand-teal" />
             <span>ACTIVE CAMPAIGN SYNDICATION SUMMARY</span>
           </div>
           <h3 className="text-lg sm:text-2xl font-bold text-white mb-1">
@@ -54,8 +54,8 @@ export function MawthooqTelemetryPanel({
           </div>
 
           <div className="p-1 sm:border-l border-white/10 sm:pl-3">
-            <div className="text-[10px] sm:text-[11px] text-emerald-400 font-mono font-bold">KSA Penetration</div>
-            <div className="text-lg sm:text-xl font-black text-emerald-400 font-mono mt-0.5">{avgSaudiReach}%</div>
+            <div className="text-[10px] sm:text-[11px] text-brand-teal-light font-mono font-bold">KSA Penetration</div>
+            <div className="text-lg sm:text-xl font-black text-brand-teal-light font-mono mt-0.5">{avgSaudiReach}%</div>
           </div>
 
           <div className="p-1 border-t sm:border-t-0 sm:border-l border-white/10 pt-2 sm:pt-1 sm:pl-3">
@@ -83,7 +83,7 @@ export function MawthooqTelemetryPanel({
           <button
             type="button"
             onClick={onOpenAuditModal}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl font-bold text-xs bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-md"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl font-bold text-xs bg-slate-900 hover:bg-slate-800 text-brand-teal-light border border-brand-teal/40 flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-md"
           >
             <ShieldCheck size={14} />
             <span>Verify GAMR Certificate</span>
@@ -93,7 +93,7 @@ export function MawthooqTelemetryPanel({
             <button
               type="button"
               onClick={() => onBundleCreators(selectedCreators.map((c) => c.name))}
-              className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-black shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-brand-purple via-[#6d28d9] to-brand-teal hover:opacity-95 text-white shadow-lg shadow-brand-purple/30 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <span>Bundle Creators into RFP</span>
               <ArrowRight size={13} strokeWidth={2.5} />

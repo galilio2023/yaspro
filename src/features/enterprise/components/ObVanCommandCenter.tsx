@@ -85,8 +85,8 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
                 </div>
 
                 <div className="absolute top-4 right-4 pointer-events-none">
-                  <div className="bg-black/85 backdrop-blur-md px-3 py-1.5 rounded-full border border-emerald-500/40 text-xs font-mono text-emerald-400 flex items-center gap-1.5">
-                    <Wifi size={13} />
+                  <div className="bg-black/85 backdrop-blur-md px-3 py-1.5 rounded-full border border-brand-teal/40 text-xs font-mono text-brand-teal-light flex items-center gap-1.5">
+                    <Wifi size={13} className="text-brand-teal" />
                     <span>ENCRYPTED SATELLITE UPLINK</span>
                   </div>
                 </div>
@@ -134,7 +134,7 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
                 {/* Progress Bar */}
                 <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-brand-cyan via-brand-purple to-emerald-400 transition-all duration-100"
+                    className="h-full bg-gradient-to-r from-brand-cyan via-brand-purple to-brand-teal transition-all duration-100"
                     style={{
                       width: isProcessingClip
                         ? `${(clipSeconds / 8.4) * 100}%`
@@ -146,8 +146,8 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
                 </div>
 
                 {clipDone && (
-                  <div className="mt-3 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-2 text-xs text-emerald-400 font-mono">
-                    <CheckCircle2 size={14} className="shrink-0" />
+                  <div className="mt-3 p-2.5 rounded-xl bg-brand-teal/15 border border-brand-teal/30 flex items-center gap-2 text-xs text-brand-teal-light font-mono">
+                    <CheckCircle2 size={14} className="shrink-0 text-brand-teal" />
                     <span>Master Vertical 9:16 Clip Syndicated to TikTok & X</span>
                   </div>
                 )}

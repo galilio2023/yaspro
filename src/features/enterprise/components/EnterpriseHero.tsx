@@ -8,9 +8,10 @@ import { ENTERPRISE_STATS } from "../data";
 
 interface EnterpriseHeroProps {
   onOpenRfp: () => void;
+  onOpenCopilot?: () => void;
 }
 
-export function EnterpriseHero({ onOpenRfp }: EnterpriseHeroProps) {
+export function EnterpriseHero({ onOpenRfp, onOpenCopilot }: EnterpriseHeroProps) {
   return (
     <section className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24 border-b border-white/10 bg-slate-950">
       {/* Background glow effects */}
@@ -31,7 +32,7 @@ export function EnterpriseHero({ onOpenRfp }: EnterpriseHeroProps) {
         {/* Top Sovereign Status Bar */}
         <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-3 mb-8 px-1">
           <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-mono font-bold tracking-wide border border-brand-purple/40 bg-brand-purple/10 text-brand-purple-light backdrop-blur-md">
-            <span className="size-1.5 sm:size-2 rounded-full bg-emerald-400 shrink-0" />
+            <span className="size-1.5 sm:size-2 rounded-full bg-brand-teal shrink-0" />
             <span>DUBAI SOUNDSTAGE: LIVE GENLOCK</span>
           </div>
 
@@ -40,8 +41,8 @@ export function EnterpriseHero({ onOpenRfp }: EnterpriseHeroProps) {
             <span>OB-VAN FLEET: DEPLOYED</span>
           </div>
 
-          <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-mono font-medium border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 backdrop-blur-md">
-            <ShieldCheck size={12} className="text-emerald-400 shrink-0" />
+          <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-mono font-medium border border-brand-teal/30 bg-brand-teal/15 text-brand-teal-light backdrop-blur-md">
+            <ShieldCheck size={12} className="text-brand-teal shrink-0" />
             <span>GAMR MAWTHOOQ CERTIFIED</span>
           </div>
         </div>
@@ -62,9 +63,19 @@ export function EnterpriseHero({ onOpenRfp }: EnterpriseHeroProps) {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-14 sm:mb-16">
+          {onOpenCopilot && (
+            <button
+              onClick={onOpenCopilot}
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-brand-purple to-brand-cyan text-white shadow-xl shadow-brand-purple/25 flex items-center justify-center gap-2 cursor-pointer transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <Sparkles size={16} className="text-brand-gold animate-pulse" />
+              <span>Launch AI RFP &amp; Budget Copilot</span>
+            </button>
+          )}
+
           <button
             onClick={onOpenRfp}
-            className="w-full sm:w-auto px-7 py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-brand-purple to-indigo-600 hover:from-brand-purple-light hover:to-indigo-500 text-white shadow-xl shadow-brand-purple/25 flex items-center justify-center gap-2 cursor-pointer transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full sm:w-auto px-7 py-3.5 rounded-xl font-bold text-sm bg-white/10 hover:bg-white/15 text-white border border-white/15 hover:border-white/30 flex items-center justify-center gap-2 cursor-pointer transition-all duration-200"
           >
             <FileText size={16} />
             <span>Submit Enterprise RFP / Tender</span>
@@ -73,10 +84,9 @@ export function EnterpriseHero({ onOpenRfp }: EnterpriseHeroProps) {
 
           <a
             href="#virtual-simulator"
-            className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-bold text-sm bg-white/10 hover:bg-white/15 text-white border border-white/15 hover:border-white/30 flex items-center justify-center gap-2 transition-all duration-200"
+            className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-bold text-sm text-text-secondary hover:text-white flex items-center justify-center gap-2 transition-all duration-200"
           >
-            <Sparkles size={16} className="text-brand-cyan" />
-            <span>Launch Virtual Stage Simulator</span>
+            <span>Virtual Stage Simulator</span>
           </a>
         </div>
 

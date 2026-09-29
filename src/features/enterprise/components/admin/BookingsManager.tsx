@@ -222,7 +222,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                         }
                         className={`text-[10px] font-semibold px-2 py-1 rounded-lg border focus:outline-none cursor-pointer ${
                           b.paymentStatus === "paid"
-                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                            ? "bg-brand-teal/15 text-brand-teal-light border-brand-teal/30"
                             : b.paymentStatus === "deposit_paid"
                             ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
                             : b.paymentStatus === "refunded"
@@ -242,7 +242,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                       <span
                         className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
                           b.status === "confirmed"
-                            ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+                            ? "bg-brand-teal/15 text-brand-teal-light border-brand-teal/30"
                             : b.status === "completed"
                             ? "bg-blue-500/20 text-blue-300 border-blue-500/30"
                             : b.status === "cancelled"
@@ -277,7 +277,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                           type="button"
                           disabled={updatingIds.has(b.id)}
                           onClick={() => handleStatusChange(b.id, "confirmed")}
-                          className="px-2 py-1 rounded bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
+                          className="px-2 py-1 rounded bg-brand-teal/20 hover:bg-brand-teal/30 border border-brand-teal/30 text-brand-teal-light text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
                         >
                           Confirm
                         </button>
@@ -468,7 +468,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                     <span className="font-bold text-white text-sm font-mono">
                       {formatCurrency(Number(callSheetBooking.totalAmount), callSheetBooking.currency || "AED")}
                     </span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase bg-brand-teal/15 text-brand-teal-light border border-brand-teal/30 font-mono">
                       {callSheetBooking.paymentStatus || "UNPAID"}
                     </span>
                   </div>

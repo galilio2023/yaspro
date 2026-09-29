@@ -178,8 +178,8 @@ export default function Footer() {
               Terms of Service
             </Link>
 
-            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[11px]">
-              <span className="size-1.5 rounded-full bg-emerald-400" />
+            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-brand-teal/15 border border-brand-teal/30 text-brand-teal-light font-mono text-[11px]">
+              <span className="size-1.5 rounded-full bg-brand-teal" />
               <span>All 4 Soundstages Online</span>
             </span>
           </div>

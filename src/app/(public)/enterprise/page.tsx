@@ -14,12 +14,14 @@ import { EnterpriseRfpModal } from "@/features/enterprise/components/EnterpriseR
 import { Container } from "@/components/ui/container";
 import Link from "next/link";
 import { Lock, ArrowRight, Video } from "lucide-react";
-
+import { ProductionCopilotModal } from "@/features/enterprise/components/ai/ProductionCopilotModal";
+import { type ProductionProposalResponse } from "@/lib/ai/production-advisor";
 
 import { type EnterpriseRfpInput } from "@/lib/validations";
 
 export default function EnterprisePage() {
   const [isRfpModalOpen, setIsRfpModalOpen] = useState(false);
+  const [isCopilotOpen, setIsCopilotOpen] = useState(false);
   const [rfpInitialData, setRfpInitialData] = useState<{
     scope?: EnterpriseRfpInput["projectScope"];
     environment?: string;
@@ -41,10 +43,21 @@ export default function EnterprisePage() {
     setIsRfpModalOpen(true);
   };
 
+  const handleApplyCopilotProposal = (proposal: ProductionProposalResponse) => {
+    handleOpenRfp({
+      scope: "turnkey_enterprise_retainer",
+      tier: `${proposal.campaignConcept} (Est. ${proposal.estimatedTotalAed.toLocaleString()} AED)`,
+      creators: proposal.recommendedInfluencers.map((i) => i.name),
+    });
+  };
+
   return (
     <main className="min-h-screen bg-background text-white selection:bg-brand-purple selection:text-white">
       {/* 1. Executive Sovereign Hero */}
-      <EnterpriseHero onOpenRfp={() => handleOpenRfp()} />
+      <EnterpriseHero
+        onOpenRfp={() => handleOpenRfp()}
+        onOpenCopilot={() => setIsCopilotOpen(true)}
+      />
 
       {/* 2. Sovereign Trust & Enterprise Partner Logos Marquee */}
       <EnterpriseTrustLogos />
@@ -122,6 +135,13 @@ export default function EnterprisePage() {
         isOpen={isRfpModalOpen}
         onClose={() => setIsRfpModalOpen(false)}
         initialData={rfpInitialData}
+      />
+
+      {/* 11. Autonomous AI Production Copilot Modal */}
+      <ProductionCopilotModal
+        isOpen={isCopilotOpen}
+        onClose={() => setIsCopilotOpen(false)}
+        onApplyToRfp={handleApplyCopilotProposal}
       />
     </main>
   );

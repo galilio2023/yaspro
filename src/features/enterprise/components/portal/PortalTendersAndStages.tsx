@@ -62,7 +62,7 @@ export function PortalTenders() {
                     <span className="text-xs font-mono font-bold text-brand-cyan">
                       {searchResult.rfp.referenceCode}
                     </span>
-                    <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-brand-teal/15 text-brand-teal-light border border-brand-teal/30">
                       {searchResult.rfp.status.replace("_", " ")}
                     </span>
                   </div>
@@ -85,7 +85,7 @@ export function PortalTenders() {
                     <span>{searchResult.rfp.country}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <ShieldCheck size={13} className="text-emerald-400 shrink-0" />
+                    <ShieldCheck size={13} className="text-brand-teal shrink-0" />
                     <span>
                       {searchResult.rfp.requiresMawthooqCompliance ? "Mawthooq Pre-Cleared" : "Standard Compliance"}
                     </span>
@@ -107,7 +107,7 @@ export function PortalTenders() {
         <div>
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono font-bold text-brand-cyan">EXP-9182-DXB</span>
-            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+            <span className="text-[10px] font-mono text-brand-teal-light bg-brand-teal/15 px-2 py-0.5 rounded border border-brand-teal/30">
               SLA ACTIVE
             </span>
           </div>
@@ -162,7 +162,7 @@ export function PortalStages() {
         <div className="text-xs text-text-secondary mb-4 leading-relaxed">
           Infinite 180° Cyclorama • Motorized DMX Grid • ARRI SkyPanel RGBWW
         </div>
-        <div className="text-xs font-mono text-emerald-400 font-bold">● Reserved: 4 Days Remaining This Month</div>
+        <div className="text-xs font-mono text-brand-teal-light font-bold">● Reserved: 4 Days Remaining This Month</div>
       </div>
 
       <div className="p-4 sm:p-5 rounded-2xl border border-white/10 bg-slate-900/60">

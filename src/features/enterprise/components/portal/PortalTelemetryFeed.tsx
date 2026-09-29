@@ -42,11 +42,11 @@ export function PortalTelemetryFeed() {
       {/* Header bar */}
       <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div className={`size-2.5 rounded-full ${isLiveStreaming ? "bg-emerald-400" : "bg-amber-400"}`} />
+          <div className={`size-2.5 rounded-full ${isLiveStreaming ? "bg-brand-teal animate-pulse" : "bg-amber-400"}`} />
           <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
             Sovereign Relay Bus &amp; SMPTE 2110 IP Ingest
           </span>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20">
             {isLiveStreaming ? "SIMULATED TELEMETRY 10s" : "PAUSED"}
           </span>
         </div>
@@ -87,7 +87,7 @@ export function PortalTelemetryFeed() {
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-purple/20 text-brand-purple-light border border-brand-purple/30 font-bold">
                     {ev.source}
                   </span>
-                  <span className="text-[10px] font-mono text-emerald-400">
+                  <span className="text-[10px] font-mono text-brand-teal-light">
                     {ev.type}
                   </span>
                 </div>

@@ -278,8 +278,8 @@ export function VirtualStudioSection() {
 
             {/* TOP BROADCAST HUD OVERLAYS */}
             <div className="absolute top-2.5 left-2.5 sm:top-3.5 sm:left-3.5 pointer-events-none flex items-center gap-2">
-              <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-emerald-500/40 text-[10px] sm:text-xs font-mono text-emerald-400">
-                <span className="size-1.5 sm:size-2 rounded-full bg-emerald-500" />
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-brand-teal/40 text-[10px] sm:text-xs font-mono text-brand-teal-light">
+                <span className="size-1.5 sm:size-2 rounded-full bg-brand-teal" />
                 <span className="font-bold">PHYSICAL STAGE</span>
                 <span className="text-white/40 hidden sm:inline">|</span>
                 <span className="text-white/80 hidden sm:inline">Green Cyclorama</span>

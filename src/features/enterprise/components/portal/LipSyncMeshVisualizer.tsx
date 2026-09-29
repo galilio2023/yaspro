@@ -45,12 +45,12 @@ export function LipSyncMeshVisualizer({
       {/* Top Header */}
       <div className="flex items-center justify-between gap-2 mb-3">
         <div className="flex items-center gap-2">
-          <span className={`size-2 rounded-full ${isPlaying ? "bg-emerald-400" : "bg-white/30"}`} />
+          <span className={`size-2 rounded-full ${isPlaying ? "bg-brand-teal animate-pulse" : "bg-white/30"}`} />
           <span className="text-[11px] font-mono font-bold text-white uppercase tracking-wider">
             Neural Viseme Tracker
           </span>
         </div>
-        <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+        <span className="text-[10px] font-mono text-brand-teal-light bg-brand-teal/15 px-2 py-0.5 rounded border border-brand-teal/30">
           {accuracy}
         </span>
       </div>

@@ -29,4 +29,6 @@ export interface InfluencerItem {
   signatureProductions?: string[];
   demographics?: CreatorDemographics;
   avatar?: string;
+  mawthooqStatus?: string;
+  mawthooqLicenseId?: string;
 }

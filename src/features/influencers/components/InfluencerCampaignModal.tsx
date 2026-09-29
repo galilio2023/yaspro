@@ -183,7 +183,7 @@ export function InfluencerCampaignModal({
 
         {isSuccess ? (
           <div className="py-12 text-center flex flex-col items-center">
-            <div className="size-16 rounded-full bg-green-500/20 border border-green-500/40 text-green-400 flex items-center justify-center mb-4">
+            <div className="size-16 rounded-full bg-brand-teal/20 border border-brand-teal/40 text-brand-teal flex items-center justify-center mb-4">
               <CheckCircle2 size={32} />
             </div>
             <h3 className="text-2xl font-bold text-white mb-2 font-display">

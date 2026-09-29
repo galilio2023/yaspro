@@ -23,8 +23,8 @@ export function HoloTwinRoiCalculator({
     <div className="p-5 sm:p-7 rounded-3xl border border-white/10 bg-slate-900/70 backdrop-blur-xl flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
       {/* Description info */}
       <div className="flex-1">
-        <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-400 mb-1.5">
-          <TrendingDown size={14} className="shrink-0" />
+        <div className="flex items-center gap-2 text-xs font-mono font-bold text-brand-teal-light mb-1.5">
+          <TrendingDown size={14} className="shrink-0 text-brand-teal" />
           <span>SOVEREIGN PRODUCTION COST OPTIMIZATION</span>
         </div>
         <h3 className="text-lg sm:text-xl font-bold text-white mb-1.5">
@@ -47,11 +47,11 @@ export function HoloTwinRoiCalculator({
           </div>
 
           <div className="px-1.5 sm:px-2 pl-2.5 sm:pl-3">
-            <div className="text-[10px] sm:text-[11px] text-emerald-400 font-mono font-bold">Virtual Stage</div>
+            <div className="text-[10px] sm:text-[11px] text-brand-teal-light font-mono font-bold">Virtual Stage</div>
             <div className="text-sm sm:text-base font-black text-white font-mono mt-0.5">
               ${virtualStageCost.toLocaleString()}
             </div>
-            <div className="text-[9px] text-emerald-400/80 font-mono mt-0.5 hidden xs:block">
+            <div className="text-[9px] text-brand-teal-light/80 font-mono mt-0.5 hidden xs:block">
               {selectedTwin.permitSavingsPercentage}% off physical
             </div>
           </div>

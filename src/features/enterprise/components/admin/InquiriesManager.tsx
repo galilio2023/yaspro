@@ -147,9 +147,9 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
 
         <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10">
           <span className="text-xs text-slate-400 flex items-center gap-1.5">
-            <CheckCircle2 size={14} className="text-emerald-400" /> Resolved Leads
+            <CheckCircle2 size={14} className="text-brand-teal" /> Resolved Leads
           </span>
-          <span className="text-2xl font-bold text-emerald-400 mt-1 block">
+          <span className="text-2xl font-bold text-brand-teal-light mt-1 block">
             {totalResolved}
           </span>
         </div>
@@ -230,7 +230,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
                     <span
                       className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
                         inq.isResolved
-                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                          ? "bg-brand-teal/15 text-brand-teal-light border-brand-teal/30"
                           : "bg-amber-500/10 text-amber-400 border-amber-500/30"
                       }`}
                     >
@@ -283,7 +283,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-colors w-full justify-center"
+                      className="px-3 py-1.5 rounded-xl bg-brand-teal/20 hover:bg-brand-teal/30 border border-brand-teal/40 text-brand-teal-light text-xs font-semibold flex items-center gap-1.5 transition-colors w-full justify-center"
                     >
                       <span>WhatsApp</span>
                       <ExternalLink size={12} />

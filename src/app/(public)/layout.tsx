@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { WhatsAppConcierge } from "@/components/common/WhatsAppConcierge";
+import { UnifiedFloatingActions } from "@/components/layout/UnifiedFloatingActions";
 
 export default function PublicLayout({
   children,
@@ -21,7 +21,7 @@ export default function PublicLayout({
         {children}
       </main>
       <Footer />
-      <WhatsAppConcierge />
+      <UnifiedFloatingActions />
     </>
   );
 }
