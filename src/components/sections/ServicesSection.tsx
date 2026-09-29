@@ -1,3 +1,5 @@
+"use client";
+
 import { Video, ShieldCheck, Clock, Award, Sparkles } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { StaggerContainer, StaggerItem } from "@/components/animations/MotionWrappers";
@@ -5,15 +7,18 @@ import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import { SERVICES_DATA } from "./services.data";
 import { ServiceCard } from "./ServiceCard";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 const HIGHLIGHT_PERKS = [
-  { icon: Award, text: "GCC & UAE Tier-One Certified Facilities" },
-  { icon: Video, text: "Cinema 8K RAW & Multi-Cam 4K DCI" },
-  { icon: Clock, text: "24/7 Crew & Fast-Response OB-Van Units" },
-  { icon: ShieldCheck, text: "Guaranteed Turnkey Master Deliverables" },
+  { icon: Award, textKey: "services.perk1", defaultText: "GCC & UAE Tier-One Certified Facilities" },
+  { icon: Video, textKey: "services.perk2", defaultText: "Cinema 8K RAW & Multi-Cam 4K DCI" },
+  { icon: Clock, textKey: "services.perk3", defaultText: "24/7 Crew & Fast-Response OB-Van Units" },
+  { icon: ShieldCheck, textKey: "services.perk4", defaultText: "Guaranteed Turnkey Master Deliverables" },
 ];
 
 export function ServicesSection() {
+  const { t, isArabic } = useLanguage();
+
   return (
     <Section
       id="services"
@@ -47,12 +52,12 @@ export function ServicesSection() {
       <Container className="relative z-10">
         <SectionHeader
           headingId="services-title"
-          badge="Turnkey Production Pillars"
+          badge={t("services.badge")}
           badgeVariant="cyan"
           badgeIcon={<Sparkles size={13} className="text-brand-cyan" />}
-          title="Shape Your Content"
-          gradientText="With Us"
-          description="From high-capacity soundproof cyclorama stages to mobile live OB-VAN broadcasting and cinema drone cinematography — built for government entities, prestige brands, and tier-one creators."
+          title={isArabic ? t("services.title") : "Shape Your Content"}
+          gradientText={isArabic ? t("services.titleGradient") : "With Us"}
+          description={t("services.description")}
         />
 
         <StaggerContainer
@@ -79,12 +84,12 @@ export function ServicesSection() {
             return (
               <div
                 key={i}
-                className="flex items-center gap-3 text-left py-1 text-text-secondary text-xs font-mono"
+                className="flex items-center gap-3 text-start py-1 text-text-secondary text-xs font-mono"
               >
                 <div className="size-7 rounded-lg bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center shrink-0">
                   <Icon size={14} className="text-brand-purple-light" />
                 </div>
-                <span>{perk.text}</span>
+                <span>{t(perk.textKey) || perk.defaultText}</span>
               </div>
             );
           })}

@@ -6,6 +6,7 @@ import { ArrowRight, Calendar, Video, MapPin } from "lucide-react";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import { BorderBeam } from "@/components/magicui/border-beam";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 // Dynamically import Three.js — SSR-off, zero-placeholder since it's behind the scene
 const RocketAndHexBallCanvas = dynamic(
@@ -24,20 +25,28 @@ interface CtaSectionProps {
 }
 
 const HUBS = [
-  { flag: "🇦🇪", city: "Dubai" },
-  { flag: "🇪🇬", city: "Cairo" },
-  { flag: "🇯🇴", city: "Amman" },
+  { flag: "🇦🇪", cityEn: "Dubai", cityAr: "دبي" },
+  { flag: "🇪🇬", cityEn: "Cairo", cityAr: "القاهرة" },
+  { flag: "🇯🇴", cityEn: "Amman", cityAr: "عَمّان" },
 ];
 
 export function CtaSection({
-  title = "Ready to Create",
-  gradientText = "Something Great?",
-  description = "Whether you need a 4K soundstage, a live OB-VAN, or a full influencer content flywheel — our production team is on-call across three regional hubs.",
-  primaryCtaText = "Book a Studio",
+  title,
+  gradientText,
+  description,
+  primaryCtaText,
   primaryCtaHref = "/studio-booking",
-  secondaryCtaText = "Talk to Producers",
+  secondaryCtaText,
   secondaryCtaHref = "/contact",
 }: CtaSectionProps) {
+  const { t, isArabic } = useLanguage();
+
+  const displayTitle = isArabic ? t("cta.title") : (title || "Ready to Create");
+  const displayGradientText = isArabic ? t("cta.titleGradient") : (gradientText || "Something Great?");
+  const displayDesc = isArabic ? t("cta.description") : (description || "Whether you need a 4K soundstage, a live OB-VAN, or a full influencer content flywheel — our production team is on-call across three regional hubs.");
+  const displayPrimaryText = isArabic ? t("cta.bookStudio") : (primaryCtaText || "Book a Studio");
+  const displaySecondaryText = isArabic ? t("cta.talkProducers") : (secondaryCtaText || "Talk to Producers");
+
   return (
     <section
       id="cta"
@@ -48,11 +57,8 @@ export function CtaSection({
       <RocketAndHexBallCanvas className="absolute inset-0 w-full h-full pointer-events-none md:pointer-events-auto" />
 
       {/* ── Layer 1: Cinematic Gradient Curtain (ensures text legibility) ── */}
-      {/* Vertical: strong at bottom so text reads clean, feathers into 3D at top */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#03020a] via-[#03020a]/70 to-[#03020a]/10" />
-      {/* Horizontal vignette: darkens left/right edges for depth */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#03020a]/60 via-transparent to-[#03020a]/60" />
-      {/* Subtle radial center glow to keep brand purple alive */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_80%,rgba(124,58,237,0.15),transparent)]" />
 
       {/* ── Layer 2: Text / CTA Content ── */}
@@ -60,8 +66,8 @@ export function CtaSection({
         <FadeUp>
           {/* Live status badge */}
           <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-mono uppercase tracking-wider font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 mb-6 backdrop-blur-md">
-            <span className="size-2 rounded-full bg-emerald-400" />
-            Now Booking Q3 &amp; Q4 2026 Productions
+            <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>{t("cta.liveStatus")}</span>
           </div>
 
           {/* Headline */}
@@ -69,26 +75,26 @@ export function CtaSection({
             id="cta-title"
             className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-4 sm:mb-6 font-display tracking-tight leading-[1.08] text-balance drop-shadow-[0_2px_24px_rgba(0,0,0,0.9)] text-center"
           >
-            {title}{" "}
+            {displayTitle}{" "}
             <span className="bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-cyan bg-clip-text text-transparent">
-              {gradientText}
+              {displayGradientText}
             </span>
           </h2>
 
           {/* Sub-copy */}
           <p className="text-sm sm:text-base md:text-lg text-text-secondary mb-8 sm:mb-10 max-w-2xl mx-auto text-balance leading-relaxed text-center">
-            {description}
+            {displayDesc}
           </p>
 
           {/* Hub pills */}
           <div className="flex items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-10 flex-wrap">
             {HUBS.map((hub) => (
               <span
-                key={hub.city}
+                key={hub.cityEn}
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-medium border border-white/10 bg-white/5 text-text-muted backdrop-blur-md"
               >
                 <MapPin size={9} className="text-brand-cyan" />
-                {hub.flag} {hub.city}
+                {hub.flag} {isArabic ? hub.cityAr : hub.cityEn}
               </span>
             ))}
           </div>
@@ -101,10 +107,10 @@ export function CtaSection({
               shimmerDuration="2.5s"
               className="w-full sm:w-auto px-9 py-4 font-semibold text-sm gap-2 shadow-[0_8px_32px_rgba(124,58,237,0.35)] min-h-[44px] justify-center"
             >
-              <Link href={primaryCtaHref}>
+              <Link href={primaryCtaHref} className="inline-flex items-center gap-2">
                 <Calendar size={15} />
-                <span>{primaryCtaText}</span>
-                <ArrowRight size={15} />
+                <span>{displayPrimaryText}</span>
+                <ArrowRight size={15} className="rtl:rotate-180 shrink-0 transition-transform" />
               </Link>
             </ShimmerButton>
 
@@ -113,7 +119,7 @@ export function CtaSection({
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-sm text-white border border-white/20 bg-white/[0.06] hover:bg-white/10 hover:border-white/30 transition-all text-center backdrop-blur-sm min-h-[44px]"
             >
               <Video size={15} className="text-brand-cyan" />
-              {secondaryCtaText}
+              <span>{displaySecondaryText}</span>
             </Link>
           </div>
         </FadeUp>

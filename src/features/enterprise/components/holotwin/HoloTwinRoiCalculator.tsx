@@ -72,7 +72,7 @@ export function HoloTwinRoiCalculator({
             className="w-full sm:w-auto btn-brand py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-lg hover:shadow-brand-purple/25 transition-all mt-2 sm:mt-0"
           >
             <span>Reserve Stage</span>
-            <ArrowRight size={13} />
+            <ArrowRight size={13} className="rtl:rotate-180" />
           </button>
         )}
       </div>

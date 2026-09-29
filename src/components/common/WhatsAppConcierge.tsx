@@ -155,9 +155,9 @@ export function WhatsAppConcierge() {
                 key={opt.title}
                 type="button"
                 onClick={() => openWhatsApp(opt.text)}
-                className="w-full text-left p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-brand-purple/40 hover:bg-white/[0.06] transition-all duration-200 flex items-center justify-between group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+                className="w-full text-start p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-brand-purple/40 hover:bg-white/[0.06] transition-all duration-200 flex items-center justify-between group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
               >
-                <div className="flex items-center gap-3 pr-2">
+                <div className="flex items-center gap-3 pe-2">
                   <div className="size-8 rounded-lg bg-brand-purple/15 text-brand-purple-light flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                     <opt.icon size={15} />
                   </div>
@@ -170,7 +170,7 @@ export function WhatsAppConcierge() {
                     </span>
                   </div>
                 </div>
-                <ArrowUpRight size={14} className="text-text-muted group-hover:text-white shrink-0 transition-colors" />
+                <ArrowUpRight size={14} className="text-text-muted group-hover:text-white shrink-0 transition-colors rtl:scale-x-[-1]" />
               </button>
             ))}
           </div>

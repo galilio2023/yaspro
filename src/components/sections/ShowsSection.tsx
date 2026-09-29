@@ -12,9 +12,18 @@ import { CinemaVideoModal } from "@/components/common/CinemaVideoModal";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-const CATEGORIES = ["All", "Talk Show", "Reality / Social", "Entertainment", "Fashion & Lifestyle"] as const;
+import { useLanguage } from "@/components/providers/LanguageProvider";
+
+const CATEGORIES = [
+  { id: "All", en: "All", ar: "الكل" },
+  { id: "Talk Show", en: "Talk Show", ar: "برامج حوارية" },
+  { id: "Reality / Social", en: "Reality / Social", ar: "واقعي / اجتماعي" },
+  { id: "Entertainment", en: "Entertainment", ar: "ترفيه" },
+  { id: "Fashion & Lifestyle", en: "Fashion & Lifestyle", ar: "موضة ولايف ستايل" },
+] as const;
 
 export function ShowsSection() {
+  const { isArabic } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [selectedShow, setSelectedShow] = useState<ShowItem | null>(null);
 
@@ -40,29 +49,33 @@ export function ShowsSection() {
       <Container className="relative z-10">
         <SectionHeader
           headingId="shows-title"
-          badge="Flagship Media Formats"
+          badge={isArabic ? "برامج إعلامية رائدة" : "Flagship Media Formats"}
           badgeVariant="purple"
           badgeIcon={<Tv size={13} />}
-          title="Signature Productions &"
-          gradientText="Original Shows"
-          description="Media projects we’ve delivered with premier Middle Eastern creators, cinematic production values, and hundreds of millions of digital views."
+          title={isArabic ? "إنتاجاتنا الحصرية و" : "Signature Productions &"}
+          gradientText={isArabic ? "البرامج الأصلية" : "Original Shows"}
+          description={
+            isArabic
+              ? "مشاريع إعلامية حصرية نفذناها مع نخبة صناع المحتوى في الشرق الأوسط بقيم إنتاج سينمائية ومئات الملايين من المشاهدات."
+              : "Media projects we’ve delivered with premier Middle Eastern creators, cinematic production values, and hundreds of millions of digital views."
+          }
         />
 
         {/* Category Filter Pills */}
         <div className="flex items-center justify-start sm:justify-center gap-2 mb-8 sm:mb-10 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
           {CATEGORIES.map((cat) => (
             <button
-              key={cat}
+              key={cat.id}
               type="button"
-              onClick={() => setActiveCategory(cat)}
+              onClick={() => setActiveCategory(cat.id)}
               className={cn(
                 "px-4 py-2 min-h-[44px] rounded-full text-xs font-medium transition-all duration-200 cursor-pointer border whitespace-nowrap flex items-center justify-center",
-                activeCategory === cat
+                activeCategory === cat.id
                   ? "bg-brand-purple text-white border-brand-purple shadow-lg shadow-brand-purple/30 scale-105"
                   : "bg-white/5 text-text-secondary border-white/10 hover:border-white/20 hover:text-white"
               )}
             >
-              {cat}
+              {isArabic ? cat.ar : cat.en}
             </button>
           ))}
         </div>
@@ -105,12 +118,12 @@ export function ShowsSection() {
                   {/* Center Play Button Overlay */}
                   <div className="absolute inset-0 flex items-center justify-center z-10">
                     <div className="size-12 sm:size-14 rounded-full bg-black/60 border border-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-xl group-hover:scale-110 group-hover:bg-brand-purple group-hover:border-white transition-all duration-300">
-                      <Play size={18} className="fill-current translate-x-0.5 text-white" />
+                      <Play size={18} className="fill-current translate-x-0.5 rtl:-translate-x-0.5 text-white" />
                     </div>
                   </div>
 
                   {/* Bottom Video HUD Duration / Quality */}
-                  <div className="absolute bottom-2.5 right-3 z-10">
+                  <div className="absolute bottom-2.5 end-3 z-10">
                     <span className="px-2 py-0.5 rounded-md bg-black/80 backdrop-blur-md text-[10px] font-mono text-white/80 border border-white/10 flex items-center gap-1">
                       <Film size={10} className="text-brand-purple-light" />
                       4K Trailer
@@ -152,7 +165,7 @@ export function ShowsSection() {
                   <div className="pt-4 border-t border-white/10 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Eye size={13} className="text-brand-purple" />
-                      <span className="text-xs font-extrabold text-white font-mono">
+                      <span className="text-xs font-extrabold text-white font-mono" dir="ltr">
                         {show.views}
                       </span>
                       <span className="text-white/30">•</span>
@@ -165,7 +178,7 @@ export function ShowsSection() {
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-brand-purple text-white text-xs font-semibold backdrop-blur-md transition-all duration-200 group-hover:scale-105 active:scale-95 cursor-pointer shadow-md"
                     >
                       <Play size={11} className="fill-current text-brand-cyan group-hover:text-white" />
-                      <span>Play</span>
+                      <span>{isArabic ? "تشغيل" : "Play"}</span>
                     </button>
                   </div>
                 </div>
@@ -177,14 +190,16 @@ export function ShowsSection() {
         {/* Section Footer CTA */}
         <FadeUp delay={0.2} className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12 pt-8 border-t border-white/10 text-center">
           <span className="text-sm text-text-secondary">
-            Have a television format or creator concept you want to produce?
+            {isArabic
+              ? "هل لديك فكرة برنامج تلفزيوني أو محتوى إبداعي ترغب بإنتاجه؟"
+              : "Have a television format or creator concept you want to produce?"}
           </span>
           <Link
             href="/studio-booking"
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-xs font-semibold shadow-lg shadow-brand-purple/25 hover:scale-105 transition-all"
           >
-            <span>Book Production Consultation</span>
-            <ArrowRight size={14} />
+            <span>{isArabic ? "حجز استشارة إنتاجية" : "Book Production Consultation"}</span>
+            <ArrowRight size={14} className="rtl:rotate-180 shrink-0 transition-transform" />
           </Link>
         </FadeUp>
       </Container>

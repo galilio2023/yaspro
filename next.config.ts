@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   experimental: {
@@ -6,6 +9,8 @@ const nextConfig: NextConfig = {
       "lucide-react",
       "framer-motion",
       "three",
+      "@radix-ui/react-slot",
+      "better-auth",
     ],
   },
   images: {
@@ -20,4 +25,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

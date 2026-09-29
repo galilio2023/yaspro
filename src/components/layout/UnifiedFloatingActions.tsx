@@ -3,31 +3,42 @@
 import { useState, useEffect, useRef } from "react";
 import { MessageSquare, X, ArrowUpRight, Camera, Video, Users, Bot, Sparkles } from "lucide-react";
 import { ProductionCopilotModal } from "@/features/enterprise/components/ai/ProductionCopilotModal";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 const WHATSAPP_PHONE = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "971554010465";
 
 const QUICK_INQUIRIES = [
   {
     icon: Video,
-    title: "Book Studio Soundstage",
-    subtitle: "Check today's soundstage & podcast suite availability",
-    text: "Hello Yas Pro Dubai team, I would like to check availability and book a studio session at your Dubai facility.",
+    titleEn: "Book Studio Soundstage",
+    titleAr: "حجز استوديو تصوير",
+    subtitleEn: "Check today's soundstage & podcast suite availability",
+    subtitleAr: "التحقق من توفر استوديوهات التصوير والبودكاست اليوم",
+    textEn: "Hello Yas Pro Dubai team, I would like to check availability and book a studio session at your Dubai facility.",
+    textAr: "مرحباً فريق ياس برو دبي، أود الاستفسار عن توفر وحجز جلسة تصوير في استوديوهاتكم بدبي.",
   },
   {
     icon: Camera,
-    title: "Urgent Gear Rental Dispatch",
-    subtitle: "Same-day camera, lens & lighting delivery across UAE",
-    text: "Hello Yas Pro dispatch, I have an urgent equipment rental request in Dubai/UAE.",
+    titleEn: "Urgent Gear Rental Dispatch",
+    titleAr: "طلب عاجل لتأجير معدات",
+    subtitleEn: "Same-day camera, lens & lighting delivery across UAE",
+    subtitleAr: "توصيل فوري للكاميرات والعدسات والإضاءة في أنحاء الإمارات",
+    textEn: "Hello Yas Pro dispatch, I have an urgent equipment rental request in Dubai/UAE.",
+    textAr: "مرحباً قسم تأجير المعدات في ياس برو، لدي طلب تأجير عاجل للمعدات في دبي/الإمارات.",
   },
   {
     icon: Users,
-    title: "Influencer Campaign Booking",
-    subtitle: "Produce a branded show or podcast with our creator roster",
-    text: "Hello Yas Pro talent team, I would like to discuss an influencer production campaign with your creator network.",
+    titleEn: "Influencer Campaign Booking",
+    titleAr: "حملة مع صناع المحتوى",
+    subtitleEn: "Produce a branded show or podcast with our creator roster",
+    subtitleAr: "إنتاج برنامج أو بودكاست برعاية علامة تجارية مع نخبة المبدعين",
+    textEn: "Hello Yas Pro talent team, I would like to discuss an influencer production campaign with your creator network.",
+    textAr: "مرحباً فريق إدارة المواهب في ياس برو، أود مناقشة حملة إنتاج مع شبكة صناع المحتوى لديكم.",
   },
 ];
 
 export function UnifiedFloatingActions() {
+  const { t, isArabic } = useLanguage();
   const [isCopilotOpen, setIsCopilotOpen] = useState(false);
   const [isWhatsAppOpen, setIsWhatsAppOpen] = useState(false);
 
@@ -105,7 +116,7 @@ export function UnifiedFloatingActions() {
       <aside
         ref={containerRef}
         aria-label="Yas Pro Production Assistant and WhatsApp Concierge"
-        className="fixed bottom-20 right-4 sm:bottom-8 sm:right-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-28 sm:[[data-has-bottom-cart=true]_&]:bottom-8 pb-[env(safe-area-inset-bottom,0px)]"
+        className="fixed bottom-20 end-4 sm:bottom-8 sm:end-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-28 sm:[[data-has-bottom-cart=true]_&]:bottom-8 pb-[env(safe-area-inset-bottom,0px)]"
       >
         {/* WhatsApp Concierge Flyout */}
         {isWhatsAppOpen && (
@@ -115,7 +126,7 @@ export function UnifiedFloatingActions() {
             aria-modal="true"
             aria-labelledby="unified-concierge-heading"
             tabIndex={-1}
-            className="absolute bottom-16 right-0 w-[calc(100vw-2rem)] max-w-[360px] sm:w-[380px] bg-secondary border border-white/15 rounded-3xl p-4 sm:p-5 shadow-2xl shadow-black/80 backdrop-blur-2xl animate-fade-up outline-none"
+            className="absolute bottom-16 end-0 w-[calc(100vw-2rem)] max-w-[360px] sm:w-[380px] bg-secondary border border-white/15 rounded-3xl p-4 sm:p-5 shadow-2xl shadow-black/80 backdrop-blur-2xl animate-fade-up outline-none"
           >
             {/* Header */}
             <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
@@ -125,12 +136,12 @@ export function UnifiedFloatingActions() {
                     <MessageSquare size={18} />
                   </div>
                 </div>
-                <div>
+                <div className="text-start">
                   <h3 id="unified-concierge-heading" className="text-sm font-bold text-white font-display">
-                    Dubai Studio Concierge
+                    {t("concierge.title")}
                   </h3>
                   <p className="text-[11px] text-brand-teal-light font-medium">
-                    Production Dispatch Online
+                    {t("concierge.status")}
                   </p>
                 </div>
               </div>
@@ -148,34 +159,38 @@ export function UnifiedFloatingActions() {
 
             {/* Quick Routing Options */}
             <div className="mt-3.5 space-y-2">
-              <p className="text-[11px] font-mono text-text-muted uppercase tracking-wider">
-                Select Inquiry Topic:
+              <p className="text-[11px] font-mono text-text-muted uppercase tracking-wider text-start">
+                {t("concierge.selectTopic")}
               </p>
               {QUICK_INQUIRIES.map((q, idx) => {
                 const Icon = q.icon;
+                const title = isArabic ? q.titleAr : q.titleEn;
+                const subtitle = isArabic ? q.subtitleAr : q.subtitleEn;
+                const text = isArabic ? q.textAr : q.textEn;
+
                 return (
                   <button
                     key={idx}
                     type="button"
-                    onClick={() => openWhatsApp(q.text)}
-                    className="w-full text-left p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/15 transition-all group cursor-pointer flex items-center justify-between gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+                    onClick={() => openWhatsApp(text)}
+                    className="w-full text-start p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/15 transition-all group cursor-pointer flex items-center justify-between gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
                   >
                     <div className="flex items-center gap-3">
                       <div className="size-8 rounded-xl bg-brand-purple/20 text-brand-purple-light flex items-center justify-center group-hover:scale-105 transition-transform">
                         <Icon size={16} />
                       </div>
-                      <div>
+                      <div className="text-start">
                         <div className="text-xs font-bold text-white group-hover:text-brand-purple-light transition-colors">
-                          {q.title}
+                          {title}
                         </div>
                         <div className="text-[10.5px] text-text-muted line-clamp-1">
-                          {q.subtitle}
+                          {subtitle}
                         </div>
                       </div>
                     </div>
                     <ArrowUpRight
                       size={14}
-                      className="text-text-muted group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0"
+                      className="text-text-muted group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0 rtl:group-hover:-translate-x-0.5 rtl:rotate-90"
                     />
                   </button>
                 );
@@ -186,11 +201,17 @@ export function UnifiedFloatingActions() {
             <div className="pt-3.5 mt-3 border-t border-white/10">
               <button
                 type="button"
-                onClick={() => openWhatsApp("Hello Yas Pro Dubai team, I have a general production inquiry.")}
+                onClick={() =>
+                  openWhatsApp(
+                    isArabic
+                      ? "مرحباً فريق ياس برو دبي، لدي استفسار بخصوص خدمات الإنتاج."
+                      : "Hello Yas Pro Dubai team, I have a general production inquiry."
+                  )
+                }
                 className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-brand-purple via-brand-purple-mid to-brand-teal hover:opacity-95 flex items-center justify-center gap-2 shadow-lg shadow-brand-purple/25 hover:shadow-brand-purple/40 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
               >
                 <MessageSquare size={14} />
-                <span>Start Custom WhatsApp Chat</span>
+                <span>{t("concierge.customChat")}</span>
               </button>
             </div>
           </div>
@@ -219,7 +240,9 @@ export function UnifiedFloatingActions() {
                   <Bot size={17} className="text-brand-purple-light group-hover/copilot:text-white transition-colors" />
                   <Sparkles size={10} className="absolute -top-1 -right-1.5 text-brand-gold animate-pulse" />
                 </div>
-                <span className="font-display tracking-wide text-[11px] sm:text-xs">AI Copilot</span>
+                <span className="font-display tracking-wide text-[11px] sm:text-xs">
+                  {t("concierge.aiCopilot")}
+                </span>
               </button>
 
               {/* Clean Divider */}
@@ -242,7 +265,9 @@ export function UnifiedFloatingActions() {
                 ) : (
                   <MessageSquare size={17} className="text-brand-teal group-hover/wa:scale-110 transition-transform duration-200" />
                 )}
-                <span className="font-display tracking-wide text-[11px] sm:text-xs">WhatsApp</span>
+                <span className="font-display tracking-wide text-[11px] sm:text-xs">
+                  {t("concierge.whatsApp")}
+                </span>
               </button>
             </div>
           </div>

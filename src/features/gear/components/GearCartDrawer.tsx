@@ -182,7 +182,7 @@ export function GearCartDrawer({
               className="px-5 py-2.5 rounded-xl font-semibold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-purple-light flex items-center gap-2 shadow-lg shadow-brand-purple/25 whitespace-nowrap cursor-pointer hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
             >
               <span>Reserve Gear</span>
-              <ArrowRight size={14} />
+              <ArrowRight size={14} className="rtl:rotate-180" />
             </Link>
           </div>
         </div>
@@ -422,7 +422,7 @@ export function GearCartDrawer({
                   className="px-6 py-3 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-purple-light flex items-center gap-2 shadow-lg shadow-brand-purple/30 hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
                 >
                   <span>Submit Reservation</span>
-                  <ArrowRight size={14} />
+                  <ArrowRight size={14} className="rtl:rotate-180" />
                 </Link>
               </div>
             </div>

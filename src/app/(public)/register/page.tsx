@@ -110,9 +110,9 @@ export default function RegisterPage() {
                   placeholder="e.g. Tariq Mansoor"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
+                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
                 />
-                <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                <User size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
             </div>
 
@@ -124,9 +124,9 @@ export default function RegisterPage() {
                   placeholder="e.g. Dubai Media Agency"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
+                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
                 />
-                <Building size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                <Building size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
             </div>
           </div>
@@ -141,9 +141,9 @@ export default function RegisterPage() {
                   placeholder="name@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
+                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
                 />
-                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                <Mail size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
             </div>
 
@@ -155,9 +155,9 @@ export default function RegisterPage() {
                   placeholder="+971 50 000 0000"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
+                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
                 />
-                <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                <Phone size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
             </div>
           </div>
@@ -172,9 +172,9 @@ export default function RegisterPage() {
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
+                className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
               />
-              <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+              <Lock size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             </div>
           </div>
 
@@ -184,7 +184,7 @@ export default function RegisterPage() {
             className="w-full min-h-[44px] py-3.5 rounded-xl bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:opacity-95 text-white font-semibold text-sm tracking-wide shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 mt-6"
           >
             {isLoading ? "Creating account..." : "Complete Registration"}
-            <ArrowRight size={14} />
+            <ArrowRight size={14} className="rtl:rotate-180" />
           </button>
         </form>
 

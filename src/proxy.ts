@@ -1,58 +1,37 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
-/**
- * Next.js 16 Proxy convention (formerly middleware.ts).
- * Performs optimistic route protection and redirects for protected portals.
- */
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Better-Auth standard cookie names:
-  // "better-auth.session_token" or "__Secure-better-auth.session_token"
-  const sessionToken =
-    request.cookies.get("better-auth.session_token")?.value ||
-    request.cookies.get("__Secure-better-auth.session_token")?.value;
+  // Handle /ar and /en localized prefixes
+  const isArabicPath = pathname === "/ar" || pathname.startsWith("/ar/");
+  const isEnglishPath = pathname === "/en" || pathname.startsWith("/en/");
 
-  const isAuthRoute =
-    pathname.startsWith("/login") || pathname.startsWith("/register");
-  const isProtectedRoute =
-    pathname.startsWith("/portal") || pathname.startsWith("/enterprise/portal");
-  const isAdminRoute =
-    pathname.startsWith("/admin");
+  if (isArabicPath || isEnglishPath) {
+    const locale = isArabicPath ? "ar" : "en";
+    const strippedPath = pathname.replace(/^\/(ar|en)/, "") || "/";
+    const url = request.nextUrl.clone();
+    url.pathname = strippedPath;
 
-  // Redirect authenticated users away from /login & /register
-  if (isAuthRoute && sessionToken) {
-    const redirectUrl = request.nextUrl.searchParams.get("callbackUrl") || "/portal";
-    return NextResponse.redirect(new URL(redirectUrl, request.url));
+    const response = NextResponse.rewrite(url);
+    response.headers.set("x-next-intl-locale", locale);
+    response.cookies.set("NEXT_LOCALE", locale, { path: "/", maxAge: 31536000 });
+    return response;
   }
 
-  // Redirect unauthenticated users away from admin dashboard
-  if (isAdminRoute && !sessionToken && process.env.NODE_ENV === "production") {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
-    loginUrl.searchParams.set("error", "admin_required");
-    return NextResponse.redirect(loginUrl);
-  }
+  // Pass-through for default routes with locale cookie awareness
+  const cookieLocale =
+    request.cookies.get("NEXT_LOCALE")?.value ||
+    request.cookies.get("locale")?.value ||
+    "en";
 
-  // Redirect unauthenticated users away from protected client & enterprise portals
-  if (isProtectedRoute && !sessionToken) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set("x-next-intl-locale", cookieLocale);
+  return response;
 }
 
+export default proxy;
+
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except:
-     * - api routes (/api/*)
-     * - static files (_next/static, _next/image)
-     * - metadata/asset files (favicon.ico, sitemap.xml, robots.txt, *.png, *.svg, *.webp, *.jpg)
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:png|jpg|jpeg|gif|svg|webp|ico)).*)",
-  ],
+  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
 };

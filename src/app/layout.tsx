@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Inter, Poppins, Noto_Sans_Arabic } from "next/font/google";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
+import { NextIntlClientProvider } from "next-intl";
 import "./globals.css";
 
 const inter = Inter({
@@ -14,6 +15,15 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-display",
   display: "swap",
+});
+
+// Arabic typeface — loaded lazily (no preload) to avoid wasting bandwidth for EN users
+const notoSansArabic = Noto_Sans_Arabic({
+  subsets: ["arabic"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-arabic",
+  display: "swap",
+  preload: false,
 });
 
 export const viewport: Viewport = {
@@ -96,6 +106,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { LanguageProvider } from "@/components/providers/LanguageProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -104,18 +116,47 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${poppins.variable}`}
+      dir="ltr"
+      className={`${inter.variable} ${poppins.variable} ${notoSansArabic.variable}`}
       suppressHydrationWarning
     >
       <head>
+        {/*
+          Blocking inline script — runs before React hydrates, before first paint.
+          Reads localStorage and sets html[lang] + html[dir] immediately so there
+          is zero flash-of-wrong-direction for returning Arabic users.
+        */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var w=console.warn;console.warn=function(){var s=Array.prototype.join.call(arguments,' ');if(s.indexOf('Multiple instances of Three.js')!==-1||s.indexOf('updating from')!==-1||s.indexOf('THREE.Clock')!==-1){return;}w.apply(console,arguments);};})();`,
+            __html: `(function(){
+  try {
+    var lang = localStorage.getItem('yaspro_lang');
+    if (lang === 'ar') {
+      document.documentElement.lang = 'ar';
+      document.documentElement.dir = 'rtl';
+    }
+  } catch(e) {}
+  // Suppress benign Three.js / WebGPU console noise
+  var w = console.warn;
+  console.warn = function() {
+    var s = Array.prototype.join.call(arguments, ' ');
+    if (
+      s.indexOf('Multiple instances of Three.js') !== -1 ||
+      s.indexOf('updating from') !== -1 ||
+      s.indexOf('THREE.Clock') !== -1
+    ) { return; }
+    w.apply(console, arguments);
+  };
+})();`,
           }}
         />
       </head>
       <body className="min-h-screen w-full bg-background text-foreground antialiased overflow-x-hidden">
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        <NextIntlClientProvider>
+          <LanguageProvider>
+            <SmoothScrollProvider>{children}</SmoothScrollProvider>
+          </LanguageProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

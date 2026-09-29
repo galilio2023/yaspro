@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MessageSquare,
   Search,
@@ -99,6 +99,22 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
 
     return matchesSearch && matchesType && matchesStatus;
   });
+
+  const PAGE_SIZE = 20;
+  const [currentPage, setCurrentPage] = useState(0);
+
+  useEffect(() => {
+    setCurrentPage(0); // eslint-disable-line
+  }, [searchQuery, filterType, filterStatus]);
+
+  const pageCount = Math.max(1, Math.ceil(filteredInquiries.length / PAGE_SIZE));
+  const safePage = Math.min(currentPage, pageCount - 1);
+  const paginatedInquiries = filteredInquiries.slice(
+    safePage * PAGE_SIZE,
+    (safePage + 1) * PAGE_SIZE
+  );
+
+  const totalInquiries = filteredInquiries.length;
 
   const totalPending = inquiriesList.filter((i) => !i.isResolved).length;
   const totalResolved = inquiriesList.filter((i) => i.isResolved).length;
@@ -209,7 +225,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
             No inquiries match your current filters.
           </div>
         ) : (
-          filteredInquiries.map((inq) => (
+          paginatedInquiries.map((inq) => (
             <div
               key={inq.id}
               className={`p-5 rounded-2xl border transition-all ${
@@ -318,6 +334,34 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
           ))
         )}
       </div>
+
+      {/* Pagination */}
+      {totalInquiries > PAGE_SIZE && (
+        <div className="flex items-center justify-between px-4 py-3 border border-white/10 rounded-2xl bg-white/[0.01] text-xs text-slate-400">
+          <span>
+            Showing {safePage * PAGE_SIZE + 1}–{Math.min((safePage + 1) * PAGE_SIZE, totalInquiries)} of {totalInquiries}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+              disabled={safePage === 0}
+              className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            >
+              Previous
+            </button>
+            <span className="font-mono text-slate-300">{safePage + 1} / {pageCount}</span>
+            <button
+              type="button"
+              onClick={() => setCurrentPage((p) => Math.min(pageCount - 1, p + 1))}
+              disabled={safePage >= pageCount - 1}
+              className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

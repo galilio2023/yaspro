@@ -128,7 +128,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               target="_blank"
               className="flex items-center gap-1 text-purple-400 hover:text-purple-300 shrink-0"
             >
-              Public Site <ArrowUpRight size={12} />
+              Public Site <ArrowUpRight size={12} className="rtl:scale-x-[-1]" />
             </Link>
           </div>
         </div>

@@ -6,21 +6,25 @@ import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { ENTERPRISE_TIERS } from "../data";
 
+import { useLanguage } from "@/components/providers/LanguageProvider";
+
 interface EnterpriseTiersProps {
   onSelectTier: (tierName: string) => void;
 }
 
 export function EnterpriseTiersSection({ onSelectTier }: EnterpriseTiersProps) {
+  const { t, isArabic } = useLanguage();
+
   return (
     <section id="enterprise-tiers" className="py-12 sm:py-16 lg:py-28 bg-background border-b border-white/10 relative overflow-hidden">
       <Container className="relative z-10 max-w-6xl">
         <SectionHeader
-          badge="Enterprise Retainers & SLA Guarantees"
+          badge={t("enterprise.tiers.badge")}
           badgeVariant="purple"
           badgeIcon={<Sparkles size={13} className="text-brand-purple-light" />}
-          title="Sovereign Media Operations"
-          gradientText="Production Retainer Tiers"
-          description="Dedicated soundstage allocations, priority OB-Van dispatch, and full-stack cinema crews for ministries, giga-projects, and multinational agencies."
+          title={t("enterprise.tiers.title")}
+          gradientText={t("enterprise.tiers.gradient")}
+          description={t("enterprise.tiers.description")}
           className="mb-12 text-center"
         />
 
@@ -44,16 +48,18 @@ export function EnterpriseTiersSection({ onSelectTier }: EnterpriseTiersProps) {
                 {/* Header */}
                 <div className="mb-4">
                   <h3 className="text-xl font-bold text-white mb-1 group-hover:text-brand-purple-lighter transition-colors">
-                    {tier.name}
+                    {isArabic ? tier.arabicName : tier.name}
                   </h3>
-                  <div className="text-xs font-arabic text-text-secondary">{tier.arabicName}</div>
+                  <div className="text-xs text-text-secondary font-arabic">
+                    {isArabic ? tier.name : tier.arabicName}
+                  </div>
                   <div className="text-xs text-text-muted mt-2 font-medium">{tier.targetClientele}</div>
                 </div>
 
                 {/* Pricing Display */}
                 <div className="mb-6 p-4 rounded-2xl bg-black/40 border border-white/5">
-                  <div className="text-2xl sm:text-3xl font-black text-white font-mono">{tier.monthlyInvestment}</div>
-                  <div className="text-[11px] text-text-secondary font-mono mt-0.5">{tier.yearlyInvestment}</div>
+                  <div className="text-2xl sm:text-3xl font-black text-white font-mono" dir="ltr">{tier.monthlyInvestment}</div>
+                  <div className="text-[11px] text-text-secondary font-mono mt-0.5" dir="ltr">{tier.yearlyInvestment}</div>
                 </div>
 
                 {/* Features List */}
@@ -73,7 +79,7 @@ export function EnterpriseTiersSection({ onSelectTier }: EnterpriseTiersProps) {
                 {/* SLA Tag */}
                 <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-[11px] text-brand-purple-light font-mono mb-4 flex items-center gap-1.5">
                   <ShieldCheck size={13} className="shrink-0" />
-                  <span>SLA: {tier.slaGuarantee}</span>
+                  <span>{t("enterprise.tiers.slaPrefix")} {tier.slaGuarantee}</span>
                 </div>
 
                 {/* Action CTA */}
@@ -85,8 +91,8 @@ export function EnterpriseTiersSection({ onSelectTier }: EnterpriseTiersProps) {
                       : "bg-white/10 hover:bg-white/15 text-white border border-white/15"
                   }`}
                 >
-                  <span>Select {tier.name}</span>
-                  <ArrowRight size={13} />
+                  <span>{t("enterprise.tiers.selectTier")} {isArabic ? tier.arabicName : tier.name}</span>
+                  <ArrowRight size={13} className="rtl:rotate-180" />
                 </button>
               </div>
             </div>

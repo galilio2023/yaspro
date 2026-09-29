@@ -1,23 +1,28 @@
+"use client";
+
 import { StaggerContainer, StaggerItem } from "@/components/animations/MotionWrappers";
 import { PILLARS } from "../data";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Shield } from "lucide-react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface AboutPillarsProps {
   headingId?: string;
 }
 
 export function AboutPillars({ headingId }: AboutPillarsProps) {
+  const { t, isArabic } = useLanguage();
+
   return (
     <div className="mb-20">
       <SectionHeader
         headingId={headingId}
-        badge="Foundations"
+        badge={t("about.pillarsBadge")}
         badgeVariant="default"
         badgeIcon={<Shield size={13} />}
-        title="Our Core"
-        gradientText="Pillars"
-        description="What sets Yas Pro apart is our end-to-end integration of cutting-edge technology and artistic vision."
+        title={t("about.pillarsTitle")}
+        gradientText={t("about.pillarsGradient")}
+        description={t("about.pillarsDesc")}
       />
 
       <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
@@ -28,10 +33,10 @@ export function AboutPillars({ headingId }: AboutPillarsProps) {
                 <pillar.icon size={22} />
               </div>
               <h3 className="text-lg font-bold text-white mb-2 font-display">
-                {pillar.title}
+                {isArabic && pillar.arTitle ? pillar.arTitle : pillar.title}
               </h3>
               <p className="text-text-secondary text-xs sm:text-sm leading-relaxed">
-                {pillar.description}
+                {isArabic && pillar.arDescription ? pillar.arDescription : pillar.description}
               </p>
             </div>
           </StaggerItem>

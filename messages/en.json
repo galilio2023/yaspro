@@ -1,0 +1,231 @@
+{
+  "nav": {
+    "productions": "Productions",
+    "soundstages": "Soundstages",
+    "gear": "Gear Rental",
+    "creators": "Creators",
+    "about": "About",
+    "contact": "Contact",
+    "portal": "Portal",
+    "signIn": "Sign In",
+    "bookStudio": "Book Studio",
+    "callUs": "Call Us",
+    "whatsApp": "WhatsApp"
+  },
+  "hero": {
+    "badge": "Next-Gen Creative & AI Media Infrastructure",
+    "title1": "Where",
+    "ai": "AI",
+    "title2": "Meets Human Creativity",
+    "subtitle": "The fastest-growing production network in the Gulf. From mobile OB-VAN live broadcasting to AI-powered post-production and tier-one creator soundstages.",
+    "bookStudio": "Book a Studio",
+    "watchReel": "Watch Showreel",
+    "dubaiTag": "Dubai",
+    "studioTag": "Studio 4K",
+    "liveTag": "LIVE",
+    "specsTag": "UAE CINEMA CAM • RAW 8K"
+  },
+  "partners": {
+    "tagline": "Chosen For UAE Government & Global Brand Productions"
+  },
+  "services": {
+    "badge": "Turnkey Production Pillars",
+    "title": "Full-Spectrum Creative &",
+    "titleGradient": "Broadcast Capabilities",
+    "description": "Enterprise-grade production services engineered for regional governments, broadcast networks, and international commercial agencies across the GCC.",
+    "perk1": "GCC & UAE Tier-One Certified Facilities",
+    "perk2": "Cinema 8K RAW & Multi-Cam 4K DCI",
+    "perk3": "24/7 Crew & Fast-Response OB-Van Units",
+    "perk4": "Guaranteed Turnkey Master Deliverables"
+  },
+  "virtualStudio": {
+    "badge": "Virtual Production & In-Camera VFX",
+    "title": "Virtual 3D Studio",
+    "titleGradient": "Before & After Simulation",
+    "description": "Drag the slider or click a scene preset to see physical green screen soundstages transformed into photorealistic 3D virtual worlds in real time.",
+    "physicalStage": "PHYSICAL STAGE",
+    "greenCyclorama": "Green Cyclorama",
+    "unrealBadge": "UNREAL 5.4",
+    "autoSweep": "Auto-Sweep",
+    "pauseSweep": "Pause Sweep",
+    "greenStage100": "100% Green Stage",
+    "split5050": "50 / 50 Split",
+    "scene100": "100% 3D Scene",
+    "bookVirtual": "Book Virtual Stage",
+    "dragPrompt": "Drag to reveal transformation"
+  },
+  "portfolio": {
+    "badge": "Government & Enterprise Portfolio",
+    "title": "Our Latest",
+    "titleGradient": "Masterpieces",
+    "description": "High-impact visual narratives, TV commercial campaigns, and nationwide broadcasts produced for leading regional brands and government entities.",
+    "viewAll": "View Complete Portfolio"
+  },
+  "ai": {
+    "badge": "Next-Gen Neural Broadcast Infrastructure",
+    "title": "The Yas Pro",
+    "titleGradient": "AI Ecosystem",
+    "description": "We combine heavy-duty broadcast infrastructure with autonomous generative AI pipelines. Every production node communicates seamlessly across soundstages, mobile OB-vans, and multi-platform Gulf distribution networks.",
+    "launchCopilot": "Launch AI Production Copilot",
+    "enterpriseHeading": "Need Custom AI Production Workflows?",
+    "enterpriseSub": "Dedicated solutions for GCC media networks",
+    "enterpriseButton": "Enterprise Sovereign Suite"
+  },
+  "gear": {
+    "badge": "Cinema Optics & Stage Rigging",
+    "title": "Turnkey Camera &",
+    "titleGradient": "Lighting Rental",
+    "description": "Arri Alexa LF, RED V-Raptor XL, anamorphic glass, and mobile OB-VAN power ready for same-day dispatch across Dubai and the Emirates.",
+    "exploreInventory": "Explore Full Rental Inventory"
+  },
+  "creators": {
+    "badge": "Mawthooq-Certified Creator Network",
+    "title": "The Region's Most",
+    "titleGradient": "Influential Voices",
+    "description": "Direct access to top-tier GCC digital talent with audited audience demographics, broadcast-ready compliance, and turnkey campaign management.",
+    "viewAllCreators": "Explore Talent Network"
+  },
+  "cta": {
+    "liveStatus": "Now Booking Q3 & Q4 2026 Productions",
+    "title": "Ready to Create",
+    "titleGradient": "Something Great?",
+    "description": "Whether you need a 4K soundstage, a live OB-VAN, or a full influencer content flywheel — our production team is on-call across three regional hubs.",
+    "bookStudio": "Book a Studio",
+    "talkProducers": "Talk to Producers"
+  },
+  "footer": {
+    "brandDesc": "The fastest-growing AI media production company in the Gulf region. Where cinematic craft meets next-generation generative media workflows.",
+    "officialChannels": "Official Channels",
+    "productionHeading": "Production",
+    "networkHeading": "Network",
+    "studiosHubs": "Regional Studios & Hubs",
+    "locations": "3 Live Locations",
+    "allRights": "All Rights Reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "soundstagesOnline": "All 4 Soundstages Online",
+    "map": "Map",
+    "services": {
+      "enterprise": "Enterprise Sovereign Solutions",
+      "studios": "Studio Stage Bookings",
+      "obVan": "OB-VAN Live Broadcast",
+      "gear": "Equipment Rental",
+      "bundles": "Production Bundles",
+      "virtual": "Virtual Production & VFX"
+    },
+    "network": {
+      "creators": "Influencer Talent Network",
+      "shows": "Original Shows & Formats",
+      "portfolio": "Masterpiece Portfolio",
+      "about": "About Yas Pro",
+      "contact": "Contact Studios"
+    },
+    "hubs": {
+      "dubai": {
+        "city": "Dubai, UAE",
+        "role": "Headquarters & Main Stages",
+        "address": "Iris Bay Tower, Business Bay"
+      },
+      "cairo": {
+        "city": "Cairo, Egypt",
+        "role": "Production & Post Hub",
+        "address": "Elite Tower, Zahraa Al Maadi"
+      },
+      "amman": {
+        "city": "Amman, Jordan",
+        "role": "Levant Regional Studio",
+        "address": "BlackRock Tower, Mecca St"
+      }
+    }
+  },
+  "footerCta": {
+    "badge": "Now Booking Q3 & Q4 2026 Productions",
+    "title": "Ready to Create Something",
+    "titleGradient": "Iconic?",
+    "description": "From tier-one creator soundstages to live OB-VAN mobile broadcasting and AI-driven virtual production. Let's engineer your vision.",
+    "bookStudio": "Book Studio Stage",
+    "talkProducers": "Talk to Producers"
+  },
+  "concierge": {
+    "title": "Dubai Studio Concierge",
+    "status": "Production Dispatch Online",
+    "selectTopic": "Select Inquiry Topic:",
+    "customChat": "Start Custom WhatsApp Chat",
+    "aiCopilot": "AI Copilot",
+    "whatsApp": "WhatsApp"
+  },
+  "about": {
+    "badge": "About Us & Our Story",
+    "title": "Redefining Media in the",
+    "titleGradient": "Gulf Region",
+    "description": "Yas Pro Media is the fastest-growing production company in the Middle East. You focus on what you do best — let Yas Pro handle the rest.",
+    "philosophyBadge": "Our Philosophy",
+    "philosophyTitle": "Where Technology Serves Human Emotion",
+    "philosophyP1": "Licensed in 2015 in Dubai, United Arab Emirates, with official accreditation from the UAE National Media Council (NMC), Yas Pro Media operates world-class production facilities across Dubai, Cairo, and Amman.",
+    "philosophyP2": "We redefine content creation by blending human creativity with generative AI workflows, chosen by federal government entities and top digital creators for our technical precision, confidentiality, and distinction.",
+    "scaleBadge": "Our Scale",
+    "scaleTitle": "Numbers That Speak For Themselves",
+    "reachLabel": "Total Creator Reach",
+    "projectsLabel": "Delivered Projects",
+    "hubsLabel": "Regional Hubs (UAE, Egypt, Jordan)",
+    "satisfactionLabel": "Client Satisfaction Goal",
+    "pillarsBadge": "Foundations",
+    "pillarsTitle": "Our Core",
+    "pillarsGradient": "Pillars",
+    "pillarsDesc": "What sets Yas Pro apart is our end-to-end integration of cutting-edge technology and artistic vision.",
+    "teamBadge": "Executive Leadership",
+    "teamTitle": "Our",
+    "teamGradient": "Leadership",
+    "teamDesc": "Experienced media directors, broadcast engineers, and digital innovators leading Yas Pro forward."
+  },
+  "contact": {
+    "badge": "Direct Inquiries",
+    "title": "Let's",
+    "titleGradient": "Talk",
+    "description": "Have a production in mind? Reach out to our studios in Dubai, Cairo, or Amman and let's create something extraordinary together.",
+    "formTitle": "Send Us a Message",
+    "fullName": "Full Name",
+    "namePlaceholder": "Your full name",
+    "email": "Email Address",
+    "emailPlaceholder": "you@company.com",
+    "phone": "Phone / WhatsApp",
+    "phonePlaceholder": "+971 50 000 0000",
+    "projectDesc": "Project Description",
+    "projectPlaceholder": "Tell us about your production goals, locations, or timeline...",
+    "sending": "Sending Message...",
+    "sendMessage": "Send Message",
+    "inquiryType": "Inquiry Type",
+    "studiosTitle": "Our Regional Studios & Offices",
+    "directEmail": "Direct Production Email",
+    "whatsAppDirect": "WhatsApp Direct",
+    "instagramChannel": "Instagram Channel"
+  },
+  "enterprise": {
+    "statusDubai": "DUBAI SOUNDSTAGE: LIVE GENLOCK",
+    "statusObVan": "OB-VAN FLEET: DEPLOYED",
+    "statusMawthooq": "GAMR MAWTHOOQ CERTIFIED",
+    "title1": "Sovereign Media Operations &",
+    "titleGradient": "Enterprise Cloud Production",
+    "subtitle": "The Gulf's premier media infrastructure. End-to-end Unreal Engine 5.4 virtual production, outside broadcast fleet, and Mawthooq-audited creator campaigns for GCC giga-projects, ministries, and global brands.",
+    "launchCopilot": "Launch AI RFP & Budget Copilot",
+    "submitRfp": "Submit Enterprise RFP / Tender",
+    "virtualStageSim": "Virtual Stage Simulator",
+    "tiers": {
+      "badge": "Enterprise Retainers & SLA Guarantees",
+      "title": "Sovereign Media Operations",
+      "gradient": "Production Retainer Tiers",
+      "description": "Dedicated soundstage allocations, priority OB-Van dispatch, and full-stack cinema crews for ministries, giga-projects, and multinational agencies.",
+      "selectTier": "Select",
+      "slaPrefix": "SLA:"
+    },
+    "obVan": {
+      "badge": "Outside Broadcast & Tactical Mobility",
+      "title": "OB-VAN Live Command Fleet &",
+      "gradient": "8-Second AI Viral Engine",
+      "description": "High-density mobile command units for arena sports, government summits, and giga-events across the Gulf. Instant EVS replay and automated AI vertical syndication.",
+      "requestVan": "Request Van",
+      "simulate": "Simulate 8s Live Highlight Post",
+      "processing": "Ingesting Multi-Cam Feed..."
+    }
+  }
+}

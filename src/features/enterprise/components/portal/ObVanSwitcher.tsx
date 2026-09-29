@@ -71,7 +71,7 @@ export function ObVanSwitcher({
             className="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-brand-cyan hover:bg-brand-cyan/80 text-black flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-brand-cyan/20 transition-all font-display"
           >
             <span>Request OB-Van Deployment</span>
-            <ArrowRight size={13} />
+            <ArrowRight size={13} className="rtl:rotate-180" />
           </button>
         )}
       </div>

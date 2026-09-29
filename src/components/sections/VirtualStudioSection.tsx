@@ -19,6 +19,7 @@ import {
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export interface VirtualStudioScene {
   id: string;
@@ -85,6 +86,7 @@ export const VIRTUAL_SCENES: VirtualStudioScene[] = [
 ];
 
 export function VirtualStudioSection() {
+  const { t, isArabic } = useLanguage();
   const [activeScene, setActiveScene] = useState<VirtualStudioScene>(VIRTUAL_SCENES[0]);
   const [sliderPosition, setSliderPosition] = useState<number>(50); // 0 to 100 percentage
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -224,12 +226,12 @@ export function VirtualStudioSection() {
       <Container className="relative z-10 max-w-5xl">
         <SectionHeader
           headingId="virtual-studio-title"
-          badge="Virtual Production & In-Camera VFX"
+          badge={t("virtualStudio.badge")}
           badgeVariant="cyan"
           badgeIcon={<Video size={13} className="text-brand-cyan" />}
-          title="Virtual 3D Studio"
-          gradientText="Before & After Simulation"
-          description="Drag the slider or click a scene preset to see physical green screen soundstages transformed into photorealistic 3D virtual worlds in real time."
+          title={isArabic ? t("virtualStudio.title") : "Virtual 3D Studio"}
+          gradientText={isArabic ? t("virtualStudio.titleGradient") : "Before & After Simulation"}
+          description={t("virtualStudio.description")}
           className="mb-6 sm:mb-8"
         />
 
@@ -312,8 +314,8 @@ export function VirtualStudioSection() {
             </div>
 
             {/* TOP BROADCAST HUD OVERLAYS */}
-            <div className="absolute top-2.5 left-2.5 sm:top-3.5 sm:left-3.5 pointer-events-none flex items-center gap-2">
-              <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-brand-teal/40 text-[10px] sm:text-xs font-mono text-brand-teal-light">
+            <div className="absolute top-2.5 start-2.5 sm:top-3.5 sm:start-3.5 pointer-events-none flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-brand-teal/40 text-[10px] sm:text-xs font-mono text-brand-teal-light font-latin">
                 <span className="size-1.5 sm:size-2 rounded-full bg-brand-teal" />
                 <span className="font-bold">PHYSICAL STAGE</span>
                 <span className="text-white/40 hidden sm:inline">|</span>
@@ -321,8 +323,8 @@ export function VirtualStudioSection() {
               </div>
             </div>
 
-            <div className="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 pointer-events-none flex items-center gap-2">
-              <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-brand-purple/40 text-[10px] sm:text-xs font-mono text-brand-purple-light">
+            <div className="absolute top-2.5 end-2.5 sm:top-3.5 sm:end-3.5 pointer-events-none flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-brand-purple/40 text-[10px] sm:text-xs font-mono text-brand-purple-light font-latin">
                 <Sparkles size={12} className="text-brand-purple-light" />
                 <span className="font-bold">UNREAL 5.4</span>
                 <span className="text-white/40 hidden sm:inline">|</span>
@@ -331,7 +333,7 @@ export function VirtualStudioSection() {
             </div>
 
             {/* BOTTOM TELEMETRY HUD */}
-            <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-3 sm:left-3 sm:right-3 flex items-center justify-between pointer-events-none text-[9px] sm:text-[11px] font-mono text-white/80 bg-black/80 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-white/10">
+            <div className="absolute bottom-2.5 start-2.5 end-2.5 sm:bottom-3 sm:start-3 sm:end-3 flex items-center justify-between pointer-events-none text-[9px] sm:text-[11px] font-mono text-white/80 bg-black/80 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-white/10 font-latin">
               <div className="flex items-center gap-3 sm:gap-5">
                 <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
                   <CheckCircle2 size={12} />
@@ -352,7 +354,7 @@ export function VirtualStudioSection() {
             <div className="absolute inset-x-0 bottom-11 flex justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
               <div className="bg-black/85 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 text-[11px] text-white font-medium flex items-center gap-1.5 shadow-2xl">
                 <SplitSquareVertical size={12} className="text-brand-cyan" />
-                <span>Drag to reveal transformation</span>
+                <span>{t("virtualStudio.dragPrompt")}</span>
               </div>
             </div>
           </div>
@@ -370,7 +372,7 @@ export function VirtualStudioSection() {
               }`}
             >
               {isAutoWiping ? <Pause size={12} /> : <Play size={12} />}
-              <span>{isAutoWiping ? "Pause Sweep" : "Auto-Sweep"}</span>
+              <span>{isAutoWiping ? t("virtualStudio.pauseSweep") : t("virtualStudio.autoSweep")}</span>
             </button>
 
             {/* Quick Preset Buttons on Mobile (horizontal scrolling pills) */}
@@ -386,7 +388,7 @@ export function VirtualStudioSection() {
                     : "text-text-secondary hover:text-white bg-white/5"
                 }`}
               >
-                100% Green
+                {t("virtualStudio.greenStage100")}
               </button>
               <button
                 onClick={() => {
@@ -399,7 +401,7 @@ export function VirtualStudioSection() {
                     : "text-text-secondary hover:text-white bg-white/5"
                 }`}
               >
-                50/50
+                {t("virtualStudio.split5050")}
               </button>
               <button
                 onClick={() => {
@@ -412,7 +414,7 @@ export function VirtualStudioSection() {
                     : "text-text-secondary hover:text-white bg-white/5"
                 }`}
               >
-                100% 3D
+                {t("virtualStudio.scene100")}
               </button>
             </div>
           </div>
@@ -430,7 +432,7 @@ export function VirtualStudioSection() {
                   : "text-text-secondary hover:text-white bg-white/5"
               }`}
             >
-              100% Green Stage
+              {t("virtualStudio.greenStage100")}
             </button>
             <button
               onClick={() => {
@@ -443,7 +445,7 @@ export function VirtualStudioSection() {
                   : "text-text-secondary hover:text-white bg-white/5"
               }`}
             >
-              50 / 50 Split
+              {t("virtualStudio.split5050")}
             </button>
             <button
               onClick={() => {
@@ -456,7 +458,7 @@ export function VirtualStudioSection() {
                   : "text-text-secondary hover:text-white bg-white/5"
               }`}
             >
-              100% 3D Scene
+              {t("virtualStudio.scene100")}
             </button>
           </div>
 
@@ -466,8 +468,8 @@ export function VirtualStudioSection() {
               href="/studio-booking"
               className="btn-brand w-full sm:w-auto py-2.5 sm:py-1.5 px-4 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold shadow-md hover:shadow-brand-purple/20 transition-all min-h-[40px] sm:min-h-0"
             >
-              <span>Book Virtual Stage</span>
-              <ArrowRight size={13} />
+              <span>{t("virtualStudio.bookVirtual")}</span>
+              <ArrowRight size={13} className="rtl:rotate-180 shrink-0 transition-transform" />
             </Link>
           </div>
         </div>

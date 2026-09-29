@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { StaggerContainer, StaggerItem, FadeUp } from "@/components/animations/MotionWrappers";
 import { INFLUENCERS_DATA } from "@/features/influencers/data";
@@ -6,8 +8,10 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import { Users, ArrowRight } from "lucide-react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export default function InfluencersSection() {
+  const { t, isArabic } = useLanguage();
   const featuredInfluencers = INFLUENCERS_DATA.slice(0, 8);
 
   return (
@@ -19,12 +23,12 @@ export default function InfluencersSection() {
       <Container>
         <SectionHeader
           headingId="influencers-title"
-          badge="Creator Production Partner"
+          badge={t("creators.badge")}
           badgeVariant="default"
           badgeIcon={<Users size={13} />}
-          title="Featured"
-          gradientText="Influencers"
-          description="Trusted by the biggest creator networks in the Middle East with 400M+ combined audience. From acoustic podcast suites to viral YouTube production and stadium live streaming."
+          title={isArabic ? t("creators.title") : "Featured"}
+          gradientText={isArabic ? t("creators.titleGradient") : "Influencers"}
+          description={t("creators.description")}
         />
 
         <StaggerContainer as="ul" role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 items-stretch w-full">
@@ -41,8 +45,10 @@ export default function InfluencersSection() {
             href="/influencers"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 rounded-full border border-brand-purple/40 text-brand-purple-light hover:bg-brand-purple/10 hover:border-brand-purple transition-all text-xs font-semibold min-h-[44px] sm:min-h-0"
           >
-            <span>View All 400M+ Creator Roster</span>
-            <ArrowRight size={14} />
+            <span>
+              {t("creators.viewAllCreators")} ({isArabic ? "شبكة 400M+ متابع" : "400M+ Audience"})
+            </span>
+            <ArrowRight size={14} className="rtl:rotate-180 shrink-0 transition-transform" />
           </Link>
         </FadeUp>
       </Container>

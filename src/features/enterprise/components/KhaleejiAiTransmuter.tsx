@@ -617,7 +617,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                 className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-bold text-xs btn-brand text-white flex items-center justify-center gap-1.5 shrink-0 cursor-pointer shadow-lg hover:shadow-brand-purple/25 transition-all"
               >
                 <span>Deploy {selectedDialect.name.split(" ")[0]}</span>
-                <ArrowRight size={13} />
+                <ArrowRight size={13} className="rtl:rotate-180" />
               </button>
             )}
           </div>

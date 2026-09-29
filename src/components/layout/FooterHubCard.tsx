@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { MapPin, Phone, ExternalLink, Clock } from "lucide-react";
 
+import { useLanguage } from "@/components/providers/LanguageProvider";
+
 export interface RegionalHub {
   city: string;
   role: string;
@@ -12,6 +14,7 @@ export interface RegionalHub {
   flag: string;
   coordinates: string;
   mapUrl?: string;
+  key?: "dubai" | "cairo" | "amman";
 }
 
 interface FooterHubCardProps {
@@ -19,13 +22,14 @@ interface FooterHubCardProps {
 }
 
 export function FooterHubCard({ hub }: FooterHubCardProps) {
+  const { t, isArabic } = useLanguage();
   const [time, setTime] = useState<string>("");
 
   useEffect(() => {
     const updateTime = () => {
       try {
         const now = new Date();
-        const formatter = new Intl.DateTimeFormat("en-US", {
+        const formatter = new Intl.DateTimeFormat(isArabic ? "ar-AE" : "en-US", {
           timeZone: hub.timeZone,
           hour: "2-digit",
           minute: "2-digit",
@@ -40,7 +44,7 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
     updateTime();
     const interval = setInterval(updateTime, 30000);
     return () => clearInterval(interval);
-  }, [hub.timeZone]);
+  }, [hub.timeZone, isArabic]);
 
   return (
     <div className="group relative rounded-2xl bg-card/60 backdrop-blur-xl p-4 flex flex-col justify-between border border-white/[0.08] hover:border-brand-purple/40 hover:bg-brand-purple/[0.06] transition-all duration-300 shadow-lg shadow-black/20 overflow-hidden">
@@ -69,7 +73,7 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
 
         {/* Studio Role */}
         <p className="text-[11px] font-semibold text-brand-purple-mid mb-1.5 leading-snug">
-          {hub.role}
+          {hub.key ? t(`footer.hubs.${hub.key}.role`) : hub.role}
         </p>
 
         {/* Address */}
@@ -82,13 +86,15 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
           >
             <span className="flex items-start gap-1">
               <MapPin size={11} className="shrink-0 text-brand-gold mt-0.5" />
-              <span className="underline-offset-2 group-hover/link:underline">{hub.address}</span>
+              <span className="underline-offset-2 group-hover/link:underline">
+                {hub.key ? t(`footer.hubs.${hub.key}.address`) : hub.address}
+              </span>
             </span>
           </a>
         ) : (
           <p className="text-[11px] text-text-secondary leading-relaxed flex items-start gap-1">
             <MapPin size={11} className="shrink-0 text-brand-gold mt-0.5" />
-            <span>{hub.address}</span>
+            <span>{hub.key ? t(`footer.hubs.${hub.key}.address`) : hub.address}</span>
           </p>
         )}
       </div>
@@ -97,7 +103,8 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
       <div className="mt-3 pt-2.5 border-t border-white/[0.06] flex items-center justify-between text-[10px]">
         <a
           href={`tel:${hub.phone}`}
-          className="flex items-center gap-1 text-text-muted hover:text-brand-teal-light transition-colors font-medium py-1"
+          className="flex items-center gap-1 text-text-muted hover:text-brand-teal-light transition-colors font-medium py-1 font-latin"
+          dir="ltr"
         >
           <Phone size={10} className="text-brand-cyan" />
           <span>{hub.phone}</span>
@@ -108,11 +115,11 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
             href={hub.mapUrl}
             target="_blank"
             rel="noopener noreferrer"
-            title="Open in Maps"
+            title={t("footer.map")}
             className="text-text-muted hover:text-brand-cyan transition-colors flex items-center gap-0.5 py-1 px-1"
           >
-            <span>Map</span>
-            <ExternalLink size={10} />
+            <span>{t("footer.map")}</span>
+            <ExternalLink size={10} className="rtl:scale-x-[-1]" />
           </a>
         )}
       </div>

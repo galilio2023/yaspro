@@ -1,13 +1,18 @@
+"use client";
+
 import { MapPin, Phone, Mail } from "lucide-react";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrappers";
 import { LOCATIONS_DATA } from "../data";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function LocationsList() {
+  const { t, isArabic } = useLanguage();
+
   return (
     <div className="w-full">
       <FadeUp delay={0.1}>
         <h2 className="text-white font-bold text-2xl mb-6 font-display">
-          Our Regional Studios &amp; Offices
+          {t("contact.studiosTitle")}
         </h2>
       </FadeUp>
 
@@ -19,14 +24,18 @@ export function LocationsList() {
                 {loc.flag}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-white font-bold font-display text-lg mb-1">{loc.country}</h3>
+                <h3 className="text-white font-bold font-display text-lg mb-1">
+                  {isArabic && loc.arCountry ? loc.arCountry : loc.country}
+                </h3>
                 <p className="text-text-secondary text-sm flex items-start gap-2 leading-relaxed">
                   <MapPin size={15} className="text-brand-purple mt-0.5 shrink-0" />
-                  <span className="break-words">{loc.address}</span>
+                  <span className="break-words">
+                    {isArabic && loc.arAddress ? loc.arAddress : loc.address}
+                  </span>
                 </p>
-                <p className="text-text-secondary text-sm flex items-center gap-2 mt-1.5 font-mono">
+                <p className="text-text-secondary text-sm flex items-center gap-2 mt-1.5 font-mono" dir="ltr">
                   <Phone size={14} className="text-brand-cyan shrink-0" />
-                  <span className="break-all">{loc.phone}</span>
+                  <span className="break-all font-latin">{loc.phone}</span>
                 </p>
               </div>
             </div>
@@ -41,10 +50,13 @@ export function LocationsList() {
               <Mail size={18} />
             </div>
             <div>
-              <span className="text-white font-bold text-sm block">Direct Production Email</span>
+              <span className="text-white font-bold text-sm block">
+                {t("contact.directEmail")}
+              </span>
               <a
                 href="mailto:info@yasproductions.com"
-                className="text-brand-purple-light hover:text-white transition-colors text-sm font-medium"
+                className="text-brand-purple-light hover:text-white transition-colors text-sm font-medium font-latin"
+                dir="ltr"
               >
                 info@yasproductions.com
               </a>
@@ -58,7 +70,7 @@ export function LocationsList() {
               rel="noopener noreferrer"
               className="flex-1 min-h-[44px] py-3 px-4 rounded-2xl text-center text-sm font-semibold text-white border border-brand-teal/40 bg-brand-teal/10 hover:bg-brand-teal/20 transition-all flex items-center justify-center gap-2 text-brand-teal-light hover:text-white shadow-md shadow-brand-teal/10"
             >
-              <span>WhatsApp Direct</span>
+              <span>{t("contact.whatsAppDirect")}</span>
             </a>
             <a
               href="https://instagram.com/yaspromedia"
@@ -66,7 +78,7 @@ export function LocationsList() {
               rel="noopener noreferrer"
               className="flex-1 min-h-[44px] py-3 px-4 rounded-2xl text-center text-sm font-semibold text-white border border-brand-purple/30 bg-brand-purple/10 hover:bg-brand-purple/20 transition-all flex items-center justify-center gap-2"
             >
-              <span>Instagram Channel</span>
+              <span>{t("contact.instagramChannel")}</span>
             </a>
           </div>
         </div>

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Sparkles } from "lucide-react";
-import { SectionHeader } from "@/components/ui/section-header";
+import { AboutHeroHeader } from "@/features/about/components/AboutHeroHeader";
 import { AboutOverview } from "@/features/about/components/AboutOverview";
 import { AboutPillars } from "@/features/about/components/AboutPillars";
 import { TeamGrid } from "@/features/about/components/TeamGrid";
@@ -22,17 +21,7 @@ export default function AboutPage() {
         className="py-12 md:py-20 bg-background"
       >
         <Container>
-          <SectionHeader
-            headingId="about-title"
-            as="h1"
-            badge="About Us &amp; Our Story"
-            badgeVariant="default"
-            badgeIcon={<Sparkles size={13} />}
-            title="Redefining Media in the"
-            gradientText="Gulf Region"
-            description="Yas Pro Media is the fastest-growing production company in the Middle East. You focus on what you do best — let Yas Pro handle the rest."
-          />
-
+          <AboutHeroHeader />
           <AboutOverview />
         </Container>
       </Section>

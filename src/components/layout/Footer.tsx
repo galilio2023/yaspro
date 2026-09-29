@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { FooterHubCard, RegionalHub } from "./FooterHubCard";
 import { FooterSocialLinks } from "./FooterSocialLinks";
@@ -5,6 +7,7 @@ import { BrandLogo } from "./BrandLogo";
 import { IyasProIcon } from "@/components/ui/IyasProIcon";
 import { FooterNavLinks } from "./FooterNavLinks";
 import { BackgroundBeams } from "@/components/aceternity/background-beams";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 import {
   Calendar,
@@ -21,25 +24,25 @@ import {
 import { FooterLinkItem } from "./FooterNavLinks";
 
 const PRODUCTION_SERVICES: readonly FooterLinkItem[] = [
-  { label: "Enterprise Sovereign Solutions", href: "/enterprise", icon: Building2 },
-  { label: "Studio Stage Bookings", href: "/studio-booking", icon: Calendar },
-  { label: "OB-VAN Live Broadcast", href: "/enterprise#ob-van-command", icon: Radio },
-  { label: "Equipment Rental", href: "/shop", icon: Camera },
-  { label: "Production Bundles", href: "/shop?category=bundles", icon: Layers },
-  { label: "Virtual Production & VFX", href: "/enterprise#virtual-simulator", icon: Wand2 },
+  { key: "footer.services.enterprise", label: "Enterprise Sovereign Solutions", href: "/enterprise", icon: Building2 },
+  { key: "footer.services.studios", label: "Studio Stage Bookings", href: "/studio-booking", icon: Calendar },
+  { key: "footer.services.obVan", label: "OB-VAN Live Broadcast", href: "/enterprise#ob-van-command", icon: Radio },
+  { key: "footer.services.gear", label: "Equipment Rental", href: "/shop", icon: Camera },
+  { key: "footer.services.bundles", label: "Production Bundles", href: "/shop?category=bundles", icon: Layers },
+  { key: "footer.services.virtual", label: "Virtual Production & VFX", href: "/enterprise#virtual-simulator", icon: Wand2 },
 ];
 
-
 const NETWORK_LINKS: readonly FooterLinkItem[] = [
-  { label: "Influencer Talent Network", href: "/influencers", icon: Users },
-  { label: "Original Shows & Formats", href: "/#shows", icon: Tv },
-  { label: "Masterpiece Portfolio", href: "/projects", icon: Film },
-  { label: "About Yas Pro", href: "/about", icon: Building2 },
-  { label: "Contact Studios", href: "/contact", icon: Mail },
+  { key: "footer.network.creators", label: "Influencer Talent Network", href: "/influencers", icon: Users },
+  { key: "footer.network.shows", label: "Original Shows & Formats", href: "/projects", icon: Tv },
+  { key: "footer.network.portfolio", label: "Masterpiece Portfolio", href: "/projects", icon: Film },
+  { key: "footer.network.about", label: "About Yas Pro", href: "/about", icon: Building2 },
+  { key: "footer.network.contact", label: "Contact Studios", href: "/contact", icon: Mail },
 ];
 
 const REGIONAL_HUBS: readonly RegionalHub[] = [
   {
+    key: "dubai",
     city: "Dubai, UAE",
     flag: "🇦🇪",
     coordinates: "25.1859° N, 55.2603° E",
@@ -51,6 +54,7 @@ const REGIONAL_HUBS: readonly RegionalHub[] = [
       "https://www.google.com/maps/place/%D9%8A%D8%A7%D8%B3+%D8%A8%D8%B1%D9%88+%D9%84%D9%84%D8%A5%D8%B9%D9%84%D8%A7%D9%85%E2%80%AD/@25.1859019,55.2602652,17z",
   },
   {
+    key: "cairo",
     city: "Cairo, Egypt",
     flag: "🇪🇬",
     coordinates: "29.9612° N, 31.2888° E",
@@ -62,6 +66,7 @@ const REGIONAL_HUBS: readonly RegionalHub[] = [
       "https://www.google.com/maps/place/YAS+PRO+MEDIA+Egypt/@29.9612031,31.2887851,17z",
   },
   {
+    key: "amman",
     city: "Amman, Jordan",
     flag: "🇯🇴",
     coordinates: "31.9481° N, 35.9083° E",
@@ -75,6 +80,7 @@ const REGIONAL_HUBS: readonly RegionalHub[] = [
 ];
 
 export default function Footer() {
+  const { t } = useLanguage();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -89,6 +95,7 @@ export default function Footer() {
       {/* Massive Luxury Watermark Typography in Background */}
       <div
         aria-hidden="true"
+        dir="ltr"
         className="pointer-events-none absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 select-none overflow-hidden flex items-center justify-center gap-2 sm:gap-4 font-black tracking-tighter leading-none whitespace-nowrap font-display z-0 opacity-15"
       >
         <IyasProIcon
@@ -120,43 +127,42 @@ export default function Footer() {
                 <BrandLogo showIndicator={false} />
               </div>
 
-              <p className="text-text-secondary text-sm leading-relaxed mb-6 max-w-sm">
-                The fastest-growing AI media production company in the Gulf region.
-                Where cinematic craft meets next-generation generative media workflows.
+              <p className="text-text-secondary text-sm leading-relaxed mb-6 max-w-sm text-start">
+                {t("footer.brandDesc")}
               </p>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-2 text-start">
               <span className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">
-                Official Channels
+                {t("footer.officialChannels")}
               </span>
               <FooterSocialLinks />
             </div>
           </div>
 
           {/* Column 2: Production Services */}
-          <div className="col-span-1 lg:col-span-2">
+          <div className="col-span-1 lg:col-span-2 text-start">
             <h3 className="text-white font-bold text-xs uppercase tracking-widest font-display mb-4 sm:mb-5">
-              Production
+              {t("footer.productionHeading")}
             </h3>
             <FooterNavLinks links={PRODUCTION_SERVICES} />
           </div>
 
           {/* Column 3: Network & Formats */}
-          <div className="col-span-1 lg:col-span-2">
+          <div className="col-span-1 lg:col-span-2 text-start">
             <h3 className="text-white font-bold text-xs uppercase tracking-widest font-display mb-4 sm:mb-5">
-              Network
+              {t("footer.networkHeading")}
             </h3>
             <FooterNavLinks links={NETWORK_LINKS} />
           </div>
 
           {/* Column 4: Regional Hubs */}
-          <div className="sm:col-span-2 lg:col-span-4">
+          <div className="sm:col-span-2 lg:col-span-4 text-start">
             <div className="flex items-center justify-between mb-4 sm:mb-5">
               <h3 className="text-white font-bold text-xs uppercase tracking-widest font-display">
-                Regional Studios &amp; Hubs
+                {t("footer.studiosHubs")}
               </h3>
-              <span className="text-[11px] font-mono text-brand-cyan">3 Live Locations</span>
+              <span className="text-[11px] font-mono text-brand-cyan">{t("footer.locations")}</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
               {REGIONAL_HUBS.map((hub) => (
@@ -167,20 +173,20 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar: Telemetry & Legal */}
-        <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted text-center sm:text-left">
-          <p>© {currentYear} YAS PRO MEDIA LLC. All Rights Reserved.</p>
+        <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted text-center sm:text-start">
+          <p>© {currentYear} YAS PRO MEDIA LLC. {t("footer.allRights")}</p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             <Link href="/privacy-policy" className="hover:text-white transition-colors py-1 min-h-[36px] sm:min-h-0 flex items-center">
-              Privacy Policy
+              {t("footer.privacy")}
             </Link>
             <Link href="/terms" className="hover:text-white transition-colors py-1 min-h-[36px] sm:min-h-0 flex items-center">
-              Terms of Service
+              {t("footer.terms")}
             </Link>
 
             <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-brand-teal/15 border border-brand-teal/30 text-brand-teal-light font-mono text-[11px]">
               <span className="size-1.5 rounded-full bg-brand-teal" />
-              <span>All 4 Soundstages Online</span>
+              <span>{t("footer.soundstagesOnline")}</span>
             </span>
           </div>
         </div>
