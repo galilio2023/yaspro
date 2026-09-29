@@ -39,13 +39,13 @@ export function MawthooqCampaignPlanner({ onBundleCreators }: CampaignPlannerPro
   return (
     <section id="mawthooq-compliance" className="py-16 sm:py-20 bg-background border-b border-white/10 relative overflow-hidden">
       {/* Background radial gradient */}
-      <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-brand-purple/10 rounded-full blur-3xl pointer-events-none" />
 
       <Container className="relative z-10 max-w-6xl">
         <SectionHeader
           badge="KSA GAMR Mawthooq & UAE NMC Compliance"
           badgeVariant="cyan"
-          badgeIcon={<ShieldCheck size={13} className="text-emerald-400" />}
+          badgeIcon={<ShieldCheck size={13} className="text-brand-teal" />}
           title="Sovereign Creator Portfolio &"
           gradientText="Government Mawthooq Synergy"
           description="Legally pre-cleared, enterprise-scale creator activations across the GCC. Zero regulatory friction, licensed commercial disclosures, and unified multi-market escrow settlements."

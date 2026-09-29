@@ -32,7 +32,7 @@ export function EnterpriseHero({ onOpenRfp, onOpenCopilot }: EnterpriseHeroProps
         {/* Top Sovereign Status Bar */}
         <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-3 mb-8 px-1">
           <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-mono font-bold tracking-wide border border-brand-purple/40 bg-brand-purple/10 text-brand-purple-light backdrop-blur-md">
-            <span className="size-1.5 sm:size-2 rounded-full bg-emerald-400 shrink-0" />
+            <span className="size-1.5 sm:size-2 rounded-full bg-brand-teal shrink-0" />
             <span>DUBAI SOUNDSTAGE: LIVE GENLOCK</span>
           </div>
 
@@ -41,8 +41,8 @@ export function EnterpriseHero({ onOpenRfp, onOpenCopilot }: EnterpriseHeroProps
             <span>OB-VAN FLEET: DEPLOYED</span>
           </div>
 
-          <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-mono font-medium border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 backdrop-blur-md">
-            <ShieldCheck size={12} className="text-emerald-400 shrink-0" />
+          <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-mono font-medium border border-brand-teal/30 bg-brand-teal/15 text-brand-teal-light backdrop-blur-md">
+            <ShieldCheck size={12} className="text-brand-teal shrink-0" />
             <span>GAMR MAWTHOOQ CERTIFIED</span>
           </div>
         </div>

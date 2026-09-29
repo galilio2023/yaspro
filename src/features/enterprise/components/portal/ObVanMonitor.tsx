@@ -37,8 +37,8 @@ export function ObVanMonitor({ activeCam }: ObVanMonitorProps) {
           <span className="text-white/90 truncate max-w-[150px] sm:max-w-none">{activeCam.label}</span>
         </div>
 
-        <div className="bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-emerald-500/40 text-[10px] sm:text-xs font-mono text-emerald-400 flex items-center gap-1 sm:gap-1.5">
-          <Activity size={12} className="shrink-0" />
+        <div className="bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-brand-teal/40 text-[10px] sm:text-xs font-mono text-brand-teal-light flex items-center gap-1 sm:gap-1.5">
+          <Activity size={12} className="shrink-0 text-brand-teal" />
           <span className="hidden xs:inline">12G-SDI</span>
           <span>11.88 Gbps</span>
         </div>

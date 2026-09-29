@@ -8,11 +8,11 @@ export function ObVanTelemetryStrip() {
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 p-4 sm:p-5 rounded-3xl border border-white/10 bg-slate-900/50 backdrop-blur-xl">
       <div className="p-3 sm:p-3.5 rounded-2xl bg-black/40 border border-white/5">
         <div className="flex items-center gap-1.5 text-text-muted text-[9px] sm:text-[10px] font-mono mb-1">
-          <Wifi size={12} className="text-emerald-400 shrink-0" />
+          <Wifi size={12} className="text-brand-teal shrink-0" />
           <span className="truncate">SATELLITE MARGIN</span>
         </div>
         <div className="text-base sm:text-lg font-black text-white font-mono">+14.2 dB</div>
-        <div className="text-[9px] sm:text-[10px] text-emerald-400 font-mono truncate">Dual Ku/Ka Locked</div>
+        <div className="text-[9px] sm:text-[10px] text-brand-teal-light font-mono truncate">Dual Ku/Ka Locked</div>
       </div>
 
       <div className="p-3 sm:p-3.5 rounded-2xl bg-black/40 border border-white/5">

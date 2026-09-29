@@ -152,7 +152,7 @@ export function ProductionCopilotModal({
                 <h3 id="copilot-dialog-title" className="font-display font-bold text-lg text-white">
                   Autonomous Production &amp; RFP Copilot
                 </h3>
-                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-brand-teal/15 text-brand-teal-light border border-brand-teal/30 font-bold">
                   AI Active
                 </span>
               </div>
@@ -266,7 +266,7 @@ export function ProductionCopilotModal({
               {/* Proposal Header & Budget Summary */}
               <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-brand-purple/20 via-black to-brand-cyan/20 border border-brand-purple/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-brand-teal font-bold">
                     Optimized Package Blueprint
                   </span>
                   <h4 className="text-base font-bold text-white mt-0.5">
@@ -295,7 +295,7 @@ export function ProductionCopilotModal({
                   <p className="text-xs text-text-secondary leading-relaxed">
                     {proposal.recommendedStudio.reason}
                   </p>
-                  <div className="text-[11px] font-mono text-emerald-400 pt-1">
+                  <div className="text-[11px] font-mono text-brand-teal-light pt-1">
                     Rate: {formatCurrency(proposal.recommendedStudio.dailyRate)} / day
                   </div>
                 </div>
@@ -361,7 +361,7 @@ export function ProductionCopilotModal({
                       key={idx}
                       className="flex items-start gap-3 p-2.5 rounded-xl bg-white/[0.02] border border-white/5"
                     >
-                      <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 size={16} className="text-brand-teal shrink-0 mt-0.5" />
                       <div>
                         <div className="text-xs font-bold text-white flex items-center gap-2">
                           <span>{item.phase}</span>
@@ -377,9 +377,9 @@ export function ProductionCopilotModal({
               </div>
 
               {/* GCC Sovereign & Compliance Note */}
-              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3">
-                <ShieldAlert size={16} className="text-emerald-400 shrink-0" />
-                <p className="text-[11px] text-emerald-300">
+              <div className="p-3 rounded-xl bg-brand-purple/15 border border-brand-purple/30 flex items-center gap-3">
+                <ShieldAlert size={16} className="text-brand-purple-light shrink-0" />
+                <p className="text-[11px] text-brand-purple-light">
                   Fully compliant with Saudi GCAM Mawthooq advertising licensing and GCC Sovereign Cloud data residency.
                 </p>
               </div>

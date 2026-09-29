@@ -85,7 +85,7 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
                     </td>
                     <td className="py-3 px-4">
                       {rfp.requiresMawthooqCompliance && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[10px] font-semibold">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-teal/15 border border-brand-teal/30 text-brand-teal-light text-[10px] font-semibold">
                           <ShieldCheck size={10} /> Mawthooq
                         </span>
                       )}
@@ -94,7 +94,7 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
                       <span
                         className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
                           rfp.status === "sla_active"
-                            ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                            ? "bg-brand-teal/15 text-brand-teal-light border border-brand-teal/30"
                             : rfp.status === "approved"
                             ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
                             : "bg-rose-500/20 text-rose-300 border border-rose-500/30"

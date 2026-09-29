@@ -34,8 +34,8 @@ export function MawthooqTelemetryPanel({
     <div className="p-5 sm:p-7 rounded-3xl border border-white/10 bg-slate-950/80 backdrop-blur-xl shadow-2xl">
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 pb-6 border-b border-white/10">
         <div>
-          <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-emerald-400 mb-2">
-            <FileCheck2 size={14} className="shrink-0" />
+          <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-brand-teal-light mb-2">
+            <FileCheck2 size={14} className="shrink-0 text-brand-teal" />
             <span>ACTIVE CAMPAIGN SYNDICATION SUMMARY</span>
           </div>
           <h3 className="text-lg sm:text-2xl font-bold text-white mb-1">
@@ -54,8 +54,8 @@ export function MawthooqTelemetryPanel({
           </div>
 
           <div className="p-1 sm:border-l border-white/10 sm:pl-3">
-            <div className="text-[10px] sm:text-[11px] text-emerald-400 font-mono font-bold">KSA Penetration</div>
-            <div className="text-lg sm:text-xl font-black text-emerald-400 font-mono mt-0.5">{avgSaudiReach}%</div>
+            <div className="text-[10px] sm:text-[11px] text-brand-teal-light font-mono font-bold">KSA Penetration</div>
+            <div className="text-lg sm:text-xl font-black text-brand-teal-light font-mono mt-0.5">{avgSaudiReach}%</div>
           </div>
 
           <div className="p-1 border-t sm:border-t-0 sm:border-l border-white/10 pt-2 sm:pt-1 sm:pl-3">

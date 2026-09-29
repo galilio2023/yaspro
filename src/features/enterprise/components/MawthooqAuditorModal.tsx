@@ -109,12 +109,12 @@ export function MawthooqAuditorModal({
 
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="size-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0">
+          <div className="size-12 rounded-2xl bg-brand-purple/20 border border-brand-purple/40 text-brand-purple-light flex items-center justify-center shrink-0">
             <ShieldCheck size={24} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-brand-teal-light font-bold bg-brand-teal/15 px-2 py-0.5 rounded border border-brand-teal/30">
                 Official Regulatory Clearance
               </span>
               <span className="text-xs font-mono text-text-muted">KSA GAMR &amp; UAE NMC</span>
@@ -332,14 +332,14 @@ export function MawthooqAuditorModal({
 
             {/* Audit Results */}
             {auditReport && (
-              <div className="space-y-3.5 p-4 rounded-2xl bg-black/50 border border-emerald-500/30">
+              <div className="space-y-3.5 p-4 rounded-2xl bg-black/50 border border-brand-purple/30">
                 {/* Score Header */}
                 <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-900 border border-white/10">
                   <div className="flex items-center gap-3">
                     <div
                       className={`size-12 rounded-xl flex items-center justify-center font-mono font-black text-lg ${
                         auditReport.status === "compliant"
-                          ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
+                          ? "bg-brand-teal/20 text-brand-teal-light border border-brand-teal/40"
                           : auditReport.status === "warning"
                           ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
                           : "bg-red-500/20 text-red-400 border border-red-500/40"
@@ -352,7 +352,7 @@ export function MawthooqAuditorModal({
                         <span
                           className={`text-xs font-bold uppercase font-mono px-2 py-0.5 rounded ${
                             auditReport.status === "compliant"
-                              ? "bg-emerald-500/10 text-emerald-400"
+                              ? "bg-brand-teal/15 text-brand-teal-light"
                               : auditReport.status === "warning"
                               ? "bg-amber-500/10 text-amber-400"
                               : "bg-red-500/10 text-red-400"
@@ -373,7 +373,7 @@ export function MawthooqAuditorModal({
                     </div>
                   </div>
 
-                  <span className="text-[10px] font-mono text-emerald-400/80 bg-emerald-500/5 px-2.5 py-1 rounded-md border border-emerald-500/10">
+                  <span className="text-[10px] font-mono text-brand-purple-light bg-brand-purple/10 px-2.5 py-1 rounded-md border border-brand-purple/20">
                     {auditReport.isAiGenerated ? "Gemini Multimodal AI" : "Deterministic GAMR Engine"}
                   </span>
                 </div>
@@ -453,15 +453,15 @@ export function MawthooqAuditorModal({
 
             <div className="p-4 rounded-2xl bg-black/40 border border-white/10 space-y-2.5 text-xs text-text-secondary">
               <div className="flex items-start gap-2">
-                <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
+                <CheckCircle2 size={15} className="text-brand-teal shrink-0 mt-0.5" />
                 <span>Pre-cleared against Saudi Consumer Protection Law (Executive Regulations 2024–2026).</span>
               </div>
               <div className="flex items-start gap-2">
-                <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
+                <CheckCircle2 size={15} className="text-brand-teal shrink-0 mt-0.5" />
                 <span>UAE National Media Council commercial influencer permit certified.</span>
               </div>
               <div className="flex items-start gap-2">
-                <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
+                <CheckCircle2 size={15} className="text-brand-teal shrink-0 mt-0.5" />
                 <span>Direct Yas Pro indemnification shield against unlicensed creator fines (up to SAR 5,000,000).</span>
               </div>
             </div>
@@ -488,7 +488,7 @@ export function MawthooqAuditorModal({
                 </div>
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-black/40 border border-white/5">
                   <span className="text-white">Milestone 3: Live Post &amp; Mawthooq Verification</span>
-                  <span className="text-emerald-400 font-bold">40% Final Settlement</span>
+                  <span className="text-brand-teal-light font-bold">40% Final Settlement</span>
                 </div>
               </div>
             </div>
