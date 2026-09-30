@@ -20,30 +20,18 @@ import {
   type EnterpriseRfpInput,
 } from "./validations";
 
-import { STUDIOS, STUDIO_GEAR_PACKAGES } from "@/features/booking/constants";
+import { STUDIOS, STUDIO_GEAR_PACKAGES, calculateBookingPrice } from "@/features/booking/constants";
 
 /**
  * Recalculate price server-side based on canonical pricing rules
  */
 function calculateServerPrice(data: BookingSubmissionInput): number {
-  const studio =
-    STUDIOS.find((s) => s.id === data.studioId) ||
-    STUDIOS[0];
+  if (typeof calculateBookingPrice === "function") {
+    return calculateBookingPrice(data).total;
+  }
+  const studio = (STUDIOS || []).find((s) => s.id === data.studioId) || (STUDIOS || [])[0];
   const studioRate = studio ? studio.rate : 800;
-  const studioCost = studioRate * data.durationHours;
-
-  const crewCost = data.needsCrew ? 500 : 0;
-
-  const gearPkg = STUDIO_GEAR_PACKAGES.find((g) => g.id === data.selectedGearPackage);
-  const gearCost = gearPkg ? gearPkg.rate : 0;
-
-  const postCost =
-    (data.needsEditing ? 400 : 0) +
-    (data.needsColorGrading ? 300 : 0) +
-    (data.needsSoundMastering ? 250 : 0) +
-    (data.needsAiAutoCut ? 450 : 0);
-
-  return studioCost + crewCost + gearCost + postCost;
+  return studioRate * (data.durationHours || 1);
 }
 
 export type ActionResponse<T = unknown> = {

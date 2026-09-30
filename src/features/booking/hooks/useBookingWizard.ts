@@ -4,6 +4,7 @@ import { generateBookingReference } from "@/lib/utils";
 import { createBooking } from "@/lib/actions";
 import { BookingState } from "../types";
 import { INITIAL_BOOKING_STATE, SESSION_TYPES, STUDIOS, STUDIO_GEAR_PACKAGES } from "../constants";
+import { calculateBookingPrice } from "../lib/pricing";
 
 function getInitialBookingState(searchParams: ReturnType<typeof useSearchParams>) {
   if (!searchParams) {
@@ -68,7 +69,6 @@ export function useBookingWizard() {
       setIsAiConfigured(true);
     }
   }
-
   const update = (values: Partial<BookingState>) => {
     setErrorMessage(null);
     setState((prev) => ({ ...prev, ...values }));
@@ -78,16 +78,16 @@ export function useBookingWizard() {
   const sessionTypeObj = SESSION_TYPES.find((s) => s.id === state.sessionType);
   const gearPkg = STUDIO_GEAR_PACKAGES.find((g) => g.id === state.selectedGearPackage);
 
-  const studioCost = studio ? studio.rate * state.durationHours : 0;
-  const crewCost = state.needsCrew ? 500 : 0;
-  const gearCost = gearPkg ? gearPkg.rate : 0;
-  const postCost =
-    (state.needsEditing ? 400 : 0) +
-    (state.needsColorGrading ? 300 : 0) +
-    (state.needsSoundMastering ? 250 : 0) +
-    (state.needsAiAutoCut ? 450 : 0);
-
-  const total = studioCost + crewCost + gearCost + postCost;
+  const { studioCost, crewCost, gearCost, postCost, total } = calculateBookingPrice({
+    studioId: state.studioId,
+    durationHours: state.durationHours,
+    needsCrew: state.needsCrew,
+    selectedGearPackage: state.selectedGearPackage,
+    needsEditing: state.needsEditing,
+    needsColorGrading: state.needsColorGrading,
+    needsSoundMastering: state.needsSoundMastering,
+    needsAiAutoCut: state.needsAiAutoCut,
+  });
 
   const nextStep = () => {
     setErrorMessage(null);

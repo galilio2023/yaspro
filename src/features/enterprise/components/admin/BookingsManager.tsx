@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   CalendarCheck,
   CheckCircle2,
@@ -14,6 +14,8 @@ import { updateBookingStatus, updateBookingPaymentStatus } from "@/lib/cms-actio
 import type { Booking } from "@/db/schema";
 import { formatCurrency } from "@/lib/utils";
 import { YasproEmblem } from "@/components/ui/YasproEmblem";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { FeedbackAlert } from "@/components/ui/feedback-alert";
 
 interface BookingsManagerProps {
   initialBookings: Booking[];
@@ -40,49 +42,15 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
 
   const callSheetBooking = bookingList.find((b) => b.id === callSheetBookingId) || null;
 
-  // Manage keyboard focus trap and restoration for the Call Sheet modal
-  useEffect(() => {
-    if (!callSheetBooking) return;
+  const handleCloseCallSheet = useCallback(() => {
+    setCallSheetBookingId(null);
+  }, []);
 
-    // Move focus into the modal
-    modalRef.current?.focus();
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setCallSheetBookingId(null);
-        return;
-      }
-
-      if (e.key === "Tab" && modalRef.current) {
-        const focusable = modalRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length === 0) return;
-
-        const firstElement = focusable[0];
-        const lastElement = focusable[focusable.length - 1];
-
-        if (e.shiftKey) {
-          if (document.activeElement === firstElement) {
-            e.preventDefault();
-            lastElement.focus();
-          }
-        } else {
-          if (document.activeElement === lastElement) {
-            e.preventDefault();
-            firstElement.focus();
-          }
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      // Restore focus to trigger button
-      triggerRef.current?.focus();
-    };
-  }, [callSheetBooking]);
+  useFocusTrap({
+    isOpen: Boolean(callSheetBooking),
+    onClose: handleCloseCallSheet,
+    containerRef: modalRef,
+  });
 
   const handleStatusChange = async (
     id: string,
@@ -152,10 +120,11 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         </div>
 
         {feedback && (
-          <div className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-1.5">
-            <CheckCircle2 size={14} />
-            <span>{feedback}</span>
-          </div>
+          <FeedbackAlert
+            type="success"
+            message={feedback}
+            onDismiss={() => setFeedback(null)}
+          />
         )}
       </div>
 

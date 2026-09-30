@@ -19,3 +19,10 @@ export const db = new Proxy({} as ReturnType<typeof createDb>, {
 });
 
 export type DB = typeof db;
+
+/**
+ * Returns true if DATABASE_URL is configured and not pointing to default placeholder.
+ */
+export function isDatabaseConfigured(): boolean {
+  return Boolean(process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx"));
+}
