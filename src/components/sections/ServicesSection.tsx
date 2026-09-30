@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Sparkles } from "lucide-react";
+import React, { useId, useState } from "react";
+import { Pause, Play, Sparkles } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
@@ -12,6 +12,8 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function ServicesSection() {
   const { t, isArabic } = useLanguage();
+  const [isPaused, setIsPaused] = useState(false);
+  const marqueeId = useId();
 
   return (
     <Section
@@ -52,15 +54,34 @@ export function ServicesSection() {
           gradientText={isArabic ? t("services.titleGradient") : "With Us"}
           description={t("services.description")}
         />
+        <button
+          type="button"
+          aria-controls={marqueeId}
+          onClick={() => setIsPaused((paused) => !paused)}
+          className="mt-6 inline-flex items-center gap-2 rounded-lg border border-white/20 px-4 py-2 text-sm text-slate-300 hover:text-white focus-visible:outline-2 focus-visible:outline-brand-cyan"
+        >
+          {isPaused ? <Play size={16} aria-hidden="true" /> : <Pause size={16} aria-hidden="true" />}
+          {isArabic
+            ? (isPaused ? "استئناف حركة الخدمات" : "إيقاف حركة الخدمات مؤقتًا")
+            : (isPaused ? "Resume services animation" : "Pause services animation")}
+        </button>
       </Container>
 
-      {/* Google Labs Style Full-Bleed Infinite Carousel (Always scrolls, pauses on hover) */}
-      <div className="relative w-full overflow-hidden select-none" dir="ltr">
+      {/* Pause on hover or focus, with a persistent manual pause control. */}
+      <div className="group/services relative w-full overflow-hidden select-none" dir="ltr">
         {/* Edge Fade Masks for smooth gradient entry/exit */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-36 bg-gradient-to-r from-background via-background/80 to-transparent z-20" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-36 bg-gradient-to-l from-background via-background/80 to-transparent z-20" />
+        <div className="pointer-events-none group-focus-within/services:hidden absolute inset-y-0 left-0 w-16 sm:w-36 bg-gradient-to-r from-background via-background/80 to-transparent z-20" />
+        <div className="pointer-events-none group-focus-within/services:hidden absolute inset-y-0 right-0 w-16 sm:w-36 bg-gradient-to-l from-background via-background/80 to-transparent z-20" />
 
         <Marquee
+          id={marqueeId}
+          pauseOnHover
+          paused={isPaused}
+          onFocusCapture={(event) => {
+            if (event.target instanceof HTMLElement) {
+              event.target.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
+            }
+          }}
           repeat={4}
           gap="1.75rem"
           className="[--duration:40s] py-4 items-stretch cursor-grab active:cursor-grabbing"

@@ -105,11 +105,11 @@ export function YasproEmblem({
       </defs>
 
       {/* 1. Outer Dark Lens Housing */}
-      <circle cx="50" cy="50" r="47" fill="url(#ringGradId)" stroke="#334155" strokeWidth="1.2" />
+      <circle cx="50" cy="50" r="47" fill={`url(#${ringGradId})`} stroke="#334155" strokeWidth="1.2" />
 
       {/* 2. Precision Knurling & Optical Calibrations */}
       <circle cx="50" cy="50" r="43" stroke="#475569" strokeWidth="0.8" strokeDasharray="1.5 3.5" opacity="0.75" />
-      <circle cx="50" cy="50" r="40" fill="url(#irisGradId)" stroke="#1e293b" strokeWidth="1.5" />
+      <circle cx="50" cy="50" r="40" fill={`url(#${irisGradId})`} stroke="#1e293b" strokeWidth="1.5" />
 
       {/* 3. Cinema Aperture Blades */}
       <g opacity="0.35" stroke="#64748b" strokeWidth="0.75">
@@ -124,7 +124,7 @@ export function YasproEmblem({
       {/* 4. Left Neon Violet Glowing Arc Rim */}
       <path
         d="M 50 4 A 46 46 0 0 0 50 96"
-        stroke="url(#neonVioletId)"
+        stroke={`url(#${neonVioletId})`}
         strokeWidth="3.2"
         strokeLinecap="round"
         filter={`url(#${outerGlowId})`}
@@ -133,7 +133,7 @@ export function YasproEmblem({
       {/* 5. Right Neon Cyan Glowing Arc Rim */}
       <path
         d="M 50 4 A 46 46 0 0 1 50 96"
-        stroke="url(#neonCyanId)"
+        stroke={`url(#${neonCyanId})`}
         strokeWidth="3.2"
         strokeLinecap="round"
         filter={`url(#${outerGlowId})`}
@@ -144,7 +144,7 @@ export function YasproEmblem({
         {/* Left Arm Beveled Polygon */}
         <polygon
           points="24,24 38,24 50,47 43,53 24,24"
-          fill="url(#yFacetLeftId)"
+          fill={`url(#${yFacetLeftId})`}
           stroke="#a855f7"
           strokeWidth="0.8"
         />
@@ -152,7 +152,7 @@ export function YasproEmblem({
         {/* Right Arm Beveled Polygon */}
         <polygon
           points="76,24 62,24 50,47 57,53 76,24"
-          fill="url(#yFacetRightId)"
+          fill={`url(#${yFacetRightId})`}
           stroke="#06b6d4"
           strokeWidth="0.8"
         />
@@ -160,7 +160,7 @@ export function YasproEmblem({
         {/* Center Chiseled Spine */}
         <polygon
           points="43,51 57,51 57,78 43,78"
-          fill="url(#yFacetStemId)"
+          fill={`url(#${yFacetStemId})`}
           stroke="#64748b"
           strokeWidth="0.6"
         />

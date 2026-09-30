@@ -7,6 +7,7 @@ interface MarqueeProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   reverse?: boolean;
   pauseOnHover?: boolean;
+  paused?: boolean;
   children: React.ReactNode;
   vertical?: boolean;
   repeat?: number;
@@ -17,6 +18,7 @@ export function Marquee({
   className,
   reverse = false,
   pauseOnHover = false,
+  paused = false,
   children,
   vertical = false,
   repeat = 4,
@@ -47,7 +49,7 @@ export function Marquee({
       {...props}
       style={{ "--gap": gap } as React.CSSProperties}
       className={cn(
-        "group flex overflow-hidden p-2 [--duration:35s] [gap:var(--gap)]",
+        "group flex overflow-hidden p-2 [--duration:35s] [gap:var(--gap)] focus-within:overflow-auto",
         !isVisible && "[&_*]:![animation-play-state:paused]",
         {
           "flex-row": !vertical,
@@ -62,7 +64,10 @@ export function Marquee({
           <div
             key={i}
             aria-hidden={i > 0 ? true : undefined}
-            className={cn("flex shrink-0 justify-around [gap:var(--gap)]", {
+            inert={i > 0 ? true : undefined}
+            className={cn("flex shrink-0 justify-around [gap:var(--gap)] group-focus-within:![animation:none]", {
+              "group-focus-within:hidden": i > 0,
+              "[animation-play-state:paused]": paused,
               "animate-marquee flex-row": !vertical,
               "animate-marquee-vertical flex-col": vertical,
               "group-hover:[animation-play-state:paused]": pauseOnHover,

@@ -28,23 +28,63 @@ export function PortalMobileNav({
   const router = useRouter();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const prevIsOpen = useRef(isOpen);
 
   useEffect(() => {
     if (!isOpen) return;
 
-    // Focus close button on dialog opening
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const closeOnDesktop = () => {
+      if (desktop.matches) setIsOpen(false);
+    };
+    closeOnDesktop();
+    desktop.addEventListener("change", closeOnDesktop);
+
+    // Inert every sibling along the dialog's ancestor path, preserving prior state.
+    const background = new Map<HTMLElement, boolean>();
+    let branch: HTMLElement = dialog;
+    while (branch.parentElement) {
+      for (const sibling of branch.parentElement.children) {
+        if (sibling instanceof HTMLElement && sibling !== branch) {
+          background.set(sibling, sibling.inert);
+          sibling.inert = true;
+        }
+      }
+      branch = branch.parentElement;
+      if (branch === document.body) break;
+    }
+
     closeButtonRef.current?.focus();
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        e.preventDefault();
         setIsOpen(false);
+      } else if (e.key === "Tab") {
+        const controls = Array.from(dialog.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )).filter((element) => element.tabIndex >= 0 && element.getClientRects().length > 0 && !element.closest("[inert]"));
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        const active = document.activeElement;
+        if (!first || !last) {
+          e.preventDefault();
+        } else if (!dialog.contains(active) || (e.shiftKey ? active === first : active === last)) {
+          e.preventDefault();
+          (e.shiftKey ? last : first).focus();
+        }
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      desktop.removeEventListener("change", closeOnDesktop);
+      for (const [element, wasInert] of background) element.inert = wasInert;
     };
   }, [isOpen]);
 
@@ -116,6 +156,7 @@ export function PortalMobileNav({
       {/* Full-screen overlay — visible only when open on mobile */}
       {isOpen && (
         <div
+          ref={dialogRef}
           className="md:hidden fixed inset-0 z-50 flex"
           role="dialog"
           aria-modal="true"

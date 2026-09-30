@@ -1,3 +1,6 @@
+"use client";
+
+import { useId } from "react";
 import Link from "next/link";
 import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { cn } from "@/lib/utils";
@@ -14,6 +17,7 @@ export function BrandLogo({
   href = "/",
   size = "default",
 }: BrandLogoProps) {
+  const emblemId = useId();
   const isLarge = size === "large";
 
   const content = (
@@ -27,7 +31,7 @@ export function BrandLogo({
         <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-brand-purple/20 via-brand-cyan/20 to-brand-purple/20 blur-md pointer-events-none opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all duration-300" />
         <YasproEmblem
           size={isLarge ? 34 : 28}
-          idPrefix="brand-emblem"
+          idPrefix={`brand-emblem-${emblemId}`}
           className="relative z-10 filter drop-shadow-[0_2px_12px_rgba(6,182,212,0.4)] group-hover:scale-105 group-hover:drop-shadow-[0_2px_16px_rgba(168,85,247,0.65)] transition-all duration-300"
         />
       </div>

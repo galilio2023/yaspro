@@ -472,12 +472,16 @@ export async function syncUserProfile(input: {
     });
 
     const targetUserId = session?.user?.id;
+    const name = input.name?.trim();
+    if (name !== undefined && !name) {
+      return { success: false, message: "Name cannot be empty." };
+    }
 
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       const updateData: Record<string, unknown> = {
         updatedAt: new Date(),
       };
-      if (input.name !== undefined) updateData.name = input.name.trim() || null;
+      if (name !== undefined) updateData.name = name;
       if (input.phone !== undefined) updateData.phone = input.phone.trim() || null;
       if (input.company !== undefined) updateData.company = input.company.trim() || null;
 

@@ -53,6 +53,8 @@ export default async function InvoicesPage() {
 
   const bookings = await getClientBookings(session.user.id);
   const withAmounts = bookings.filter((b) => Number(b.totalAmount) > 0);
+  // Payment records store a status/reference, but no received deposit amount.
+  const summariesIncomplete = withAmounts.some((b) => b.paymentStatus === "deposit_paid");
   const totalPaid = withAmounts
     .filter((b) => b.paymentStatus === "paid")
     .reduce((sum, b) => sum + Number(b.totalAmount), 0);
@@ -71,17 +73,24 @@ export default async function InvoicesPage() {
       <div className="grid grid-cols-2 gap-4">
         <div className="p-5 rounded-2xl bg-emerald-900/20 border border-emerald-500/20 flex flex-col gap-1">
           <div className="text-[11px] text-emerald-400 uppercase tracking-wide font-medium flex items-center gap-1.5">
-            <CheckCircle2 size={12} /> Total Paid
+            <CheckCircle2 size={12} /> {summariesIncomplete ? "Known Paid" : "Total Paid"}
           </div>
           <div className="text-2xl font-extrabold text-white" dir="ltr">{totalPaid.toLocaleString()} AED</div>
         </div>
         <div className="p-5 rounded-2xl bg-amber-900/20 border border-amber-500/20 flex flex-col gap-1">
           <div className="text-[11px] text-amber-400 uppercase tracking-wide font-medium flex items-center gap-1.5">
-            <AlertCircle size={12} /> Outstanding
+            <AlertCircle size={12} /> {summariesIncomplete ? "Known Outstanding" : "Outstanding"}
           </div>
           <div className="text-2xl font-extrabold text-white" dir="ltr">{totalOutstanding.toLocaleString()} AED</div>
         </div>
       </div>
+
+      {summariesIncomplete && (
+        <p className="text-sm text-amber-300" role="status">
+          These summaries are incomplete: received deposits and remaining balances for deposit-paid bookings are unavailable.
+          The amounts shown exclude those bookings. Contact your concierge for complete account totals.
+        </p>
+      )}
 
       {/* Tax invoice notice */}
       <div className="flex items-start gap-3 p-4 rounded-2xl bg-slate-800/60 border border-white/10">

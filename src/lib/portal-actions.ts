@@ -56,7 +56,6 @@ export async function lookupEnterpriseRfp(referenceCode: string): Promise<Enterp
 
   const userRole = (session.user as { role?: string })?.role;
   const userEmail = session.user.email?.toLowerCase().trim();
-  const userCompany = ((session.user as { company?: string | null })?.company || "").toLowerCase().trim();
 
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
@@ -65,12 +64,11 @@ export async function lookupEnterpriseRfp(referenceCode: string): Promise<Enterp
       });
 
       if (record) {
-        // Enforce ownership: only admin, or the submitter (by userId, workEmail, or organizationName)
+        // Enforce ownership using the submitter ID or a verified email address.
         const isOwner =
           userRole === "admin" ||
           (record.userId && record.userId === session.user.id) ||
-          (record.workEmail && record.workEmail.toLowerCase().trim() === userEmail) ||
-          (userCompany && record.organizationName && record.organizationName.toLowerCase().trim() === userCompany);
+          (session.user.emailVerified && record.workEmail && record.workEmail.toLowerCase().trim() === userEmail);
 
         if (!isOwner) {
           return {

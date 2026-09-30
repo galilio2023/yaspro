@@ -77,6 +77,7 @@ export function PortalSettingsForm({ user }: PortalSettingsFormProps) {
             </button>
             <button
               type="button"
+              disabled={isSaving}
               onClick={() => {
                 setIsEditing(false);
                 setEditPhone(savedPhone);
@@ -135,6 +136,7 @@ export function PortalSettingsForm({ user }: PortalSettingsFormProps) {
             {isEditing ? (
               <input
                 type="tel"
+                disabled={isSaving}
                 value={editPhone}
                 onChange={(e) => setEditPhone(e.target.value)}
                 placeholder="+971 XX XXX XXXX"
@@ -157,6 +159,7 @@ export function PortalSettingsForm({ user }: PortalSettingsFormProps) {
             {isEditing ? (
               <input
                 type="text"
+                disabled={isSaving}
                 value={editCompany}
                 onChange={(e) => setEditCompany(e.target.value)}
                 placeholder="Independent"
