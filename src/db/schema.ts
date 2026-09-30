@@ -10,7 +10,7 @@ import {
   jsonb,
   index,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
@@ -151,7 +151,10 @@ export const equipment = pgTable("equipment", {
   includedInKit: jsonb("included_in_kit").$type<string[]>().default([]),
   isAvailable: boolean("is_available").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+},
+(table) => [
+  index("equipment_category_avail_idx").on(table.category, table.isAvailable),
+]);
 
 // ─── Bookings ─────────────────────────────────────────────────────────────────
 
@@ -214,7 +217,7 @@ export const inquiries = pgTable(
   },
   (table) => [
     index("inquiries_created_at_idx").on(table.createdAt),
-    index("inquiries_resolved_idx").on(table.isResolved),
+    index("inquiries_resolved_idx").on(table.createdAt).where(sql`${table.isResolved} = false`),
   ]
 );
 
@@ -239,7 +242,10 @@ export const projects = pgTable("projects", {
   isFeatured: boolean("is_featured").notNull().default(false),
   publishedAt: timestamp("published_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+},
+(table) => [
+  index("projects_category_idx").on(table.category, table.isFeatured),
+]);
 
 // ─── Influencers ──────────────────────────────────────────────────────────────
 
@@ -272,6 +278,7 @@ export const enterpriseRfps = pgTable(
   "enterprise_rfps",
   {
     id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").references(() => users.id),
     referenceCode: text("reference_code").notNull().unique(),
     organizationName: text("organization_name").notNull(),
     organizationType: text("organization_type").notNull().default("enterprise"),
@@ -295,7 +302,7 @@ export const enterpriseRfps = pgTable(
   },
   (table) => [
     index("rfps_created_at_idx").on(table.createdAt),
-    index("rfps_status_idx").on(table.status),
+    index("rfps_status_idx").on(table.status, table.createdAt.desc()),
   ]
 );
 

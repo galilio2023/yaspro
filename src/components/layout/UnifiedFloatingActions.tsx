@@ -246,7 +246,7 @@ export function UnifiedFloatingActions() {
       <aside
         ref={containerRef}
         aria-label="Yas Pro Assistant Launcher"
-        className="fixed bottom-20 right-4 sm:bottom-8 sm:right-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-28 sm:[[data-has-bottom-cart=true]_&]:bottom-8 pb-[env(safe-area-inset-bottom,0px)]"
+        className="fixed bottom-20 end-4 sm:bottom-8 sm:end-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-28 sm:[[data-has-bottom-cart=true]_&]:bottom-8 pb-[env(safe-area-inset-bottom,0px)]"
       >
         {/* WhatsApp Concierge Flyout */}
         {isWhatsAppOpen && (
@@ -256,7 +256,7 @@ export function UnifiedFloatingActions() {
             aria-modal="true"
             aria-labelledby="unified-concierge-heading"
             tabIndex={-1}
-            className="absolute bottom-16 right-0 w-[calc(100vw-2rem)] max-w-[360px] sm:w-[380px] bg-[#0c0a18]/95 border border-emerald-500/20 rounded-3xl p-4 sm:p-5 shadow-2xl shadow-black/90 backdrop-blur-2xl animate-fade-up outline-none"
+            className="absolute bottom-16 end-0 w-[calc(100vw-2rem)] max-w-[360px] sm:w-[380px] bg-[#0c0a18]/95 border border-emerald-500/20 rounded-3xl p-4 sm:p-5 shadow-2xl shadow-black/90 backdrop-blur-2xl animate-fade-up outline-none"
           >
             {/* Header */}
             <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
@@ -353,7 +353,7 @@ export function UnifiedFloatingActions() {
           <div
             role="menu"
             aria-label="Yas Pro Assistant Options"
-            className="absolute bottom-16 right-0 mb-2 flex flex-col items-end gap-3 animate-fade-up"
+            className="absolute bottom-16 end-0 mb-2 flex flex-col items-end gap-3 animate-fade-up"
           >
             {/* Option 1: AI Production Copilot SVG Button */}
             <div className="flex items-center gap-2.5 group/ai">

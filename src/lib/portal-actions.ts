@@ -3,6 +3,8 @@
 import { db } from "@/db";
 import { enterpriseRfps } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
 export interface EnterpriseRfpLookupResult {
   found: boolean;
@@ -37,10 +39,23 @@ export interface ProductionTelemetryEvent {
  * Look up an Enterprise RFP by reference code (with live database fallback to demo references)
  */
 export async function lookupEnterpriseRfp(referenceCode: string): Promise<EnterpriseRfpLookupResult> {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session?.user) {
+    return {
+      found: false,
+      message: "Unauthorized: Active session required to query the enterprise ledger.",
+    };
+  }
+
   const code = referenceCode.trim().toUpperCase();
   if (!code) {
     return { found: false, message: "Please provide a valid RFP reference code." };
   }
+
+  const userRole = (session.user as { role?: string })?.role;
+  const userEmail = session.user.email?.toLowerCase().trim();
 
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
@@ -49,6 +64,19 @@ export async function lookupEnterpriseRfp(referenceCode: string): Promise<Enterp
       });
 
       if (record) {
+        // Enforce ownership using the submitter ID or a verified email address.
+        const isOwner =
+          userRole === "admin" ||
+          (record.userId && record.userId === session.user.id) ||
+          (session.user.emailVerified && record.workEmail && record.workEmail.toLowerCase().trim() === userEmail);
+
+        if (!isOwner) {
+          return {
+            found: false,
+            message: "Access denied: This proposal reference belongs to another organization.",
+          };
+        }
+
         return {
           found: true,
           rfp: {
@@ -71,6 +99,13 @@ export async function lookupEnterpriseRfp(referenceCode: string): Promise<Enterp
 
     // Demo lookup fallbacks for instant client evaluation
     if (code === "EXP-9182-DXB" || code.startsWith("EXP-")) {
+      if (userRole !== "admin" && userRole !== "enterprise") {
+        return {
+          found: false,
+          message: "Access denied: Enterprise clearance required to access sovereign proposal references.",
+        };
+      }
+
       return {
         found: true,
         rfp: {

@@ -269,7 +269,7 @@ export function VirtualStudioSection() {
         </div>
 
         {/* ─── 2. MAIN CINEMA STAGE VIEWPORT (Optimized 16:9 Cinema Container) ─── */}
-        <div className="relative w-full rounded-2xl sm:rounded-3xl border border-white/20 bg-slate-950 overflow-hidden shadow-2xl select-none mb-3">
+        <div className="relative w-full rounded-2xl sm:rounded-3xl border border-white/20 bg-slate-950 overflow-hidden shadow-2xl select-none mb-3" dir="ltr">
           <div
             ref={containerRef}
             onMouseDown={handleMouseDown}

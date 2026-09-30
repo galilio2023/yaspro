@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useId, useEffect, useRef } from "react";
-import { Sparkles } from "lucide-react";
-import { IyasProIcon } from "@/components/ui/IyasProIcon";
+import { YasproEmblem } from "@/components/ui/YasproEmblem";
 
 interface YasproBrandSparkleBadgeProps {
   className?: string;
@@ -132,19 +131,13 @@ export function YasproBrandSparkleBadge({ className = "" }: YasproBrandSparkleBa
         className="pointer-events-none absolute inset-0 size-full"
       />
 
-      {/* Brand Icon Badge */}
-      <div className="relative z-10 flex items-center justify-center size-7 rounded-xl bg-gradient-to-tr from-brand-purple to-brand-cyan p-[1px] shadow-sm">
-        <div className="size-full bg-background rounded-[11px] flex items-center justify-center">
-          <Sparkles size={14} className="text-brand-purple-light animate-pulse" />
-        </div>
-      </div>
 
-      {/* Brand Typography */}
-      <div className="relative z-10 flex items-center gap-1.5 font-latin" dir="ltr" style={{ direction: "ltr" }}>
-        <IyasProIcon
-          size={14}
+      {/* Brand Typography & Emblem */}
+      <div className="relative z-10 flex items-center gap-2 font-latin" dir="ltr" style={{ direction: "ltr" }}>
+        <YasproEmblem
+          size={22}
           idPrefix="badge-logo"
-          className="filter drop-shadow-[0_0_6px_rgba(167,139,250,0.6)] -translate-y-0.5"
+          className="filter drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]"
         />
         <span className="font-extrabold text-base tracking-wider bg-gradient-to-r from-white via-brand-purple-light to-brand-cyan bg-clip-text text-transparent drop-shadow-sm font-display font-latin">
           YASPRO

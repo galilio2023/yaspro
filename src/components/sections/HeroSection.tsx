@@ -5,11 +5,9 @@ import Link from "next/link";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { ArrowRight, Play } from "lucide-react";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
-import { BorderBeam } from "@/components/magicui/border-beam";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import { HeroStats } from "./HeroStats";
-import { SplineScene } from "@/components/3d/SplineScene";
 import { HeroSparkles } from "./HeroSparkles";
 import { YasproBrandSparkleBadge } from "./YasproBrandSparkleBadge";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -23,9 +21,36 @@ export default function HeroSection() {
     <Section
       id="hero"
       aria-labelledby="hero-title"
-      className="min-h-[calc(100dvh-3.5rem)] sm:min-h-[calc(100dvh-4.5rem)] flex items-center justify-center py-8 sm:py-12 md:py-20 bg-background relative"
+      className="min-h-[calc(100dvh-3.5rem)] sm:min-h-[calc(100dvh-4.5rem)] flex items-center justify-center py-8 sm:py-12 md:py-20 bg-background relative overflow-hidden"
     >
+      {/* ── Cinematic 3D Virtual Production Soundstage Background ── */}
+      <div className="absolute inset-0 pointer-events-none select-none z-0 overflow-hidden">
+        {/* The 16:9 3D Cinema Robot & Soundstage Image */}
+        <div
+          className={`absolute inset-0 bg-cover bg-[80%_center] lg:bg-right bg-no-repeat opacity-90 transition-opacity duration-700 ${
+            isArabic ? "-scale-x-100" : ""
+          }`}
+          style={{
+            backgroundImage: `url('/images/branding/yaspro-hero-bg.jpg')`,
+          }}
+        />
+
+        {/* Deep Vignette Blends:
+            1. Directional gradient from start edge to guarantee maximum typography contrast
+            2. Bottom gradient for seamless transition to partners/stats
+            3. Top gradient for navbar harmony */}
+        <div 
+          className={`absolute inset-y-0 w-full lg:w-3/5 from-background via-background/90 to-transparent ${
+            isArabic ? "right-0 bg-gradient-to-l" : "left-0 bg-gradient-to-r"
+          }`} 
+        />
+        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-background/80 via-background/20 to-transparent" />
+        <div className="absolute inset-0 bg-black/35 lg:bg-black/20" />
+      </div>
+
       <HeroSparkles />
+
       <Container className="relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-16 items-center">
 
@@ -37,7 +62,7 @@ export default function HeroSection() {
 
             <h1
               id="hero-title"
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-6 font-display tracking-tight leading-[1.1] rtl:leading-[1.28] text-balance"
+              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-6 font-display tracking-tight leading-[1.1] rtl:leading-[1.28] text-balance drop-shadow-md"
             >
               {isArabic ? (
                 // Arabic: fluid phrase with gradient on AI keywords
@@ -85,7 +110,7 @@ export default function HeroSection() {
               <button
                 type="button"
                 onClick={() => setIsPlayingReel(true)}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-medium text-sm text-white border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/25 transition-all text-center backdrop-blur-sm whitespace-nowrap cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-medium text-sm text-white border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/25 transition-all text-center backdrop-blur-sm whitespace-nowrap cursor-pointer shadow-lg shadow-black/40"
               >
                 {/* Play triangle: mirrors in Arabic, normal in English */}
                 <Play
@@ -101,48 +126,8 @@ export default function HeroSection() {
             <HeroStats />
           </FadeUp>
 
-          {/* ── Right Column: Interactive Spline 3D Scene ── */}
-          <div className="lg:col-span-5 relative w-full flex items-center justify-center mt-2 sm:mt-0">
-            <div className="relative w-full aspect-[4/3] sm:aspect-square max-w-xs sm:max-w-sm md:max-w-[400px] lg:max-w-[500px] mx-auto rounded-2xl sm:rounded-3xl border border-white/10 bg-card/40 backdrop-blur-md overflow-hidden shadow-2xl shadow-brand-purple/10">
-              <BorderBeam size={240} duration={12} delay={2} colorFrom="var(--brand-purple)" colorTo="var(--brand-cyan)" />
-
-              {/*
-                HUD Badge — top-start (logical: left in LTR, right in RTL).
-                Tech strings (Dubai, Studio 4K, LIVE) stay Latin with font-latin.
-              */}
-              <div className="absolute top-4 start-4 z-20 flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-black/70 border border-white/15 backdrop-blur-xl shadow-xl shadow-black/50 select-none pointer-events-none">
-                {/* UAE Flag micro SVG */}
-                <div className="size-fit rounded-[3px] overflow-hidden border border-white/20 shadow-sm flex items-center justify-center">
-                  <svg width="18" height="12" viewBox="0 0 24 16" fill="none">
-                    <rect width="24" height="5.33" y="0" fill="#00732f" />
-                    <rect width="24" height="5.33" y="5.33" fill="#ffffff" />
-                    <rect width="24" height="5.33" y="10.66" fill="#000000" />
-                    <rect width="6" height="16" x="0" fill="#ff0000" />
-                  </svg>
-                </div>
-
-                <div className="flex items-center gap-1.5 font-mono text-[10.5px] uppercase font-bold tracking-wider text-white font-latin">
-                  <span>Dubai</span>
-                  <span className="text-white/40">•</span>
-                  <span className="text-brand-purple-light">Studio 4K</span>
-                </div>
-
-                {/* Live REC Beacon */}
-                <div className="flex items-center gap-1.5 ps-1.5 border-s border-white/15">
-                  <span className="size-1.5 rounded-full bg-emerald-400" />
-                  <span className="text-[9px] font-mono tracking-widest text-emerald-400 font-semibold font-latin">LIVE</span>
-                </div>
-              </div>
-
-              {/* Spec Tag — bottom-end (logical: right in LTR, left in RTL) */}
-              <div className="absolute bottom-4 end-4 z-20 hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-black/60 border border-white/10 backdrop-blur-md text-[9.5px] font-mono text-text-muted select-none pointer-events-none font-latin">
-                <span className="size-1.5 rounded-full bg-brand-cyan" />
-                <span>UAE CINEMA CAM • RAW 8K</span>
-              </div>
-
-              <SplineScene className="size-full" />
-            </div>
-          </div>
+          {/* ── Right Column: Open vista for the 3D Cinema Robot & Soundstage ── */}
+          <div className="lg:col-span-5 hidden lg:block" aria-hidden="true" />
         </div>
       </Container>
 

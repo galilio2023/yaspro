@@ -44,6 +44,7 @@ export function OrbitingMediaNodes() {
       ref={containerRef}
       role="region"
       aria-label="Yas Pro AI Ecosystem interactive telemetry diagram"
+      dir="ltr"
       className={cn(
         "relative flex h-[380px] sm:h-[500px] md:h-[560px] w-full max-w-full items-center justify-center overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 bg-[#080614] shadow-[0_20px_60px_rgba(0,0,0,0.8)] select-none group/orbit [transform:translateZ(0)] will-change-transform",
         !isVisible && "[&_*]:![animation-play-state:paused]"

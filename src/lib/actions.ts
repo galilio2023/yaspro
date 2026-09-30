@@ -4,6 +4,8 @@ import { db } from "@/db";
 import { bookings, inquiries, users, studios, enterpriseRfps, type SessionType, type InquiryType } from "@/db/schema";
 import { generateBookingReference } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 import { eq, and, inArray } from "drizzle-orm";
 import { checkRateLimit, checkIdempotency, getClientIdentifier } from "@/lib/rate-limit";
 import { sendBookingConfirmationNotification, sendInquiryNotification } from "@/lib/notifications";
@@ -407,11 +409,15 @@ export async function submitEnterpriseRfp(rawInput: unknown): Promise<ActionResp
       throw new Error("Enterprise RFP database is not configured");
     }
 
+    const session = await auth.api.getSession({ headers: await headers() });
+    const currentUserId = session?.user?.id ?? null;
+
     // The unique constraint arbitrates concurrent requests; only return an inserted code.
     for (let attempt = 0; attempt < 10; attempt++) {
       const referenceCode = `EXP-${Math.floor(1000 + Math.random() * 9000)}-${suffix}`;
       const [inserted] = await db.insert(enterpriseRfps).values({
         referenceCode,
+        userId: currentUserId,
         organizationName: data.organizationName,
         organizationType: data.organizationType,
         contactName: data.contactName,
@@ -451,9 +457,6 @@ export async function submitEnterpriseRfp(rawInput: unknown): Promise<ActionResp
   }
 }
 
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
-
 /**
  * Synchronize registered user profile info directly into the users table
  */
@@ -469,14 +472,18 @@ export async function syncUserProfile(input: {
     });
 
     const targetUserId = session?.user?.id;
+    const name = input.name?.trim();
+    if (name !== undefined && !name) {
+      return { success: false, message: "Name cannot be empty." };
+    }
 
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       const updateData: Record<string, unknown> = {
         updatedAt: new Date(),
       };
-      if (input.name) updateData.name = input.name;
-      if (input.phone) updateData.phone = input.phone;
-      if (input.company) updateData.company = input.company;
+      if (name !== undefined) updateData.name = name;
+      if (input.phone !== undefined) updateData.phone = input.phone.trim() || null;
+      if (input.company !== undefined) updateData.company = input.company.trim() || null;
 
       if (targetUserId) {
         await db
@@ -484,9 +491,11 @@ export async function syncUserProfile(input: {
           .set(updateData)
           .where(eq(users.id, targetUserId));
       } else {
-      return { success: false, message: "Unauthorized: Active session required." };
+        return { success: false, message: "Unauthorized: Active session required." };
+      }
     }
-    }
+    revalidatePath("/portal/settings");
+    revalidatePath("/portal");
     return { success: true, message: "Profile information synchronized in database." };
   } catch (err) {
     console.error("syncUserProfile error:", err);

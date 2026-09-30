@@ -103,12 +103,12 @@ export const YasproSparkles: React.FC<YasproSparklesProps> = ({
       const mainFontSize = Math.min(Math.max(w * 0.16, 68), 210);
       const subFontSize = Math.max(mainFontSize * 0.15, 14);
 
-      // Render bold, heavy typography "iYASPRO"
+      // Render bold, heavy typography "YASPRO"
       offCtx.font = `900 ${mainFontSize}px "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
       offCtx.textAlign = "center";
       offCtx.textBaseline = "middle";
       offCtx.fillStyle = "#ffffff";
-      offCtx.fillText("iYASPRO", cx, cy - mainFontSize * 0.08);
+      offCtx.fillText("YASPRO", cx, cy - mainFontSize * 0.08);
 
       // Subtitle
       offCtx.font = `800 ${subFontSize}px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;

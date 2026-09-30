@@ -74,23 +74,17 @@ export default async function Image({
                 border: "1.5px solid rgba(196, 181, 253, 0.4)",
               }}
             >
-              <svg width="22" height="30" viewBox="0 0 24 34" fill="none">
-                {/* Candle Flame */}
-                <path
-                  d="M12 1.2 C12.8 3.5 15.6 5.8 15.6 7.6 C15.6 9.8 14 10.8 12 10.8 C10 10.8 8.4 9.8 8.4 7.6 C8.4 5.8 11.2 3.5 12 1.2 Z"
-                  fill="#f59e0b"
-                />
-                <circle cx="12" cy="7.5" r="2" fill="#ffffff" />
-                {/* Wick */}
-                <path d="M12 10.5 V13.5" stroke="#1e1b4b" strokeWidth="1.2" />
-                {/* Candle Body */}
-                <rect x="9" y="14" width="6" height="17" rx="3" fill="#818cf8" />
-                <ellipse cx="12" cy="14" rx="3" ry="1.2" fill="#c4b5fd" />
+              <svg width="26" height="26" viewBox="0 0 100 100" fill="none">
+                <circle cx="50" cy="50" r="46" fill="#0f172a" stroke="#38bdf8" strokeWidth="3" />
+                <polygon points="24,24 38,24 50,47 43,53 24,24" fill="#a855f7" />
+                <polygon points="76,24 62,24 50,47 57,53 76,24" fill="#06b6d4" />
+                <polygon points="43,51 57,51 57,78 43,78" fill="#cbd5e1" />
+                <polygon points="43,78 50,84 57,78 50,75" fill="#38bdf8" />
               </svg>
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div style={{ fontSize: "24px", fontWeight: 800, color: "#ffffff", display: "flex" }}>
-                iYASPRO
+                YASPRO
               </div>
               <div style={{ fontSize: "11px", letterSpacing: "0.2em", color: "#a78bfa", fontWeight: 700, display: "flex" }}>
                 PORTFOLIO CASE STUDY

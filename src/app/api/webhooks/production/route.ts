@@ -22,7 +22,26 @@ interface WebhookPayload {
  */
 function verifyHmacSignature(rawBody: string, signatureHeader: string | null): boolean {
   const secret = process.env.WEBHOOK_SECRET;
-  if (!secret || !signatureHeader) {
+  if (!secret) {
+    // Only permit bypass in explicit test environments or unconfigured local sandboxes
+    const isLocalOrTestDb =
+      !process.env.DATABASE_URL ||
+      process.env.DATABASE_URL.includes("ep-xxx") ||
+      process.env.DATABASE_URL.includes("localhost") ||
+      process.env.DATABASE_URL.includes("postgresql://test:");
+
+    const isPermittedBypass =
+      process.env.ALLOW_UNSIGNED_WEBHOOKS === "true" ||
+      (process.env.NODE_ENV !== "production" && isLocalOrTestDb);
+
+    if (isPermittedBypass) {
+      return true;
+    }
+
+    console.error("WEBHOOK_SECRET is not configured while running in production database environment. Webhook rejected.");
+    return false;
+  }
+  if (!signatureHeader) {
     return false;
   }
 

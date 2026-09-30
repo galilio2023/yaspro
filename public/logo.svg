@@ -1,103 +1,88 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 64" fill="none">
   <defs>
-    <radialGradient id="candle-halo" cx="50%" cy="30%" r="70%">
-      <stop offset="0%" stop-color="#2e1065" />
-      <stop offset="50%" stop-color="#0f0728" />
+    <!-- Background Emblem Halo -->
+    <radialGradient id="logo-halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1e1040" />
+      <stop offset="60%" stop-color="#0a0518" />
       <stop offset="100%" stop-color="#03020a" />
     </radialGradient>
-    <linearGradient id="candle-border" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.8" />
-      <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.5" />
-      <stop offset="100%" stop-color="#6366f1" stop-opacity="0.7" />
-    </linearGradient>
-    <filter id="flame-glow" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="2.5" result="blur" />
-      <feMerge>
-        <feMergeNode in="blur" />
-        <feMergeNode in="SourceGraphic" />
-      </feMerge>
-    </filter>
-    <linearGradient id="flame-grad" x1="50%" y1="100%" x2="50%" y2="0%">
-      <stop offset="0%" stop-color="#f59e0b" />
-      <stop offset="30%" stop-color="#f43f5e" />
-      <stop offset="70%" stop-color="#a855f7" />
-      <stop offset="100%" stop-color="#38bdf8" />
-    </linearGradient>
-    <linearGradient id="ember-grad" x1="50%" y1="100%" x2="50%" y2="0%">
-      <stop offset="0%" stop-color="#fef08a" />
-      <stop offset="50%" stop-color="#ffffff" />
-      <stop offset="100%" stop-color="#c4b5fd" />
-    </linearGradient>
-    <linearGradient id="candle-stem" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.9" />
-      <stop offset="25%" stop-color="#818cf8" />
-      <stop offset="60%" stop-color="#6366f1" />
+
+    <!-- Neon Rim Left (Violet) -->
+    <linearGradient id="logo-neon-v" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#7c3aed" />
+      <stop offset="50%" stop-color="#a855f7" />
       <stop offset="100%" stop-color="#c084fc" />
     </linearGradient>
-    <linearGradient id="text-brand-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#a78bfa" />
-      <stop offset="50%" stop-color="#c4b5fd" />
+
+    <!-- Neon Rim Right (Cyan) -->
+    <linearGradient id="logo-neon-c" x1="100%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0891b2" />
+      <stop offset="50%" stop-color="#06b6d4" />
       <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+
+    <!-- 3D Facet Left -->
+    <linearGradient id="logo-facet-l" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="50%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#334155" />
+    </linearGradient>
+
+    <!-- 3D Facet Right -->
+    <linearGradient id="logo-facet-r" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="50%" stop-color="#cbd5e1" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+
+    <!-- Typography Gradient -->
+    <linearGradient id="logo-text-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="50%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#06b6d4" />
     </linearGradient>
   </defs>
 
-  <!-- Candle Emblem Badge Container -->
-  <g transform="translate(6, 4)">
-    <rect x="2" y="2" width="52" height="52" rx="16" fill="url(#candle-halo)" stroke="url(#candle-border)" stroke-width="1.8" />
-    <circle cx="28" cy="18" r="12" fill="#a855f7" fill-opacity="0.2" filter="url(#flame-glow)" />
+  <!-- Cinema Lens Y Emblem -->
+  <g transform="translate(8, 7)">
+    <circle cx="25" cy="25" r="24" fill="url(#logo-halo)" stroke="#334155" stroke-width="1.2" />
+    <circle cx="25" cy="25" r="21" stroke="#475569" stroke-width="0.75" stroke-dasharray="1.5 2.5" opacity="0.6" />
 
-    <!-- Flame (Dot of the 'i') -->
-    <g filter="url(#flame-glow)">
-      <path
-        d="M28 9
-           C29.4 12.5 33.6 15.5 33.6 18.5
-           C33.6 22 31 23.8 28 23.8
-           C25 23.8 22.4 22 22.4 18.5
-           C22.4 15.5 26.6 12.5 28 9 Z"
-        fill="url(#flame-grad)"
-      />
-      <path
-        d="M28 12.5
-           C28.7 14.5 31.2 16.5 31.2 18.6
-           C31.2 20.6 29.8 21.6 28 21.6
-           C26.2 21.6 24.8 20.6 24.8 18.6
-           C24.8 16.5 27.3 14.5 28 12.5 Z"
-        fill="url(#ember-grad)"
-      />
-      <circle cx="28" cy="19.5" r="1.4" fill="#ffffff" />
+    <!-- Left Neon Arc -->
+    <path d="M 25 3 A 22 22 0 0 0 25 47" stroke="url(#logo-neon-v)" stroke-width="2.5" stroke-linecap="round" />
+
+    <!-- Right Neon Arc -->
+    <path d="M 25 3 A 22 22 0 0 1 25 47" stroke="url(#logo-neon-c)" stroke-width="2.5" stroke-linecap="round" />
+
+    <!-- Geometric 3D Y -->
+    <g>
+      <!-- Left Arm -->
+      <polygon points="12,12 19,12 25,23 21,27 12,12" fill="url(#logo-facet-l)" stroke="#a855f7" stroke-width="0.5" />
+      <!-- Right Arm -->
+      <polygon points="38,12 31,12 25,23 29,27 38,12" fill="url(#logo-facet-r)" stroke="#06b6d4" stroke-width="0.5" />
+      <!-- Stem Column -->
+      <polygon points="21,25 29,25 29,38 21,38" fill="#cbd5e1" stroke="#334155" stroke-width="0.5" />
+      <!-- Wedge Foot -->
+      <polygon points="21,38 25,41 29,38 25,36" fill="#38bdf8" />
+
+      <!-- Specular Lines -->
+      <line x1="12" y1="12" x2="21" y2="26" stroke="#ffffff" stroke-width="0.8" opacity="0.8" />
+      <line x1="38" y1="12" x2="29" y2="26" stroke="#67e8f9" stroke-width="0.8" opacity="0.9" />
+      <line x1="25" y1="23" x2="25" y2="41" stroke="#ffffff" stroke-width="0.9" opacity="0.8" />
     </g>
-
-    <!-- Wick -->
-    <path d="M28 22.5 V27" stroke="#1e1b4b" stroke-width="1.5" stroke-linecap="round" />
-    <circle cx="28" cy="23.2" r="0.8" fill="#f59e0b" />
-
-    <!-- Candle Body (Stem of the 'i') -->
-    <path
-      d="M23.5 28.5
-         H32.5
-         V45.5
-         C32.5 48.5 30.5 50 28 50
-         C25.5 50 23.5 48.5 23.5 45.5
-         V28.5 Z"
-      fill="url(#candle-stem)"
-    />
-    <ellipse cx="28" cy="28.5" rx="4.5" ry="1.8" fill="#e0e7ff" />
-    <path d="M25.2 30.5 V44" stroke="#ffffff" stroke-width="1.3" stroke-linecap="round" opacity="0.75" />
-    <path d="M30.8 30.5 V43" stroke="#38bdf8" stroke-width="0.8" stroke-linecap="round" opacity="0.6" />
-    <ellipse cx="28" cy="49.5" rx="3.5" ry="1" fill="#38bdf8" opacity="0.4" />
   </g>
 
-  <!-- Typography: iYASPRO -->
-  <g transform="translate(74, 38)">
-    <text font-family="'Poppins', 'Inter', -apple-system, sans-serif" font-weight="900" font-size="26" fill="#ffffff" letter-spacing="-0.5">
-      iYAS<tspan fill="url(#text-brand-grad)">PRO</tspan>
+  <!-- Typography: YASPRO -->
+  <g transform="translate(68, 38)">
+    <text font-family="'Poppins', 'Inter', -apple-system, sans-serif" font-weight="900" font-size="28" fill="#ffffff" letter-spacing="-0.5">
+      YAS<tspan fill="url(#logo-text-grad)">PRO</tspan>
     </text>
   </g>
 
   <!-- Subtitle: AI MEDIA HUB • DUBAI -->
-  <g transform="translate(75, 53)">
-    <text font-family="'Inter', -apple-system, sans-serif" font-weight="600" font-size="8.5" fill="#888899" letter-spacing="2.8">
-      AI MEDIA HUB <tspan fill="#38bdf8">•</tspan> DUBAI
+  <g transform="translate(69, 52)">
+    <text font-family="'Inter', -apple-system, sans-serif" font-weight="600" font-size="9" fill="#94a3b8" letter-spacing="2.8">
+      AI MEDIA HUB <tspan fill="#06b6d4">•</tspan> DUBAI
     </text>
   </g>
 </svg>

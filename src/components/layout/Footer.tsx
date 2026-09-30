@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FooterHubCard, RegionalHub } from "./FooterHubCard";
 import { FooterSocialLinks } from "./FooterSocialLinks";
 import { BrandLogo } from "./BrandLogo";
-import { IyasProIcon } from "@/components/ui/IyasProIcon";
+import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { FooterNavLinks } from "./FooterNavLinks";
 import { BackgroundBeams } from "@/components/aceternity/background-beams";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -98,10 +98,10 @@ export default function Footer() {
         dir="ltr"
         className="pointer-events-none absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 select-none overflow-hidden flex items-center justify-center gap-2 sm:gap-4 font-black tracking-tighter leading-none whitespace-nowrap font-display z-0 opacity-15"
       >
-        <IyasProIcon
-          size="16vw"
-          idPrefix="footer-bg-candle"
-          className="filter drop-shadow-[0_0_60px_rgba(245,158,11,0.5)] -translate-y-3"
+        <YasproEmblem
+          size="15vw"
+          idPrefix="footer-bg-emblem"
+          className="filter drop-shadow-[0_0_60px_rgba(6,182,212,0.4)]"
         />
         <span
           className="text-[17vw] tracking-tighter"

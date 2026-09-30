@@ -1,135 +1,75 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <defs>
     <!-- Background Gradient: Deep luxury obsidian / midnight violet -->
-    <radialGradient id="bg-glow" cx="50%" cy="30%" r="70%">
-      <stop offset="0%" stop-color="#2e1065" />
-      <stop offset="50%" stop-color="#0f0728" />
-      <stop offset="100%" stop-color="#03020a" />
+    <radialGradient id="fav-bg" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#180b33" />
+      <stop offset="50%" stop-color="#090514" />
+      <stop offset="100%" stop-color="#020108" />
     </radialGradient>
 
-    <!-- Squircle Border Gradient -->
-    <linearGradient id="squircle-border" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.8" />
+    <!-- Border Gradient -->
+    <linearGradient id="fav-border" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" stop-opacity="0.8" />
       <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.5" />
-      <stop offset="100%" stop-color="#6366f1" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0.7" />
     </linearGradient>
 
-    <!-- Flame Glow Filter -->
-    <filter id="flame-blur" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="2.5" result="glow" />
-      <feMerge>
-        <feMergeNode in="glow" />
-        <feMergeNode in="SourceGraphic" />
-      </feMerge>
-    </filter>
-
-    <!-- Flame Gradient: Warm Golden Amber -> Magenta / Electric Orchid -> Cyan Tip -->
-    <linearGradient id="flame-grad" x1="50%" y1="100%" x2="50%" y2="0%">
-      <stop offset="0%" stop-color="#f59e0b" />
-      <stop offset="30%" stop-color="#f43f5e" />
-      <stop offset="70%" stop-color="#a855f7" />
-      <stop offset="100%" stop-color="#38bdf8" />
-    </linearGradient>
-
-    <!-- Inner Core Ember: Blazing White / Warm Gold -->
-    <linearGradient id="ember-grad" x1="50%" y1="100%" x2="50%" y2="0%">
-      <stop offset="0%" stop-color="#fef08a" />
-      <stop offset="50%" stop-color="#ffffff" />
-      <stop offset="100%" stop-color="#c4b5fd" />
-    </linearGradient>
-
-    <!-- Candle Body Gradient: Royal Violet to Deep Indigo with Cyan Edge -->
-    <linearGradient id="candle-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.9" />
-      <stop offset="25%" stop-color="#818cf8" />
-      <stop offset="60%" stop-color="#6366f1" />
+    <!-- Neon Rim Left (Violet) -->
+    <linearGradient id="fav-neon-v" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#7c3aed" />
+      <stop offset="50%" stop-color="#a855f7" />
       <stop offset="100%" stop-color="#c084fc" />
     </linearGradient>
 
-    <!-- Molten Wax Rim -->
-    <linearGradient id="wax-rim" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#e0e7ff" />
-      <stop offset="50%" stop-color="#a78bfa" />
-      <stop offset="100%" stop-color="#818cf8" />
+    <!-- Neon Rim Right (Cyan) -->
+    <linearGradient id="fav-neon-c" x1="100%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0891b2" />
+      <stop offset="50%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#38bdf8" />
     </linearGradient>
 
-    <!-- Specular Highlight Line -->
-    <linearGradient id="specular-line" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
-      <stop offset="70%" stop-color="#ffffff" stop-opacity="0.3" />
-      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.5" />
+    <!-- 3D Facet Left -->
+    <linearGradient id="fav-facet-l" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="50%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#334155" />
+    </linearGradient>
+
+    <!-- 3D Facet Right -->
+    <linearGradient id="fav-facet-r" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="50%" stop-color="#cbd5e1" />
+      <stop offset="100%" stop-color="#1e293b" />
     </linearGradient>
   </defs>
 
-  <!-- App Icon Background Squircle (Apple / Browser Standard) -->
-  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#bg-glow)" stroke="url(#squircle-border)" stroke-width="1.5" />
+  <!-- Squircle App Icon Container -->
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#fav-bg)" stroke="url(#fav-border)" stroke-width="1.2" />
 
-  <!-- Ambient Light Reflection Behind Candle Flame -->
-  <circle cx="32" cy="18" r="14" fill="#a855f7" fill-opacity="0.15" filter="url(#flame-blur)" />
-  <circle cx="32" cy="19" r="8" fill="#f59e0b" fill-opacity="0.25" filter="url(#flame-blur)" />
+  <!-- Outer Optical Ring -->
+  <circle cx="32" cy="32" r="23" stroke="#334155" stroke-width="1" />
+  <circle cx="32" cy="32" r="20" stroke="#475569" stroke-width="0.75" stroke-dasharray="1.5 2.5" opacity="0.6" />
 
-  <!-- 1. FLAME (The Dot of the Candle "i") -->
-  <g filter="url(#flame-blur)">
-    <!-- Outer Tear Flame -->
-    <path
-      d="M32 8
-         C33.6 12 38.5 15.5 38.5 19
-         C38.5 23 35.5 25 32 25
-         C28.5 25 25.5 23 25.5 19
-         C25.5 15.5 30.4 12 32 8 Z"
-      fill="url(#flame-grad)"
-    />
+  <!-- Left Neon Arc -->
+  <path d="M 32 9 A 23 23 0 0 0 32 55" stroke="url(#fav-neon-v)" stroke-width="2.5" stroke-linecap="round" />
 
-    <!-- Inner Incandescent Ember Heart -->
-    <path
-      d="M32 12
-         C32.8 14.5 35.8 16.8 35.8 19.2
-         C35.8 21.6 34.2 22.8 32 22.8
-         C29.8 22.8 28.2 21.6 28.2 19.2
-         C28.2 16.8 31.2 14.5 32 12 Z"
-      fill="url(#ember-grad)"
-    />
+  <!-- Right Neon Arc -->
+  <path d="M 32 9 A 23 23 0 0 1 32 55" stroke="url(#fav-neon-c)" stroke-width="2.5" stroke-linecap="round" />
 
-    <!-- Pure Hot Sparkle Center -->
-    <circle cx="32" cy="20.2" r="1.8" fill="#ffffff" />
-  </g>
-
-  <!-- 2. WICK -->
-  <path d="M32 23.5 Q32.4 26.5 32 29" stroke="#1e1b4b" stroke-width="1.8" stroke-linecap="round" />
-  <circle cx="32" cy="24.5" r="1" fill="#f59e0b" />
-
-  <!-- 3. CANDLE BODY (The Stem of the Candle "i") -->
+  <!-- Geometric 3D Y -->
   <g>
-    <!-- Wax Column -->
-    <path
-      d="M26.5 30.5
-         H37.5
-         V51
-         C37.5 54.5 35 56.5 32 56.5
-         C29 56.5 26.5 54.5 26.5 51
-         V30.5 Z"
-      fill="url(#candle-grad)"
-    />
+    <!-- Left Arm -->
+    <polygon points="18,18 26,18 32,30 28,34 18,18" fill="url(#fav-facet-l)" stroke="#a855f7" stroke-width="0.6" />
+    <!-- Right Arm -->
+    <polygon points="46,18 38,18 32,30 36,34 46,18" fill="url(#fav-facet-r)" stroke="#06b6d4" stroke-width="0.6" />
+    <!-- Stem Column -->
+    <polygon points="28,32 36,32 36,46 28,46" fill="#cbd5e1" stroke="#334155" stroke-width="0.5" />
+    <!-- Wedge Foot -->
+    <polygon points="28,46 32,50 36,46 32,44" fill="#38bdf8" />
 
-    <!-- Molten Wax Dish Rim at Top -->
-    <ellipse cx="32" cy="30.5" rx="5.5" ry="2.2" fill="url(#wax-rim)" />
-
-    <!-- Wax Droplet on Left Side -->
-    <path
-      d="M26.5 34 C26.5 38 27.8 40 27.8 42.5 C27.8 43.5 27 44 26.5 44"
-      stroke="#c4b5fd"
-      stroke-width="1.3"
-      stroke-linecap="round"
-      opacity="0.75"
-    />
-
-    <!-- 3D Specular Highlight Ridge -->
-    <path d="M28.8 33 V50" stroke="url(#specular-line)" stroke-width="1.8" stroke-linecap="round" />
-
-    <!-- Ambient Cyan Edge Rim -->
-    <path d="M35.2 33 V49" stroke="#38bdf8" stroke-width="1" stroke-linecap="round" opacity="0.6" />
-
-    <!-- Base Glow Cushion -->
-    <ellipse cx="32" cy="56" rx="4" ry="1.2" fill="#38bdf8" opacity="0.5" />
+    <!-- Specular Highlight Lines -->
+    <line x1="18" y1="18" x2="28" y2="33" stroke="#ffffff" stroke-width="0.9" opacity="0.85" />
+    <line x1="46" y1="18" x2="36" y2="33" stroke="#67e8f9" stroke-width="0.9" opacity="0.95" />
+    <line x1="32" y1="30" x2="32" y2="50" stroke="#ffffff" stroke-width="1" opacity="0.8" />
   </g>
 </svg>
