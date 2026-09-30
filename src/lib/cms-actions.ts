@@ -80,6 +80,7 @@ export interface CmsResponse<T = unknown> {
  */
 export async function getCmsOverviewStats() {
   try {
+    await requireAdmin();
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       const [allProjects, allInfluencers, allGear, allBookings, allRfps, allInquiries, allUsers, allStudios] =
         await Promise.all([
@@ -426,6 +427,7 @@ export async function upsertCmsEquipment(data: Partial<Equipment> & { name: stri
  */
 export async function getCmsBookings(): Promise<Booking[]> {
   try {
+    await requireAdmin();
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       return await db.select().from(bookings).orderBy(desc(bookings.createdAt));
     }
@@ -443,6 +445,17 @@ export async function getCmsBookings(): Promise<Booking[]> {
  */
 export async function getClientBookings(userId: string): Promise<Booking[]> {
   try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    if (!session?.user) {
+      throw new Error("Unauthorized: Active session required.");
+    }
+    const userRole = (session.user as { role?: string })?.role;
+    if (userRole !== "admin" && session.user.id !== userId) {
+      throw new Error("Forbidden: Access denied to other client bookings.");
+    }
+
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       return await db
         .select()
@@ -516,6 +529,7 @@ export async function updateBookingPaymentStatus(
  */
 export async function getCmsEnterpriseRfps(): Promise<EnterpriseRfp[]> {
   try {
+    await requireAdmin();
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       return await db.select().from(enterpriseRfps).orderBy(desc(enterpriseRfps.createdAt));
     }

@@ -3,6 +3,8 @@
 import { db } from "@/db";
 import { enterpriseRfps } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
 export interface EnterpriseRfpLookupResult {
   found: boolean;
@@ -37,6 +39,16 @@ export interface ProductionTelemetryEvent {
  * Look up an Enterprise RFP by reference code (with live database fallback to demo references)
  */
 export async function lookupEnterpriseRfp(referenceCode: string): Promise<EnterpriseRfpLookupResult> {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session?.user) {
+    return {
+      found: false,
+      message: "Unauthorized: Active session required to query the enterprise ledger.",
+    };
+  }
+
   const code = referenceCode.trim().toUpperCase();
   if (!code) {
     return { found: false, message: "Please provide a valid RFP reference code." };

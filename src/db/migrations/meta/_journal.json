@@ -22,6 +22,20 @@
       "when": 1790719375394,
       "tag": "0002_lovely_corsair",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790750372738,
+      "tag": "0003_bizarre_wraith",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790750416189,
+      "tag": "0004_no_overlapping_bookings",
+      "breakpoints": true
     }
   ]
 }

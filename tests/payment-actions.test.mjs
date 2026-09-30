@@ -45,6 +45,8 @@ test('processBookingOnlinePayment records deposit payment and updates booking', 
     },
     'drizzle-orm': { eq: () => {} },
     'next/cache': { revalidatePath: (p) => { revalidatedPaths.push(p); } },
+    '@/lib/auth': { auth: { api: { getSession: async () => ({ user: { role: 'admin' } }) } } },
+    'next/headers': { headers: async () => new Headers() },
   });
 
   const res = await processBookingOnlinePayment(
@@ -68,6 +70,8 @@ test('processBookingOnlinePayment rejects missing reference and invalid amount',
     '@/db/schema': { bookings: {} },
     'drizzle-orm': { eq: () => {} },
     'next/cache': { revalidatePath: () => {} },
+    '@/lib/auth': { auth: { api: { getSession: async () => ({ user: { role: 'admin' } }) } } },
+    'next/headers': { headers: async () => new Headers() },
   });
 
   const resMissing = await processBookingOnlinePayment('', 500, 'full', '');
