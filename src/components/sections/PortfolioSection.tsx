@@ -14,11 +14,67 @@ import { CinemaVideoModal } from "@/components/common/CinemaVideoModal";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
+function MarqueeColumn({
+  items,
+  direction,
+  className,
+  onWatchReel,
+  categoryId,
+}: {
+  items: ProjectItem[];
+  direction: "up" | "down";
+  className?: string;
+  onWatchReel: (p: ProjectItem) => void;
+  categoryId: string;
+}) {
+  if (!items.length) return null;
+
+  // Guarantee enough height to seamlessly loop
+  const baseItems = items.length < 4 ? [...items, ...items, ...items, ...items] : items;
+
+  return (
+    <div className={cn("relative flex flex-col h-full", className)}>
+      <div
+        key={categoryId} // Reset animation when category changes
+        className={cn(
+          "flex flex-col w-full",
+          direction === "up" ? "animate-marquee-up" : "animate-marquee-down"
+        )}
+      >
+        {/* Block A */}
+        <div className="flex flex-col gap-5 sm:gap-6 lg:gap-8 pb-5 sm:pb-6 lg:pb-8">
+          {baseItems.map((project, idx) => (
+            <div key={`a-${project.id}-${idx}`} className="transition-transform duration-300 hover:scale-[1.05] hover:z-40 origin-center relative rounded-3xl">
+              <ProjectCard
+                project={project}
+                priority={idx < 4}
+                onWatchReel={() => onWatchReel(project)}
+              />
+            </div>
+          ))}
+        </div>
+        {/* Block B (Identical clone for seamless loop) */}
+        <div className="flex flex-col gap-5 sm:gap-6 lg:gap-8 pb-5 sm:pb-6 lg:pb-8">
+          {baseItems.map((project, idx) => (
+            <div key={`b-${project.id}-${idx}`} className="transition-transform duration-300 hover:scale-[1.05] hover:z-40 origin-center relative rounded-3xl">
+              <ProjectCard
+                project={project}
+                priority={false}
+                onWatchReel={() => onWatchReel(project)}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface PortfolioSectionProps {
   limit?: number;
 }
 
-export function PortfolioSection({ limit = 6 }: PortfolioSectionProps) {
+export function PortfolioSection({ limit = 12 }: PortfolioSectionProps) {
   const { t, isArabic } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<ProjectCategory>("all");
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
@@ -37,6 +93,32 @@ export function PortfolioSection({ limit = 6 }: PortfolioSectionProps) {
       aria-labelledby="portfolio-title"
       className="bg-background border-t border-white/10 relative overflow-hidden"
     >
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes marquee-up {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-50%); }
+        }
+        @keyframes marquee-down {
+          0% { transform: translateY(-50%); }
+          100% { transform: translateY(0); }
+        }
+        .animate-marquee-up {
+          animation: marquee-up 35s linear infinite;
+        }
+        .animate-marquee-down {
+          animation: marquee-down 35s linear infinite;
+        }
+        .marquee-grid:hover .animate-marquee-up,
+        .marquee-grid:hover .animate-marquee-down {
+          animation-play-state: paused !important;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-marquee-up, .animate-marquee-down {
+            animation: none !important;
+            transform: translateY(0) !important;
+          }
+        }
+      `}} />
       <Container>
         <SectionHeader
           headingId="portfolio-title"
@@ -67,18 +149,33 @@ export function PortfolioSection({ limit = 6 }: PortfolioSectionProps) {
           ))}
         </div>
 
-        {/* Projects Grid */}
-        <ul role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 items-stretch">
-          {filteredProjects.map((project, i) => (
-            <FadeUp as="li" key={project.id} delay={i * 0.05} className="h-full">
-              <ProjectCard
-                project={project}
-                priority={i < 6}
-                onWatchReel={(p) => setSelectedProject(p)}
-              />
-            </FadeUp>
-          ))}
-        </ul>
+        {/* Projects Marquee Grid */}
+        <div className="marquee-grid relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 h-[600px] md:h-[700px] overflow-hidden -mx-4 px-4 sm:mx-0 sm:px-0 py-4">
+          {/* Top/Bottom Fade Masks */}
+          <div className="absolute inset-x-0 top-0 h-24 sm:h-32 bg-gradient-to-b from-background to-transparent z-30 pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 h-24 sm:h-32 bg-gradient-to-t from-background to-transparent z-30 pointer-events-none" />
+
+          <MarqueeColumn 
+            items={filteredProjects.filter((_, i) => i % 3 === 0)} 
+            direction="up" 
+            onWatchReel={setSelectedProject} 
+            categoryId={activeCategory} 
+          />
+          <MarqueeColumn 
+            items={filteredProjects.filter((_, i) => i % 3 === 1)} 
+            direction="down" 
+            className="hidden sm:flex" 
+            onWatchReel={setSelectedProject} 
+            categoryId={activeCategory} 
+          />
+          <MarqueeColumn 
+            items={filteredProjects.filter((_, i) => i % 3 === 2)} 
+            direction="up" 
+            className="hidden lg:flex" 
+            onWatchReel={setSelectedProject} 
+            categoryId={activeCategory} 
+          />
+        </div>
 
         {/* Centered "View All" CTA below the grid */}
         <FadeUp delay={0.15} className="flex justify-center mt-12">
