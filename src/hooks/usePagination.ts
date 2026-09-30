@@ -33,8 +33,8 @@ export function usePagination<T>(
   );
 
   const prevPage = useCallback(
-    () => setCurrentPage((p) => Math.max(0, p - 1)),
-    []
+    () => setCurrentPage((p) => Math.max(0, Math.min(p, pageCount - 1) - 1)),
+    [pageCount]
   );
 
   const resetPage = useCallback(() => setCurrentPage(0), []);

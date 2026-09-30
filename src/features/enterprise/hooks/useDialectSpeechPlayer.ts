@@ -16,8 +16,10 @@ export function useDialectSpeechPlayer() {
 
   const animationFrameRef = useRef<number | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
+  const sessionIdRef = useRef<number>(0);
 
   const stopAudio = useCallback(() => {
+    sessionIdRef.current++;
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
@@ -78,6 +80,9 @@ export function useDialectSpeechPlayer() {
         return;
       }
 
+      sessionIdRef.current++;
+      const currentSessionId = sessionIdRef.current;
+
       setIsPlayingAudio(true);
       setPlaybackProgress(0);
 
@@ -98,6 +103,7 @@ export function useDialectSpeechPlayer() {
         if (arabicVoice) utterance.voice = arabicVoice;
 
         utterance.onboundary = (event) => {
+          if (sessionIdRef.current !== currentSessionId) return;
           if (event.name === "word") {
             const charIndex = event.charIndex;
             let runningLength = 0;
@@ -112,10 +118,13 @@ export function useDialectSpeechPlayer() {
         };
 
         utterance.onend = () => {
+          if (sessionIdRef.current !== currentSessionId) return;
           stopAudio();
         };
 
-        utterance.onerror = () => {
+        utterance.onerror = (e) => {
+          if (sessionIdRef.current !== currentSessionId) return;
+          if (e.error === "canceled" || e.error === "interrupted") return;
           playSynthesizerFallback(durationMs);
         };
 
@@ -125,6 +134,7 @@ export function useDialectSpeechPlayer() {
       }
 
       const updateLoop = (now: number) => {
+        if (sessionIdRef.current !== currentSessionId) return;
         const elapsed = now - startTime;
         const progress = Math.min(100, (elapsed / durationMs) * 100);
         setPlaybackProgress(progress);
