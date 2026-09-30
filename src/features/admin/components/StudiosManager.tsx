@@ -9,7 +9,7 @@ import {
   DollarSign,
   Save,
 } from "lucide-react";
-import { upsertCmsStudio, toggleStudioActiveStatus } from "@/lib/cms-actions";
+import { upsertCmsStudio, toggleStudioActiveStatus } from "@/lib/actions/studios-soundstages-operations";
 import type { Studio } from "@/db/schema";
 import { formatCurrency } from "@/lib/utils";
 import { Dialog } from "@/components/ui/dialog";

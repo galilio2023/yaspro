@@ -3,29 +3,38 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Film, Plus, Trash2, Edit3, CheckCircle, ExternalLink, Save, X } from "lucide-react";
-import { upsertCmsProject, deleteCmsProject } from "@/lib/cms-actions";
+import { upsertCmsProject, deleteCmsProject } from "@/lib/actions/projects";
 import { AdminImageUploader } from "@/components/admin/AdminImageUploader";
 import type { Project } from "@/db/schema";
 import { FeedbackAlert } from "@/components/ui/feedback-alert";
-import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
+import { useCrud } from "@/hooks/useCrud";
 
 interface ProjectsManagerProps {
   initialProjects: Project[];
 }
 
 export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
-  const [projectList, setProjectList] = useState<Project[]>(initialProjects);
-  const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
 
-  const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(1200);
-
-  const handleOpenNew = () => {
-    setError(null);
-    clearFeedback();
-    setEditingProject({
+  const {
+    dataList: projectList,
+    editingItem: editingProject,
+    setEditingItem: setEditingProject,
+    isSubmitting,
+    error,
+    setError,
+    feedback,
+    clearFeedback,
+    handleOpenNew,
+    handleSave,
+    handleDelete,
+  } = useCrud<Project>({
+    initialData: initialProjects,
+    upsertAction: upsertCmsProject,
+    deleteAction: deleteCmsProject,
+    getId: (item) => item.id,
+    getSlug: (item) => item.slug,
+    defaultNewItem: {
       title: "",
       slug: "",
       arabicTitle: "",
@@ -38,64 +47,9 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
       coverImageUrl: "/images/projects/flag-day.jpg",
       videoUrl: "",
       isFeatured: true,
-    });
-  };
-
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingProject?.title || !editingProject?.slug) return;
-
-    setIsSubmitting(true);
-    setError(null);
-    clearFeedback();
-
-    try {
-      const res = await upsertCmsProject(
-        editingProject as Partial<Project> & { title: string; slug: string }
-      );
-
-      if (res.success) {
-        showFeedback("Project successfully updated!");
-        // Update local state
-        setProjectList((prev) => {
-          const idx = prev.findIndex((p) =>
-            editingProject.id ? p.id === editingProject.id : p.slug === editingProject.slug
-          );
-          if (idx >= 0) {
-            const updated = [...prev];
-            updated[idx] = { ...updated[idx], ...editingProject } as Project;
-            return updated;
-          }
-          return [
-            {
-              ...editingProject,
-              id: editingProject.id || `proj-${Date.now()}`,
-              createdAt: new Date(),
-              publishedAt: new Date(),
-            } as Project,
-            ...prev,
-          ];
-        });
-        setTimeout(() => {
-          setEditingProject(null);
-        }, 1200);
-      } else {
-        setError(res.error || "Failed to update project.");
-      }
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "Failed to update project.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDelete = async (id: string, slug: string) => {
-    if (!confirm(`Are you sure you want to delete project: ${slug}?`)) return;
-    const res = await deleteCmsProject(id);
-    if (res.success) {
-      setProjectList((prev) => prev.filter((p) => p.id !== id));
-    }
-  };
+    },
+    onSuccessMessage: "Project successfully updated!",
+  });
 
   return (
     <div className="space-y-6">

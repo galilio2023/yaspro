@@ -14,7 +14,7 @@ import {
   CheckCircle2,
   Clock,
 } from "lucide-react";
-import { updateUserRole, deleteCmsUser } from "@/lib/cms-actions";
+import { updateUserRole, deleteCmsUser } from "@/lib/actions/users-client-operations";
 import type { User } from "@/db/schema";
 import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { DataTable, DataTableHeader, DataTableBody, DataTableRow, DataTableEmpty } from "@/components/ui/data-table";

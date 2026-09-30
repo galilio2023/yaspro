@@ -103,10 +103,10 @@ export function PortfolioSection({ limit = 12 }: PortfolioSectionProps) {
           100% { transform: translateY(0); }
         }
         .animate-marquee-up {
-          animation: marquee-up 35s linear infinite;
+          animation: marquee-up 85s linear infinite;
         }
         .animate-marquee-down {
-          animation: marquee-down 35s linear infinite;
+          animation: marquee-down 85s linear infinite;
         }
         .marquee-grid:hover .animate-marquee-up,
         .marquee-grid:hover .animate-marquee-down {

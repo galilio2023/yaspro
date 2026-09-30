@@ -17,7 +17,7 @@ import {
   Wrench,
   HelpCircle,
 } from "lucide-react";
-import { updateInquiryStatus, deleteCmsInquiry } from "@/lib/cms-actions";
+import { updateInquiryStatus, deleteCmsInquiry } from "@/lib/actions/inquiries-leads-operations";
 import type { Inquiry } from "@/db/schema";
 import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { PaginationControls } from "@/components/ui/pagination-controls";

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Users, Plus, Edit3, Save, X, CheckCircle, ExternalLink, ShieldCheck } from "lucide-react";
-import { upsertCmsInfluencer } from "@/lib/cms-actions";
+import { upsertCmsInfluencer } from "@/lib/actions/influencers";
 import type { Influencer } from "@/db/schema";
 import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
