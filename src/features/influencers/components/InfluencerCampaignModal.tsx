@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { X, Sparkles, CheckCircle2, Send, Building, DollarSign, Calendar } from "lucide-react";
 import { submitInfluencerCampaignRequest } from "@/lib/actions";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { InfluencerItem } from "../types";
 import { Badge } from "@/components/ui/badge";
 
@@ -60,52 +61,22 @@ export function InfluencerCampaignModal({
     message: "",
   });
 
-  // Focus management and escape/tab trapping
+  useFocusTrap({
+    isOpen: mounted && isOpen,
+    onClose,
+    containerRef: panelRef,
+    initialFocusRef: closeButtonRef,
+  });
+
+  // Lock body scroll
   useEffect(() => {
     if (!isOpen) return;
-
-    triggerRef.current = document.activeElement as HTMLElement | null;
-
-    const timer = setTimeout(() => {
-      closeButtonRef.current?.focus();
-    }, 50);
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-        return;
-      }
-
-      if (e.key === "Tab") {
-        const focusableElements = panelRef.current?.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (!focusableElements || focusableElements.length === 0) return;
-
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
-
-        if (e.shiftKey && document.activeElement === firstElement) {
-          e.preventDefault();
-          lastElement.focus();
-        } else if (!e.shiftKey && document.activeElement === lastElement) {
-          e.preventDefault();
-          firstElement.focus();
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-
     return () => {
-      clearTimeout(timer);
-      window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = originalOverflow || "";
-      triggerRef.current?.focus();
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   if (!mounted || !isOpen) return null;
 

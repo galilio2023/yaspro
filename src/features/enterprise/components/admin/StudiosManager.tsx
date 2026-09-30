@@ -14,6 +14,8 @@ import {
 import { upsertCmsStudio, toggleStudioActiveStatus } from "@/lib/cms-actions";
 import type { Studio } from "@/db/schema";
 import { formatCurrency } from "@/lib/utils";
+import { Dialog } from "@/components/ui/dialog";
+import { FeedbackAlert } from "@/components/ui/feedback-alert";
 
 interface StudiosManagerProps {
   initialStudios: Studio[];
@@ -105,10 +107,11 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
 
         <div className="flex items-center gap-3">
           {feedback && (
-            <div className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-1.5">
-              <CheckCircle2 size={14} />
-              <span>{feedback}</span>
-            </div>
+            <FeedbackAlert
+              type="success"
+              message={feedback}
+              onDismiss={() => setFeedback(null)}
+            />
           )}
 
           <button
@@ -235,137 +238,126 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
       </div>
 
       {/* Edit / Create Studio Modal */}
-      {editingStudio && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="relative w-full max-w-lg p-6 sm:p-8 rounded-3xl bg-slate-900 border border-white/10 shadow-2xl">
-            <button
-              type="button"
-              onClick={() => setEditingStudio(null)}
-              className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
-            >
-              <X size={16} />
-            </button>
-
-            <h2 className="text-lg font-bold text-white mb-1">
-              {editingStudio.id ? "Edit Soundstage Specifications" : "Provision New Soundstage"}
-            </h2>
-            <p className="text-xs text-slate-400 mb-6">
-              Update hourly rates, maximum headcount, and amenities visible in the public booking wizard.
-            </p>
-
-            <form onSubmit={handleSaveStudio} className="space-y-4 text-xs">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-300 font-medium mb-1.5">Stage Name (English)</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Studio C — Green Cyc Stage"
-                    value={editingStudio.name || ""}
-                    onChange={(e) => setEditingStudio({ ...editingStudio, name: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-300 font-medium mb-1.5">Stage Name (Arabic - اسم الاستوديو)</label>
-                  <input
-                    type="text"
-                    dir="rtl"
-                    placeholder="مثال: استوديو ج — استوديو الكروما الخضراء"
-                    value={editingStudio.arabicName || ""}
-                    onChange={(e) => setEditingStudio({ ...editingStudio, arabicName: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 font-arabic"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-300 font-medium mb-1.5">Hourly Rate (AED)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    required
-                    placeholder="800.00"
-                    value={editingStudio.hourlyRate || ""}
-                    onChange={(e) => setEditingStudio({ ...editingStudio, hourlyRate: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-slate-300 font-medium mb-1.5">Max Headcount</label>
-                  <input
-                    type="number"
-                    required
-                    placeholder="25"
-                    value={editingStudio.capacity || 20}
-                    onChange={(e) =>
-                      setEditingStudio({ ...editingStudio, capacity: parseInt(e.target.value) || 10 })
-                    }
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 font-mono"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-300 font-medium mb-1.5">Description (English)</label>
-                  <textarea
-                    rows={3}
-                    placeholder="Describe lighting grid, dimensions, and acoustic isolation..."
-                    value={editingStudio.description || ""}
-                    onChange={(e) => setEditingStudio({ ...editingStudio, description: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 resize-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-300 font-medium mb-1.5">Description (Arabic - الوصف بالعربي)</label>
-                  <textarea
-                    rows={3}
-                    dir="rtl"
-                    placeholder="وصف شبكة الإضاءة، الأبعاد، والعزل الصوتي..."
-                    value={editingStudio.arabicDescription || ""}
-                    onChange={(e) => setEditingStudio({ ...editingStudio, arabicDescription: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 resize-none font-arabic"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 pt-2">
+      <Dialog
+        isOpen={Boolean(editingStudio)}
+        onClose={() => setEditingStudio(null)}
+        title={editingStudio?.id ? "Edit Soundstage Specifications" : "Provision New Soundstage"}
+        description="Update hourly rates, maximum headcount, and amenities visible in the public booking wizard."
+        maxWidth="lg"
+      >
+        {editingStudio && (
+          <form onSubmit={handleSaveStudio} className="space-y-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-slate-300 font-medium mb-1.5">Stage Name (English)</label>
                 <input
-                  type="checkbox"
-                  id="isActiveToggle"
-                  checked={editingStudio.isActive ?? true}
-                  onChange={(e) => setEditingStudio({ ...editingStudio, isActive: e.target.checked })}
-                  className="rounded border-white/20 text-purple-600 focus:ring-purple-500"
+                  type="text"
+                  required
+                  placeholder="e.g. Studio C — Green Cyc Stage"
+                  value={editingStudio.name || ""}
+                  onChange={(e) => setEditingStudio({ ...editingStudio, name: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500"
                 />
-                <label htmlFor="isActiveToggle" className="text-slate-300">
-                  Stage is open and available for instant booking in wizard
-                </label>
+              </div>
+              <div>
+                <label className="block text-slate-300 font-medium mb-1.5">Stage Name (Arabic - اسم الاستوديو)</label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  placeholder="مثال: استوديو ج — استوديو الكروما الخضراء"
+                  value={editingStudio.arabicName || ""}
+                  onChange={(e) => setEditingStudio({ ...editingStudio, arabicName: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 font-arabic"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-slate-300 font-medium mb-1.5">Hourly Rate (AED)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  required
+                  placeholder="800.00"
+                  value={editingStudio.hourlyRate || ""}
+                  onChange={(e) => setEditingStudio({ ...editingStudio, hourlyRate: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 font-mono"
+                />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
-                <button
-                  type="button"
-                  onClick={() => setEditingStudio(null)}
-                  className="px-4 py-2.5 rounded-xl bg-white/5 text-slate-300 hover:text-white"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold flex items-center gap-2 shadow-lg shadow-purple-600/30 disabled:opacity-50 cursor-pointer"
-                >
-                  <Save size={14} />
-                  <span>{isSubmitting ? "Saving..." : "Save Soundstage"}</span>
-                </button>
+              <div>
+                <label className="block text-slate-300 font-medium mb-1.5">Max Headcount</label>
+                <input
+                  type="number"
+                  required
+                  placeholder="25"
+                  value={editingStudio.capacity || 20}
+                  onChange={(e) =>
+                    setEditingStudio({ ...editingStudio, capacity: parseInt(e.target.value) || 10 })
+                  }
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 font-mono"
+                />
               </div>
-            </form>
-          </div>
-        </div>
-      )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-slate-300 font-medium mb-1.5">Description (English)</label>
+                <textarea
+                  rows={3}
+                  placeholder="Describe lighting grid, dimensions, and acoustic isolation..."
+                  value={editingStudio.description || ""}
+                  onChange={(e) => setEditingStudio({ ...editingStudio, description: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 resize-none"
+                />
+              </div>
+              <div>
+                <label className="block text-slate-300 font-medium mb-1.5">Description (Arabic - الوصف بالعربي)</label>
+                <textarea
+                  rows={3}
+                  dir="rtl"
+                  placeholder="وصف شبكة الإضاءة، الأبعاد، والعزل الصوتي..."
+                  value={editingStudio.arabicDescription || ""}
+                  onChange={(e) => setEditingStudio({ ...editingStudio, arabicDescription: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 resize-none font-arabic"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-2">
+              <input
+                type="checkbox"
+                id="isActiveToggle"
+                checked={editingStudio.isActive ?? true}
+                onChange={(e) => setEditingStudio({ ...editingStudio, isActive: e.target.checked })}
+                className="rounded border-white/20 text-purple-600 focus:ring-purple-500"
+              />
+              <label htmlFor="isActiveToggle" className="text-slate-300">
+                Stage is open and available for instant booking in wizard
+              </label>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+              <button
+                type="button"
+                onClick={() => setEditingStudio(null)}
+                className="px-4 py-2.5 rounded-xl bg-white/5 text-slate-300 hover:text-white cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold flex items-center gap-2 shadow-lg shadow-purple-600/30 disabled:opacity-50 cursor-pointer"
+              >
+                <Save size={14} />
+                <span>{isSubmitting ? "Saving..." : "Save Soundstage"}</span>
+              </button>
+            </div>
+          </form>
+        )}
+      </Dialog>
     </div>
   );
 }

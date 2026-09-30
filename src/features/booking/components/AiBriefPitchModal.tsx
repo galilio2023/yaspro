@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Sparkles, CheckCircle2, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
+import { useFocusTrap } from "@/hooks/useFocusTrap";
+
 interface BriefRecommendation {
   recommendedStudio: string;
   recommendedGear: string;
@@ -27,72 +29,14 @@ export function AiBriefPitchModal({
   const [appliedIds, setAppliedIds] = useState<{ studioId: string; gearId: string; hours: number } | null>(null);
 
   const dialogRef = useRef<HTMLDivElement>(null);
-  const triggerElementRef = useRef<HTMLElement | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const activeRequestIdRef = useRef<number>(0);
 
-  // Focus trap, Escape key handling, and restore focus to trigger
-  useEffect(() => {
-    if (!isOpen) return;
-
-    triggerElementRef.current = document.activeElement as HTMLElement | null;
-
-    // Focus first focusable element or dialog
-    const focusTimer = setTimeout(() => {
-      if (dialogRef.current) {
-        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length > 0) {
-          focusable[0].focus();
-        } else {
-          dialogRef.current.focus();
-        }
-      }
-    }, 50);
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-        return;
-      }
-
-      if (e.key === "Tab" && dialogRef.current) {
-        const focusable = Array.from(
-          dialogRef.current.querySelectorAll<HTMLElement>(
-            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-          )
-        );
-
-        if (focusable.length === 0) return;
-
-        const firstElement = focusable[0];
-        const lastElement = focusable[focusable.length - 1];
-
-        if (e.shiftKey) {
-          if (document.activeElement === firstElement) {
-            e.preventDefault();
-            lastElement.focus();
-          }
-        } else {
-          if (document.activeElement === lastElement) {
-            e.preventDefault();
-            firstElement.focus();
-          }
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      clearTimeout(focusTimer);
-      window.removeEventListener("keydown", handleKeyDown);
-      if (triggerElementRef.current) {
-        triggerElementRef.current.focus();
-      }
-    };
-  }, [isOpen, onClose]);
+  useFocusTrap({
+    isOpen,
+    onClose,
+    containerRef: dialogRef,
+  });
 
   // Clean up any pending timer on unmount
   useEffect(() => {

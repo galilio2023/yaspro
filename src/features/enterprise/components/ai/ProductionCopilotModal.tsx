@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import {
   Sparkles,
   Bot,
@@ -35,67 +36,12 @@ export function ProductionCopilotModal({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const dialogRef = useRef<HTMLDivElement>(null);
-  const triggerElementRef = useRef<HTMLElement | null>(null);
 
-  // Focus trap, Escape key handling, and restore focus to trigger
-  useEffect(() => {
-    if (!isOpen) return;
-
-    triggerElementRef.current = document.activeElement as HTMLElement | null;
-
-    const focusTimer = setTimeout(() => {
-      if (dialogRef.current) {
-        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length > 0) {
-          focusable[0].focus();
-        } else {
-          dialogRef.current.focus();
-        }
-      }
-    }, 50);
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-        return;
-      }
-
-      if (e.key === "Tab") {
-        if (!dialogRef.current) return;
-        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length === 0) return;
-
-        const firstElement = focusable[0];
-        const lastElement = focusable[focusable.length - 1];
-
-        if (e.shiftKey) {
-          if (document.activeElement === firstElement) {
-            e.preventDefault();
-            lastElement.focus();
-          }
-        } else {
-          if (document.activeElement === lastElement) {
-            e.preventDefault();
-            firstElement.focus();
-          }
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      clearTimeout(focusTimer);
-      window.removeEventListener("keydown", handleKeyDown);
-      if (triggerElementRef.current) {
-        triggerElementRef.current.focus();
-      }
-    };
-  }, [isOpen, onClose]);
+  useFocusTrap({
+    isOpen,
+    onClose,
+    containerRef: dialogRef,
+  });
 
   if (!isOpen) return null;
 

@@ -20,6 +20,8 @@ import { formatCurrency } from "@/lib/utils";
 import { GearItem, RentalDateRange, DeliveryMethod } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { getGearRecommendations } from "../lib/gear-rules";
+import { calculateGearCartTotals } from "../lib/cart-pricing";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 const emptySubscribe = () => () => {};
@@ -59,58 +61,22 @@ export function GearCartDrawer({
   }
 
 
-  // Lock body scroll and manage focus trap & escape key when breakdown modal is open
+  useFocusTrap({
+    isOpen: isOpen && items.length > 0,
+    onClose: () => setIsOpen(false),
+    containerRef: panelRef,
+    initialFocusRef: closeButtonRef,
+  });
+
+  // Lock body scroll when breakdown modal is open
   useEffect(() => {
     if (!isOpen || items.length === 0) return;
-
-    const timer = setTimeout(() => {
-      closeButtonRef.current?.focus();
-    }, 50);
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        setIsOpen(false);
-        return;
-      }
-
-      if (e.key === "Tab") {
-        if (!panelRef.current) return;
-        const focusable = panelRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length === 0) return;
-
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        if (e.shiftKey) {
-          if (document.activeElement === first) {
-            e.preventDefault();
-            last.focus();
-          }
-        } else {
-          if (document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-          }
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const triggerBtn = triggerButtonRef.current;
-
     return () => {
-      clearTimeout(timer);
-      window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = originalOverflow || "";
-      triggerBtn?.focus();
     };
   }, [isOpen, items.length]);
-
 
   // Signal to global floating widgets (e.g. WhatsApp concierge) that bottom cart bar is active
   useEffect(() => {
@@ -127,11 +93,8 @@ export function GearCartDrawer({
   if (items.length === 0) return null;
 
   // Calculation
-  const baseDayRate = items.reduce((acc, curr) => acc + curr.dailyRate, 0);
-  const rentalSubtotal = baseDayRate * dateRange.billingMultiplier;
-  const deliveryFee = deliveryMethod === "courier_dubai" ? 250 : 0;
-  const grandTotal = rentalSubtotal + deliveryFee;
-  const totalDeposit = items.reduce((acc, curr) => acc + (curr.securityDeposit || curr.dailyRate * 1.5), 0);
+  const { baseDayRate, rentalSubtotal, deliveryFee, grandTotal, totalDeposit } =
+    calculateGearCartTotals(items, dateRange, deliveryMethod);
 
   const smartRecommendations = getGearRecommendations(items.map((i) => i.id));
 

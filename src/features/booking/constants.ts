@@ -114,3 +114,54 @@ export const WIZARD_STEPS: readonly WizardStepItem[] = [
   { id: 6, label: "Post Production", icon: Sparkles },
   { id: 7, label: "Contact & Confirm", icon: CreditCard },
 ];
+
+export interface BookingPricingInput {
+  studioId?: string;
+  durationHours?: number;
+  needsCrew?: boolean;
+  selectedGearPackage?: string;
+  needsEditing?: boolean;
+  needsColorGrading?: boolean;
+  needsSoundMastering?: boolean;
+  needsAiAutoCut?: boolean;
+}
+
+export interface BookingPricingBreakdown {
+  studioCost: number;
+  crewCost: number;
+  gearCost: number;
+  postCost: number;
+  total: number;
+}
+
+/**
+ * Pure domain pricing calculation for studio reservations.
+ * Enforces canonical pricing rules across both client wizard and server mutations.
+ */
+export function calculateBookingPrice(input: BookingPricingInput): BookingPricingBreakdown {
+  const durationHours = Math.max(1, Math.min(input.durationHours ?? 1, 24));
+  const studio = (STUDIOS || []).find((s) => s.id === input.studioId) || (STUDIOS || [])[0];
+  const studioRate = studio ? studio.rate : 800;
+  const studioCost = studioRate * durationHours;
+
+  const crewCost = input.needsCrew ? 500 : 0;
+
+  const gearPkg = (STUDIO_GEAR_PACKAGES || []).find((g) => g.id === input.selectedGearPackage);
+  const gearCost = gearPkg ? gearPkg.rate : 0;
+
+  const postCost =
+    (input.needsEditing ? 400 : 0) +
+    (input.needsColorGrading ? 300 : 0) +
+    (input.needsSoundMastering ? 250 : 0) +
+    (input.needsAiAutoCut ? 450 : 0);
+
+  const total = studioCost + crewCost + gearCost + postCost;
+
+  return {
+    studioCost,
+    crewCost,
+    gearCost,
+    postCost,
+    total,
+  };
+}

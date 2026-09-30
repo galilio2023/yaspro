@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { storageProvider } from "@/lib/storage";
 import crypto from "crypto";
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
@@ -137,18 +136,12 @@ export async function POST(request: Request) {
       .slice(0, 24);
     const uniqueFileName = `${Date.now()}-${randomSuffix}-${sanitizedBase || "asset"}.${detectedFormat.ext}`;
 
-    // 7. Write to public/uploads with flag 'wx' (exclusive creation)
-    const uploadsDir = join(process.cwd(), "public", "uploads");
-    await mkdir(uploadsDir, { recursive: true });
-
-    const filePath = join(uploadsDir, uniqueFileName);
-    await writeFile(filePath, buffer, { flag: "wx" });
-
-    const publicUrl = `/uploads/${uniqueFileName}`;
+    // 7. Write to storage provider
+    const saveResult = await storageProvider.save(uniqueFileName, buffer);
 
     return NextResponse.json({
       success: true,
-      url: publicUrl,
+      url: saveResult.url,
       fileName: uniqueFileName,
       sizeBytes: file.size,
       mimeType: detectedFormat.mime,

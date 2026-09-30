@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import {
   X,
   ShieldCheck,
@@ -41,6 +42,13 @@ export function MawthooqAuditorModal({
   const [isAuditing, setIsAuditing] = useState(false);
   const [auditReport, setAuditReport] = useState<MawthooqAuditReport | null>(null);
   const [auditError, setAuditError] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap({
+    isOpen,
+    onClose,
+    containerRef,
+  });
 
   if (!isOpen) return null;
 
@@ -97,7 +105,11 @@ export function MawthooqAuditorModal({
       aria-modal="true"
       aria-labelledby="mawthooq-modal-title"
     >
-      <div className="relative w-full h-full sm:h-auto sm:max-h-[90vh] sm:w-[90vw] sm:max-w-3xl rounded-none sm:rounded-3xl border border-emerald-500/30 bg-slate-950 p-6 sm:p-8 shadow-2xl shadow-emerald-500/10 my-0 sm:my-8 overflow-y-auto">
+      <div
+        ref={containerRef}
+        tabIndex={-1}
+        className="relative w-full h-full sm:h-auto sm:max-h-[90vh] sm:w-[90vw] sm:max-w-3xl rounded-none sm:rounded-3xl border border-emerald-500/30 bg-slate-950 p-6 sm:p-8 shadow-2xl shadow-emerald-500/10 my-0 sm:my-8 overflow-y-auto outline-none"
+      >
         {/* Close Button */}
         <button
           onClick={onClose}

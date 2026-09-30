@@ -44,6 +44,13 @@ function isUuid(id?: string): boolean {
 }
 
 /**
+ * Checks whether an active PostgreSQL database is configured.
+ */
+function isDbAvailable(): boolean {
+  return Boolean(process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx"));
+}
+
+/**
  * Enforces admin authorization on sensitive state-changing CMS mutations.
  * In production/connected database environments, throws an error if user lacks admin role.
  */
@@ -81,7 +88,7 @@ export interface CmsResponse<T = unknown> {
 export async function getCmsOverviewStats() {
   try {
     await requireAdmin();
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       const [allProjects, allInfluencers, allGear, allBookings, allRfps, allInquiries, allUsers, allStudios] =
         await Promise.all([
           db.select().from(projects),
@@ -142,7 +149,7 @@ export async function getCmsOverviewStats() {
  * @returns Array of projects ordered by creation date.
  */
 export async function getCmsProjects(): Promise<Project[]> {
-  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+  if (isDbAvailable()) {
     const records = await db.select().from(projects).orderBy(desc(projects.createdAt));
     if (records && records.length > 0) return records;
   }
@@ -182,7 +189,7 @@ export async function getCmsProjects(): Promise<Project[]> {
 export async function upsertCmsProject(data: Partial<Project> & { title: string; slug: string }): Promise<CmsResponse> {
   try {
     await requireAdmin();
-    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (!isDbAvailable()) {
       return { success: true, message: "Project saved in local preview mode." };
     }
 
@@ -233,7 +240,7 @@ export async function upsertCmsProject(data: Partial<Project> & { title: string;
 export async function deleteCmsProject(id: string): Promise<CmsResponse> {
   try {
     await requireAdmin();
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       await db.delete(projects).where(eq(projects.id, id));
     }
     revalidatePath("/projects");
@@ -253,7 +260,7 @@ export async function deleteCmsProject(id: string): Promise<CmsResponse> {
  * @returns Array of influencer profiles.
  */
 export async function getCmsInfluencers(): Promise<Influencer[]> {
-  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+  if (isDbAvailable()) {
     const records = await db.select().from(influencers).orderBy(desc(influencers.createdAt));
     if (records && records.length > 0) return records;
   }
@@ -291,7 +298,7 @@ export async function getCmsInfluencers(): Promise<Influencer[]> {
 export async function upsertCmsInfluencer(data: Partial<Influencer> & { name: string; slug: string }): Promise<CmsResponse> {
   try {
     await requireAdmin();
-    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (!isDbAvailable()) {
       return { success: true, message: "Creator profile updated in preview mode." };
     }
 
@@ -343,7 +350,7 @@ export async function upsertCmsInfluencer(data: Partial<Influencer> & { name: st
  * @returns Array of gear equipment records.
  */
 export async function getCmsEquipment(): Promise<Equipment[]> {
-  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+  if (isDbAvailable()) {
     const records = await db.select().from(equipment).orderBy(desc(equipment.createdAt));
     if (records && records.length > 0) return records;
   }
@@ -377,7 +384,7 @@ export async function getCmsEquipment(): Promise<Equipment[]> {
 export async function upsertCmsEquipment(data: Partial<Equipment> & { name: string; dailyRate: string; category: string }): Promise<CmsResponse> {
   try {
     await requireAdmin();
-    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (!isDbAvailable()) {
       return { success: true, message: "Equipment updated in preview mode." };
     }
 
@@ -428,7 +435,7 @@ export async function upsertCmsEquipment(data: Partial<Equipment> & { name: stri
 export async function getCmsBookings(): Promise<Booking[]> {
   try {
     await requireAdmin();
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       return await db.select().from(bookings).orderBy(desc(bookings.createdAt));
     }
   } catch (e) {
@@ -456,7 +463,7 @@ export async function getClientBookings(userId: string): Promise<Booking[]> {
       throw new Error("Forbidden: Access denied to other client bookings.");
     }
 
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       return await db
         .select()
         .from(bookings)
@@ -479,7 +486,7 @@ export async function getClientBookings(userId: string): Promise<Booking[]> {
 export async function updateBookingStatus(id: string, status: "pending" | "confirmed" | "cancelled" | "completed"): Promise<CmsResponse> {
   try {
     await requireAdmin();
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       await db.update(bookings).set({ status, updatedAt: new Date() }).where(eq(bookings.id, id));
     }
     revalidatePath("/admin/bookings");
@@ -504,7 +511,7 @@ export async function updateBookingPaymentStatus(
 ): Promise<CmsResponse> {
   try {
     await requireAdmin();
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       const updatePayload: { paymentStatus: string; updatedAt: Date; paymentReference?: string } = {
         paymentStatus,
         updatedAt: new Date(),
@@ -530,7 +537,7 @@ export async function updateBookingPaymentStatus(
 export async function getCmsEnterpriseRfps(): Promise<EnterpriseRfp[]> {
   try {
     await requireAdmin();
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       return await db.select().from(enterpriseRfps).orderBy(desc(enterpriseRfps.createdAt));
     }
   } catch (e) {
@@ -549,7 +556,7 @@ export async function getCmsEnterpriseRfps(): Promise<EnterpriseRfp[]> {
 export async function updateEnterpriseRfpStatus(id: string, status: string): Promise<CmsResponse> {
   try {
     await requireAdmin();
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       await db.update(enterpriseRfps).set({ status, updatedAt: new Date() }).where(eq(enterpriseRfps.id, id));
     }
     revalidatePath("/admin/rfps");
@@ -570,7 +577,7 @@ export async function updateEnterpriseRfpStatus(id: string, status: string): Pro
 export async function getCmsUsers(): Promise<User[]> {
   await requireAdmin();
   try {
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       const records = await db.select().from(users).orderBy(desc(users.createdAt));
       if (records && records.length > 0) return records;
     }
@@ -629,7 +636,7 @@ export async function getCmsUsers(): Promise<User[]> {
 export async function updateUserRole(userId: string, role: "admin" | "client" | "enterprise"): Promise<CmsResponse> {
   try {
     await requireAdmin();
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       await db.update(users).set({ role, updatedAt: new Date() }).where(eq(users.id, userId));
     }
     revalidatePath("/admin/users");
@@ -650,7 +657,7 @@ export async function updateUserRole(userId: string, role: "admin" | "client" | 
 export async function updateUserProfile(userId: string, data: Partial<User>): Promise<CmsResponse> {
   try {
     await requireAdmin();
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       const { name, phone, company, image } = data;
       const safeData: Record<string, unknown> = { updatedAt: new Date() };
       if (name !== undefined) safeData.name = name;
@@ -677,7 +684,7 @@ export async function updateUserProfile(userId: string, data: Partial<User>): Pr
 export async function deleteCmsUser(userId: string): Promise<CmsResponse> {
   try {
     await requireAdmin();
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       await db.delete(users).where(eq(users.id, userId));
     }
     revalidatePath("/admin/users");
@@ -698,7 +705,7 @@ export async function deleteCmsUser(userId: string): Promise<CmsResponse> {
 export async function getCmsInquiries(): Promise<Inquiry[]> {
   await requireAdmin();
   try {
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       return await db.select().from(inquiries).orderBy(desc(inquiries.createdAt));
     }
   } catch (e) {
@@ -753,7 +760,7 @@ export async function getCmsInquiries(): Promise<Inquiry[]> {
 export async function updateInquiryStatus(id: string, isResolved: boolean): Promise<CmsResponse> {
   try {
     await requireAdmin();
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       await db.update(inquiries).set({ isResolved }).where(eq(inquiries.id, id));
     }
     revalidatePath("/admin/inquiries");
@@ -773,7 +780,7 @@ export async function updateInquiryStatus(id: string, isResolved: boolean): Prom
 export async function deleteCmsInquiry(id: string): Promise<CmsResponse> {
   try {
     await requireAdmin();
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       await db.delete(inquiries).where(eq(inquiries.id, id));
     }
     revalidatePath("/admin/inquiries");
@@ -792,7 +799,7 @@ export async function deleteCmsInquiry(id: string): Promise<CmsResponse> {
  * @returns Array of Studio records.
  */
 export async function getCmsStudios(): Promise<Studio[]> {
-  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+  if (isDbAvailable()) {
     const records = await db.select().from(studios).orderBy(desc(studios.createdAt));
     if (records && records.length > 0) return records;
   }
@@ -825,7 +832,7 @@ export async function upsertCmsStudio(
 ): Promise<CmsResponse> {
   try {
     await requireAdmin();
-    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (!isDbAvailable()) {
       return { success: true, message: "Studio updated in preview mode." };
     }
 
@@ -870,7 +877,7 @@ export async function upsertCmsStudio(
 export async function toggleStudioActiveStatus(id: string, isActive: boolean): Promise<CmsResponse> {
   try {
     await requireAdmin();
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    if (isDbAvailable()) {
       if (isUuid(id)) {
         await db.update(studios).set({ isActive }).where(eq(studios.id, id));
       } else {

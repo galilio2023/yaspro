@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { getCmsProjects, getCmsInfluencers, getCmsEquipment, getCmsStudios } from "./cms-actions";
-import { db } from "@/db";
+import { db, isDatabaseConfigured } from "@/db";
 import { projects, influencers, type Project, type Influencer, type Equipment, type Studio } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { PROJECTS_DATA } from "@/features/projects/data";
@@ -43,7 +43,7 @@ export const getCachedProjects = unstable_cache(
 export async function getCachedProjectBySlug(slug: string): Promise<ProjectItem | null> {
   const fetcher = unstable_cache(
     async (targetSlug: string): Promise<ProjectItem | null> => {
-      if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+      if (isDatabaseConfigured()) {
         const record = await db.query.projects.findFirst({
           where: eq(projects.slug, targetSlug),
         });
@@ -109,7 +109,7 @@ export const getCachedInfluencers = unstable_cache(
 export async function getCachedInfluencerBySlug(slug: string): Promise<InfluencerItem | null> {
   const fetcher = unstable_cache(
     async (targetSlug: string): Promise<InfluencerItem | null> => {
-      if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+      if (isDatabaseConfigured()) {
         const record = await db.query.influencers.findFirst({
           where: eq(influencers.slug, targetSlug),
         });
