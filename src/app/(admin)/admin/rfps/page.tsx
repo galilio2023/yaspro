@@ -1,6 +1,6 @@
 import React from "react";
 import { getCmsEnterpriseRfps } from "@/lib/cms-actions";
-import { RfpsManager } from "@/features/enterprise/components/admin/RfpsManager";
+import { RfpsManager } from "@/features/admin";
 
 export const metadata = {
   title: "Enterprise RFPs CMS | Yas Productions",

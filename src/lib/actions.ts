@@ -20,7 +20,7 @@ import {
   type EnterpriseRfpInput,
 } from "./validations";
 
-import { STUDIOS, STUDIO_GEAR_PACKAGES, calculateBookingPrice } from "@/features/booking/constants";
+import { STUDIOS, calculateBookingPrice } from "@/features/booking/constants";
 
 /**
  * Recalculate price server-side based on canonical pricing rules

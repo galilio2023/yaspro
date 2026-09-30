@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, ArrowRight, ShieldCheck, Play, Award, MapPin } from "lucide-react";
+import { Sparkles, ArrowRight, ShieldCheck, MapPin } from "lucide-react";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import { useLanguage } from "@/components/providers/LanguageProvider";

@@ -1,13 +1,12 @@
 "use client";
 
-import { FadeUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrappers";
-import { Badge } from "@/components/ui/badge";
+import { StaggerContainer, StaggerItem } from "@/components/animations/MotionWrappers";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { Milestone, Flag, Radio, Sparkles, Building2 } from "lucide-react";
 
 export function AboutMilestones() {
-  const { t, isArabic } = useLanguage();
+  const { t } = useLanguage();
 
   const MILESTONES = [
     {
@@ -60,7 +59,7 @@ export function AboutMilestones() {
         <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 -translate-y-1/2 bg-gradient-to-r from-brand-purple/40 via-brand-cyan/40 to-emerald-400/40 pointer-events-none" />
 
         <StaggerContainer className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10 items-stretch">
-          {MILESTONES.map((m, idx) => {
+          {MILESTONES.map((m) => {
             const Icon = m.icon;
             return (
               <StaggerItem key={m.year} className="h-full">

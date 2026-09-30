@@ -3,27 +3,9 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Download, MessageSquare, CheckCircle, Play, Pause, Send } from "lucide-react";
+import type { DailyClip, FrameAnnotation } from "../../types";
 
-export interface DailyClip {
-  id: string;
-  title: string;
-  thumbnail: string;
-  duration: string;
-  timecode: string;
-  camera: string;
-  status: "APPROVED" | "PENDING_REVIEW";
-  watermarkCode: string;
-}
-
-interface FrameAnnotation {
-  id: string;
-  timecode: string;
-  author: string;
-  role: string;
-  comment: string;
-  createdAt: string;
-  type: "color" | "audio" | "cut";
-}
+export type { DailyClip, FrameAnnotation };
 
 interface PortalDailiesProps {
   activeClip: DailyClip;

@@ -34,6 +34,20 @@ function getNestedValue(obj: Record<string, unknown>, path: string): string | un
   return typeof current === "string" ? current : undefined;
 }
 
+/**
+ * Synchronize document attributes, localStorage, and next-intl cookies.
+ */
+function syncLocaleStorage(lang: Language) {
+  if (typeof window === "undefined") return;
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  try {
+    localStorage.setItem("yaspro_lang", lang);
+    document.cookie = `NEXT_LOCALE=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+    document.cookie = `locale=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+  } catch {}
+}
+
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({
@@ -47,52 +61,62 @@ export function LanguageProvider({
   const pathname = usePathname();
 
   // Match initial server and first-client render exactly using the request locale
-  const [language, setLanguageState] = useState<Language>(initialLocale);
+  const [userLang, setUserLang] = useState<Language>(initialLocale);
+  const [prevPathname, setPrevPathname] = useState(pathname);
 
-  function applyLanguage(lang: Language) {
-    document.documentElement.lang = lang;
-    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-    try {
-      localStorage.setItem("yaspro_lang", lang);
-    } catch {}
+  const routeLang: Language | null =
+    pathname === "/en" || pathname?.startsWith("/en/")
+      ? "en"
+      : pathname === "/ar" || pathname?.startsWith("/ar/")
+      ? "ar"
+      : null;
+
+  // Reconcile when pathname changes during render without cascading effects
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    if (routeLang && routeLang !== userLang) {
+      setUserLang(routeLang);
+      syncLocaleStorage(routeLang);
+    }
   }
 
-  // Post-hydration reconciliation: prioritize explicit /en and /ar paths over localStorage
+  const language = routeLang ?? userLang;
+
+  // Reconcile and synchronize client storage & cookies on hydration and language changes
   useEffect(() => {
-    if (pathname === "/en" || pathname?.startsWith("/en/")) {
-      if (language !== "en") {
-        setLanguageState("en"); // eslint-disable-line
-        applyLanguage("en");
-      }
-    } else if (pathname === "/ar" || pathname?.startsWith("/ar/")) {
-      if (language !== "ar") {
-        setLanguageState("ar"); // eslint-disable-line
-        applyLanguage("ar");
-      }
-    } else {
-      // Unprefixed path: check saved preference
+    if (!routeLang) {
       try {
         const saved = localStorage.getItem("yaspro_lang") as Language;
-        if ((saved === "ar" || saved === "en") && saved !== language) {
-          applyLanguage(saved);
-          setLanguageState(saved); // eslint-disable-line
+        if ((saved === "ar" || saved === "en") && saved !== userLang) {
+          queueMicrotask(() => {
+            setUserLang(saved);
+            syncLocaleStorage(saved);
+          });
+          return;
         }
       } catch {}
     }
-  }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+    syncLocaleStorage(language);
+  }, [routeLang, userLang, language]);
 
   const setLanguage = (newLang: Language) => {
-    setLanguageState(newLang);
-    applyLanguage(newLang);
+    setUserLang(newLang);
+    syncLocaleStorage(newLang);
 
     if (!pathname) return;
-    if (newLang === "ar" && !pathname.startsWith("/ar")) {
-      const stripped = pathname.replace(/^\/en(\/|$)/, "/") || "/";
-      const target = stripped === "/" ? "/ar" : `/ar${stripped}`;
-      router.push(target);
-    } else if (newLang === "en") {
-      const target = pathname.replace(/^\/ar(\/|$)/, "/") || "/";
-      router.push(target);
+
+    if (newLang === "ar") {
+      if (!pathname.startsWith("/ar")) {
+        const stripped = pathname.replace(/^\/en(\/|$)/, "/") || "/";
+        const target = stripped === "/" ? "/ar" : `/ar${stripped}`;
+        router.push(target);
+      }
+    } else {
+      if (!pathname.startsWith("/en")) {
+        const stripped = pathname.replace(/^\/ar(\/|$)/, "/") || "/";
+        const target = stripped === "/" ? "/en" : `/en${stripped}`;
+        router.push(target);
+      }
     }
   };
 

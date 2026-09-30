@@ -1,4 +1,4 @@
-import { Sparkles, Camera, Radio, Users, Award, ShieldCheck, Cpu, Clapperboard, Globe2 } from "lucide-react";
+import { Sparkles, Camera, Radio, Users, Award, ShieldCheck, Clapperboard, Globe2 } from "lucide-react";
 
 export interface TeamMember {
   role: string;

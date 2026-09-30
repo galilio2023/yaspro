@@ -59,3 +59,24 @@ export interface EnterprisePackageTier {
   slaGuarantee: string;
   popular?: boolean;
 }
+
+export interface DailyClip {
+  id: string;
+  title: string;
+  thumbnail: string;
+  duration: string;
+  timecode: string;
+  camera: string;
+  status: "APPROVED" | "PENDING_REVIEW";
+  watermarkCode: string;
+}
+
+export interface FrameAnnotation {
+  id: string;
+  timecode: string;
+  author: string;
+  role: string;
+  comment: string;
+  createdAt: string;
+  type: "color" | "audio" | "cut";
+}

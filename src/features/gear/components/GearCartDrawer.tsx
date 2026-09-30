@@ -96,8 +96,8 @@ export function GearCartDrawer({
 
   if (items.length === 0) return null;
 
-  // Calculation
-  const { baseDayRate, rentalSubtotal, deliveryFee, grandTotal, totalDeposit } =
+  // Calculation — only destructure what is rendered in the UI
+  const { grandTotal, totalDeposit } =
     calculateGearCartTotals(items, dateRange, deliveryMethod);
 
   const smartRecommendations = getGearRecommendations(items.map((i) => i.id));

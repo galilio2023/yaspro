@@ -8,13 +8,13 @@ export interface CosmicConstellationSparklesProps {
   className?: string;
 }
 
-// Gentle, natural cosmic starlight palette (calm, organic, starry)
+// Bright, beautiful neon and cosmic palette
 const PALETTE = [
-  "#c4b5fd", // Soft Lavender Starlight
-  "#bae6fd", // Gentle Sky Blue
-  "#fef08a", // Soft Warm Starlight
-  "#fde68a", // Gentle Pale Amber
-  "#e2e8f0", // Natural Pearl White
+  "14, 182, 212",   // Brand Cyan
+  "139, 92, 246",   // Brand Purple
+  "245, 158, 11",   // Brand Gold
+  "16, 185, 129",   // Emerald
+  "236, 72, 153",   // Pink
 ];
 
 interface Particle {
@@ -174,10 +174,13 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
       oCtx.arc(135 * s, 0, 55 * s, -Math.PI * 0.35, Math.PI * 0.35);
       oCtx.stroke();
 
-      // Title
-      oCtx.font = `800 ${18 * s}px "Inter", system-ui, sans-serif`;
+      // Brand Name & Camera Constellation
+      oCtx.font = `900 ${22 * s}px "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
       oCtx.textAlign = "center";
-      oCtx.fillText("4K  Y A S P R O   R I G", 0, 85 * s);
+      oCtx.fillText("Y A S P R O", 0, 84 * s);
+
+      oCtx.font = `700 ${10 * s}px "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+      oCtx.fillText("4 K   P R O D U C T I O N S", 0, 102 * s);
 
       oCtx.restore();
 
@@ -210,8 +213,8 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
       const x = Math.random() * width;
       const y = Math.random() * height;
       const color = PALETTE[Math.floor(Math.random() * PALETTE.length)];
-      const baseAlpha = Math.random() * 0.3 + 0.22; // Gentle, natural transparency
-      const baseSize = Math.random() * 0.9 + 0.7; // Delicate stardust specs (0.7px - 1.6px)
+      const baseAlpha = Math.random() * 0.25 + 0.35; // Rich opacity for visible obsidian silhouettes
+      const baseSize = Math.random() * 0.7 + 0.9; // 0.9px - 1.6px defined stardust beads
 
       const camTarget = i < camPoints.length ? camPoints[i] : { x: Math.random() * width, y: Math.random() * height };
 
@@ -316,8 +319,8 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
 
       const isSolidHold = camWeight === 1;
 
-      // Natural soft blending (no harsh lightning flare)
-      ctx.globalCompositeOperation = "source-over";
+      // Additive blending for a beautiful neon glow
+      ctx.globalCompositeOperation = "lighter";
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
@@ -364,20 +367,35 @@ export const CosmicConstellationSparkles: React.FC<CosmicConstellationSparklesPr
         const currentAlpha = p.baseAlpha + Math.sin(p.pulsePhase) * 0.1;
         const currentSize = p.baseSize + Math.sin(p.pulsePhase) * 0.15;
 
-        // Gentle stardust opacity when forming the camera
+        // Distinct stardust opacity when forming the camera and brand name
         const finalAlpha = p.hasTarget && camWeight > 0.15
-          ? Math.min(0.75, currentAlpha + 0.25 * camWeight)
+          ? Math.min(0.94, currentAlpha + 0.35 * camWeight)
           : currentAlpha;
 
         const finalSize = p.hasTarget && camWeight > 0.15
-          ? p.baseSize + 0.3 * camWeight
+          ? p.baseSize + 0.55 * camWeight
           : currentSize;
 
-        // Soft, natural starlight point
-        ctx.globalAlpha = Math.max(0.12, Math.min(0.8, finalAlpha));
-        ctx.fillStyle = p.color;
+        const r = Math.max(1.15, finalSize * 1.35);
+
+        ctx.globalAlpha = Math.max(0.25, Math.min(0.96, finalAlpha));
+
+        // Bright, beautiful glowing gradient
+        const grad = ctx.createRadialGradient(
+          p.x - r * 0.25,
+          p.y - r * 0.25,
+          0,
+          p.x,
+          p.y,
+          r
+        );
+        grad.addColorStop(0, "rgba(255, 255, 255, 1)"); // Bright white core
+        grad.addColorStop(0.4, `rgba(${p.color}, 0.8)`); // Vibrant color
+        grad.addColorStop(1, `rgba(${p.color}, 0)`); // Fade out to transparent
+
+        ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, Math.max(0.7, finalSize), 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
         ctx.fill();
       }
 

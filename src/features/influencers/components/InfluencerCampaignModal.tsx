@@ -48,7 +48,6 @@ export function InfluencerCampaignModal({
 
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const triggerRef = useRef<HTMLElement | null>(null);
 
   const [formData, setFormData] = useState({
     brandName: "",

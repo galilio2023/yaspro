@@ -1,6 +1,6 @@
 import React from "react";
 import { getCmsInquiries } from "@/lib/cms-actions";
-import { InquiriesManager } from "@/features/enterprise/components/admin/InquiriesManager";
+import { InquiriesManager } from "@/features/admin";
 
 export const metadata = {
   title: "Inquiries & Leads Desk | Yas Productions CMS",

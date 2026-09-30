@@ -113,13 +113,13 @@ export default function HeroSection() {
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-medium text-sm text-white border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/25 transition-all text-center backdrop-blur-sm whitespace-nowrap cursor-pointer shadow-lg shadow-black/40"
               >
                 {/* Play triangle: mirrors in Arabic, normal in English */}
+                <span>{t("hero.watchReel")}</span>
                 <Play
                   size={14}
                   className={`text-brand-purple fill-current shrink-0 transition-transform ${
                     isArabic ? "scale-x-[-1]" : ""
                   }`}
                 />
-                <span>{t("hero.watchReel")}</span>
               </button>
             </div>
 
