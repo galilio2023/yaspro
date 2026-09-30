@@ -53,7 +53,7 @@ export async function getCmsOverviewStats() {
         clientUsers: allUsers.filter((u) => u.role === "client").length,
         adminUsers: allUsers.filter((u) => u.role === "admin").length,
         totalStudios: allStudios.length || STUDIOS.length,
-        activeStudios: allStudios.filter((s) => s.isActive).length || STUDIOS.length,
+        activeStudios: allStudios.length > 0 ? allStudios.filter((s) => s.isActive).length : STUDIOS.length,
       };
     }
   } catch (err) {

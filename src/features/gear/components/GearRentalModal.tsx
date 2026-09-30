@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useSyncExternalStore } from "react";
+import React, { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import {
@@ -51,6 +51,9 @@ export function GearRentalModal({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [confirmationCode, setConfirmationCode] = useState<string | null>(null);
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const hasItem = Boolean(item);
+
   // Sync initial duration
   useEffect(() => {
     if (isOpen) {
@@ -72,6 +75,52 @@ export function GearRentalModal({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
+
+  useEffect(() => {
+    if (!mounted || !isOpen || !hasItem) return;
+    const card = dialogRef.current;
+    if (!card) return;
+    const previouslyFocused = document.activeElement;
+    card.focus();
+
+    const keepFocusInside = (event: FocusEvent) => {
+      if (!card.contains(event.target as Node)) card.focus();
+    };
+    const trapTab = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const focusable = Array.from(card.querySelectorAll<HTMLElement>(
+        'button, a[href], input, select, textarea, [tabindex]'
+      )).filter((element) => element.tabIndex >= 0 && !element.matches(":disabled") && element.getClientRects().length > 0);
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!first || !last) {
+        event.preventDefault();
+        card.focus();
+      } else if (!focusable.includes(document.activeElement as HTMLElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("focusin", keepFocusInside);
+    card.addEventListener("keydown", trapTab);
+    return () => {
+      document.removeEventListener("focusin", keepFocusInside);
+      card.removeEventListener("keydown", trapTab);
+      if (previouslyFocused instanceof HTMLElement && previouslyFocused.isConnected) previouslyFocused.focus();
+    };
+  }, [mounted, isOpen, hasItem]);
+
+  // Switching views can remove the focused control.
+  useEffect(() => {
+    const card = dialogRef.current;
+    if (card && !card.contains(document.activeElement)) card.focus();
+  }, [viewMode]);
 
   if (!mounted || !isOpen || !item) return null;
 
@@ -102,26 +151,28 @@ export function GearRentalModal({
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    const res = await submitGearReservation({
-      gearId: item.id,
-      gearName: item.name,
-      customerName,
-      email,
-      phone,
-      company,
-      durationDays,
-      deliveryMethod,
-      estimatedTotal: grandTotal,
-      notes,
-    });
+    try {
+      const res = await submitGearReservation({
+        gearId: item.id,
+        customerName,
+        email,
+        phone,
+        company,
+        durationDays,
+        deliveryMethod,
+        notes,
+      });
 
-    setIsSubmitting(false);
-
-    if (res.success && res.data?.referenceCode) {
-      setConfirmationCode(res.data.referenceCode);
-      setViewMode("confirmed");
-    } else {
-      setErrorMessage(res.error || (isArabic ? "حدث خطأ أثناء إرسال الحجز، يرجى المحاولة لاحقاً" : "Failed to submit reservation. Please try WhatsApp."));
+      if (res.success && res.data?.referenceCode) {
+        setConfirmationCode(res.data.referenceCode);
+        setViewMode("confirmed");
+      } else {
+        setErrorMessage(res.error || (isArabic ? "حدث خطأ أثناء إرسال الحجز، يرجى المحاولة لاحقاً" : "Failed to submit reservation. Please try WhatsApp."));
+      }
+    } catch {
+      setErrorMessage(isArabic ? "حدث خطأ أثناء إرسال الحجز، يرجى المحاولة لاحقاً" : "Failed to submit reservation. Please try WhatsApp.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -136,14 +187,17 @@ export function GearRentalModal({
       <div className="fixed inset-0" onClick={onClose} aria-hidden="true" />
 
       {/* Modal Dialog Card */}
-      <div className="relative w-full max-w-3xl my-auto rounded-3xl border border-white/15 bg-[#0b0918] shadow-2xl shadow-brand-purple/20 overflow-hidden z-10 flex flex-col max-h-[92vh]">
+      <div ref={dialogRef} tabIndex={-1} className="relative w-full max-w-3xl my-auto rounded-3xl border border-white/15 bg-[#0b0918] shadow-2xl shadow-brand-purple/20 overflow-hidden z-10 flex flex-col max-h-[92vh]">
         {/* Header Bar */}
         <div className="relative px-6 py-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
-          <div className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-brand-cyan animate-pulse" />
-            <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
-              {item.categoryLabel} · {isArabic ? "حجز وتأجير فوري" : "Instant Gear Reservation"}
-            </span>
+          <div>
+            <h2 id="gear-modal-title" className="text-lg font-bold text-white font-display">{displayName}</h2>
+            <div className="flex items-center gap-2">
+              <span className="size-2 rounded-full bg-brand-cyan animate-pulse" />
+              <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
+                {item.categoryLabel} · {isArabic ? "حجز وتأجير فوري" : "Instant Gear Reservation"}
+              </span>
+            </div>
           </div>
 
           <button
@@ -230,12 +284,13 @@ export function GearRentalModal({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-text-secondary block mb-1">
+                  <label htmlFor="gear-customerName" className="text-xs font-medium text-text-secondary block mb-1">
                     {isArabic ? "الاسم الكامل *" : "Full Name *"}
                   </label>
                   <input
                     type="text"
                     required
+                    id="gear-customerName"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder={isArabic ? "مثال: طارق المنصوري" : "e.g. John Doe"}
@@ -243,12 +298,13 @@ export function GearRentalModal({
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-text-secondary block mb-1">
+                  <label htmlFor="gear-phone" className="text-xs font-medium text-text-secondary block mb-1">
                     {isArabic ? "رقم الهاتف / واتساب *" : "Phone / WhatsApp *"}
                   </label>
                   <input
                     type="tel"
                     required
+                    id="gear-phone"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+971 50 123 4567"
@@ -259,12 +315,13 @@ export function GearRentalModal({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-text-secondary block mb-1">
+                  <label htmlFor="gear-email" className="text-xs font-medium text-text-secondary block mb-1">
                     {isArabic ? "البريد الإلكتروني *" : "Email Address *"}
                   </label>
                   <input
                     type="email"
                     required
+                    id="gear-email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="dp@production.ae"
@@ -272,11 +329,12 @@ export function GearRentalModal({
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-text-secondary block mb-1">
+                  <label htmlFor="gear-company" className="text-xs font-medium text-text-secondary block mb-1">
                     {isArabic ? "جهة الإنتاج / الشركة" : "Production Company / Agency"}
                   </label>
                   <input
                     type="text"
+                    id="gear-company"
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder={isArabic ? "اختياري" : "Optional"}
@@ -286,11 +344,12 @@ export function GearRentalModal({
               </div>
 
               <div>
-                <label className="text-xs font-medium text-text-secondary block mb-1">
+                <label htmlFor="gear-notes" className="text-xs font-medium text-text-secondary block mb-1">
                   {isArabic ? "ملاحظات إضافية أو ملحقات خاصة" : "Special Requests or Call Sheet Notes"}
                 </label>
                 <textarea
                   rows={2}
+                  id="gear-notes"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder={isArabic ? "مثال: موعد استلام باكر، إضافة عدسة 50mm، توصيل لموقع صحراوي..." : "e.g. Early morning call, specific lens mount, location delivery..."}
@@ -352,7 +411,7 @@ export function GearRentalModal({
                 </div>
 
                 <div className="md:col-span-7 space-y-2.5">
-                  <h3 id="gear-modal-title" className="text-2xl font-bold text-white font-display">
+                  <h3 className="text-2xl font-bold text-white font-display">
                     {displayName}
                   </h3>
                   <p className="text-xs text-text-secondary leading-relaxed">
@@ -425,7 +484,7 @@ export function GearRentalModal({
                       {isArabic ? "خصم 20%" : "20% Off"}
                     </span>
                     <div className="text-xs font-bold">{isArabic ? "عطلة نهاية الأسبوع (3 أيام)" : "3-Day Weekend"}</div>
-                    <div className="text-[10px] text-brand-cyan/90 mt-0.5">{isArabic ? "ادفع يومين واحصل على الثالث" : "Weekend Deal"}</div>
+                    <div className="text-[10px] text-brand-cyan/90 mt-0.5">{isArabic ? "عرض عطلة نهاية الأسبوع" : "Weekend Deal"}</div>
                   </button>
 
                   <button

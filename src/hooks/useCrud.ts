@@ -87,9 +87,15 @@ export function useCrud<T>({
 
   const handleDelete = async (id: string, name?: string) => {
     if (!confirm(`Are you sure you want to delete ${name || "this item"}?`)) return;
-    const res = await deleteAction(id);
-    if (res.success) {
-      setDataList((prev) => prev.filter((p) => getId(p) !== id));
+    try {
+      const res = await deleteAction(id);
+      if (res.success) {
+        setDataList((prev) => prev.filter((p) => getId(p) !== id));
+      } else {
+        alert(res.error || "Failed to delete item.");
+      }
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete item.");
     }
   };
 

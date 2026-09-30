@@ -227,3 +227,163 @@ test('previous page moves back from the rendered page after the list shrinks', (
   render().prevPage();
   assert.equal(render().currentPage, 0);
 });
+
+test('CRUD delete failures report feedback and preserve rows; success removes only the target', async () => {
+  for (const outcome of ['rejected', 'unsuccessful', 'success', 'cancelled']) {
+    const harness = hookHarness();
+    const alerts = [];
+    let calls = 0;
+    const { useCrud } = loadSource('src/hooks/useCrud.ts', {
+      react: harness.hooks,
+      '@/hooks/useFeedbackAlert': { useFeedbackAlert: () => ({}) },
+    }, { confirm: () => outcome !== 'cancelled', alert: (message) => alerts.push(message) });
+    const initialData = [{ id: 'target' }, { id: 'other' }];
+    const render = () => harness.render(() => useCrud({
+      initialData, getId: (item) => item.id,
+      deleteAction: async () => {
+        calls++;
+        if (outcome === 'rejected') throw new Error('Delete rejected');
+        return { success: outcome === 'success', error: 'Delete unsuccessful' };
+      },
+    }));
+    await render().handleDelete('target');
+    assert.deepEqual(render().dataList, outcome === 'success' ? [initialData[1]] : initialData);
+    assert.deepEqual(alerts, outcome === 'rejected' ? ['Delete rejected'] : outcome === 'unsuccessful' ? ['Delete unsuccessful'] : []);
+    assert.equal(calls, outcome === 'cancelled' ? 0 : 1);
+  }
+});
+
+function gearModalFixture(submit, isArabic = false, globals = {}) {
+  const harness = hookHarness();
+  const mocks = {
+    react: { ...harness.hooks, useSyncExternalStore: (_subscribe, snapshot) => snapshot() },
+    'react-dom': { createPortal: (content) => content },
+    'next/image': 'Image',
+    'lucide-react': new Proxy({}, { get: (_, key) => key }),
+    '@/lib/utils': { formatCurrency: String, cn: (...classes) => classes.join(' ') },
+    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic }) },
+    '@/lib/actions/equipment-gear': { submitGearReservation: submit },
+  };
+  const { GearRentalModal } = loadSource('src/features/gear/components/GearRentalModal.tsx', mocks, {
+    document: { body: {} }, ...globals,
+  });
+  const props = {
+    item: { id: 'camera', name: 'Camera', category: 'cameras', categoryLabel: 'Cinema', dailyRate: 100, specs: [] },
+    isOpen: true, onClose() {},
+  };
+  const render = () => harness.render(() => GearRentalModal(props));
+  const openForm = () => {
+    const button = nodes(render(), (node) => node.type === 'button' && String(node.props.onClick).includes('setViewMode("form")'))[0];
+    assert.ok(button);
+    button.props.onClick();
+    return render();
+  };
+  return { harness, render, openForm, props };
+}
+
+function assertModalTitle(tree) {
+  const dialog = nodes(tree, (node) => node.props.role === 'dialog')[0];
+  const headings = nodes(tree, (node) => node.props.id === dialog.props['aria-labelledby']);
+  assert.equal(headings.length, 1);
+  assert.equal(headings[0].type, 'h2');
+  assert.equal(headings[0].props.children, 'Camera');
+}
+
+test('gear modal preserves success and returned errors, localizes rejections, and unlocks submission', async () => {
+  for (const isArabic of [false, true]) {
+    for (const outcome of ['success', 'unsuccessful', 'rejected']) {
+      let resolve;
+      let reject;
+      const response = new Promise((yes, no) => { resolve = yes; reject = no; });
+      const fixture = gearModalFixture(() => response, isArabic);
+      assertModalTitle(fixture.render());
+      const formView = fixture.openForm();
+      assertModalTitle(formView);
+      const labels = nodes(formView, (node) => node.type === 'label');
+      assert.equal(labels.length, 5);
+      for (const label of labels) {
+        assert.ok(label.props.htmlFor);
+        assert.equal(nodes(formView, (node) => ['input', 'textarea'].includes(node.type) && node.props.id === label.props.htmlFor).length, 1);
+      }
+      for (const [field, value] of [['customerName', 'Customer'], ['phone', '+971501234567'], ['email', 'test@example.com']]) {
+        nodes(fixture.render(), (node) => node.props.id === `gear-${field}`)[0].props.onChange({ target: { value } });
+      }
+      const submission = nodes(fixture.render(), (node) => node.type === 'form')[0].props.onSubmit({ preventDefault() {} });
+      assert.equal(nodes(fixture.render(), (node) => node.props.type === 'submit')[0].props.disabled, true);
+      if (outcome === 'rejected') reject(new Error('Transport failure'));
+      else resolve(outcome === 'success' ? { success: true, data: { referenceCode: 'GEAR-TEST' } } : { success: false, error: 'Server error' });
+      await submission;
+      const tree = fixture.render();
+      assertModalTitle(tree);
+      if (outcome === 'success') {
+        assert.equal(nodes(tree, (node) => node.type === 'form').length, 0);
+        assert.equal(nodes(tree, (node) => node.props.children === 'GEAR-TEST').length, 1);
+      } else {
+        assert.equal(nodes(tree, (node) => node.props.type === 'submit')[0].props.disabled, false);
+        const expected = outcome === 'unsuccessful' ? 'Server error' : isArabic
+          ? 'حدث خطأ أثناء إرسال الحجز، يرجى المحاولة لاحقاً' : 'Failed to submit reservation. Please try WhatsApp.';
+        assert.equal(nodes(tree, (node) => node.props.children === expected).length, 1);
+      }
+    }
+  }
+});
+
+test('gear modal contains keyboard focus, handles changing controls, and restores the opener', () => {
+  const documentListeners = new Map();
+  const document = {
+    body: {}, activeElement: null,
+    addEventListener: (event, callback) => documentListeners.set(event, callback),
+    removeEventListener: (event) => documentListeners.delete(event),
+  };
+  class Element {
+    tabIndex = 0;
+    isConnected = true;
+    disabled = false;
+    visible = true;
+    focus() { document.activeElement = this; }
+    matches() { return this.disabled; }
+    getClientRects() { return this.visible ? [{}] : []; }
+  }
+  const opener = new Element();
+  opener.focus();
+  let controls = [new Element(), new Element(), new Element()];
+  controls[1].disabled = true;
+  const cardListeners = new Map();
+  const card = Object.assign(new Element(), {
+    contains: (target) => target === card || controls.includes(target),
+    querySelectorAll: () => controls,
+    addEventListener: (event, callback) => cardListeners.set(event, callback),
+    removeEventListener: (event) => cardListeners.delete(event),
+  });
+  const fixture = gearModalFixture(async () => ({}), false, {
+    document, HTMLElement: Element, window: { addEventListener() {}, removeEventListener() {} },
+  });
+  nodes(fixture.render(), (node) => node.props.ref)[0].props.ref.current = card;
+  fixture.harness.commit();
+  assert.equal(document.activeElement, card);
+  const tab = (shiftKey = false) => {
+    let prevented = false;
+    cardListeners.get('keydown')({ key: 'Tab', shiftKey, preventDefault() { prevented = true; } });
+    assert.equal(prevented, true);
+  };
+  tab();
+  assert.equal(document.activeElement, controls[0]);
+  tab(true);
+  assert.equal(document.activeElement, controls[2]);
+  tab();
+  assert.equal(document.activeElement, controls[0]);
+  controls = [new Element(), new Element()];
+  controls[1].visible = false;
+  card.focus();
+  tab(true);
+  assert.equal(document.activeElement, controls[0]);
+  documentListeners.get('focusin')({ target: opener });
+  assert.equal(document.activeElement, card);
+  controls = [];
+  tab();
+  assert.equal(document.activeElement, card);
+  fixture.harness.unmount();
+  assert.equal(document.activeElement, opener);
+  assert.equal(documentListeners.size, 0);
+  assert.equal(cardListeners.size, 0);
+});

@@ -59,6 +59,7 @@ export function GearRentalSection() {
     { id: "cameras", label: "Cinema Cameras", arabicLabel: "كاميرات سينمائية" },
     { id: "lenses", label: "Optics & Lenses", arabicLabel: "العدسات السينمائية" },
     { id: "lighting", label: "Lighting & Grip", arabicLabel: "الإضاءة والملحقات" },
+    { id: "audio", label: "Location Audio", arabicLabel: "صوتيات المواقع" },
   ];
 
   return (
@@ -185,9 +186,11 @@ export function GearRentalSection() {
                       {isArabic ? "الباقة الإعلانية الرائدة" : "Featured Production Rig"}
                     </span>
 
-                    <span className="px-2.5 py-1 rounded-full bg-brand-cyan/20 backdrop-blur-md text-brand-cyan border border-brand-cyan/40 text-[10px] font-mono font-bold">
-                      {isArabic ? "وفر حتى 25%" : "Save 25% on Kit"}
-                    </span>
+                    {discountMultiplier < 1 && (
+                      <span className="px-2.5 py-1 rounded-full bg-brand-cyan/20 backdrop-blur-md text-brand-cyan border border-brand-cyan/40 text-[10px] font-mono font-bold">
+                        {isArabic ? `وفر ${Math.round((1 - discountMultiplier) * 100)}%` : `Save ${Math.round((1 - discountMultiplier) * 100)}% on Kit`}
+                      </span>
+                    )}
                   </div>
 
                   {/* Live Status Pill */}
