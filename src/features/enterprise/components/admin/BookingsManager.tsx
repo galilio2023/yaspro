@@ -13,7 +13,7 @@ import {
 import { updateBookingStatus, updateBookingPaymentStatus } from "@/lib/cms-actions";
 import type { Booking } from "@/db/schema";
 import { formatCurrency } from "@/lib/utils";
-import { IyasProIcon } from "@/components/ui/IyasProIcon";
+import { YasproEmblem } from "@/components/ui/YasproEmblem";
 
 interface BookingsManagerProps {
   initialBookings: Booking[];
@@ -394,11 +394,11 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
             <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6 no-print">
               <div className="flex items-center gap-2.5">
                 <div className="size-8 rounded-xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-white font-bold text-xs shadow-md">
-                  <IyasProIcon size={16} idPrefix="callsheet-emblem" />
+                  <YasproEmblem size={16} idPrefix="callsheet-emblem" />
                 </div>
                 <div>
                   <h2 id="call-sheet-modal-title" className="text-base font-bold text-white flex items-center gap-1.5">
-                    <span>iYASPRO</span>
+                    <span>YASPRO</span>
                     <span className="text-purple-400 font-normal">Call Sheet</span>
                   </h2>
                   <span className="text-[10px] font-mono text-purple-400">

@@ -18,7 +18,7 @@ import {
   Radio,
   ArrowUpRight,
 } from "lucide-react";
-import { IyasProIcon } from "@/components/ui/IyasProIcon";
+import { YasproEmblem } from "@/components/ui/YasproEmblem";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
@@ -46,11 +46,11 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
       <header className="md:hidden flex items-center justify-between px-4 py-3 bg-slate-900/80 backdrop-blur-xl border-b border-white/10 sticky top-0 z-40">
         <Link href="/" className="flex items-center gap-2.5 group">
           <div className="size-8 rounded-xl bg-gradient-to-tr from-purple-600 via-purple-700 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/25 border border-purple-400/30">
-            <IyasProIcon size={16} idPrefix="mob-emblem" className="filter drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]" />
+            <YasproEmblem size={16} idPrefix="mob-emblem" className="filter drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]" />
           </div>
           <div className="flex items-center">
             <span className="font-extrabold tracking-tight text-white group-hover:text-purple-300 transition-colors">
-              iYASPRO
+              YASPRO
             </span>
             <span className="ml-1 text-xs font-bold text-purple-400">CMS</span>
           </div>
@@ -89,12 +89,12 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
                 onClick={() => setIsOpen(false)}
               >
                 <div className="size-9 rounded-xl bg-gradient-to-tr from-purple-600 via-purple-700 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/25 border border-purple-400/30">
-                  <IyasProIcon size={18} idPrefix="mob-panel-emblem" className="filter drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]" />
+                  <YasproEmblem size={18} idPrefix="mob-panel-emblem" className="filter drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]" />
                 </div>
                 <div>
                   <div className="flex items-center">
                     <span className="font-extrabold tracking-tight text-white group-hover:text-purple-300 transition-colors">
-                      iYASPRO
+                      YASPRO
                     </span>
                     <span className="ml-1 text-xs font-bold text-purple-400">CMS</span>
                   </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { IyasProIcon } from "@/components/ui/IyasProIcon";
+import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { PortalSidebarClient } from "@/components/portal/PortalSidebarClient";
 import { PortalNavIcon } from "@/components/portal/PortalNavIcon";
 import type { PortalNavItem } from "@/components/portal/types";
@@ -49,7 +49,7 @@ export function PortalSidebar({
             <div
               className={`size-9 rounded-xl bg-gradient-to-tr ${gradientClass} flex items-center justify-center shadow-lg ${shadowClass} border`}
             >
-              <IyasProIcon
+              <YasproEmblem
                 size={18}
                 idPrefix="portal-emblem"
                 className="filter drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]"
@@ -60,7 +60,7 @@ export function PortalSidebar({
                 <span
                   className={`font-extrabold tracking-tight text-white transition-colors ${logoHoverClass}`}
                 >
-                  iYASPRO
+                  YASPRO
                 </span>
                 <span className={`ml-1 text-xs font-bold ${subtitleClass}`}>
                   PRO

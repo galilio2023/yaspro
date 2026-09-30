@@ -54,6 +54,10 @@ export async function lookupEnterpriseRfp(referenceCode: string): Promise<Enterp
     return { found: false, message: "Please provide a valid RFP reference code." };
   }
 
+  const userRole = (session.user as { role?: string })?.role;
+  const userEmail = session.user.email?.toLowerCase().trim();
+  const userCompany = ((session.user as { company?: string | null })?.company || "").toLowerCase().trim();
+
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       const record = await db.query.enterpriseRfps.findFirst({
@@ -61,6 +65,20 @@ export async function lookupEnterpriseRfp(referenceCode: string): Promise<Enterp
       });
 
       if (record) {
+        // Enforce ownership: only admin, or the submitter (by userId, workEmail, or organizationName)
+        const isOwner =
+          userRole === "admin" ||
+          (record.userId && record.userId === session.user.id) ||
+          (record.workEmail && record.workEmail.toLowerCase().trim() === userEmail) ||
+          (userCompany && record.organizationName && record.organizationName.toLowerCase().trim() === userCompany);
+
+        if (!isOwner) {
+          return {
+            found: false,
+            message: "Access denied: This proposal reference belongs to another organization.",
+          };
+        }
+
         return {
           found: true,
           rfp: {
@@ -83,6 +101,13 @@ export async function lookupEnterpriseRfp(referenceCode: string): Promise<Enterp
 
     // Demo lookup fallbacks for instant client evaluation
     if (code === "EXP-9182-DXB" || code.startsWith("EXP-")) {
+      if (userRole !== "admin" && userRole !== "enterprise") {
+        return {
+          found: false,
+          message: "Access denied: Enterprise clearance required to access sovereign proposal references.",
+        };
+      }
+
       return {
         found: true,
         rfp: {

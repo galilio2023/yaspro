@@ -1,20 +1,14 @@
 "use client";
 
-import { Video, ShieldCheck, Clock, Award, Sparkles } from "lucide-react";
+import React from "react";
+import { Sparkles } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
-import { StaggerContainer, StaggerItem } from "@/components/animations/MotionWrappers";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
+import { Marquee } from "@/components/magicui/marquee";
 import { SERVICES_DATA } from "./services.data";
 import { ServiceCard } from "./ServiceCard";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-
-const HIGHLIGHT_PERKS = [
-  { icon: Award, textKey: "services.perk1", defaultText: "GCC & UAE Tier-One Certified Facilities" },
-  { icon: Video, textKey: "services.perk2", defaultText: "Cinema 8K RAW & Multi-Cam 4K DCI" },
-  { icon: Clock, textKey: "services.perk3", defaultText: "24/7 Crew & Fast-Response OB-Van Units" },
-  { icon: ShieldCheck, textKey: "services.perk4", defaultText: "Guaranteed Turnkey Master Deliverables" },
-];
 
 export function ServicesSection() {
   const { t, isArabic } = useLanguage();
@@ -23,7 +17,7 @@ export function ServicesSection() {
     <Section
       id="services"
       aria-labelledby="services-title"
-      className="bg-background relative overflow-hidden py-12 sm:py-16 lg:py-28 border-b border-white/5"
+      className="bg-background relative overflow-hidden py-14 sm:py-20 lg:py-28 border-b border-white/5"
       background={
         <>
           <div
@@ -38,7 +32,6 @@ export function ServicesSection() {
               background: "radial-gradient(circle, rgba(6,182,212,0.3) 0%, transparent 70%)",
             }}
           />
-          {/* Subtle grid texture */}
           <div
             className="absolute inset-0 opacity-[0.03] pointer-events-none"
             style={{
@@ -49,7 +42,7 @@ export function ServicesSection() {
         </>
       }
     >
-      <Container className="relative z-10">
+      <Container className="relative z-10 mb-8 sm:mb-12">
         <SectionHeader
           headingId="services-title"
           badge={t("services.badge")}
@@ -59,42 +52,24 @@ export function ServicesSection() {
           gradientText={isArabic ? t("services.titleGradient") : "With Us"}
           description={t("services.description")}
         />
+      </Container>
 
-        <StaggerContainer
-          as="ul"
-          role="list"
-          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch w-full mb-14"
+      {/* Google Labs Style Full-Bleed Infinite Carousel (Always scrolls, pauses on hover) */}
+      <div className="relative w-full overflow-hidden select-none" dir="ltr">
+        {/* Edge Fade Masks for smooth gradient entry/exit */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-36 bg-gradient-to-r from-background via-background/80 to-transparent z-20" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-36 bg-gradient-to-l from-background via-background/80 to-transparent z-20" />
+
+        <Marquee
+          repeat={4}
+          gap="1.75rem"
+          className="[--duration:40s] py-4 items-stretch cursor-grab active:cursor-grabbing"
         >
           {SERVICES_DATA.map((svc) => (
-            <StaggerItem
-              as="li"
-              key={svc.id}
-              id={svc.id === "ob-van-broadcast" ? "ob-van" : svc.id}
-              className="h-full scroll-mt-24"
-            >
-              <ServiceCard service={svc} />
-            </StaggerItem>
+            <ServiceCard key={svc.id} service={svc} />
           ))}
-        </StaggerContainer>
-
-        {/* Feature Highlights Ribbon */}
-        <div className="w-full rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md px-6 py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
-          {HIGHLIGHT_PERKS.map((perk, i) => {
-            const Icon = perk.icon;
-            return (
-              <div
-                key={i}
-                className="flex items-center gap-3 text-start py-1 text-text-secondary text-xs font-mono"
-              >
-                <div className="size-7 rounded-lg bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center shrink-0">
-                  <Icon size={14} className="text-brand-purple-light" />
-                </div>
-                <span>{t(perk.textKey) || perk.defaultText}</span>
-              </div>
-            );
-          })}
-        </div>
-      </Container>
+        </Marquee>
+      </div>
     </Section>
   );
 }

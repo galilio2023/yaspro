@@ -278,6 +278,7 @@ export const enterpriseRfps = pgTable(
   "enterprise_rfps",
   {
     id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").references(() => users.id),
     referenceCode: text("reference_code").notNull().unique(),
     organizationName: text("organization_name").notNull(),
     organizationType: text("organization_type").notNull().default("enterprise"),

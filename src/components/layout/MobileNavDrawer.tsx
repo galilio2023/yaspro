@@ -6,7 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Sparkles, MapPin, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { IyasProIcon } from "@/components/ui/IyasProIcon";
+import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { useSession } from "@/lib/auth-client";
 
@@ -146,7 +146,7 @@ export function MobileNavDrawer({
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between mb-4 px-1 pb-3 border-b border-white/10">
                 <div dir="ltr" style={{ direction: "ltr" }} className="flex items-center gap-1 font-latin">
-                  <IyasProIcon size={16} idPrefix="drawer-logo" className="filter drop-shadow-[0_0_6px_rgba(167,139,250,0.6)] -translate-y-0.5" />
+                  <YasproEmblem size={18} idPrefix="drawer-logo" className="filter drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]" />
                   <span className="font-extrabold text-sm tracking-tight text-white font-display">
                     YAS<span className="text-brand-purple-light">PRO</span>
                   </span>

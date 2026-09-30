@@ -28,6 +28,8 @@ export default async function EnterprisePortalLayout({
 }) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) redirect("/login?callbackUrl=/enterprise/portal");
+  const role = (session.user as { role?: string }).role;
+  if (role !== "enterprise" && role !== "admin") redirect("/portal");
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row antialiased selection:bg-purple-600 selection:text-white">

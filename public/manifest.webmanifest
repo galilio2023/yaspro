@@ -1,6 +1,6 @@
 {
-  "name": "iYASPRO Media Hub",
-  "short_name": "iYASPRO",
+  "name": "YASPRO Media Hub",
+  "short_name": "YASPRO",
   "description": "AI-Powered Media Production Soundstages & Broadcast Fleet",
   "start_url": "/",
   "display": "standalone",

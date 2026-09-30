@@ -623,10 +623,10 @@ export async function getCmsUsers(): Promise<User[]> {
  * Updates a user's role (e.g. promoting client to admin).
  *
  * @param userId - ID of the user record.
- * @param role - Updated role ("admin" | "client").
+ * @param role - Updated role ("admin" | "client" | "enterprise").
  * @returns CMS response confirming update.
  */
-export async function updateUserRole(userId: string, role: "admin" | "client"): Promise<CmsResponse> {
+export async function updateUserRole(userId: string, role: "admin" | "client" | "enterprise"): Promise<CmsResponse> {
   try {
     await requireAdmin();
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {

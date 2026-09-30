@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { syncUserProfile } from "@/lib/actions";
 import {
   User, Mail, Phone, Building, ShieldCheck,
@@ -18,7 +19,10 @@ interface PortalSettingsFormProps {
 }
 
 export function PortalSettingsForm({ user }: PortalSettingsFormProps) {
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
+  const [savedPhone, setSavedPhone] = useState(user.phone ?? "");
+  const [savedCompany, setSavedCompany] = useState(user.company ?? "");
   const [editPhone, setEditPhone] = useState(user.phone ?? "");
   const [editCompany, setEditCompany] = useState(user.company ?? "");
   const [isSaving, setIsSaving] = useState(false);
@@ -29,13 +33,16 @@ export function PortalSettingsForm({ user }: PortalSettingsFormProps) {
     setFeedback(null);
     const res = await syncUserProfile({
       email: user.email,
-      phone: editPhone.trim() || undefined,
-      company: editCompany.trim() || undefined,
+      phone: editPhone,
+      company: editCompany,
     });
     setIsSaving(false);
     if (res.success) {
+      setSavedPhone(editPhone.trim());
+      setSavedCompany(editCompany.trim());
       setFeedback({ type: "success", msg: "Profile updated successfully." });
       setIsEditing(false);
+      router.refresh();
     } else {
       setFeedback({ type: "error", msg: res.message ?? "Failed to save." });
     }
@@ -70,7 +77,12 @@ export function PortalSettingsForm({ user }: PortalSettingsFormProps) {
             </button>
             <button
               type="button"
-              onClick={() => { setIsEditing(false); setEditPhone(user.phone ?? ""); setEditCompany(user.company ?? ""); setFeedback(null); }}
+              onClick={() => {
+                setIsEditing(false);
+                setEditPhone(savedPhone);
+                setEditCompany(savedCompany);
+                setFeedback(null);
+              }}
               className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-300 border border-white/10 px-3 py-1.5 rounded-xl transition-all cursor-pointer"
             >
               <X size={13} /> Cancel
@@ -130,7 +142,7 @@ export function PortalSettingsForm({ user }: PortalSettingsFormProps) {
                 className="w-full text-sm font-semibold text-white bg-white/5 border border-emerald-500/40 rounded-lg px-3 py-1.5 outline-none focus:border-emerald-400/70 placeholder:text-slate-500"
               />
             ) : (
-              <div className="text-sm font-semibold text-white" dir="ltr">{user.phone ?? "Not provided"}</div>
+              <div className="text-sm font-semibold text-white" dir="ltr">{savedPhone || "Not provided"}</div>
             )}
           </div>
         </div>
@@ -151,7 +163,7 @@ export function PortalSettingsForm({ user }: PortalSettingsFormProps) {
                 className="w-full text-sm font-semibold text-white bg-white/5 border border-purple-500/40 rounded-lg px-3 py-1.5 outline-none focus:border-purple-400/70 placeholder:text-slate-500"
               />
             ) : (
-              <div className="text-sm font-semibold text-white">{user.company ?? "Independent"}</div>
+              <div className="text-sm font-semibold text-white">{savedCompany || "Independent"}</div>
             )}
           </div>
         </div>

@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Menu, X, ArrowUpRight, LogOut, User } from "lucide-react";
-import { IyasProIcon } from "@/components/ui/IyasProIcon";
+import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { signOut } from "@/lib/auth-client";
 import { PortalNavIcon } from "@/components/portal/PortalNavIcon";
 import type { PortalNavItem } from "@/components/portal/types";
@@ -26,6 +26,35 @@ export function PortalMobileNav({
 }: PortalMobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const prevIsOpen = useRef(isOpen);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Focus close button on dialog opening
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
+
+  // Return focus to menu toggle button when drawer closes
+  useEffect(() => {
+    if (prevIsOpen.current && !isOpen) {
+      menuButtonRef.current?.focus();
+    }
+    prevIsOpen.current = isOpen;
+  }, [isOpen]);
 
   const isEmerald = accentColor === "emerald";
 
@@ -56,7 +85,7 @@ export function PortalMobileNav({
           <div
             className={`size-8 rounded-xl bg-gradient-to-tr ${gradientClass} flex items-center justify-center shadow-lg ${shadowClass} border`}
           >
-            <IyasProIcon
+            <YasproEmblem
               size={16}
               idPrefix="mob-portal-emblem"
               className="filter drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]"
@@ -66,7 +95,7 @@ export function PortalMobileNav({
             <span
               className={`font-extrabold tracking-tight text-white transition-colors ${logoHoverClass}`}
             >
-              iYASPRO
+              YASPRO
             </span>
             <span className={`ml-1 text-xs font-bold ${subtitleClass}`}>
               PORTAL
@@ -75,6 +104,7 @@ export function PortalMobileNav({
         </Link>
 
         <button
+          ref={menuButtonRef}
           onClick={() => setIsOpen(true)}
           aria-label="Open navigation menu"
           className="p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
@@ -109,7 +139,7 @@ export function PortalMobileNav({
                 <div
                   className={`size-9 rounded-xl bg-gradient-to-tr ${gradientClass} flex items-center justify-center shadow-lg ${shadowClass} border`}
                 >
-                  <IyasProIcon
+                  <YasproEmblem
                     size={18}
                     idPrefix="mob-panel-portal-emblem"
                     className="filter drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]"
@@ -120,7 +150,7 @@ export function PortalMobileNav({
                     <span
                       className={`font-extrabold tracking-tight text-white transition-colors ${logoHoverClass}`}
                     >
-                      iYASPRO
+                      YASPRO
                     </span>
                     <span className={`ml-1 text-xs font-bold ${subtitleClass}`}>
                       PRO
@@ -135,6 +165,7 @@ export function PortalMobileNav({
               </Link>
 
               <button
+                ref={closeButtonRef}
                 onClick={() => setIsOpen(false)}
                 aria-label="Close navigation menu"
                 className="p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
