@@ -1,6 +1,6 @@
 import React from "react";
 import { getCmsEquipment } from "@/lib/cms-actions";
-import { GearManager } from "@/features/enterprise/components/admin/GearManager";
+import { GearManager } from "@/features/admin";
 
 export const metadata = {
   title: "Gear Catalog CMS | Yas Productions",

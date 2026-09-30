@@ -1,6 +1,6 @@
 import React from "react";
 import { getCmsUsers } from "@/lib/cms-actions";
-import { UsersManager } from "@/features/enterprise/components/admin/UsersManager";
+import { UsersManager } from "@/features/admin";
 
 export const metadata = {
   title: "Registered Users & Clients CMS | Yas Productions",

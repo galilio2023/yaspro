@@ -1,11 +1,11 @@
 "use client";
 
-import { FadeUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrappers";
+import { FadeUp } from "@/components/animations/MotionWrappers";
 import { Badge } from "@/components/ui/badge";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { REGIONAL_HUBS_EXPANDED, ACCREDITATIONS } from "../data";
-import { MapPin, CheckCircle2, ShieldCheck, Clock, Award } from "lucide-react";
+import { MapPin, CheckCircle2, ShieldCheck } from "lucide-react";
 
 export function AboutOverview() {
   const { t, isArabic } = useLanguage();

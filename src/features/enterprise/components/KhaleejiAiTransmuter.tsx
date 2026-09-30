@@ -15,94 +15,8 @@ import {
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { LipSyncMeshVisualizer } from "./portal/LipSyncMeshVisualizer";
-
-interface DialectPreset {
-  id: string;
-  name: string;
-  arabicName: string;
-  flag: string;
-  region: string;
-  langCode: string;
-  targetMarket: string;
-  spokenSample: string;
-  englishTranslation: string;
-  culturalNote: string;
-  lipSyncAccuracy: string;
-  preferredTones: string[];
-}
-
-const DIALECT_PRESETS: DialectPreset[] = [
-  {
-    id: "najdi",
-    name: "Najdi (Riyadh / Central KSA)",
-    arabicName: "اللهجة النجدية (الرياض)",
-    flag: "🇸🇦",
-    region: "Riyadh & Central Province",
-    langCode: "ar-SA",
-    targetMarket: "Saudi Vision 2030, Giga-projects & Prime TVCs",
-    spokenSample: "طال عمرك، التصوير والإنتاج هنا ما تلقاه بأي مكان ثاني، الجودة تفرَق معك من أول لقطة والإنجاز يرفع الراس!",
-    englishTranslation: "May your life be long, this production quality is unmatched anywhere else; the difference shows from the very first frame!",
-    culturalNote: "Employs high-prestige Najdi honorifics ('طال عمرك', 'تفرق معك') to build instant trust with Saudi decision-makers.",
-    lipSyncAccuracy: "99.8% Neural Phoneme Sync",
-    preferredTones: ["Authoritative", "Honorable", "Inspiring"],
-  },
-  {
-    id: "emirati",
-    name: "Emirati (Dubai & Abu Dhabi)",
-    arabicName: "اللهجة الإماراتية (دبي وأبوظبي)",
-    flag: "🇦🇪",
-    region: "United Arab Emirates",
-    langCode: "ar-AE",
-    targetMarket: "Dubai Tourism, Sovereign Summits & Luxury Brands",
-    spokenSample: "طال عمرك، الشغل اهني ما عليه كلام، تقنيات عالمية واستوديوهات متطورة تبيّض الويه في كل محفل!",
-    englishTranslation: "May your life be long, the craftsmanship here is unquestionable; world-class tech that brings honor on every global stage!",
-    culturalNote: "Infused with authentic Gulf vernacular ('اهني', 'ما عليه كلام', 'تبيّض الويه') reflecting Emirati warmth and excellence.",
-    lipSyncAccuracy: "99.6% Neural Phoneme Sync",
-    preferredTones: ["Warm", "Prestigious", "Forward-looking"],
-  },
-  {
-    id: "hijazi",
-    name: "Hijazi (Jeddah & Western KSA)",
-    arabicName: "اللهجة الحجازية (جدة ومكة)",
-    flag: "🇸🇦",
-    region: "Jeddah & Red Sea Coast",
-    langCode: "ar-SA",
-    targetMarket: "Youth Lifestyle, Entertainment & Red Sea Festivals",
-    spokenSample: "يا سيدي، الشغل هنا على أصوله، استوديوهات وكاميرات 4K وإخراج عالمي يفرّح القلب ويخليك مبسوط!",
-    englishTranslation: "Respected master, the work here is done to perfection; 4K cameras and world-class direction that delights the heart!",
-    culturalNote: "Features relaxed and convivial Western Saudi idioms ('يا سيدي', 'على أصوله') ideal for entertainment and hospitality.",
-    lipSyncAccuracy: "99.7% Neural Phoneme Sync",
-    preferredTones: ["Approachable", "Energetic", "Culturally Rich"],
-  },
-  {
-    id: "kuwaiti",
-    name: "Kuwaiti (Kuwait & Northern Gulf)",
-    arabicName: "اللهجة الكويتية",
-    flag: "🇰🇼",
-    region: "Kuwait & Gulf Coast",
-    langCode: "ar-KW",
-    targetMarket: "High-Engagement Commercials & Creator Shows",
-    spokenSample: "يا طويل العمر، الإنتاج هني حدّه عجيب ومضبوط، لا تحاتي شي فريق Yas Pro يضبط لك كل تفصيلة!",
-    englishTranslation: "Respected sir, the production here is extremely impressive and precise; leave your worries aside, Yas Pro covers every detail!",
-    culturalNote: "Uses classic Kuwaiti emphasis ('حدّه عجيب', 'لا تحاتي', 'يضبط لك') commanding high youth resonance.",
-    lipSyncAccuracy: "99.5% Neural Phoneme Sync",
-    preferredTones: ["Punchy", "Witty", "Relatable"],
-  },
-  {
-    id: "egyptian",
-    name: "Egyptian (Cairo & Pan-Arab)",
-    arabicName: "اللهجة المصرية الفصحى المعتدلة",
-    flag: "🇪🇬",
-    region: "Cairo & North Africa Hub",
-    langCode: "ar-EG",
-    targetMarket: "Regional TV Commercials & Pan-Arab Streaming",
-    spokenSample: "يا فندم، الإنتاج هنا احترافي لأعلى درجة، أحدث أجهزة سينمائية ومعدات هوليوودية هتوصل رسالتك بأجمل صورة!",
-    englishTranslation: "Esteemed client, the production here is professional to the highest standard; Hollywood-grade gear that delivers your message beautifully!",
-    culturalNote: "Universally comprehended across 100M+ Arab viewers with crisp phonetic articulation and commercial dynamism.",
-    lipSyncAccuracy: "99.9% Neural Phoneme Sync",
-    preferredTones: ["Cinematic", "Engaging", "Artistic"],
-  },
-];
+import { DIALECT_PRESETS, type DialectPreset } from "../dialects.data";
+import { useDialectSpeechPlayer } from "../hooks/useDialectSpeechPlayer";
 
 interface KhaleejiAiTransmuterProps {
   onSelectDialectForRfp?: (dialect: string) => void;
@@ -110,9 +24,6 @@ interface KhaleejiAiTransmuterProps {
 
 export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransmuterProps) {
   const [selectedDialect, setSelectedDialect] = useState<DialectPreset>(DIALECT_PRESETS[0]);
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [playbackProgress, setPlaybackProgress] = useState(0);
-  const [activeWordIndex, setActiveWordIndex] = useState(-1);
   const [selectedTone, setSelectedTone] = useState(selectedDialect.preferredTones[0]);
   
   // Custom Live Script Transmuter States
@@ -122,133 +33,25 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
   const [transmutedOutput, setTransmutedOutput] = useState<string | null>(null);
   const [culturalExplanation, setCulturalExplanation] = useState<string | null>(null);
 
-  const animationFrameRef = useRef<number | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
   const activeScript = transmutedOutput || selectedDialect.spokenSample;
   const words = activeScript.split(" ");
 
-  // Real Web Speech API + Web Audio Synthesizer Hook
-  const stopAudio = () => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-    }
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = null;
-    }
-    setIsPlayingAudio(false);
-    setPlaybackProgress(0);
-    setActiveWordIndex(-1);
-  };
-
-  const playSynthesizerFallback = (durationMs: number) => {
-    try {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      audioContextRef.current = ctx;
-
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(220, ctx.currentTime);
-      // Gentle formant shift simulating Arabic speech cadence
-      osc.frequency.exponentialRampToValueAtTime(320, ctx.currentTime + durationMs / 2000);
-      osc.frequency.exponentialRampToValueAtTime(260, ctx.currentTime + durationMs / 1000);
-
-      gain.gain.setValueAtTime(0.001, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + durationMs / 1000);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + durationMs / 1000);
-    } catch {
-      // AudioContext unavailable or restricted
-    }
-  };
+  const {
+    isPlayingAudio,
+    playbackProgress,
+    activeWordIndex,
+    toggleAudio,
+    stopAudio,
+  } = useDialectSpeechPlayer();
 
   const handleToggleAudio = () => {
-    if (isPlayingAudio) {
-      stopAudio();
-      return;
-    }
-
-    setIsPlayingAudio(true);
-    setPlaybackProgress(0);
-
-    const hasSpeech = typeof window !== "undefined" && "speechSynthesis" in window;
-    const durationMs = 5200; // Estimated phrase duration
-    const startTime = performance.now();
-
-    if (hasSpeech) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(activeScript);
-      utterance.lang = selectedDialect.langCode;
-      utterance.rate = selectedTone === "Authoritative" ? 0.9 : selectedTone === "Punchy" ? 1.15 : 1.0;
-      utterance.pitch = selectedTone === "Warm" ? 0.95 : 1.05;
-
-      // Select Arabic voice if available
-      const voices = window.speechSynthesis.getVoices();
-      const arabicVoice = voices.find((v) => v.lang.startsWith("ar"));
-      if (arabicVoice) utterance.voice = arabicVoice;
-
-      utterance.onboundary = (event) => {
-        if (event.name === "word") {
-          const charIndex = event.charIndex;
-          let runningLength = 0;
-          for (let i = 0; i < words.length; i++) {
-            runningLength += words[i].length + 1;
-            if (charIndex < runningLength) {
-              setActiveWordIndex(i);
-              break;
-            }
-          }
-        }
-      };
-
-      utterance.onend = () => {
-        stopAudio();
-      };
-
-      utterance.onerror = () => {
-        // Fallback to simulated audio synthesis if voice engine errors
-        playSynthesizerFallback(durationMs);
-      };
-
-      window.speechSynthesis.speak(utterance);
-    } else {
-      playSynthesizerFallback(durationMs);
-    }
-
-    // Smooth continuous progress & viseme progression
-    const updateLoop = (now: number) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(100, (elapsed / durationMs) * 100);
-      setPlaybackProgress(progress);
-
-      // Interpolate active word index if boundary events aren't supported
-      const wordIdx = Math.floor((progress / 100) * words.length);
-      setActiveWordIndex(Math.min(words.length - 1, wordIdx));
-
-      if (progress < 100) {
-        animationFrameRef.current = requestAnimationFrame(updateLoop);
-      } else {
-        stopAudio();
-      }
-    };
-
-    animationFrameRef.current = requestAnimationFrame(updateLoop);
+    toggleAudio({
+      activeScript,
+      langCode: selectedDialect.langCode,
+      selectedTone,
+      words,
+    });
   };
-
-  // Cleanup on unmount or dialect switch
-  useEffect(() => {
-    return () => {
-      stopAudio();
-    };
-  }, []);
 
   const handleSelectDialect = (preset: DialectPreset) => {
     stopAudio();

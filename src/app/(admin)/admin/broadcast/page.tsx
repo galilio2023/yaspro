@@ -1,5 +1,5 @@
 import React from "react";
-import { BroadcastManager } from "@/features/enterprise/components/admin/BroadcastManager";
+import { BroadcastManager } from "@/features/admin";
 
 export const metadata = {
   title: "Broadcast & OB Van Dispatcher | Yas Productions CMS",

@@ -1,6 +1,6 @@
 import React from "react";
 import { getCmsStudios } from "@/lib/cms-actions";
-import { StudiosManager } from "@/features/enterprise/components/admin/StudiosManager";
+import { StudiosManager } from "@/features/admin";
 
 export const metadata = {
   title: "Soundstages & Rates CMS | Yas Productions",

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useEffectEvent, useRef, useId } from "react";
+import React, { useState, useEffect, useCallback, useRef, useId } from "react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 import {
@@ -34,7 +34,7 @@ export function EnterpriseRfpModal({ isOpen, onClose, initialData }: EnterpriseR
 
 function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalProps, "isOpen">) {
   const fieldId = useId();
-  const closeDialog = useEffectEvent(onClose);
+  const closeDialog = useCallback(() => onClose(), [onClose]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successResult, setSuccessResult] = useState<{ referenceCode: string; message: string } | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

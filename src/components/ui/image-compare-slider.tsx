@@ -133,7 +133,7 @@ export function ImageCompareSlider({
       )}
     >
       {/* Background (After / Composite image) */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0" suppressHydrationWarning>
         <Image
           src={afterImage}
           alt={afterAlt}
@@ -142,19 +142,20 @@ export function ImageCompareSlider({
           className="object-cover"
           priority
         />
-        {afterLabel && (
+        {afterLabel ? (
           <div className="absolute top-4 right-4 z-10 px-3 py-1.5 rounded-xl bg-black/70 backdrop-blur-md border border-white/10 text-[11px] font-mono text-white/90">
             {afterLabel}
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* Foreground (Before / Raw image clipped to slider position) */}
       <div
         className="absolute inset-0"
-        style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
+        style={{ clipPath: `inset(0% ${100 - sliderPosition}% 0% 0%)` }}
+        suppressHydrationWarning
       >
-        <div className="relative w-full h-full">
+        <div className="relative w-full h-full" suppressHydrationWarning>
           <Image
             src={beforeImage}
             alt={beforeAlt}
@@ -163,11 +164,11 @@ export function ImageCompareSlider({
             className="object-cover"
             priority
           />
-          {beforeLabel && (
+          {beforeLabel ? (
             <div className="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-xl bg-black/70 backdrop-blur-md border border-white/10 text-[11px] font-mono text-white/90">
               {beforeLabel}
             </div>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -175,6 +176,7 @@ export function ImageCompareSlider({
       <div
         className="absolute top-0 bottom-0 w-0.5 bg-gradient-to-b from-brand-purple-light via-white to-brand-purple z-20 pointer-events-none"
         style={{ left: `${sliderPosition}%` }}
+        suppressHydrationWarning
       >
         <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-9 rounded-full bg-slate-900 border-2 border-brand-purple shadow-xl shadow-brand-purple/50 flex items-center justify-center text-brand-purple-light group-hover:scale-110 transition-transform">
           <SplitSquareVertical size={16} />

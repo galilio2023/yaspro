@@ -3,7 +3,7 @@
 import { StaggerContainer, StaggerItem } from "@/components/animations/MotionWrappers";
 import { TEAM_MEMBERS } from "../data";
 import { SectionHeader } from "@/components/ui/section-header";
-import { Users, Award, Shield } from "lucide-react";
+import { Users, Shield } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface TeamGridProps {

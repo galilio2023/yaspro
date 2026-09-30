@@ -1,6 +1,6 @@
 import React from "react";
 import { getCmsInfluencers } from "@/lib/cms-actions";
-import { InfluencersManager } from "@/features/enterprise/components/admin/InfluencersManager";
+import { InfluencersManager } from "@/features/admin";
 
 export const metadata = {
   title: "Creators CMS | Yas Productions",

@@ -26,9 +26,6 @@ import {
   type VirtualStudioScene,
 } from "@/features/enterprise/virtual-studio.data";
 
-// Re-export data and type for backward compatibility
-export { VIRTUAL_SCENES, type VirtualStudioScene };
-
 export function VirtualStudioSection() {
   const { t } = useLanguage();
   const [activeScene, setActiveScene] = useState<VirtualStudioScene>(VIRTUAL_SCENES[0]);

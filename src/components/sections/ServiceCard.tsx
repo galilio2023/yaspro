@@ -2,16 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Camera, Play, Radio, Zap } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import type { ServiceItem, ServiceIconName } from "./services.data";
-
-const SERVICE_ICONS: Record<ServiceIconName, typeof Camera> = {
-  camera: Camera,
-  radio: Radio,
-  play: Play,
-  zap: Zap,
-};
+import type { ServiceItem } from "./services.data";
 
 export interface ServiceCardProps {
   service: ServiceItem;
