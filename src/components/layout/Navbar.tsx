@@ -9,21 +9,24 @@ import { BrandLogo } from "./BrandLogo";
 import { MobileNavDrawer, NavLinkItem } from "./MobileNavDrawer";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
+import { useSession } from "@/lib/auth-client";
+
 export interface NavItemConfig extends NavLinkItem {
   key: string;
 }
 
 const NAV_LINKS: readonly NavItemConfig[] = [
   { key: "nav.productions", label: "Productions", href: "/projects" },
-  { key: "nav.soundstages", label: "Soundstages", href: "/enterprise" },
   { key: "nav.gear", label: "Gear Rental", href: "/shop" },
   { key: "nav.creators", label: "Creators", href: "/influencers" },
+  { key: "nav.enterprise", label: "Enterprise", href: "/enterprise" },
   { key: "nav.about", label: "About", href: "/about" },
   { key: "nav.contact", label: "Contact", href: "/contact" },
 ];
 
 export default function Navbar() {
   const { language, toggleLanguage, t } = useLanguage();
+  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
@@ -96,26 +99,33 @@ export default function Navbar() {
               {language === "en" ? "العربية" : "EN"}
             </button>
 
-            {/* Client Portal — xl+ only */}
+            {/* Portal Link / User Status */}
             <Link
-              href="/portal"
-              className="hidden xl:inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-300/80 hover:text-white px-2.5 py-1.5 rounded-full hover:bg-white/[0.06] transition-all"
+              href={session?.user ? "/portal" : "/login"}
+              className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-300/90 hover:text-white px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-all"
             >
-              <span className="size-1.5 rounded-full bg-brand-cyan/80 animate-pulse" />
-              <span>{t("nav.portal")}</span>
+              <span
+                className={cn(
+                  "size-1.5 rounded-full",
+                  session?.user ? "bg-emerald-400 animate-pulse" : "bg-brand-cyan/80"
+                )}
+              />
+              <span className="max-w-[110px] truncate">
+                {session?.user ? session.user.name.split(" ")[0] : t("nav.portal")}
+              </span>
             </Link>
 
             {/* Primary CTA: Book Studio */}
             <Link
               href="/studio-booking"
-              className="relative group inline-flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+              className="relative group inline-flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple whitespace-nowrap shrink-0"
             >
               <span className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-teal opacity-50 blur-sm group-hover:opacity-100 group-hover:blur-md transition-all duration-300 pointer-events-none" />
               <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-brand-purple via-brand-purple-light/80 to-brand-teal p-[1px] pointer-events-none">
                 <span className="block size-full rounded-xl bg-[#090616]" />
               </span>
               <span className="absolute inset-[1px] rounded-xl bg-gradient-to-b from-white/10 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
-              <span className="relative z-10 flex items-center gap-1.5 font-display text-[11px] sm:text-[12px] uppercase tracking-wider">
+              <span className="relative z-10 flex items-center gap-1.5 font-display text-[11px] sm:text-[12px] uppercase tracking-wider rtl:tracking-normal whitespace-nowrap">
                 <Sparkles size={12} className="text-brand-purple-light group-hover:text-brand-cyan transition-colors" />
                 <span>{t("nav.bookStudio")}</span>
               </span>

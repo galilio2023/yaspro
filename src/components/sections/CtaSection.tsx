@@ -41,11 +41,11 @@ export function CtaSection({
 }: CtaSectionProps) {
   const { t, isArabic } = useLanguage();
 
-  const displayTitle = isArabic ? t("cta.title") : (title || "Ready to Create");
-  const displayGradientText = isArabic ? t("cta.titleGradient") : (gradientText || "Something Great?");
-  const displayDesc = isArabic ? t("cta.description") : (description || "Whether you need a 4K soundstage, a live OB-VAN, or a full influencer content flywheel — our production team is on-call across three regional hubs.");
-  const displayPrimaryText = isArabic ? t("cta.bookStudio") : (primaryCtaText || "Book a Studio");
-  const displaySecondaryText = isArabic ? t("cta.talkProducers") : (secondaryCtaText || "Talk to Producers");
+  const displayTitle = title || (isArabic ? t("cta.title") : "Ready to Create");
+  const displayGradientText = gradientText || (isArabic ? t("cta.titleGradient") : "Something Great?");
+  const displayDesc = description || (isArabic ? t("cta.description") : "Whether you need a 4K soundstage, a live OB-VAN, or a full influencer content flywheel — our production team is on-call across three regional hubs.");
+  const displayPrimaryText = primaryCtaText || (isArabic ? t("cta.bookStudio") : "Book a Studio");
+  const displaySecondaryText = secondaryCtaText || (isArabic ? t("cta.talkProducers") : "Talk to Producers");
 
   return (
     <section
@@ -73,7 +73,7 @@ export function CtaSection({
           {/* Headline */}
           <h2
             id="cta-title"
-            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-4 sm:mb-6 font-display tracking-tight leading-[1.08] text-balance drop-shadow-[0_2px_24px_rgba(0,0,0,0.9)] text-center"
+            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-4 sm:mb-6 font-display tracking-tight leading-[1.08] rtl:leading-[1.28] text-balance drop-shadow-[0_2px_24px_rgba(0,0,0,0.9)] text-center"
           >
             {displayTitle}{" "}
             <span className="bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-cyan bg-clip-text text-transparent">
@@ -107,7 +107,7 @@ export function CtaSection({
               shimmerDuration="2.5s"
               className="w-full sm:w-auto px-9 py-4 font-semibold text-sm gap-2 shadow-[0_8px_32px_rgba(124,58,237,0.35)] min-h-[44px] justify-center"
             >
-              <Link href={primaryCtaHref} className="inline-flex items-center gap-2">
+              <Link href={primaryCtaHref} className="inline-flex items-center gap-2 whitespace-nowrap">
                 <Calendar size={15} />
                 <span>{displayPrimaryText}</span>
                 <ArrowRight size={15} className="rtl:rotate-180 shrink-0 transition-transform" />
@@ -116,7 +116,7 @@ export function CtaSection({
 
             <Link
               href={secondaryCtaHref}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-sm text-white border border-white/20 bg-white/[0.06] hover:bg-white/10 hover:border-white/30 transition-all text-center backdrop-blur-sm min-h-[44px]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-sm text-white border border-white/20 bg-white/[0.06] hover:bg-white/10 hover:border-white/30 transition-all text-center backdrop-blur-sm min-h-[44px] whitespace-nowrap"
             >
               <Video size={15} className="text-brand-cyan" />
               <span>{displaySecondaryText}</span>

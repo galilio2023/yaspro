@@ -55,11 +55,15 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
         {/* City header with Flag & Live Time */}
         <div className="flex items-center justify-between gap-1 mb-2">
           <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-base" role="img" aria-label={hub.city}>
+            <span
+              className="text-base"
+              role="img"
+              aria-label={hub.key ? t(`footer.hubs.${hub.key}.city`) : hub.city}
+            >
               {hub.flag}
             </span>
             <span className="text-xs font-bold text-white tracking-wide truncate">
-              {hub.city}
+              {hub.key ? t(`footer.hubs.${hub.key}.city`) : hub.city}
             </span>
           </div>
 
@@ -103,11 +107,12 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
       <div className="mt-3 pt-2.5 border-t border-white/[0.06] flex items-center justify-between text-[10px]">
         <a
           href={`tel:${hub.phone}`}
-          className="flex items-center gap-1 text-text-muted hover:text-brand-teal-light transition-colors font-medium py-1 font-latin"
+          className="inline-flex items-center gap-1.5 text-text-muted hover:text-brand-teal-light transition-colors font-medium py-1 shrink-0 font-latin"
           dir="ltr"
+          style={{ direction: "ltr", unicodeBidi: "isolate" }}
         >
-          <Phone size={10} className="text-brand-cyan" />
-          <span>{hub.phone}</span>
+          <Phone size={11} className="text-brand-cyan shrink-0" />
+          <span className="font-mono text-[10.5px] whitespace-nowrap">{hub.phone}</span>
         </a>
 
         {hub.mapUrl && (
@@ -116,10 +121,10 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             title={t("footer.map")}
-            className="text-text-muted hover:text-brand-cyan transition-colors flex items-center gap-0.5 py-1 px-1"
+            className="inline-flex items-center gap-1 text-text-muted hover:text-brand-cyan transition-colors py-1 px-1 shrink-0"
           >
             <span>{t("footer.map")}</span>
-            <ExternalLink size={10} className="rtl:scale-x-[-1]" />
+            <ExternalLink size={10} className="rtl:scale-x-[-1] shrink-0" />
           </a>
         )}
       </div>

@@ -3,8 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Camera, Play, Radio, Zap, CheckCircle2 } from "lucide-react";
-import { CardContainer, CardBody, CardItem } from "@/components/aceternity/3d-card";
-import { BorderBeam } from "@/components/magicui/border-beam";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import type { ServiceItem, ServiceIconName } from "./services.data";
 
@@ -59,124 +57,99 @@ export function ServiceCard({ service }: ServiceCardProps) {
   const displayStatLabel = isArabic ? (service.arabicStatLabel || service.statLabel) : service.statLabel;
 
   return (
-    <CardContainer className="w-full h-full py-2">
-      <CardBody className="relative group/card rounded-3xl border border-white/10 bg-[#0a0718] overflow-hidden flex flex-col justify-between h-full transition-colors duration-300 hover:border-white/25 hover:shadow-[0_20px_50px_rgba(0,0,0,0.8)] [transform:translateZ(0)]">
-        {/* Subtle Ambient Radial Lighting */}
-        <div
-          className="pointer-events-none absolute -inset-px opacity-0 group-hover/card:opacity-100 transition-opacity duration-700 rounded-3xl z-10"
-          style={{
-            background: `radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), ${accents.glow} 0%, transparent 60%)`,
-          }}
-        />
+    <div className="relative group/card h-full rounded-3xl border border-white/10 bg-gradient-to-b from-slate-900/90 via-slate-950/95 to-black/95 p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 hover:border-purple-500/40 hover:shadow-[0_12px_40px_rgba(124,58,237,0.18)] hover:-translate-y-1.5 overflow-hidden">
+      {/* Ambient Top Glow on Hover */}
+      <div
+        className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-64 h-32 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 blur-2xl rounded-full"
+        style={{ background: accents.glow }}
+      />
 
-        {/* Dynamic Background Image with Depth & Dark Gradient Mask */}
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      <div>
+        {/* Visual Hero Thumbnail with Overlay */}
+        <div className="relative w-full h-44 sm:h-48 rounded-2xl overflow-hidden mb-5 border border-white/10 bg-slate-900 shadow-inner group">
           <Image
             src={service.image}
             alt={displayTitle}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-            className="object-cover opacity-20 filter grayscale contrast-125 group-hover/card:scale-110 group-hover/card:opacity-35 group-hover/card:grayscale-0 transition-all duration-700 ease-out"
+            className="object-cover transition-transform duration-700 ease-out group-hover/card:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0718] via-[#0a0718]/90 to-[#0a0718]/40" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-[#0a0718]" />
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
 
-        {/* Highlight Border Beam for Featured Pillar */}
-        {service.highlight && (
-          <BorderBeam
-            size={220}
-            duration={10}
-            colorFrom="var(--brand-purple)"
-            colorTo="var(--brand-cyan)"
-            className="z-20"
-          />
-        )}
-
-        {/* Card Content Container */}
-        <div className="relative z-20 p-6 sm:p-7 flex flex-col h-full justify-between text-start">
-          <div>
-            {/* Top Bar: Icon + Status Badge */}
-            <div className="flex items-center justify-between gap-3 mb-6">
-              <CardItem
-                translateZ={40}
-                className={`size-12 rounded-2xl bg-white/[0.06] border ${accents.border} backdrop-blur-md flex items-center justify-center shadow-lg transition-transform duration-300 group-hover/card:scale-110`}
-              >
-                <Icon size={22} className={accents.icon} />
-              </CardItem>
-
-              <CardItem translateZ={30}>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono tracking-wider uppercase border border-white/10 bg-white/5 text-text-secondary backdrop-blur-md">
-                  <span className="size-1.5 rounded-full bg-brand-teal" />
-                  {displayBadge}
-                </span>
-              </CardItem>
-            </div>
-
-            {/* Subtitle & Title */}
-            <CardItem translateZ={30} className="mb-1">
-              <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-brand-purple-light/80 block">
-                {displaySubtitle}
-              </span>
-            </CardItem>
-
-            <CardItem
-              translateZ={45}
-              as="h3"
-              className="text-xl sm:text-2xl font-extrabold text-white font-display tracking-tight mb-3 group-hover/card:text-brand-purple-lighter transition-colors duration-300"
-            >
-              {displayTitle}
-            </CardItem>
-
-            {/* Description */}
-            <CardItem
-              translateZ={25}
-              as="p"
-              className="text-text-secondary text-xs sm:text-sm leading-relaxed mb-6 line-clamp-3 group-hover/card:text-white/80 transition-colors"
-            >
-              {displayDescription}
-            </CardItem>
-
-            {/* Tech Specs Badges */}
-            <CardItem translateZ={35} className="flex flex-wrap gap-1.5 mb-6">
-              {displaySpecs.map((spec) => (
-                <span
-                  key={spec}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-mono font-medium text-text-muted bg-white/[0.04] border border-white/5 group-hover/card:border-white/15 group-hover/card:text-text-secondary transition-colors"
-                >
-                  <CheckCircle2 size={10} className="text-brand-purple-light shrink-0" />
-                  {spec}
-                </span>
-              ))}
-            </CardItem>
+          {/* Floating Icon Emblem */}
+          <div className="absolute top-3.5 start-3.5 size-10 rounded-xl bg-black/60 backdrop-blur-md border border-white/15 flex items-center justify-center shadow-lg">
+            <Icon size={18} className={accents.icon} />
           </div>
 
-          {/* Bottom Card Footer: Key Metric + Interactive Action Link */}
-          <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-3 mt-auto">
-            <CardItem translateZ={25} className="flex flex-col text-start">
-              <span className="text-sm font-extrabold font-display text-white group-hover/card:text-brand-cyan transition-colors font-latin" dir="ltr">
-                {service.stat}
-              </span>
-              <span className="text-[10px] uppercase font-mono text-text-muted tracking-wider">
-                {displayStatLabel}
-              </span>
-            </CardItem>
+          {/* Floating Status Tag */}
+          <div className="absolute top-3.5 end-3.5">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono tracking-wider uppercase border border-white/15 bg-black/60 text-slate-300 backdrop-blur-md">
+              <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              {displayBadge}
+            </span>
+          </div>
 
-            <CardItem translateZ={40}>
-              <Link
-                href={service.href}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-brand-purple border border-white/15 hover:border-brand-purple transition-all duration-300 shadow-md group/btn"
-              >
-                <span>{isArabic ? "احجز الآن" : "Book Now"}</span>
-                <ArrowRight
-                  size={12}
-                  className="transition-transform duration-300 group-hover/btn:translate-x-1 rtl:group-hover/btn:-translate-x-1 rtl:rotate-180"
-                />
-              </Link>
-            </CardItem>
+          {/* Floating Spec Tag over image bottom */}
+          <div className="absolute bottom-3 start-3 end-3 flex items-center justify-between text-white text-[11px] font-mono">
+            <span className="font-bold text-white px-2 py-0.5 rounded bg-black/50 backdrop-blur-sm border border-white/10" dir="ltr">
+              {service.stat}
+            </span>
+            <span className="text-[10px] text-slate-300 px-2 py-0.5 rounded bg-black/50 backdrop-blur-sm border border-white/10">
+              {displayStatLabel}
+            </span>
           </div>
         </div>
-      </CardBody>
-    </CardContainer>
+
+        {/* Subtitle & Title with normalized min-height to prevent uneven card alignment */}
+        <div className="space-y-1.5 mb-3 text-start">
+          <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.18em] text-purple-400 font-semibold block truncate">
+            {displaySubtitle}
+          </span>
+          <h3 className="text-lg sm:text-xl font-black text-white font-display tracking-tight leading-snug group-hover/card:text-purple-300 transition-colors line-clamp-2 min-h-[3.25rem]">
+            {displayTitle}
+          </h3>
+        </div>
+
+        {/* Clean Description with uniform height */}
+        <p className="text-slate-400 text-xs sm:text-[13px] leading-relaxed mb-5 line-clamp-3 min-h-[3.75rem] text-start">
+          {displayDescription}
+        </p>
+
+        {/* Feature Check Badges - clean pill layout */}
+        <div className="flex flex-wrap gap-1.5 mb-6 text-start">
+          {displaySpecs.map((spec) => (
+            <span
+              key={spec}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono text-slate-300 bg-white/[0.04] border border-white/10 whitespace-nowrap"
+            >
+              <CheckCircle2 size={12} className="text-emerald-400 shrink-0" />
+              <span>{spec}</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Action Footer: Full-width button with clear micro-copy, no awkward clapping or wrapping */}
+      <div className="pt-4 border-t border-white/10 mt-auto flex flex-col gap-2.5">
+        <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 px-0.5">
+          <span className="flex items-center gap-1.5">
+            <span className="size-1.5 rounded-full bg-emerald-400" />
+            <span className="truncate">{isArabic ? "جاهز للحجز الفوري" : "Instant Availability"}</span>
+          </span>
+          <span className="font-bold text-slate-300" dir="ltr">{service.stat}</span>
+        </div>
+
+        <Link
+          href={service.href}
+          className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 transition-all duration-200 shadow-md shadow-purple-600/25 flex items-center justify-center gap-2 group/btn whitespace-nowrap select-none"
+        >
+          <span>{isArabic ? "احجز الخدمة الآن" : "Reserve Studio & Gear"}</span>
+          <ArrowRight
+            size={14}
+            className="transition-transform duration-200 group-hover/btn:translate-x-1 rtl:group-hover/btn:-translate-x-1 rtl:rotate-180 shrink-0"
+          />
+        </Link>
+      </div>
+    </div>
   );
 }

@@ -89,9 +89,11 @@ export function CinemaVideoModal({
 
   const parsed = parseVideoSource(vimeoId, videoUrl);
 
-  // Lock body scroll and listen for Escape key
+  // Lock body scroll, listen for Escape key, and suspend background 3D/canvases
   useEffect(() => {
     if (!isOpen) return;
+
+    window.dispatchEvent(new CustomEvent("yaspro:cinema-modal-open"));
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -104,6 +106,7 @@ export function CinemaVideoModal({
     document.body.style.overflow = "hidden";
 
     return () => {
+      window.dispatchEvent(new CustomEvent("yaspro:cinema-modal-close"));
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = originalOverflow || "";
     };
@@ -175,16 +178,25 @@ export function CinemaVideoModal({
           {/* ENGINE 2: YouTube Embed (youtube-nocookie with zero bot hangs) */}
           {parsed.type === "youtube" && (
             <iframe
-              src={`https://www.youtube-nocookie.com/embed/${parsed.idOrUrl}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+              src={`https://www.youtube-nocookie.com/embed/${parsed.idOrUrl}?autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1`}
               className="absolute inset-0 size-full border-0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
               title={title}
             />
           )}
 
-          {/* ENGINE 3: Option C - Luxury Cinema Gateway for Vimeo / External Links */}
-          {(parsed.type === "vimeo" || parsed.type === "unknown") && (
+          {/* ENGINE 3: Vimeo Player Embed - Hardware accelerated, optimized params to prevent browser auto-pause/hang loops */}
+          {parsed.type === "vimeo" && (
+            <iframe
+              src={`https://player.vimeo.com/video/${parsed.idOrUrl}?autoplay=1&autopause=0&playsinline=1&title=0&byline=0&portrait=0&transparent=0&dnt=1&app_id=58479`}
+              className="absolute inset-0 size-full border-0 bg-black"
+              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+              title={title}
+            />
+          )}
+
+          {/* ENGINE 4: Fallback Gateway for unknown/external links */}
+          {parsed.type === "unknown" && (
             <div className="absolute inset-0 size-full flex flex-col justify-between p-6 sm:p-10 bg-gradient-to-t from-black via-zinc-950/80 to-black/60">
               {/* Background Poster Artwork */}
               {posterImage && (

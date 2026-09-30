@@ -115,7 +115,7 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
             <form onSubmit={handleSave} className="mt-5 space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Equipment Name</label>
+                  <label className="block text-slate-300 font-medium mb-1">Equipment Name (English)</label>
                   <input
                     type="text"
                     required
@@ -131,17 +131,31 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Slug (Unique Key)</label>
+                  <label className="block text-slate-300 font-medium mb-1">Name (Arabic - الاسم بالعربي)</label>
                   <input
                     type="text"
-                    required
-                    value={editingGear.slug || ""}
+                    dir="rtl"
+                    placeholder="اسم المعدات بالعربية"
+                    value={editingGear.arabicName || ""}
                     onChange={(e) =>
-                      setEditingGear({ ...editingGear, slug: e.target.value })
+                      setEditingGear({ ...editingGear, arabicName: e.target.value })
                     }
                     className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-medium mb-1">Slug (Unique Key)</label>
+                <input
+                  type="text"
+                  required
+                  value={editingGear.slug || ""}
+                  onChange={(e) =>
+                    setEditingGear({ ...editingGear, slug: e.target.value })
+                  }
+                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-emerald-500"
+                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -203,16 +217,31 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
                 />
               </div>
 
-              <div>
-                <label className="block text-slate-300 font-medium mb-1">Description</label>
-                <textarea
-                  rows={3}
-                  value={editingGear.description || ""}
-                  onChange={(e) =>
-                    setEditingGear({ ...editingGear, description: e.target.value })
-                  }
-                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-emerald-500"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1">Description (English)</label>
+                  <textarea
+                    rows={3}
+                    value={editingGear.description || ""}
+                    onChange={(e) =>
+                      setEditingGear({ ...editingGear, description: e.target.value })
+                    }
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1">Description (Arabic - الوصف بالعربي)</label>
+                  <textarea
+                    rows={3}
+                    dir="rtl"
+                    placeholder="وصف تفصيلي للمعدة والمواصفات الفنية..."
+                    value={editingGear.arabicDescription || ""}
+                    onChange={(e) =>
+                      setEditingGear({ ...editingGear, arabicDescription: e.target.value })
+                    }
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-emerald-500 font-arabic"
+                  />
+                </div>
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">

@@ -22,12 +22,7 @@ interface WebhookPayload {
  */
 function verifyHmacSignature(rawBody: string, signatureHeader: string | null): boolean {
   const secret = process.env.WEBHOOK_SECRET;
-  if (!secret || secret.includes("whsec_xxx")) {
-    // If webhook secret is not configured in local/staging, permit processing
-    return true;
-  }
-
-  if (!signatureHeader) {
+  if (!secret || !signatureHeader) {
     return false;
   }
 

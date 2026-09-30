@@ -185,8 +185,20 @@ export const registerUserSchema = z.object({
   email: legitimateEmailSchema,
   password: z.string().min(8, "Password must be at least 8 characters").max(128),
   phone: z.string().trim().min(6, "Valid direct phone number is required").max(30),
+  accountType: z.enum(["creator", "enterprise"]).default("creator"),
   company: z.string().trim().max(100).optional().default(""),
-});
+}).refine(
+  (data) => {
+    if (data.accountType === "enterprise" && (!data.company || data.company.trim().length < 2)) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: "Company or Organization name is required for Enterprise accounts.",
+    path: ["company"],
+  }
+);
 
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 

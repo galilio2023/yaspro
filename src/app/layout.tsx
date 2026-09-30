@@ -106,34 +106,59 @@ export const metadata: Metadata = {
   },
 };
 
-import { LanguageProvider } from "@/components/providers/LanguageProvider";
+import { LanguageProvider, type Language } from "@/components/providers/LanguageProvider";
+import { getLocale, getMessages } from "next-intl/server";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let locale: Language = "en";
+  let messages = {};
+  try {
+    const rawLocale = await getLocale();
+    if (rawLocale === "ar" || rawLocale === "en") {
+      locale = rawLocale;
+    }
+    messages = await getMessages();
+  } catch {
+    locale = "en";
+  }
+
+  const direction = locale === "ar" ? "rtl" : "ltr";
+
   return (
     <html
-      lang="en"
-      dir="ltr"
+      lang={locale}
+      dir={direction}
       className={`${inter.variable} ${poppins.variable} ${notoSansArabic.variable}`}
       suppressHydrationWarning
     >
       <head>
         {/*
           Blocking inline script — runs before React hydrates, before first paint.
-          Reads localStorage and sets html[lang] + html[dir] immediately so there
-          is zero flash-of-wrong-direction for returning Arabic users.
+          Reads pathname and localStorage and sets html[lang] + html[dir] immediately
+          so there is zero flash-of-wrong-direction for returning Arabic users while
+          honoring explicit /en and /ar paths.
         */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){
   try {
-    var lang = localStorage.getItem('yaspro_lang');
-    if (lang === 'ar') {
+    var path = window.location.pathname;
+    if (path === '/en' || path.indexOf('/en/') === 0) {
+      document.documentElement.lang = 'en';
+      document.documentElement.dir = 'ltr';
+    } else if (path === '/ar' || path.indexOf('/ar/') === 0) {
       document.documentElement.lang = 'ar';
       document.documentElement.dir = 'rtl';
+    } else {
+      var lang = localStorage.getItem('yaspro_lang');
+      if (lang === 'ar') {
+        document.documentElement.lang = 'ar';
+        document.documentElement.dir = 'rtl';
+      }
     }
   } catch(e) {}
   // Suppress benign Three.js / WebGPU console noise
@@ -152,8 +177,8 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen w-full bg-background text-foreground antialiased overflow-x-hidden">
-        <NextIntlClientProvider>
-          <LanguageProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <LanguageProvider initialLocale={locale}>
             <SmoothScrollProvider>{children}</SmoothScrollProvider>
           </LanguageProvider>
         </NextIntlClientProvider>

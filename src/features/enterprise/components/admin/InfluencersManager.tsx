@@ -167,6 +167,37 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
                     className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-blue-500"
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1">Creator Role (English)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Cinema Director & Producer"
+                    value={editingCreator.role || ""}
+                    onChange={(e) =>
+                      setEditingCreator({ ...editingCreator, role: e.target.value })
+                    }
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1">Role (Arabic - المسمى / الدور)</label>
+                  <input
+                    type="text"
+                    dir="rtl"
+                    placeholder="مثال: مخرج سينمائي ومؤثر رقمي"
+                    value={editingCreator.arabicRole || ""}
+                    onChange={(e) =>
+                      setEditingCreator({ ...editingCreator, arabicRole: e.target.value })
+                    }
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-blue-500 font-arabic"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-slate-300 font-medium mb-1">Total Followers</label>
                   <input
@@ -175,6 +206,18 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
                     value={editingCreator.totalFollowers || ""}
                     onChange={(e) =>
                       setEditingCreator({ ...editingCreator, totalFollowers: e.target.value })
+                    }
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1">Total Followers (Number for Sorting)</label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 70"
+                    value={editingCreator.rawFollowers || 10}
+                    onChange={(e) =>
+                      setEditingCreator({ ...editingCreator, rawFollowers: parseInt(e.target.value) || 0 })
                     }
                     className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-blue-500"
                   />
@@ -217,16 +260,31 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
                 </div>
               </div>
 
-              <div>
-                <label className="block text-slate-300 font-medium mb-1">Bio / Profile</label>
-                <textarea
-                  rows={3}
-                  value={editingCreator.bio || ""}
-                  onChange={(e) =>
-                    setEditingCreator({ ...editingCreator, bio: e.target.value })
-                  }
-                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-blue-500"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1">Bio / Profile (English)</label>
+                  <textarea
+                    rows={3}
+                    value={editingCreator.bio || ""}
+                    onChange={(e) =>
+                      setEditingCreator({ ...editingCreator, bio: e.target.value })
+                    }
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1">Bio (Arabic - النبذة التعريفية)</label>
+                  <textarea
+                    rows={3}
+                    dir="rtl"
+                    placeholder="نبذة تعريفية مختصرة عن المؤثر وخبراته ومجالات التعاون..."
+                    value={editingCreator.arabicBio || ""}
+                    onChange={(e) =>
+                      setEditingCreator({ ...editingCreator, arabicBio: e.target.value })
+                    }
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-blue-500 font-arabic"
+                  />
+                </div>
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">

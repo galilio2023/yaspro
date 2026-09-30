@@ -25,6 +25,16 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
   const [callSheetBookingId, setCallSheetBookingId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
 
+  const PAGE_SIZE = 20;
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const paginatedBookings = bookingList.slice(
+    currentPage * PAGE_SIZE,
+    (currentPage + 1) * PAGE_SIZE
+  );
+
+  const totalBookings = bookingList.length;
+
   const modalRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -173,7 +183,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                   </td>
                 </tr>
               ) : (
-                bookingList.map((b) => (
+                paginatedBookings.map((b) => (
                   <tr key={b.id} className="hover:bg-white/[0.02] transition-colors">
                     {/* Reference */}
                     <td className="py-3.5 px-4 font-mono font-semibold text-purple-300">
@@ -307,6 +317,34 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {totalBookings > PAGE_SIZE && (
+          <div className="flex items-center justify-between px-4 py-3 border-t border-white/10 bg-white/[0.01] text-xs text-slate-400">
+            <span>
+              Showing {currentPage * PAGE_SIZE + 1}–{Math.min((currentPage + 1) * PAGE_SIZE, totalBookings)} of {totalBookings}
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+                disabled={currentPage === 0}
+                className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              >
+                Previous
+              </button>
+              <span className="font-mono text-slate-300">{currentPage + 1} / {Math.ceil(totalBookings / PAGE_SIZE)}</span>
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.min(Math.ceil(totalBookings / PAGE_SIZE) - 1, p + 1))}
+                disabled={currentPage >= Math.ceil(totalBookings / PAGE_SIZE) - 1}
+                className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Production Call Sheet Modal (Print Ready) */}

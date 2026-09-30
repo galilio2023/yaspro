@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Play, Tv, Eye, Film, ArrowUpRight } from "lucide-react";
 import { ProjectItem } from "../types";
-import { CardContainer, CardBody, CardItem } from "@/components/aceternity/3d-card";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -12,9 +11,11 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 export function ProjectCard({
   project,
   onWatchReel,
+  priority = false,
 }: {
   project: ProjectItem;
   onWatchReel?: (project: ProjectItem) => void;
+  priority?: boolean;
 }) {
   const { isArabic } = useLanguage();
   const isGovernment =
@@ -34,31 +35,29 @@ export function ProjectCard({
   };
 
   return (
-    <CardContainer className="w-full h-full">
-      <CardBody
-        as="article"
-        className="relative group/card flex flex-col justify-between h-full rounded-3xl border border-brand-purple/15 bg-[#0e0c1f] hover:border-brand-purple/50 hover:bg-[#120f26] hover:shadow-2xl hover:shadow-brand-purple/15 transition-colors duration-300 overflow-hidden [transform:translateZ(0)]"
-      >
-        {isGovernment && (
-          <BorderBeam size={220} duration={14} colorFrom="var(--brand-gold)" colorTo="var(--brand-purple)" />
-        )}
+    <article className="relative group/card flex flex-col justify-between h-full rounded-3xl border border-white/10 bg-[#0e0c1f] hover:border-brand-purple/50 hover:bg-[#120f26] hover:shadow-2xl hover:shadow-brand-purple/15 transition-all duration-300 overflow-hidden">
+      {isGovernment && (
+        <BorderBeam size={220} duration={14} colorFrom="var(--brand-gold)" colorTo="var(--brand-purple)" />
+      )}
 
-        {/* Thumbnail Stage */}
-        <CardItem translateZ={30} className="w-full">
-          <div
-            onClick={handleReelClick}
-            className={`block relative w-full aspect-[16/9] overflow-hidden bg-secondary group/thumb ${
-              onWatchReel && hasVideo ? "cursor-pointer" : ""
-            }`}
-          >
-            {project.image ? (
-              <Image
-                src={project.image}
-                alt={project.title}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover transition-transform duration-700 ease-out group-hover/thumb:scale-107"
-              />
+      {/* Thumbnail Stage */}
+      <div className="w-full">
+        <div
+          onClick={handleReelClick}
+          className={`block relative w-full aspect-[16/9] overflow-hidden bg-slate-900 group/thumb ${
+            onWatchReel && hasVideo ? "cursor-pointer" : ""
+          }`}
+        >
+          {project.image ? (
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              priority={priority}
+              loading={priority ? "eager" : "lazy"}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 ease-out group-hover/thumb:scale-105"
+            />
             ) : (
               <>
                 <div className="absolute inset-0 bg-gradient-to-br from-brand-purple/30 via-secondary to-black" />
@@ -101,11 +100,11 @@ export function ProjectCard({
               </span>
             </div>
           </div>
-        </CardItem>
+        </div>
 
         {/* Content */}
         <div className="p-4 sm:p-6 flex flex-col flex-1">
-          <CardItem translateZ={42} className="w-full mb-1">
+          <div className="w-full mb-1">
             <h3 className="text-xl font-bold text-text-primary mb-1 font-display group-hover/card:text-brand-purple-light transition-colors line-clamp-1">
               <Link
                 href={`/projects/${project.slug}`}
@@ -119,23 +118,23 @@ export function ProjectCard({
                 {project.arabicTitle}
               </p>
             )}
-          </CardItem>
+          </div>
 
-          <CardItem translateZ={25} className="w-full">
+          <div className="w-full">
             <p className="text-xs text-brand-purple-mid font-semibold mb-3 flex items-center gap-1.5">
               <Tv size={12} className="shrink-0 text-brand-teal" />
               <span>Client: {project.client}</span>
             </p>
-          </CardItem>
+          </div>
 
-          <CardItem translateZ={20} className="w-full">
+          <div className="w-full">
             <p className="text-text-secondary text-sm leading-relaxed mb-5 line-clamp-2">
               {project.description}
             </p>
-          </CardItem>
+          </div>
 
           {project.deliverables && project.deliverables.length > 0 && (
-            <CardItem translateZ={30} className="flex flex-wrap gap-1.5 w-full">
+            <div className="flex flex-wrap gap-1.5 w-full">
               {project.deliverables.slice(0, 2).map((item) => (
                 <span
                   key={item}
@@ -144,15 +143,12 @@ export function ProjectCard({
                   {item}
                 </span>
               ))}
-            </CardItem>
+            </div>
           )}
         </div>
 
         {/* Footer */}
-        <CardItem
-          translateZ={32}
-          className="px-4 pb-4 sm:px-6 sm:pb-6 pt-3 sm:pt-2 flex items-center justify-between mt-auto w-full border-t border-brand-purple/10"
-        >
+        <div className="px-4 pb-4 sm:px-6 sm:pb-6 pt-3 sm:pt-2 flex items-center justify-between mt-auto w-full border-t border-brand-purple/10">
           <span className="text-xs text-text-ghost font-medium">
             {project.year ? `Yas Production · ${project.year}` : "Yas Original"}
           </span>
@@ -174,8 +170,7 @@ export function ProjectCard({
               <ArrowUpRight size={11} className="rtl:rotate-90 rtl:scale-x-[-1]" />
             </Link>
           )}
-        </CardItem>
-      </CardBody>
-    </CardContainer>
+        </div>
+    </article>
   );
 }

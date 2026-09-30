@@ -5,11 +5,13 @@ export type DeliveryMethod = "studio_delivery" | "courier_dubai" | "pickup_hub";
 export interface GearItem {
   id: string;
   name: string;
+  arabicName?: string;
   category: GearCategory;
   categoryLabel: string;
   dailyRate: number;
   specs: string[];
   description: string;
+  arabicDescription?: string;
   isPopular?: boolean;
   image?: string;
   isKit?: boolean;

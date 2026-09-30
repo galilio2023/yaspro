@@ -47,7 +47,7 @@ export function BrandLogo({
         </div>
 
         {/* Subtitle */}
-        <span className="text-[9.5px] sm:text-[10px] text-text-muted uppercase tracking-[0.22em] font-mono font-latin leading-tight mt-0.5" dir="ltr" style={{ direction: "ltr" }}>
+        <span className="text-[9.5px] sm:text-[10px] text-text-muted uppercase tracking-[0.22em] font-mono font-latin leading-tight mt-0.5 whitespace-nowrap" dir="ltr" style={{ direction: "ltr" }}>
           AI MEDIA HUB • DUBAI
         </span>
       </div>

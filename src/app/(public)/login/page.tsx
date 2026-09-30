@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
 import { Lock, Mail, ArrowRight, AlertCircle, ShieldCheck } from "lucide-react";
 import { IyasProIcon } from "@/components/ui/IyasProIcon";
+import { useTranslations } from "next-intl";
 
 export default function LoginPage() {
   const router = useRouter();
+  const t = useTranslations("auth.login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -49,10 +51,10 @@ export default function LoginPage() {
             <IyasProIcon size={44} idPrefix="login-candle" className="filter drop-shadow-[0_2px_12px_rgba(245,158,11,0.45)]" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-white font-display">
-            Welcome to Yas Pro
+            {t("title")}
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Sign in to access your productions, dailies, or CMS dashboard.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -65,12 +67,12 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div>
-            <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">Corporate Email</label>
+            <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">{t("emailLabel")}</label>
             <div className="relative">
               <input
                 type="email"
                 required
-                placeholder="name@company.com"
+                placeholder={t("emailPlaceholder")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
@@ -81,13 +83,13 @@ export default function LoginPage() {
 
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-slate-300 font-medium text-xs sm:text-sm">Password</label>
+              <label className="text-slate-300 font-medium text-xs sm:text-sm">{t("passwordLabel")}</label>
             </div>
             <div className="relative">
               <input
                 type="password"
                 required
-                placeholder="••••••••••••"
+                placeholder={t("passwordPlaceholder")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
@@ -101,21 +103,21 @@ export default function LoginPage() {
             disabled={isLoading}
             className="w-full min-h-[44px] py-3.5 rounded-xl bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:opacity-95 text-white font-semibold text-sm tracking-wide shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 mt-6"
           >
-            {isLoading ? "Signing in..." : "Sign In to Account"}
+            {isLoading ? t("submittingBtn") : t("submitBtn")}
             <ArrowRight size={14} className="rtl:rotate-180" />
           </button>
         </form>
 
         <div className="mt-8 pt-6 border-t border-white/10 text-center text-xs text-slate-400">
-          <span>Don&apos;t have a production account? </span>
+          <span>{t("noAccount")}{" "}</span>
           <Link href="/register" className="text-purple-400 hover:text-purple-300 font-semibold inline-block py-1">
-            Register here
+            {t("registerLink")}
           </Link>
         </div>
 
         <div className="mt-4 p-3 rounded-xl bg-purple-950/20 border border-purple-800/20 text-[11px] text-slate-400 flex items-center gap-2">
           <ShieldCheck size={14} className="text-purple-400 shrink-0" />
-          <span>Protected by Better Auth with Argon2 password hashing.</span>
+          <span>{t("securityBadge")}</span>
         </div>
       </div>
     </div>

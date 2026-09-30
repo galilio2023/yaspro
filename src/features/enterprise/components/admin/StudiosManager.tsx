@@ -57,10 +57,12 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
     const res = await upsertCmsStudio({
       id: editingStudio.id,
       name: editingStudio.name,
+      arabicName: editingStudio.arabicName,
       slug,
       hourlyRate: editingStudio.hourlyRate,
       capacity: editingStudio.capacity || 20,
       description: editingStudio.description || "",
+      arabicDescription: editingStudio.arabicDescription,
       imageUrl: editingStudio.imageUrl || "/images/projects/dmx.jpg",
       amenities: (editingStudio.amenities as string[]) || [
         "10Gbps Symmetrical Fiber",
@@ -252,16 +254,29 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
             </p>
 
             <form onSubmit={handleSaveStudio} className="space-y-4 text-xs">
-              <div>
-                <label className="block text-slate-300 font-medium mb-1.5">Stage Name</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Studio C — Green Cyc Stage"
-                  value={editingStudio.name || ""}
-                  onChange={(e) => setEditingStudio({ ...editingStudio, name: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1.5">Stage Name (English)</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Studio C — Green Cyc Stage"
+                    value={editingStudio.name || ""}
+                    onChange={(e) => setEditingStudio({ ...editingStudio, name: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1.5">Stage Name (Arabic - اسم الاستوديو)</label>
+                  <input
+                    type="text"
+                    dir="rtl"
+                    placeholder="مثال: استوديو ج — استوديو الكروما الخضراء"
+                    value={editingStudio.arabicName || ""}
+                    onChange={(e) => setEditingStudio({ ...editingStudio, arabicName: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 font-arabic"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -293,15 +308,28 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-slate-300 font-medium mb-1.5">Stage Description</label>
-                <textarea
-                  rows={3}
-                  placeholder="Describe lighting grid, dimensions, and acoustic isolation..."
-                  value={editingStudio.description || ""}
-                  onChange={(e) => setEditingStudio({ ...editingStudio, description: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 resize-none"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1.5">Description (English)</label>
+                  <textarea
+                    rows={3}
+                    placeholder="Describe lighting grid, dimensions, and acoustic isolation..."
+                    value={editingStudio.description || ""}
+                    onChange={(e) => setEditingStudio({ ...editingStudio, description: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 resize-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1.5">Description (Arabic - الوصف بالعربي)</label>
+                  <textarea
+                    rows={3}
+                    dir="rtl"
+                    placeholder="وصف شبكة الإضاءة، الأبعاد، والعزل الصوتي..."
+                    value={editingStudio.arabicDescription || ""}
+                    onChange={(e) => setEditingStudio({ ...editingStudio, arabicDescription: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 resize-none font-arabic"
+                  />
+                </div>
               </div>
 
               <div className="flex items-center gap-2 pt-2">

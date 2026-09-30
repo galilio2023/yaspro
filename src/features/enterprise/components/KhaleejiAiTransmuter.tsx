@@ -82,7 +82,7 @@ const DIALECT_PRESETS: DialectPreset[] = [
     region: "Kuwait & Gulf Coast",
     langCode: "ar-KW",
     targetMarket: "High-Engagement Commercials & Creator Shows",
-    spokenSample: "يا طويل العمر، الإنتاج هني حدّه عجيب ومضبوط، لا تحاتي شي فريق ياس برو يضبط لك كل تفصيلة!",
+    spokenSample: "يا طويل العمر، الإنتاج هني حدّه عجيب ومضبوط، لا تحاتي شي فريق Yas Pro يضبط لك كل تفصيلة!",
     englishTranslation: "Respected sir, the production here is extremely impressive and precise; leave your worries aside, Yas Pro covers every detail!",
     culturalNote: "Uses classic Kuwaiti emphasis ('حدّه عجيب', 'لا تحاتي', 'يضبط لك') commanding high youth resonance.",
     lipSyncAccuracy: "99.5% Neural Phoneme Sync",

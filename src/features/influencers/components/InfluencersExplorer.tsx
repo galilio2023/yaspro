@@ -9,6 +9,8 @@ import { InfluencerFilters } from "./InfluencerFilters";
 import { INFLUENCERS_DATA } from "../data";
 import type { InfluencerItem } from "../types";
 
+import { useLanguage } from "@/components/providers/LanguageProvider";
+
 export interface InfluencersExplorerProps {
   initialInfluencers?: readonly InfluencerItem[];
 }
@@ -16,6 +18,7 @@ export interface InfluencersExplorerProps {
 export function InfluencersExplorer({
   initialInfluencers = INFLUENCERS_DATA,
 }: InfluencersExplorerProps) {
+  const { isArabic } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedNationality, setSelectedNationality] = useState<string>("all");
 
@@ -58,11 +61,15 @@ export function InfluencersExplorer({
         </StaggerContainer>
       ) : (
         <EmptyState
-          title="No Creators Found"
-          description="We couldn't find any creators matching your filter criteria. Try searching with a different term or view all creators."
+          title={isArabic ? "لم يتم العثور على صناع محتوى" : "No Creators Found"}
+          description={
+            isArabic
+              ? "لم نتمكن من العثور على صناع محتوى يطابقون خيارات البحث. يرجى تجربة كلمات بحث أخرى أو إعادة ضبط التصفية."
+              : "We couldn't find any creators matching your filter criteria. Try searching with a different term or view all creators."
+          }
           action={
-            <Button variant="outline" size="sm" onClick={handleReset} className="rounded-xl">
-              Reset Filters
+            <Button variant="outline" size="sm" onClick={handleReset} className="rounded-xl cursor-pointer">
+              {isArabic ? "إعادة تعيين الفلاتر" : "Reset Filters"}
             </Button>
           }
         />

@@ -48,10 +48,6 @@ function isUuid(id?: string): boolean {
  * In production/connected database environments, throws an error if user lacks admin role.
  */
 async function requireAdmin() {
-  const isPreview = !process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx");
-  if (isPreview && process.env.NODE_ENV !== "production") {
-    return;
-  }
   try {
     const session = await auth.api.getSession({
       headers: await headers(),
@@ -63,10 +59,6 @@ async function requireAdmin() {
   } catch (err) {
     if ((err as Error).message?.includes("Unauthorized")) {
       throw err;
-    }
-    // If headers() is unavailable (e.g. unit test runner environment), allow if not prod
-    if (process.env.NODE_ENV === "test") {
-      return;
     }
     throw new Error("Unauthorized: Admin credentials required for this operation.");
   }
@@ -188,6 +180,7 @@ export async function getCmsProjects(): Promise<Project[]> {
  */
 export async function upsertCmsProject(data: Partial<Project> & { title: string; slug: string }): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
       return { success: true, message: "Project saved in local preview mode." };
     }
@@ -238,6 +231,7 @@ export async function upsertCmsProject(data: Partial<Project> & { title: string;
  */
 export async function deleteCmsProject(id: string): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       await db.delete(projects).where(eq(projects.id, id));
     }
@@ -268,9 +262,11 @@ export async function getCmsInfluencers(): Promise<Influencer[]> {
     slug: inf.slug,
     name: inf.name,
     role: inf.role || null,
+    arabicRole: null,
     nationality: inf.nationality || null,
     flag: inf.flag || null,
     bio: inf.bio || null,
+    arabicBio: null,
     imageUrl: inf.avatar || null,
     totalFollowers: inf.totalFollowers || null,
     rawFollowers: Math.round(inf.rawFollowers) || null,
@@ -293,6 +289,7 @@ export async function getCmsInfluencers(): Promise<Influencer[]> {
  */
 export async function upsertCmsInfluencer(data: Partial<Influencer> & { name: string; slug: string }): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
       return { success: true, message: "Creator profile updated in preview mode." };
     }
@@ -301,9 +298,11 @@ export async function upsertCmsInfluencer(data: Partial<Influencer> & { name: st
       name: data.name,
       slug: data.slug,
       role: data.role || null,
+      arabicRole: data.arabicRole || null,
       nationality: data.nationality || null,
       flag: data.flag || null,
       bio: data.bio || null,
+      arabicBio: data.arabicBio || null,
       imageUrl: data.imageUrl || null,
       totalFollowers: data.totalFollowers || null,
       rawFollowers: data.rawFollowers || null,
@@ -352,7 +351,9 @@ export async function getCmsEquipment(): Promise<Equipment[]> {
     id: g.id,
     slug: g.id,
     name: g.name,
+    arabicName: g.arabicName || null,
     description: g.description || null,
+    arabicDescription: g.arabicDescription || null,
     category: g.category,
     dailyRate: g.dailyRate.toFixed(2),
     securityDeposit: (g.securityDeposit || 0).toFixed(2),
@@ -374,6 +375,7 @@ export async function getCmsEquipment(): Promise<Equipment[]> {
  */
 export async function upsertCmsEquipment(data: Partial<Equipment> & { name: string; dailyRate: string; category: string }): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
       return { success: true, message: "Equipment updated in preview mode." };
     }
@@ -383,7 +385,9 @@ export async function upsertCmsEquipment(data: Partial<Equipment> & { name: stri
     const payload = {
       slug: itemSlug,
       name: data.name,
+      arabicName: data.arabicName || null,
       description: data.description || null,
+      arabicDescription: data.arabicDescription || null,
       category: data.category,
       dailyRate: data.dailyRate,
       securityDeposit: data.securityDeposit || "0.00",
@@ -432,6 +436,27 @@ export async function getCmsBookings(): Promise<Booking[]> {
 }
 
 /**
+ * Fetches all bookings belonging to a specific client user for the portal dashboard.
+ *
+ * @param userId - The authenticated user's ID.
+ * @returns Array of bookings ordered by scheduled date descending.
+ */
+export async function getClientBookings(userId: string): Promise<Booking[]> {
+  try {
+    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+      return await db
+        .select()
+        .from(bookings)
+        .where(eq(bookings.userId, userId))
+        .orderBy(desc(bookings.scheduledAt));
+    }
+  } catch (e) {
+    console.error("getClientBookings error:", e);
+  }
+  return [];
+}
+
+/**
  * Updates the approval status of a studio booking reservation.
  *
  * @param id - UUID of the booking.
@@ -440,6 +465,7 @@ export async function getCmsBookings(): Promise<Booking[]> {
  */
 export async function updateBookingStatus(id: string, status: "pending" | "confirmed" | "cancelled" | "completed"): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       await db.update(bookings).set({ status, updatedAt: new Date() }).where(eq(bookings.id, id));
     }
@@ -508,6 +534,7 @@ export async function getCmsEnterpriseRfps(): Promise<EnterpriseRfp[]> {
  */
 export async function updateEnterpriseRfpStatus(id: string, status: string): Promise<CmsResponse> {
   try {
+    await requireAdmin();
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       await db.update(enterpriseRfps).set({ status, updatedAt: new Date() }).where(eq(enterpriseRfps.id, id));
     }
@@ -761,7 +788,9 @@ export async function getCmsStudios(): Promise<Studio[]> {
     id: s.id,
     slug: s.id,
     name: s.name,
+    arabicName: null,
     description: s.desc || null,
+    arabicDescription: null,
     capacity: 20,
     hourlyRate: s.rate.toFixed(2),
     imageUrl: s.image || null,
@@ -789,7 +818,9 @@ export async function upsertCmsStudio(
     const payload = {
       slug: data.slug,
       name: data.name,
+      arabicName: data.arabicName || null,
       description: data.description || null,
+      arabicDescription: data.arabicDescription || null,
       capacity: data.capacity || 20,
       hourlyRate: data.hourlyRate,
       imageUrl: data.imageUrl || null,
