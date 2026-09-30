@@ -26,6 +26,11 @@ export function useFocusTrap({
   autoRestoreFocus = true,
 }: UseFocusTrapOptions) {
   const triggerRef = useRef<HTMLElement | null>(null);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -52,7 +57,7 @@ export function useFocusTrap({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
-        onClose();
+        onCloseRef.current();
         return;
       }
 
@@ -85,8 +90,11 @@ export function useFocusTrap({
       clearTimeout(focusTimer);
       window.removeEventListener("keydown", handleKeyDown);
       if (autoRestoreFocus && triggerRef.current) {
-        triggerRef.current.focus();
+        const el = triggerRef.current;
+        requestAnimationFrame(() => {
+          el?.focus?.();
+        });
       }
     };
-  }, [isOpen, onClose, containerRef, initialFocusRef, autoRestoreFocus]);
+  }, [isOpen, containerRef, initialFocusRef, autoRestoreFocus]);
 }

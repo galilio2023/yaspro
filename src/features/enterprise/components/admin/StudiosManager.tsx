@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Layers,
   Edit2,
@@ -26,6 +26,10 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
   const [editingStudio, setEditingStudio] = useState<Partial<Studio> | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+
+  const handleCloseDialog = useCallback(() => {
+    setEditingStudio(null);
+  }, []);
 
   const handleToggleActive = async (studio: Studio) => {
     const nextStatus = !studio.isActive;
@@ -240,7 +244,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
       {/* Edit / Create Studio Modal */}
       <Dialog
         isOpen={Boolean(editingStudio)}
-        onClose={() => setEditingStudio(null)}
+        onClose={handleCloseDialog}
         title={editingStudio?.id ? "Edit Soundstage Specifications" : "Provision New Soundstage"}
         description="Update hourly rates, maximum headcount, and amenities visible in the public booking wizard."
         maxWidth="lg"

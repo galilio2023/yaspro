@@ -45,12 +45,13 @@ export function CopilotProposalTab() {
     }
     setProposalError(null);
     setIsGeneratingProposal(true);
+    const sanitizedDays = Math.min(30, Math.max(1, Math.round(Number(timelineDays) || 2)));
 
     try {
       const res = await fetch("/api/ai/proposal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ brief, targetMarket, timelineDays }),
+        body: JSON.stringify({ brief, targetMarket, timelineDays: sanitizedDays }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to generate proposal");
@@ -124,9 +125,17 @@ export function CopilotProposalTab() {
               <input
                 type="number"
                 min={1}
-                max={14}
+                max={30}
+                step={1}
                 value={timelineDays}
-                onChange={(e) => setTimelineDays(Number(e.target.value))}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  if (isNaN(val)) {
+                    setTimelineDays(1);
+                  } else {
+                    setTimelineDays(Math.min(30, Math.max(1, val)));
+                  }
+                }}
                 className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-purple min-h-[44px] sm:min-h-0"
               />
             </div>

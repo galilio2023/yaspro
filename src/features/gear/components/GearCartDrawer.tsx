@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useSyncExternalStore } from "react";
+import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
@@ -61,9 +61,13 @@ export function GearCartDrawer({
   }
 
 
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
   useFocusTrap({
     isOpen: isOpen && items.length > 0,
-    onClose: () => setIsOpen(false),
+    onClose: handleClose,
     containerRef: panelRef,
     initialFocusRef: closeButtonRef,
   });

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   CalendarCheck,
   CheckCircle2,
@@ -42,9 +42,13 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
 
   const callSheetBooking = bookingList.find((b) => b.id === callSheetBookingId) || null;
 
+  const handleCloseCallSheet = useCallback(() => {
+    setCallSheetBookingId(null);
+  }, []);
+
   useFocusTrap({
     isOpen: Boolean(callSheetBooking),
-    onClose: () => setCallSheetBookingId(null),
+    onClose: handleCloseCallSheet,
     containerRef: modalRef,
   });
 

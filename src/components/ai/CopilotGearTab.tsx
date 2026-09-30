@@ -41,10 +41,12 @@ export function CopilotGearTab() {
           {GEAR_DATA.map((gear) => {
             const isSelected = selectedGearIds.includes(gear.id);
             return (
-              <div
+              <button
+                type="button"
                 key={gear.id}
                 onClick={() => toggleGearItem(gear.id)}
-                className={`p-3 rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-between min-h-[44px] ${
+                aria-pressed={isSelected}
+                className={`p-3 rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-between min-h-[44px] text-left w-full ${
                   isSelected
                     ? "bg-brand-purple/15 border-brand-purple/50 text-white"
                     : "bg-white/[0.02] border-white/5 text-text-secondary hover:border-white/20"
@@ -65,7 +67,7 @@ export function CopilotGearTab() {
                 >
                   {isSelected && <CheckCircle2 size={13} />}
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>

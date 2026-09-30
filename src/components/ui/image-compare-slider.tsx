@@ -41,10 +41,12 @@ export function ImageCompareSlider({
   const [internalPosition, setInternalPosition] = useState<number>(initialPosition);
   const sliderPosition = position !== undefined ? position : internalPosition;
 
-  const setPosition = (pos: number) => {
-    if (onPositionChange) onPositionChange(pos);
-    else setInternalPosition(pos);
-  };
+  const setPosition = useCallback((pos: number) => {
+    if (position === undefined) {
+      setInternalPosition(pos);
+    }
+    onPositionChange?.(pos);
+  }, [position, onPositionChange]);
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -60,7 +62,7 @@ export function ImageCompareSlider({
     rafDragRef.current = requestAnimationFrame(() => {
       setPosition(Math.round(percentage * 10) / 10);
     });
-  }, [onPositionChange]);
+  }, [setPosition]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -149,18 +151,10 @@ export function ImageCompareSlider({
 
       {/* Foreground (Before / Raw image clipped to slider position) */}
       <div
-        className="absolute inset-0 overflow-hidden"
-        style={{ width: `${sliderPosition}%` }}
+        className="absolute inset-0"
+        style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
       >
-        <div
-          className="relative w-full h-full"
-          style={{
-            width: containerRef.current
-              ? `${containerRef.current.clientWidth}px`
-              : "100%",
-            height: "100%",
-          }}
-        >
+        <div className="relative w-full h-full">
           <Image
             src={beforeImage}
             alt={beforeAlt}

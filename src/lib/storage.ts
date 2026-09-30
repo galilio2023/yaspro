@@ -51,20 +51,45 @@ export class S3CompatibleStorageProvider implements StorageProvider {
   }
 
   async save(filename: string, buffer: Buffer): Promise<UploadResult> {
-    // If S3 credentials are configured, write to S3; otherwise fallback safely to disk
-    if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
-      // In production with AWS/R2 SDK, putObject to bucket
-      const publicUrl = `${this.publicUrlBase.replace(/\/$/, "")}/${filename}`;
+    if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+      throw new Error("S3 object storage upload failed: AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are required.");
+    }
+
+    try {
+      // Dynamic import to support optional AWS SDK without bundling penalty for local storage
+      // @ts-expect-error - optional runtime dependency
+      const { S3Client, PutObjectCommand } = await import("@aws-sdk/client-s3");
+      const client = new S3Client({
+        region: process.env.AWS_REGION || "us-east-1",
+        credentials: {
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        },
+        ...(process.env.S3_ENDPOINT ? { endpoint: process.env.S3_ENDPOINT } : {}),
+      });
+
+      await client.send(
+        new PutObjectCommand({
+          Bucket: this.bucket,
+          Key: filename,
+          Body: buffer,
+        })
+      );
+
+      const publicUrl = this.publicUrlBase
+        ? `${this.publicUrlBase.replace(/\/$/, "")}/${filename}`
+        : `https://${this.bucket}.s3.amazonaws.com/${filename}`;
+
       return {
         url: publicUrl,
         path: `${this.bucket}/${filename}`,
         size: buffer.length,
       };
+    } catch (err: unknown) {
+      throw new Error(
+        `Failed to persist file to S3 object storage: ${err instanceof Error ? err.message : String(err)}`
+      );
     }
-
-    // Development fallback
-    const local = new LocalDiskStorageProvider();
-    return local.save(filename, buffer);
   }
 }
 
