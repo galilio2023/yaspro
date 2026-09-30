@@ -76,7 +76,6 @@ export function LanguageProvider({
     setPrevPathname(pathname);
     if (routeLang && routeLang !== userLang) {
       setUserLang(routeLang);
-      syncLocaleStorage(routeLang);
     }
   }
 

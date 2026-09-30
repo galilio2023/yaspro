@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Users, Plus, Edit3, Save, X, CheckCircle, ExternalLink, ShieldCheck } from "lucide-react";
 import { upsertCmsInfluencer } from "@/lib/cms-actions";
 import type { Influencer } from "@/db/schema";
+import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
 
 interface InfluencersManagerProps {
@@ -15,10 +16,13 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
   const [creators, setCreators] = useState<Influencer[]>(initialInfluencers);
   const [editingCreator, setEditingCreator] = useState<Partial<Influencer> | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const { feedback, showFeedback } = useFeedbackAlert(1200);
+  const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(1200);
 
   const handleOpenNew = () => {
+    setError(null);
+    clearFeedback();
     setEditingCreator({
       name: "",
       slug: "",
@@ -41,36 +45,45 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
     if (!editingCreator?.name || !editingCreator?.slug) return;
 
     setIsSubmitting(true);
+    setError(null);
+    clearFeedback();
 
-    const res = await upsertCmsInfluencer(
-      editingCreator as Partial<Influencer> & { name: string; slug: string }
-    );
+    try {
+      const res = await upsertCmsInfluencer(
+        editingCreator as Partial<Influencer> & { name: string; slug: string }
+      );
 
-    if (res.success) {
-      showFeedback("Creator profile updated in Neon DB!");
-      setCreators((prev) => {
-        const idx = prev.findIndex((c) => c.slug === editingCreator.slug);
-        if (idx >= 0) {
-          const updated = [...prev];
-          updated[idx] = { ...updated[idx], ...editingCreator } as Influencer;
-          return updated;
-        }
-        return [
-          {
-            ...editingCreator,
-            id: editingCreator.id || `creator-${Date.now()}`,
-            createdAt: new Date(),
-          } as Influencer,
-          ...prev,
-        ];
-      });
-      setTimeout(() => {
-        setEditingCreator(null);
-      }, 1200);
-    } else {
-      showFeedback(res.error || "Failed to update creator.");
+      if (res.success) {
+        showFeedback("Creator profile updated in Neon DB!");
+        setCreators((prev) => {
+          const idx = prev.findIndex((c) =>
+            editingCreator.id ? c.id === editingCreator.id : c.slug === editingCreator.slug
+          );
+          if (idx >= 0) {
+            const updated = [...prev];
+            updated[idx] = { ...updated[idx], ...editingCreator } as Influencer;
+            return updated;
+          }
+          return [
+            {
+              ...editingCreator,
+              id: editingCreator.id || `creator-${Date.now()}`,
+              createdAt: new Date(),
+            } as Influencer,
+            ...prev,
+          ];
+        });
+        setTimeout(() => {
+          setEditingCreator(null);
+        }, 1200);
+      } else {
+        setError(res.error || "Failed to update creator.");
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Failed to update creator.");
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   return (
@@ -109,6 +122,8 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
                 <X size={18} />
               </button>
             </div>
+
+            {error && <FeedbackAlert type="error" message={error} className="mt-4" />}
 
             {feedback && (
               <div className="mt-4 p-3 rounded-xl bg-blue-950/60 border border-blue-500/40 text-xs text-blue-200 flex items-center gap-2">
@@ -368,7 +383,11 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
                         <ExternalLink size={14} />
                       </a>
                       <button
-                        onClick={() => setEditingCreator(c)}
+                        onClick={() => {
+                          setError(null);
+                          clearFeedback();
+                          setEditingCreator(c);
+                        }}
                         className="p-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/40 text-blue-300"
                         title="Edit Creator"
                       >

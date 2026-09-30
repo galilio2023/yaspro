@@ -6,6 +6,7 @@ import { Film, Plus, Trash2, Edit3, CheckCircle, ExternalLink, Save, X } from "l
 import { upsertCmsProject, deleteCmsProject } from "@/lib/cms-actions";
 import { AdminImageUploader } from "@/components/admin/AdminImageUploader";
 import type { Project } from "@/db/schema";
+import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
 
 interface ProjectsManagerProps {
@@ -16,11 +17,14 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
   const [projectList, setProjectList] = useState<Project[]>(initialProjects);
   const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
 
-  const { feedback, showFeedback } = useFeedbackAlert(1200);
+  const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(1200);
 
   const handleOpenNew = () => {
+    setError(null);
+    clearFeedback();
     setEditingProject({
       title: "",
       slug: "",
@@ -42,38 +46,47 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
     if (!editingProject?.title || !editingProject?.slug) return;
 
     setIsSubmitting(true);
+    setError(null);
+    clearFeedback();
 
-    const res = await upsertCmsProject(
-      editingProject as Partial<Project> & { title: string; slug: string }
-    );
+    try {
+      const res = await upsertCmsProject(
+        editingProject as Partial<Project> & { title: string; slug: string }
+      );
 
-    if (res.success) {
-      showFeedback("Project successfully updated!");
-      // Update local state
-      setProjectList((prev) => {
-        const idx = prev.findIndex((p) => p.slug === editingProject.slug);
-        if (idx >= 0) {
-          const updated = [...prev];
-          updated[idx] = { ...updated[idx], ...editingProject } as Project;
-          return updated;
-        }
-        return [
-          {
-            ...editingProject,
-            id: editingProject.id || `proj-${Date.now()}`,
-            createdAt: new Date(),
-            publishedAt: new Date(),
-          } as Project,
-          ...prev,
-        ];
-      });
-      setTimeout(() => {
-        setEditingProject(null);
-      }, 1200);
-    } else {
-      showFeedback(res.error || "Failed to update project.");
+      if (res.success) {
+        showFeedback("Project successfully updated!");
+        // Update local state
+        setProjectList((prev) => {
+          const idx = prev.findIndex((p) =>
+            editingProject.id ? p.id === editingProject.id : p.slug === editingProject.slug
+          );
+          if (idx >= 0) {
+            const updated = [...prev];
+            updated[idx] = { ...updated[idx], ...editingProject } as Project;
+            return updated;
+          }
+          return [
+            {
+              ...editingProject,
+              id: editingProject.id || `proj-${Date.now()}`,
+              createdAt: new Date(),
+              publishedAt: new Date(),
+            } as Project,
+            ...prev,
+          ];
+        });
+        setTimeout(() => {
+          setEditingProject(null);
+        }, 1200);
+      } else {
+        setError(res.error || "Failed to update project.");
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Failed to update project.");
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   const handleDelete = async (id: string, slug: string) => {
@@ -120,6 +133,8 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                 <X size={18} />
               </button>
             </div>
+
+            {error && <FeedbackAlert type="error" message={error} className="mt-4" />}
 
             {feedback && (
               <div className="mt-4 p-3 rounded-xl bg-purple-950/60 border border-purple-500/40 text-xs text-purple-200 flex items-center gap-2">
@@ -326,7 +341,11 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                         <ExternalLink size={14} />
                       </a>
                       <button
-                        onClick={() => setEditingProject(proj)}
+                        onClick={() => {
+                          setError(null);
+                          clearFeedback();
+                          setEditingProject(proj);
+                        }}
                         className="p-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/40 text-purple-300"
                         title="Edit Project"
                       >

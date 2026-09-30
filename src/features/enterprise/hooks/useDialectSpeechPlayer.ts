@@ -16,6 +16,7 @@ export function useDialectSpeechPlayer() {
 
   const animationFrameRef = useRef<number | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
+  const oscillatorRef = useRef<OscillatorNode | null>(null);
   const sessionIdRef = useRef<number>(0);
 
   const stopAudio = useCallback(() => {
@@ -26,6 +27,11 @@ export function useDialectSpeechPlayer() {
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
       animationFrameRef.current = null;
+    }
+    if (oscillatorRef.current) {
+      oscillatorRef.current.stop();
+      oscillatorRef.current.disconnect();
+      oscillatorRef.current = null;
     }
     setIsPlayingAudio(false);
     setPlaybackProgress(0);
@@ -48,7 +54,10 @@ export function useDialectSpeechPlayer() {
         window.AudioContext ||
         (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (!AudioCtx) return;
-      const ctx = new AudioCtx();
+      const existingContext = audioContextRef.current;
+      const ctx = existingContext && existingContext.state !== "closed"
+        ? existingContext
+        : new AudioCtx();
       audioContextRef.current = ctx;
 
       const osc = ctx.createOscillator();
@@ -66,7 +75,13 @@ export function useDialectSpeechPlayer() {
 
       osc.connect(gain);
       gain.connect(ctx.destination);
+      osc.onended = () => {
+        osc.disconnect();
+        gain.disconnect();
+        if (oscillatorRef.current === osc) oscillatorRef.current = null;
+      };
       osc.start();
+      oscillatorRef.current = osc;
       osc.stop(ctx.currentTime + durationMs / 1000);
     } catch {
       // AudioContext unavailable or restricted in browser environment

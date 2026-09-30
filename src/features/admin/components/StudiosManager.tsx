@@ -59,38 +59,43 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)+/g, "");
 
-    const res = await upsertCmsStudio({
-      id: editingStudio.id,
-      name: editingStudio.name,
-      arabicName: editingStudio.arabicName,
-      slug,
-      hourlyRate: editingStudio.hourlyRate,
-      capacity: editingStudio.capacity || 20,
-      description: editingStudio.description || "",
-      arabicDescription: editingStudio.arabicDescription,
-      imageUrl: editingStudio.imageUrl || "/images/projects/dmx.jpg",
-      amenities: (editingStudio.amenities as string[]) || [
-        "10Gbps Symmetrical Fiber",
-        "Green Room",
-        "Sound Isolated",
-      ],
-      isActive: editingStudio.isActive ?? true,
-    });
-
-    if (res.success) {
-      setStudiosList((prev) => {
-        const exists = prev.some((s) => s.slug === slug);
-        if (exists) {
-          return prev.map((s) => (s.slug === slug ? ({ ...s, ...editingStudio, slug } as Studio) : s));
-        }
-        return [{ ...editingStudio, slug, id: editingStudio.id || slug } as Studio, ...prev];
+    try {
+      const res = await upsertCmsStudio({
+        id: editingStudio.id,
+        name: editingStudio.name,
+        arabicName: editingStudio.arabicName,
+        slug,
+        hourlyRate: editingStudio.hourlyRate,
+        capacity: editingStudio.capacity || 20,
+        description: editingStudio.description || "",
+        arabicDescription: editingStudio.arabicDescription,
+        imageUrl: editingStudio.imageUrl || "/images/projects/dmx.jpg",
+        amenities: (editingStudio.amenities as string[]) || [
+          "10Gbps Symmetrical Fiber",
+          "Green Room",
+          "Sound Isolated",
+        ],
+        isActive: editingStudio.isActive ?? true,
       });
-      showFeedback("Studio details successfully saved to database.");
-      setEditingStudio(null);
-    } else {
-      alert(res.error || "Failed to save studio");
+
+      if (res.success) {
+        setStudiosList((prev) => {
+          const exists = prev.some((s) => s.slug === slug);
+          if (exists) {
+            return prev.map((s) => (s.slug === slug ? ({ ...s, ...editingStudio, slug } as Studio) : s));
+          }
+          return [{ ...editingStudio, slug, id: editingStudio.id || slug } as Studio, ...prev];
+        });
+        showFeedback("Studio details successfully saved to database.");
+        setEditingStudio(null);
+      } else {
+        alert(res.error || "Failed to save studio");
+      }
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Failed to save studio");
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   return (

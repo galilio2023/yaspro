@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Camera, Plus, Edit3, Save, X, CheckCircle, Tag } from "lucide-react";
 import { upsertCmsEquipment } from "@/lib/cms-actions";
 import type { Equipment } from "@/db/schema";
+import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
 
 interface GearManagerProps {
@@ -15,10 +16,13 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
   const [gearList, setGearList] = useState<Equipment[]>(initialEquipment);
   const [editingGear, setEditingGear] = useState<Partial<Equipment> | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const { feedback, showFeedback } = useFeedbackAlert(1200);
+  const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(1200);
 
   const handleOpenNew = () => {
+    setError(null);
+    clearFeedback();
     setEditingGear({
       name: "",
       category: "cameras",
@@ -37,36 +41,43 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
     if (!editingGear?.name || !editingGear?.dailyRate || !editingGear?.category) return;
 
     setIsSubmitting(true);
+    setError(null);
+    clearFeedback();
 
-    const res = await upsertCmsEquipment(
-      editingGear as Partial<Equipment> & { name: string; dailyRate: string; category: string }
-    );
+    try {
+      const res = await upsertCmsEquipment(
+        editingGear as Partial<Equipment> & { name: string; dailyRate: string; category: string }
+      );
 
-    if (res.success) {
-      showFeedback("Equipment updated in Neon DB catalog!");
-      setGearList((prev) => {
-        const idx = prev.findIndex((g) => g.id === editingGear.id);
-        if (idx >= 0) {
-          const updated = [...prev];
-          updated[idx] = { ...updated[idx], ...editingGear } as Equipment;
-          return updated;
-        }
-        return [
-          {
-            ...editingGear,
-            id: editingGear.id || `gear-${Date.now()}`,
-            createdAt: new Date(),
-          } as Equipment,
-          ...prev,
-        ];
-      });
-      setTimeout(() => {
-        setEditingGear(null);
-      }, 1200);
-    } else {
-      showFeedback(res.error || "Failed to update equipment.");
+      if (res.success) {
+        showFeedback("Equipment updated in Neon DB catalog!");
+        setGearList((prev) => {
+          const idx = prev.findIndex((g) => g.id === editingGear.id);
+          if (idx >= 0) {
+            const updated = [...prev];
+            updated[idx] = { ...updated[idx], ...editingGear } as Equipment;
+            return updated;
+          }
+          return [
+            {
+              ...editingGear,
+              id: editingGear.id || `gear-${Date.now()}`,
+              createdAt: new Date(),
+            } as Equipment,
+            ...prev,
+          ];
+        });
+        setTimeout(() => {
+          setEditingGear(null);
+        }, 1200);
+      } else {
+        setError(res.error || "Failed to update equipment.");
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Failed to update equipment.");
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   return (
@@ -105,6 +116,8 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
                 <X size={18} />
               </button>
             </div>
+
+            {error && <FeedbackAlert type="error" message={error} className="mt-4" />}
 
             {feedback && (
               <div className="mt-4 p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-xs text-emerald-200 flex items-center gap-2">
@@ -311,7 +324,11 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
                   </td>
                   <td className="py-3 px-4 text-right">
                     <button
-                      onClick={() => setEditingGear(g)}
+                      onClick={() => {
+                        setError(null);
+                        clearFeedback();
+                        setEditingGear(g);
+                      }}
                       className="p-1.5 rounded-lg bg-brand-purple/20 hover:bg-brand-purple/30 text-brand-purple-light border border-brand-purple/30 transition-colors"
                       title="Edit Equipment"
                     >
