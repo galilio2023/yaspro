@@ -5,7 +5,7 @@ import {
   CalendarCheck,
   FileText,
 } from "lucide-react";
-import { updateBookingStatus, updateBookingPaymentStatus } from "@/lib/cms-actions";
+import { updateBookingStatus, updateBookingPaymentStatus } from "@/lib/actions/bookings-rfp-operations";
 import type { Booking } from "@/db/schema";
 import { formatCurrency } from "@/lib/utils";
 import { FeedbackAlert } from "@/components/ui/feedback-alert";

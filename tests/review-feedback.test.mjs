@@ -73,12 +73,17 @@ function managerFixture([name, prop, action, editTitle, fields], save, rowOverri
     'next/image': 'Image',
     'lucide-react': new Proxy({}, { get: (_, key) => key }),
     '@/lib/cms-actions': { [action]: save },
+    '@/lib/actions/equipment-gear': { [action]: save },
+    '@/lib/actions/influencers': { [action]: save },
+    '@/lib/actions/projects': { [action]: save },
+    '@/lib/actions/studios-soundstages-operations': { [action]: save },
     '@/lib/utils': { formatCurrency: String },
     '@/components/ui/dialog': { Dialog: 'Dialog' },
     '@/components/ui/feedback-alert': { FeedbackAlert: 'FeedbackAlert' },
     '@/components/admin/AdminImageUploader': { AdminImageUploader: 'Uploader' },
   };
   mocks['@/hooks/useFeedbackAlert'] = loadSource('src/hooks/useFeedbackAlert.ts', mocks);
+  mocks['@/hooks/useCrud'] = loadSource('src/hooks/useCrud.ts', mocks);
   const Component = loadSource(`src/features/admin/components/${name}.tsx`, mocks, {
     alert: (message) => alerts.push(message),
   })[name];

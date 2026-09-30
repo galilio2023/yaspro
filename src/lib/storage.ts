@@ -24,9 +24,9 @@ export class LocalDiskStorageProvider implements StorageProvider {
   }
 
   async save(filename: string, buffer: Buffer): Promise<UploadResult> {
-    const uploadDir = join(process.cwd(), this.baseDir);
+    const uploadDir = join(/*turbopackIgnore: true*/ process.cwd(), this.baseDir);
     await mkdir(uploadDir, { recursive: true });
-    const filepath = join(uploadDir, filename);
+    const filepath = join(/*turbopackIgnore: true*/ uploadDir, filename);
     await writeFile(filepath, buffer);
 
     return {

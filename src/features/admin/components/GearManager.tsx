@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Camera, Plus, Edit3, Save, X, CheckCircle, Tag } from "lucide-react";
-import { upsertCmsEquipment } from "@/lib/cms-actions";
+import { upsertCmsEquipment } from "@/lib/actions/equipment-gear";
 import type { Equipment } from "@/db/schema";
 import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";

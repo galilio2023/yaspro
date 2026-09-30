@@ -8,14 +8,27 @@ import vm from 'node:vm';
 import ts from 'typescript';
 
 function loadSource(file, mocks = {}, globals = {}) {
-  const source = fs.readFileSync(path.join(import.meta.dirname, '..', file), 'utf8');
+  const fullPath = path.resolve(import.meta.dirname, '..', file);
+  const dir = path.dirname(fullPath);
+  const source = fs.readFileSync(fullPath, 'utf8');
   const { outputText } = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   });
   const exports = {};
   vm.runInNewContext(outputText, {
     exports,
-    require: (name) => Object.hasOwn(mocks, name) ? mocks[name] : loadDependency(name),
+    require: (name) => {
+      if (Object.hasOwn(mocks, name)) return mocks[name];
+      if (name.startsWith('.')) {
+        const resolvedTarget = path.resolve(dir, name);
+        const candidate = [resolvedTarget, `${resolvedTarget}.ts`, `${resolvedTarget}.js`, path.join(resolvedTarget, 'index.ts')].find(fs.existsSync);
+        if (candidate) {
+          const relativeToRoot = path.relative(path.resolve(import.meta.dirname, '..'), candidate).replace(/\\/g, '/');
+          return loadSource(relativeToRoot, mocks, globals);
+        }
+      }
+      return loadDependency(name);
+    },
     console: { error() {}, log() {} },
     process: { env: { DATABASE_URL: 'postgresql://test:local@localhost/rfp' } },
     ...globals,

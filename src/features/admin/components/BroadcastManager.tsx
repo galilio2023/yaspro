@@ -10,7 +10,7 @@ import {
   ShieldCheck,
   Video,
 } from "lucide-react";
-import { dispatchTelemetryEvent } from "@/lib/cms-actions";
+import { dispatchTelemetryEvent } from "@/lib/actions/broadcast-telemetry-dispatcher";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
 
 type TelemetryType = "C2C_INGEST" | "OB_VAN_GPS" | "MAWTHOOQ_AUDIT" | "GENLOCK_SYNC" | "RENDER_COMPLETE";

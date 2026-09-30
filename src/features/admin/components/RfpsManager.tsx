@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { FileSpreadsheet, MapPin, Building } from "lucide-react";
-import { updateEnterpriseRfpStatus } from "@/lib/cms-actions";
+import { updateEnterpriseRfpStatus } from "@/lib/actions/bookings-rfp-operations";
 import type { EnterpriseRfp } from "@/db/schema";
 import { DataTable, DataTableHeader, DataTableBody, DataTableRow, DataTableEmpty } from "@/components/ui/data-table";
 import { PaginationControls } from "@/components/ui/pagination-controls";
