@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, RefObject } from "react";
 
+const activeTraps: { containerRef: RefObject<HTMLElement | null>; focus: () => void }[] = [];
+
 export interface UseFocusTrapOptions {
   isOpen: boolean;
   onClose: () => void;
@@ -42,9 +44,13 @@ export function useFocusTrap({
       'button, [href], input, select, textarea, [tabindex]'
     ) ?? []).filter((el) => el.tabIndex >= 0 && !el.matches(":disabled") && el.getClientRects().length > 0);
 
-    (initialFocusRef?.current ?? getFocusable()[0] ?? containerRef.current)?.focus();
+    const focus = () => (initialFocusRef?.current ?? getFocusable()[0] ?? containerRef.current)?.focus();
+    const trap = { containerRef, focus };
+    activeTraps.push(trap);
+    focus();
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (activeTraps.at(-1) !== trap || e.defaultPrevented) return;
       if (e.key === "Escape") {
         e.preventDefault();
         onCloseRef.current();
@@ -62,12 +68,27 @@ export function useFocusTrap({
       }
     };
 
+    const handleFocusIn = (event: FocusEvent) => {
+      if (activeTraps.at(-1) === trap && containerRef.current &&
+          !containerRef.current.contains(event.target as Node)) focus();
+    };
+    window.addEventListener("focusin", handleFocusIn);
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      if (autoRestoreFocus && triggerRef.current) {
-        if (triggerRef.current.isConnected) triggerRef.current.focus();
+      window.removeEventListener("focusin", handleFocusIn);
+      const wasTopmost = activeTraps.at(-1) === trap;
+      const index = activeTraps.indexOf(trap);
+      if (index !== -1) activeTraps.splice(index, 1);
+      if (!wasTopmost) return;
+      const previous = activeTraps.at(-1);
+      const trigger = triggerRef.current;
+      if (autoRestoreFocus && trigger?.isConnected &&
+          (!previous || previous.containerRef.current?.contains(trigger))) {
+        trigger.focus();
+      } else if (previous) {
+        previous.focus();
       }
     };
   }, [isOpen, containerRef, initialFocusRef, autoRestoreFocus]);

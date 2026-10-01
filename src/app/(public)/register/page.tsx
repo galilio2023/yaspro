@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp, signIn } from "@/lib/auth-client";
-import { syncUserProfile, claimGuestAccount } from "@/lib/actions";
+import { syncUserProfile } from "@/lib/actions";
 import { registerUserSchema } from "@/lib/validations";
 import { User, Mail, Lock, Building, Phone, ArrowRight, AlertCircle, ShieldCheck } from "lucide-react";
 import { BrandLogo } from "@/components/layout/BrandLogo";
@@ -22,9 +22,12 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  const [claimNotice, setClaimNotice] = useState(false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
+    setClaimNotice(false);
 
     // 1. Validate complete registration payload with registerUserSchema
     const parseResult = registerUserSchema.safeParse({
@@ -59,33 +62,7 @@ export default function RegisterPage() {
           res.error.code === "USER_ALREADY_EXISTS";
 
         if (isExistingUser) {
-          const claimRes = await claimGuestAccount({
-            email: validData.email,
-            password: validData.password,
-            name: validData.name,
-            phone: validData.phone,
-            company: validData.company || "",
-          });
-
-          if (claimRes.success) {
-            const signInRes = await signIn.email({
-              email: validData.email,
-              password: validData.password,
-            });
-            if (signInRes.error) {
-              setErrorMsg(signInRes.error.message || "Failed to sign in. Please try again.");
-              return;
-            }
-            if (claimRes.data?.role === "enterprise") {
-              router.push("/enterprise/portal");
-            } else {
-              router.push("/portal");
-            }
-            router.refresh();
-            return;
-          } else {
-            setErrorMsg(claimRes.message || res.error.message || "Failed to create account.");
-          }
+          setClaimNotice(true);
         } else {
           setErrorMsg(res.error.message || "Failed to create account.");
         }
@@ -143,6 +120,12 @@ export default function RegisterPage() {
             {t("subtitle")}
           </p>
         </div>
+
+        {claimNotice && (
+          <div role="status" className="mb-6 p-3.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs">
+            {t("claimBookingsNotice")}
+          </div>
+        )}
 
         {errorMsg && (
           <div className="mb-6 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">

@@ -20,6 +20,7 @@ import { formatCurrency } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { useSession } from "@/lib/auth-client";
 import { createGearBookingOrder } from "@/lib/actions/equipment-gear";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { BookingPaymentModal } from "@/features/booking/components/BookingPaymentModal";
 
 interface GearCheckoutModalProps {
@@ -76,16 +77,14 @@ export function GearCheckoutModal({
     }
   }, [session, customerName, email]);
 
-  // Trap ESC key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen && !isPaymentModalOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, isPaymentModalOpen, onClose]);
+  const handleClose = () => {
+    setIsPaymentModalOpen(false);
+    if (createdBooking) onOrderCompleted();
+    setCreatedBooking(null);
+    onClose();
+  };
+
+  useFocusTrap({ isOpen, onClose: handleClose, containerRef: dialogRef });
 
   if (!isOpen) return null;
 
@@ -122,7 +121,6 @@ export function GearCheckoutModal({
           referenceCode: res.data.referenceCode,
           totalAmount: res.data.totalAmount,
         });
-        onOrderCompleted();
         // Automatically open the Ziina payment modal
         setIsPaymentModalOpen(true);
       } else {
@@ -157,10 +155,11 @@ export function GearCheckoutModal({
           aria-modal="true"
           className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-xl animate-fade-up overflow-y-auto"
         >
-          <div className="fixed inset-0" onClick={onClose} aria-hidden="true" />
+          <div className="fixed inset-0" onClick={handleClose} aria-hidden="true" />
 
           <div
             ref={dialogRef}
+            tabIndex={-1}
             className="relative w-full max-w-4xl my-auto rounded-3xl border border-white/15 bg-[#0b0918] shadow-2xl shadow-brand-purple/20 overflow-hidden z-10 flex flex-col max-h-[92vh]"
           >
             {/* Header */}
@@ -183,7 +182,7 @@ export function GearCheckoutModal({
 
               <button
                 type="button"
-                onClick={onClose}
+                onClick={handleClose}
                 className="size-8 rounded-full border border-white/10 bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-colors cursor-pointer"
                 aria-label="Close"
               >
@@ -236,7 +235,7 @@ export function GearCheckoutModal({
                     <button
                       type="button"
                       onClick={() => {
-                        onClose();
+                        handleClose();
                         router.push("/portal/bookings");
                       }}
                       className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-medium transition-colors cursor-pointer"
@@ -474,7 +473,7 @@ export function GearCheckoutModal({
       {createdBooking && (
         <BookingPaymentModal
           isOpen={isPaymentModalOpen}
-          onClose={() => setIsPaymentModalOpen(false)}
+          onClose={handleClose}
           bookingId={createdBooking.bookingId}
           referenceCode={createdBooking.referenceCode}
           totalAmount={createdBooking.totalAmount}

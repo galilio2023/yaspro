@@ -16,7 +16,9 @@ import {
   CreditCard,
   ArrowRight,
 } from "lucide-react";
-import { GearItem } from "../types";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { calculateGearCartTotals, calculateRentalMultiplier } from "../lib/cart-pricing";
+import { GearItem, DeliveryMethod } from "../types";
 import { formatCurrency, cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { createGearBookingOrder } from "@/lib/actions/equipment-gear";
@@ -44,7 +46,7 @@ export function GearRentalModal({
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   const [durationDays, setDurationDays] = useState<number>(initialDurationDays);
-  const [deliveryMethod, setDeliveryMethod] = useState<"soundstage" | "dubai_courier" | "hub_pickup">("soundstage");
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("studio_delivery");
   const [viewMode, setViewMode] = useState<"overview" | "form" | "confirmed">("overview");
 
   // Form states
@@ -70,6 +72,9 @@ export function GearRentalModal({
       setViewMode("overview");
       setErrorMessage(null);
       setConfirmationCode(null);
+      setCreatedBookingId(null);
+      setCreatedAmount(0);
+      setIsPaymentOpen(false);
       if (session?.user) {
         setCustomerName((prev) => prev || session.user.name || "");
         setEmail((prev) => prev || session.user.email || "");
@@ -77,71 +82,20 @@ export function GearRentalModal({
     }
   }, [isOpen, initialDurationDays, session]);
 
-  // Close on ESC
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
-
-  useEffect(() => {
-    if (!mounted || !isOpen || !hasItem) return;
-    const card = dialogRef.current;
-    if (!card) return;
-    const previouslyFocused = document.activeElement;
-    card.focus();
-
-    const keepFocusInside = (event: FocusEvent) => {
-      if (!card.contains(event.target as Node)) card.focus();
-    };
-    const trapTab = (event: KeyboardEvent) => {
-      if (event.key !== "Tab") return;
-      const focusable = Array.from(card.querySelectorAll<HTMLElement>(
-        'button, a[href], input, select, textarea, [tabindex]'
-      )).filter((element) => element.tabIndex >= 0 && !element.matches(":disabled") && element.getClientRects().length > 0);
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (!first || !last) {
-        event.preventDefault();
-        card.focus();
-      } else if (!focusable.includes(document.activeElement as HTMLElement)) {
-        event.preventDefault();
-        (event.shiftKey ? last : first).focus();
-      } else if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-    document.addEventListener("focusin", keepFocusInside);
-    card.addEventListener("keydown", trapTab);
-    return () => {
-      document.removeEventListener("focusin", keepFocusInside);
-      card.removeEventListener("keydown", trapTab);
-      if (previouslyFocused instanceof HTMLElement && previouslyFocused.isConnected) previouslyFocused.focus();
-    };
-  }, [mounted, isOpen, hasItem]);
+  useFocusTrap({ isOpen: mounted && isOpen && hasItem, onClose, containerRef: dialogRef });
 
   // Switching views can remove the focused control.
   useEffect(() => {
     const card = dialogRef.current;
-    if (card && !card.contains(document.activeElement)) card.focus();
-  }, [viewMode]);
+    if (!isPaymentOpen && card && !card.contains(document.activeElement)) card.focus();
+  }, [viewMode, isPaymentOpen]);
 
   if (!mounted || !isOpen || !item) return null;
 
   // Pricing calculations
-  const discountMultiplier = durationDays >= 7 ? 0.65 : durationDays >= 3 ? 0.8 : 1.0;
-  const effectiveDailyRate = Math.round(item.dailyRate * discountMultiplier);
-  const deliveryFee = deliveryMethod === "dubai_courier" ? 250 : 0;
-  const subtotal = effectiveDailyRate * durationDays;
-  const grandTotal = subtotal + deliveryFee;
+  const { multiplier } = calculateRentalMultiplier(durationDays);
+  const discountMultiplier = multiplier / durationDays;
+  const { grandTotal, deliveryFee } = calculateGearCartTotals([item], { totalDays: durationDays }, deliveryMethod);
   const deposit = item.securityDeposit || 0;
 
   const displayName = isArabic && item.arabicName ? item.arabicName : item.name;
@@ -517,7 +471,7 @@ export function GearRentalModal({
                     )}
                   >
                     <span className="absolute -top-2 inset-x-0 mx-auto w-max px-2 py-0.2 rounded-full bg-brand-cyan text-black text-[9px] font-extrabold uppercase">
-                      {isArabic ? "خصم 20%" : "20% Off"}
+                      {isArabic ? `خصم ${calculateRentalMultiplier(3).discountPct}%` : `${calculateRentalMultiplier(3).discountPct}% Off`}
                     </span>
                     <div className="text-xs font-bold">{isArabic ? "عطلة نهاية الأسبوع (3 أيام)" : "3-Day Weekend"}</div>
                     <div className="text-[10px] text-brand-cyan/90 mt-0.5">{isArabic ? "عرض عطلة نهاية الأسبوع" : "Weekend Deal"}</div>
@@ -534,7 +488,7 @@ export function GearRentalModal({
                     )}
                   >
                     <span className="absolute -top-2 inset-x-0 mx-auto w-max px-2 py-0.2 rounded-full bg-amber-400 text-black text-[9px] font-extrabold uppercase">
-                      {isArabic ? "خصم 35%" : "35% Off"}
+                      {isArabic ? `خصم ${calculateRentalMultiplier(7).discountPct}%` : `${calculateRentalMultiplier(7).discountPct}% Off`}
                     </span>
                     <div className="text-xs font-bold">{isArabic ? "أسبوعي (7 أيام)" : "Weekly Tier"}</div>
                     <div className="text-[10px] text-amber-300/90 mt-0.5">{isArabic ? "أفضل قيمة للإنتاج" : "Best Production Value"}</div>
@@ -551,10 +505,10 @@ export function GearRentalModal({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <button
                     type="button"
-                    onClick={() => setDeliveryMethod("soundstage")}
+                    onClick={() => setDeliveryMethod("studio_delivery")}
                     className={cn(
                       "p-2.5 rounded-xl border text-start transition-all cursor-pointer text-xs",
-                      deliveryMethod === "soundstage"
+                      deliveryMethod === "studio_delivery"
                         ? "bg-brand-purple/15 border-brand-purple/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     )}
@@ -568,10 +522,10 @@ export function GearRentalModal({
 
                   <button
                     type="button"
-                    onClick={() => setDeliveryMethod("dubai_courier")}
+                    onClick={() => setDeliveryMethod("courier_dubai")}
                     className={cn(
                       "p-2.5 rounded-xl border text-start transition-all cursor-pointer text-xs",
-                      deliveryMethod === "dubai_courier"
+                      deliveryMethod === "courier_dubai"
                         ? "bg-brand-purple/15 border-brand-purple/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     )}
@@ -585,10 +539,10 @@ export function GearRentalModal({
 
                   <button
                     type="button"
-                    onClick={() => setDeliveryMethod("hub_pickup")}
+                    onClick={() => setDeliveryMethod("pickup_hub")}
                     className={cn(
                       "p-2.5 rounded-xl border text-start transition-all cursor-pointer text-xs",
-                      deliveryMethod === "hub_pickup"
+                      deliveryMethod === "pickup_hub"
                         ? "bg-brand-purple/15 border-brand-purple/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     )}

@@ -11,6 +11,8 @@ import React, {
 import type { GearItem, RentalDateRange, DeliveryMethod } from "@/features/gear/types";
 import { calculateGearCartTotals, type GearRentalPricingBreakdown } from "@/features/gear/lib/cart-pricing";
 
+import { getInitialDateRange, parseCartStorage } from "@/features/gear/lib/cart-storage";
+
 const CART_STORAGE_KEY = "yaspro_cinema_cart_v1";
 
 export interface CartContextValue {
@@ -36,17 +38,6 @@ export interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-function getInitialDateRange(): RentalDateRange {
-  const today = new Date().toISOString().split("T")[0];
-  return {
-    pickupDate: today,
-    returnDate: today,
-    totalDays: 1,
-    billingMultiplier: 1,
-    discountPercentage: 0,
-  };
-}
-
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<GearItem[]>([]);
   const [dateRange, setDateRange] = useState<RentalDateRange>(getInitialDateRange);
@@ -58,13 +49,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(CART_STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        if (Array.isArray(parsed.items)) setItems(parsed.items);
-        if (parsed.dateRange) setDateRange(parsed.dateRange);
-        if (parsed.deliveryMethod) setDeliveryMethod(parsed.deliveryMethod);
-      }
+      const restored = parseCartStorage(saved);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setItems(restored.items);
+      setDateRange(restored.dateRange);
+      setDeliveryMethod(restored.deliveryMethod);
     } catch {
       // Ignore localStorage errors (e.g. incognito quota)
     } finally {
@@ -92,13 +81,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Sync across tabs
   useEffect(() => {
     const handleStorage = (e: StorageEvent) => {
-      if (e.key === CART_STORAGE_KEY && e.newValue) {
-        try {
-          const parsed = JSON.parse(e.newValue);
-          if (Array.isArray(parsed.items)) setItems(parsed.items);
-          if (parsed.dateRange) setDateRange(parsed.dateRange);
-          if (parsed.deliveryMethod) setDeliveryMethod(parsed.deliveryMethod);
-        } catch {}
+      if (e.storageArea === localStorage && (e.key === CART_STORAGE_KEY || e.key === null)) {
+        const restored = parseCartStorage(e.newValue);
+        setItems(restored.items);
+        setDateRange(restored.dateRange);
+        setDeliveryMethod(restored.deliveryMethod);
       }
     };
     window.addEventListener("storage", handleStorage);

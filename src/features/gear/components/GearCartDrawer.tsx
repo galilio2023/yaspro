@@ -108,7 +108,7 @@ export function GearCartDrawer({
     };
   }, [effectiveItems.length]);
 
-  if (effectiveItems.length === 0) return null;
+  if (effectiveItems.length === 0 && !isCheckoutOpen) return null;
 
   // Calculation — only destructure what is rendered in the UI
   const { grandTotal, totalDeposit } =
@@ -119,7 +119,7 @@ export function GearCartDrawer({
   return (
     <>
       {/* Floating Bottom Bar: Centered on desktop, elevated on mobile */}
-      <aside
+      {effectiveItems.length > 0 && <aside
         aria-label="Rental selection summary"
         className="fixed bottom-4 inset-x-3 sm:bottom-6 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[640px] max-w-2xl z-40 animate-fade-up"
       >
@@ -197,7 +197,7 @@ export function GearCartDrawer({
             </button>
           </div>
         </div>
-      </aside>
+      </aside>}
 
       {/* Expanded Breakdown Modal / Sheet (Portaled to document.body) */}
       {isOpen && mounted && createPortal(

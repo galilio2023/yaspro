@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useId } from "react";
 import { useRouter } from "next/navigation";
 import {
   Search,
@@ -44,6 +44,7 @@ export function CommandPalette() {
   const { toggleLanguage, isArabic } = useLanguage();
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const resultsId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
 
   useFocusTrap({
@@ -280,6 +281,12 @@ export function CommandPalette() {
     });
   }, [query, COMMANDS]);
 
+  useEffect(() => {
+    if (isOpen) {
+      listRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: "nearest" });
+    }
+  }, [isOpen, selectedIndex, filtered]);
+
   const executeCommand = (cmd: PaletteCommand) => {
     setIsOpen(false);
     if (cmd.action) {
@@ -325,6 +332,12 @@ export function CommandPalette() {
           <input
             ref={inputRef}
             type="text"
+            role="combobox"
+            aria-label="Search commands"
+            aria-autocomplete="list"
+            aria-expanded={isOpen}
+            aria-controls={resultsId}
+            aria-activedescendant={filtered[selectedIndex] ? `${resultsId}-${filtered[selectedIndex].id}` : undefined}
             placeholder="Type a command, stage, gear, or jump to page... (e.g. 'book', 'gear', 'admin')"
             value={query}
             onChange={(e) => {
@@ -347,7 +360,7 @@ export function CommandPalette() {
         </div>
 
         {/* Results List */}
-        <div ref={listRef} className="flex-1 overflow-y-auto p-2 space-y-1">
+        <div ref={listRef} id={resultsId} role="listbox" aria-label="Commands" className="flex-1 overflow-y-auto p-2 space-y-1">
           {filtered.length === 0 ? (
             <div className="py-10 text-center text-slate-500 text-xs">
               No matching modules or actions found for &ldquo;{query}&rdquo;
@@ -359,6 +372,11 @@ export function CommandPalette() {
               return (
                 <button
                   key={cmd.id}
+                  id={`${resultsId}-${cmd.id}`}
+                  role="option"
+                  aria-selected={isSelected}
+                  tabIndex={-1}
+                  onMouseDown={(e) => e.preventDefault()}
                   onClick={() => executeCommand(cmd)}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center justify-between gap-3 text-xs transition-colors cursor-pointer ${

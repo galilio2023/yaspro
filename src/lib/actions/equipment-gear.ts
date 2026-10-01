@@ -1,12 +1,13 @@
 "use server";
 
+import { calculateGearCartTotals } from "../../features/gear/lib/cart-pricing";
+import { checkRateLimit, getClientIdentifier } from "../rate-limit";
 import { z } from "zod";
 import { db } from "@/db";
 import {
   equipment,
   inquiries,
   bookings,
-  users,
   type Equipment,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
@@ -183,28 +184,33 @@ export async function submitGearReservation(
 }
 
 const gearOrderSchema = z.object({
-  gearIds: z.array(z.string()).min(1, "Please select at least one piece of gear."),
+  gearIds: z.array(z.string()).min(1, "Please select at least one piece of gear.").max(100),
   customerName: z.string().min(2, "Customer name is required."),
   email: z.string().email("Invalid email address."),
   phone: z.string().min(6, "Valid phone number is required."),
   company: z.string().optional(),
-  durationDays: z.number().int().min(1).default(1),
-  deliveryMethod: z.string().default("studio_delivery"),
+  durationDays: z.number().int().min(1).max(365).default(1),
+  deliveryMethod: z.enum(["studio_delivery", "courier_dubai", "pickup_hub"]).default("studio_delivery"),
   notes: z.string().optional(),
-  startDate: z.string().optional(),
+  startDate: z.iso.date().optional(),
 });
 
 export type GearOrderInput = z.input<typeof gearOrderSchema>;
 
 /**
  * Creates a verified cinema gear rental order directly in the bookings table.
- * Automatically links to the authenticated user (or provisions/matches a user record by email),
+ * Links only to the authenticated user,
  * computes duration discounts & delivery surcharges, and returns the reference code for Ziina payment.
  */
 export async function createGearBookingOrder(
   payload: GearOrderInput
 ): Promise<CmsResponse<{ bookingId: string; referenceCode: string; totalAmount: number; currency: string }>> {
   try {
+    const clientId = await getClientIdentifier();
+    if (!checkRateLimit(`gear-order:${clientId}`, 5, 10 * 60 * 1000).allowed) {
+      return { success: false, error: "Too many booking requests. Please try again later." };
+    }
+
     const parsed = gearOrderSchema.safeParse(payload);
     if (!parsed.success) {
       return {
@@ -215,7 +221,7 @@ export async function createGearBookingOrder(
     const input = parsed.data;
 
     // 1. Resolve equipment items & calculate pricing
-    let totalBaseDailyRate = 0;
+    const pricedItems: { dailyRate: number }[] = [];
     for (const gearId of input.gearIds) {
       let storedGear = null;
       if (isDbAvailable()) {
@@ -230,53 +236,16 @@ export async function createGearBookingOrder(
       if (!item) {
         return { success: false, error: `Equipment item ${gearId} was not found.` };
       }
-      totalBaseDailyRate += Number(item.dailyRate);
+      pricedItems.push({ dailyRate: Number(item.dailyRate) });
     }
 
-    const discountMultiplier = input.durationDays >= 7 ? 0.65 : input.durationDays >= 3 ? 0.8 : 1;
-    const isCourier = input.deliveryMethod === "courier_dubai" || input.deliveryMethod === "dubai_courier";
-    const deliveryFee = isCourier ? 250 : 0;
-    const grandTotal = Math.round(totalBaseDailyRate * discountMultiplier) * input.durationDays + deliveryFee;
+    const { grandTotal } = calculateGearCartTotals(pricedItems, { totalDays: input.durationDays }, input.deliveryMethod);
 
-    // 2. Identify user from active session or provision/link by email
-    let finalUserId: string | null = null;
-    let customerName = input.customerName.trim();
-    try {
-      const session = await getCurrentSession?.();
-      if (session?.user?.id) {
-        finalUserId = session.user.id;
-        if (!customerName && session.user.name) {
-          customerName = session.user.name;
-        }
-      }
-    } catch {
-      // In tests or environments without headers, proceed with guest provisioning
-    }
+    // An email supplied by a guest is not proof of account ownership.
+    const session = await getCurrentSession();
+    const finalUserId = session?.user?.id ?? null;
 
     if (isDbAvailable()) {
-      if (!finalUserId) {
-        const existingUser = await db.query.users.findFirst({
-          where: eq(users.email, input.email.toLowerCase()),
-        });
-        if (existingUser) {
-          finalUserId = existingUser.id;
-        } else {
-          const newUserId = `usr_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-          const [created] = await db
-            .insert(users)
-            .values({
-              id: newUserId,
-              name: customerName,
-              email: input.email.toLowerCase(),
-              phone: input.phone,
-              company: input.company || null,
-              role: "client",
-            })
-            .returning();
-          finalUserId = created?.id || newUserId;
-        }
-      }
-
       // 3. Insert into bookings
       const referenceCode = generateBookingReference();
       const scheduledAtDate = input.startDate ? new Date(input.startDate) : new Date();
