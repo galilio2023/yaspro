@@ -6,87 +6,14 @@ import { getClientBookings } from "@/lib/cms-actions";
 import Link from "next/link";
 import {
   CalendarCheck,
-  CheckCircle2,
-  XCircle,
   AlertCircle,
-  Clock,
   ArrowRight,
   FileSpreadsheet,
 } from "lucide-react";
-import type { Booking } from "@/db/schema";
+import { ClientBookingCard } from "@/components/portal/ClientBookingCard";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "My Bookings | Client Portal" };
-
-const STATUS_CONFIG = {
-  pending: { label: "Pending", icon: Clock, color: "text-amber-400 bg-amber-500/10 border-amber-500/30" },
-  confirmed: { label: "Confirmed", icon: CheckCircle2, color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30" },
-  cancelled: { label: "Cancelled", icon: XCircle, color: "text-rose-400 bg-rose-500/10 border-rose-500/30" },
-  completed: { label: "Completed", icon: CheckCircle2, color: "text-slate-400 bg-slate-500/10 border-slate-500/30" },
-} as const;
-
-const PAYMENT_CONFIG: Record<string, { label: string; color: string }> = {
-  paid: { label: "Paid", color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30" },
-  deposit_paid: { label: "Deposit Paid", color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30" },
-  unpaid: { label: "Unpaid", color: "text-amber-400 bg-amber-500/10 border-amber-500/30" },
-};
-
-function formatDate(date: Date | string | null) {
-  if (!date) return "—";
-  return new Date(date).toLocaleDateString(undefined, {
-    weekday: "short", year: "numeric", month: "short", day: "numeric",
-    hour: "2-digit", minute: "2-digit",
-  });
-}
-
-function formatSessionType(type: string, isGearRental: boolean, equipmentCount: number) {
-  if (isGearRental) {
-    return equipmentCount > 0 ? `Cinema Gear Rental (${equipmentCount} items)` : "Cinema Gear Rental";
-  }
-  return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function BookingRow({ b }: { b: Booking }) {
-  const isGearRental = !b.studioId && Array.isArray(b.equipmentIds) && b.equipmentIds.length > 0;
-  const equipmentCount = Array.isArray(b.equipmentIds) ? b.equipmentIds.length : 0;
-  const cfg = STATUS_CONFIG[b.status as keyof typeof STATUS_CONFIG];
-  const StatusIcon = cfg?.icon ?? AlertCircle;
-  const payCfg = PAYMENT_CONFIG[b.paymentStatus] ?? PAYMENT_CONFIG.unpaid;
-  const durationLabel = isGearRental
-    ? `${Math.max(1, Math.round(b.durationHours / 24))} day(s) rental`
-    : `${b.durationHours}h · ${b.headcount} person${b.headcount !== 1 ? "s" : ""}`;
-
-  return (
-    <div className="px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-white/[0.02] transition-colors">
-      <div className="flex flex-col gap-0.5 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-bold text-white">
-            {formatSessionType(b.sessionType, isGearRental, equipmentCount)}
-          </span>
-          <span className="text-[10px] font-mono text-slate-500">#{b.referenceCode}</span>
-        </div>
-        <div className="text-[11px] text-slate-400" dir="ltr">{formatDate(b.scheduledAt)}</div>
-        <div className="text-[11px] text-slate-500">
-          {durationLabel}
-          {b.propsNotes ? ` · ${b.propsNotes}` : ""}
-        </div>
-      </div>
-      <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
-        <span className="text-xs font-bold text-white" dir="ltr">
-          {Number(b.totalAmount).toLocaleString()} {b.currency}
-        </span>
-        <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full border ${payCfg.color}`}>
-          {payCfg.label}
-        </span>
-        {cfg && (
-          <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full border ${cfg.color}`}>
-            <StatusIcon size={10} />{cfg.label}
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
 
 export default async function BookingsPage() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -122,7 +49,9 @@ export default async function BookingsPage() {
           </div>
         ) : (
           <div className="divide-y divide-white/5">
-            {upcoming.map((b) => <BookingRow key={b.id} b={b} />)}
+            {upcoming.map((b) => (
+              <ClientBookingCard key={b.id} booking={b} />
+            ))}
           </div>
         )}
       </div>
@@ -136,7 +65,9 @@ export default async function BookingsPage() {
             <span className="text-[11px] text-slate-400">{past.length} sessions</span>
           </div>
           <div className="divide-y divide-white/5 opacity-80">
-            {past.map((b) => <BookingRow key={b.id} b={b} />)}
+            {past.map((b) => (
+              <ClientBookingCard key={b.id} booking={b} />
+            ))}
           </div>
         </div>
       )}

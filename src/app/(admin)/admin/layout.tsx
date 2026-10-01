@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { AdminMobileNav } from "@/components/admin/AdminMobileNav";
+import { AdminSignOutButton } from "@/components/admin/AdminSignOutButton";
 import { CommandPalette } from "@/components/layout/CommandPalette";
 
 export const dynamic = "force-dynamic";
@@ -124,6 +125,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             >
               Public Site <ArrowUpRight size={12} className="rtl:scale-x-[-1]" />
             </Link>
+          </div>
+
+          <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-end">
+            <AdminSignOutButton />
           </div>
         </div>
       </aside>

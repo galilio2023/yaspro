@@ -262,7 +262,9 @@ export async function createGearBookingOrder(
           headcount: 1,
           equipmentIds: input.gearIds,
           propsNotes: `Gear Delivery: ${input.deliveryMethod}`,
-          specialRequests: input.notes || null,
+          specialRequests: finalUserId
+            ? input.notes || null
+            : `[Contact: ${input.customerName} | ${input.email} | ${input.phone}${input.company ? ` | ${input.company}` : ""}]${input.notes ? ` — ${input.notes}` : ""}`,
           totalAmount: grandTotal.toFixed(2),
           currency: "AED",
           status: "pending",

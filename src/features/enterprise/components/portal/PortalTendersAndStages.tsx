@@ -4,8 +4,9 @@ import React, { useState } from "react";
 import { Search, ShieldCheck, User, Globe, AlertCircle } from "lucide-react";
 import { lookupEnterpriseRfp, type EnterpriseRfpLookupResult } from "@/lib/portal-actions";
 import { VirtualStageConfigurator } from "@/features/booking/components/VirtualStageConfigurator";
+import type { EnterpriseRfp } from "@/db/schema";
 
-export function PortalTenders() {
+export function PortalTenders({ initialRfps = [] }: { initialRfps?: EnterpriseRfp[] }) {
   const [searchInput, setSearchInput] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResult, setSearchResult] = useState<EnterpriseRfpLookupResult | null>(null);
@@ -102,50 +103,101 @@ export function PortalTenders() {
         )}
       </div>
 
-      {/* ─── Active GCC Sovereign Master Tenders ─── */}
-      <div className="p-4 sm:p-5 rounded-2xl border border-white/10 bg-slate-900/60 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold text-brand-cyan">EXP-9182-DXB</span>
-            <span className="text-[10px] font-mono text-brand-teal-light bg-brand-teal/15 px-2 py-0.5 rounded border border-brand-teal/30">
-              SLA ACTIVE
-            </span>
+      {/* ─── Active Tenders & RFPs ─── */}
+      {initialRfps.length > 0 ? (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between text-xs text-text-muted px-1">
+            <span>Your Submitted Proposals ({initialRfps.length})</span>
+            <span className="font-mono text-brand-teal-light">Live Neon DB Ledger</span>
           </div>
-          <h4 className="text-sm sm:text-base font-bold text-white mt-1">
-            Dubai Municipality Professional Academy (DMX) Master Launch Film
-          </h4>
-          <div className="text-xs text-text-secondary mt-0.5">
-            Senior Producer: Yaman Alomari • Deliverable: 4K Master + 3D CGI Tour
-          </div>
-        </div>
+          {initialRfps.map((rfp) => (
+            <div
+              key={rfp.id}
+              className="p-4 sm:p-5 rounded-2xl border border-white/10 bg-slate-900/60 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 hover:border-brand-purple/40 transition-colors"
+            >
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-mono font-bold text-brand-cyan">
+                    {rfp.referenceCode}
+                  </span>
+                  <span className="text-[10px] font-mono text-brand-teal-light bg-brand-teal/15 px-2 py-0.5 rounded border border-brand-teal/30 uppercase">
+                    {rfp.status.replace(/_/g, " ")}
+                  </span>
+                  {rfp.requiresMawthooqCompliance && (
+                    <span className="text-[10px] font-mono text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1">
+                      <ShieldCheck size={10} /> Mawthooq
+                    </span>
+                  )}
+                </div>
+                <h4 className="text-sm sm:text-base font-bold text-white mt-1">
+                  {rfp.organizationName} — {rfp.projectScope.replace(/_/g, " ").toUpperCase()}
+                </h4>
+                <div className="text-xs text-text-secondary mt-0.5">
+                  Contact: {rfp.contactName} • {rfp.country} • Budget: {rfp.estimatedBudget.replace(/_/g, " ")}
+                </div>
+              </div>
 
-        <div className="text-left md:text-right pt-2 md:pt-0 border-t border-white/5 md:border-none w-full md:w-auto">
-          <div className="text-xs font-mono text-text-muted">Target Delivery</div>
-          <div className="text-xs sm:text-sm font-bold text-white">Next 14 Business Days</div>
+              <div className="text-left md:text-right pt-2 md:pt-0 border-t border-white/5 md:border-none w-full md:w-auto shrink-0">
+                <div className="text-xs font-mono text-text-muted">Logged Date</div>
+                <div className="text-xs sm:text-sm font-bold text-white">
+                  {new Date(rfp.createdAt).toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
+      ) : (
+        <>
+          {/* ─── Active GCC Sovereign Master Tenders (Showcase / Preview) ─── */}
+          <div className="p-4 sm:p-5 rounded-2xl border border-white/10 bg-slate-900/60 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-bold text-brand-cyan">EXP-9182-DXB</span>
+                <span className="text-[10px] font-mono text-brand-teal-light bg-brand-teal/15 px-2 py-0.5 rounded border border-brand-teal/30">
+                  SLA ACTIVE
+                </span>
+              </div>
+              <h4 className="text-sm sm:text-base font-bold text-white mt-1">
+                Dubai Municipality Professional Academy (DMX) Master Launch Film
+              </h4>
+              <div className="text-xs text-text-secondary mt-0.5">
+                Senior Producer: Yaman Alomari • Deliverable: 4K Master + 3D CGI Tour
+              </div>
+            </div>
 
-      <div className="p-4 sm:p-5 rounded-2xl border border-white/10 bg-slate-900/60 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold text-brand-gold">EXP-7419-KSA</span>
-            <span className="text-[10px] font-mono text-brand-gold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-              UNDER REVIEW
-            </span>
+            <div className="text-left md:text-right pt-2 md:pt-0 border-t border-white/5 md:border-none w-full md:w-auto">
+              <div className="text-xs font-mono text-text-muted">Target Delivery</div>
+              <div className="text-xs sm:text-sm font-bold text-white">Next 14 Business Days</div>
+            </div>
           </div>
-          <h4 className="text-sm sm:text-base font-bold text-white mt-1">
-            Saudi Pro League Multi-Cam OB-VAN Broadcast Deployment
-          </h4>
-          <div className="text-xs text-text-secondary mt-0.5">
-            Mobile Unit 01 Dispatch • EVS Live Replay &amp; AI Viral Syndication
-          </div>
-        </div>
 
-        <div className="text-left md:text-right pt-2 md:pt-0 border-t border-white/5 md:border-none w-full md:w-auto">
-          <div className="text-xs font-mono text-text-muted">Status</div>
-          <div className="text-xs sm:text-sm font-bold text-brand-gold">Board Review Stage</div>
-        </div>
-      </div>
+          <div className="p-4 sm:p-5 rounded-2xl border border-white/10 bg-slate-900/60 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-bold text-brand-gold">EXP-7419-KSA</span>
+                <span className="text-[10px] font-mono text-brand-gold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                  UNDER REVIEW
+                </span>
+              </div>
+              <h4 className="text-sm sm:text-base font-bold text-white mt-1">
+                Saudi Pro League Multi-Cam OB-VAN Broadcast Deployment
+              </h4>
+              <div className="text-xs text-text-secondary mt-0.5">
+                Mobile Unit 01 Dispatch • EVS Live Replay &amp; AI Viral Syndication
+              </div>
+            </div>
+
+            <div className="text-left md:text-right pt-2 md:pt-0 border-t border-white/5 md:border-none w-full md:w-auto">
+              <div className="text-xs font-mono text-text-muted">Status</div>
+              <div className="text-xs sm:text-sm font-bold text-brand-gold">Board Review Stage</div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

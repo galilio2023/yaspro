@@ -64,14 +64,9 @@ export function GearCartDrawer({
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Automatically close breakdown modal when cart becomes empty
   const [prevItemsCount, setPrevItemsCount] = useState(effectiveItems.length);
   if (effectiveItems.length !== prevItemsCount) {
     setPrevItemsCount(effectiveItems.length);
-    if (effectiveItems.length === 0 && isOpen) {
-      setLocalOpen(false);
-      cartContext.closeCart();
-    }
   }
 
   const handleClose = useCallback(() => {
@@ -80,7 +75,7 @@ export function GearCartDrawer({
   }, [cartContext]);
 
   useFocusTrap({
-    isOpen: isOpen && effectiveItems.length > 0,
+    isOpen: isOpen,
     onClose: handleClose,
     containerRef: panelRef,
     initialFocusRef: closeButtonRef,
@@ -88,13 +83,13 @@ export function GearCartDrawer({
 
   // Lock body scroll when breakdown modal is open
   useEffect(() => {
-    if (!isOpen || effectiveItems.length === 0) return;
+    if (!isOpen) return;
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = originalOverflow || "";
     };
-  }, [isOpen, effectiveItems.length]);
+  }, [isOpen]);
 
   // Signal to global floating widgets (e.g. WhatsApp concierge) that bottom cart bar is active
   useEffect(() => {
@@ -108,7 +103,7 @@ export function GearCartDrawer({
     };
   }, [effectiveItems.length]);
 
-  if (effectiveItems.length === 0 && !isCheckoutOpen) return null;
+  if (effectiveItems.length === 0 && !isOpen && !isCheckoutOpen) return null;
 
   // Calculation — only destructure what is rendered in the UI
   const { grandTotal, totalDeposit } =
@@ -224,10 +219,22 @@ export function GearCartDrawer({
                 </div>
                 <div>
                   <h3 id="rental-cart-title" className="text-white font-bold text-base font-display">
-                    {isArabic ? "تفاصيل باقة استئجار المعدات" : "Rental Package Breakdown"}
+                    {effectiveItems.length === 0
+                      ? isArabic
+                        ? "سلة استئجار المعدات"
+                        : "Cinema Gear Cart"
+                      : isArabic
+                      ? "تفاصيل باقة استئجار المعدات"
+                      : "Rental Package Breakdown"}
                   </h3>
                   <p className="text-xs text-text-muted">
-                    {isArabic ? "مركز إنتاج دبي • تقدير فوري للتكلفة" : "Dubai Production Hub • Instant Quote Estimate"}
+                    {effectiveItems.length === 0
+                      ? isArabic
+                        ? "مركز إنتاج دبي • مستودع المعدات"
+                        : "Dubai Production Hub • Gear Vault"
+                      : isArabic
+                      ? "مركز إنتاج دبي • تقدير فوري للتكلفة"
+                      : "Dubai Production Hub • Instant Quote Estimate"}
                   </p>
                 </div>
               </div>
@@ -237,12 +244,36 @@ export function GearCartDrawer({
                 type="button"
                 onClick={handleClose}
                 className="size-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple shrink-0"
-                aria-label={isArabic ? "إغلاق التفاصيل" : "Close cart breakdown"}
+                aria-label={isArabic ? "إغلاق السلة" : "Close cart"}
               >
                 <X size={16} />
               </button>
             </div>
 
+            {effectiveItems.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                <div className="size-16 rounded-2xl bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center text-brand-purple-light mb-4">
+                  <ShoppingBag size={32} />
+                </div>
+                <h4 className="text-white font-bold text-base mb-1.5 font-display">
+                  {isArabic ? "سلة المعدات فارغة" : "Your Cinema Gear Cart is Empty"}
+                </h4>
+                <p className="text-xs text-text-muted max-w-[280px] mb-6 leading-relaxed">
+                  {isArabic
+                    ? "تصفح مستودع كاميرات السينما والعدسات والإضاءة وأضف المعدات لحجزها فوراً لمشروعك القادم."
+                    : "Explore our Dubai cinema cameras, anamorphic lenses, lighting packages, and sound stages to build your rental kit."}
+                </p>
+                <a
+                  href="/shop"
+                  onClick={handleClose}
+                  className="px-5 py-2.5 rounded-xl font-semibold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-purple-light flex items-center gap-2 shadow-lg shadow-brand-purple/25 hover:opacity-90 transition-opacity cursor-pointer"
+                >
+                  <span>{isArabic ? "استكشاف كتالوج المعدات" : "Explore Gear Catalog"}</span>
+                  <ArrowRight size={14} className="rtl:rotate-180" />
+                </a>
+              </div>
+            ) : (
+              <>
             {/* Scrollable Item List */}
             <div className="flex-1 overflow-y-auto py-4 space-y-3">
               <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">
@@ -455,6 +486,8 @@ export function GearCartDrawer({
                 </button>
               </div>
             </div>
+            </>
+            )}
           </div>
         </div>,
         document.body

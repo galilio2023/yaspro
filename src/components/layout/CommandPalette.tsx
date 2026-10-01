@@ -21,6 +21,8 @@ import {
   Layers,
   LayoutDashboard,
   ShoppingBag,
+  LogOut,
+  MessageSquare,
 } from "lucide-react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -247,6 +249,23 @@ export function CommandPalette() {
         href: "/admin/studios",
         keywords: "stages rates cyc acoustic virtual production",
       },
+      {
+        id: "admin-broadcast",
+        title: "Admin CMS: Broadcast & OB Van Edge Telemetry",
+        category: "Admin CMS",
+        icon: Radio,
+        href: "/admin/broadcast",
+        keywords: "broadcast ob van telemetry edge starlink genlock",
+        badge: "Live",
+      },
+      {
+        id: "admin-inquiries",
+        title: "Admin CMS: Inquiries & Client Leads Triage",
+        category: "Admin CMS",
+        icon: MessageSquare,
+        href: "/admin/inquiries",
+        keywords: "inquiries leads contact messages triage quotes",
+      },
 
       // Quick Actions
       {
@@ -266,8 +285,34 @@ export function CommandPalette() {
         keywords: "language arabic english ترجمة لغة",
         badge: isArabic ? "EN" : "العربية",
       },
+      {
+        id: "action-whatsapp",
+        title: isArabic ? "محادثة الدعم الفني عبر واتساب (+971 55 401 0465)" : "WhatsApp Concierge Support Hotline",
+        category: "Quick Actions",
+        icon: PhoneCall,
+        action: () => window.open("https://wa.me/971554010465", "_blank"),
+        keywords: "whatsapp support concierge phone hotline call chat",
+        badge: "24/7",
+      },
+      {
+        id: "action-signout",
+        title: isArabic ? "تسجيل الخروج من الحساب" : "Sign Out of Account",
+        category: "Quick Actions",
+        icon: LogOut,
+        action: async () => {
+          try {
+            const { signOut } = await import("@/lib/auth-client");
+            await signOut();
+          } catch {
+            // ignore network signout failure
+          }
+          router.push("/login");
+          router.refresh();
+        },
+        keywords: "sign out logout exit تسجيل خروج",
+      },
     ],
-    [isArabic, toggleLanguage]
+    [isArabic, toggleLanguage, router]
   );
 
   const filtered = useMemo(() => {
