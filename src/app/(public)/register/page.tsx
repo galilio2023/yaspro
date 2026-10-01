@@ -53,7 +53,7 @@ export default function RegisterPage() {
       });
 
       if (res.error) {
-        // If user already exists (e.g. from prior guest booking without password), attempt automatic claim
+        // Existing guest profiles can only be claimed with verified email ownership.
         const isExistingUser =
           res.error.message?.toLowerCase().includes("exist") ||
           res.error.code === "USER_ALREADY_EXISTS";
@@ -65,15 +65,18 @@ export default function RegisterPage() {
             name: validData.name,
             phone: validData.phone,
             company: validData.company || "",
-            role: targetRole,
           });
 
           if (claimRes.success) {
-            await signIn.email({
+            const signInRes = await signIn.email({
               email: validData.email,
               password: validData.password,
             });
-            if (targetRole === "enterprise") {
+            if (signInRes.error) {
+              setErrorMsg(signInRes.error.message || "Failed to sign in. Please try again.");
+              return;
+            }
+            if (claimRes.data?.role === "enterprise") {
               router.push("/enterprise/portal");
             } else {
               router.push("/portal");
@@ -87,7 +90,15 @@ export default function RegisterPage() {
           setErrorMsg(res.error.message || "Failed to create account.");
         }
       } else {
-        // Guarantee synchronization of additional profile fields and role into Neon PostgreSQL
+        // Establish the authenticated session before synchronizing profile fields.
+        const signInRes = await signIn.email({
+          email: validData.email,
+          password: validData.password,
+        });
+        if (signInRes.error) {
+          setErrorMsg(signInRes.error.message || "Account created, but sign-in failed. Please try signing in.");
+          return;
+        }
         const syncRes = await syncUserProfile({
           email: validData.email,
           name: validData.name,

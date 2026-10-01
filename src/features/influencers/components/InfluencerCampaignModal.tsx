@@ -181,7 +181,7 @@ export function InfluencerCampaignModal({
         ) : (
           <form onSubmit={handleSubmit} className="pt-5 space-y-4">
             {errorMessage && (
-              <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+              <div role="alert" className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
                 <AlertCircle size={15} className="shrink-0 text-rose-400" />
                 <span>{errorMessage}</span>
               </div>

@@ -462,6 +462,9 @@ export async function syncUserProfile(input: {
     });
 
     const targetUserId = session?.user?.id;
+    if (!targetUserId) {
+      return { success: false, message: "Unauthorized: Active session required." };
+    }
     const name = input.name?.trim();
     if (name !== undefined && !name) {
       return { success: false, message: "Name cannot be empty." };
@@ -478,30 +481,10 @@ export async function syncUserProfile(input: {
         updateData.role = input.role;
       }
 
-      if (targetUserId) {
-        await db
-          .update(users)
-          .set(updateData)
-          .where(eq(users.id, targetUserId));
-      } else {
-        // Fallback for immediate post-signup sync before session headers settle:
-        if (input.email) {
-          const matched = await db.query.users.findFirst({
-            where: eq(users.email, input.email.toLowerCase().trim()),
-          });
-          if (matched && Date.now() - new Date(matched.createdAt).getTime() < 120_000) {
-            await db
-              .update(users)
-              .set(updateData)
-              .where(eq(users.id, matched.id));
-            revalidatePath("/portal/settings");
-            revalidatePath("/portal");
-            revalidatePath("/enterprise/portal");
-            return { success: true, message: "Profile information synchronized in database." };
-          }
-        }
-        return { success: false, message: "Unauthorized: Active session required." };
-      }
+      await db
+        .update(users)
+        .set(updateData)
+        .where(eq(users.id, targetUserId));
     }
     revalidatePath("/portal/settings");
     revalidatePath("/portal");
@@ -523,31 +506,36 @@ export async function claimGuestAccount(input: {
   phone?: string;
   company?: string;
   role?: "client" | "enterprise";
-}): Promise<ActionResponse<{ claimed: boolean }>> {
+}): Promise<ActionResponse<{ claimed: boolean; role: string }>> {
   try {
     const trimmedEmail = input.email.toLowerCase().trim();
     if (!trimmedEmail || !input.password || input.password.length < 8) {
       return { success: false, message: "A valid email and password (minimum 8 characters) are required." };
     }
 
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user?.emailVerified || session.user.email.toLowerCase().trim() !== trimmedEmail) {
+      return { success: false, message: "Verified email ownership is required to claim a guest account. Please contact support for account recovery." };
+    }
+
     if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
-      return { success: true, message: "Account verified." };
+      return { success: false, message: "Account recovery is unavailable. Please try again later." };
     }
 
     const existingUser = await db.query.users.findFirst({
       where: eq(users.email, trimmedEmail),
     });
 
-    if (!existingUser) {
-      return { success: false, message: "No prior profile found for this email." };
+    // Guest booking profiles use server-generated usr_ IDs. Require the verified
+    // session to own that exact profile; an email match alone is not authority.
+    if (!existingUser || existingUser.id !== session.user.id ||
+        !existingUser.emailVerified || !/^usr_\d+_[a-z0-9]+$/.test(existingUser.id)) {
+      return { success: false, message: "No verified guest profile is available to claim." };
     }
 
-    // Check if account credentials already exist
+    // Any linked provider makes this an existing member, including OAuth accounts.
     const existingAccount = await db.query.accounts.findFirst({
-      where: and(
-        eq(accounts.userId, existingUser.id),
-        eq(accounts.providerId, "credential")
-      ),
+      where: eq(accounts.userId, existingUser.id),
     });
 
     if (existingAccount) {
@@ -571,14 +559,13 @@ export async function claimGuestAccount(input: {
       updatedAt: new Date(),
     });
 
-    // Update user profile fields & role
+    // Update profile fields while preserving the existing role.
     await db
       .update(users)
       .set({
         name: input.name.trim() || existingUser.name,
         phone: input.phone?.trim() || existingUser.phone,
         company: input.company?.trim() || existingUser.company,
-        role: input.role || "client",
         updatedAt: new Date(),
       })
       .where(eq(users.id, existingUser.id));
@@ -587,7 +574,7 @@ export async function claimGuestAccount(input: {
     return {
       success: true,
       message: "Guest reservations successfully claimed and converted to a permanent member account.",
-      data: { claimed: true },
+      data: { claimed: true, role: existingUser.role },
     };
   } catch (err) {
     console.error("claimGuestAccount error:", err);

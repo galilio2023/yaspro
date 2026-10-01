@@ -21,6 +21,7 @@ import {
   Layers,
   LayoutDashboard,
 } from "lucide-react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface PaletteCommand {
@@ -42,6 +43,14 @@ export function CommandPalette() {
   const { toggleLanguage, isArabic } = useLanguage();
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap({
+    isOpen,
+    onClose: () => setIsOpen(false),
+    containerRef: panelRef,
+    initialFocusRef: inputRef,
+  });
 
   // Keyboard shortcut listener
   useEffect(() => {
@@ -55,8 +64,6 @@ export function CommandPalette() {
           }
           return !prev;
         });
-      } else if (e.key === "Escape" && isOpen) {
-        setIsOpen(false);
       }
     };
 
@@ -72,14 +79,7 @@ export function CommandPalette() {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("open-command-palette", handleCustomTrigger);
     };
-  }, [isOpen]);
-
-  // Focus input when opened
-  useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }
-  }, [isOpen]);
+  }, []);
 
   const COMMANDS: PaletteCommand[] = useMemo(
     () => [
@@ -305,6 +305,8 @@ export function CommandPalette() {
       aria-label="Universal Command Palette"
     >
       <div
+        ref={panelRef}
+        tabIndex={-1}
         className="w-full max-w-xl bg-slate-900 border border-purple-500/30 rounded-2xl sm:rounded-3xl shadow-2xl shadow-purple-900/30 overflow-hidden flex flex-col max-h-[75vh]"
         onClick={(e) => e.stopPropagation()}
       >
@@ -328,6 +330,7 @@ export function CommandPalette() {
           </kbd>
           <button
             onClick={() => setIsOpen(false)}
+            aria-label="Close command palette"
             className="p-1 rounded-lg text-slate-400 hover:text-white sm:hidden"
           >
             <X size={16} />

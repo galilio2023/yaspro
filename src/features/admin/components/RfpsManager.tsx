@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import { FileSpreadsheet, MapPin, Building, Eye, X, Mail, Phone } from "lucide-react";
+import React, { useState, useRef } from "react";
+import { FileSpreadsheet, MapPin, Building, Eye, Mail, Phone } from "lucide-react";
 import { updateEnterpriseRfpStatus } from "@/lib/actions/bookings-rfp-operations";
 import type { EnterpriseRfp } from "@/db/schema";
 import { DataTable, DataTableHeader, DataTableBody, DataTableRow, DataTableEmpty } from "@/components/ui/data-table";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { StatusBadge, MawthooqBadge } from "@/components/ui/status-badge";
+import { Dialog } from "@/components/ui/dialog";
 import { usePagination } from "@/hooks/usePagination";
 
 interface RfpsManagerProps {
@@ -18,20 +19,26 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [inspectRfp, setInspectRfp] = useState<EnterpriseRfp | null>(null);
 
+  const updatePending = useRef(false);
+
   const pagination = usePagination(rfpList, 20);
 
   const handleStatusChange = async (id: string, newStatus: string) => {
+    if (updatePending.current) return;
+    updatePending.current = true;
     setUpdatingId(id);
-    const res = await updateEnterpriseRfpStatus(id, newStatus);
-    if (res.success) {
-      setRfpList((prev) =>
-        prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
-      );
-      if (inspectRfp && inspectRfp.id === id) {
-        setInspectRfp((prev) => (prev ? { ...prev, status: newStatus } : null));
+    try {
+      const res = await updateEnterpriseRfpStatus(id, newStatus);
+      if (res.success) {
+        setRfpList((prev) =>
+          prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
+        );
+        setInspectRfp((prev) => prev?.id === id ? { ...prev, status: newStatus } : prev);
       }
+    } finally {
+      updatePending.current = false;
+      setUpdatingId(null);
     }
-    setUpdatingId(null);
   };
 
   return (
@@ -104,14 +111,14 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
                       <span>Inspect</span>
                     </button>
                     <button
-                      disabled={updatingId === rfp.id}
+                      disabled={updatingId !== null}
                       onClick={() => handleStatusChange(rfp.id, "approved")}
                       className="px-2 py-1 rounded bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
                     >
                       Approve
                     </button>
                     <button
-                      disabled={updatingId === rfp.id}
+                      disabled={updatingId !== null}
                       onClick={() => handleStatusChange(rfp.id, "sla_active")}
                       className="px-2 py-1 rounded bg-brand-teal/20 hover:bg-brand-teal/30 border border-brand-teal/30 text-brand-teal-light text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
                     >
@@ -138,19 +145,16 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
 
       {/* Enterprise RFP Inspection Modal */}
       {inspectRfp && (
-        <div
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setInspectRfp(null)}
+        <Dialog
+          isOpen={Boolean(inspectRfp)}
+          onClose={() => setInspectRfp(null)}
+          title={`RFP ${inspectRfp.referenceCode}`}
+          maxWidth="2xl"
         >
-          <div
-            className="relative w-full max-w-2xl bg-slate-900 border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
             {/* Header */}
             <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-bold text-white font-mono">{inspectRfp.referenceCode}</span>
                   <StatusBadge status={inspectRfp.status} />
                   {inspectRfp.requiresMawthooqCompliance && <MawthooqBadge />}
                 </div>
@@ -158,12 +162,7 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
                   Submitted {new Date(inspectRfp.createdAt).toLocaleString()}
                 </p>
               </div>
-              <button
-                onClick={() => setInspectRfp(null)}
-                className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer"
-              >
-                <X size={18} />
-              </button>
+
             </div>
 
             {/* Content Details */}
@@ -240,8 +239,10 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
 
               {/* Quick Status Update */}
               <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-400">Change Tender Phase:</span>
+                <label htmlFor="rfp-phase" className="text-xs font-semibold text-slate-400">Change Tender Phase:</label>
                 <select
+                  id="rfp-phase"
+                  disabled={updatingId !== null}
                   value={inspectRfp.status}
                   onChange={(e) => handleStatusChange(inspectRfp.id, e.target.value)}
                   className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/20 text-white text-xs font-medium cursor-pointer focus:outline-none focus:border-purple-500"
@@ -254,8 +255,7 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
                 </select>
               </div>
             </div>
-          </div>
-        </div>
+        </Dialog>
       )}
     </div>
   );

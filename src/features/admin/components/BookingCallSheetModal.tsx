@@ -157,7 +157,7 @@ export function BookingCallSheetModal({
                 Stage Location &amp; Facility
               </span>
               <span className="font-bold text-purple-300 text-sm block">
-                {booking.studioName || "Soundstage A"}
+                {booking.studioName || "Unknown location"}
               </span>
               <p className="text-[11px] text-slate-400 mt-1">
                 Yas Pro Production Hub &bull; Dubai Studio City

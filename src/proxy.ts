@@ -32,7 +32,7 @@ export function proxy(request: NextRequest) {
   // ── 1. Optimistic auth redirect ──────────────────────────────────────────
   // Strip locale prefix (/ar or /en) so localized paths like /ar/admin or /en/portal
   // are properly matched against protected routes.
-  const normalizedPath = pathname.replace(/^\/(ar|en)/, "") || "/";
+  const normalizedPath = pathname.replace(/^\/(ar|en)(?=\/|$)/, "") || "/";
   const isProtected = AUTH_REQUIRED_ROUTES.some(
     (route) => normalizedPath === route || normalizedPath.startsWith(route + "/")
   );
@@ -50,7 +50,7 @@ export function proxy(request: NextRequest) {
 
   if (isArabicPath || isEnglishPath) {
     const locale = isArabicPath ? "ar" : "en";
-    const strippedPath = pathname.replace(/^\/(ar|en)/, "") || "/";
+    const strippedPath = pathname.replace(/^\/(ar|en)(?=\/|$)/, "") || "/";
     const url = request.nextUrl.clone();
     url.pathname = strippedPath;
 

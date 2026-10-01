@@ -151,9 +151,9 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                         {b.userEmail}
                       </span>
                     )}
-                    {b.userPhone && (
+                    {(b.userPhone || b.userCompany) && (
                       <span className="text-[10px] text-purple-400 font-mono flex items-center gap-1 mt-0.5">
-                        <span>{b.userPhone}</span>
+                        {b.userPhone && <span>{b.userPhone}</span>}
                         {b.userCompany && <span className="text-slate-500">({b.userCompany})</span>}
                       </span>
                     )}

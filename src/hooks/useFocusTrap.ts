@@ -38,21 +38,11 @@ export function useFocusTrap({
     // Capture currently focused element before trap activates
     triggerRef.current = document.activeElement as HTMLElement | null;
 
-    // Target initial focus
-    const focusTimer = setTimeout(() => {
-      if (initialFocusRef?.current) {
-        initialFocusRef.current.focus();
-      } else if (containerRef.current) {
-        const focusable = containerRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length > 0) {
-          focusable[0].focus();
-        } else {
-          containerRef.current.focus();
-        }
-      }
-    }, 50);
+    const getFocusable = () => Array.from(containerRef.current?.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]'
+    ) ?? []).filter((el) => el.tabIndex >= 0 && !el.matches(":disabled") && el.getClientRects().length > 0);
+
+    (initialFocusRef?.current ?? getFocusable()[0] ?? containerRef.current)?.focus();
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -62,38 +52,22 @@ export function useFocusTrap({
       }
 
       if (e.key === "Tab" && containerRef.current) {
-        const focusable = containerRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length === 0) return;
-
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        if (e.shiftKey) {
-          if (document.activeElement === first) {
-            e.preventDefault();
-            last.focus();
-          }
-        } else {
-          if (document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-          }
-        }
+        const focusable = getFocusable();
+        const index = focusable.indexOf(document.activeElement as HTMLElement);
+        const nextIndex = e.shiftKey
+          ? (index <= 0 ? focusable.length - 1 : index - 1)
+          : (index + 1) % focusable.length;
+        e.preventDefault();
+        (focusable[nextIndex] ?? containerRef.current).focus();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      clearTimeout(focusTimer);
       window.removeEventListener("keydown", handleKeyDown);
       if (autoRestoreFocus && triggerRef.current) {
-        const el = triggerRef.current;
-        requestAnimationFrame(() => {
-          el?.focus?.();
-        });
+        if (triggerRef.current.isConnected) triggerRef.current.focus();
       }
     };
   }, [isOpen, containerRef, initialFocusRef, autoRestoreFocus]);

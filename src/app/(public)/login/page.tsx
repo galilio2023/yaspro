@@ -11,7 +11,11 @@ import { useTranslations } from "next-intl";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl");
+  const requestedCallback = searchParams.get("callbackUrl");
+  const callbackUrl = requestedCallback?.startsWith("/") &&
+    !requestedCallback.startsWith("//") && !requestedCallback.startsWith("/\\") &&
+    !/[\u0000-\u001f\u007f]/.test(requestedCallback)
+    ? requestedCallback : null;
   const errorParam = searchParams.get("error");
 
   const t = useTranslations("auth.login");
