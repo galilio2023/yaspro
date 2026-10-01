@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X, Sparkles, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BrandLogo } from "./BrandLogo";
 import { MobileNavDrawer, NavLinkItem } from "./MobileNavDrawer";
@@ -89,6 +89,18 @@ export default function Navbar() {
           {/* ── Right: Action Strip ── */}
           <div className="flex items-center gap-2">
 
+            {/* Quick Command Palette Button */}
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent("open-command-palette"))}
+              type="button"
+              className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-slate-300 hover:text-white px-2.5 py-1.5 rounded-full border border-white/10 hover:border-purple-500/40 bg-white/5 hover:bg-purple-950/20 transition-all cursor-pointer"
+              title="Quick Search & Navigation (Ctrl+K / ⌘K)"
+              aria-label="Open command palette"
+            >
+              <Search size={12} className="text-purple-400" />
+              <kbd className="text-[9px] font-mono text-purple-300 opacity-80">⌘K</kbd>
+            </button>
+
             {/* Language Toggle */}
             <button
               onClick={toggleLanguage}
@@ -100,20 +112,32 @@ export default function Navbar() {
             </button>
 
             {/* Portal Link / User Status */}
-            <Link
-              href={session?.user ? "/portal" : "/login"}
-              className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-300/90 hover:text-white px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-all"
-            >
-              <span
-                className={cn(
-                  "size-1.5 rounded-full",
-                  session?.user ? "bg-emerald-400 animate-pulse" : "bg-brand-cyan/80"
-                )}
-              />
-              <span className="max-w-[110px] truncate">
-                {session?.user ? session.user.name.split(" ")[0] : t("nav.portal")}
-              </span>
-            </Link>
+            {(() => {
+              const role = (session?.user as { role?: string } | undefined)?.role;
+              const portalHref = session?.user
+                ? role === "admin"
+                  ? "/admin"
+                  : role === "enterprise"
+                  ? "/enterprise/portal"
+                  : "/portal"
+                : "/login";
+              return (
+                <Link
+                  href={portalHref}
+                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-300/90 hover:text-white px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-all"
+                >
+                  <span
+                    className={cn(
+                      "size-1.5 rounded-full",
+                      session?.user ? "bg-emerald-400 animate-pulse" : "bg-brand-cyan/80"
+                    )}
+                  />
+                  <span className="max-w-[110px] truncate">
+                    {session?.user ? session.user.name.split(" ")[0] : t("nav.portal")}
+                  </span>
+                </Link>
+              );
+            })()}
 
             {/* Primary CTA: Book Studio */}
             <Link

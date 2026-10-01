@@ -6,7 +6,6 @@ import {
   Search,
   Shield,
   ShieldCheck,
-  UserCheck,
   Building,
   Mail,
   Trash2,
@@ -29,7 +28,7 @@ interface UsersManagerProps {
 export function UsersManager({ initialUsers }: UsersManagerProps) {
   const [usersList, setUsersList] = useState<User[]>(initialUsers);
   const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState<"all" | "client" | "admin">("all");
+  const [roleFilter, setRoleFilter] = useState<"all" | "client" | "enterprise" | "admin">("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3000);
@@ -48,10 +47,11 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
   const pagination = usePagination(filteredUsers, 20);
 
   const totalClients = usersList.filter((u) => u.role === "client").length;
+  const totalEnterprise = usersList.filter((u) => u.role === "enterprise").length;
   const totalAdmins = usersList.filter((u) => u.role === "admin").length;
 
-  const handleToggleRole = async (user: User) => {
-    const newRole = user.role === "admin" ? "client" : "admin";
+  const handleRoleChange = async (user: User, newRole: "client" | "enterprise" | "admin") => {
+    if (user.role === newRole) return;
     if (!confirm(`Are you sure you want to change ${user.name}'s role to "${newRole}"?`)) return;
     setUpdatingId(user.id);
     const res = await updateUserRole(user.id, newRole);
@@ -98,11 +98,12 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: "Total Accounts", icon: <Users size={14} className="text-purple-400" />, value: usersList.length },
           { label: "Production Clients", icon: <Building size={14} className="text-cyan-400" />, value: totalClients },
-          { label: "System Administrators", icon: <ShieldCheck size={14} className="text-emerald-400" />, value: totalAdmins },
+          { label: "Enterprise Vaults", icon: <Shield size={14} className="text-amber-400" />, value: totalEnterprise },
+          { label: "System Admins", icon: <ShieldCheck size={14} className="text-emerald-400" />, value: totalAdmins },
         ].map(({ label, icon, value }) => (
           <div key={label} className="p-4 rounded-2xl bg-white/[0.02] border border-white/10">
             <span className="text-xs text-slate-400 flex items-center gap-1.5">{icon} {label}</span>
@@ -123,8 +124,8 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
           />
           <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
         </div>
-        <div className="flex items-center gap-2 self-end sm:self-auto">
-          {(["all", "client", "admin"] as const).map((tab) => (
+        <div className="flex items-center gap-1.5 self-end sm:self-auto flex-wrap">
+          {(["all", "client", "enterprise", "admin"] as const).map((tab) => (
             <button
               key={tab}
               type="button"
@@ -135,7 +136,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                   : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
               }`}
             >
-              {tab === "all" ? "All Users" : `${tab}s`}
+              {tab === "all" ? "All Users" : tab === "enterprise" ? "Enterprise" : `${tab}s`}
             </button>
           ))}
         </div>
@@ -205,21 +206,29 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                     <span className="text-slate-600 italic">Not provided</span>
                   )}
                 </td>
-                {/* Role Badge */}
+                {/* Role Selector */}
                 <td className="py-3.5 px-4">
-                  <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
+                  <select
+                    value={user.role}
+                    disabled={updatingId === user.id}
+                    onChange={(e) =>
+                      handleRoleChange(
+                        user,
+                        e.target.value as "client" | "enterprise" | "admin"
+                      )
+                    }
+                    className={`text-[10px] font-semibold px-2 py-1 rounded-lg border focus:outline-none cursor-pointer transition-colors ${
                       user.role === "admin"
                         ? "bg-purple-500/20 text-purple-300 border-purple-500/30"
+                        : user.role === "enterprise"
+                        ? "bg-amber-500/20 text-amber-300 border-amber-500/30"
                         : "bg-blue-500/15 text-blue-300 border-blue-500/20"
                     }`}
                   >
-                    {user.role === "admin" ? (
-                      <><Shield size={10} className="text-purple-400" /> Administrator</>
-                    ) : (
-                      <><UserCheck size={10} className="text-blue-400" /> Client</>
-                    )}
-                  </span>
+                    <option value="client" className="bg-slate-900 text-white">Client</option>
+                    <option value="enterprise" className="bg-slate-900 text-white">Enterprise Partner</option>
+                    <option value="admin" className="bg-slate-900 text-white">System Admin</option>
+                  </select>
                 </td>
                 {/* Registered Date */}
                 <td className="py-3.5 px-4 text-slate-400 font-mono text-[11px]">
@@ -235,14 +244,6 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                 {/* Actions */}
                 <td className="py-3.5 px-4 text-right">
                   <div className="flex items-center justify-end gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => handleToggleRole(user)}
-                      disabled={updatingId === user.id}
-                      className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors cursor-pointer text-[11px] disabled:opacity-50"
-                    >
-                      {user.role === "admin" ? "Demote" : "Make Admin"}
-                    </button>
                     <button
                       type="button"
                       onClick={() => handleDeleteUser(user)}

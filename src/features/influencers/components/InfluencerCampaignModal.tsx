@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { X, Sparkles, CheckCircle2, Send, Building, DollarSign, Calendar } from "lucide-react";
+import { X, Sparkles, CheckCircle2, Send, Building, DollarSign, Calendar, AlertCircle } from "lucide-react";
 import { submitInfluencerCampaignRequest } from "@/lib/actions";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { InfluencerItem } from "../types";
@@ -45,6 +45,7 @@ export function InfluencerCampaignModal({
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -82,9 +83,10 @@ export function InfluencerCampaignModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage(null);
 
     try {
-      await submitInfluencerCampaignRequest({
+      const res = await submitInfluencerCampaignRequest({
         creatorId: creator.id,
         creatorName: creator.name,
         brandName: formData.brandName,
@@ -97,10 +99,14 @@ export function InfluencerCampaignModal({
         message: formData.message,
       });
 
-      setIsSuccess(true);
+      if (res.success) {
+        setIsSuccess(true);
+      } else {
+        setErrorMessage(res.message || "Failed to submit collaboration brief. Please verify your details.");
+      }
     } catch (err) {
-      console.error(err);
-      setIsSuccess(true); // show confirmation
+      console.error("submitInfluencerCampaignRequest error:", err);
+      setErrorMessage((err as Error).message || "An unexpected error occurred while transmitting your request.");
     } finally {
       setIsSubmitting(false);
     }
@@ -174,6 +180,12 @@ export function InfluencerCampaignModal({
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="pt-5 space-y-4">
+            {errorMessage && (
+              <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+                <AlertCircle size={15} className="shrink-0 text-rose-400" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Brand Name */}
               <div>

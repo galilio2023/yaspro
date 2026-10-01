@@ -1,20 +1,29 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { signIn } from "@/lib/auth-client";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn, authClient } from "@/lib/auth-client";
 import { Lock, Mail, ArrowRight, AlertCircle, ShieldCheck } from "lucide-react";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { useTranslations } from "next-intl";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+  const errorParam = searchParams.get("error");
+
   const t = useTranslations("auth.login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(() => {
+    if (errorParam === "admin_required") {
+      return "Administrative clearance is required to access that area. Please sign in with an authorized account or visit your Client Portal.";
+    }
+    return null;
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +39,27 @@ export default function LoginPage() {
       if (res.error) {
         setErrorMsg(res.error.message || "Failed to sign in. Please check credentials.");
       } else {
-        router.push("/admin");
+        // Query user session to establish genuine role
+        const sessionRes = await authClient.getSession();
+        const role = (sessionRes?.data?.user as { role?: string } | undefined)?.role;
+
+        if (callbackUrl) {
+          // Prevent non-admins from bouncing on /admin callback
+          if (callbackUrl.startsWith("/admin") && role !== "admin") {
+            router.push(role === "enterprise" ? "/enterprise/portal" : "/portal");
+          } else {
+            router.push(callbackUrl);
+          }
+        } else {
+          // Role-aware destination
+          if (role === "admin") {
+            router.push("/admin");
+          } else if (role === "enterprise") {
+            router.push("/enterprise/portal");
+          } else {
+            router.push("/portal");
+          }
+        }
         router.refresh();
       }
     } catch (err) {
@@ -121,5 +150,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-[80vh] flex items-center justify-center text-slate-400 text-xs">Loading secure login portal...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

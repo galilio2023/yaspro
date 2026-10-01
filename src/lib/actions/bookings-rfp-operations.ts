@@ -6,6 +6,8 @@ import { db } from "@/db";
 import {
   bookings,
   enterpriseRfps,
+  users,
+  studios,
   type Booking,
   type EnterpriseRfp,
 } from "@/db/schema";
@@ -13,17 +15,45 @@ import { eq, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { isDbAvailable, requireAdmin, type CmsResponse } from "./shared";
 
+export interface EnrichedBooking extends Booking {
+  userName?: string | null;
+  userEmail?: string | null;
+  userPhone?: string | null;
+  userCompany?: string | null;
+  studioName?: string | null;
+}
 
 /**
- * Retrieves all studio reservations from Neon PostgreSQL.
+ * Retrieves all studio reservations from Neon PostgreSQL joined with client contact details.
  *
  * @returns Array of booking records ordered by creation date.
  */
-export async function getCmsBookings(): Promise<Booking[]> {
+export async function getCmsBookings(): Promise<EnrichedBooking[]> {
   try {
     await requireAdmin();
     if (isDbAvailable()) {
-      return await db.select().from(bookings).orderBy(desc(bookings.createdAt));
+      const records = await db
+        .select({
+          booking: bookings,
+          userName: users.name,
+          userEmail: users.email,
+          userPhone: users.phone,
+          userCompany: users.company,
+          studioName: studios.name,
+        })
+        .from(bookings)
+        .leftJoin(users, eq(bookings.userId, users.id))
+        .leftJoin(studios, eq(bookings.studioId, studios.id))
+        .orderBy(desc(bookings.createdAt));
+
+      return records.map((r) => ({
+        ...r.booking,
+        userName: r.userName,
+        userEmail: r.userEmail,
+        userPhone: r.userPhone,
+        userCompany: r.userCompany,
+        studioName: r.studioName,
+      }));
     }
   } catch (e) {
     console.error("getCmsBookings error:", e);

@@ -1,11 +1,12 @@
 "use server";
 
 import { db } from "@/db";
-import { bookings, inquiries, users, studios, enterpriseRfps, type SessionType, type InquiryType } from "@/db/schema";
+import { bookings, inquiries, users, studios, enterpriseRfps, accounts, type SessionType, type InquiryType } from "@/db/schema";
 import { generateBookingReference } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { hashPassword } from "better-auth/crypto";
 import { eq, and, inArray } from "drizzle-orm";
 import { checkRateLimit, checkIdempotency, getClientIdentifier } from "@/lib/rate-limit";
 import { sendBookingConfirmationNotification, sendInquiryNotification } from "@/lib/notifications";
@@ -453,6 +454,7 @@ export async function syncUserProfile(input: {
   name?: string;
   phone?: string;
   company?: string;
+  role?: "client" | "enterprise";
 }): Promise<ActionResponse> {
   try {
     const session = await auth.api.getSession({
@@ -472,6 +474,9 @@ export async function syncUserProfile(input: {
       if (name !== undefined) updateData.name = name;
       if (input.phone !== undefined) updateData.phone = input.phone.trim() || null;
       if (input.company !== undefined) updateData.company = input.company.trim() || null;
+      if (input.role !== undefined && (input.role === "client" || input.role === "enterprise")) {
+        updateData.role = input.role;
+      }
 
       if (targetUserId) {
         await db
@@ -479,15 +484,114 @@ export async function syncUserProfile(input: {
           .set(updateData)
           .where(eq(users.id, targetUserId));
       } else {
+        // Fallback for immediate post-signup sync before session headers settle:
+        if (input.email) {
+          const matched = await db.query.users.findFirst({
+            where: eq(users.email, input.email.toLowerCase().trim()),
+          });
+          if (matched && Date.now() - new Date(matched.createdAt).getTime() < 120_000) {
+            await db
+              .update(users)
+              .set(updateData)
+              .where(eq(users.id, matched.id));
+            revalidatePath("/portal/settings");
+            revalidatePath("/portal");
+            revalidatePath("/enterprise/portal");
+            return { success: true, message: "Profile information synchronized in database." };
+          }
+        }
         return { success: false, message: "Unauthorized: Active session required." };
       }
     }
     revalidatePath("/portal/settings");
     revalidatePath("/portal");
+    revalidatePath("/enterprise/portal");
     return { success: true, message: "Profile information synchronized in database." };
   } catch (err) {
     console.error("syncUserProfile error:", err);
     return { success: false, message: "Failed to synchronize profile details." };
+  }
+}
+
+/**
+ * Resolves account creation collision for users who previously submitted a guest booking
+ */
+export async function claimGuestAccount(input: {
+  email: string;
+  password: string;
+  name: string;
+  phone?: string;
+  company?: string;
+  role?: "client" | "enterprise";
+}): Promise<ActionResponse<{ claimed: boolean }>> {
+  try {
+    const trimmedEmail = input.email.toLowerCase().trim();
+    if (!trimmedEmail || !input.password || input.password.length < 8) {
+      return { success: false, message: "A valid email and password (minimum 8 characters) are required." };
+    }
+
+    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
+      return { success: true, message: "Account verified." };
+    }
+
+    const existingUser = await db.query.users.findFirst({
+      where: eq(users.email, trimmedEmail),
+    });
+
+    if (!existingUser) {
+      return { success: false, message: "No prior profile found for this email." };
+    }
+
+    // Check if account credentials already exist
+    const existingAccount = await db.query.accounts.findFirst({
+      where: and(
+        eq(accounts.userId, existingUser.id),
+        eq(accounts.providerId, "credential")
+      ),
+    });
+
+    if (existingAccount) {
+      return {
+        success: false,
+        message: "An active account with this email already exists. Please sign in with your password.",
+      };
+    }
+
+    // Hash password and link credentials into accounts table
+    const hashedPassword = await hashPassword(input.password);
+    const accountId = `acc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
+    await db.insert(accounts).values({
+      id: accountId,
+      accountId: existingUser.id,
+      providerId: "credential",
+      userId: existingUser.id,
+      password: hashedPassword,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    // Update user profile fields & role
+    await db
+      .update(users)
+      .set({
+        name: input.name.trim() || existingUser.name,
+        phone: input.phone?.trim() || existingUser.phone,
+        company: input.company?.trim() || existingUser.company,
+        role: input.role || "client",
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, existingUser.id));
+
+    revalidatePath("/admin/users");
+    return {
+      success: true,
+      message: "Guest reservations successfully claimed and converted to a permanent member account.",
+      data: { claimed: true },
+    };
+  } catch (err) {
+    console.error("claimGuestAccount error:", err);
+    return { success: false, message: "Failed to claim account credentials." };
   }
 }
 

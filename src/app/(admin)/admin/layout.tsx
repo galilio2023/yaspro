@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { AdminMobileNav } from "@/components/admin/AdminMobileNav";
+import { CommandPalette } from "@/components/layout/CommandPalette";
 
 export const dynamic = "force-dynamic";
 
@@ -129,6 +130,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-x-hidden p-4 sm:p-8 lg:p-10">{children}</main>
+      <CommandPalette />
     </div>
   );
 }

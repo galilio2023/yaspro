@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signUp } from "@/lib/auth-client";
-import { syncUserProfile } from "@/lib/actions";
+import { signUp, signIn } from "@/lib/auth-client";
+import { syncUserProfile, claimGuestAccount } from "@/lib/actions";
 import { registerUserSchema } from "@/lib/validations";
 import { User, Mail, Lock, Building, Phone, ArrowRight, AlertCircle, ShieldCheck } from "lucide-react";
 import { BrandLogo } from "@/components/layout/BrandLogo";
@@ -42,6 +42,7 @@ export default function RegisterPage() {
     }
 
     const validData = parseResult.data;
+    const targetRole = validData.accountType === "enterprise" ? "enterprise" : "client";
     setIsLoading(true);
 
     try {
@@ -52,14 +53,47 @@ export default function RegisterPage() {
       });
 
       if (res.error) {
-        setErrorMsg(res.error.message || "Failed to create account.");
+        // If user already exists (e.g. from prior guest booking without password), attempt automatic claim
+        const isExistingUser =
+          res.error.message?.toLowerCase().includes("exist") ||
+          res.error.code === "USER_ALREADY_EXISTS";
+
+        if (isExistingUser) {
+          const claimRes = await claimGuestAccount({
+            email: validData.email,
+            password: validData.password,
+            name: validData.name,
+            phone: validData.phone,
+            company: validData.company || "",
+            role: targetRole,
+          });
+
+          if (claimRes.success) {
+            await signIn.email({
+              email: validData.email,
+              password: validData.password,
+            });
+            if (targetRole === "enterprise") {
+              router.push("/enterprise/portal");
+            } else {
+              router.push("/portal");
+            }
+            router.refresh();
+            return;
+          } else {
+            setErrorMsg(claimRes.message || res.error.message || "Failed to create account.");
+          }
+        } else {
+          setErrorMsg(res.error.message || "Failed to create account.");
+        }
       } else {
-        // Guarantee synchronization of additional profile fields into Neon PostgreSQL
+        // Guarantee synchronization of additional profile fields and role into Neon PostgreSQL
         const syncRes = await syncUserProfile({
           email: validData.email,
           name: validData.name,
           phone: validData.phone,
           company: validData.company || "",
+          role: targetRole,
         });
 
         if (!syncRes.success) {
@@ -67,7 +101,11 @@ export default function RegisterPage() {
           return;
         }
 
-        router.push("/portal");
+        if (targetRole === "enterprise") {
+          router.push("/enterprise/portal");
+        } else {
+          router.push("/portal");
+        }
         router.refresh();
       }
     } catch (err) {
