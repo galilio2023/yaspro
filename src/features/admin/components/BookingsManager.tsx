@@ -5,8 +5,7 @@ import {
   CalendarCheck,
   FileText,
 } from "lucide-react";
-import { updateBookingStatus, updateBookingPaymentStatus } from "@/lib/actions/bookings-rfp-operations";
-import type { Booking } from "@/db/schema";
+import { updateBookingStatus, updateBookingPaymentStatus, type EnrichedBooking } from "@/lib/actions/bookings-rfp-operations";
 import { formatCurrency } from "@/lib/utils";
 import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { DataTable, DataTableHeader, DataTableBody, DataTableRow, DataTableEmpty } from "@/components/ui/data-table";
@@ -17,11 +16,11 @@ import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
 import { BookingCallSheetModal } from "./BookingCallSheetModal";
 
 interface BookingsManagerProps {
-  initialBookings: Booking[];
+  initialBookings: EnrichedBooking[];
 }
 
 export function BookingsManager({ initialBookings }: BookingsManagerProps) {
-  const [bookingList, setBookingList] = useState<Booking[]>(initialBookings);
+  const [bookingList, setBookingList] = useState<EnrichedBooking[]>(initialBookings);
   const [updatingIds, setUpdatingIds] = useState<Set<string>>(new Set());
   const [callSheetBookingId, setCallSheetBookingId] = useState<string | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -120,6 +119,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         <DataTableHeader>
           <tr>
             <th className="py-3 px-4">Reference</th>
+            <th className="py-3 px-4">Client &amp; Contact</th>
             <th className="py-3 px-4">Session &amp; Stage</th>
             <th className="py-3 px-4">Scheduled Date</th>
             <th className="py-3 px-4">Duration</th>
@@ -131,7 +131,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         </DataTableHeader>
         <DataTableBody>
           {bookingList.length === 0 ? (
-            <DataTableEmpty colSpan={8} message="No bookings logged yet in the database." />
+            <DataTableEmpty colSpan={9} message="No bookings logged yet in the database." />
           ) : (
             pagination.paginatedItems.map((b) => (
               <DataTableRow key={b.id}>
@@ -140,13 +140,42 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                   {b.referenceCode}
                 </td>
 
-                {/* Session Type */}
+                {/* Client & Contact */}
+                <td className="py-3.5 px-4">
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-white text-xs">
+                      {b.userName || "Direct Client"}
+                    </span>
+                    {b.userEmail && (
+                      <span className="text-[11px] text-slate-400 font-mono">
+                        {b.userEmail}
+                      </span>
+                    )}
+                    {(b.userPhone || b.userCompany) && (
+                      <span className="text-[10px] text-purple-400 font-mono flex items-center gap-1 mt-0.5">
+                        {b.userPhone && <span>{b.userPhone}</span>}
+                        {b.userCompany && <span className="text-slate-500">({b.userCompany})</span>}
+                      </span>
+                    )}
+                  </div>
+                </td>
+
+                {/* Session Type & Studio */}
                 <td className="py-3.5 px-4 capitalize text-slate-300">
                   <span className="font-semibold text-white block">
-                    {b.sessionType.replace("_", " ")}
+                    {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
+                      ? "Cinema Gear Rental"
+                      : b.sessionType.replace("_", " ")}
+                  </span>
+                  <span className="text-[11px] text-purple-300 font-medium block">
+                    {b.studioName || (!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
+                      ? `${b.equipmentIds.length} Equipment Item${b.equipmentIds.length > 1 ? "s" : ""}`
+                      : "Soundstage")}
                   </span>
                   <span className="text-[10px] text-slate-400">
-                    Headcount: {b.headcount} pax
+                    {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
+                      ? b.propsNotes || "Dispatch & Delivery"
+                      : `Headcount: ${b.headcount} pax`}
                   </span>
                 </td>
 
@@ -161,7 +190,9 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
 
                 {/* Duration */}
                 <td className="py-3.5 px-4 text-slate-300 font-mono">
-                  {b.durationHours} hrs
+                  {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
+                    ? `${Math.max(1, Math.round(b.durationHours / 24))} Days`
+                    : `${b.durationHours} hrs`}
                 </td>
 
                 {/* Amount */}

@@ -138,3 +138,70 @@ test('billing summaries remain complete when there are no deposit-paid bookings'
   assert.match(markup, /Total Paid/);
   assert.doesNotMatch(markup, /summaries are incomplete|Known Paid|Known Outstanding/);
 });
+
+function claimHarness({ sessionUser = null, user, account = null } = {}) {
+  const writes = [];
+  const queries = [];
+  const { claimGuestAccount, syncUserProfile } = loadSource('src/lib/actions.ts', {
+    ...authMocks(sessionUser),
+    '@/db': { db: {
+      query: {
+        users: { findFirst: async () => { queries.push('user'); return user; } },
+        accounts: { findFirst: async ({ where }) => {
+          queries.push(where);
+          return account;
+        } },
+      },
+      insert: () => ({ values: async (value) => writes.push(value) }),
+      update: () => ({ set: (value) => ({ where: async (where) => writes.push({ value, where }) }) }),
+    } },
+    '@/db/schema': { users: { id: 'id', email: 'email' }, accounts: { userId: 'userId', providerId: 'providerId' } },
+    'drizzle-orm': { eq: (field, value) => ({ field, value }) },
+    'better-auth/crypto': { hashPassword: async () => 'hashed-password' },
+    'next/cache': { revalidatePath() {} },
+    '@/lib/utils': {}, '@/lib/rate-limit': {}, '@/lib/notifications': {},
+    './validations': {}, '@/features/booking/constants': {},
+  });
+  return { claimGuestAccount, syncUserProfile, writes, queries };
+}
+const guest = { id: 'usr_123456_abcd', email: 'guest@example.com', emailVerified: true, role: 'client', name: 'Guest' };
+const claimInput = { email: guest.email, password: 'new-password', name: 'Member', role: 'enterprise' };
+
+test('profile synchronization rejects anonymous requests without looking up recently created users', async () => {
+  const h = claimHarness({ user: { ...guest, createdAt: new Date() } });
+  assert.equal((await h.syncUserProfile({ email: guest.email, name: 'Attacker', role: 'enterprise' })).success, false);
+  assert.equal(h.queries.length, 0);
+  assert.equal(h.writes.length, 0);
+});
+
+test('claims require verified ownership of the exact guest profile', async () => {
+  for (const sessionUser of [null, { ...guest, emailVerified: false }, { ...guest, email: 'other@example.com' }, { ...guest, id: 'other' }]) {
+    const h = claimHarness({ sessionUser, user: guest });
+    assert.equal((await h.claimGuestAccount(claimInput)).success, false);
+    assert.equal(h.writes.length, 0);
+  }
+  for (const user of [{ ...guest, emailVerified: false }, { ...guest, id: 'registered-user' }]) {
+    const h = claimHarness({ sessionUser: { ...guest, id: user.id }, user });
+    assert.equal((await h.claimGuestAccount(claimInput)).success, false);
+    assert.equal(h.writes.length, 0);
+  }
+});
+
+test('claims reject any linked account, including OAuth-only members', async () => {
+  for (const providerId of ['credential', 'google']) {
+    const h = claimHarness({ sessionUser: guest, user: guest, account: { providerId } });
+    assert.equal((await h.claimGuestAccount(claimInput)).success, false);
+    assert.equal(h.queries[1].field, 'userId', 'account lookup must not filter out OAuth providers');
+    assert.equal(h.writes.length, 0);
+  }
+});
+
+test('a verified guest with no accounts can attach credentials without changing role', async () => {
+  const h = claimHarness({ sessionUser: guest, user: guest });
+  const result = await h.claimGuestAccount(claimInput);
+  assert.equal(result.success, true);
+  assert.equal(result.data.role, 'client');
+  assert.equal(h.writes[0].userId, guest.id);
+  assert.equal(h.writes[0].password, 'hashed-password');
+  assert.equal(Object.hasOwn(h.writes[1].value, 'role'), false);
+});

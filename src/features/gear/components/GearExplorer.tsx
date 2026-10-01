@@ -8,13 +8,13 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
 import { CategoryFilterBar, CategoryOption } from "@/components/ui/category-filter";
 import { GearCard } from "./GearCard";
-import { GearCartDrawer } from "./GearCartDrawer";
 import { RentalDateSelector } from "./RentalDateSelector";
 import { GEAR_DATA, GEAR_CATEGORIES } from "../data";
-import { GearCategory, GearItem, RentalDateRange } from "../types";
+import { GearCategory, GearItem } from "../types";
 import type { MatchedGearPackage } from "@/lib/ai/ai-kit-matcher";
 import { formatCurrency } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useCart } from "@/components/providers/CartProvider";
 
 export interface GearExplorerProps {
   initialGear?: readonly GearItem[];
@@ -41,7 +41,13 @@ export function GearExplorer({
   const selectedCategory = userCategory ?? validUrlCategory ?? "all";
   const setSelectedCategory = (cat: GearCategory) => setUserCategory(cat);
 
-  const [cart, setCart] = useState<string[]>([]);
+  const {
+    isInCart,
+    toggleItem,
+    addItem,
+    dateRange,
+    setDateRange,
+  } = useCart();
 
   // AI Kit Matcher state
   const [aiPrompt, setAiPrompt] = useState("");
@@ -75,21 +81,8 @@ export function GearExplorer({
 
   const handleAddAllToCart = () => {
     if (!matchedKit) return;
-    const kitIds = matchedKit.items.map((i) => i.item.id);
-    setCart((prev) => Array.from(new Set([...prev, ...kitIds])));
+    matchedKit.items.forEach((m) => addItem(m.item));
   };
-
-  // Default to 1-day shoot starting today
-  const [dateRange, setDateRange] = useState<RentalDateRange>(() => {
-    const today = new Date().toISOString().split("T")[0];
-    return {
-      pickupDate: today,
-      returnDate: today,
-      totalDays: 1,
-      billingMultiplier: 1,
-      discountPercentage: 0,
-    };
-  });
 
   const { isArabic } = useLanguage();
 
@@ -111,22 +104,9 @@ export function GearExplorer({
   }, [selectedCategory, initialGear]);
 
   const toggleCart = (id: string) => {
-    setCart((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+    const item = initialGear.find((g) => g.id === id) || GEAR_DATA.find((g) => g.id === id);
+    if (item) toggleItem(item);
   };
-
-  const removeFromCart = (id: string) => {
-    setCart((prev) => prev.filter((item) => item !== id));
-  };
-
-  const clearCart = () => {
-    setCart([]);
-  };
-
-  const selectedItems = useMemo(() => {
-    return GEAR_DATA.filter((g) => cart.includes(g.id));
-  }, [cart]);
 
   return (
     <div className="w-full">
@@ -319,7 +299,7 @@ export function GearExplorer({
             <StaggerItem as="li" key={item.id} className="h-full">
               <GearCard
                 item={item}
-                inCart={cart.includes(item.id)}
+                inCart={isInCart(item.id)}
                 onToggle={toggleCart}
               />
             </StaggerItem>
@@ -345,15 +325,6 @@ export function GearExplorer({
           }
         />
       )}
-
-      {/* 4. Floating Multi-Day Rental Cart Drawer */}
-      <GearCartDrawer
-        items={selectedItems}
-        dateRange={dateRange}
-        onRemoveItem={removeFromCart}
-        onAddItem={(item) => setCart((prev) => (prev.includes(item.id) ? prev : [...prev, item.id]))}
-        onClearCart={clearCart}
-      />
     </div>
   );
 }

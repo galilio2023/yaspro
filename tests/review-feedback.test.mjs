@@ -262,8 +262,22 @@ function gearModalFixture(submit, isArabic = false, globals = {}) {
     'lucide-react': new Proxy({}, { get: (_, key) => key }),
     '@/lib/utils': { formatCurrency: String, cn: (...classes) => classes.join(' ') },
     '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic }) },
-    '@/lib/actions/equipment-gear': { submitGearReservation: submit },
+    '@/lib/actions/equipment-gear': {
+      submitGearReservation: submit,
+      createGearBookingOrder: submit ? async (input) => {
+        const res = await submit(input);
+        return {
+          ...res,
+          data: res?.data ? { ...res.data, bookingId: 'b_test_123', totalAmount: 100 } : undefined,
+        };
+      } : undefined,
+    },
+    '@/lib/auth-client': { useSession: () => ({ data: null }) },
+    '@/features/booking/components/BookingPaymentModal': { BookingPaymentModal: () => null },
+    'next/link': ({ children, ...props }) => ({ type: 'a', props: { ...props, children } }),
   };
+  mocks['../lib/cart-pricing'] = loadSource('src/features/gear/lib/cart-pricing.ts', {});
+  mocks['@/hooks/useFocusTrap'] = loadSource('src/hooks/useFocusTrap.ts', mocks, globals);
   const { GearRentalModal } = loadSource('src/features/gear/components/GearRentalModal.tsx', mocks, {
     document: { body: {} }, ...globals,
   });
@@ -356,11 +370,15 @@ test('gear modal contains keyboard focus, handles changing controls, and restore
     removeEventListener: (event) => cardListeners.delete(event),
   });
   const fixture = gearModalFixture(async () => ({}), false, {
-    document, HTMLElement: Element, window: { addEventListener() {}, removeEventListener() {} },
+    document, HTMLElement: Element, window: {
+      addEventListener: (event, callback) => cardListeners.set(event, callback),
+      removeEventListener: (event) => cardListeners.delete(event),
+    },
   });
   nodes(fixture.render(), (node) => node.props.ref)[0].props.ref.current = card;
   fixture.harness.commit();
-  assert.equal(document.activeElement, card);
+  assert.equal(document.activeElement, controls[0]);
+  card.focus();
   const tab = (shiftKey = false) => {
     let prevented = false;
     cardListeners.get('keydown')({ key: 'Tab', shiftKey, preventDefault() { prevented = true; } });
@@ -377,8 +395,8 @@ test('gear modal contains keyboard focus, handles changing controls, and restore
   card.focus();
   tab(true);
   assert.equal(document.activeElement, controls[0]);
-  documentListeners.get('focusin')({ target: opener });
-  assert.equal(document.activeElement, card);
+  cardListeners.get('focusin')({ target: opener });
+  assert.equal(document.activeElement, controls[0]);
   controls = [];
   tab();
   assert.equal(document.activeElement, card);
@@ -386,4 +404,368 @@ test('gear modal contains keyboard focus, handles changing controls, and restore
   assert.equal(document.activeElement, opener);
   assert.equal(documentListeners.size, 0);
   assert.equal(cardListeners.size, 0);
+});
+
+function authFormFixture(page, { callbackUrl = null, role = 'client', claim = false, signInError = null } = {}) {
+  const harness = hookHarness();
+  const events = [];
+  const result = { name: 'Member', email: 'member@example.com', password: 'password123', phone: '123', company: 'Org', accountType: 'enterprise' };
+  const Page = loadSource(`src/app/(public)/${page}/page.tsx`, {
+    react: harness.hooks,
+    'next/link': 'Link',
+    'next/navigation': {
+      useRouter: () => ({ push: (url) => events.push(['push', url]), refresh: () => events.push(['refresh']) }),
+      useSearchParams: () => ({ get: (key) => key === 'callbackUrl' ? callbackUrl : null }),
+    },
+    'next-intl': { useTranslations: () => (key) => key },
+    '@/components/layout/BrandLogo': { BrandLogo: 'Logo' },
+    '@/lib/auth-client': {
+      signUp: { email: async () => ({ error: claim ? { code: 'USER_ALREADY_EXISTS' } : null }) },
+      signIn: { email: async () => { events.push(['signIn']); return { error: signInError }; } },
+      authClient: { getSession: async () => ({ data: { user: { role } } }) },
+    },
+    '@/lib/actions': {
+      claimGuestAccount: async () => ({ success: true, data: { role } }),
+      syncUserProfile: async () => { events.push(['sync']); return { success: true }; },
+    },
+    '@/lib/validations': { registerUserSchema: { safeParse: () => ({ success: true, data: result }) } },
+  }).default;
+  const render = () => harness.render(() => page === 'login' ? Page().props.children.type() : Page());
+  const submit = () => nodes(render(), (n) => n.type === 'form')[0].props.onSubmit({ preventDefault() {} });
+  return { submit, render, events };
+}
+
+test('login rejects unsafe callbacks and retains role-based destinations', async () => {
+  for (const [callbackUrl, role, expected] of [
+    ['//evil.example', 'client', '/portal'], ['/\\evil.example', 'enterprise', '/enterprise/portal'],
+    ['javascript:alert(1)', 'admin', '/admin'], ['https://evil.example', 'client', '/portal'],
+    ['/\n/evil.example', 'client', '/portal'], [null, 'admin', '/admin'],
+    ['/portal/settings?tab=profile', 'client', '/portal/settings?tab=profile'],
+    ['/admin/users', 'client', '/portal'], ['/admin/users', 'admin', '/admin/users'],
+  ]) {
+    const h = authFormFixture('login', { callbackUrl, role });
+    await h.submit();
+    assert.equal(h.events.find(([event]) => event === 'push')[1], expected);
+  }
+});
+
+test('registration stops on sign-in errors for new accounts', async () => {
+  const h = authFormFixture('register', { signInError: { message: 'Sign-in failed' } });
+  await h.submit();
+  assert.deepEqual(h.events, [['signIn']]);
+  assert.ok(nodes(h.render(), (n) => n.props.children === 'Sign-in failed').length);
+});
+
+test('signup signs in before profile synchronization; collisions show the claim notice', async () => {
+  const signup = authFormFixture('register');
+  await signup.submit();
+  assert.deepEqual(signup.events, [['signIn'], ['sync'], ['push', '/enterprise/portal'], ['refresh']]);
+  for (const role of ['client', 'enterprise']) {
+    const h = authFormFixture('register', { claim: true, role });
+    await h.submit();
+    assert.deepEqual(h.events, []);
+    assert.ok(nodes(h.render(), (n) => n.props.role === 'status' && n.props.children === 'claimBookingsNotice').length);
+  }
+});
+
+test('shared dialog trap filters hidden/disabled controls, wraps Tab, and restores focus', () => {
+  const listeners = new Map();
+  const document = { activeElement: null };
+  class Element {
+    tabIndex = 0;
+    isConnected = true;
+    disabled = false;
+    visible = true;
+    focus() { document.activeElement = this; }
+    matches() { return this.disabled; }
+    getClientRects() { return this.visible ? [{}] : []; }
+  }
+  const opener = new Element();
+  opener.focus();
+  const first = new Element();
+  const hidden = Object.assign(new Element(), { visible: false });
+  const disabled = Object.assign(new Element(), { disabled: true });
+  const last = new Element();
+  let controls = [first, hidden, disabled, last];
+  const panel = Object.assign(new Element(), { querySelectorAll: () => controls });
+  const harness = hookHarness();
+  const { useFocusTrap } = loadSource('src/hooks/useFocusTrap.ts', { react: harness.hooks }, {
+    document,
+    window: {
+      addEventListener: (type, fn) => listeners.set(type, fn),
+      removeEventListener: (type) => listeners.delete(type),
+    },
+  });
+  let closed = false;
+  const render = (isOpen) => harness.render(() => useFocusTrap({
+    isOpen, onClose: () => { closed = true; }, containerRef: { current: panel }, initialFocusRef: { current: first },
+  }));
+  render(false); harness.commit();
+  assert.equal(listeners.size, 0);
+  render(true); harness.commit();
+  assert.equal(document.activeElement, first);
+  const key = (key, shiftKey = false) => {
+    let prevented = false;
+    listeners.get('keydown')({ key, shiftKey, preventDefault() { prevented = true; } });
+    assert.equal(prevented, true);
+  };
+  key('Tab', true);
+  assert.equal(document.activeElement, last);
+  key('Tab');
+  assert.equal(document.activeElement, first);
+  key('Tab');
+  assert.equal(document.activeElement, last);
+  controls = [];
+  key('Tab');
+  assert.equal(document.activeElement, panel);
+  key('Escape');
+  assert.equal(closed, true);
+  harness.unmount();
+  assert.equal(document.activeElement, opener);
+  assert.equal(listeners.size, 0);
+});
+
+test('RFP status completion preserves the currently inspected record and blocks overlapping updates', async () => {
+  const harness = hookHarness();
+  let finish;
+  let calls = 0;
+  const { RfpsManager } = loadSource('src/features/admin/components/RfpsManager.tsx', {
+    react: harness.hooks,
+    '@/lib/actions/bookings-rfp-operations': { updateEnterpriseRfpStatus: () => {
+      calls++;
+      return new Promise((resolve) => { finish = resolve; });
+    } },
+    '@/components/ui/data-table': new Proxy({}, { get: (_, key) => key }),
+    '@/components/ui/pagination-controls': { PaginationControls: 'Pagination' },
+    '@/components/ui/status-badge': { StatusBadge: 'StatusBadge', MawthooqBadge: 'MawthooqBadge' },
+    '@/components/ui/dialog': { Dialog: 'Dialog' },
+    '@/hooks/usePagination': { usePagination: (items) => ({ paginatedItems: items }) },
+  });
+  const rows = ['a', 'b'].map((id) => ({ id, referenceCode: id, status: 'pending_review', projectScope: 'scope', estimatedBudget: 'budget', organizationType: 'org' }));
+  const render = () => harness.render(() => RfpsManager({ initialRfps: rows }));
+  const inspectors = () => nodes(render(), (n) => n.props.title === 'Inspect full RFP proposal');
+  inspectors()[0].props.onClick();
+  const selector = () => nodes(render(), (n) => n.type === 'select')[0];
+  const staleSelector = selector();
+  const pending = staleSelector.props.onChange({ target: { value: 'approved' } });
+  await staleSelector.props.onChange({ target: { value: 'rejected' } });
+  assert.equal(calls, 1);
+  inspectors()[1].props.onClick();
+  assert.equal(selector().props.disabled, true);
+  finish({ success: true });
+  await pending;
+  assert.equal(selector().props.value, 'pending_review');
+  assert.equal(selector().props.disabled, false);
+  const dialog = nodes(render(), (n) => n.type === 'Dialog')[0];
+  assert.equal(dialog.props.title, 'RFP b');
+  const label = nodes(render(), (n) => n.type === 'label')[0];
+  assert.equal(label.props.htmlFor, selector().props.id);
+  const retry = selector().props.onChange({ target: { value: 'sla_active' } });
+  finish({ success: false });
+  await retry;
+  assert.equal(selector().props.disabled, false);
+});
+
+test('nested traps handle Tab and Escape only at the top and resume after either unmount order', () => {
+  for (const removeParentFirst of [false, true]) {
+    const listeners = new Map();
+    const document = { activeElement: null };
+    class Element {
+      tabIndex = 0;
+      isConnected = true;
+      controls = [];
+      focus() { document.activeElement = this; }
+      matches() { return false; }
+      getClientRects() { return [{}]; }
+      querySelectorAll() { return this.controls; }
+      contains(target) { return target === this || this.controls.includes(target); }
+    }
+    const opener = new Element();
+    opener.focus();
+    const parent = new Element(); parent.controls = [new Element(), new Element()];
+    const child = new Element(); child.controls = [new Element(), new Element()];
+    let activeHarness;
+    const { useFocusTrap } = loadSource('src/hooks/useFocusTrap.ts', {
+      react: {
+        useRef: (...args) => activeHarness.hooks.useRef(...args),
+        useEffect: (...args) => activeHarness.hooks.useEffect(...args),
+      },
+    }, {
+      document,
+      window: {
+        addEventListener(type, handler) {
+          if (!listeners.has(type)) listeners.set(type, new Set());
+          listeners.get(type).add(handler);
+        },
+        removeEventListener(type, handler) { listeners.get(type).delete(handler); },
+      },
+    });
+    const closures = [];
+    function mount(panel, name) {
+      const h = activeHarness = hookHarness();
+      h.render(() => useFocusTrap({ isOpen: true, onClose: () => closures.push(name), containerRef: { current: panel } }));
+      h.commit();
+      return h;
+    }
+    const parentHarness = mount(parent, 'parent');
+    const childHarness = mount(child, 'child');
+    const key = (key) => {
+      const event = { key, defaultPrevented: false, preventDefault() { this.defaultPrevented = true; } };
+      for (const handler of listeners.get('keydown')) handler(event);
+    };
+    key('Tab');
+    assert.equal(document.activeElement, child.controls[1]);
+    key('Escape');
+    assert.deepEqual(closures, ['child']);
+    if (removeParentFirst) {
+      parentHarness.unmount();
+      assert.equal(document.activeElement, child.controls[1]);
+      key('Tab');
+      assert.equal(document.activeElement, child.controls[0]);
+    }
+    childHarness.unmount();
+    if (!removeParentFirst) {
+      assert.equal(document.activeElement, parent.controls[0]);
+      key('Tab');
+      assert.equal(document.activeElement, parent.controls[1]);
+      key('Escape');
+      assert.deepEqual(closures, ['child', 'parent']);
+      parentHarness.unmount();
+      assert.equal(document.activeElement, opener);
+    }
+    assert.equal(listeners.get('keydown').size, 0);
+    assert.equal(listeners.get('focusin').size, 0);
+  }
+});
+
+test('checkout retains the server booking for payment and completes only when closed', async () => {
+  const harness = hookHarness();
+  let completed = 0;
+  let closed = 0;
+  const Component = loadSource('src/features/gear/components/GearCheckoutModal.tsx', {
+    react: harness.hooks,
+    'react-dom': { createPortal: (content) => content },
+    'next/image': 'Image',
+    'next/navigation': { useRouter: () => ({ push() {} }) },
+    'lucide-react': new Proxy({}, { get: (_, key) => key }),
+    '@/lib/utils': { formatCurrency: String },
+    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic: false }) },
+    '@/lib/auth-client': { useSession: () => ({ data: null }) },
+    '@/hooks/useFocusTrap': { useFocusTrap() {} },
+    '@/lib/actions/equipment-gear': { createGearBookingOrder: async () => ({ success: true, data: { bookingId: 'b1', referenceCode: 'REF1', totalAmount: 405 } }) },
+    '@/features/booking/components/BookingPaymentModal': { BookingPaymentModal: 'Payment' },
+  }, { document: { body: {} } }).GearCheckoutModal;
+  const props = { isOpen: true, onClose: () => closed++, onOrderCompleted: () => completed++, items: [{ id: 'camera', name: 'Camera', dailyRate: 101.25 }], dateRange: { totalDays: 7, pickupDate: '2026-10-01' }, deliveryMethod: 'pickup_hub', grandTotal: 1, totalDeposit: 0 };
+  const render = () => harness.render(() => Component(props));
+  const inputs = nodes(render(), (n) => n.type === 'input');
+  for (const input of inputs) input.props.onChange({ target: { value: input.props.type === 'email' ? 'guest@example.com' : '123456789' } });
+  await nodes(render(), (n) => n.type === 'form')[0].props.onSubmit({ preventDefault() {} });
+  assert.equal(completed, 0);
+  assert.equal(closed, 0);
+  props.items = [];
+  const payment = nodes(render(), (n) => n.type === 'Payment')[0];
+  assert.equal(payment.props.isOpen, true);
+  assert.equal(payment.props.bookingId, 'b1');
+  assert.equal(payment.props.referenceCode, 'REF1');
+  assert.equal(payment.props.totalAmount, 405);
+  payment.props.onClose();
+  assert.equal(completed, 1);
+  assert.equal(closed, 1);
+  assert.equal(nodes(render(), (n) => n.type === 'Payment').length, 0);
+});
+
+test('reopening a rental modal clears the previous booking and payment state', async () => {
+  const fixture = gearModalFixture(async () => ({ success: true, data: { referenceCode: 'OLD-REF' } }), false, {
+    document: { body: {}, activeElement: null }, window: { addEventListener() {}, removeEventListener() {} },
+  });
+  fixture.openForm();
+  for (const [field, value] of [['customerName', 'Customer'], ['phone', '+971501234567'], ['email', 'test@example.com']]) {
+    nodes(fixture.render(), (n) => n.props.id === `gear-${field}`)[0].props.onChange({ target: { value } });
+  }
+  await nodes(fixture.render(), (n) => n.type === 'form')[0].props.onSubmit({ preventDefault() {} });
+  const payment = nodes(fixture.render(), (n) => n.props.bookingId === 'b_test_123')[0];
+  assert.equal(payment.props.totalAmount, 100);
+  fixture.props.isOpen = false;
+  fixture.render(); fixture.harness.commit();
+  fixture.props.isOpen = true;
+  fixture.render(); fixture.harness.commit();
+  assert.equal(nodes(fixture.render(), (n) => n.props.bookingId === 'b_test_123').length, 0);
+  fixture.harness.unmount();
+});
+
+test('command palette exposes and scrolls the active option as arrow keys wrap and filtering changes', () => {
+  const harness = hookHarness();
+  const listeners = new Map();
+  const scrolled = [];
+  const { CommandPalette } = loadSource('src/components/layout/CommandPalette.tsx', {
+    react: { ...harness.hooks, useId: () => 'palette-test' },
+    'next/navigation': { useRouter: () => ({ push() {} }) },
+    'lucide-react': new Proxy({}, { get: (_, key) => key }),
+    '@/hooks/useFocusTrap': { useFocusTrap() {} },
+    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic: false, toggleLanguage() {} }) },
+  }, { window: { addEventListener: (type, fn) => listeners.set(type, fn), removeEventListener: (type) => listeners.delete(type) } });
+  const render = () => harness.render(() => CommandPalette());
+  render(); harness.commit();
+  listeners.get('open-command-palette')();
+  let tree;
+  const refresh = () => {
+    tree = render();
+    const list = nodes(tree, (n) => n.props.role === 'listbox')[0];
+    list.props.ref.current = { querySelector: () => ({ scrollIntoView: (options) => {
+      assert.equal(options.block, 'nearest');
+      scrolled.push(nodes(tree, (n) => n.props['aria-selected'] === true)[0]?.props.id);
+    } }) };
+    harness.commit();
+    const input = nodes(tree, (n) => n.props.role === 'combobox')[0];
+    assert.equal(input.props['aria-controls'], list.props.id);
+    const selected = nodes(tree, (n) => n.props['aria-selected'] === true)[0];
+    assert.equal(input.props['aria-activedescendant'], selected?.props.id);
+    if (selected) assert.equal(selected.props.tabIndex, -1);
+    return input;
+  };
+  let input = refresh();
+  const options = nodes(tree, (n) => n.props.role === 'option');
+  const key = (key) => { input.props.onKeyDown({ key, preventDefault() {} }); input = refresh(); };
+  key('ArrowUp');
+  assert.equal(input.props['aria-activedescendant'], options.at(-1).props.id);
+  key('ArrowDown');
+  assert.equal(input.props['aria-activedescendant'], options[0].props.id);
+  key('ArrowDown');
+  assert.equal(scrolled.at(-1), options[1].props.id);
+  input.props.onChange({ target: { value: 'no-such-command-xyz' } });
+  input = refresh();
+  assert.equal(input.props['aria-activedescendant'], undefined);
+  key('ArrowDown');
+  assert.equal(input.props['aria-activedescendant'], undefined);
+  harness.unmount();
+});
+
+test('emptying the cart while checkout is open keeps the checkout component mounted', () => {
+  const harness = hookHarness();
+  const cart = {
+    items: [{ id: 'camera', name: 'Camera', dailyRate: 100 }],
+    dateRange: { totalDays: 1, billingMultiplier: 1 }, deliveryMethod: 'pickup_hub',
+    isCartOpen: false, closeCart() {}, clearCart() {},
+  };
+  const { GearCartDrawer } = loadSource('src/features/gear/components/GearCartDrawer.tsx', {
+    react: { ...harness.hooks, useSyncExternalStore: (_subscribe, snapshot) => snapshot() },
+    'react-dom': { createPortal: (content) => content },
+    'next/image': 'Image',
+    'lucide-react': new Proxy({}, { get: (_, key) => key }),
+    '@/lib/utils': { formatCurrency: String },
+    '@/components/ui/badge': { Badge: 'Badge' },
+    '../lib/gear-rules': { getGearRecommendations: () => [] },
+    '../lib/cart-pricing': loadSource('src/features/gear/lib/cart-pricing.ts', {}),
+    '@/hooks/useFocusTrap': { useFocusTrap() {} },
+    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic: false }) },
+    '@/components/providers/CartProvider': { useCart: () => cart },
+    './GearCheckoutModal': { GearCheckoutModal: 'Checkout' },
+  });
+  const render = () => harness.render(() => GearCartDrawer({}));
+  nodes(render(), (n) => n.type === 'button' && nodes(n, (child) => child.props.children === 'Reserve Gear').length)[0].props.onClick();
+  assert.equal(nodes(render(), (n) => n.type === 'Checkout')[0].props.isOpen, true);
+  cart.items = [];
+  const tree = render();
+  assert.equal(nodes(tree, (n) => n.type === 'Checkout')[0].props.isOpen, true);
+  assert.equal(nodes(tree, (n) => n.type === 'aside').length, 0);
 });

@@ -1,17 +1,20 @@
 "use server";
 
+import { calculateGearCartTotals } from "../../features/gear/lib/cart-pricing";
+import { checkRateLimit, getClientIdentifier } from "../rate-limit";
 import { z } from "zod";
 import { db } from "@/db";
 import {
   equipment,
   inquiries,
+  bookings,
   type Equipment,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { revalidatePath, updateTag } from "next/cache";
 import { GEAR_DATA } from "@/features/gear/data";
-import { slugify } from "@/lib/utils";
-import { isUuid, isDbAvailable, requireAdmin, type CmsResponse } from "./shared";
+import { slugify, generateBookingReference } from "@/lib/utils";
+import { isUuid, isDbAvailable, requireAdmin, getCurrentSession, type CmsResponse } from "./shared";
 
 
 /**
@@ -176,6 +179,128 @@ export async function submitGearReservation(
     return {
       success: false,
       error: "Unable to save your reservation. Please contact us on WhatsApp.",
+    };
+  }
+}
+
+const gearOrderSchema = z.object({
+  gearIds: z.array(z.string()).min(1, "Please select at least one piece of gear.").max(100),
+  customerName: z.string().min(2, "Customer name is required."),
+  email: z.string().email("Invalid email address."),
+  phone: z.string().min(6, "Valid phone number is required."),
+  company: z.string().optional(),
+  durationDays: z.number().int().min(1).max(365).default(1),
+  deliveryMethod: z.enum(["studio_delivery", "courier_dubai", "pickup_hub"]).default("studio_delivery"),
+  notes: z.string().optional(),
+  startDate: z.iso.date().optional(),
+});
+
+export type GearOrderInput = z.input<typeof gearOrderSchema>;
+
+/**
+ * Creates a verified cinema gear rental order directly in the bookings table.
+ * Links only to the authenticated user,
+ * computes duration discounts & delivery surcharges, and returns the reference code for Ziina payment.
+ */
+export async function createGearBookingOrder(
+  payload: GearOrderInput
+): Promise<CmsResponse<{ bookingId: string; referenceCode: string; totalAmount: number; currency: string }>> {
+  try {
+    const clientId = await getClientIdentifier();
+    if (!checkRateLimit(`gear-order:${clientId}`, 5, 10 * 60 * 1000).allowed) {
+      return { success: false, error: "Too many booking requests. Please try again later." };
+    }
+
+    const parsed = gearOrderSchema.safeParse(payload);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("\n"),
+      };
+    }
+    const input = parsed.data;
+
+    // 1. Resolve equipment items & calculate pricing
+    const pricedItems: { dailyRate: number }[] = [];
+    for (const gearId of input.gearIds) {
+      let storedGear = null;
+      if (isDbAvailable()) {
+        const [found] = await db
+          .select()
+          .from(equipment)
+          .where(isUuid(gearId) ? eq(equipment.id, gearId) : eq(equipment.slug, gearId))
+          .limit(1);
+        storedGear = found;
+      }
+      const item = storedGear || GEAR_DATA.find((g) => g.id === gearId);
+      if (!item) {
+        return { success: false, error: `Equipment item ${gearId} was not found.` };
+      }
+      pricedItems.push({ dailyRate: Number(item.dailyRate) });
+    }
+
+    const { grandTotal } = calculateGearCartTotals(pricedItems, { totalDays: input.durationDays }, input.deliveryMethod);
+
+    // An email supplied by a guest is not proof of account ownership.
+    const session = await getCurrentSession();
+    const finalUserId = session?.user?.id ?? null;
+
+    if (isDbAvailable()) {
+      // 3. Insert into bookings
+      const referenceCode = generateBookingReference();
+      const scheduledAtDate = input.startDate ? new Date(input.startDate) : new Date();
+
+      const [newBooking] = await db
+        .insert(bookings)
+        .values({
+          referenceCode,
+          userId: finalUserId,
+          studioId: null, // Standalone gear rental
+          sessionType: "commercial",
+          scheduledAt: scheduledAtDate,
+          durationHours: input.durationDays * 24,
+          headcount: 1,
+          equipmentIds: input.gearIds,
+          propsNotes: `Gear Delivery: ${input.deliveryMethod}`,
+          specialRequests: input.notes || null,
+          totalAmount: grandTotal.toFixed(2),
+          currency: "AED",
+          status: "pending",
+          paymentStatus: "unpaid",
+        })
+        .returning();
+
+      revalidatePath("/portal");
+      revalidatePath("/portal/bookings");
+      revalidatePath("/admin/bookings");
+
+      return {
+        success: true,
+        message: "Gear rental booking created successfully.",
+        data: {
+          bookingId: newBooking?.id || `gear_${Date.now()}`,
+          referenceCode: newBooking?.referenceCode || referenceCode,
+          totalAmount: grandTotal,
+          currency: "AED",
+        },
+      };
+    }
+
+    // Fallback when DB is unavailable (e.g. mock test environment)
+    return {
+      success: true,
+      data: {
+        bookingId: `mock-gear-${Date.now()}`,
+        referenceCode: generateBookingReference(),
+        totalAmount: grandTotal,
+        currency: "AED",
+      },
+    };
+  } catch (error) {
+    console.error("createGearBookingOrder error:", error);
+    return {
+      success: false,
+      error: "Unable to process gear rental booking. Please retry or contact us on WhatsApp.",
     };
   }
 }

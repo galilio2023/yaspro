@@ -316,6 +316,7 @@
       "securityBadge": "Protected by Better Auth with Argon2 password hashing."
     },
     "register": {
+      "claimBookingsNotice": "Check your email for instructions to claim your bookings. If you have not received a claim link, please contact support.",
       "title": "Create Production Account",
       "subtitle": "Access enterprise dailies, reserve studios, and manage rental gear with Yas Pro.",
       "accountTypeLabel": "Account Type",

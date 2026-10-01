@@ -31,6 +31,16 @@ export async function requireAdmin() {
   }
 }
 
+export async function getCurrentSession() {
+  try {
+    return await auth.api.getSession({
+      headers: await headers(),
+    });
+  } catch {
+    return null;
+  }
+}
+
 export interface CmsResponse<T = unknown> {
   success: boolean;
   message?: string;

@@ -42,8 +42,10 @@ export async function createZiinaPaymentIntent(
     const ziinaApiKey = process.env.ZIINA_API_KEY;
     const isSimulateEnabled = process.env.ZIINA_SIMULATE === "true" || process.env.NODE_ENV === "test";
 
+    const isLiveKey = Boolean(ziinaApiKey && !ziinaApiKey.includes("ziina_xxx") && !ziinaApiKey.startsWith("your_"));
+
     // 1. Live Ziina API Key branch
-    if (ziinaApiKey && !ziinaApiKey.includes("ziina_xxx")) {
+    if (isLiveKey) {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://yaspro.ae";
       const amountInFils = Math.round(amountAed * 100);
       const idempotencyKey = `ziina-${bookingId || referenceCode}-${paymentType}-${amountInFils}`;

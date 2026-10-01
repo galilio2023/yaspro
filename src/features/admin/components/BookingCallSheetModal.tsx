@@ -3,12 +3,13 @@
 import React, { useRef, useCallback } from "react";
 import { Printer, X, CheckCircle2 } from "lucide-react";
 import type { Booking } from "@/db/schema";
+import type { EnrichedBooking } from "@/lib/actions/bookings-rfp-operations";
 import { formatCurrency } from "@/lib/utils";
 import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 interface BookingCallSheetModalProps {
-  booking: Booking | null;
+  booking: (Booking & Partial<EnrichedBooking>) | null;
   onClose: () => void;
 }
 
@@ -114,22 +115,59 @@ export function BookingCallSheetModal({
                 YasPro Production Call Sheet
               </h1>
               <p className="text-xs text-slate-600">
-                Yas Pro Soundstage Facilities &bull; Dubai Studio City
+                {booking.studioName || "Yas Pro Soundstages"} &bull; Dubai Studio City
               </p>
             </div>
             <div className="text-right">
               <span className="text-xs font-mono font-bold text-slate-900 block">
                 REF: {booking.referenceCode}
               </span>
-              <span className="text-[10px] text-slate-500">
-                Official Production Schedule
+              <span className="text-[10px] text-slate-500 block">
+                Client: {booking.userName || "Direct Client"} {booking.userCompany ? `(${booking.userCompany})` : ""}
               </span>
+              {booking.userPhone && (
+                <span className="text-[10px] text-slate-500 font-mono block">
+                  Tel: {booking.userPhone}
+                </span>
+              )}
             </div>
           </div>
         </div>
 
         {/* — Call Sheet Content — */}
         <div className="space-y-6 text-xs text-slate-300">
+          {/* Client & Production Details */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-1">
+              <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                Production Client
+              </span>
+              <span className="font-bold text-white text-sm block">
+                {booking.userName || "Direct Client"}
+              </span>
+              <div className="text-[11px] text-slate-400 space-y-0.5 mt-1 font-mono">
+                {booking.userEmail && <div>Email: {booking.userEmail}</div>}
+                {booking.userPhone && <div>Phone: {booking.userPhone}</div>}
+                {booking.userCompany && <div>Company: {booking.userCompany}</div>}
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-1">
+              <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                Stage Location &amp; Facility
+              </span>
+              <span className="font-bold text-purple-300 text-sm block">
+                {booking.studioName || (booking.equipmentIds && booking.equipmentIds.length > 0 ? "Cinema Gear Dispatch Facility" : "Main Production Stage")}
+              </span>
+              <p className="text-[11px] text-slate-400 mt-1">
+                Yas Pro Production Hub &bull; Dubai Studio City
+              </p>
+              <div className="text-[10px] text-slate-500 font-mono mt-1">
+                Category: {booking.sessionType.replace(/_/g, " ").toUpperCase()}
+              </div>
+            </div>
+          </div>
+
           {/* Studio & Date Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/10">
             {[

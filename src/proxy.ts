@@ -30,11 +30,11 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // ── 1. Optimistic auth redirect ──────────────────────────────────────────
-  // If the path starts with a protected route and there is no session cookie,
-  // redirect to /login immediately (fast, no DB call).
-  // Real role/validity checks happen server-side in the page or layout.
+  // Strip locale prefix (/ar or /en) so localized paths like /ar/admin or /en/portal
+  // are properly matched against protected routes.
+  const normalizedPath = pathname.replace(/^\/(ar|en)(?=\/|$)/, "") || "/";
   const isProtected = AUTH_REQUIRED_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith(route + "/")
+    (route) => normalizedPath === route || normalizedPath.startsWith(route + "/")
   );
 
   if (isProtected && !hasSessionCookie(request)) {
@@ -50,7 +50,7 @@ export function proxy(request: NextRequest) {
 
   if (isArabicPath || isEnglishPath) {
     const locale = isArabicPath ? "ar" : "en";
-    const strippedPath = pathname.replace(/^\/(ar|en)/, "") || "/";
+    const strippedPath = pathname.replace(/^\/(ar|en)(?=\/|$)/, "") || "/";
     const url = request.nextUrl.clone();
     url.pathname = strippedPath;
 

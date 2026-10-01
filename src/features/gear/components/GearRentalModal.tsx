@@ -13,11 +13,18 @@ import {
   Camera,
   Box,
   Building,
+  CreditCard,
+  ArrowRight,
 } from "lucide-react";
-import { GearItem } from "../types";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { calculateGearCartTotals, calculateRentalMultiplier } from "../lib/cart-pricing";
+import { GearItem, DeliveryMethod } from "../types";
 import { formatCurrency, cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import { submitGearReservation } from "@/lib/actions/equipment-gear";
+import { createGearBookingOrder } from "@/lib/actions/equipment-gear";
+import { useSession } from "@/lib/auth-client";
+import { BookingPaymentModal } from "@/features/booking/components/BookingPaymentModal";
+import Link from "next/link";
 
 const emptySubscribe = () => () => {};
 
@@ -35,10 +42,11 @@ export function GearRentalModal({
   initialDurationDays = 1,
 }: GearRentalModalProps) {
   const { isArabic } = useLanguage();
+  const { data: session } = useSession();
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   const [durationDays, setDurationDays] = useState<number>(initialDurationDays);
-  const [deliveryMethod, setDeliveryMethod] = useState<"soundstage" | "dubai_courier" | "hub_pickup">("soundstage");
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("studio_delivery");
   const [viewMode, setViewMode] = useState<"overview" | "form" | "confirmed">("overview");
 
   // Form states
@@ -50,11 +58,13 @@ export function GearRentalModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [confirmationCode, setConfirmationCode] = useState<string | null>(null);
+  const [createdBookingId, setCreatedBookingId] = useState<string | null>(null);
+  const [createdAmount, setCreatedAmount] = useState<number>(0);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const hasItem = Boolean(item);
 
-  // Sync initial duration
   useEffect(() => {
     if (isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -62,74 +72,30 @@ export function GearRentalModal({
       setViewMode("overview");
       setErrorMessage(null);
       setConfirmationCode(null);
+      setCreatedBookingId(null);
+      setCreatedAmount(0);
+      setIsPaymentOpen(false);
+      if (session?.user) {
+        setCustomerName((prev) => prev || session.user.name || "");
+        setEmail((prev) => prev || session.user.email || "");
+      }
     }
-  }, [isOpen, initialDurationDays]);
+  }, [isOpen, initialDurationDays, session]);
 
-  // Close on ESC
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
-
-  useEffect(() => {
-    if (!mounted || !isOpen || !hasItem) return;
-    const card = dialogRef.current;
-    if (!card) return;
-    const previouslyFocused = document.activeElement;
-    card.focus();
-
-    const keepFocusInside = (event: FocusEvent) => {
-      if (!card.contains(event.target as Node)) card.focus();
-    };
-    const trapTab = (event: KeyboardEvent) => {
-      if (event.key !== "Tab") return;
-      const focusable = Array.from(card.querySelectorAll<HTMLElement>(
-        'button, a[href], input, select, textarea, [tabindex]'
-      )).filter((element) => element.tabIndex >= 0 && !element.matches(":disabled") && element.getClientRects().length > 0);
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (!first || !last) {
-        event.preventDefault();
-        card.focus();
-      } else if (!focusable.includes(document.activeElement as HTMLElement)) {
-        event.preventDefault();
-        (event.shiftKey ? last : first).focus();
-      } else if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-    document.addEventListener("focusin", keepFocusInside);
-    card.addEventListener("keydown", trapTab);
-    return () => {
-      document.removeEventListener("focusin", keepFocusInside);
-      card.removeEventListener("keydown", trapTab);
-      if (previouslyFocused instanceof HTMLElement && previouslyFocused.isConnected) previouslyFocused.focus();
-    };
-  }, [mounted, isOpen, hasItem]);
+  useFocusTrap({ isOpen: mounted && isOpen && hasItem, onClose, containerRef: dialogRef });
 
   // Switching views can remove the focused control.
   useEffect(() => {
     const card = dialogRef.current;
-    if (card && !card.contains(document.activeElement)) card.focus();
-  }, [viewMode]);
+    if (!isPaymentOpen && card && !card.contains(document.activeElement)) card.focus();
+  }, [viewMode, isPaymentOpen]);
 
   if (!mounted || !isOpen || !item) return null;
 
   // Pricing calculations
-  const discountMultiplier = durationDays >= 7 ? 0.65 : durationDays >= 3 ? 0.8 : 1.0;
-  const effectiveDailyRate = Math.round(item.dailyRate * discountMultiplier);
-  const deliveryFee = deliveryMethod === "dubai_courier" ? 250 : 0;
-  const subtotal = effectiveDailyRate * durationDays;
-  const grandTotal = subtotal + deliveryFee;
+  const { multiplier } = calculateRentalMultiplier(durationDays);
+  const discountMultiplier = multiplier / durationDays;
+  const { grandTotal, deliveryFee } = calculateGearCartTotals([item], { totalDays: durationDays }, deliveryMethod);
   const deposit = item.securityDeposit || 0;
 
   const displayName = isArabic && item.arabicName ? item.arabicName : item.name;
@@ -152,8 +118,8 @@ export function GearRentalModal({
     setErrorMessage(null);
 
     try {
-      const res = await submitGearReservation({
-        gearId: item.id,
+      const res = await createGearBookingOrder({
+        gearIds: [item.id],
         customerName,
         email,
         phone,
@@ -165,7 +131,10 @@ export function GearRentalModal({
 
       if (res.success && res.data?.referenceCode) {
         setConfirmationCode(res.data.referenceCode);
+        setCreatedBookingId(res.data.bookingId);
+        setCreatedAmount(res.data.totalAmount);
         setViewMode("confirmed");
+        setIsPaymentOpen(true);
       } else {
         setErrorMessage(res.error || (isArabic ? "حدث خطأ أثناء إرسال الحجز، يرجى المحاولة لاحقاً" : "Failed to submit reservation. Please try WhatsApp."));
       }
@@ -176,8 +145,10 @@ export function GearRentalModal({
     }
   };
 
-  return createPortal(
-    <div
+  return (
+    <>
+      {createPortal(
+        <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="gear-modal-title"
@@ -223,8 +194,8 @@ export function GearRentalModal({
               </h3>
               <p className="text-sm text-text-secondary max-w-md mx-auto leading-relaxed">
                 {isArabic
-                  ? "تم تسجيل طلبك في نظام التوزيع المركزي لدينا. سيتواصل معك مهندس الإنتاج خلال 15 دقيقة لتأكيد مواعيد التسليم والفحص الفني."
-                  : "Your equipment hold has been logged in our dispatch system. An engineer will contact you within 15 minutes to coordinate calibration and set delivery."}
+                  ? "تم تسجيل حجزك رسميًا في لوحة تحكم حسابك وربطه بمركز التوزيع الرئيسي. يمكنك إتمام الدفع الإلكتروني الآن أو المتابعة من لوحة تحكمك."
+                  : "Your equipment reservation has been booked and linked to your Client Portal. You can pay online via Ziina or follow up with dispatch."}
               </p>
 
               <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 inline-block text-center font-mono">
@@ -237,6 +208,24 @@ export function GearRentalModal({
               </div>
 
               <div className="pt-4 flex flex-wrap justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsPaymentOpen(true)}
+                  className="px-6 py-2.5 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan text-white font-semibold text-xs inline-flex items-center gap-2 shadow-lg shadow-brand-purple/30 hover:opacity-90 transition-all cursor-pointer"
+                >
+                  <CreditCard size={15} />
+                  <span>{isArabic ? "الدفع الإلكتروني عبر Ziina" : "Pay Online via Ziina"}</span>
+                </button>
+
+                <Link
+                  href="/portal/bookings"
+                  onClick={onClose}
+                  className="px-6 py-2.5 rounded-full border border-white/20 text-white hover:bg-white/10 text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer"
+                >
+                  <span>{isArabic ? "عرض في لوحة التحكم" : "View in Client Portal"}</span>
+                  <ArrowRight size={13} className="rtl:rotate-180" />
+                </Link>
+
                 <a
                   href={whatsAppUrl}
                   target="_blank"
@@ -244,14 +233,15 @@ export function GearRentalModal({
                   className="px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs inline-flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition-all"
                 >
                   <MessageCircle size={15} />
-                  <span>{isArabic ? "متابعة فورية عبر واتساب" : "Chat with Dispatch on WhatsApp"}</span>
+                  <span>{isArabic ? "متابعة عبر واتساب" : "Chat on WhatsApp"}</span>
                 </a>
+
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-6 py-2.5 rounded-full border border-white/20 text-white hover:bg-white/10 text-xs font-semibold transition-all cursor-pointer"
+                  className="px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-text-muted hover:text-white text-xs transition-all cursor-pointer"
                 >
-                  {isArabic ? "إغلاق النافذة" : "Close Window"}
+                  {isArabic ? "إغلاق" : "Close"}
                 </button>
               </div>
             </div>
@@ -481,7 +471,7 @@ export function GearRentalModal({
                     )}
                   >
                     <span className="absolute -top-2 inset-x-0 mx-auto w-max px-2 py-0.2 rounded-full bg-brand-cyan text-black text-[9px] font-extrabold uppercase">
-                      {isArabic ? "خصم 20%" : "20% Off"}
+                      {isArabic ? `خصم ${calculateRentalMultiplier(3).discountPct}%` : `${calculateRentalMultiplier(3).discountPct}% Off`}
                     </span>
                     <div className="text-xs font-bold">{isArabic ? "عطلة نهاية الأسبوع (3 أيام)" : "3-Day Weekend"}</div>
                     <div className="text-[10px] text-brand-cyan/90 mt-0.5">{isArabic ? "عرض عطلة نهاية الأسبوع" : "Weekend Deal"}</div>
@@ -498,7 +488,7 @@ export function GearRentalModal({
                     )}
                   >
                     <span className="absolute -top-2 inset-x-0 mx-auto w-max px-2 py-0.2 rounded-full bg-amber-400 text-black text-[9px] font-extrabold uppercase">
-                      {isArabic ? "خصم 35%" : "35% Off"}
+                      {isArabic ? `خصم ${calculateRentalMultiplier(7).discountPct}%` : `${calculateRentalMultiplier(7).discountPct}% Off`}
                     </span>
                     <div className="text-xs font-bold">{isArabic ? "أسبوعي (7 أيام)" : "Weekly Tier"}</div>
                     <div className="text-[10px] text-amber-300/90 mt-0.5">{isArabic ? "أفضل قيمة للإنتاج" : "Best Production Value"}</div>
@@ -515,10 +505,10 @@ export function GearRentalModal({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <button
                     type="button"
-                    onClick={() => setDeliveryMethod("soundstage")}
+                    onClick={() => setDeliveryMethod("studio_delivery")}
                     className={cn(
                       "p-2.5 rounded-xl border text-start transition-all cursor-pointer text-xs",
-                      deliveryMethod === "soundstage"
+                      deliveryMethod === "studio_delivery"
                         ? "bg-brand-purple/15 border-brand-purple/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     )}
@@ -532,10 +522,10 @@ export function GearRentalModal({
 
                   <button
                     type="button"
-                    onClick={() => setDeliveryMethod("dubai_courier")}
+                    onClick={() => setDeliveryMethod("courier_dubai")}
                     className={cn(
                       "p-2.5 rounded-xl border text-start transition-all cursor-pointer text-xs",
-                      deliveryMethod === "dubai_courier"
+                      deliveryMethod === "courier_dubai"
                         ? "bg-brand-purple/15 border-brand-purple/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     )}
@@ -549,10 +539,10 @@ export function GearRentalModal({
 
                   <button
                     type="button"
-                    onClick={() => setDeliveryMethod("hub_pickup")}
+                    onClick={() => setDeliveryMethod("pickup_hub")}
                     className={cn(
                       "p-2.5 rounded-xl border text-start transition-all cursor-pointer text-xs",
-                      deliveryMethod === "hub_pickup"
+                      deliveryMethod === "pickup_hub"
                         ? "bg-brand-purple/15 border-brand-purple/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     )}
@@ -610,5 +600,20 @@ export function GearRentalModal({
       </div>
     </div>,
     document.body
+  )}
+
+  {createdBookingId && confirmationCode && (
+    <BookingPaymentModal
+      isOpen={isPaymentOpen}
+      onClose={() => setIsPaymentOpen(false)}
+      bookingId={createdBookingId}
+      referenceCode={confirmationCode}
+      totalAmount={createdAmount || grandTotal}
+      onPaymentSuccess={() => {
+        setIsPaymentOpen(false);
+      }}
+    />
+  )}
+  </>
   );
 }

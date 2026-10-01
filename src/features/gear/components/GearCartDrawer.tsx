@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import Link from "next/link";
 import Image from "next/image";
 import {
   ShoppingBag,
@@ -17,21 +16,23 @@ import {
   Plus,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
-import { GearItem, RentalDateRange, DeliveryMethod } from "../types";
+import { GearItem, RentalDateRange } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { getGearRecommendations } from "../lib/gear-rules";
 import { calculateGearCartTotals } from "../lib/cart-pricing";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useCart } from "@/components/providers/CartProvider";
+import { GearCheckoutModal } from "./GearCheckoutModal";
 
 const emptySubscribe = () => () => {};
 
 interface GearCartDrawerProps {
-  items: GearItem[];
-  dateRange: RentalDateRange;
-  onRemoveItem: (id: string) => void;
+  items?: GearItem[];
+  dateRange?: RentalDateRange;
+  onRemoveItem?: (id: string) => void;
   onAddItem?: (item: GearItem) => void;
-  onClearCart: () => void;
+  onClearCart?: () => void;
   checkoutHref?: string;
 }
 
@@ -40,33 +41,46 @@ export function GearCartDrawer({
   dateRange,
   onRemoveItem,
   onAddItem,
-  checkoutHref = "/contact",
+  onClearCart,
 }: GearCartDrawerProps) {
   const { isArabic } = useLanguage();
+  const cartContext = useCart();
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("studio_delivery");
+
+  const effectiveItems = items ?? cartContext.items;
+  const effectiveDateRange = dateRange ?? cartContext.dateRange;
+  const effectiveDeliveryMethod = cartContext.deliveryMethod;
+  const setEffectiveDeliveryMethod = cartContext.setDeliveryMethod;
+  const handleRemove = onRemoveItem ?? cartContext.removeItem;
+  const handleAdd = onAddItem ?? cartContext.addItem;
+  const handleClear = onClearCart ?? cartContext.clearCart;
+
+  const [localOpen, setLocalOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+
+  const isOpen = localOpen || cartContext.isCartOpen;
 
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
 
   // Automatically close breakdown modal when cart becomes empty
-  const [prevItemsCount, setPrevItemsCount] = useState(items.length);
-  if (items.length !== prevItemsCount) {
-    setPrevItemsCount(items.length);
-    if (items.length === 0 && isOpen) {
-      setIsOpen(false);
+  const [prevItemsCount, setPrevItemsCount] = useState(effectiveItems.length);
+  if (effectiveItems.length !== prevItemsCount) {
+    setPrevItemsCount(effectiveItems.length);
+    if (effectiveItems.length === 0 && isOpen) {
+      setLocalOpen(false);
+      cartContext.closeCart();
     }
   }
 
-
   const handleClose = useCallback(() => {
-    setIsOpen(false);
-  }, []);
+    setLocalOpen(false);
+    cartContext.closeCart();
+  }, [cartContext]);
 
   useFocusTrap({
-    isOpen: isOpen && items.length > 0,
+    isOpen: isOpen && effectiveItems.length > 0,
     onClose: handleClose,
     containerRef: panelRef,
     initialFocusRef: closeButtonRef,
@@ -74,17 +88,17 @@ export function GearCartDrawer({
 
   // Lock body scroll when breakdown modal is open
   useEffect(() => {
-    if (!isOpen || items.length === 0) return;
+    if (!isOpen || effectiveItems.length === 0) return;
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = originalOverflow || "";
     };
-  }, [isOpen, items.length]);
+  }, [isOpen, effectiveItems.length]);
 
   // Signal to global floating widgets (e.g. WhatsApp concierge) that bottom cart bar is active
   useEffect(() => {
-    if (items.length > 0) {
+    if (effectiveItems.length > 0) {
       document.body.dataset.hasBottomCart = "true";
     } else {
       delete document.body.dataset.hasBottomCart;
@@ -92,20 +106,20 @@ export function GearCartDrawer({
     return () => {
       delete document.body.dataset.hasBottomCart;
     };
-  }, [items.length]);
+  }, [effectiveItems.length]);
 
-  if (items.length === 0) return null;
+  if (effectiveItems.length === 0 && !isCheckoutOpen) return null;
 
   // Calculation — only destructure what is rendered in the UI
   const { grandTotal, totalDeposit } =
-    calculateGearCartTotals(items, dateRange, deliveryMethod);
+    calculateGearCartTotals(effectiveItems, effectiveDateRange, effectiveDeliveryMethod);
 
-  const smartRecommendations = getGearRecommendations(items.map((i) => i.id));
+  const smartRecommendations = getGearRecommendations(effectiveItems.map((i) => i.id));
 
   return (
     <>
       {/* Floating Bottom Bar: Centered on desktop, elevated on mobile */}
-      <aside
+      {effectiveItems.length > 0 && <aside
         aria-label="Rental selection summary"
         className="fixed bottom-4 inset-x-3 sm:bottom-6 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[640px] max-w-2xl z-40 animate-fade-up"
       >
@@ -113,7 +127,10 @@ export function GearCartDrawer({
           <button
             ref={triggerButtonRef}
             type="button"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => {
+              if (isOpen) handleClose();
+              else setLocalOpen(true);
+            }}
             className="flex items-center gap-3 text-start group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple rounded-xl"
             aria-expanded={isOpen}
           >
@@ -123,12 +140,12 @@ export function GearCartDrawer({
             <div>
               <p className="text-white font-bold text-sm flex items-center gap-2">
                 <span>
-                  {items.length}{" "}
+                  {effectiveItems.length}{" "}
                   {isArabic
-                    ? items.length === 1
+                    ? effectiveItems.length === 1
                       ? "معدة محددة"
                       : "معدات محددة"
-                    : items.length === 1
+                    : effectiveItems.length === 1
                     ? "Item Selected"
                     : "Items Selected"}
                 </span>
@@ -144,10 +161,10 @@ export function GearCartDrawer({
               </p>
               <div className="flex items-center gap-2 text-xs text-text-muted">
                 <span>
-                  {dateRange.totalDays} {isArabic ? "أيام" : "Days"} (
+                  {effectiveDateRange.totalDays} {isArabic ? "أيام" : "Days"} (
                   {isArabic
-                    ? `${dateRange.billingMultiplier} أيام فوترة`
-                    : `${dateRange.billingMultiplier} billed`}
+                    ? `${effectiveDateRange.billingMultiplier} أيام فوترة`
+                    : `${effectiveDateRange.billingMultiplier} billed`}
                   )
                 </span>
                 <span>•</span>
@@ -161,28 +178,32 @@ export function GearCartDrawer({
           <div className="flex items-center gap-2 shrink-0">
             <button
               type="button"
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => {
+                if (isOpen) handleClose();
+                else setLocalOpen(true);
+              }}
               className="hidden sm:inline-flex px-4 py-2.5 rounded-xl text-xs font-semibold text-text-secondary bg-white/5 hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
             >
               {isOpen ? (isArabic ? "إخفاء" : "Hide") : isArabic ? "التفاصيل" : "Details"}
             </button>
 
-            <Link
-              href={`${checkoutHref}?service=gear-rental&items=${items.map((i) => i.id).join(",")}&days=${dateRange.totalDays}`}
+            <button
+              type="button"
+              onClick={() => setIsCheckoutOpen(true)}
               className="px-5 py-2.5 rounded-xl font-semibold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-purple-light flex items-center gap-2 shadow-lg shadow-brand-purple/25 whitespace-nowrap cursor-pointer hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
             >
               <span>{isArabic ? "حجز المعدات" : "Reserve Gear"}</span>
               <ArrowRight size={14} className="rtl:rotate-180" />
-            </Link>
+            </button>
           </div>
         </div>
-      </aside>
+      </aside>}
 
       {/* Expanded Breakdown Modal / Sheet (Portaled to document.body) */}
       {isOpen && mounted && createPortal(
         <div
           className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center bg-black/85 backdrop-blur-xl p-4 animate-fade-up select-none"
-          onClick={() => setIsOpen(false)}
+          onClick={handleClose}
           aria-hidden="true"
         >
           <div
@@ -214,7 +235,7 @@ export function GearCartDrawer({
               <button
                 ref={closeButtonRef}
                 type="button"
-                onClick={() => setIsOpen(false)}
+                onClick={handleClose}
                 className="size-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple shrink-0"
                 aria-label={isArabic ? "إغلاق التفاصيل" : "Close cart breakdown"}
               >
@@ -226,11 +247,11 @@ export function GearCartDrawer({
             <div className="flex-1 overflow-y-auto py-4 space-y-3">
               <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">
                 {isArabic
-                  ? `المعدات المحددة (${items.length})`
-                  : `Selected Equipment (${items.length})`}
+                  ? `المعدات المحددة (${effectiveItems.length})`
+                  : `Selected Equipment (${effectiveItems.length})`}
               </p>
 
-              {items.map((item) => {
+              {effectiveItems.map((item) => {
                 const itemName = isArabic && item.arabicName ? item.arabicName : item.name;
                 return (
                   <div
@@ -268,11 +289,11 @@ export function GearCartDrawer({
 
                     <div className="flex items-center gap-3 shrink-0">
                       <span className="text-xs font-bold font-mono text-white">
-                        {formatCurrency(item.dailyRate * dateRange.billingMultiplier)}
+                        {formatCurrency(item.dailyRate * effectiveDateRange.billingMultiplier)}
                       </span>
                       <button
                         type="button"
-                        onClick={() => onRemoveItem(item.id)}
+                        onClick={() => handleRemove(item.id)}
                         className="text-text-muted hover:text-red-400 transition-colors p-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 rounded-lg"
                         aria-label={`Remove ${itemName}`}
                       >
@@ -321,16 +342,14 @@ export function GearCartDrawer({
                             <span className="text-[11px] font-mono text-brand-purple-light font-bold">
                               +{formatCurrency(rec.recommendedItem.dailyRate)}{isArabic ? "/يوم" : "/d"}
                             </span>
-                            {onAddItem && (
-                              <button
-                                type="button"
-                                onClick={() => onAddItem(rec.recommendedItem)}
-                                className="px-2.5 py-1 rounded-lg bg-brand-purple hover:bg-brand-purple-light text-white text-[10px] font-bold flex items-center gap-1 transition-all cursor-pointer shadow-sm"
-                              >
-                                <Plus size={11} />
-                                <span>{isArabic ? "إضافة" : "Add"}</span>
-                              </button>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleAdd(rec.recommendedItem)}
+                              className="px-2.5 py-1 rounded-lg bg-brand-purple hover:bg-brand-purple-light text-white text-[10px] font-bold flex items-center gap-1 transition-all cursor-pointer shadow-sm"
+                            >
+                              <Plus size={11} />
+                              <span>{isArabic ? "إضافة" : "Add"}</span>
+                            </button>
                           </div>
                         </div>
                       );
@@ -347,9 +366,9 @@ export function GearCartDrawer({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <button
                     type="button"
-                    onClick={() => setDeliveryMethod("studio_delivery")}
+                    onClick={() => setEffectiveDeliveryMethod("studio_delivery")}
                     className={`p-3 rounded-xl border text-start transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple ${
-                      deliveryMethod === "studio_delivery"
+                      effectiveDeliveryMethod === "studio_delivery"
                         ? "bg-brand-purple/15 border-brand-purple/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     }`}
@@ -361,9 +380,9 @@ export function GearCartDrawer({
 
                   <button
                     type="button"
-                    onClick={() => setDeliveryMethod("courier_dubai")}
+                    onClick={() => setEffectiveDeliveryMethod("courier_dubai")}
                     className={`p-3 rounded-xl border text-start transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple ${
-                      deliveryMethod === "courier_dubai"
+                      effectiveDeliveryMethod === "courier_dubai"
                         ? "bg-brand-purple/15 border-brand-purple/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     }`}
@@ -375,9 +394,9 @@ export function GearCartDrawer({
 
                   <button
                     type="button"
-                    onClick={() => setDeliveryMethod("pickup_hub")}
+                    onClick={() => setEffectiveDeliveryMethod("pickup_hub")}
                     className={`p-3 rounded-xl border text-start transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple ${
-                      deliveryMethod === "pickup_hub"
+                      effectiveDeliveryMethod === "pickup_hub"
                         ? "bg-brand-purple/15 border-brand-purple/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     }`}
@@ -396,14 +415,14 @@ export function GearCartDrawer({
                 <span className="flex items-center gap-1.5">
                   <Calendar size={13} className="text-text-muted shrink-0" />
                   <span>
-                    {dateRange.pickupDate} {isArabic ? "إلى" : "to"} {dateRange.returnDate} ({dateRange.totalDays} {isArabic ? "أيام" : "Days"})
+                    {effectiveDateRange.pickupDate} {isArabic ? "إلى" : "to"} {effectiveDateRange.returnDate} ({effectiveDateRange.totalDays} {isArabic ? "أيام" : "Days"})
                   </span>
                 </span>
                 <span className="text-brand-purple-light font-medium">
-                  {dateRange.discountPercentage > 0
+                  {effectiveDateRange.discountPercentage > 0
                     ? isArabic
-                      ? `تم تطبيق خصم ${dateRange.discountPercentage}%`
-                      : `${dateRange.discountPercentage}% Discount Applied`
+                      ? `تم تطبيق خصم ${effectiveDateRange.discountPercentage}%`
+                      : `${effectiveDateRange.discountPercentage}% Discount Applied`
                     : isArabic
                     ? "السعر اليومي القياسي"
                     : "Standard Tier"}
@@ -423,19 +442,39 @@ export function GearCartDrawer({
                   </span>
                 </div>
 
-                <Link
-                  href={`${checkoutHref}?service=gear-rental&items=${items.map((i) => i.id).join(",")}&days=${dateRange.totalDays}&delivery=${deliveryMethod}`}
-                  className="px-6 py-3 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-purple-light flex items-center gap-2 shadow-lg shadow-brand-purple/30 hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple shrink-0"
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleClose();
+                    setIsCheckoutOpen(true);
+                  }}
+                  className="px-6 py-3 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-purple-light flex items-center gap-2 shadow-lg shadow-brand-purple/30 hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple shrink-0 cursor-pointer"
                 >
                   <span>{isArabic ? "تأكيد طلب الحجز" : "Submit Reservation"}</span>
                   <ArrowRight size={14} className="rtl:rotate-180" />
-                </Link>
+                </button>
               </div>
             </div>
           </div>
         </div>,
         document.body
       )}
+
+      {/* Dedicated Multi-Item Gear Checkout Modal */}
+      <GearCheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        items={effectiveItems}
+        dateRange={effectiveDateRange}
+        deliveryMethod={effectiveDeliveryMethod}
+        grandTotal={grandTotal}
+        totalDeposit={totalDeposit}
+        onOrderCompleted={() => {
+          handleClear();
+          setIsCheckoutOpen(false);
+          handleClose();
+        }}
+      />
     </>
   );
 }

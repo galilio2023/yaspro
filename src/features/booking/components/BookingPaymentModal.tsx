@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import { createPortal } from "react-dom";
+import React, { useState, useRef } from "react";
 import { CreditCard, ShieldCheck, Lock, AlertCircle, X, Loader2, Smartphone, Zap } from "lucide-react";
 import { processBookingOnlinePayment } from "@/lib/payment-actions";
 import { createZiinaPaymentIntent } from "@/lib/ziina";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { formatCurrency } from "@/lib/utils";
 
 interface BookingPaymentModalProps {
@@ -30,6 +32,9 @@ export function BookingPaymentModal({
   const [cardCvc, setCardCvc] = useState("•••");
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap({ isOpen, onClose, containerRef: dialogRef });
 
   if (!isOpen) return null;
 
@@ -86,9 +91,9 @@ export function BookingPaymentModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="relative w-full max-w-lg rounded-3xl bg-slate-900 border border-white/10 shadow-2xl p-6 sm:p-8 text-left animate-fade-up">
+  return createPortal(
+    <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Secure Online Checkout" tabIndex={-1} className="relative w-full max-w-lg rounded-3xl bg-slate-900 border border-white/10 shadow-2xl p-6 sm:p-8 text-left animate-fade-up">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
           <div className="flex items-center gap-2.5">
@@ -278,6 +283,7 @@ export function BookingPaymentModal({
           </button>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
