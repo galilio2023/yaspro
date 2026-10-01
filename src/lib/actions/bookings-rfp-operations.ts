@@ -46,14 +46,29 @@ export async function getCmsBookings(): Promise<EnrichedBooking[]> {
         .leftJoin(studios, eq(bookings.studioId, studios.id))
         .orderBy(desc(bookings.createdAt));
 
-      return records.map((r) => ({
-        ...r.booking,
-        userName: r.userName,
-        userEmail: r.userEmail,
-        userPhone: r.userPhone,
-        userCompany: r.userCompany,
-        studioName: r.studioName,
-      }));
+      return records.map((r) => {
+        let guestName = r.userName;
+        let guestEmail = r.userEmail;
+        let guestPhone = r.userPhone;
+        let guestCompany = r.userCompany;
+        if (!guestEmail && r.booking.specialRequests?.startsWith("[Contact: ")) {
+          const match = r.booking.specialRequests.match(/\[Contact:\s*([^|]+)\|\s*([^|]+)\|\s*([^|\]]+)(?:\|\s*([^\]]+))?\]/);
+          if (match) {
+            guestName = match[1]?.trim() || guestName;
+            guestEmail = match[2]?.trim() || guestEmail;
+            guestPhone = match[3]?.trim() || guestPhone;
+            guestCompany = match[4]?.trim() || guestCompany;
+          }
+        }
+        return {
+          ...r.booking,
+          userName: guestName,
+          userEmail: guestEmail,
+          userPhone: guestPhone,
+          userCompany: guestCompany,
+          studioName: r.studioName,
+        };
+      });
     }
   } catch (e) {
     console.error("getCmsBookings error:", e);

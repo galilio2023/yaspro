@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/db";
-import { enterpriseRfps } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { enterpriseRfps, type EnterpriseRfp } from "@/db/schema";
+import { eq, or, desc } from "drizzle-orm";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 
@@ -136,6 +136,39 @@ export async function lookupEnterpriseRfp(referenceCode: string): Promise<Enterp
       message: "Database telemetry lookup encountered a temporary issue. Please try again.",
     };
   }
+}
+
+/**
+ * Fetch real enterprise RFPs submitted by the authenticated user
+ */
+export async function getUserEnterpriseRfps(): Promise<EnterpriseRfp[]> {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    if (!session?.user) return [];
+
+    const userRole = (session.user as { role?: string })?.role;
+    const userEmail = session.user.email?.toLowerCase().trim();
+
+    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+      const records = await db
+        .select()
+        .from(enterpriseRfps)
+        .where(
+          userRole === "admin"
+            ? undefined
+            : userEmail
+            ? or(eq(enterpriseRfps.userId, session.user.id), eq(enterpriseRfps.workEmail, userEmail))
+            : eq(enterpriseRfps.userId, session.user.id)
+        )
+        .orderBy(desc(enterpriseRfps.createdAt));
+      return records;
+    }
+  } catch (err) {
+    console.error("getUserEnterpriseRfps error:", err);
+  }
+  return [];
 }
 
 /**

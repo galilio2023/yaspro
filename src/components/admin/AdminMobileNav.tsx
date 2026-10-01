@@ -19,6 +19,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { YasproEmblem } from "@/components/ui/YasproEmblem";
+import { AdminSignOutButton } from "@/components/admin/AdminSignOutButton";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
@@ -159,6 +160,10 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
                 >
                   Public Site <ArrowUpRight size={12} className="rtl:scale-x-[-1]" />
                 </Link>
+              </div>
+
+              <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-end">
+                <AdminSignOutButton />
               </div>
             </div>
           </div>

@@ -7,6 +7,7 @@ import { Menu, X, Sparkles, Search, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BrandLogo } from "./BrandLogo";
 import { MobileNavDrawer, NavLinkItem } from "./MobileNavDrawer";
+import { NavbarUserMenu } from "./NavbarUserMenu";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { useCart } from "@/components/providers/CartProvider";
 
@@ -129,33 +130,18 @@ export default function Navbar() {
               {language === "en" ? "العربية" : "EN"}
             </button>
 
-            {/* Portal Link / User Status */}
-            {(() => {
-              const role = (session?.user as { role?: string } | undefined)?.role;
-              const portalHref = session?.user
-                ? role === "admin"
-                  ? "/admin"
-                  : role === "enterprise"
-                  ? "/enterprise/portal"
-                  : "/portal"
-                : "/login";
-              return (
-                <Link
-                  href={portalHref}
-                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-300/90 hover:text-white px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-all"
-                >
-                  <span
-                    className={cn(
-                      "size-1.5 rounded-full",
-                      session?.user ? "bg-emerald-400 animate-pulse" : "bg-brand-cyan/80"
-                    )}
-                  />
-                  <span className="max-w-[110px] truncate">
-                    {session?.user ? session.user.name.split(" ")[0] : t("nav.portal")}
-                  </span>
-                </Link>
-              );
-            })()}
+            {/* Portal Link / User Status Dropdown */}
+            {session?.user ? (
+              <NavbarUserMenu user={session.user} />
+            ) : (
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-300/90 hover:text-white px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-all"
+              >
+                <span className="size-1.5 rounded-full bg-brand-cyan/80" />
+                <span className="max-w-[110px] truncate">{t("nav.portal")}</span>
+              </Link>
+            )}
 
             {/* Primary CTA: Book Studio */}
             <Link
