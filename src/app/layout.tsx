@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins, Noto_Sans_Arabic } from "next/font/google";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
+import { CartProvider } from "@/components/providers/CartProvider";
 import { NextIntlClientProvider } from "next-intl";
 import "./globals.css";
 
@@ -186,7 +187,9 @@ export default async function RootLayout({
       <body className="min-h-screen w-full bg-background text-foreground antialiased overflow-x-hidden">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <LanguageProvider initialLocale={locale}>
-            <SmoothScrollProvider>{children}</SmoothScrollProvider>
+            <CartProvider>
+              <SmoothScrollProvider>{children}</SmoothScrollProvider>
+            </CartProvider>
           </LanguageProvider>
         </NextIntlClientProvider>
       </body>

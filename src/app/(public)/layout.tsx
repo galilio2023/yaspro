@@ -3,6 +3,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { UnifiedFloatingActions } from "@/components/layout/UnifiedFloatingActions";
 import { CommandPalette } from "@/components/layout/CommandPalette";
+import { GearCartDrawer } from "@/features/gear/components/GearCartDrawer";
 
 export default function PublicLayout({
   children,
@@ -24,6 +25,7 @@ export default function PublicLayout({
       <Footer />
       <UnifiedFloatingActions />
       <CommandPalette />
+      <GearCartDrawer />
     </>
   );
 }

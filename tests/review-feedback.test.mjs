@@ -262,7 +262,19 @@ function gearModalFixture(submit, isArabic = false, globals = {}) {
     'lucide-react': new Proxy({}, { get: (_, key) => key }),
     '@/lib/utils': { formatCurrency: String, cn: (...classes) => classes.join(' ') },
     '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic }) },
-    '@/lib/actions/equipment-gear': { submitGearReservation: submit },
+    '@/lib/actions/equipment-gear': {
+      submitGearReservation: submit,
+      createGearBookingOrder: submit ? async (input) => {
+        const res = await submit(input);
+        return {
+          ...res,
+          data: res?.data ? { ...res.data, bookingId: 'b_test_123', totalAmount: 100 } : undefined,
+        };
+      } : undefined,
+    },
+    '@/lib/auth-client': { useSession: () => ({ data: null }) },
+    '@/features/booking/components/BookingPaymentModal': { BookingPaymentModal: () => null },
+    'next/link': ({ children, ...props }) => ({ type: 'a', props: { ...props, children } }),
   };
   const { GearRentalModal } = loadSource('src/features/gear/components/GearRentalModal.tsx', mocks, {
     document: { body: {} }, ...globals,

@@ -163,13 +163,19 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                 {/* Session Type & Studio */}
                 <td className="py-3.5 px-4 capitalize text-slate-300">
                   <span className="font-semibold text-white block">
-                    {b.sessionType.replace("_", " ")}
+                    {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
+                      ? "Cinema Gear Rental"
+                      : b.sessionType.replace("_", " ")}
                   </span>
                   <span className="text-[11px] text-purple-300 font-medium block">
-                    {b.studioName || "Soundstage"}
+                    {b.studioName || (!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
+                      ? `${b.equipmentIds.length} Equipment Item${b.equipmentIds.length > 1 ? "s" : ""}`
+                      : "Soundstage")}
                   </span>
                   <span className="text-[10px] text-slate-400">
-                    Headcount: {b.headcount} pax
+                    {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
+                      ? b.propsNotes || "Dispatch & Delivery"
+                      : `Headcount: ${b.headcount} pax`}
                   </span>
                 </td>
 
@@ -184,7 +190,9 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
 
                 {/* Duration */}
                 <td className="py-3.5 px-4 text-slate-300 font-mono">
-                  {b.durationHours} hrs
+                  {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
+                    ? `${Math.max(1, Math.round(b.durationHours / 24))} Days`
+                    : `${b.durationHours} hrs`}
                 </td>
 
                 {/* Amount */}

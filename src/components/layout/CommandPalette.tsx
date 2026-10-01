@@ -20,6 +20,7 @@ import {
   PhoneCall,
   Layers,
   LayoutDashboard,
+  ShoppingBag,
 } from "lucide-react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -247,6 +248,14 @@ export function CommandPalette() {
       },
 
       // Quick Actions
+      {
+        id: "action-cart",
+        title: isArabic ? "فتح سلة استئجار المعدات السينمائية" : "Open Cinema Gear Cart",
+        category: "Quick Actions",
+        icon: ShoppingBag,
+        action: () => window.dispatchEvent(new CustomEvent("open-gear-cart")),
+        keywords: "cart gear equipment camera lens rental bag checkout سلة معدات",
+      },
       {
         id: "action-lang",
         title: isArabic ? "Switch to English Interface" : "التبديل إلى الواجهة العربية",

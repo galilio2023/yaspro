@@ -39,23 +39,37 @@ function formatDate(date: Date | string | null) {
   });
 }
 
-function formatSessionType(type: string) {
+function formatSessionType(type: string, isGearRental: boolean, equipmentCount: number) {
+  if (isGearRental) {
+    return equipmentCount > 0 ? `Cinema Gear Rental (${equipmentCount} items)` : "Cinema Gear Rental";
+  }
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function BookingRow({ b }: { b: Booking }) {
+  const isGearRental = !b.studioId && Array.isArray(b.equipmentIds) && b.equipmentIds.length > 0;
+  const equipmentCount = Array.isArray(b.equipmentIds) ? b.equipmentIds.length : 0;
   const cfg = STATUS_CONFIG[b.status as keyof typeof STATUS_CONFIG];
   const StatusIcon = cfg?.icon ?? AlertCircle;
   const payCfg = PAYMENT_CONFIG[b.paymentStatus] ?? PAYMENT_CONFIG.unpaid;
+  const durationLabel = isGearRental
+    ? `${Math.max(1, Math.round(b.durationHours / 24))} day(s) rental`
+    : `${b.durationHours}h · ${b.headcount} person${b.headcount !== 1 ? "s" : ""}`;
+
   return (
     <div className="px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-white/[0.02] transition-colors">
       <div className="flex flex-col gap-0.5 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-bold text-white">{formatSessionType(b.sessionType)}</span>
+          <span className="text-xs font-bold text-white">
+            {formatSessionType(b.sessionType, isGearRental, equipmentCount)}
+          </span>
           <span className="text-[10px] font-mono text-slate-500">#{b.referenceCode}</span>
         </div>
         <div className="text-[11px] text-slate-400" dir="ltr">{formatDate(b.scheduledAt)}</div>
-        <div className="text-[11px] text-slate-500">{b.durationHours}h · {b.headcount} person{b.headcount !== 1 ? "s" : ""}</div>
+        <div className="text-[11px] text-slate-500">
+          {durationLabel}
+          {b.propsNotes ? ` · ${b.propsNotes}` : ""}
+        </div>
       </div>
       <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
         <span className="text-xs font-bold text-white" dir="ltr">

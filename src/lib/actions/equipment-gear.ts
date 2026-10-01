@@ -5,13 +5,15 @@ import { db } from "@/db";
 import {
   equipment,
   inquiries,
+  bookings,
+  users,
   type Equipment,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { revalidatePath, updateTag } from "next/cache";
 import { GEAR_DATA } from "@/features/gear/data";
-import { slugify } from "@/lib/utils";
-import { isUuid, isDbAvailable, requireAdmin, type CmsResponse } from "./shared";
+import { slugify, generateBookingReference } from "@/lib/utils";
+import { isUuid, isDbAvailable, requireAdmin, getCurrentSession, type CmsResponse } from "./shared";
 
 
 /**
@@ -176,6 +178,160 @@ export async function submitGearReservation(
     return {
       success: false,
       error: "Unable to save your reservation. Please contact us on WhatsApp.",
+    };
+  }
+}
+
+const gearOrderSchema = z.object({
+  gearIds: z.array(z.string()).min(1, "Please select at least one piece of gear."),
+  customerName: z.string().min(2, "Customer name is required."),
+  email: z.string().email("Invalid email address."),
+  phone: z.string().min(6, "Valid phone number is required."),
+  company: z.string().optional(),
+  durationDays: z.number().int().min(1).default(1),
+  deliveryMethod: z.string().default("studio_delivery"),
+  notes: z.string().optional(),
+  startDate: z.string().optional(),
+});
+
+export type GearOrderInput = z.input<typeof gearOrderSchema>;
+
+/**
+ * Creates a verified cinema gear rental order directly in the bookings table.
+ * Automatically links to the authenticated user (or provisions/matches a user record by email),
+ * computes duration discounts & delivery surcharges, and returns the reference code for Ziina payment.
+ */
+export async function createGearBookingOrder(
+  payload: GearOrderInput
+): Promise<CmsResponse<{ bookingId: string; referenceCode: string; totalAmount: number; currency: string }>> {
+  try {
+    const parsed = gearOrderSchema.safeParse(payload);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("\n"),
+      };
+    }
+    const input = parsed.data;
+
+    // 1. Resolve equipment items & calculate pricing
+    let totalBaseDailyRate = 0;
+    for (const gearId of input.gearIds) {
+      let storedGear = null;
+      if (isDbAvailable()) {
+        const [found] = await db
+          .select()
+          .from(equipment)
+          .where(isUuid(gearId) ? eq(equipment.id, gearId) : eq(equipment.slug, gearId))
+          .limit(1);
+        storedGear = found;
+      }
+      const item = storedGear || GEAR_DATA.find((g) => g.id === gearId);
+      if (!item) {
+        return { success: false, error: `Equipment item ${gearId} was not found.` };
+      }
+      totalBaseDailyRate += Number(item.dailyRate);
+    }
+
+    const discountMultiplier = input.durationDays >= 7 ? 0.65 : input.durationDays >= 3 ? 0.8 : 1;
+    const isCourier = input.deliveryMethod === "courier_dubai" || input.deliveryMethod === "dubai_courier";
+    const deliveryFee = isCourier ? 250 : 0;
+    const grandTotal = Math.round(totalBaseDailyRate * discountMultiplier) * input.durationDays + deliveryFee;
+
+    // 2. Identify user from active session or provision/link by email
+    let finalUserId: string | null = null;
+    let customerName = input.customerName.trim();
+    try {
+      const session = await getCurrentSession?.();
+      if (session?.user?.id) {
+        finalUserId = session.user.id;
+        if (!customerName && session.user.name) {
+          customerName = session.user.name;
+        }
+      }
+    } catch {
+      // In tests or environments without headers, proceed with guest provisioning
+    }
+
+    if (isDbAvailable()) {
+      if (!finalUserId) {
+        const existingUser = await db.query.users.findFirst({
+          where: eq(users.email, input.email.toLowerCase()),
+        });
+        if (existingUser) {
+          finalUserId = existingUser.id;
+        } else {
+          const newUserId = `usr_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+          const [created] = await db
+            .insert(users)
+            .values({
+              id: newUserId,
+              name: customerName,
+              email: input.email.toLowerCase(),
+              phone: input.phone,
+              company: input.company || null,
+              role: "client",
+            })
+            .returning();
+          finalUserId = created?.id || newUserId;
+        }
+      }
+
+      // 3. Insert into bookings
+      const referenceCode = generateBookingReference();
+      const scheduledAtDate = input.startDate ? new Date(input.startDate) : new Date();
+
+      const [newBooking] = await db
+        .insert(bookings)
+        .values({
+          referenceCode,
+          userId: finalUserId,
+          studioId: null, // Standalone gear rental
+          sessionType: "commercial",
+          scheduledAt: scheduledAtDate,
+          durationHours: input.durationDays * 24,
+          headcount: 1,
+          equipmentIds: input.gearIds,
+          propsNotes: `Gear Delivery: ${input.deliveryMethod}`,
+          specialRequests: input.notes || null,
+          totalAmount: grandTotal.toFixed(2),
+          currency: "AED",
+          status: "pending",
+          paymentStatus: "unpaid",
+        })
+        .returning();
+
+      revalidatePath("/portal");
+      revalidatePath("/portal/bookings");
+      revalidatePath("/admin/bookings");
+
+      return {
+        success: true,
+        message: "Gear rental booking created successfully.",
+        data: {
+          bookingId: newBooking?.id || `gear_${Date.now()}`,
+          referenceCode: newBooking?.referenceCode || referenceCode,
+          totalAmount: grandTotal,
+          currency: "AED",
+        },
+      };
+    }
+
+    // Fallback when DB is unavailable (e.g. mock test environment)
+    return {
+      success: true,
+      data: {
+        bookingId: `mock-gear-${Date.now()}`,
+        referenceCode: generateBookingReference(),
+        totalAmount: grandTotal,
+        currency: "AED",
+      },
+    };
+  } catch (error) {
+    console.error("createGearBookingOrder error:", error);
+    return {
+      success: false,
+      error: "Unable to process gear rental booking. Please retry or contact us on WhatsApp.",
     };
   }
 }
