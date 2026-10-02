@@ -7,13 +7,20 @@ import { formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { BookingState, SessionTypeItem, StudioItem } from "../types";
-import { STUDIO_GEAR_PACKAGES, TURNKEY_STUDIO_PACKAGES } from "../constants";
+import {
+  STUDIO_GEAR_PACKAGES,
+  TURNKEY_STUDIO_PACKAGES,
+  STUDIO_ADDONS,
+  PROMO_CODES,
+  BookingPricingBreakdown,
+} from "../constants";
 
 interface BookingSummaryProps {
   state: BookingState;
   studio: StudioItem;
   sessionTypeObj?: SessionTypeItem;
   total: number;
+  breakdown?: BookingPricingBreakdown;
 }
 
 export function BookingSummary({
@@ -21,11 +28,20 @@ export function BookingSummary({
   studio,
   sessionTypeObj,
   total,
+  breakdown,
 }: BookingSummaryProps) {
   const { isArabic } = useLanguage();
   const [currency, setCurrency] = useState<"AED" | "USD">("AED");
   const exchangeRate = currency === "USD" ? 0.272 : 1;
   const displayTotal = total * exchangeRate;
+
+  const teleprompterRate = (STUDIO_ADDONS || []).find((a) => a.id === "teleprompter")?.rate ?? 85;
+  const extraMicRate = (STUDIO_ADDONS || []).find((a) => a.id === "extra-mic")?.rate ?? 120;
+  const rushDeliveryRate = (STUDIO_ADDONS || []).find((a) => a.id === "rush-delivery")?.rate ?? 150;
+
+  const normalizedPromo = state.promoCode?.trim().toUpperCase();
+  const isPromoValid = Boolean(normalizedPromo && PROMO_CODES[normalizedPromo]);
+  const discountAmount = breakdown?.discount ?? 0;
 
   const selectedGear = STUDIO_GEAR_PACKAGES.find(
     (g) => g.id === state.selectedGearPackage
@@ -155,14 +171,21 @@ export function BookingSummary({
           {state.hasTeleprompter && (
             <div className="flex justify-between items-center">
               <span className="text-text-secondary">{isArabic ? "شاشة تلقين احترافية:" : "Teleprompter:"}</span>
-              <span className="text-amber-400 font-bold">+{formatCurrency(85 * state.durationHours)}</span>
+              <span className="text-amber-400 font-bold">+{formatCurrency(teleprompterRate * (state.durationHours || 1) * exchangeRate)}</span>
             </div>
           )}
 
           {(state.extraMicsCount || 0) > 0 && (
             <div className="flex justify-between items-center">
-              <span className="text-text-secondary">{isArabic ? "ميكروفون Shure إضافي:" : "Extra SM7B Mic:"}</span>
-              <span className="text-amber-400 font-bold">+{formatCurrency((state.extraMicsCount || 1) * 120)}</span>
+              <span className="text-text-secondary">{isArabic ? "ميكروفون Shure إضافي:" : "Extra SM7B Mic:"} ({state.extraMicsCount})</span>
+              <span className="text-amber-400 font-bold">+{formatCurrency((state.extraMicsCount || 0) * extraMicRate * exchangeRate)}</span>
+            </div>
+          )}
+
+          {state.hasRushDelivery && (
+            <div className="flex justify-between items-center">
+              <span className="text-text-secondary">{isArabic ? "تسليم مستعجل (24 ساعة):" : "Rush Delivery (24h):"}</span>
+              <span className="text-amber-400 font-bold">+{formatCurrency(rushDeliveryRate * exchangeRate)}</span>
             </div>
           )}
 
@@ -172,14 +195,14 @@ export function BookingSummary({
                 <Sparkles size={12} className="text-amber-400" />
                 <span>{isArabic ? "مونتاج ذكاء اصطناعي وترجمة:" : "AI Auto-Cut & Subtitles:"}</span>
               </span>
-              <span className="text-amber-400 font-bold">+450 AED</span>
+              <span className="text-amber-400 font-bold">+{formatCurrency(450 * exchangeRate)}</span>
             </div>
           )}
 
-          {state.promoCode && (
+          {isPromoValid && discountAmount > 0 && (
             <div className="flex justify-between items-center pt-1 border-t border-white/5 text-emerald-400 font-semibold">
-              <span>{isArabic ? "كوبون الخصم:" : "Promo Voucher:"} ({state.promoCode})</span>
-              <span>Applied ✓</span>
+              <span>{isArabic ? "كوبون الخصم:" : "Promo Voucher:"} ({normalizedPromo})</span>
+              <span>-{formatCurrency(discountAmount * exchangeRate)}</span>
             </div>
           )}
         </div>

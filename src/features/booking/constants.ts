@@ -226,10 +226,14 @@ export function calculateBookingPrice(input: BookingPricingInput): BookingPricin
   const gearPkg = (STUDIO_GEAR_PACKAGES || []).find((g) => g.id === input.selectedGearPackage);
   const gearCost = gearPkg ? gearPkg.rate : 0;
 
-  // Add-ons cost
-  const teleprompterCost = input.hasTeleprompter ? 85 * durationHours : 0;
-  const extraMicsCost = (input.extraMicsCount || 0) * 120;
-  const rushDeliveryCost = input.hasRushDelivery ? 150 : 0;
+  // Add-ons cost looked up from STUDIO_ADDONS catalog
+  const teleprompterRate = (STUDIO_ADDONS || []).find((a) => a.id === "teleprompter")?.rate ?? 85;
+  const extraMicRate = (STUDIO_ADDONS || []).find((a) => a.id === "extra-mic")?.rate ?? 120;
+  const rushDeliveryRate = (STUDIO_ADDONS || []).find((a) => a.id === "rush-delivery")?.rate ?? 150;
+
+  const teleprompterCost = input.hasTeleprompter ? teleprompterRate * durationHours : 0;
+  const extraMicsCost = (input.extraMicsCount || 0) * extraMicRate;
+  const rushDeliveryCost = input.hasRushDelivery ? rushDeliveryRate : 0;
   const addOnsCost = teleprompterCost + extraMicsCost + rushDeliveryCost;
 
   const postCost =

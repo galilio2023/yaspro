@@ -15,6 +15,24 @@ export interface BrandLogoItem {
 
 export const GOV_LOGOS: readonly GovernmentLogo[] = [
   {
+    id: "expo-2020",
+    name: "Expo 2020 Dubai",
+    logo: "/images/partners/expo-2020.png",
+    glowColor: "rgba(217,151,38,0.5)",
+  },
+  {
+    id: "museum-future",
+    name: "Museum of the Future",
+    logo: "/images/partners/museum-of-the-future.png",
+    glowColor: "rgba(255,255,255,0.4)",
+  },
+  {
+    id: "etihad-ensany",
+    name: "Etihad Ensany Foundation",
+    logo: "/images/partners/etihad-ensany.png",
+    glowColor: "rgba(34,197,94,0.4)",
+  },
+  {
     id: "presidential-affairs",
     name: "Ministry of Presidential Affairs",
     logo: "/images/partners/ministry-of-presidential-affairs.png",
@@ -111,6 +129,30 @@ export const BRAND_LOGOS: readonly BrandLogoItem[] = [
     </svg>`,
   },
   {
+    id: "hbo-max",
+    name: "HBO Max",
+    logo: "/images/partners/hbo-max.svg",
+    color: "#5822b4",
+  },
+  {
+    id: "hulu",
+    name: "Hulu",
+    logo: "/images/partners/hulu.svg",
+    color: "#1ce783",
+  },
+  {
+    id: "copper",
+    name: "Copper Media",
+    logo: "/images/partners/copper.png",
+    color: "#c87d55",
+  },
+  {
+    id: "flair",
+    name: "Flair Event Production",
+    logo: "/images/partners/flair.png",
+    color: "#e11d48",
+  },
+  {
     id: "dmx",
     name: "DMX Global",
     logo: "/images/partners/dmx.png",
@@ -129,27 +171,9 @@ export const BRAND_LOGOS: readonly BrandLogoItem[] = [
     color: "#d97706",
   },
   {
-    id: "c-1",
-    name: "Partner Brand 1",
-    logo: "/images/partners/brands/c-1.png",
+    id: "bassem-yakhour",
+    name: "Bassem Yakhour Show",
+    logo: "/images/partners/bassem-yakhour.png",
     color: "#eab308",
-  },
-  {
-    id: "c-2",
-    name: "Partner Brand 2",
-    logo: "/images/partners/brands/c-2.png",
-    color: "#3b82f6",
-  },
-  {
-    id: "d-1",
-    name: "Partner Brand 3",
-    logo: "/images/partners/brands/d-1.png",
-    color: "#ec4899",
-  },
-  {
-    id: "f-3",
-    name: "Partner Brand 4",
-    logo: "/images/partners/brands/f-3.png",
-    color: "#f59e0b",
   },
 ];

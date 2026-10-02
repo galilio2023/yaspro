@@ -609,6 +609,8 @@ export function GearRentalModal({
       bookingId={createdBookingId}
       referenceCode={confirmationCode}
       totalAmount={createdAmount || grandTotal}
+      securityDeposit={deposit}
+      orderTitle={displayName}
       onPaymentSuccess={() => {
         setIsPaymentOpen(false);
       }}

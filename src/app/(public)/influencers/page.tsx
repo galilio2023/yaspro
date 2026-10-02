@@ -7,6 +7,7 @@ import { Container } from "@/components/ui/container";
 import type { InfluencerItem, CreatorDemographics } from "@/features/influencers/types";
 
 import { InfluencersPageHeader } from "@/features/influencers/components/InfluencersPageHeader";
+import { VerticalReelsShowcase } from "@/features/influencers/components/VerticalReelsShowcase";
 
 export const revalidate = 3600;
 
@@ -43,6 +44,8 @@ export default async function InfluencersPage() {
     <Section id="influencers-page" aria-labelledby="influencers-title" className="py-12 md:py-20 bg-background">
       <Container>
         <InfluencersPageHeader />
+
+        <VerticalReelsShowcase />
 
         <InfluencersExplorer initialInfluencers={initialInfluencers} />
       </Container>

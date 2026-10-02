@@ -17,35 +17,135 @@ import { slugify, generateBookingReference } from "@/lib/utils";
 import { isUuid, isDbAvailable, requireAdmin, getCurrentSession, type CmsResponse } from "./shared";
 
 
+export interface PaginatedEquipmentParams {
+  page?: number;
+  limit?: number;
+  category?: string;
+  search?: string;
+  isKit?: boolean;
+  isPopular?: boolean;
+  sort?: "rate_asc" | "rate_desc" | "newest" | "popular";
+}
+
+export interface PaginatedEquipmentResult {
+  items: Equipment[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasMore: boolean;
+}
+
+/**
+ * Enterprise Paginated Cinema Equipment Query.
+ * Supports page/limit offset, search query, category facets, and sorting.
+ */
+export async function getPaginatedEquipment(
+  params: PaginatedEquipmentParams = {}
+): Promise<PaginatedEquipmentResult> {
+  const page = Math.max(1, params.page || 1);
+  const limit = Math.max(1, Math.min(params.limit || 12, 100));
+  const offset = (page - 1) * limit;
+
+  let allRecords: Equipment[] = [];
+
+  if (isDbAvailable()) {
+    try {
+      const records = await db.select().from(equipment).orderBy(desc(equipment.createdAt));
+      if (records && records.length > 0) {
+        allRecords = records;
+      }
+    } catch (err) {
+      console.error("DB query failed in getPaginatedEquipment, falling back to static catalog:", err);
+    }
+  }
+
+  if (allRecords.length === 0) {
+    allRecords = GEAR_DATA.map((g) => ({
+      id: g.id,
+      slug: g.id,
+      name: g.name,
+      arabicName: g.arabicName || null,
+      description: g.description || null,
+      arabicDescription: g.arabicDescription || null,
+      category: g.category,
+      dailyRate: g.dailyRate.toFixed(2),
+      securityDeposit: (g.securityDeposit || 0).toFixed(2),
+      imageUrl: g.image || null,
+      specs: g.specs || [],
+      isPopular: !!g.isPopular,
+      isKit: !!g.isKit,
+      includedInKit: g.includedInKit || [],
+      isAvailable: true,
+      createdAt: new Date(),
+    }));
+  }
+
+  let filtered = allRecords;
+
+  if (params.category && params.category !== "all") {
+    filtered = filtered.filter((item) => item.category === params.category);
+  }
+  if (params.search && params.search.trim()) {
+    const query = params.search.toLowerCase().trim();
+    filtered = filtered.filter((item) =>
+      item.name.toLowerCase().includes(query) ||
+      (item.description && item.description.toLowerCase().includes(query)) ||
+      (item.arabicName && item.arabicName.includes(query))
+    );
+  }
+  if (params.isKit !== undefined) {
+    filtered = filtered.filter((item) => !!item.isKit === params.isKit);
+  }
+  if (params.isPopular !== undefined) {
+    filtered = filtered.filter((item) => !!item.isPopular === params.isPopular);
+  }
+
+  if (params.sort === "rate_asc") {
+    filtered = [...filtered].sort((a, b) => Number(a.dailyRate) - Number(b.dailyRate));
+  } else if (params.sort === "rate_desc") {
+    filtered = [...filtered].sort((a, b) => Number(b.dailyRate) - Number(a.dailyRate));
+  } else if (params.sort === "popular") {
+    filtered = [...filtered].sort((a, b) => (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0));
+  }
+
+  const total = filtered.length;
+  const totalPages = Math.ceil(total / limit) || 1;
+  const items = filtered.slice(offset, offset + limit);
+
+  return {
+    items,
+    total,
+    page,
+    limit,
+    totalPages,
+    hasMore: page < totalPages,
+  };
+}
+
+/**
+ * Retrieves the featured flagship fleet spotlight (6 items) strictly for landing page display.
+ * Avoids over-fetching the full 160-item catalog on the homepage.
+ */
+export async function getFeaturedEquipmentSpotlight(limit = 6): Promise<Equipment[]> {
+  const result = await getPaginatedEquipment({
+    limit,
+    isPopular: true,
+    sort: "popular",
+  });
+  if (result.items.length >= limit) return result.items;
+  const fallback = await getPaginatedEquipment({ limit });
+  return fallback.items;
+}
+
 /**
  * Retrieves cinema equipment and rental gear catalog from Neon PostgreSQL.
  *
  * @returns Array of gear equipment records.
  */
 export async function getCmsEquipment(): Promise<Equipment[]> {
-  if (isDbAvailable()) {
-    const records = await db.select().from(equipment).orderBy(desc(equipment.createdAt));
-    if (records && records.length > 0) return records;
-  }
-
-  return GEAR_DATA.map((g) => ({
-    id: g.id,
-    slug: g.id,
-    name: g.name,
-    arabicName: g.arabicName || null,
-    description: g.description || null,
-    arabicDescription: g.arabicDescription || null,
-    category: g.category,
-    dailyRate: g.dailyRate.toFixed(2),
-    securityDeposit: (g.securityDeposit || 0).toFixed(2),
-    imageUrl: g.image || null,
-    specs: g.specs || [],
-    isPopular: !!g.isPopular,
-    isKit: !!g.isKit,
-    includedInKit: g.includedInKit || [],
-    isAvailable: true,
-    createdAt: new Date(),
-  }));
+  const result = await getPaginatedEquipment({ limit: 100 });
+  return result.items;
 }
 
 /**

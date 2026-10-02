@@ -15,10 +15,26 @@ export const bookingSubmissionSchema = z.object({
     "commercial",
     "music_video",
   ]),
-  scheduledAt: z.string().min(1, "Scheduled date and time required"),
+  scheduledAt: z
+    .string()
+    .min(1, "Scheduled date and time required")
+    .refine((val) => {
+      const match = val.match(/T(\d{2}):(\d{2})/);
+      if (!match) return false;
+      const hours = parseInt(match[1], 10);
+      const minutes = parseInt(match[2], 10);
+      if (isNaN(hours) || isNaN(minutes) || minutes < 0 || minutes > 59) return false;
+      // Studio operating hours are strictly 09:00 to 21:00
+      return hours >= 9 && hours <= 21;
+    }, "Studio bookings are restricted to operating window 09:00 - 21:00"),
   durationHours: z.number().int().min(1).max(24).default(2),
   headcount: z.number().int().min(1).max(100).default(2),
+  turnkeyPackageId: z.string().optional().default("none"),
   selectedGearPackage: z.string().optional().default("none"),
+  hasTeleprompter: z.boolean().optional().default(false),
+  extraMicsCount: z.number().int().min(0).max(10).optional().default(0),
+  hasRushDelivery: z.boolean().optional().default(false),
+  promoCode: z.string().trim().max(30).optional().default(""),
   needsCrew: z.boolean().optional().default(false),
   needsEditing: z.boolean().optional().default(false),
   needsColorGrading: z.boolean().optional().default(false),

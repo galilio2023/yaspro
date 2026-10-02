@@ -4,6 +4,7 @@ import { AboutHeroHeader } from "@/features/about/components/AboutHeroHeader";
 import { AboutOverview } from "@/features/about/components/AboutOverview";
 import { AboutMilestones } from "@/features/about/components/AboutMilestones";
 import { AboutPillars } from "@/features/about/components/AboutPillars";
+import { YasGroupShowcase } from "@/features/group/components/YasGroupShowcase";
 import { TeamGrid } from "@/features/about/components/TeamGrid";
 import { AboutCtaBanner } from "@/features/about/components/AboutCtaBanner";
 import { Section } from "@/components/ui/section";
@@ -57,6 +58,9 @@ export default function AboutPage() {
           <AboutPillars headingId="pillars-title" />
         </Container>
       </Section>
+
+      {/* ── Yas Media Group Ecosystem & Subsidiaries ── */}
+      <YasGroupShowcase />
 
       {/* ── Executive Leadership & Team Roster ── */}
       <Section

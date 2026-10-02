@@ -144,20 +144,25 @@ async function seed() {
       .onConflictDoNothing();
   }
 
-  // 5. Team Users (Imported from legacy WordPress admin directory)
-  console.log("Seeding Administrative and Team Accounts with login passwords...");
-  const teamUsers = [
+  // 5. Team & Client Users (Imported from legacy WordPress directory)
+  console.log("Seeding Administrative and Team Accounts with login credentials...");
+  const seededUsers = [
     { id: "usr_yaman_ceo", name: "Yaman Alomari", email: "ceo@yasproductions.com", role: "admin", company: "Yas Productions" },
     { id: "usr_yaspro_admin", name: "YASPRO Master", email: "pressyaman@gmail.com", role: "admin", company: "Yas Productions" },
     { id: "usr_ahmad_lead", name: "Ahmad Wadi", email: "ahmedwadi978@gmail.com", role: "admin", company: "Yas Productions" },
     { id: "usr_yaspro_hq", name: "YASPRO Operations", email: "info@yasproductions.com", role: "admin", company: "Yas Productions" },
     { id: "usr_walaa_admin", name: "Walaa Ali", email: "walaa.ali131@gmail.com", role: "admin", company: "Yas Productions" },
+    { id: "usr_belal_client", name: "Belal Alaa", email: "eng.belalalaa@gmail.com", role: "client", company: "Independent Creator" },
   ];
 
-  const initialPasswordHash = await hashPassword("YasPro@2026!");
+  const defaultAdminPassword =
+    process.env.INITIAL_ADMIN_PASSWORD ||
+    process.env.ADMIN_SEED_PASSWORD ||
+    "YasPro@2026!";
+  const initialPasswordHash = await hashPassword(defaultAdminPassword);
 
-  for (const u of teamUsers) {
-    await db
+  for (const u of seededUsers) {
+    const [persistedUser] = await db
       .insert(schema.users)
       .values({
         id: u.id,
@@ -175,26 +180,24 @@ async function seed() {
           company: u.company,
           updatedAt: new Date(),
         },
-      });
+      })
+      .returning();
 
+    const targetUserId = persistedUser?.id || u.id;
+
+    // Preserve existing passwords on conflict - only insert initial credentials for new accounts
     await db
       .insert(schema.accounts)
       .values({
-        id: `acc_${u.id}`,
-        accountId: u.id,
+        id: `acc_${targetUserId}`,
+        accountId: targetUserId,
         providerId: "credential",
-        userId: u.id,
+        userId: targetUserId,
         password: initialPasswordHash,
         createdAt: new Date(),
         updatedAt: new Date(),
       })
-      .onConflictDoUpdate({
-        target: schema.accounts.id,
-        set: {
-          password: initialPasswordHash,
-          updatedAt: new Date(),
-        },
-      });
+      .onConflictDoNothing();
   }
 
   // 6. Historical Bookings (Preserved from WordPress studio reservations)

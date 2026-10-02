@@ -78,16 +78,23 @@ export function useBookingWizard() {
   const sessionTypeObj = SESSION_TYPES.find((s) => s.id === state.sessionType);
   const gearPkg = STUDIO_GEAR_PACKAGES.find((g) => g.id === state.selectedGearPackage);
 
-  const { studioCost, crewCost, gearCost, postCost, total } = calculateBookingPrice({
+  const breakdown = calculateBookingPrice({
     studioId: state.studioId,
+    turnkeyPackageId: state.turnkeyPackageId,
     durationHours: state.durationHours,
     needsCrew: state.needsCrew,
     selectedGearPackage: state.selectedGearPackage,
+    hasTeleprompter: state.hasTeleprompter,
+    extraMicsCount: state.extraMicsCount,
+    hasRushDelivery: state.hasRushDelivery,
+    promoCode: state.promoCode,
     needsEditing: state.needsEditing,
     needsColorGrading: state.needsColorGrading,
     needsSoundMastering: state.needsSoundMastering,
     needsAiAutoCut: state.needsAiAutoCut,
   });
+
+  const { studioCost, crewCost, gearCost, postCost, total } = breakdown;
 
   const nextStep = () => {
     setErrorMessage(null);
@@ -138,7 +145,12 @@ export function useBookingWizard() {
         scheduledAt: `${state.date}T${state.time || "10:00"}`,
         durationHours: state.durationHours,
         headcount: state.headcount,
+        turnkeyPackageId: state.turnkeyPackageId || "none",
         selectedGearPackage: state.selectedGearPackage,
+        hasTeleprompter: state.hasTeleprompter,
+        extraMicsCount: state.extraMicsCount,
+        hasRushDelivery: state.hasRushDelivery,
+        promoCode: state.promoCode?.trim(),
         needsCrew: state.needsCrew,
         needsEditing: state.needsEditing,
         needsColorGrading: state.needsColorGrading,
@@ -185,6 +197,7 @@ export function useBookingWizard() {
     gearCost,
     postCost,
     total,
+    breakdown,
     isSubmitting,
     confirmed,
     referenceCode,
