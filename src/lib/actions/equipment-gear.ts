@@ -36,17 +36,7 @@ export interface PaginatedEquipmentResult {
   hasMore: boolean;
 }
 
-/**
- * Enterprise Paginated Cinema Equipment Query.
- * Supports page/limit offset, search query, category facets, and sorting.
- */
-export async function getPaginatedEquipment(
-  params: PaginatedEquipmentParams = {}
-): Promise<PaginatedEquipmentResult> {
-  const page = Math.max(1, params.page || 1);
-  const limit = Math.max(1, Math.min(params.limit || 12, 100));
-  const offset = (page - 1) * limit;
-
+async function getFullEquipmentCatalog(): Promise<Equipment[]> {
   let allRecords: Equipment[] = [];
 
   if (isDbAvailable()) {
@@ -56,7 +46,7 @@ export async function getPaginatedEquipment(
         allRecords = records;
       }
     } catch (err) {
-      console.error("DB query failed in getPaginatedEquipment, falling back to static catalog:", err);
+      console.error("DB query failed in getFullEquipmentCatalog, falling back to static catalog:", err);
     }
   }
 
@@ -80,6 +70,22 @@ export async function getPaginatedEquipment(
       createdAt: new Date(),
     }));
   }
+
+  return allRecords;
+}
+
+/**
+ * Enterprise Paginated Cinema Equipment Query.
+ * Supports page/limit offset, search query, category facets, and sorting.
+ */
+export async function getPaginatedEquipment(
+  params: PaginatedEquipmentParams = {}
+): Promise<PaginatedEquipmentResult> {
+  const page = Math.max(1, params.page || 1);
+  const limit = Math.max(1, Math.min(params.limit || 12, 100));
+  const offset = (page - 1) * limit;
+
+  const allRecords = await getFullEquipmentCatalog();
 
   let filtered = allRecords;
 
@@ -140,12 +146,12 @@ export async function getFeaturedEquipmentSpotlight(limit = 6): Promise<Equipmen
 
 /**
  * Retrieves cinema equipment and rental gear catalog from Neon PostgreSQL.
+ * Returns every catalog entry without truncation.
  *
  * @returns Array of gear equipment records.
  */
 export async function getCmsEquipment(): Promise<Equipment[]> {
-  const result = await getPaginatedEquipment({ limit: 100 });
-  return result.items;
+  return await getFullEquipmentCatalog();
 }
 
 /**

@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Building2, Sparkles, ArrowUpRight, ShieldCheck } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { YAS_GROUP_COMPANIES, YasGroupCompany } from "../data";
@@ -62,7 +62,7 @@ export function YasGroupShowcase() {
               >
                 <div>
                   {/* Top Bar: Brand Logo & Division */}
-                  <div className="flex items-center justify-between gap-4 mb-6">
+                  <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 mb-6">
                     {/* Fixed physical LTR container for brand logo */}
                     <div
                       dir="ltr"
@@ -77,7 +77,7 @@ export function YasGroupShowcase() {
                       />
                     </div>
 
-                    <span className="text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full border border-white/10 bg-white/5 text-zinc-300 shrink-0">
+                    <span className="text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full border border-white/10 bg-white/5 text-zinc-300 shrink max-w-full break-words text-center">
                       {isArabic ? company.divisionAr : company.division}
                     </span>
                   </div>

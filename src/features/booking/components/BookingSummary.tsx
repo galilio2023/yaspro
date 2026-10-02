@@ -98,9 +98,9 @@ export function BookingSummary({
             {studio.name}
           </p>
           <div className="flex items-center justify-between text-xs text-amber-400 font-semibold mt-1.5">
-            <span>{formatCurrency(studio.rate)} {isArabic ? "/ ساعة" : "/ hour"}</span>
+            <span>{formatCurrency(studio.rate * exchangeRate, currency)} {isArabic ? "/ ساعة" : "/ hour"}</span>
             <span className="font-mono text-text-primary">
-              {formatCurrency(studio.rate * state.durationHours)}
+              {formatCurrency((breakdown ? breakdown.studioCost : studio.rate * state.durationHours) * exchangeRate, currency)}
             </span>
           </div>
         </div>
@@ -147,7 +147,9 @@ export function BookingSummary({
                 <Sparkles size={13} className="shrink-0" />
                 <span className="truncate">{selectedTurnkey.name}</span>
               </span>
-              <span className="text-amber-400 font-bold shrink-0">+{formatCurrency(selectedTurnkey.rate)}</span>
+              <span className="text-amber-400 font-bold shrink-0">
+                +{formatCurrency((breakdown ? breakdown.turnkeyCost : selectedTurnkey.rate) * exchangeRate, currency)}
+              </span>
             </div>
           )}
 
@@ -157,35 +159,45 @@ export function BookingSummary({
                 <Box size={13} className="text-emerald-400 shrink-0" />
                 <span className="truncate text-text-primary font-medium">{selectedGear.name}</span>
               </span>
-              <span className="text-emerald-400 font-bold shrink-0">+{formatCurrency(selectedGear.rate)}</span>
+              <span className="text-emerald-400 font-bold shrink-0">
+                +{formatCurrency((breakdown ? breakdown.gearCost : selectedGear.rate) * exchangeRate, currency)}
+              </span>
             </div>
           )}
 
           {state.needsCrew && (
             <div className="flex justify-between items-center">
               <span className="text-text-secondary">{isArabic ? "طاقم استوديو مخصص:" : "Dedicated Studio Crew:"}</span>
-              <span className="text-emerald-400 font-bold">+500 AED</span>
+              <span className="text-emerald-400 font-bold">
+                +{formatCurrency((breakdown ? breakdown.crewCost : 500) * exchangeRate, currency)}
+              </span>
             </div>
           )}
 
           {state.hasTeleprompter && (
             <div className="flex justify-between items-center">
               <span className="text-text-secondary">{isArabic ? "شاشة تلقين احترافية:" : "Teleprompter:"}</span>
-              <span className="text-amber-400 font-bold">+{formatCurrency(teleprompterRate * (state.durationHours || 1) * exchangeRate)}</span>
+              <span className="text-amber-400 font-bold">
+                +{formatCurrency(teleprompterRate * (state.durationHours || 1) * exchangeRate, currency)}
+              </span>
             </div>
           )}
 
           {(state.extraMicsCount || 0) > 0 && (
             <div className="flex justify-between items-center">
               <span className="text-text-secondary">{isArabic ? "ميكروفون Shure إضافي:" : "Extra SM7B Mic:"} ({state.extraMicsCount})</span>
-              <span className="text-amber-400 font-bold">+{formatCurrency((state.extraMicsCount || 0) * extraMicRate * exchangeRate)}</span>
+              <span className="text-amber-400 font-bold">
+                +{formatCurrency((state.extraMicsCount || 0) * extraMicRate * exchangeRate, currency)}
+              </span>
             </div>
           )}
 
           {state.hasRushDelivery && (
             <div className="flex justify-between items-center">
               <span className="text-text-secondary">{isArabic ? "تسليم مستعجل (24 ساعة):" : "Rush Delivery (24h):"}</span>
-              <span className="text-amber-400 font-bold">+{formatCurrency(rushDeliveryRate * exchangeRate)}</span>
+              <span className="text-amber-400 font-bold">
+                +{formatCurrency(rushDeliveryRate * exchangeRate, currency)}
+              </span>
             </div>
           )}
 
@@ -195,14 +207,16 @@ export function BookingSummary({
                 <Sparkles size={12} className="text-amber-400" />
                 <span>{isArabic ? "مونتاج ذكاء اصطناعي وترجمة:" : "AI Auto-Cut & Subtitles:"}</span>
               </span>
-              <span className="text-amber-400 font-bold">+{formatCurrency(450 * exchangeRate)}</span>
+              <span className="text-amber-400 font-bold">
+                +{formatCurrency(450 * exchangeRate, currency)}
+              </span>
             </div>
           )}
 
           {isPromoValid && discountAmount > 0 && (
             <div className="flex justify-between items-center pt-1 border-t border-white/5 text-emerald-400 font-semibold">
               <span>{isArabic ? "كوبون الخصم:" : "Promo Voucher:"} ({normalizedPromo})</span>
-              <span>-{formatCurrency(discountAmount * exchangeRate)}</span>
+              <span>-{formatCurrency(discountAmount * exchangeRate, currency)}</span>
             </div>
           )}
         </div>

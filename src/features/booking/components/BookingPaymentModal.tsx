@@ -15,9 +15,8 @@ import {
   Copy,
   Check,
   Receipt,
-  Sparkles,
 } from "lucide-react";
-import { processBookingOnlinePayment } from "@/lib/payment-actions";
+import { processBookingOnlinePayment, markBookingBankTransferPending } from "@/lib/payment-actions";
 import { createZiinaPaymentIntent } from "@/lib/ziina";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { formatCurrency, cn } from "@/lib/utils";
@@ -53,6 +52,7 @@ export function BookingPaymentModal({
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [copiedIban, setCopiedIban] = useState(false);
+  const [bankConfirmed, setBankConfirmed] = useState(false);
 
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap({ isOpen, onClose, containerRef: dialogRef });
@@ -66,17 +66,36 @@ export function BookingPaymentModal({
   const vatAmount = Math.round((chargeAmount - chargeAmount / 1.05) * 100) / 100;
   const netAmount = Math.round((chargeAmount - vatAmount) * 100) / 100;
 
-  const handleCopyIban = () => {
-    navigator.clipboard.writeText("AE240260001023456789001");
-    setCopiedIban(true);
-    setTimeout(() => setCopiedIban(false), 2000);
+  const handleCopyIban = async () => {
+    try {
+      await navigator.clipboard.writeText("AE240260001023456789001");
+      setCopiedIban(true);
+      setTimeout(() => setCopiedIban(false), 2000);
+    } catch (e) {
+      console.error("Failed to copy IBAN:", e);
+    }
   };
 
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
     if (paymentMethod === "bank") {
-      // For bank wire, acknowledge instructions
-      onClose();
+      setIsProcessing(true);
+      setErrorMsg(null);
+      try {
+        const res = await markBookingBankTransferPending(
+          bookingId || "",
+          referenceCode
+        );
+        if (res.success) {
+          setBankConfirmed(true);
+        } else {
+          setErrorMsg(res.error || (isArabic ? "فشل تسجيل طلب التحويل البنكي" : "Failed to record wire transfer request."));
+        }
+      } catch (err) {
+        setErrorMsg((err as Error).message || "An unexpected error occurred.");
+      } finally {
+        setIsProcessing(false);
+      }
       return;
     }
 
@@ -206,9 +225,16 @@ export function BookingPaymentModal({
             </div>
 
             {securityDeposit > 0 && (
-              <div className="flex justify-between text-amber-300 text-[11px] pt-1 border-t border-white/5">
-                <span>{isArabic ? "تأمين المعدات (حجز مسترد):" : "Refundable Security Pre-Auth:"}</span>
-                <span className="font-mono font-bold">{formatCurrency(securityDeposit)}</span>
+              <div className="flex flex-col gap-0.5 pt-1 border-t border-white/5 text-[11px]">
+                <div className="flex justify-between text-amber-300">
+                  <span>{isArabic ? "تأمين المعدات المسترد (يُحصّل منفصلاً عند الاستلام):" : "Refundable Security Deposit (Billed Separately):"}</span>
+                  <span className="font-mono font-bold">{formatCurrency(securityDeposit)}</span>
+                </div>
+                <span className="text-[10px] text-text-muted">
+                  {isArabic
+                    ? "* يُحصّل مبلغ التأمين بشكل مستقل عند الاستلام، ولا يدخل ضمن إجمالي المستحق الآن أدناه."
+                    : "* Collected separately upon check-in; not included in Total Payable Now below."}
+                </span>
               </div>
             )}
 
@@ -475,51 +501,76 @@ export function BookingPaymentModal({
             </span>
           </div>
 
-          {/* Pay Button */}
-          <button
-            type="submit"
-            disabled={isProcessing}
-            className={cn(
-              "w-full py-3.5 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer disabled:opacity-50",
-              paymentMethod === "ziina"
-                ? "bg-amber-500 hover:bg-amber-400 text-black font-extrabold shadow-amber-500/25"
-                : paymentMethod === "card"
-                ? "btn-brand text-black"
-                : "bg-white/10 hover:bg-white/20 text-white border border-white/20"
-            )}
-          >
-            {isProcessing ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                <span>{isArabic ? "جاري معالجة التفويض..." : "Processing Authorization..."}</span>
-              </>
-            ) : paymentMethod === "ziina" ? (
-              <>
-                <Zap size={16} className="fill-black" />
+          {/* Pay Button / Bank Confirmation */}
+          {bankConfirmed ? (
+            <div className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 space-y-3 text-start">
+              <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs sm:text-sm">
+                <Check size={18} className="shrink-0" />
                 <span>
                   {isArabic
-                    ? `دفع ${formatCurrency(chargeAmount)} عبر Ziina و Apple Pay`
-                    : `Pay ${formatCurrency(chargeAmount)} with Ziina · Apple Pay`}
+                    ? "تم تسجيل طلب التحويل البنكي — الحجز قيد التأكيد"
+                    : "Wire Transfer Logged — Awaiting Bank Settlement"}
                 </span>
-              </>
-            ) : paymentMethod === "card" ? (
-              <>
-                <ShieldCheck size={16} />
-                <span>
-                  {isArabic
-                    ? `سداد ${formatCurrency(chargeAmount)} بأمان`
-                    : `Pay ${formatCurrency(chargeAmount)} Securely`}
-                </span>
-              </>
-            ) : (
-              <>
-                <Building2 size={16} />
-                <span>
-                  {isArabic ? "تأكيد طلب التحويل البنكي" : "Acknowledge Wire Transfer Instructions"}
-                </span>
-              </>
-            )}
-          </button>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed">
+                {isArabic
+                  ? "تم حفظ حجز الاستوديو بانتظار استلام الحوالة البنكية وفق التفاصيل الموضحة أعلاه. الحجز غير مدفوع بعد، وسيتم تأكيده فور مطابقة الإشعار البنكي."
+                  : "Your studio reservation is on hold awaiting receipt of the bank transfer as outlined above. This booking remains unpaid until bank reconciliation."}
+              </p>
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-colors cursor-pointer"
+              >
+                {isArabic ? "إغلاق والتأكيد" : "Close & Acknowledge"}
+              </button>
+            </div>
+          ) : (
+            <button
+              type="submit"
+              disabled={isProcessing}
+              className={cn(
+                "w-full py-3.5 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer disabled:opacity-50",
+                paymentMethod === "ziina"
+                  ? "bg-amber-500 hover:bg-amber-400 text-black font-extrabold shadow-amber-500/25"
+                  : paymentMethod === "card"
+                  ? "btn-brand text-black"
+                  : "bg-white/10 hover:bg-white/20 text-white border border-white/20"
+              )}
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  <span>{isArabic ? "جاري معالجة التفويض..." : "Processing Authorization..."}</span>
+                </>
+              ) : paymentMethod === "ziina" ? (
+                <>
+                  <Zap size={16} className="fill-black" />
+                  <span>
+                    {isArabic
+                      ? `دفع ${formatCurrency(chargeAmount)} عبر Ziina و Apple Pay`
+                      : `Pay ${formatCurrency(chargeAmount)} with Ziina · Apple Pay`}
+                  </span>
+                </>
+              ) : paymentMethod === "card" ? (
+                <>
+                  <ShieldCheck size={16} />
+                  <span>
+                    {isArabic
+                      ? `سداد ${formatCurrency(chargeAmount)} بأمان`
+                      : `Pay ${formatCurrency(chargeAmount)} Securely`}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Building2 size={16} />
+                  <span>
+                    {isArabic ? "تأكيد طلب التحويل البنكي" : "Acknowledge Wire Transfer Instructions"}
+                  </span>
+                </>
+              )}
+            </button>
+          )}
         </form>
       </div>
     </div>,

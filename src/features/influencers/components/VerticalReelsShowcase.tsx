@@ -6,11 +6,9 @@ import {
   Pause,
   Volume2,
   VolumeX,
-  Sparkles,
   Flame,
   Eye,
   CheckCircle2,
-  Maximize2,
   Smartphone,
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -88,10 +86,11 @@ const REELS: ReelItem[] = [
 export function VerticalReelsShowcase() {
   const { isArabic } = useLanguage();
   const [activeReelId, setActiveReelId] = useState<string | null>(null);
+  const [playbackError, setPlaybackError] = useState<string | null>(null);
   const [isMuted, setIsMuted] = useState(true);
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
 
-  const togglePlay = (id: string) => {
+  const togglePlay = async (id: string) => {
     const video = videoRefs.current[id];
     if (!video) return;
 
@@ -103,8 +102,15 @@ export function VerticalReelsShowcase() {
       if (activeReelId && videoRefs.current[activeReelId]) {
         videoRefs.current[activeReelId]?.pause();
       }
-      video.play().catch(() => {});
-      setActiveReelId(id);
+      setPlaybackError(null);
+      try {
+        await video.play();
+        setActiveReelId(id);
+      } catch (err) {
+        console.error("Video playback failed for reel", id, err);
+        setPlaybackError(id);
+        setActiveReelId(null);
+      }
     }
   };
 
@@ -175,7 +181,17 @@ export function VerticalReelsShowcase() {
                   playsInline
                   muted={isMuted}
                   preload="metadata"
-                  className="size-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onPlay={() => setActiveReelId(reel.id)}
+                  onPause={() => {
+                    if (activeReelId === reel.id) setActiveReelId(null);
+                  }}
+                  onEnded={() => {
+                    if (activeReelId === reel.id) setActiveReelId(null);
+                  }}
+                  className={cn(
+                    "size-full group-hover:scale-105 transition-transform duration-500",
+                    reel.aspectRatio === "landscape" ? "object-contain bg-black" : "object-cover"
+                  )}
                 />
 
                 {/* Dark Gradient Overlay for text contrast */}
@@ -207,6 +223,13 @@ export function VerticalReelsShowcase() {
                   )}
                 </div>
 
+                {/* Playback error notice */}
+                {playbackError === reel.id && (
+                  <div className="absolute inset-x-3 bottom-16 p-2 rounded-lg bg-red-950/80 border border-red-500/40 text-[10px] text-red-300 font-mono text-center">
+                    {isArabic ? "تعذر تشغيل الفيديو" : "Playback failed. Click to retry."}
+                  </div>
+                )}
+
                 {/* Bottom Video Meta Info */}
                 <div className="absolute bottom-3 inset-x-3 pointer-events-none space-y-1">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 block font-semibold">
@@ -234,6 +257,7 @@ export function VerticalReelsShowcase() {
                 <button
                   type="button"
                   onClick={() => togglePlay(reel.id)}
+                  aria-label={`${isPlaying ? (isArabic ? "إيقاف" : "Pause") : (isArabic ? "تشغيل" : "Watch")} — ${isArabic ? reel.titleAr : reel.titleEn}`}
                   className="text-[11px] font-mono font-semibold text-amber-400 hover:text-amber-300 transition-colors cursor-pointer"
                 >
                   {isPlaying ? (isArabic ? "إيقاف" : "Pause") : (isArabic ? "تشغيل" : "Watch")}

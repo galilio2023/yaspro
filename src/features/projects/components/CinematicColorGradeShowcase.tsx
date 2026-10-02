@@ -6,9 +6,6 @@ import {
   Sparkles,
   Sliders,
   Film,
-  Camera,
-  Layers,
-  CheckCircle2,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -38,10 +35,10 @@ const PRESETS: ComparisonPreset[] = [
     camera: "ARRI Alexa Mini LF · LogC3",
     coloristSuite: "DaVinci Resolve Studio 19 · AcesCC",
     imageSrc: "/images/projects/stadiums-dubai.jpg",
-    descriptionEn: "Showcasing dynamic range compression from 14+ stops of sensor RAW to HDR10 master grade with custom film print emulation.",
-    descriptionAr: "معالجة المدى الديناميكي العالي من خام الحساس لأكثر من 14 وقفة إلى ماستر سينمائي معتمد ومعاير للألوان.",
-    beforeLabelEn: "RAW SENSOR LOG (ARRI LogC3)",
-    beforeLabelAr: "خام الكاميرا (ARRI LogC3)",
+    descriptionEn: "Interactive simulation comparing a flat Log look against an HDR10 master grade with custom film print emulation.",
+    descriptionAr: "محاكاة تفاعلية تقارن المظهر المسطح المنبسط (Log) مع ماستر سينمائي معتمد ومعاير للألوان.",
+    beforeLabelEn: "SIMULATED FLAT LOG LOOK (ARRI LogC3)",
+    beforeLabelAr: "محاكاة المظهر المسطح (ARRI LogC3)",
     afterLabelEn: "DAVINCI RESOLVE MASTER GRADE",
     afterLabelAr: "ماستر تصحيح الألوان النهائي",
   },
@@ -52,10 +49,10 @@ const PRESETS: ComparisonPreset[] = [
     camera: "RED V-Raptor XL 8K · REDCODE RAW",
     coloristSuite: "FilmLight Baselight & DaVinci Resolve",
     imageSrc: "/images/projects/flag-day.jpg",
-    descriptionEn: "Skin-tone precision and vibrant desert sky separation with highlight roll-off engineered for national broadcast television.",
-    descriptionAr: "دقة درجات البشرة وتدرجات سماء الصحراء مع معالجة حواف الإضاءة المصممة للبث التلفزيوني الوطني.",
-    beforeLabelEn: "UNGRADED RED RAW (IPP2)",
-    beforeLabelAr: "خام RED RAW غير معالج",
+    descriptionEn: "Interactive simulation demonstrating a simulated flat profile against the final broadcast grade with balanced skin tones and desert skies.",
+    descriptionAr: "محاكاة تفاعلية توضح المظهر المسطح مقابل معالجة البث الإعلاني المعتمدة مع درجات بشرة دقيقة وتدرجات سماء الصحراء.",
+    beforeLabelEn: "SIMULATED FLAT LOOK (RED IPP2)",
+    beforeLabelAr: "محاكاة المظهر المسطح (RED IPP2)",
     afterLabelEn: "BROADCAST COMMERCIAL GRADE",
     afterLabelAr: "معالجة البث الإعلاني المعتمدة",
   },
@@ -66,10 +63,10 @@ const PRESETS: ComparisonPreset[] = [
     camera: "Sony FX9 CineAlta · S-Log3 / S-Gamut3.Cine",
     coloristSuite: "Real-Time Mo-Sys Color Matcher & Resolve",
     imageSrc: "/images/projects/dmx.jpg",
-    descriptionEn: "Real-time LED volume lighting matched seamlessly to foreground talent using live spectral color matrix.",
-    descriptionAr: "مطابقة إضاءة شاشات المايكرو-ليد مع إضاءة الاستوديو والممثلين عبر مصفوفة ألوان حية وفائقة الدقة.",
-    beforeLabelEn: "RAW STUDIO CAPTURE (S-Log3)",
-    beforeLabelAr: "تسجيل الاستوديو الخام (S-Log3)",
+    descriptionEn: "Interactive simulation comparing a flat studio capture against the final photoreal XR composite with live color matching.",
+    descriptionAr: "محاكاة تفاعلية بين تسجيل الاستوديو بمظهر مسطح والدمج الواقعي النهائي في بيئة الإنتاج الافتراضي.",
+    beforeLabelEn: "SIMULATED FLAT CAPTURE (Sony S-Log3)",
+    beforeLabelAr: "محاكاة التسجيل المسطح (Sony S-Log3)",
     afterLabelEn: "FINAL PHOTOREAL XR COMPOSITE",
     afterLabelAr: "الدمج النهائي الواقعي للإنتاج الافتراضي",
   },
@@ -218,7 +215,7 @@ export function CinematicColorGradeShowcase() {
           }
         }}
         onTouchEnd={handlePointerUp}
-        className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-2xl overflow-hidden select-none cursor-ew-resize border border-white/15 shadow-2xl group bg-black"
+        className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-2xl overflow-hidden select-none cursor-ew-resize border border-white/15 shadow-2xl group bg-black @container"
       >
         {/* AFTER IMAGE (Underneath, Full Grade) */}
         <div className="absolute inset-0">
@@ -235,20 +232,18 @@ export function CinematicColorGradeShowcase() {
           />
         </div>
 
-        {/* BEFORE IMAGE (Clipped Overlay with Flat Camera LOG Filter Emulation) */}
+        {/* BEFORE IMAGE (Clipped Overlay with Simulated Flat LOG Filter Emulation) */}
         <div
           className="absolute inset-y-0 left-0 overflow-hidden"
           style={{ width: `${sliderPos}%` }}
         >
           <div
-            className="relative h-full"
-            style={{
-              width: containerRef.current ? `${containerRef.current.clientWidth}px` : "100%",
-            }}
+            className="relative h-full w-[100cqw] max-w-none"
+            style={{ width: "100cqw" }}
           >
             <Image
               src={preset.imageSrc}
-              alt={`${preset.titleEn} - Flat Log`}
+              alt={`${preset.titleEn} - Simulated Flat Look`}
               fill
               priority
               sizes="(max-width: 1200px) 100vw, 1200px"

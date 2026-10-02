@@ -82,3 +82,51 @@ export async function processBookingOnlinePayment(
     };
   }
 }
+
+/**
+ * Server action to mark a studio booking reservation as awaiting bank transfer confirmation.
+ * Preserves the booking as unpaid/pending with a recorded wire payment reference.
+ *
+ * @param bookingId - UUID or reference code of the booking.
+ * @param referenceCode - Booking reference code (e.g. YAS-ABC123).
+ */
+export async function markBookingBankTransferPending(
+  bookingId: string,
+  referenceCode: string
+): Promise<{ success: boolean; message?: string; error?: string }> {
+  try {
+    if (!bookingId && !referenceCode) {
+      return { success: false, error: "Booking reference is required." };
+    }
+
+    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+      const updateData = {
+        paymentStatus: "unpaid" as const,
+        paymentReference: `WIRE_PENDING_${Date.now()}`,
+        updatedAt: new Date(),
+      };
+
+      if (bookingId && bookingId.length > 20) {
+        await db.update(bookings).set(updateData).where(eq(bookings.id, bookingId));
+      } else {
+        await db.update(bookings).set(updateData).where(eq(bookings.referenceCode, referenceCode));
+      }
+    }
+
+    revalidatePath("/admin/bookings");
+    revalidatePath("/portal");
+    revalidatePath("/studio-booking");
+
+    return {
+      success: true,
+      message: "Booking marked as awaiting corporate bank transfer.",
+    };
+  } catch (error) {
+    console.error("markBookingBankTransferPending error:", error);
+    return {
+      success: false,
+      error: (error as Error).message || "Failed to record wire transfer request.",
+    };
+  }
+}
+

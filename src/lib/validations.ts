@@ -1,49 +1,72 @@
 import { z } from "zod";
 
-export const bookingSubmissionSchema = z.object({
-  firstName: z.string().trim().min(1, "First name is required").max(60),
-  lastName: z.string().trim().min(1, "Last name is required").max(60),
-  email: z.string().trim().email("Invalid email address").max(120),
-  phone: z.string().trim().min(5, "Valid phone number required").max(30),
-  company: z.string().trim().max(100).optional().default(""),
-  studioId: z.string().min(1, "Studio selection is required"),
-  sessionType: z.enum([
-    "podcast",
-    "video_production",
-    "photography",
-    "interview",
-    "commercial",
-    "music_video",
-  ]),
-  scheduledAt: z
-    .string()
-    .min(1, "Scheduled date and time required")
-    .refine((val) => {
-      const match = val.match(/T(\d{2}):(\d{2})/);
-      if (!match) return false;
-      const hours = parseInt(match[1], 10);
-      const minutes = parseInt(match[2], 10);
-      if (isNaN(hours) || isNaN(minutes) || minutes < 0 || minutes > 59) return false;
-      // Studio operating hours are strictly 09:00 to 21:00
-      return hours >= 9 && hours <= 21;
-    }, "Studio bookings are restricted to operating window 09:00 - 21:00"),
-  durationHours: z.number().int().min(1).max(24).default(2),
-  headcount: z.number().int().min(1).max(100).default(2),
-  turnkeyPackageId: z.string().optional().default("none"),
-  selectedGearPackage: z.string().optional().default("none"),
-  hasTeleprompter: z.boolean().optional().default(false),
-  extraMicsCount: z.number().int().min(0).max(10).optional().default(0),
-  hasRushDelivery: z.boolean().optional().default(false),
-  promoCode: z.string().trim().max(30).optional().default(""),
-  needsCrew: z.boolean().optional().default(false),
-  needsEditing: z.boolean().optional().default(false),
-  needsColorGrading: z.boolean().optional().default(false),
-  needsSoundMastering: z.boolean().optional().default(false),
-  needsAiAutoCut: z.boolean().optional().default(false),
-  propsNotes: z.string().max(1000).optional().default(""),
-  specialRequests: z.string().max(1000).optional().default(""),
-  totalAmount: z.number().nonnegative().optional(),
-});
+export const bookingSubmissionSchema = z
+  .object({
+    firstName: z.string().trim().min(1, "First name is required").max(60),
+    lastName: z.string().trim().min(1, "Last name is required").max(60),
+    email: z.string().trim().email("Invalid email address").max(120),
+    phone: z.string().trim().min(5, "Valid phone number required").max(30),
+    company: z.string().trim().max(100).optional().default(""),
+    studioId: z.string().min(1, "Studio selection is required"),
+    sessionType: z.enum([
+      "podcast",
+      "video_production",
+      "photography",
+      "interview",
+      "commercial",
+      "music_video",
+    ]),
+    scheduledAt: z.string().min(1, "Scheduled date and time required"),
+    durationHours: z.number().int().min(1).max(24).default(2),
+    headcount: z.number().int().min(1).max(100).default(2),
+    turnkeyPackageId: z.string().optional().default("none"),
+    selectedGearPackage: z.string().optional().default("none"),
+    hasTeleprompter: z.boolean().optional().default(false),
+    extraMicsCount: z.number().int().min(0).max(10).optional().default(0),
+    hasRushDelivery: z.boolean().optional().default(false),
+    promoCode: z.string().trim().max(30).optional().default(""),
+    needsCrew: z.boolean().optional().default(false),
+    needsEditing: z.boolean().optional().default(false),
+    needsColorGrading: z.boolean().optional().default(false),
+    needsSoundMastering: z.boolean().optional().default(false),
+    needsAiAutoCut: z.boolean().optional().default(false),
+    propsNotes: z.string().max(1000).optional().default(""),
+    specialRequests: z.string().max(1000).optional().default(""),
+    totalAmount: z.number().nonnegative().optional(),
+  })
+  .superRefine((data, ctx) => {
+    const match = data.scheduledAt?.match(/T(\d{2}):(\d{2})/);
+    if (!match) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["scheduledAt"],
+        message: "Studio bookings require a valid scheduled time",
+      });
+      return;
+    }
+    const hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    if (isNaN(hours) || isNaN(minutes) || minutes < 0 || minutes > 59) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["scheduledAt"],
+        message: "Invalid time specification",
+      });
+      return;
+    }
+    const startMinutes = hours * 60 + minutes;
+    const duration = data.durationHours ?? 2;
+    const endMinutes = startMinutes + duration * 60;
+
+    // Start must be at or after 09:00 (540 min), and end must be at or before 21:00 (1260 min)
+    if (startMinutes < 9 * 60 || endMinutes > 21 * 60) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["scheduledAt"],
+        message: "Studio bookings are restricted to operating window 09:00 - 21:00",
+      });
+    }
+  });
 
 export type BookingSubmissionInput = z.infer<typeof bookingSubmissionSchema>;
 

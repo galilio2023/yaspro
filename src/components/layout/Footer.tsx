@@ -180,7 +180,7 @@ export default function Footer() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-5 text-left">
             <span className="text-[11px] font-mono tracking-wider uppercase text-zinc-400 font-semibold flex items-center gap-2">
               <span className="size-1.5 rounded-full bg-amber-500" />
-              <span>YAS MEDIA GROUP COMPANIES &amp; SUBSIDIARIES</span>
+              <span>{t("footer.companiesHeading")}</span>
             </span>
             <span className="text-[10px] font-mono text-zinc-500">
               DUBAI • CAIRO • AMMAN

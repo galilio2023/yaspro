@@ -6,7 +6,7 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import type { WizardStepProps } from "../../types";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import { Clock, Sun, Sunset, Moon, Calendar, Users, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Clock, Sun, Sunset, Moon, Users, AlertCircle, CheckCircle2 } from "lucide-react";
 
 const HEADCOUNT_OPTIONS = [1, 2, 3, 4, 6, "10+"] as const;
 
@@ -82,6 +82,21 @@ export function StepDatetime({ state, update }: WizardStepProps) {
       timeRange: "05:00 PM – 09:00 PM",
     },
   ];
+
+  const setDuration = (newDur: number) => {
+    // If current start time would push end time past 21:00, adjust start time
+    const [curHStr] = (state.time || "10:00").split(":");
+    const curH = parseInt(curHStr, 10);
+    if (curH + newDur > 21) {
+      const adjustedH = Math.max(9, 21 - newDur);
+      update({
+        durationHours: newDur,
+        time: `${String(adjustedH).padStart(2, "0")}:00`,
+      });
+    } else {
+      update({ durationHours: newDur });
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -169,42 +184,28 @@ export function StepDatetime({ state, update }: WizardStepProps) {
           min={1}
           max={12}
           value={state.durationHours}
-          onChange={(e) => {
-            const newDur = Number(e.target.value);
-            // If current start time would push end time past 21:00, adjust start time
-            const [curHStr] = (state.time || "10:00").split(":");
-            const curH = parseInt(curHStr, 10);
-            if (curH + newDur > 21) {
-              const adjustedH = Math.max(9, 21 - newDur);
-              update({
-                durationHours: newDur,
-                time: `${String(adjustedH).padStart(2, "0")}:00`,
-              });
-            } else {
-              update({ durationHours: newDur });
-            }
-          }}
+          onChange={(e) => setDuration(Number(e.target.value))}
           className="w-full accent-amber-500 cursor-pointer h-2 bg-white/10 rounded-lg appearance-none"
         />
 
         <div className="flex justify-between text-xs text-text-muted mt-2">
           <button
             type="button"
-            onClick={() => update({ durationHours: 1 })}
+            onClick={() => setDuration(1)}
             className="hover:text-amber-400 transition-colors cursor-pointer"
           >
             1h {isArabic ? "(بودكاست سريع)" : "(Quick Pod)"}
           </button>
           <button
             type="button"
-            onClick={() => update({ durationHours: 4 })}
+            onClick={() => setDuration(4)}
             className="hover:text-amber-400 transition-colors cursor-pointer"
           >
             4h {isArabic ? "(نصف يوم)" : "(Half Day)"}
           </button>
           <button
             type="button"
-            onClick={() => update({ durationHours: 8 })}
+            onClick={() => setDuration(8)}
             className="hover:text-amber-400 transition-colors cursor-pointer"
           >
             8h {isArabic ? "(يوم كامل)" : "(Full Day Block)"}

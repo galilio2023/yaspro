@@ -117,6 +117,8 @@ export interface TurnkeyStudioPackage {
   description: string;
   features: string[];
   isPopular?: boolean;
+  includedHours: number;
+  eligibleStudios: readonly string[];
 }
 
 export const TURNKEY_STUDIO_PACKAGES: readonly TurnkeyStudioPackage[] = [
@@ -126,6 +128,8 @@ export const TURNKEY_STUDIO_PACKAGES: readonly TurnkeyStudioPackage[] = [
     rate: 0,
     description: "Hourly stage rental with customized gear, crew, and post-production.",
     features: ["Acoustically isolated room", "High-speed optical fiber feed", "Base stage access"],
+    includedHours: 0,
+    eligibleStudios: ["studio-xr", "studio-a", "studio-b", "studio-c"],
   },
   {
     id: "basic-recording",
@@ -133,6 +137,8 @@ export const TURNKEY_STUDIO_PACKAGES: readonly TurnkeyStudioPackage[] = [
     rate: 490,
     description: "Soundproof studio room, broadcast microphone, sound engineer, and digital master delivery.",
     features: ["Soundproof room", "Broadcast mic kit", "Recording sound engineer", "Instant file delivery"],
+    includedHours: 2,
+    eligibleStudios: ["studio-b", "studio-a"],
   },
   {
     id: "podcast-package",
@@ -141,6 +147,8 @@ export const TURNKEY_STUDIO_PACKAGES: readonly TurnkeyStudioPackage[] = [
     description: "Dual soundproof suites with 4x Shure SM7B microphones, sound engineer, and multi-track stems.",
     features: ["Two soundproof rooms", "4x Shure SM7B mics", "Recording engineer", "Basic audio mastering"],
     isPopular: true,
+    includedHours: 2,
+    eligibleStudios: ["studio-b", "studio-a"],
   },
   {
     id: "recording-pro-edit",
@@ -149,6 +157,8 @@ export const TURNKEY_STUDIO_PACKAGES: readonly TurnkeyStudioPackage[] = [
     description: "Fully equipped 3-Cam 4K podcast set, Shure SM7B mics, studio operator, color grading & full episode cut.",
     features: ["3x Cinema 4K Cameras", "3x Shure SM7B mics", "Studio operator & switcher", "Full master episode edit & sync"],
     isPopular: true,
+    includedHours: 2,
+    eligibleStudios: ["studio-b", "studio-a"],
   },
 ];
 
@@ -216,10 +226,16 @@ export function calculateBookingPrice(input: BookingPricingInput): BookingPricin
   
   // Turnkey package resolution
   const turnkeyPkg = TURNKEY_STUDIO_PACKAGES.find((p) => p.id === input.turnkeyPackageId);
-  const turnkeyCost = turnkeyPkg && turnkeyPkg.id !== "none" ? turnkeyPkg.rate : 0;
-  
-  // If turnkey package is active, base studio cost is handled by the turnkey package
-  const studioCost = turnkeyCost > 0 ? 0 : studioRate * durationHours;
+  const isPackageEligible = Boolean(
+    turnkeyPkg &&
+    turnkeyPkg.id !== "none" &&
+    turnkeyPkg.eligibleStudios?.includes(studio?.id || "")
+  );
+
+  const turnkeyCost = isPackageEligible && turnkeyPkg ? turnkeyPkg.rate : 0;
+  const includedHours = isPackageEligible && turnkeyPkg ? turnkeyPkg.includedHours : 0;
+  const extraHours = Math.max(0, durationHours - includedHours);
+  const studioCost = isPackageEligible ? extraHours * studioRate : studioRate * durationHours;
 
   const crewCost = input.needsCrew ? 500 : 0;
 

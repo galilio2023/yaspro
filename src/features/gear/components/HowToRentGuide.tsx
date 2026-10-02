@@ -7,12 +7,10 @@ import {
   ShieldCheck,
   Truck,
   Building2,
-  Clock,
   HelpCircle,
   ChevronDown,
   Sparkles,
   CheckCircle2,
-  ArrowRight,
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { cn } from "@/lib/utils";
@@ -35,8 +33,8 @@ export function HowToRentGuide() {
         {
           title: isArabic ? "خصومات الفترات الطويلة" : "Duration Discounts",
           desc: isArabic
-            ? "يوم إضافي مجاني عند حجز 3 أيام متتالية، وأسعار خاصة لأسابيع التصوير الكاملة والشهرية."
-            : "Hire 3 days, pay for 2. Special negotiated rates for multi-week and monthly principal photography.",
+            ? "خصم 20% عند حجز 3 أيام وخصم 35% للحجز الأسبوعي (7 أيام)، مع أسعار خاصة للمشاريع الشهرية."
+            : "20% discount for 3-day hires and 35% discount for weekly hires, with special negotiated rates for monthly principal photography.",
         },
         {
           title: isArabic ? "حجز الكاميرات المشروطة" : "Camera Prep & Lens Testing",
@@ -59,7 +57,7 @@ export function HowToRentGuide() {
           title: isArabic ? "للمقيمين والشركات المحلية" : "UAE Residents & Companies",
           desc: isArabic
             ? "صورة الهوية الإماراتية + الرخصة التجارية (للشركات) لتسجيل الحساب المعتمد في دقائق."
-            : "Emirates ID copy and Trade License (for production companies) for instant instant onboarding.",
+            : "Emirates ID copy and Trade License (for production companies) for instant onboarding.",
         },
         {
           title: isArabic ? "للأطقم الدولية الزائرة" : "Visiting International Crews",
