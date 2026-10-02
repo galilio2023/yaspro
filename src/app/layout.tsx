@@ -109,6 +109,7 @@ export const metadata: Metadata = {
 };
 
 import { LanguageProvider, type Language } from "@/components/providers/LanguageProvider";
+import { GlobalPageLoaderProvider } from "@/components/layout/GlobalPageLoader";
 import { getLocale, getMessages } from "next-intl/server";
 
 export default async function RootLayout({
@@ -188,9 +189,11 @@ export default async function RootLayout({
       <body className="min-h-screen w-full bg-background text-foreground antialiased overflow-x-hidden">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <LanguageProvider initialLocale={locale}>
-            <CartProvider>
-              <SmoothScrollProvider>{children}</SmoothScrollProvider>
-            </CartProvider>
+            <GlobalPageLoaderProvider>
+              <CartProvider>
+                <SmoothScrollProvider>{children}</SmoothScrollProvider>
+              </CartProvider>
+            </GlobalPageLoaderProvider>
           </LanguageProvider>
         </NextIntlClientProvider>
       </body>
