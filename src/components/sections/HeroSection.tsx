@@ -53,8 +53,8 @@ export default function HeroSection() {
           <FadeUp className="lg:col-span-7 flex flex-col items-center text-center lg:items-start lg:text-start">
             <div className="mb-6 flex justify-center lg:justify-start">
               <StudioBadge
-                stage="STAGE 01"
-                label={isArabic ? "استوديو الإنتاج الافتراضي الفائق" : "VIRTUAL PRODUCTION & CINE STUDIOS"}
+                stage="AI HUB"
+                label={isArabic ? "مركز الذكاء الاصطناعي والإنتاج الافتراضي" : "AI MEDIA HUB & VIRTUAL PRODUCTION"}
               />
             </div>
 

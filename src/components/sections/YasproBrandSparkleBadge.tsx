@@ -144,7 +144,7 @@ export function YasproBrandSparkleBadge({ className = "" }: YasproBrandSparkleBa
         </span>
         <span className="h-3 w-[1px] bg-white/20 inline-block self-center mx-1" />
         <span className="text-xs font-medium text-text-secondary tracking-wide">
-          Cinema Studios & Virtual Production · Dubai
+          AI Media Hub & Virtual Production · Dubai
         </span>
       </div>
 

@@ -59,7 +59,7 @@ export function BrandLogo({
 
         {/* Subtitle */}
         <span className="text-[9.5px] sm:text-[10px] text-zinc-300 uppercase tracking-[0.22em] font-mono font-latin leading-tight mt-0.5 whitespace-nowrap" dir="ltr" style={{ direction: "ltr" }}>
-          CINEMA STUDIOS • DUBAI
+          AI MEDIA HUB • DUBAI
         </span>
       </div>
     </div>

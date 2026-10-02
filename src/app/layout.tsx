@@ -52,20 +52,21 @@ const siteUrl = getSiteUrl();
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "YASPRO | Cinema Studios & Virtual Production Dubai",
-    template: "%s | YASPRO",
+    default: "Yas Pro | AI Media Hub",
+    template: "%s | Yas Pro",
   },
   description:
-    "The premier human-crafted production company in the Gulf region. Cinema soundstages, robotic camera systems, equipment rental, and high-impact commercial production.",
+    "Turning vision into reality. Premier AI Media Hub in Dubai: 3D virtual production soundstages, OB-VAN live broadcast, cinema gear rental, and top-tier MENA creator network across UAE, Egypt, and Jordan.",
   keywords: [
-    "cinema production",
+    "AI media hub",
     "virtual production",
     "soundstage booking",
-    "UAE film production",
-    "commercial production",
-    "OB Van",
-    "live broadcast",
-    "Dubai media studios",
+    "podcast booking",
+    "OB-VAN live broadcast",
+    "camera rental Dubai",
+    "influencer network",
+    "Dubai media production",
+    "Yas Pro",
   ],
   icons: {
     icon: [
@@ -83,26 +84,26 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    siteName: "Yas Pro | Cinema Studios",
-    title: "Yas Pro | Cinema Studios & Virtual Production Dubai",
+    siteName: "Yas Pro | AI Media Hub",
+    title: "Yas Pro | AI Media Hub & Virtual Production",
     description:
-      "Premier Dubai media production house: 4K virtual production soundstages, turnkey cinema camera & lighting rental, MENA creator roster, and live stadium broadcasting.",
+      "Turning vision into reality. From green screen to another visual dimension, advanced AI technology transforms ideas into powerful media experiences.",
     images: [
       {
         url: `${siteUrl}/opengraph-image`,
         secureUrl: `${siteUrl}/opengraph-image`,
         width: 1200,
         height: 630,
-        alt: "Yas Pro | Cinema Studios & Virtual Production Dubai",
+        alt: "Yas Pro | AI Media Hub & Virtual Production",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Yas Pro | Cinema Studios & Virtual Production Dubai",
+    title: "Yas Pro | AI Media Hub & Virtual Production",
     description:
-      "Premier Dubai media production house: 4K virtual production soundstages, turnkey cinema camera & lighting rental, MENA creator roster, and live stadium broadcasting.",
+      "Turning vision into reality. From green screen to another visual dimension, advanced AI technology transforms ideas into powerful media experiences.",
     images: [`${siteUrl}/opengraph-image`],
   },
 };

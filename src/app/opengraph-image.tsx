@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
 
-export const alt = "Yas Pro | Cinema Studios & Virtual Production Dubai";
+export const alt = "Yas Pro | AI Media Hub & Virtual Production Dubai";
 export const size = {
   width: 1200,
   height: 630,
@@ -105,7 +105,7 @@ export default async function Image() {
                   display: "flex",
                 }}
               >
-                CINEMA STUDIOS • DUBAI
+                AI MEDIA HUB • DUBAI
               </div>
             </div>
           </div>

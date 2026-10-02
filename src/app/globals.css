@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  /* ── Brand Palette: Cinema Studio (Tungsten Amber & Obsidian) ────── */
+  /* ── Brand Palette: AI Media Hub (Tungsten Amber & Obsidian) ────── */
   /* Primary & Accents: Mapped to Cinema Tungsten Amber to kill legacy neon gradients */
   --brand-purple: #f59e0b;
   --brand-purple-rgb: 245, 158, 11;
