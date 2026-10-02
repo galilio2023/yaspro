@@ -24,13 +24,13 @@ export const GOV_LOGOS: readonly GovernmentLogo[] = [
     id: "dubai-health",
     name: "Dubai Health Authority",
     logo: "/images/partners/dubai-health-authority.png",
-    glowColor: "rgba(6,182,212,0.5)", // Cyan
+    glowColor: "rgba(245,158,11,0.4)",
   },
   {
     id: "dubai-land",
     name: "Dubai Land Department",
     logo: "/images/partners/dubai-land-department.png",
-    glowColor: "rgba(168,85,247,0.5)", // Purple
+    glowColor: "rgba(217,119,6,0.4)",
   },
   {
     id: "icp-identity",
@@ -42,25 +42,25 @@ export const GOV_LOGOS: readonly GovernmentLogo[] = [
     id: "womens-union",
     name: "General Women's Union",
     logo: "/images/partners/general-womens-union.png",
-    glowColor: "rgba(244,114,182,0.5)", // Rose
+    glowColor: "rgba(245,158,11,0.4)",
   },
   {
     id: "dubai-sports",
     name: "Dubai Sports Council",
     logo: "/images/partners/dubai-sports-council.png",
-    glowColor: "rgba(59,130,246,0.5)", // Blue
+    glowColor: "rgba(217,119,6,0.4)",
   },
   {
     id: "family-care",
     name: "Family Care Authority",
     logo: "/images/partners/family-care-authority.png",
-    glowColor: "rgba(168,85,247,0.5)",
+    glowColor: "rgba(245,158,11,0.4)",
   },
   {
     id: "human-resources",
     name: "Human Resources Department",
     logo: "/images/partners/human-resources-department.png",
-    glowColor: "rgba(6,182,212,0.5)",
+    glowColor: "rgba(217,119,6,0.4)",
   },
 ];
 
@@ -81,7 +81,7 @@ export const BRAND_LOGOS: readonly BrandLogoItem[] = [
     color: "#00a3e0",
     svg: `<svg viewBox="0 0 110 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-9 w-auto">
       <circle cx="18" cy="18" r="14" stroke="#00A3E0" stroke-width="4"/>
-      <circle cx="25" cy="14" r="4" fill="#9333EA"/>
+      <circle cx="25" cy="14" r="4" fill="#10B981"/>
       <text x="40" y="24" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="800" font-size="20" letter-spacing="1">ZAIN</text>
     </svg>`,
   },
@@ -97,24 +97,24 @@ export const BRAND_LOGOS: readonly BrandLogoItem[] = [
   {
     id: "gitex",
     name: "GITEX Global",
-    color: "#06b6d4",
+    color: "#f59e0b",
     svg: `<svg viewBox="0 0 145 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-9 w-auto">
       <defs>
         <linearGradient id="gitex-g" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#06B6D4"/>
-          <stop offset="100%" stop-color="#3B82F6"/>
+          <stop offset="0%" stop-color="#f59e0b"/>
+          <stop offset="100%" stop-color="#d97706"/>
         </linearGradient>
       </defs>
       <path d="M6 10l8-4 8 4v16l-8 4-8-4V10z" stroke="url(#gitex-g)" stroke-width="2.5" fill="none"/>
-      <circle cx="14" cy="18" r="3" fill="#06B6D4"/>
-      <text x="30" y="24" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="900" font-size="18" letter-spacing="0.5">GITEX<tspan fill="#06B6D4">.DXB</tspan></text>
+      <circle cx="14" cy="18" r="3" fill="#f59e0b"/>
+      <text x="30" y="24" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="900" font-size="18" letter-spacing="0.5">GITEX<tspan fill="#f59e0b">.DXB</tspan></text>
     </svg>`,
   },
   {
     id: "dmx",
     name: "DMX Global",
     logo: "/images/partners/dmx.png",
-    color: "#a855f7",
+    color: "#f59e0b",
   },
   {
     id: "hatta",
@@ -126,7 +126,7 @@ export const BRAND_LOGOS: readonly BrandLogoItem[] = [
     id: "delos",
     name: "Delos",
     logo: "/images/partners/delos.png",
-    color: "#06b6d4",
+    color: "#d97706",
   },
   {
     id: "c-1",
@@ -150,6 +150,6 @@ export const BRAND_LOGOS: readonly BrandLogoItem[] = [
     id: "f-3",
     name: "Partner Brand 4",
     logo: "/images/partners/brands/f-3.png",
-    color: "#06b6d4",
+    color: "#f59e0b",
   },
 ];

@@ -97,12 +97,12 @@ export function BookingPaymentModal({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
           <div className="flex items-center gap-2.5">
-            <div className="size-8 rounded-xl bg-purple-600/20 border border-purple-500/30 text-purple-400 flex items-center justify-center">
+            <div className="size-8 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center">
               <CreditCard size={18} />
             </div>
             <div>
               <h3 className="font-bold text-white text-base font-display">Secure Online Checkout</h3>
-              <span className="text-[10px] font-mono text-purple-400">REF: {referenceCode}</span>
+              <span className="text-[10px] font-mono text-amber-400">REF: {referenceCode}</span>
             </div>
           </div>
           <button
@@ -131,7 +131,7 @@ export function BookingPaymentModal({
                 onClick={() => setPaymentMethod("ziina")}
                 className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                   paymentMethod === "ziina"
-                    ? "bg-gradient-to-br from-amber-500/20 via-purple-600/20 to-transparent border-amber-400/60 text-white shadow-lg shadow-amber-500/10"
+                    ? "bg-amber-500/15 border-amber-400/60 text-white shadow-lg shadow-amber-500/10"
                     : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white"
                 }`}
               >
@@ -151,13 +151,13 @@ export function BookingPaymentModal({
                 onClick={() => setPaymentMethod("card")}
                 className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                   paymentMethod === "card"
-                    ? "bg-purple-600/20 border-purple-500/50 text-white"
+                    ? "bg-amber-500/20 border-amber-500/50 text-white"
                     : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white"
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
                   <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <CreditCard size={14} className="text-purple-400" /> Direct Card
+                    <CreditCard size={14} className="text-amber-400" /> Direct Card
                   </span>
                 </div>
                 <div className="text-[11px] text-slate-400 mt-2">Visa &bull; Mastercard &bull; AMEX</div>
@@ -174,11 +174,11 @@ export function BookingPaymentModal({
                 onClick={() => setPaymentType("deposit")}
                 className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                   paymentType === "deposit"
-                    ? "bg-purple-600/20 border-purple-500/50 text-white"
+                    ? "bg-amber-500/20 border-amber-500/50 text-white"
                     : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white"
                 }`}
               >
-                <div className="text-[10px] font-mono uppercase text-purple-300">50% Deposit</div>
+                <div className="text-[10px] font-mono uppercase text-amber-400">50% Deposit</div>
                 <div className="text-sm font-bold text-white mt-0.5">{formatCurrency(depositAmount)}</div>
                 <div className="text-[10px] text-slate-400 mt-1">Holds your stage date</div>
               </button>
@@ -188,11 +188,11 @@ export function BookingPaymentModal({
                 onClick={() => setPaymentType("full")}
                 className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                   paymentType === "full"
-                    ? "bg-purple-600/20 border-purple-500/50 text-white"
+                    ? "bg-amber-500/20 border-amber-500/50 text-white"
                     : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white"
                 }`}
               >
-                <div className="text-[10px] font-mono uppercase text-purple-300">Full Amount</div>
+                <div className="text-[10px] font-mono uppercase text-amber-400">Full Amount</div>
                 <div className="text-sm font-bold text-white mt-0.5">{formatCurrency(totalAmount)}</div>
                 <div className="text-[10px] text-slate-400 mt-1">Instant reconciliation</div>
               </button>
@@ -219,7 +219,7 @@ export function BookingPaymentModal({
                   value={cardNumber}
                   onChange={(e) => setCardNumber(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-amber-500"
                 />
               </div>
 
@@ -231,7 +231,7 @@ export function BookingPaymentModal({
                   value={cardExpiry}
                   onChange={(e) => setCardExpiry(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-amber-500"
                 />
               </div>
               <div>
@@ -241,7 +241,7 @@ export function BookingPaymentModal({
                   value={cardCvc}
                   onChange={(e) => setCardCvc(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-purple-500"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-amber-500"
                 />
               </div>
             </div>
@@ -260,8 +260,8 @@ export function BookingPaymentModal({
             disabled={isProcessing}
             className={`w-full py-3.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer disabled:opacity-50 ${
               paymentMethod === "ziina"
-                ? "bg-gradient-to-r from-amber-500 via-amber-600 to-purple-600 hover:from-amber-400 hover:to-purple-500 text-slate-950 font-black shadow-amber-500/25"
-                : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-purple-600/30"
+                ? "bg-amber-500 hover:bg-amber-400 text-black font-extrabold shadow-amber-500/25"
+                : "btn-brand text-black"
             }`}
           >
             {isProcessing ? (

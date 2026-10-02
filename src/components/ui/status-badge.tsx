@@ -22,12 +22,12 @@ const STATUS_STYLES: Record<
   string,
   { classes: string; icon?: React.ReactNode }
 > = {
-  confirmed:     { classes: "bg-brand-teal/15 text-brand-teal-light border-brand-teal/30",  icon: <CheckCircle2 size={11} /> },
-  sla_active:    { classes: "bg-brand-teal/15 text-brand-teal-light border-brand-teal/30",  icon: <CheckCircle2 size={11} /> },
+  confirmed:     { classes: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",  icon: <CheckCircle2 size={11} /> },
+  sla_active:    { classes: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",  icon: <CheckCircle2 size={11} /> },
   approved:      { classes: "bg-blue-500/20 text-blue-300 border-blue-500/30",               icon: <CheckCircle2 size={11} /> },
   completed:     { classes: "bg-blue-500/20 text-blue-300 border-blue-500/30",               icon: <CheckCircle2 size={11} /> },
-  resolved:      { classes: "bg-brand-teal/15 text-brand-teal-light border-brand-teal/30",  icon: <CheckCircle2 size={11} /> },
-  paid:          { classes: "bg-brand-teal/15 text-brand-teal-light border-brand-teal/30",  icon: undefined },
+  resolved:      { classes: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",  icon: <CheckCircle2 size={11} /> },
+  paid:          { classes: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",  icon: undefined },
   deposit_paid:  { classes: "bg-amber-500/10 text-amber-400 border-amber-500/30",            icon: undefined },
   pending:       { classes: "bg-amber-500/20 text-amber-300 border-amber-500/30",            icon: <Clock size={11} /> },
   pending_review:{ classes: "bg-amber-500/20 text-amber-300 border-amber-500/30",            icon: <Clock size={11} /> },
@@ -79,7 +79,7 @@ export function MawthooqBadge({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-teal/15 border border-brand-teal/30 text-brand-teal-light text-[10px] font-semibold",
+        "inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-semibold",
         className
       )}
     >

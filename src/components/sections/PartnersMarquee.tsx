@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { Marquee } from "@/components/magicui/marquee";
 import { GOV_LOGOS, BRAND_LOGOS } from "@/features/partners/data";
-
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function PartnersMarquee() {
@@ -11,24 +10,22 @@ export function PartnersMarquee() {
   return (
     <aside
       aria-label="Government and Brand Partners"
-      // dir="ltr" forces logo marquees to always scroll left-to-right — this is
-      // visually correct and expected regardless of the page language direction.
       dir="ltr"
-      className="relative w-full py-10 sm:py-14 lg:py-20 border-y border-white/5 bg-black/40 backdrop-blur-md overflow-hidden flex flex-col items-center select-none max-w-full"
+      className="relative w-full py-10 sm:py-14 lg:py-18 border-y border-white/8 bg-zinc-950/60 backdrop-blur-md overflow-hidden flex flex-col items-center select-none max-w-full"
     >
-      {/* Edge Fade Masks — logical start/end so they hug the correct sides */}
-      <div className="pointer-events-none absolute inset-y-0 start-0 w-12 sm:w-40 bg-gradient-to-r from-background via-background/80 to-transparent z-20" />
-      <div className="pointer-events-none absolute inset-y-0 end-0 w-12 sm:w-40 bg-gradient-to-l from-background via-background/80 to-transparent z-20" />
+      {/* Edge Fade Masks */}
+      <div className="pointer-events-none absolute inset-y-0 start-0 w-16 sm:w-44 bg-gradient-to-r from-background via-background/80 to-transparent z-20" />
+      <div className="pointer-events-none absolute inset-y-0 end-0 w-16 sm:w-44 bg-gradient-to-l from-background via-background/80 to-transparent z-20" />
 
-      {/* Subtle Section Label */}
-      <div className="mb-6 flex items-center justify-center gap-2 px-4 text-center">
-        <span className="size-1.5 rounded-full bg-brand-cyan animate-pulse shrink-0" />
-        <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.15em] sm:tracking-[0.25em] text-text-muted">
+      {/* Subtle Production Label */}
+      <div className="mb-6 flex items-center justify-center gap-2.5 px-4 text-center">
+        <span className="size-1.5 rounded-full bg-amber-500 shrink-0" />
+        <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.18em] sm:tracking-[0.25em] text-zinc-400">
           {isArabic
             ? "شريك الإنتاج المعتمد للمؤسسات الحكومية في الإمارات وكبرى العلامات العالمية"
             : "Chosen For UAE Government & Global Brand Productions"}
         </span>
-        <span className="size-1.5 rounded-full bg-brand-purple animate-pulse shrink-0" />
+        <span className="size-1.5 rounded-full bg-amber-500 shrink-0" />
       </div>
 
       {/* Row 1: Official UAE Government Entities */}
@@ -38,14 +35,14 @@ export function PartnersMarquee() {
             <div
               key={gov.id}
               title={gov.name}
-              className="flex items-center justify-center opacity-70 hover:opacity-100 hover:scale-115 transition-all duration-300 cursor-pointer group"
+              className="flex items-center justify-center opacity-65 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer group"
             >
               <Image
                 src={gov.logo}
                 alt={gov.name}
                 width={160}
                 height={55}
-                className="h-9 sm:h-12 w-auto object-contain filter group-hover:drop-shadow-[0_0_14px_rgba(196,181,253,0.7)] transition-all duration-300"
+                className="h-9 sm:h-11 w-auto object-contain filter brightness-90 group-hover:brightness-100 transition-all duration-300"
               />
             </div>
           ))}
@@ -59,11 +56,11 @@ export function PartnersMarquee() {
             <div
               key={brand.id}
               title={brand.name}
-              className="flex items-center justify-center opacity-75 hover:opacity-100 hover:scale-115 transition-all duration-300 cursor-pointer group"
+              className="flex items-center justify-center opacity-65 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer group"
             >
               {brand.svg ? (
                 <div
-                  className="flex items-center justify-center filter group-hover:drop-shadow-[0_0_16px_rgba(6,182,212,0.8)] transition-all duration-300"
+                  className="flex items-center justify-center filter brightness-90 group-hover:brightness-100 transition-all duration-300"
                   dangerouslySetInnerHTML={{ __html: brand.svg }}
                 />
               ) : (
@@ -72,7 +69,7 @@ export function PartnersMarquee() {
                   alt={brand.name}
                   width={150}
                   height={50}
-                  className="h-8 sm:h-11 w-auto object-contain filter group-hover:drop-shadow-[0_0_14px_rgba(6,182,212,0.6)] transition-all duration-300"
+                  className="h-8 sm:h-10 w-auto object-contain filter brightness-90 group-hover:brightness-100 transition-all duration-300"
                 />
               )}
             </div>

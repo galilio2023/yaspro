@@ -67,7 +67,7 @@ export default async function InfluencerDetailPage({
     <section className="w-full py-12 md:py-20 bg-background relative overflow-hidden flex flex-col items-center">
       <JsonLd data={CREATOR_SCHEMA} />
       {/* Ambient background light */}
-      <div className="absolute top-20 right-1/4 size-[600px] bg-brand-purple/10 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute top-20 right-1/4 size-[600px] bg-amber-500/5 rounded-full blur-[160px] pointer-events-none" />
 
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <BackButton href="/influencers" label="Back to Influencer Hub" />

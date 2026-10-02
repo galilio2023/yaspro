@@ -18,7 +18,7 @@ export function TeamGrid({ headingId }: TeamGridProps) {
       <SectionHeader
         headingId={headingId}
         badge={t("about.teamBadge")}
-        badgeVariant="cyan"
+        badgeVariant="gold"
         badgeIcon={<Users size={13} />}
         title={t("about.teamTitle")}
         gradientText={t("about.teamGradient")}
@@ -28,26 +28,26 @@ export function TeamGrid({ headingId }: TeamGridProps) {
       <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
         {TEAM_MEMBERS.map((member) => (
           <StaggerItem as="article" key={member.role} className="h-full">
-            <div className="rounded-3xl border border-white/10 bg-[#0b081b]/90 backdrop-blur-xl p-6 sm:p-7 flex flex-col justify-between h-full hover:border-brand-purple/50 hover:bg-[#100c26] transition-all duration-300 group shadow-xl shadow-black/30">
+            <div className="rounded-3xl border border-white/10 bg-[#070709]/90 backdrop-blur-xl p-6 sm:p-7 flex flex-col justify-between h-full hover:border-amber-500/50 hover:bg-white/[0.04] transition-all duration-300 group shadow-xl shadow-black/30">
               <div>
                 {/* Header: Monogram Avatar + Department Tag */}
                 <div className="flex items-center justify-between gap-3 mb-5">
                   <div className={`size-12 sm:size-14 rounded-2xl bg-gradient-to-tr ${member.gradient} p-[1.5px] shadow-lg shadow-black/50 group-hover:scale-105 transition-transform`}>
-                    <div className="size-full bg-[#0a0718] rounded-[14px] flex items-center justify-center font-mono font-bold text-sm sm:text-base text-white font-latin" dir="ltr">
+                    <div className="size-full bg-[#070709] rounded-[14px] flex items-center justify-center font-mono font-bold text-sm sm:text-base text-white font-latin" dir="ltr">
                       {member.initials}
                     </div>
                   </div>
 
-                  <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-brand-purple-light">
+                  <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-amber-400">
                     {isArabic ? member.arDepartment : member.department}
                   </span>
                 </div>
 
                 <div className="mb-2">
-                  <span className="text-xs font-semibold text-brand-cyan uppercase tracking-wider block font-mono">
+                  <span className="text-xs font-semibold text-amber-400 uppercase tracking-wider block font-mono">
                     {isArabic ? member.arRole : member.role}
                   </span>
-                  <h3 className="text-xl font-bold text-white font-display mt-0.5 group-hover:text-brand-purple-light transition-colors">
+                  <h3 className="text-xl font-bold text-white font-display mt-0.5 group-hover:text-amber-400 transition-colors">
                     {isArabic ? member.arName : member.name}
                   </h3>
                 </div>

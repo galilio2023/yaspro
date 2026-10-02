@@ -208,7 +208,7 @@ export function AiBriefPitchModal({
       >
         <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
           <div className="flex items-center gap-2.5">
-            <div className="size-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/25">
+            <div className="size-9 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-lg shadow-amber-500/10">
               <Sparkles size={18} />
             </div>
             <div>
@@ -216,7 +216,7 @@ export function AiBriefPitchModal({
                 <h3 id="ai-pitch-assistant-title" className="text-base font-bold font-display">
                   AI Production Pitch Assistant
                 </h3>
-                <Badge variant="cyan" className="text-[9px] uppercase tracking-wider">
+                <Badge variant="gold" className="text-[9px] uppercase tracking-wider">
                   BETA
                 </Badge>
               </div>
@@ -248,14 +248,14 @@ export function AiBriefPitchModal({
               value={briefPrompt}
               onChange={(e) => handlePromptChange(e.target.value)}
               placeholder="e.g. Shooting a 4-episode tech founder podcast with 3 hosts in Dubai, or a luxury automotive commercial with an Unreal virtual desert backdrop..."
-              className="w-full p-3.5 rounded-xl bg-black/60 border border-white/10 text-white placeholder:text-slate-500 text-xs leading-relaxed focus:outline-none focus:border-brand-purple"
+              className="w-full p-3.5 rounded-xl bg-black/60 border border-white/10 text-white placeholder:text-slate-500 text-xs leading-relaxed focus:outline-none focus:border-amber-500/60"
             />
           </div>
 
           <button
             type="submit"
             disabled={isGenerating || !briefPrompt.trim()}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-brand-purple to-brand-cyan hover:opacity-95 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-brand-purple/20 disabled:opacity-50"
+            className="w-full py-3 rounded-xl btn-brand text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50"
           >
             {isGenerating ? (
               <>
@@ -273,8 +273,8 @@ export function AiBriefPitchModal({
 
         {/* AI Pitch Output */}
         {recommendation && (
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-brand-purple/30 space-y-3 animate-fade-in">
-            <div className="flex items-center gap-1.5 text-brand-purple-light text-xs font-bold font-mono">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-amber-500/30 space-y-3 animate-fade-in">
+            <div className="flex items-center gap-1.5 text-amber-400 text-xs font-bold font-mono">
               <CheckCircle2 size={14} className="text-emerald-400" />
               <span>Recommended Production Setup</span>
             </div>
@@ -293,7 +293,7 @@ export function AiBriefPitchModal({
                 <span className="text-[10px] text-text-muted font-mono uppercase block mb-1">
                   Camera / Rig
                 </span>
-                <span className="font-bold text-brand-cyan block truncate">
+                <span className="font-bold text-amber-400 block truncate">
                   {recommendation.recommendedGear}
                 </span>
               </div>
@@ -315,7 +315,7 @@ export function AiBriefPitchModal({
             <button
               type="button"
               onClick={handleApply}
-              className="w-full py-2.5 rounded-xl bg-brand-purple hover:bg-brand-purple-light text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer mt-2"
+              className="w-full py-2.5 rounded-xl btn-brand text-xs font-bold flex items-center justify-center gap-2 cursor-pointer mt-2"
             >
               <span>Apply to Booking Form</span>
               <ArrowRight size={14} className="rtl:rotate-180" />

@@ -42,11 +42,11 @@ export function PortalTelemetryFeed() {
       {/* Header bar */}
       <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div className={`size-2.5 rounded-full ${isLiveStreaming ? "bg-brand-teal animate-pulse" : "bg-amber-400"}`} />
+          <div className={`size-2.5 rounded-full ${isLiveStreaming ? "bg-emerald-400 animate-pulse" : "bg-amber-400"}`} />
           <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
             Sovereign Relay Bus &amp; SMPTE 2110 IP Ingest
           </span>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">
             {isLiveStreaming ? "SIMULATED TELEMETRY 10s" : "PAUSED"}
           </span>
         </div>
@@ -79,15 +79,15 @@ export function PortalTelemetryFeed() {
             className="p-3.5 sm:p-4 rounded-2xl bg-slate-900/60 border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
           >
             <div className="flex items-start gap-3 min-w-0">
-              <div className="size-8 rounded-xl bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+              <div className="size-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
                 <Radio size={14} />
               </div>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-purple/20 text-brand-purple-light border border-brand-purple/30 font-bold">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/30 font-bold">
                     {ev.source}
                   </span>
-                  <span className="text-[10px] font-mono text-brand-teal-light">
+                  <span className="text-[10px] font-mono text-emerald-400">
                     {ev.type}
                   </span>
                 </div>

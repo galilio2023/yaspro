@@ -17,7 +17,7 @@ export function BookingProgress({
     <div
       role="navigation"
       aria-label="Booking steps"
-      className="flex items-center gap-1 p-2 rounded-2xl border border-brand-purple/15 bg-card/60 backdrop-blur-xl overflow-x-auto scrollbar-none"
+      className="flex items-center gap-1 p-2 rounded-2xl border border-white/10 bg-card/60 backdrop-blur-xl overflow-x-auto scrollbar-none"
     >
       {steps.map((s, idx) => {
         const isCurrent = currentStep === s.id;
@@ -34,9 +34,9 @@ export function BookingProgress({
               className={cn(
                 "flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200",
                 isCurrent
-                  ? "bg-gradient-brand text-white shadow-md shadow-brand-purple/35 font-bold"
+                  ? "bg-amber-500/15 border border-amber-500/40 text-amber-400 font-bold"
                   : isCompleted
-                  ? "text-brand-purple-mid hover:bg-brand-purple/10 font-semibold cursor-pointer"
+                  ? "text-amber-400 hover:bg-amber-500/10 font-semibold cursor-pointer"
                   : "text-text-ghost opacity-40 cursor-default"
               )}
             >
@@ -44,9 +44,9 @@ export function BookingProgress({
                 className={cn(
                   "size-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0",
                   isCurrent
-                    ? "bg-white/20"
+                    ? "bg-amber-500 text-black"
                     : isCompleted
-                    ? "bg-brand-purple/20"
+                    ? "bg-amber-500/20 text-amber-400"
                     : "bg-white/5"
                 )}
               >
@@ -64,7 +64,7 @@ export function BookingProgress({
               <div
                 className={cn(
                   "h-px w-3 rounded-full transition-colors",
-                  isCompleted ? "bg-brand-purple/40" : "bg-white/8"
+                  isCompleted ? "bg-amber-500/40" : "bg-white/8"
                 )}
               />
             )}

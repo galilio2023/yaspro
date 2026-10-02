@@ -43,7 +43,7 @@ export function CategoryFilterBar<T extends string>({
             className={cn(
               "px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer flex items-center gap-2",
               isActive
-                ? "bg-brand-purple text-white shadow-md shadow-brand-purple/30"
+                ? "bg-amber-500 text-zinc-950 font-bold shadow-md shadow-amber-500/20"
                 : "text-text-secondary hover:text-white hover:bg-white/5"
             )}
           >
@@ -53,7 +53,7 @@ export function CategoryFilterBar<T extends string>({
                 className={cn(
                   "text-[10px] px-1.5 py-0.5 rounded-full",
                   isActive
-                    ? "bg-white/20 text-white"
+                    ? "bg-black/20 text-zinc-950 font-bold"
                     : "bg-white/5 text-text-muted"
                 )}
               >

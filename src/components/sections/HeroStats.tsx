@@ -23,25 +23,16 @@ export function HeroStats({ stats = DEFAULT_STATS }: HeroStatsProps) {
   const { isArabic } = useLanguage();
 
   return (
-    <dl className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4 w-full pt-8 border-t border-brand-purple/20">
-      {stats.map((stat, i) => (
-        <div key={stat.label} className="flex flex-col items-start text-start gap-0.5">
+    <dl className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4 w-full pt-8 border-t border-white/10">
+      {stats.map((stat) => (
+        <div key={stat.label} className="flex flex-col items-start text-start gap-1">
           <dd
-            className="text-2xl sm:text-3xl font-extrabold font-display font-latin"
+            className="text-2xl sm:text-3xl font-bold font-display font-latin text-white tracking-tight"
             dir="ltr"
-            style={{
-              background:
-                i % 2 === 0
-                  ? "linear-gradient(135deg,#7c3aed,#c4b5fd,#06b6d4)"
-                  : "linear-gradient(135deg,#f59e0b,#fcd34d,#f59e0b)",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
           >
             {stat.value}
           </dd>
-          <dt className="text-text-muted text-[11px] font-medium uppercase tracking-wider rtl:tracking-normal whitespace-nowrap">
+          <dt className="text-zinc-400 text-[11px] font-mono uppercase tracking-wider rtl:tracking-normal whitespace-nowrap">
             {isArabic ? (stat.arLabel || stat.label) : stat.label}
           </dt>
         </div>

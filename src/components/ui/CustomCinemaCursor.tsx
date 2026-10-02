@@ -65,7 +65,7 @@ export function CustomCinemaCursor() {
     <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden">
       {/* Precision Center Dot */}
       <motion.div
-        className="fixed top-0 left-0 size-2 -ml-1 -mt-1 rounded-full bg-brand-cyan shadow-[0_0_8px_rgba(6,182,212,0.8)]"
+        className="fixed top-0 left-0 size-2 -ml-1 -mt-1 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]"
         style={{
           transform: `translate3d(${mousePosition.x}px, ${mousePosition.y}px, 0)`,
         }}
@@ -75,9 +75,9 @@ export function CustomCinemaCursor() {
       <motion.div
         className={`fixed top-0 left-0 rounded-full flex items-center justify-center transition-colors duration-200 backdrop-blur-[2px] ${
           cursorText
-            ? "size-20 -ml-10 -mt-10 bg-brand-purple/20 border border-brand-purple/40 shadow-[0_0_20px_rgba(124,58,237,0.4)]"
+            ? "size-20 -ml-10 -mt-10 bg-amber-500/20 border border-amber-500/40 shadow-[0_0_20px_rgba(245,158,11,0.4)]"
             : isPointer
-            ? "size-12 -ml-6 -mt-6 bg-brand-purple/15 border border-brand-purple/30 shadow-[0_0_15px_rgba(124,58,237,0.3)]"
+            ? "size-12 -ml-6 -mt-6 bg-amber-500/15 border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.3)]"
             : "size-8 -ml-4 -mt-4 border border-white/20 bg-white/[0.02]"
         }`}
         style={{
@@ -86,7 +86,7 @@ export function CustomCinemaCursor() {
         }}
       >
         {cursorText && (
-          <span className="text-[9px] font-mono font-bold tracking-widest text-brand-purple-light uppercase text-center px-1">
+          <span className="text-[9px] font-mono font-bold tracking-widest text-amber-400 uppercase text-center px-1">
             {cursorText}
           </span>
         )}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Cpu, Sparkles, Activity } from "lucide-react";
+import { Cpu, Activity } from "lucide-react";
 import { OrbitingCircles } from "@/components/magicui/orbiting-circles";
 import { ORBIT_NODES, OrbitNodeConfig } from "./ecosystem.data";
 import { cn } from "@/lib/utils";
@@ -50,26 +50,25 @@ export function OrbitingMediaNodes() {
         !isVisible && "[&_*]:![animation-play-state:paused]"
       )}
     >
-      {/* Background Volumetric Glow & Cosmic Nebulae */}
+      {/* Background Volumetric Glow & Atmospheric Lighting */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden max-w-full">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[260px] sm:size-[380px] rounded-full bg-brand-purple/20 blur-[80px] sm:blur-[90px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[160px] sm:size-[220px] rounded-full bg-brand-teal/15 blur-[50px] sm:blur-[60px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[260px] sm:size-[380px] rounded-full bg-amber-500/10 blur-[80px] sm:blur-[90px]" />
       </div>
 
       {/* Sweeping Holographic Radar Sweep */}
       <div
-        className="pointer-events-none absolute size-[300px] sm:size-[460px] rounded-full opacity-25 animate-spin-around [animation-duration:14s] max-w-full"
+        className="pointer-events-none absolute size-[300px] sm:size-[460px] rounded-full opacity-20 animate-spin-around [animation-duration:14s] max-w-full"
         style={{
           background:
-            "conic-gradient(from 0deg at 50% 50%, rgba(124,58,237,0) 0deg, rgba(6,182,212,0.18) 320deg, rgba(124,58,237,0.4) 360deg)",
+            "conic-gradient(from 0deg at 50% 50%, rgba(245,158,11,0) 0deg, rgba(217,119,6,0.12) 320deg, rgba(245,158,11,0.25) 360deg)",
         }}
       />
 
       {/* Top HUD Telemetry Banner */}
       <div className="absolute top-3 sm:top-4 inset-x-4 sm:inset-x-6 flex items-center justify-between pointer-events-none z-30 text-[9px] sm:text-[11px] font-mono uppercase tracking-wider text-text-muted border-b border-white/5 pb-2">
         <div className="flex items-center gap-2">
-          <span className="size-2 rounded-full bg-brand-cyan animate-ping" />
-          <span className="text-white/80 font-bold">YAS NEURAL MESH v4.2</span>
+          <span className="size-2 rounded-full bg-amber-400 animate-ping" />
+          <span className="text-white/80 font-bold">YAS BROADCAST TELEMETRY v4.2</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-emerald-400 font-semibold flex items-center gap-1">
@@ -82,12 +81,12 @@ export function OrbitingMediaNodes() {
       {/* Bottom Interactive Telemetry Status Bar */}
       <div className="absolute bottom-4 inset-x-6 flex items-center justify-between pointer-events-none z-30 text-[10px] sm:text-[11px] font-mono border-t border-white/5 pt-2 text-text-muted">
         <div className="flex items-center gap-2">
-          <Activity size={12} className="text-brand-purple-light" />
+          <Activity size={12} className="text-amber-400" />
           <span className="text-text-secondary">
             {hoveredNode ? (
               <span className="text-white font-semibold">
                 NODE LOCKED:{" "}
-                <span className="text-brand-cyan">{hoveredNode.name}</span> —{" "}
+                <span className="text-amber-400">{hoveredNode.name}</span> —{" "}
                 <span className="text-text-muted">{hoveredNode.subtitle}</span>
               </span>
             ) : (
@@ -95,7 +94,7 @@ export function OrbitingMediaNodes() {
             )}
           </span>
         </div>
-        <span className="hidden sm:inline-block text-brand-purple-light/70">
+        <span className="hidden sm:inline-block text-amber-400/80">
           GCC BROADCAST MESH
         </span>
       </div>
@@ -140,7 +139,7 @@ export function OrbitingMediaNodes() {
             />
             {/* Subtle glow rim for active orbit */}
             <circle
-              className="stroke-brand-purple/20 stroke-1 opacity-40"
+              className="stroke-amber-500/20 stroke-1 opacity-40"
               cx="50%"
               cy="50%"
               r={r + 1}
@@ -150,36 +149,35 @@ export function OrbitingMediaNodes() {
         ))}
       </svg>
 
-      {/* ── Center Nucleus: High-Tech "YAS AI" Media Engine ── */}
+      {/* ── Center Nucleus: Studio Control Core ── */}
       <div className="relative z-20 flex flex-col items-center justify-center">
         {/* Outer Tech Ring 1 (Dashed Clockwise) */}
         <div
-          className="absolute size-36 sm:size-40 rounded-full border border-dashed border-brand-purple/40 animate-spin-around pointer-events-none"
+          className="absolute size-36 sm:size-40 rounded-full border border-dashed border-amber-500/30 animate-spin-around pointer-events-none"
           style={{ animationDuration: "24s" }}
         />
 
         {/* Outer Tech Ring 2 (Dotted Counter-Clockwise) */}
         <div
-          className="absolute size-32 sm:size-36 rounded-full border border-dotted border-brand-cyan/40 animate-spin-around pointer-events-none"
+          className="absolute size-32 sm:size-36 rounded-full border border-dotted border-amber-400/20 animate-spin-around pointer-events-none"
           style={{ animationDuration: "16s", animationDirection: "reverse" }}
         />
 
-        {/* Pulsing Quantum Energy Halo */}
-        <div className="absolute size-24 sm:size-28 rounded-full bg-gradient-to-tr from-brand-purple/50 via-brand-cyan/30 to-brand-purple/60 blur-md animate-pulse pointer-events-none" />
+        {/* Ambient Halo */}
+        <div className="absolute size-24 sm:size-28 rounded-full bg-amber-500/20 blur-md pointer-events-none" />
 
         {/* Central Core Orb */}
-        <div className="relative z-10 flex flex-col items-center justify-center size-24 sm:size-28 rounded-full border-2 border-brand-purple-light/50 bg-[#0d0b1a]/95 backdrop-blur-2xl shadow-[0_0_40px_rgba(124,58,237,0.7)] group-hover/orbit:shadow-[0_0_55px_rgba(6,182,212,0.8)] transition-all duration-500">
+        <div className="relative z-10 flex flex-col items-center justify-center size-24 sm:size-28 rounded-full border-2 border-amber-500/40 bg-[#0d0b12] backdrop-blur-2xl shadow-[0_0_30px_rgba(245,158,11,0.25)] transition-all duration-300">
           <div className="relative flex items-center justify-center mb-1">
-            <Cpu className="size-8 sm:size-9 text-brand-cyan animate-pulse drop-shadow-[0_0_12px_rgba(6,182,212,0.9)]" />
-            <Sparkles className="size-3 text-brand-purple-lighter absolute -top-1 -right-2 animate-bounce" />
+            <Cpu className="size-8 sm:size-9 text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
           </div>
 
-          <span className="text-xs sm:text-sm font-extrabold font-display text-white tracking-widest uppercase bg-gradient-to-r from-white via-brand-purple-lighter to-brand-cyan bg-clip-text text-transparent">
-            Yas AI
+          <span className="text-xs sm:text-sm font-extrabold font-display text-amber-400 tracking-widest uppercase">
+            YAS PRO
           </span>
 
-          <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-wider text-brand-purple-light/90 font-semibold">
-            Neural Core
+          <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-wider text-amber-300/80 font-semibold">
+            STUDIO CORE
           </span>
         </div>
       </div>

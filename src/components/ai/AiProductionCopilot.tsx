@@ -45,7 +45,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
         {/* Header */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-white/10 bg-white/[0.02]">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="size-9 sm:size-10 rounded-xl bg-brand-purple/20 border border-brand-purple/40 flex items-center justify-center text-brand-purple-light shadow-inner shrink-0">
+            <div className="size-9 sm:size-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-inner shrink-0">
               <Sparkles size={18} className="animate-pulse" />
             </div>
             <div className="min-w-0">
@@ -53,7 +53,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
                 <h3 className="text-sm sm:text-lg font-bold text-white font-display truncate">
                   Yas Pro Autonomous Production Copilot
                 </h3>
-                <span className="hidden xs:inline-flex px-2 py-0.5 text-[9px] sm:text-[10px] font-mono uppercase tracking-wider font-semibold rounded-full bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/30 shrink-0">
+                <span className="hidden xs:inline-flex px-2 py-0.5 text-[9px] sm:text-[10px] font-mono uppercase tracking-wider font-semibold rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 shrink-0">
                   Google Gemini
                 </span>
               </div>
@@ -78,7 +78,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
             onClick={() => setActiveTab("proposal")}
             className={`flex items-center justify-center gap-1.5 py-3 px-1 sm:px-4 text-center text-xs font-semibold border-b-2 transition-all duration-200 min-h-[44px] cursor-pointer ${
               activeTab === "proposal"
-                ? "border-brand-purple text-brand-purple-light"
+                ? "border-amber-500 text-amber-400 font-bold"
                 : "border-transparent text-text-secondary hover:text-white"
             }`}
           >
@@ -92,7 +92,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
             onClick={() => setActiveTab("dialect")}
             className={`flex items-center justify-center gap-1.5 py-3 px-1 sm:px-4 text-center text-xs font-semibold border-b-2 transition-all duration-200 min-h-[44px] cursor-pointer ${
               activeTab === "dialect"
-                ? "border-brand-purple text-brand-purple-light"
+                ? "border-amber-500 text-amber-400 font-bold"
                 : "border-transparent text-text-secondary hover:text-white"
             }`}
           >
@@ -106,7 +106,7 @@ export function AiProductionCopilot({ isOpen, onClose }: AiProductionCopilotProp
             onClick={() => setActiveTab("gear")}
             className={`flex items-center justify-center gap-1.5 py-3 px-1 sm:px-4 text-center text-xs font-semibold border-b-2 transition-all duration-200 min-h-[44px] cursor-pointer ${
               activeTab === "gear"
-                ? "border-brand-purple text-brand-purple-light"
+                ? "border-amber-500 text-amber-400 font-bold"
                 : "border-transparent text-text-secondary hover:text-white"
             }`}
           >

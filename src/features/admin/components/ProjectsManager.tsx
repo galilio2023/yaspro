@@ -57,7 +57,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <Film className="text-purple-400" /> Projects CMS Management
+            <Film className="text-amber-400" /> Projects CMS Management
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Manage commercial, national, and event films stored in Neon PostgreSQL.
@@ -66,7 +66,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
 
         <button
           onClick={handleOpenNew}
-          className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2 transition-colors shrink-0"
+          className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition-colors shrink-0"
         >
           <Plus size={16} /> Add New Project
         </button>
@@ -91,7 +91,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
             {error && <FeedbackAlert type="error" message={error} className="mt-4" />}
 
             {feedback && (
-              <div className="mt-4 p-3 rounded-xl bg-purple-950/60 border border-purple-500/40 text-xs text-purple-200 flex items-center gap-2">
+              <div className="mt-4 p-3 rounded-xl bg-amber-950/40 border border-amber-500/30 text-xs text-amber-200 flex items-center gap-2">
                 <CheckCircle size={14} /> {feedback}
               </div>
             )}
@@ -107,7 +107,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, title: e.target.value })
                     }
-                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500"
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-500"
                   />
                 </div>
                 <div>
@@ -120,7 +120,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, arabicTitle: e.target.value })
                     }
-                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500 font-arabic"
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-500 font-arabic"
                   />
                 </div>
                 <div>
@@ -132,7 +132,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, slug: e.target.value })
                     }
-                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500"
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-500"
                   />
                 </div>
               </div>
@@ -148,7 +148,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                         category: e.target.value as Project["category"],
                       })
                     }
-                    className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-white/10 text-white focus:outline-none focus:border-purple-500"
+                    className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-white/10 text-white focus:outline-none focus:border-amber-500"
                   >
                     <option value="government">Government & National</option>
                     <option value="commercial">Commercial / Brand</option>
@@ -163,7 +163,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, client: e.target.value })
                     }
-                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500"
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-500"
                   />
                 </div>
                 <div>
@@ -174,7 +174,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, year: e.target.value })
                     }
-                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500"
+                    className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-500"
                   />
                 </div>
               </div>
@@ -188,7 +188,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                   onChange={(e) =>
                     setEditingProject({ ...editingProject, videoUrl: e.target.value })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500 font-mono text-xs"
+                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-500 font-mono text-xs"
                 />
               </div>
 
@@ -215,7 +215,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                   onChange={(e) =>
                     setEditingProject({ ...editingProject, description: e.target.value })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500"
+                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
@@ -230,7 +230,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting || isUploadingCover}
-                  className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-semibold flex items-center gap-2 disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold flex items-center gap-2 disabled:opacity-50"
                 >
                   <Save size={14} /> {isUploadingCover ? "Uploading Asset..." : "Save to Neon DB"}
                 </button>
@@ -277,7 +277,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                     </div>
                   </td>
                   <td className="py-3 px-4">
-                    <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-purple-300 font-medium">
+                    <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-amber-300 font-medium">
                       {proj.category}
                     </span>
                   </td>
@@ -300,7 +300,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                           clearFeedback();
                           setEditingProject(proj);
                         }}
-                        className="p-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/40 text-purple-300"
+                        className="p-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300"
                         title="Edit Project"
                       >
                         <Edit3 size={14} />

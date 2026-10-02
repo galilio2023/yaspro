@@ -14,7 +14,7 @@ export function InfluencerAudienceCard({ demographics, creatorName }: Influencer
     <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 sm:p-8 shadow-xl shadow-black/20">
       <div className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-xl bg-brand-cyan/15 border border-brand-cyan/30 flex items-center justify-center text-brand-cyan">
+          <div className="size-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
             <BarChart2 size={20} />
           </div>
           <div>
@@ -27,7 +27,7 @@ export function InfluencerAudienceCard({ demographics, creatorName }: Influencer
           </div>
         </div>
 
-        <Badge variant="cyan" className="text-xs font-semibold gap-1.5 hidden sm:inline-flex">
+        <Badge variant="gold" className="text-xs font-semibold gap-1.5 hidden sm:inline-flex">
           <Sparkles size={12} />
           <span>Verified Roster</span>
         </Badge>
@@ -48,7 +48,7 @@ export function InfluencerAudienceCard({ demographics, creatorName }: Influencer
           <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider block mb-1">
             Engagement
           </span>
-          <span className="text-xl font-extrabold text-brand-cyan font-display">
+          <span className="text-xl font-extrabold text-amber-400 font-display">
             {demographics.engagementRate}
           </span>
         </div>
@@ -67,8 +67,8 @@ export function InfluencerAudienceCard({ demographics, creatorName }: Influencer
             Gender Split
           </span>
           <span className="text-xs font-bold text-white">
-            <span className="text-brand-cyan">{demographics.genderSplit.male}% M</span> /{" "}
-            <span className="text-brand-purple-light">{demographics.genderSplit.female}% F</span>
+            <span className="text-amber-400">{demographics.genderSplit.male}% M</span> /{" "}
+            <span className="text-stone-300">{demographics.genderSplit.female}% F</span>
           </span>
         </div>
       </div>
@@ -76,7 +76,7 @@ export function InfluencerAudienceCard({ demographics, creatorName }: Influencer
       {/* Top Countries Progress Bars */}
       <div>
         <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-1.5">
-          <Globe size={13} className="text-brand-purple" />
+          <Globe size={13} className="text-amber-400" />
           <span>Primary Geographic Distribution (GCC &amp; MENA)</span>
         </h4>
 
@@ -92,7 +92,7 @@ export function InfluencerAudienceCard({ demographics, creatorName }: Influencer
               </div>
               <div className="h-2 w-full rounded-full bg-white/5 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan"
+                  className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-300"
                   style={{ width: `${c.percentage}%` }}
                 />
               </div>

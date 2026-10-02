@@ -28,11 +28,11 @@ export function ShopHeroHeader() {
       {/* Trust & Guarantee Highlights Bar */}
       <FadeUp delay={0.08} className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs text-text-muted">
         <div className="flex items-center gap-2 bg-white/[0.03] border border-white/10 px-3.5 py-1.5 rounded-full">
-          <ShieldCheck size={14} className="text-brand-purple-light shrink-0" />
+          <ShieldCheck size={14} className="text-amber-400 shrink-0" />
           <span>{isArabic ? "معايرة وفحص تقني شامل قبل التسليم" : "100% Bench-Tested & Calibrated"}</span>
         </div>
         <div className="flex items-center gap-2 bg-white/[0.03] border border-white/10 px-3.5 py-1.5 rounded-full">
-          <Truck size={14} className="text-brand-cyan shrink-0" />
+          <Truck size={14} className="text-amber-400 shrink-0" />
           <span>{isArabic ? "توصيل سريع لموقع التصوير في الإمارات" : "Fast UAE Soundstage & Set Delivery"}</span>
         </div>
         <div className="flex items-center gap-2 bg-white/[0.03] border border-white/10 px-3.5 py-1.5 rounded-full">

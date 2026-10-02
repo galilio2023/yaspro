@@ -15,7 +15,7 @@ export function StepStudio({ state, update }: WizardStepProps) {
         <label className="block text-xs uppercase tracking-wider font-semibold text-text-secondary">
           Select Dedicated Soundstage or Suite
         </label>
-        <span className="text-[11px] text-brand-purple-light font-mono">
+        <span className="text-[11px] text-amber-400 font-mono">
           Includes Green Room &amp; High-Speed Fiber
         </span>
       </div>
@@ -32,8 +32,8 @@ export function StepStudio({ state, update }: WizardStepProps) {
             className={cn(
               "w-full p-4 sm:p-5 rounded-2xl border text-left transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer group",
               isSelected
-                ? "border-brand-purple bg-brand-purple/15 shadow-xl shadow-brand-purple/20"
-                : "border-white/10 bg-white/5 hover:border-brand-purple/40 hover:bg-white/[0.08]"
+                ? "border-amber-500 bg-amber-500/15 shadow-xl shadow-amber-500/20"
+                : "border-white/10 bg-white/5 hover:border-amber-500/40 hover:bg-white/[0.08]"
             )}
           >
             <div className="flex items-center gap-4">
@@ -48,8 +48,8 @@ export function StepStudio({ state, update }: WizardStepProps) {
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   {isSelected && (
-                    <div className="absolute inset-0 bg-brand-purple/40 flex items-center justify-center text-white">
-                      <Check size={20} />
+                    <div className="absolute inset-0 bg-amber-500/50 flex items-center justify-center text-zinc-950 font-black">
+                      <Check size={20} strokeWidth={3} />
                     </div>
                   )}
                 </div>
@@ -64,7 +64,7 @@ export function StepStudio({ state, update }: WizardStepProps) {
             </div>
 
             <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 pt-2 sm:pt-0 border-white/5 shrink-0">
-              <div className="text-brand-purple-light font-extrabold text-lg sm:text-xl font-display">
+              <div className="text-amber-400 font-extrabold text-lg sm:text-xl font-display">
                 {formatCurrency(s.rate)}
               </div>
               <div className="text-text-muted text-[11px]">per hour / AED</div>

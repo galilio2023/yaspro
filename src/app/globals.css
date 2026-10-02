@@ -1,46 +1,45 @@
 @import "tailwindcss";
 
 :root {
-  /* ── Brand Palette: Deep Cosmic ─────────────────────────────────── */
-  /* Primary: Electric Violet */
-  --brand-purple: #7c3aed;
-  --brand-purple-rgb: 124, 58, 237;
-  --brand-purple-light: #c4b5fd;
-  --brand-purple-lighter: #ede9fe;
-  --brand-purple-dark: #4c1d95;
-  --brand-purple-mid: #a78bfa;
+  /* ── Brand Palette: AI Media Hub (Tungsten Amber & Obsidian) ────── */
+  /* Primary & Accents: Mapped to Cinema Tungsten Amber to kill legacy neon gradients */
+  --brand-purple: #f59e0b;
+  --brand-purple-rgb: 245, 158, 11;
+  --brand-purple-light: #fbbf24;
+  --brand-purple-lighter: #fef3c7;
+  --brand-purple-dark: #b45309;
+  --brand-purple-mid: #d97706;
 
-  /* Accent: Cosmic Gold */
+  /* Accent: Tungsten Amber */
   --brand-gold: #f59e0b;
   --brand-gold-rgb: 245, 158, 11;
   --brand-gold-light: #fcd34d;
   --brand-gold-dark: #b45309;
 
-  /* Accent: Aurora Teal */
-  --brand-teal: #06b6d4;
-  --brand-teal-rgb: 6, 182, 212;
-  --brand-teal-light: #67e8f9;
+  /* Legacy Teal & Cyan aliases mapped to Cinema Amber/Bronze */
+  --brand-teal: #d97706;
+  --brand-teal-rgb: 217, 119, 6;
+  --brand-teal-light: #fbbf24;
 
-  /* Legacy alias (keep so existing code doesn't break) */
-  --brand-cyan: var(--brand-teal);
-  --brand-cyan-rgb: var(--brand-teal-rgb);
+  --brand-cyan: #f59e0b;
+  --brand-cyan-rgb: 245, 158, 11;
 
-  /* ── Surfaces ───────────────────────────────────────────────────── */
-  --background: #03020a;
-  --background-alt: #06050f;
-  --foreground: #f5f3ff;
-  --card: #0d0b1a;
-  --card-alt: #110f1f;
-  --card-foreground: #f5f3ff;
-  --secondary: #080614;
-  --border: rgba(124, 58, 237, 0.16);
-  --border-subtle: rgba(255, 255, 255, 0.10);
+  /* ── Surfaces: Cinematic Obsidian & Studio Slate ────────────────── */
+  --background: #070709;
+  --background-alt: #0c0b10;
+  --foreground: #f4f4f6;
+  --card: #111016;
+  --card-alt: #16151e;
+  --card-foreground: #f4f4f6;
+  --secondary: #0c0b10;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.04);
 
-  /* ── Text: WCAG 2.1 AA Compliant (min 4.5:1 on #03020a) ──────────── */
-  --text-primary: #f5f3ff;
-  --text-secondary: #beb4db;
-  --text-muted: #9d93be;
-  --text-ghost: #7a7098;
+  /* ── Text: High-Contrast Studio Typography ───────────────────────── */
+  --text-primary: #f4f4f6;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --text-ghost: #52525b;
 }
 
 @theme inline {
@@ -231,8 +230,8 @@ section {
 }
 
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 16px rgba(124,58,237,0.3); }
-  50%       { box-shadow: 0 0 40px rgba(124,58,237,0.65), 0 0 80px rgba(124,58,237,0.25); }
+  0%, 100% { box-shadow: 0 0 16px rgba(245,158,11,0.25); }
+  50%       { box-shadow: 0 0 36px rgba(245,158,11,0.5), 0 0 60px rgba(245,158,11,0.18); }
 }
 
 @keyframes gradient-shift {
@@ -281,42 +280,41 @@ html[dir="rtl"] .animate-marquee {
 /* ─── Brand Gradient Utilities ───────────────────────────────────────────── */
 
 @utility bg-gradient-brand {
-  background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 50%, #06b6d4 100%);
+  background: linear-gradient(135deg, #18181b 0%, #27272a 100%);
 }
 
 @utility bg-gradient-brand-reverse {
-  background: linear-gradient(135deg, #06b6d4 0%, #a78bfa 50%, #7c3aed 100%);
+  background: linear-gradient(135deg, #27272a 0%, #18181b 100%);
 }
 
 @utility bg-gradient-gold {
-  background: linear-gradient(135deg, #b45309 0%, #f59e0b 50%, #fcd34d 100%);
+  background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%);
 }
 
 @utility btn-brand {
-  background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 60%, #06b6d4 100%);
-  background-size: 200% 200%;
-  color: #ffffff;
-  font-weight: 600;
-  transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
-  box-shadow: 0 4px 24px rgba(124,58,237,0.35), 0 1px 4px rgba(0,0,0,0.4);
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #09090b !important;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 
   &:hover {
-    background-position: right center;
-    opacity: 0.93;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
     transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(124,58,237,0.5), 0 2px 8px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 28px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    color: #000000 !important;
   }
 
-  &:active { transform: translateY(0px); }
+  &:active {
+    transform: translateY(0px) scale(0.98);
+  }
 }
 
 @utility gradient-text {
-  background: linear-gradient(135deg, #7c3aed 0%, #c4b5fd 40%, #06b6d4 80%, #f59e0b 100%);
-  background-size: 200% auto;
+  background: linear-gradient(180deg, #ffffff 15%, #e4e4e7 60%, #a1a1aa 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: gradient-shift 6s ease infinite;
 }
 
 @utility gradient-text-gold {
@@ -327,24 +325,39 @@ html[dir="rtl"] .animate-marquee {
 }
 
 @utility glass-card {
-  background: rgba(13, 11, 26, 0.6);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  border: 1px solid rgba(124, 58, 237, 0.12);
-  border-radius: 1.5rem;
+  background: rgba(18, 17, 24, 0.75);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.25rem;
 }
 
 @utility glass-card-hover {
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover {
-    background: rgba(124, 58, 237, 0.07);
-    border-color: rgba(124, 58, 237, 0.4);
+    background: rgba(24, 23, 32, 0.9);
+    border-color: rgba(255, 255, 255, 0.18);
     box-shadow:
-      0 16px 48px -12px rgba(0,0,0,0.7),
-      0 0 32px -8px rgba(124,58,237,0.3),
-      inset 0 1px 0 rgba(255,255,255,0.06);
-    transform: translateY(-4px);
+      0 20px 48px -12px rgba(0, 0, 0, 0.8),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
+  }
+}
+
+@utility film-grain {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    z-index: 1;
   }
 }
 
@@ -356,10 +369,10 @@ html[dir="rtl"] .animate-marquee {
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse at 15% 50%,  rgba(124,58,237,0.18) 0%, transparent 60%),
-      radial-gradient(ellipse at 85% 15%,  rgba(6,182,212,0.12)  0%, transparent 55%),
-      radial-gradient(ellipse at 50% 90%,  rgba(196,181,253,0.09) 0%, transparent 50%),
-      radial-gradient(ellipse at 70% 60%,  rgba(245,158,11,0.06)  0%, transparent 45%);
+      radial-gradient(ellipse at 15% 50%,  rgba(245,158,11,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 85% 15%,  rgba(217,119,6,0.06)  0%, transparent 55%),
+      radial-gradient(ellipse at 50% 90%,  rgba(251,191,36,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 60%,  rgba(245,158,11,0.04)  0%, transparent 45%);
     pointer-events: none;
     animation: var(--animate-mesh-float);
   }
@@ -385,7 +398,7 @@ html[dir="rtl"] .animate-marquee {
 @utility glow-orb-purple {
   position: absolute;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(124,58,237,0.25) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(245,158,11,0.14) 0%, transparent 70%);
   filter: blur(60px);
   pointer-events: none;
 }
@@ -401,7 +414,7 @@ html[dir="rtl"] .animate-marquee {
 @utility glow-orb-teal {
   position: absolute;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(6,182,212,0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(217,119,6,0.12) 0%, transparent 70%);
   filter: blur(60px);
   pointer-events: none;
 }
@@ -412,7 +425,7 @@ html[dir="rtl"] .animate-marquee {
 ::-webkit-scrollbar-track { background: #06050f; }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #7c3aed, #06b6d4);
+  background: linear-gradient(180deg, #d97706, #f59e0b);
   border-radius: 4px;
 }
 
@@ -421,7 +434,7 @@ html[dir="rtl"] .animate-marquee {
   background: linear-gradient(
     90deg,
     rgba(255,255,255,0.04) 25%,
-    rgba(124,58,237,0.12) 50%,
+    rgba(245,158,11,0.08) 50%,
     rgba(255,255,255,0.04) 75%
   );
   background-size: 200% 100%;

@@ -10,7 +10,6 @@ import {
   FileText,
   ChevronDown,
   Sparkles,
-  Camera,
   Users,
   Video,
 } from "lucide-react";
@@ -27,7 +26,7 @@ const STATUS_CONFIG = {
 
 const PAYMENT_CONFIG: Record<string, { label: string; color: string }> = {
   paid: { label: "Paid", color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30" },
-  deposit_paid: { label: "Deposit Paid", color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30" },
+  deposit_paid: { label: "Deposit Paid", color: "text-emerald-300 bg-emerald-500/10 border-emerald-500/30" },
   unpaid: { label: "Unpaid", color: "text-amber-400 bg-amber-500/10 border-amber-500/30" },
 };
 
@@ -143,7 +142,7 @@ export function ClientBookingCard({ booking }: { booking: Booking }) {
         <div className="px-6 py-4 mx-6 mb-4 rounded-2xl bg-black/40 border border-white/10 text-xs space-y-3 animate-fade-in">
           <div className="flex items-center justify-between border-b border-white/10 pb-2">
             <div className="font-bold text-white flex items-center gap-1.5">
-              <FileText size={13} className="text-purple-400" />
+              <FileText size={13} className="text-amber-400" />
               <span>Production Call Sheet &amp; Specifications</span>
             </div>
             {currentBooking.paymentReference && (
@@ -157,7 +156,7 @@ export function ClientBookingCard({ booking }: { booking: Booking }) {
             <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
               <div className="text-[10px] text-slate-500 uppercase tracking-wide">Crew &amp; Headcount</div>
               <div className="font-semibold text-white mt-0.5 flex items-center gap-1">
-                <Users size={12} className="text-cyan-400" />
+                <Users size={12} className="text-stone-300" />
                 <span>{currentBooking.headcount} Team Member{currentBooking.headcount > 1 ? "s" : ""}</span>
               </div>
             </div>
@@ -165,7 +164,7 @@ export function ClientBookingCard({ booking }: { booking: Booking }) {
             <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
               <div className="text-[10px] text-slate-500 uppercase tracking-wide">Post-Production Services</div>
               <div className="font-semibold text-white mt-0.5 flex items-center gap-1">
-                <Sparkles size={12} className="text-purple-400" />
+                <Sparkles size={12} className="text-amber-400" />
                 <span>
                   {[
                     currentBooking.needsEditing && "Editing",

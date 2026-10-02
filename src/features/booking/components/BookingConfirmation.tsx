@@ -33,7 +33,7 @@ export function BookingConfirmation({
           animate={{ scale: 1 }}
           transition={{ type: "spring", stiffness: 200, damping: 15 }}
         >
-          <CheckCircle className="mx-auto text-brand-teal mb-6" size={68} />
+          <CheckCircle className="mx-auto text-emerald-400 mb-6" size={68} />
         </motion.div>
         <h2 className="text-3xl font-extrabold text-white mb-2 font-display">
           Booking Confirmed!
@@ -41,8 +41,8 @@ export function BookingConfirmation({
         <p className="text-text-secondary text-sm mb-6">
           Your studio session has been secured in our production calendar.
         </p>
-        <div className="rounded-2xl border border-brand-purple/40 bg-brand-purple/10 px-6 py-4 mb-4 inline-block">
-          <p className="text-brand-purple-light font-mono font-extrabold text-xl tracking-wider">
+        <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-6 py-4 mb-4 inline-block">
+          <p className="text-amber-400 font-mono font-extrabold text-xl tracking-wider">
             {referenceCode}
           </p>
           <p className="text-text-muted text-xs mt-1">
@@ -55,7 +55,7 @@ export function BookingConfirmation({
           <span
             className={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${
               paymentStatus === "deposit_paid" || paymentStatus === "paid"
-                ? "bg-brand-teal/20 text-brand-teal-light border-brand-teal/40"
+                ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
                 : "bg-amber-500/20 text-amber-300 border-amber-500/40"
             }`}
           >
@@ -77,7 +77,7 @@ export function BookingConfirmation({
             <button
               type="button"
               onClick={() => setIsPaymentModalOpen(true)}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-xl shadow-purple-600/30 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl btn-brand text-xs font-bold transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
             >
               <CreditCard size={15} />
               <span>Pay 50% Deposit Online</span>

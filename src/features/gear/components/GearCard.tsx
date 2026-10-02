@@ -37,10 +37,10 @@ export function GearCard({
   const resolvedActionLabel = actionLabel || (isArabic ? "حجز المعدة" : "Reserve");
 
   return (
-    <article className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 sm:p-5 flex flex-col justify-between h-full group relative hover:border-brand-purple/40 hover:bg-white/[0.05] transition-all duration-300 shadow-xl shadow-black/20 overflow-hidden">
+    <article className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 sm:p-5 flex flex-col justify-between h-full group relative hover:border-amber-500/40 hover:bg-white/[0.05] transition-all duration-300 shadow-xl shadow-black/20 overflow-hidden">
       <div>
         {/* Product Visual Stage */}
-        <div className="relative w-full aspect-[16/9] mb-4 sm:mb-5 rounded-2xl overflow-hidden bg-black/50 border border-white/10 group-hover:border-brand-purple/30 transition-all duration-300">
+        <div className="relative w-full aspect-[16/9] mb-4 sm:mb-5 rounded-2xl overflow-hidden bg-black/50 border border-white/10 group-hover:border-amber-500/30 transition-all duration-300">
           {item.image ? (
             <Image
               src={item.image}
@@ -57,7 +57,7 @@ export function GearCard({
             <div className="flex items-center justify-center size-full bg-gradient-to-br from-white/5 to-white/0">
               <Camera
                 size={36}
-                className="text-text-muted group-hover:text-brand-purple-light transition-colors"
+                className="text-text-muted group-hover:text-amber-400 transition-colors"
               />
             </div>
           )}
@@ -88,8 +88,8 @@ export function GearCard({
           <div className="absolute bottom-2.5 inset-x-2.5 flex items-center justify-between gap-2 pointer-events-none z-10">
             {item.isKit ? (
               <Badge
-                variant="cyan"
-                className="text-[9.5px] font-bold uppercase tracking-wider gap-1 backdrop-blur-md bg-black/70 border-brand-cyan/40 text-brand-cyan shrink-0"
+                variant="gold"
+                className="text-[9.5px] font-bold uppercase tracking-wider gap-1 backdrop-blur-md bg-black/70 border-amber-500/40 text-amber-300 shrink-0"
               >
                 <Box size={10} />
                 <span>{isArabic ? "باقة متكاملة" : "Turnkey Kit"}</span>
@@ -103,7 +103,7 @@ export function GearCard({
         </div>
 
         {/* Title */}
-        <h3 className="text-base sm:text-lg font-bold text-white mb-2 font-display group-hover:text-brand-purple-light transition-colors line-clamp-1 rtl:leading-normal">
+        <h3 className="text-base sm:text-lg font-bold text-white mb-2 font-display group-hover:text-amber-300 transition-colors line-clamp-1 rtl:leading-normal">
           {displayName}
         </h3>
 
@@ -120,13 +120,13 @@ export function GearCard({
         {/* Turnkey Kit Inclusions (if kit) */}
         {item.isKit && item.includedInKit && !isCompact && (
           <div className="mb-5 p-3 rounded-2xl bg-white/[0.02] border border-white/5">
-            <span className="text-[10px] uppercase font-mono font-semibold text-brand-purple-light block mb-2">
+            <span className="text-[10px] uppercase font-mono font-semibold text-amber-400 block mb-2">
               {isArabic ? "محتويات الباقة تشمل:" : "Package Includes:"}
             </span>
             <ul className="space-y-1.5">
               {item.includedInKit.slice(0, 3).map((inc) => (
                 <li key={inc} className="text-[11px] text-text-secondary flex items-start gap-1.5">
-                  <span className="text-brand-cyan shrink-0">•</span>
+                  <span className="text-amber-400 shrink-0">•</span>
                   <span className="truncate">{inc}</span>
                 </li>
               ))}
@@ -144,7 +144,7 @@ export function GearCard({
           <ul className="space-y-2 mb-6">
             {item.specs.map((spec) => (
               <li key={spec} className="text-xs text-text-muted flex items-center gap-2">
-                <CheckCircle2 size={13} className="text-brand-purple shrink-0" />
+                <CheckCircle2 size={13} className="text-amber-400 shrink-0" />
                 <span>{spec}</span>
               </li>
             ))}
@@ -157,7 +157,7 @@ export function GearCard({
         <div className="text-start">
           <div
             className={cn(
-              "font-bold bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-cyan bg-clip-text text-transparent font-display font-latin text-start",
+              "font-bold text-amber-400 font-display font-latin text-start",
               isCompact ? "text-base sm:text-lg" : "text-xl"
             )}
           >
@@ -188,7 +188,7 @@ export function GearCard({
           ) : actionHref ? (
             <Link
               href={actionHref}
-              className="px-3.5 py-2.5 sm:py-3 rounded-xl text-xs font-semibold bg-white/5 hover:bg-brand-purple/20 text-brand-purple-light border border-white/10 transition-all cursor-pointer inline-flex items-center justify-center whitespace-nowrap"
+              className="px-3.5 py-2.5 sm:py-3 rounded-xl text-xs font-semibold bg-white/5 hover:bg-amber-500/20 text-amber-400 border border-white/10 hover:border-amber-500/40 transition-all cursor-pointer inline-flex items-center justify-center whitespace-nowrap"
             >
               {resolvedActionLabel}
             </Link>

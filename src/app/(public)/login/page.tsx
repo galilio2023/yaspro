@@ -76,9 +76,9 @@ function LoginForm() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center p-4 py-12 sm:py-16">
       {/* Glow Backdrops */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[400px] bg-brand-purple/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[400px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 w-full max-w-md mx-auto p-6 sm:p-10 rounded-3xl bg-slate-900/80 border border-white/10 backdrop-blur-2xl shadow-2xl">
+      <div className="relative z-10 w-full max-w-md mx-auto p-6 sm:p-10 rounded-3xl bg-[#0c0b10] border border-white/10 backdrop-blur-2xl shadow-2xl">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mx-auto mb-5">
             <BrandLogo size="large" href="/" />
@@ -108,7 +108,7 @@ function LoginForm() {
                 placeholder={t("emailPlaceholder")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
+                className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/60 transition-colors text-base sm:text-sm"
               />
               <Mail size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             </div>
@@ -125,7 +125,7 @@ function LoginForm() {
                 placeholder={t("passwordPlaceholder")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
+                className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/60 transition-colors text-base sm:text-sm"
               />
               <Lock size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             </div>
@@ -134,7 +134,7 @@ function LoginForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full min-h-[44px] py-3.5 rounded-xl bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:opacity-95 text-white font-semibold text-sm tracking-wide shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 mt-6"
+            className="w-full min-h-[44px] py-3.5 rounded-xl btn-brand text-xs font-bold tracking-wide flex items-center justify-center gap-2 disabled:opacity-50 mt-6 cursor-pointer"
           >
             {isLoading ? t("submittingBtn") : t("submitBtn")}
             <ArrowRight size={14} className="rtl:rotate-180" />
@@ -143,13 +143,13 @@ function LoginForm() {
 
         <div className="mt-8 pt-6 border-t border-white/10 text-center text-xs text-slate-400">
           <span>{t("noAccount")}{" "}</span>
-          <Link href="/register" className="text-purple-400 hover:text-purple-300 font-semibold inline-block py-1">
+          <Link href="/register" className="text-amber-400 hover:text-amber-300 font-semibold inline-block py-1">
             {t("registerLink")}
           </Link>
         </div>
 
-        <div className="mt-4 p-3 rounded-xl bg-purple-950/20 border border-purple-800/20 text-[11px] text-slate-400 flex items-center gap-2">
-          <ShieldCheck size={14} className="text-purple-400 shrink-0" />
+        <div className="mt-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300 flex items-center gap-2">
+          <ShieldCheck size={14} className="text-amber-400 shrink-0" />
           <span>{t("securityBadge")}</span>
         </div>
       </div>

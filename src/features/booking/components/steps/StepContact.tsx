@@ -42,10 +42,10 @@ export function StepContact({ state, update }: WizardStepProps) {
       ) : (
         <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 text-xs text-slate-300 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShieldCheck size={16} className="text-purple-400 shrink-0" />
+            <ShieldCheck size={16} className="text-amber-400 shrink-0" />
             <span>Have an account? Log in for 1-click booking and saved invoicing.</span>
           </div>
-          <a href="/login" className="text-purple-400 hover:text-purple-300 font-semibold underline text-[11px]">
+          <a href="/login" className="text-amber-400 hover:text-amber-300 font-semibold underline text-[11px]">
             Sign in
           </a>
         </div>

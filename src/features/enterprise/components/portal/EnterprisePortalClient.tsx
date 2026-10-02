@@ -50,9 +50,9 @@ export function EnterprisePortalClient({ userName }: EnterprisePortalClientProps
   const [activeTab, setActiveTab] = useState<"dailies" | "rfps" | "stages" | "telemetry">("dailies");
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white pt-24 sm:pt-28 pb-16 sm:pb-20 selection:bg-brand-purple">
+    <main className="min-h-screen bg-slate-950 text-white pt-24 sm:pt-28 pb-16 sm:pb-20 selection:bg-amber-500 selection:text-black">
       {/* Background accents */}
-      <div className="absolute top-20 left-1/3 w-[600px] h-[400px] bg-brand-purple/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-20 left-1/3 w-[600px] h-[400px] bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
 
       <Container className="relative z-10 max-w-6xl">
         {/* Access Notice */}
@@ -76,7 +76,7 @@ export function EnterprisePortalClient({ userName }: EnterprisePortalClientProps
 
           <Link
             href="/enterprise"
-            className="text-xs font-mono text-brand-purple-light hover:text-white flex items-center gap-1 transition-colors self-end sm:self-auto"
+            className="text-xs font-mono text-amber-400 hover:text-white flex items-center gap-1 transition-colors self-end sm:self-auto"
           >
             <span>&larr; Back to Enterprise</span>
           </Link>
@@ -99,7 +99,7 @@ export function EnterprisePortalClient({ userName }: EnterprisePortalClientProps
             onClick={() => setActiveTab("dailies")}
             className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
               activeTab === "dailies"
-                ? "bg-brand-purple text-white shadow-md shadow-brand-purple/30 font-bold"
+                ? "bg-amber-500 text-zinc-950 shadow-md shadow-amber-500/20 font-bold"
                 : "text-text-secondary hover:text-white bg-white/5"
             }`}
           >
@@ -112,7 +112,7 @@ export function EnterprisePortalClient({ userName }: EnterprisePortalClientProps
             onClick={() => setActiveTab("rfps")}
             className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
               activeTab === "rfps"
-                ? "bg-brand-purple text-white shadow-md shadow-brand-purple/30 font-bold"
+                ? "bg-amber-500 text-zinc-950 shadow-md shadow-amber-500/20 font-bold"
                 : "text-text-secondary hover:text-white bg-white/5"
             }`}
           >
@@ -125,7 +125,7 @@ export function EnterprisePortalClient({ userName }: EnterprisePortalClientProps
             onClick={() => setActiveTab("stages")}
             className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
               activeTab === "stages"
-                ? "bg-brand-purple text-white shadow-md shadow-brand-purple/30 font-bold"
+                ? "bg-amber-500 text-zinc-950 shadow-md shadow-amber-500/20 font-bold"
                 : "text-text-secondary hover:text-white bg-white/5"
             }`}
           >
@@ -138,7 +138,7 @@ export function EnterprisePortalClient({ userName }: EnterprisePortalClientProps
             onClick={() => setActiveTab("telemetry")}
             className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 ${
               activeTab === "telemetry"
-                ? "bg-brand-purple text-white shadow-md shadow-brand-purple/30 font-bold"
+                ? "bg-amber-500 text-zinc-950 shadow-md shadow-amber-500/20 font-bold"
                 : "text-text-secondary hover:text-white bg-white/5"
             }`}
           >

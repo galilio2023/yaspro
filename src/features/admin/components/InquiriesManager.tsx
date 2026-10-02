@@ -30,10 +30,10 @@ interface InquiriesManagerProps {
 
 const INQUIRY_ICONS: Record<string, React.ReactNode> = {
   ob_van: <Radio size={14} className="text-amber-400" />,
-  live_broadcast: <Radio size={14} className="text-cyan-400" />,
+  live_broadcast: <Radio size={14} className="text-amber-500" />,
   outdoor_filming: <Camera size={14} className="text-emerald-400" />,
-  studio_booking: <Layers size={14} className="text-purple-400" />,
-  technical_support: <Wrench size={14} className="text-blue-400" />,
+  studio_booking: <Layers size={14} className="text-amber-400" />,
+  technical_support: <Wrench size={14} className="text-stone-300" />,
   general: <HelpCircle size={14} className="text-slate-400" />,
 };
 
@@ -111,7 +111,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white font-display flex items-center gap-2.5">
-            <MessageSquare size={24} className="text-purple-400" />
+            <MessageSquare size={24} className="text-amber-400" />
             Client Inquiries &amp; Production Leads
           </h1>
           <p className="text-xs text-slate-400 mt-1">
@@ -126,9 +126,9 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: "Total Inquiries", icon: <MessageSquare size={14} className="text-purple-400" />, value: inquiriesList.length, color: "text-white" },
+          { label: "Total Inquiries", icon: <MessageSquare size={14} className="text-amber-400" />, value: inquiriesList.length, color: "text-white" },
           { label: "Action Required (Open)", icon: <Clock size={14} className="text-amber-400" />, value: totalPending, color: "text-amber-400" },
-          { label: "Resolved Leads", icon: <CheckCircle2 size={14} className="text-brand-teal" />, value: totalResolved, color: "text-brand-teal-light" },
+          { label: "Resolved Leads", icon: <CheckCircle2 size={14} className="text-emerald-400" />, value: totalResolved, color: "text-emerald-300" },
         ].map(({ label, icon, value, color }) => (
           <div key={label} className="p-4 rounded-2xl bg-white/[0.02] border border-white/10">
             <span className="text-xs text-slate-400 flex items-center gap-1.5">
@@ -147,7 +147,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
             placeholder="Search leads by name, email, company, keyword..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
+            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
           />
           <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
         </div>
@@ -160,7 +160,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
               onClick={() => setFilterStatus(tab)}
               className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize transition-all cursor-pointer ${
                 filterStatus === tab
-                  ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30"
+                  ? "bg-amber-500 text-slate-950 font-bold shadow-lg shadow-amber-500/20"
                   : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
               }`}
             >
@@ -171,7 +171,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 text-xs text-slate-300 focus:outline-none focus:border-purple-500"
+            className="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 text-xs text-slate-300 focus:outline-none focus:border-amber-500"
           >
             <option value="all">All Inquiry Types</option>
             <option value="ob_van">OB Van Broadcast</option>
@@ -211,7 +211,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
                     <span
                       className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
                         inq.isResolved
-                          ? "bg-brand-teal/15 text-brand-teal-light border-brand-teal/30"
+                          ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
                           : "bg-amber-500/10 text-amber-400 border-amber-500/30"
                       }`}
                     >
@@ -230,16 +230,16 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
                   {/* Client Info */}
                   <div className="flex items-center gap-4 text-xs flex-wrap text-slate-300">
                     <span className="font-semibold text-white flex items-center gap-1.5">
-                      <User size={13} className="text-purple-400" /> {inq.name}
+                      <User size={13} className="text-amber-400" /> {inq.name}
                     </span>
                     {inq.company && (
                       <span className="text-slate-400 flex items-center gap-1">
-                        <Building size={13} className="text-blue-400" /> {inq.company}
+                        <Building size={13} className="text-stone-300" /> {inq.company}
                       </span>
                     )}
                     <a
                       href={`mailto:${inq.email}`}
-                      className="text-purple-400 hover:text-purple-300 flex items-center gap-1 font-mono"
+                      className="text-amber-400 hover:text-amber-300 flex items-center gap-1 font-mono"
                     >
                       <Mail size={13} /> {inq.email}
                     </a>
@@ -260,7 +260,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 rounded-xl bg-brand-teal/20 hover:bg-brand-teal/30 border border-brand-teal/40 text-brand-teal-light text-xs font-semibold flex items-center gap-1.5 transition-colors w-full justify-center"
+                      className="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-colors w-full justify-center"
                     >
                       <span>WhatsApp</span>
                       <ExternalLink size={12} />
@@ -271,10 +271,10 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
                     type="button"
                     onClick={() => handleToggleResolved(inq)}
                     disabled={updatingId === inq.id}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer w-full text-center disabled:opacity-50 ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer w-full text-center disabled:opacity-50 ${
                       inq.isResolved
                         ? "bg-white/5 hover:bg-white/10 text-slate-400"
-                        : "bg-purple-600 hover:bg-purple-500 text-white"
+                        : "bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold"
                     }`}
                   >
                     {inq.isResolved ? "Reopen Lead" : "Mark Resolved"}

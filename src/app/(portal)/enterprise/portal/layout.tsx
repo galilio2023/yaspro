@@ -32,20 +32,20 @@ export default async function EnterprisePortalLayout({
   if (role !== "enterprise" && role !== "admin") redirect("/portal");
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row antialiased selection:bg-purple-600 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row antialiased selection:bg-amber-500 selection:text-black">
       <PortalMobileNav
         navItems={ENTERPRISE_NAV}
         userName={session.user.name}
         userEmail={session.user.email}
         userRole="enterprise"
-        accentColor="purple"
+        accentColor="amber"
       />
       <PortalSidebar
         navItems={ENTERPRISE_NAV}
         userName={session.user.name}
         userEmail={session.user.email}
         userRole="enterprise"
-        accentColor="purple"
+        accentColor="amber"
       />
       <main className="flex-1 overflow-x-hidden p-4 sm:p-8 lg:p-10">{children}</main>
     </div>

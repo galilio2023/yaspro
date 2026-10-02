@@ -23,7 +23,7 @@ export function ObVanSwitcher({
       <div>
         <div className="text-xs font-mono uppercase tracking-wider text-text-muted mb-2.5 sm:mb-3 flex items-center justify-between">
           <span>Multiview Matrix</span>
-          <span className="text-brand-cyan font-bold">SMPTE ST 2110</span>
+          <span className="text-amber-400 font-bold">SMPTE ST 2110</span>
         </div>
 
         {/* Camera Feed Thumbnail Grid: 3 cols on mobile, 2 cols on lg desktop */}
@@ -68,7 +68,7 @@ export function ObVanSwitcher({
           <button
             type="button"
             onClick={onDispatchVan}
-            className="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-brand-cyan hover:bg-brand-cyan/80 text-black flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-brand-cyan/20 transition-all font-display"
+            className="w-full py-2.5 px-4 rounded-xl text-xs font-bold btn-brand text-zinc-950 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-amber-500/20 transition-all font-display"
           >
             <span>Request OB-Van Deployment</span>
             <ArrowRight size={13} className="rtl:rotate-180" />

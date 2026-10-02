@@ -49,7 +49,7 @@ export function CopilotDialectTab() {
             value={scriptText}
             onChange={(e) => setScriptText(e.target.value)}
             placeholder="Enter script text to localize into authentic Gulf dialect..."
-            className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-3 text-base sm:text-sm text-white placeholder-text-muted focus:outline-none focus:border-brand-purple transition-colors resize-none"
+            className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-3 text-base sm:text-sm text-white placeholder-text-muted focus:outline-none focus:border-amber-500 transition-colors resize-none"
             dir="auto"
           />
         </div>
@@ -62,7 +62,7 @@ export function CopilotDialectTab() {
             <select
               value={selectedDialect}
               onChange={(e) => setSelectedDialect(e.target.value)}
-              className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-purple min-h-[44px] sm:min-h-0"
+              className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-amber-500 min-h-[44px] sm:min-h-0"
             >
               <option value="najdi" className="bg-neutral-900">🇸🇦 Najdi (Riyadh)</option>
               <option value="emirati" className="bg-neutral-900">🇦🇪 Emirati (Dubai / Abu Dhabi)</option>
@@ -79,7 +79,7 @@ export function CopilotDialectTab() {
             <select
               value={scriptTone}
               onChange={(e) => setScriptTone(e.target.value)}
-              className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-purple min-h-[44px] sm:min-h-0"
+              className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-amber-500 min-h-[44px] sm:min-h-0"
             >
               <option value="Prestige" className="bg-neutral-900">Prestige & Luxury</option>
               <option value="Warm Hospitality" className="bg-neutral-900">Warm Hospitality</option>
@@ -99,7 +99,7 @@ export function CopilotDialectTab() {
         <button
           onClick={handleTransmuteDialect}
           disabled={isTransmuting}
-          className="w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl font-semibold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-cyan hover:opacity-95 transition-all shadow-lg disabled:opacity-50 min-h-[44px] cursor-pointer"
+          className="w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl font-bold text-xs btn-brand disabled:opacity-50 min-h-[44px] cursor-pointer"
         >
           {isTransmuting ? (
             <>
@@ -132,8 +132,8 @@ export function CopilotDialectTab() {
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-brand-purple/10 border border-brand-purple/20">
-              <div className="text-[10px] uppercase tracking-wider font-mono text-brand-purple-light mb-1.5">
+            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
+              <div className="text-[10px] uppercase tracking-wider font-mono text-amber-400 mb-1.5">
                 Transmuted Regional Script (V/O Ready)
               </div>
               <p className="text-base text-white font-medium leading-relaxed font-arabic" dir="rtl">
@@ -158,7 +158,7 @@ export function CopilotDialectTab() {
                 {dialectResult.honorificsUsed.map((h) => (
                   <span
                     key={h}
-                    className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-brand-gold text-xs font-arabic"
+                    className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-amber-400 text-xs font-arabic"
                     dir="rtl"
                   >
                     {h}
@@ -169,7 +169,7 @@ export function CopilotDialectTab() {
           </div>
         ) : (
           <div className="h-full flex flex-col items-center justify-center text-center p-8 space-y-3">
-            <div className="size-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-brand-purple">
+            <div className="size-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-400">
               <Languages size={26} />
             </div>
             <h4 className="text-sm font-semibold text-white">Dialect Engine Idle</h4>

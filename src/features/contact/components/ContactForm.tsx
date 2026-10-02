@@ -127,9 +127,9 @@ export function ContactForm() {
       </h2>
 
       {gearBanner && (
-        <div className="mb-6 p-4 rounded-2xl bg-brand-purple/10 border border-brand-purple/30 flex items-start justify-between gap-3 text-xs">
+        <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start justify-between gap-3 text-xs">
           <div className="flex items-start gap-2.5">
-            <ShoppingBag className="text-brand-purple-light shrink-0 mt-0.5" size={17} />
+            <ShoppingBag className="text-amber-400 shrink-0 mt-0.5" size={17} />
             <div>
               <span className="font-bold text-white block">
                 {isArabic ? "تم استيراد حجز المعدات" : "Equipment Reservation Imported"}
@@ -137,7 +137,7 @@ export function ContactForm() {
               <p className="text-slate-300 text-[11px] mt-0.5">
                 {gearBanner.itemNames.join(", ")} &bull; {gearBanner.days} {isArabic ? "أيام" : "Day(s)"} &bull; {gearBanner.delivery}
               </p>
-              <span className="text-brand-purple-light font-mono text-[11px] font-semibold mt-1 inline-block" dir="ltr">
+              <span className="text-amber-400 font-mono text-[11px] font-semibold mt-1 inline-block" dir="ltr">
                 Est: {formatCurrency(gearBanner.totalEst)}
               </span>
             </div>
@@ -146,7 +146,7 @@ export function ContactForm() {
             type="button"
             onClick={() => setGearBanner(null)}
             aria-label="Dismiss equipment reservation summary"
-            className="p-1 min-h-[44px] min-w-[44px] rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple-light focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 flex items-center justify-center"
+            className="p-1 min-h-[44px] min-w-[44px] rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 flex items-center justify-center"
           >
             <X size={14} />
           </button>
@@ -215,7 +215,7 @@ export function ContactForm() {
           variant="brand"
           size="lg"
           disabled={isSubmitting}
-          className="w-full sm:w-auto min-h-[44px] rounded-2xl gap-2 font-semibold shadow-lg shadow-brand-purple/25"
+          className="w-full sm:w-auto min-h-[44px] rounded-2xl gap-2 font-semibold shadow-lg shadow-amber-500/20"
         >
           {isSubmitting ? (
             <span>{t("contact.sending")}</span>

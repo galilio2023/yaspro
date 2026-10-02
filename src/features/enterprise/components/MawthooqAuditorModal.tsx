@@ -121,12 +121,12 @@ export function MawthooqAuditorModal({
 
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="size-12 rounded-2xl bg-brand-purple/20 border border-brand-purple/40 text-brand-purple-light flex items-center justify-center shrink-0">
+          <div className="size-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0">
             <ShieldCheck size={24} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-brand-teal-light font-bold bg-brand-teal/15 px-2 py-0.5 rounded border border-brand-teal/30">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold bg-emerald-500/15 px-2 py-0.5 rounded border border-emerald-500/30">
                 Official Regulatory Clearance
               </span>
               <span className="text-xs font-mono text-text-muted">KSA GAMR &amp; UAE NMC</span>
@@ -143,7 +143,7 @@ export function MawthooqAuditorModal({
             onClick={() => setActiveTab("certificate")}
             className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === "certificate"
-                ? "bg-gradient-to-r from-brand-purple to-brand-teal text-white shadow-md shadow-brand-purple/30 font-bold"
+                ? "btn-brand font-bold"
                 : "text-text-secondary hover:text-white"
             }`}
           >
@@ -153,18 +153,18 @@ export function MawthooqAuditorModal({
             onClick={() => setActiveTab("audit")}
             className={`flex-1 min-w-[120px] py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
               activeTab === "audit"
-                ? "bg-gradient-to-r from-brand-purple to-brand-teal text-white shadow-md shadow-brand-purple/30 font-bold"
+                ? "btn-brand font-bold"
                 : "text-text-secondary hover:text-white"
             }`}
           >
-            <Sparkles size={13} className={activeTab === "audit" ? "text-white" : "text-brand-purple-light"} />
+            <Sparkles size={13} className={activeTab === "audit" ? "text-zinc-950" : "text-amber-400"} />
             <span>AI Script Auditor</span>
           </button>
           <button
             onClick={() => setActiveTab("safety")}
             className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === "safety"
-                ? "bg-gradient-to-r from-brand-purple to-brand-teal text-white shadow-md shadow-brand-purple/30 font-bold"
+                ? "btn-brand font-bold"
                 : "text-text-secondary hover:text-white"
             }`}
           >
@@ -174,7 +174,7 @@ export function MawthooqAuditorModal({
             onClick={() => setActiveTab("escrow")}
             className={`flex-1 min-w-[110px] py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === "escrow"
-                ? "bg-gradient-to-r from-brand-purple to-brand-teal text-white shadow-md shadow-brand-purple/30 font-bold"
+                ? "btn-brand font-bold"
                 : "text-text-secondary hover:text-white"
             }`}
           >
@@ -205,7 +205,7 @@ export function MawthooqAuditorModal({
                     Mawthooq Advertising Verification
                   </div>
                   <div className="text-xs font-mono text-text-secondary">
-                    Certificate Serial: <span className="text-brand-cyan">{certificateId}</span>
+                    Certificate Serial: <span className="text-amber-400">{certificateId}</span>
                   </div>
                 </div>
 
@@ -275,7 +275,7 @@ export function MawthooqAuditorModal({
             {/* Input Card */}
             <div className="p-4 rounded-2xl bg-slate-900 border border-white/10 space-y-3">
               <label className="text-xs font-mono font-bold text-text-muted uppercase flex items-center justify-between">
-                <span className="flex items-center gap-1.5 text-brand-teal">
+                <span className="flex items-center gap-1.5 text-amber-400">
                   <FileCheck size={14} />
                   <span>Script / Ad Copy Regulatory Scanner</span>
                 </span>
@@ -287,7 +287,7 @@ export function MawthooqAuditorModal({
                 value={scriptInput}
                 onChange={(e) => setScriptInput(e.target.value)}
                 placeholder="Paste promotional caption, script dialogue, or campaign brief..."
-                className="w-full bg-black/60 border border-white/15 rounded-xl p-3 text-base sm:text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-brand-purple resize-none font-mono"
+                className="w-full bg-black/60 border border-white/15 rounded-xl p-3 text-base sm:text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-amber-500 resize-none font-mono"
               />
 
               <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
@@ -300,7 +300,7 @@ export function MawthooqAuditorModal({
                       setScriptInput(sample);
                       handleRunAudit(sample);
                     }}
-                    className="text-[11px] px-2.5 py-1 rounded-lg bg-brand-teal/15 hover:bg-brand-teal/25 text-brand-teal-light border border-brand-teal/40 cursor-pointer transition-colors"
+                    className="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 cursor-pointer transition-colors"
                   >
                     ✓ Compliant Sample (#إعلان)
                   </button>
@@ -321,7 +321,7 @@ export function MawthooqAuditorModal({
                   type="button"
                   onClick={() => handleRunAudit()}
                   disabled={isAuditing || !scriptInput.trim()}
-                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-purple to-brand-teal hover:opacity-95 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-brand-purple/25 transition-all disabled:opacity-50 cursor-pointer shrink-0"
+                  className="px-4 py-2 rounded-xl btn-brand text-xs font-bold flex items-center gap-2 disabled:opacity-50 cursor-pointer shrink-0"
                 >
                   {isAuditing ? (
                     <span className="animate-pulse">Scanning GAMR Rules...</span>
@@ -344,14 +344,14 @@ export function MawthooqAuditorModal({
 
             {/* Audit Results */}
             {auditReport && (
-              <div className="space-y-3.5 p-4 rounded-2xl bg-black/50 border border-brand-purple/30">
+              <div className="space-y-3.5 p-4 rounded-2xl bg-black/50 border border-amber-500/30">
                 {/* Score Header */}
                 <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-900 border border-white/10">
                   <div className="flex items-center gap-3">
                     <div
                       className={`size-12 rounded-xl flex items-center justify-center font-mono font-black text-lg ${
                         auditReport.status === "compliant"
-                          ? "bg-brand-teal/20 text-brand-teal-light border border-brand-teal/40"
+                          ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
                           : auditReport.status === "warning"
                           ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
                           : "bg-red-500/20 text-red-400 border border-red-500/40"
@@ -364,7 +364,7 @@ export function MawthooqAuditorModal({
                         <span
                           className={`text-xs font-bold uppercase font-mono px-2 py-0.5 rounded ${
                             auditReport.status === "compliant"
-                              ? "bg-brand-teal/15 text-brand-teal-light"
+                              ? "bg-emerald-500/15 text-emerald-400"
                               : auditReport.status === "warning"
                               ? "bg-amber-500/10 text-amber-400"
                               : "bg-red-500/10 text-red-400"
@@ -385,7 +385,7 @@ export function MawthooqAuditorModal({
                     </div>
                   </div>
 
-                  <span className="text-[10px] font-mono text-brand-purple-light bg-brand-purple/10 px-2.5 py-1 rounded-md border border-brand-purple/20">
+                  <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/20">
                     {auditReport.isAiGenerated ? "Gemini Multimodal AI" : "Deterministic GAMR Engine"}
                   </span>
                 </div>
@@ -458,22 +458,22 @@ export function MawthooqAuditorModal({
               </div>
               <div className="p-3.5 rounded-xl bg-slate-900 border border-white/10">
                 <div className="text-xs text-text-secondary font-mono mb-1">Mandatory Tags</div>
-                <div className="text-2xl font-black text-brand-cyan font-mono">Auto-Injected</div>
+                <div className="text-2xl font-black text-amber-400 font-mono">Auto-Injected</div>
                 <div className="text-[10px] text-text-muted mt-0.5">#إعلان #ad disclosure locked</div>
               </div>
             </div>
 
             <div className="p-4 rounded-2xl bg-black/40 border border-white/10 space-y-2.5 text-xs text-text-secondary">
               <div className="flex items-start gap-2">
-                <CheckCircle2 size={15} className="text-brand-teal shrink-0 mt-0.5" />
+                <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
                 <span>Pre-cleared against Saudi Consumer Protection Law (Executive Regulations 2024–2026).</span>
               </div>
               <div className="flex items-start gap-2">
-                <CheckCircle2 size={15} className="text-brand-teal shrink-0 mt-0.5" />
+                <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
                 <span>UAE National Media Council commercial influencer permit certified.</span>
               </div>
               <div className="flex items-start gap-2">
-                <CheckCircle2 size={15} className="text-brand-teal shrink-0 mt-0.5" />
+                <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
                 <span>Direct Yas Pro indemnification shield against unlicensed creator fines (up to SAR 5,000,000).</span>
               </div>
             </div>
@@ -484,7 +484,7 @@ export function MawthooqAuditorModal({
         {activeTab === "escrow" && (
           <div className="space-y-4">
             <div className="p-4 rounded-2xl bg-slate-900 border border-white/10">
-              <div className="flex items-center gap-2 text-xs font-mono font-bold text-brand-gold mb-3">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400 mb-3">
                 <Coins size={14} />
                 <span>AUTOMATED SETTLEMENT MILESTONES (SARIE / AANI)</span>
               </div>
@@ -492,15 +492,15 @@ export function MawthooqAuditorModal({
               <div className="space-y-2 text-xs font-mono">
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-black/40 border border-white/5">
                   <span className="text-white">Milestone 1: Script &amp; Concept Clearance</span>
-                  <span className="text-brand-cyan font-bold">25% Locked in Escrow</span>
+                  <span className="text-amber-400 font-bold">25% Locked in Escrow</span>
                 </div>
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-black/40 border border-white/5">
                   <span className="text-white">Milestone 2: Yas Pro Studio Production Wrap</span>
-                  <span className="text-brand-cyan font-bold">35% Release on Delivery</span>
+                  <span className="text-amber-400 font-bold">35% Release on Delivery</span>
                 </div>
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-black/40 border border-white/5">
                   <span className="text-white">Milestone 3: Live Post &amp; Mawthooq Verification</span>
-                  <span className="text-brand-teal-light font-bold">40% Final Settlement</span>
+                  <span className="text-emerald-400 font-bold">40% Final Settlement</span>
                 </div>
               </div>
             </div>

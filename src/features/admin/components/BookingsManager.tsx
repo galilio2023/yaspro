@@ -136,7 +136,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
             pagination.paginatedItems.map((b) => (
               <DataTableRow key={b.id}>
                 {/* Reference */}
-                <td className="py-3.5 px-4 font-mono font-semibold text-purple-300">
+                <td className="py-3.5 px-4 font-mono font-semibold text-amber-300">
                   {b.referenceCode}
                 </td>
 
@@ -152,7 +152,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                       </span>
                     )}
                     {(b.userPhone || b.userCompany) && (
-                      <span className="text-[10px] text-purple-400 font-mono flex items-center gap-1 mt-0.5">
+                      <span className="text-[10px] text-amber-400 font-mono flex items-center gap-1 mt-0.5">
                         {b.userPhone && <span>{b.userPhone}</span>}
                         {b.userCompany && <span className="text-slate-500">({b.userCompany})</span>}
                       </span>
@@ -167,7 +167,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                       ? "Cinema Gear Rental"
                       : b.sessionType.replace("_", " ")}
                   </span>
-                  <span className="text-[11px] text-purple-300 font-medium block">
+                  <span className="text-[11px] text-amber-300 font-medium block">
                     {b.studioName || (!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
                       ? `${b.equipmentIds.length} Equipment Item${b.equipmentIds.length > 1 ? "s" : ""}`
                       : "Soundstage")}
@@ -213,7 +213,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                     }
                     className={`text-[10px] font-semibold px-2 py-1 rounded-lg border focus:outline-none cursor-pointer ${
                       b.paymentStatus === "paid"
-                        ? "bg-brand-teal/15 text-brand-teal-light border-brand-teal/30"
+                        ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
                         : b.paymentStatus === "deposit_paid"
                         ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
                         : b.paymentStatus === "refunded"
@@ -245,7 +245,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                         triggerRef.current = e.currentTarget;
                         setCallSheetBookingId(b.id);
                       }}
-                      className="px-2 py-1 rounded bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 text-[11px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                      className="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[11px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
                       title="Generate Printable Call Sheet"
                     >
                       <FileText size={11} />
@@ -256,7 +256,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                       type="button"
                       disabled={updatingIds.has(b.id)}
                       onClick={() => handleStatusChange(b.id, "confirmed")}
-                      className="px-2 py-1 rounded bg-brand-teal/20 hover:bg-brand-teal/30 border border-brand-teal/30 text-brand-teal-light text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
+                      className="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
                     >
                       Confirm
                     </button>

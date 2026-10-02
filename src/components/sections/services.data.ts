@@ -44,7 +44,7 @@ export const SERVICES_DATA: readonly ServiceItem[] = [
     arabicStatLabel: "مساحة الاستوديو",
     href: "/studio-booking",
     highlight: true,
-    accentGlow: "from-brand-purple/20 via-brand-purple/5 to-transparent",
+    accentGlow: "from-amber-500/20 via-amber-500/5 to-transparent",
   },
   {
     id: "ob-van-broadcast",
@@ -67,7 +67,7 @@ export const SERVICES_DATA: readonly ServiceItem[] = [
     arabicStatLabel: "قنوات بث متزامنة",
     href: "/contact",
     highlight: false,
-    accentGlow: "from-brand-teal/20 via-brand-teal/5 to-transparent",
+    accentGlow: "from-emerald-500/20 via-emerald-500/5 to-transparent",
   },
   {
     id: "outdoor-cinema",
@@ -113,6 +113,6 @@ export const SERVICES_DATA: readonly ServiceItem[] = [
     arabicStatLabel: "تسليم في نفس اليوم",
     href: "/studio-booking",
     highlight: false,
-    accentGlow: "from-purple-500/20 via-cyan-500/5 to-transparent",
+    accentGlow: "from-amber-500/20 via-amber-500/5 to-transparent",
   },
 ];

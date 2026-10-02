@@ -21,7 +21,7 @@ export function ProjectHeroStage({ project }: ProjectHeroStageProps) {
         onClick={() => project.vimeoId && setIsPlaying(true)}
         className="relative w-full aspect-video max-h-[60vh] lg:max-h-none rounded-3xl overflow-hidden border border-white/15 bg-black shadow-2xl shadow-black/60 group cursor-pointer select-none"
       >
-        <BorderBeam size={260} duration={12} colorFrom="var(--brand-purple)" colorTo="var(--brand-cyan)" />
+        <BorderBeam size={260} duration={12} colorFrom="#f59e0b" colorTo="#d97706" />
 
         {/* Real Cinema Poster Image */}
         {project.image ? (
@@ -34,7 +34,7 @@ export function ProjectHeroStage({ project }: ProjectHeroStageProps) {
             className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-tr from-black via-brand-purple/20 to-secondary flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-tr from-black via-amber-950/20 to-secondary flex items-center justify-center">
             <Film size={64} className="text-white/20 group-hover:text-white/40 transition-colors" />
           </div>
         )}
@@ -53,7 +53,7 @@ export function ProjectHeroStage({ project }: ProjectHeroStageProps) {
             </Badge>
           </div>
           {project.views && (
-            <Badge variant="cyan" className="text-[10px] sm:text-xs font-bold backdrop-blur-md gap-1">
+            <Badge variant="gold" className="text-[10px] sm:text-xs font-bold backdrop-blur-md gap-1">
               <Sparkles size={12} /> {project.views}
             </Badge>
           )}
@@ -61,8 +61,8 @@ export function ProjectHeroStage({ project }: ProjectHeroStageProps) {
 
         {/* Center Play Button Overlay */}
         <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none">
-          <div className="size-14 sm:size-20 rounded-full bg-brand-purple/90 border border-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-2xl shadow-brand-purple/50 group-hover:scale-110 transition-transform duration-300">
-            <Play size={20} className="fill-current translate-x-0.5 text-white" />
+          <div className="size-14 sm:size-20 rounded-full bg-amber-500/90 border border-white/30 backdrop-blur-md flex items-center justify-center text-zinc-950 shadow-2xl shadow-amber-500/40 group-hover:scale-110 transition-transform duration-300">
+            <Play size={20} className="fill-current translate-x-0.5 text-zinc-950" />
           </div>
           <span className="mt-2 sm:mt-3 text-[10px] sm:text-xs uppercase tracking-widest text-white/90 font-mono drop-shadow-md">
             Watch Production Master

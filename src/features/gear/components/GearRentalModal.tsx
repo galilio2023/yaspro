@@ -158,13 +158,13 @@ export function GearRentalModal({
       <div className="fixed inset-0" onClick={onClose} aria-hidden="true" />
 
       {/* Modal Dialog Card */}
-      <div ref={dialogRef} tabIndex={-1} className="relative w-full max-w-3xl my-auto rounded-3xl border border-white/15 bg-[#0b0918] shadow-2xl shadow-brand-purple/20 overflow-hidden z-10 flex flex-col max-h-[92vh]">
+      <div ref={dialogRef} tabIndex={-1} className="relative w-full max-w-3xl my-auto rounded-3xl border border-white/10 bg-[#070709] shadow-2xl shadow-black/80 overflow-hidden z-10 flex flex-col max-h-[92vh]">
         {/* Header Bar */}
         <div className="relative px-6 py-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
           <div>
             <h2 id="gear-modal-title" className="text-lg font-bold text-white font-display">{displayName}</h2>
             <div className="flex items-center gap-2">
-              <span className="size-2 rounded-full bg-brand-cyan animate-pulse" />
+              <span className="size-2 rounded-full bg-amber-400 animate-pulse" />
               <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
                 {item.categoryLabel} · {isArabic ? "حجز وتأجير فوري" : "Instant Gear Reservation"}
               </span>
@@ -202,7 +202,7 @@ export function GearRentalModal({
                 <span className="text-[11px] text-text-muted uppercase block">
                   {isArabic ? "رقم المرجع التأجيري" : "Booking Reference"}
                 </span>
-                <span className="text-xl font-bold text-brand-cyan tracking-wider">
+                <span className="text-xl font-bold text-amber-400 tracking-wider">
                   {confirmationCode}
                 </span>
               </div>
@@ -211,7 +211,7 @@ export function GearRentalModal({
                 <button
                   type="button"
                   onClick={() => setIsPaymentOpen(true)}
-                  className="px-6 py-2.5 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan text-white font-semibold text-xs inline-flex items-center gap-2 shadow-lg shadow-brand-purple/30 hover:opacity-90 transition-all cursor-pointer"
+                  className="px-6 py-2.5 rounded-full btn-brand text-xs font-bold inline-flex items-center gap-2 cursor-pointer"
                 >
                   <CreditCard size={15} />
                   <span>{isArabic ? "الدفع الإلكتروني عبر Ziina" : "Pay Online via Ziina"}</span>
@@ -260,7 +260,7 @@ export function GearRentalModal({
                 <button
                   type="button"
                   onClick={() => setViewMode("overview")}
-                  className="text-xs text-brand-purple-light hover:underline cursor-pointer"
+                  className="text-xs text-amber-400 hover:underline cursor-pointer"
                 >
                   ← {isArabic ? "تعديل المدة" : "Back to Specs"}
                 </button>
@@ -284,7 +284,7 @@ export function GearRentalModal({
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder={isArabic ? "مثال: طارق المنصوري" : "e.g. John Doe"}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/15 text-white text-xs focus:outline-none focus:border-brand-purple"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/15 text-white text-xs focus:outline-none focus:border-amber-500"
                   />
                 </div>
                 <div>
@@ -298,7 +298,7 @@ export function GearRentalModal({
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+971 50 123 4567"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/15 text-white text-xs focus:outline-none focus:border-brand-purple font-mono"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/15 text-white text-xs focus:outline-none focus:border-amber-500 font-mono"
                   />
                 </div>
               </div>
@@ -315,7 +315,7 @@ export function GearRentalModal({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="dp@production.ae"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/15 text-white text-xs focus:outline-none focus:border-brand-purple"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/15 text-white text-xs focus:outline-none focus:border-amber-500"
                   />
                 </div>
                 <div>
@@ -328,7 +328,7 @@ export function GearRentalModal({
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder={isArabic ? "اختياري" : "Optional"}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/15 text-white text-xs focus:outline-none focus:border-brand-purple"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/15 text-white text-xs focus:outline-none focus:border-amber-500"
                   />
                 </div>
               </div>
@@ -343,7 +343,7 @@ export function GearRentalModal({
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder={isArabic ? "مثال: موعد استلام باكر، إضافة عدسة 50mm، توصيل لموقع صحراوي..." : "e.g. Early morning call, specific lens mount, location delivery..."}
-                  className="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/15 text-white text-xs focus:outline-none focus:border-brand-purple resize-none"
+                  className="w-full px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/15 text-white text-xs focus:outline-none focus:border-amber-500 resize-none"
                 />
               </div>
 
@@ -355,7 +355,7 @@ export function GearRentalModal({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-2.5 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-cyan hover:opacity-95 transition-opacity disabled:opacity-50 cursor-pointer flex items-center gap-2 shadow-lg shadow-brand-purple/30"
+                  className="px-6 py-2.5 rounded-xl font-bold text-xs btn-brand disabled:opacity-50 cursor-pointer flex items-center gap-2"
                 >
                   {isSubmitting ? (
                     <span>{isArabic ? "جاري الإرسال..." : "Submitting..."}</span>
@@ -412,7 +412,7 @@ export function GearRentalModal({
                     {item.specs.map((spec) => (
                       <span
                         key={spec}
-                        className="text-[10.5px] px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/10 text-brand-purple-light font-mono"
+                        className="text-[10.5px] px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/10 text-amber-300 font-mono"
                       >
                         ✓ {spec}
                       </span>
@@ -423,15 +423,15 @@ export function GearRentalModal({
 
               {/* Turnkey Inclusions (if Kit) */}
               {item.isKit && item.includedInKit && item.includedInKit.length > 0 && (
-                <div className="p-4 rounded-2xl bg-white/[0.02] border border-brand-purple/20">
-                  <div className="flex items-center gap-2 mb-2 text-brand-cyan text-xs font-bold font-mono">
+                <div className="p-4 rounded-2xl bg-white/[0.02] border border-amber-500/20">
+                  <div className="flex items-center gap-2 mb-2 text-amber-400 text-xs font-bold font-mono">
                     <Box size={14} />
                     <span>{isArabic ? "محتويات باقة التصوير المتكاملة:" : "Turnkey Package Rig Includes:"}</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-text-secondary">
                     {item.includedInKit.map((inc) => (
                       <div key={inc} className="flex items-center gap-1.5">
-                        <CheckCircle2 size={13} className="text-brand-purple shrink-0" />
+                        <CheckCircle2 size={13} className="text-amber-400 shrink-0" />
                         <span className="truncate">{inc}</span>
                       </div>
                     ))}
@@ -452,7 +452,7 @@ export function GearRentalModal({
                     className={cn(
                       "p-3 rounded-2xl border text-center transition-all cursor-pointer",
                       durationDays === 1
-                        ? "bg-brand-purple/20 border-brand-purple text-white shadow-lg shadow-brand-purple/20"
+                        ? "bg-amber-500/20 border-amber-500 text-white shadow-lg shadow-amber-500/20"
                         : "bg-white/[0.03] border-white/10 text-text-secondary hover:border-white/20"
                     )}
                   >
@@ -466,15 +466,15 @@ export function GearRentalModal({
                     className={cn(
                       "p-3 rounded-2xl border text-center transition-all cursor-pointer relative",
                       durationDays === 3
-                        ? "bg-brand-purple/20 border-brand-purple text-white shadow-lg shadow-brand-purple/20"
+                        ? "bg-amber-500/20 border-amber-500 text-white shadow-lg shadow-amber-500/20"
                         : "bg-white/[0.03] border-white/10 text-text-secondary hover:border-white/20"
                     )}
                   >
-                    <span className="absolute -top-2 inset-x-0 mx-auto w-max px-2 py-0.2 rounded-full bg-brand-cyan text-black text-[9px] font-extrabold uppercase">
+                    <span className="absolute -top-2 inset-x-0 mx-auto w-max px-2 py-0.2 rounded-full bg-amber-400 text-black text-[9px] font-extrabold uppercase">
                       {isArabic ? `خصم ${calculateRentalMultiplier(3).discountPct}%` : `${calculateRentalMultiplier(3).discountPct}% Off`}
                     </span>
                     <div className="text-xs font-bold">{isArabic ? "عطلة نهاية الأسبوع (3 أيام)" : "3-Day Weekend"}</div>
-                    <div className="text-[10px] text-brand-cyan/90 mt-0.5">{isArabic ? "عرض عطلة نهاية الأسبوع" : "Weekend Deal"}</div>
+                    <div className="text-[10px] text-amber-400/90 mt-0.5">{isArabic ? "عرض عطلة نهاية الأسبوع" : "Weekend Deal"}</div>
                   </button>
 
                   <button
@@ -483,7 +483,7 @@ export function GearRentalModal({
                     className={cn(
                       "p-3 rounded-2xl border text-center transition-all cursor-pointer relative",
                       durationDays === 7
-                        ? "bg-brand-purple/20 border-brand-purple text-white shadow-lg shadow-brand-purple/20"
+                        ? "bg-amber-500/15 border-amber-500/60 text-white shadow-lg shadow-amber-500/10"
                         : "bg-white/[0.03] border-white/10 text-text-secondary hover:border-white/20"
                     )}
                   >
@@ -509,12 +509,12 @@ export function GearRentalModal({
                     className={cn(
                       "p-2.5 rounded-xl border text-start transition-all cursor-pointer text-xs",
                       deliveryMethod === "studio_delivery"
-                        ? "bg-brand-purple/15 border-brand-purple/50 text-white"
+                        ? "bg-amber-500/15 border-amber-500/60 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     )}
                   >
                     <div className="font-bold flex items-center gap-1.5">
-                      <Building size={13} className="text-brand-purple" />
+                      <Building size={13} className="text-amber-400" />
                       <span>{isArabic ? "استوديو Yas Pro" : "Yas Soundstage"}</span>
                     </div>
                     <div className="text-[10px] text-emerald-400 mt-0.5">{isArabic ? "مجاناً مع الحجز" : "Free On-Site"}</div>
@@ -526,12 +526,12 @@ export function GearRentalModal({
                     className={cn(
                       "p-2.5 rounded-xl border text-start transition-all cursor-pointer text-xs",
                       deliveryMethod === "courier_dubai"
-                        ? "bg-brand-purple/15 border-brand-purple/50 text-white"
+                        ? "bg-amber-500/15 border-amber-500/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     )}
                   >
                     <div className="font-bold flex items-center gap-1.5">
-                      <Truck size={13} className="text-brand-cyan" />
+                      <Truck size={13} className="text-amber-400" />
                       <span>{isArabic ? "توصيل لموقع التصوير" : "Set Courier"}</span>
                     </div>
                     <div className="text-[10px] text-text-muted mt-0.5">{isArabic ? "+250 درهم دبي" : "+250 AED UAE Set"}</div>
@@ -543,7 +543,7 @@ export function GearRentalModal({
                     className={cn(
                       "p-2.5 rounded-xl border text-start transition-all cursor-pointer text-xs",
                       deliveryMethod === "pickup_hub"
-                        ? "bg-brand-purple/15 border-brand-purple/50 text-white"
+                        ? "bg-amber-500/15 border-amber-500/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     )}
                   >
@@ -557,7 +557,7 @@ export function GearRentalModal({
               </div>
 
               {/* Price Calculation Banner */}
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-brand-purple/10 to-brand-cyan/10 border border-white/10 flex flex-wrap items-center justify-between gap-3">
+              <div className="p-4 rounded-2xl bg-zinc-900 border border-white/10 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-2xl font-black text-white font-display">
@@ -588,7 +588,7 @@ export function GearRentalModal({
                   <button
                     type="button"
                     onClick={() => setViewMode("form")}
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-xs font-bold transition-all hover:scale-105 cursor-pointer shadow-lg shadow-brand-purple/25"
+                    className="px-5 py-2.5 rounded-xl btn-brand text-xs font-bold cursor-pointer"
                   >
                     {isArabic ? "طلب حجز مباشر" : "Book Online"}
                   </button>

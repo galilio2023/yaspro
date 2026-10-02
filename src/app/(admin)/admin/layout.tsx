@@ -58,26 +58,26 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect("/login?error=admin_required");
   }
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row antialiased selection:bg-purple-600 selection:text-white">
+    <div className="min-h-screen bg-[#070709] text-slate-100 flex flex-col md:flex-row antialiased selection:bg-amber-500 selection:text-black">
       <AdminMobileNav adminName={adminName} />
       {/* Sidebar — desktop only */}
-      <aside className="hidden md:flex w-full md:w-64 border-b md:border-b-0 md:border-r border-white/10 bg-slate-900/60 backdrop-blur-xl p-4 sm:p-6 shrink-0 flex-col justify-between">
+      <aside className="hidden md:flex w-full md:w-64 border-b md:border-b-0 md:border-r border-white/10 bg-[#0c0b10] backdrop-blur-xl p-4 sm:p-6 shrink-0 flex-col justify-between">
         <div>
           {/* Logo / Brand */}
           <div className="flex items-center justify-between pb-6 border-b border-white/10">
             <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="size-9 rounded-xl bg-gradient-to-tr from-purple-600 via-purple-700 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/25 border border-purple-400/30">
-                <YasproEmblem size={18} idPrefix="admin-emblem" className="filter drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]" />
+              <div className="size-9 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center shadow-lg shadow-amber-500/10">
+                <YasproEmblem size={18} idPrefix="admin-emblem" />
               </div>
               <div>
                 <div className="flex items-center">
-                  <span className="font-extrabold tracking-tight text-white group-hover:text-purple-300 transition-colors">
+                  <span className="font-extrabold tracking-tight text-white group-hover:text-amber-300 transition-colors">
                     YASPRO
                   </span>
-                  <span className="ml-1 text-xs font-bold text-purple-400">CMS</span>
+                  <span className="ml-1 text-xs font-bold text-amber-400">OPS</span>
                 </div>
-                <span className="block text-[10px] text-purple-400 font-mono tracking-wider uppercase">
-                  Neon • Drizzle
+                <span className="block text-[10px] text-amber-400/80 font-mono tracking-wider uppercase">
+                  Studio Console
                 </span>
               </div>
             </Link>
@@ -93,7 +93,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                   href={item.href}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.06] transition-all"
                 >
-                  <Icon size={18} className="text-purple-400/80 shrink-0" />
+                  <Icon size={18} className="text-amber-400/80 shrink-0" />
                   <span>{item.label}</span>
                 </Link>
               );
@@ -103,13 +103,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
         {/* Database Status Footer */}
         <div className="pt-6 border-t border-white/10 mt-6">
-          <div className="p-3 rounded-xl bg-purple-950/30 border border-purple-800/30 text-xs">
-            <div className="flex items-center gap-2 text-purple-300 font-medium">
-              <Database size={14} className="text-purple-400" />
-              <span>PostgreSQL Connection</span>
+          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs">
+            <div className="flex items-center gap-2 text-amber-300 font-medium">
+              <Database size={14} className="text-amber-400" />
+              <span>Production Database</span>
             </div>
             <p className="text-[11px] text-slate-400 mt-1">
-              Connected to Neon serverless database with automated fallback.
+              Connected to Neon serverless database with automated telemetry.
             </p>
           </div>
 
@@ -121,7 +121,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <Link
               href="/"
               target="_blank"
-              className="flex items-center gap-1 text-purple-400 hover:text-purple-300 shrink-0"
+              className="flex items-center gap-1 text-amber-400 hover:text-amber-300 shrink-0"
             >
               Public Site <ArrowUpRight size={12} className="rtl:scale-x-[-1]" />
             </Link>

@@ -35,16 +35,16 @@ export default function SupportPage() {
       {/* Email */}
       <a
         href="mailto:production@yaspromotions.com"
-        className="flex items-center gap-4 p-6 rounded-3xl bg-slate-900/60 border border-white/10 hover:border-purple-500/30 hover:bg-purple-900/10 transition-all group"
+        className="flex items-center gap-4 p-6 rounded-3xl bg-slate-900/60 border border-white/10 hover:border-amber-500/30 hover:bg-amber-900/10 transition-all group"
       >
-        <div className="size-12 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0 group-hover:bg-purple-500/20 transition-colors">
+        <div className="size-12 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 group-hover:bg-amber-500/20 transition-colors">
           <Mail size={22} />
         </div>
         <div>
           <div className="text-sm font-bold text-white mb-0.5">Email Production Team</div>
           <div className="text-xs text-slate-400">production@yaspromotions.com — Response within 4 hours</div>
         </div>
-        <ExternalLink size={16} className="ml-auto text-slate-500 group-hover:text-purple-400 transition-colors shrink-0" />
+        <ExternalLink size={16} className="ml-auto text-slate-500 group-hover:text-amber-400 transition-colors shrink-0" />
       </a>
 
       {/* Hotline card */}

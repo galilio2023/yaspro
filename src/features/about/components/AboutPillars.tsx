@@ -30,11 +30,11 @@ export function AboutPillars({ headingId }: AboutPillarsProps) {
           const Icon = pillar.icon;
           return (
             <StaggerItem key={pillar.title} className="h-full">
-              <div className="rounded-3xl border border-white/10 bg-[#0c091c]/80 backdrop-blur-xl p-6 sm:p-7 h-full flex flex-col justify-between hover:border-brand-purple/50 hover:bg-[#110d28]/90 transition-all duration-300 group shadow-xl shadow-black/30">
+              <div className="rounded-3xl border border-white/10 bg-[#070709]/80 backdrop-blur-xl p-6 sm:p-7 h-full flex flex-col justify-between hover:border-amber-500/50 hover:bg-white/[0.04] transition-all duration-300 group shadow-xl shadow-black/30">
                 <div>
                   {/* Top Bar with Icon & Micro-Badge */}
                   <div className="flex items-center justify-between gap-2 mb-5">
-                    <div className="size-12 rounded-2xl bg-white/[0.04] border border-white/10 group-hover:border-brand-purple/40 flex items-center justify-center text-brand-purple-light group-hover:scale-105 transition-all shadow-md">
+                    <div className="size-12 rounded-2xl bg-white/[0.04] border border-white/10 group-hover:border-amber-500/40 flex items-center justify-center text-amber-400 group-hover:scale-105 transition-all shadow-md">
                       <Icon size={22} />
                     </div>
 
@@ -43,7 +43,7 @@ export function AboutPillars({ headingId }: AboutPillarsProps) {
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-white mb-2.5 font-display group-hover:text-brand-purple-light transition-colors">
+                  <h3 className="text-lg font-bold text-white mb-2.5 font-display group-hover:text-amber-400 transition-colors">
                     {isArabic && pillar.arTitle ? pillar.arTitle : pillar.title}
                   </h3>
 

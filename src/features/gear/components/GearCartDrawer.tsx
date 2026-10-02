@@ -118,7 +118,7 @@ export function GearCartDrawer({
         aria-label="Rental selection summary"
         className="fixed bottom-4 inset-x-3 sm:bottom-6 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[640px] max-w-2xl z-40 animate-fade-up"
       >
-        <div className="rounded-2xl border border-brand-purple/40 bg-black/95 backdrop-blur-2xl p-4 sm:p-5 shadow-2xl shadow-brand-purple/20 flex items-center justify-between gap-4">
+        <div className="rounded-2xl border border-amber-500/40 bg-black/95 backdrop-blur-2xl p-4 sm:p-5 shadow-2xl shadow-black/80 flex items-center justify-between gap-4">
           <button
             ref={triggerButtonRef}
             type="button"
@@ -126,10 +126,10 @@ export function GearCartDrawer({
               if (isOpen) handleClose();
               else setLocalOpen(true);
             }}
-            className="flex items-center gap-3 text-start group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple rounded-xl"
+            className="flex items-center gap-3 text-start group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-xl"
             aria-expanded={isOpen}
           >
-            <div className="size-11 rounded-xl bg-brand-purple/20 border border-brand-purple/40 flex items-center justify-center text-brand-purple-light group-hover:scale-105 transition-transform shrink-0">
+            <div className="size-11 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 group-hover:scale-105 transition-transform shrink-0">
               <ShoppingBag size={20} />
             </div>
             <div>
@@ -144,7 +144,7 @@ export function GearCartDrawer({
                     ? "Item Selected"
                     : "Items Selected"}
                 </span>
-                <span className="text-[11px] text-brand-purple-light font-normal hover:underline">
+                <span className="text-[11px] text-amber-400 font-normal hover:underline">
                   {isOpen
                     ? isArabic
                       ? "إغلاق التفاصيل"
@@ -163,7 +163,7 @@ export function GearCartDrawer({
                   )
                 </span>
                 <span>•</span>
-                <span className="text-brand-purple-light font-bold">
+                <span className="text-amber-400 font-bold">
                   {formatCurrency(grandTotal)}
                 </span>
               </div>
@@ -177,7 +177,7 @@ export function GearCartDrawer({
                 if (isOpen) handleClose();
                 else setLocalOpen(true);
               }}
-              className="hidden sm:inline-flex px-4 py-2.5 rounded-xl text-xs font-semibold text-text-secondary bg-white/5 hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+              className="hidden sm:inline-flex px-4 py-2.5 rounded-xl text-xs font-semibold text-text-secondary bg-white/5 hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
             >
               {isOpen ? (isArabic ? "إخفاء" : "Hide") : isArabic ? "التفاصيل" : "Details"}
             </button>
@@ -185,7 +185,7 @@ export function GearCartDrawer({
             <button
               type="button"
               onClick={() => setIsCheckoutOpen(true)}
-              className="px-5 py-2.5 rounded-xl font-semibold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-purple-light flex items-center gap-2 shadow-lg shadow-brand-purple/25 whitespace-nowrap cursor-pointer hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+              className="px-5 py-2.5 rounded-xl font-bold text-xs btn-brand flex items-center gap-2 whitespace-nowrap cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
             >
               <span>{isArabic ? "حجز المعدات" : "Reserve Gear"}</span>
               <ArrowRight size={14} className="rtl:rotate-180" />
@@ -214,7 +214,7 @@ export function GearCartDrawer({
             {/* Header */}
             <div className="flex items-center justify-between pb-4 border-b border-white/10">
               <div className="flex items-center gap-2.5">
-                <div className="size-8 rounded-lg bg-brand-purple/20 flex items-center justify-center text-brand-purple-light shrink-0">
+                <div className="size-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
                   <ShoppingBag size={16} />
                 </div>
                 <div>
@@ -243,7 +243,7 @@ export function GearCartDrawer({
                 ref={closeButtonRef}
                 type="button"
                 onClick={handleClose}
-                className="size-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple shrink-0"
+                className="size-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 shrink-0"
                 aria-label={isArabic ? "إغلاق السلة" : "Close cart"}
               >
                 <X size={16} />
@@ -252,7 +252,7 @@ export function GearCartDrawer({
 
             {effectiveItems.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-                <div className="size-16 rounded-2xl bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center text-brand-purple-light mb-4">
+                <div className="size-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-4">
                   <ShoppingBag size={32} />
                 </div>
                 <h4 className="text-white font-bold text-base mb-1.5 font-display">
@@ -266,7 +266,7 @@ export function GearCartDrawer({
                 <a
                   href="/shop"
                   onClick={handleClose}
-                  className="px-5 py-2.5 rounded-xl font-semibold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-purple-light flex items-center gap-2 shadow-lg shadow-brand-purple/25 hover:opacity-90 transition-opacity cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl font-bold text-xs btn-brand flex items-center gap-2 cursor-pointer"
                 >
                   <span>{isArabic ? "استكشاف كتالوج المعدات" : "Explore Gear Catalog"}</span>
                   <ArrowRight size={14} className="rtl:rotate-180" />
@@ -287,7 +287,7 @@ export function GearCartDrawer({
                 return (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-brand-purple/30 transition-colors gap-3"
+                    className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-amber-500/30 transition-colors gap-3"
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       {item.image && (
@@ -307,7 +307,7 @@ export function GearCartDrawer({
                             {itemName}
                           </span>
                           {item.isKit && (
-                            <Badge variant="cyan" className="text-[9px] px-1.5 py-0 shrink-0">
+                            <Badge variant="gold" className="text-[9px] px-1.5 py-0 shrink-0">
                               {isArabic ? "باقة" : "Kit"}
                             </Badge>
                           )}
@@ -337,9 +337,9 @@ export function GearCartDrawer({
 
               {/* Smart Production Assistant Recommendations */}
               {smartRecommendations.length > 0 && (
-                <div className="p-3.5 rounded-2xl bg-gradient-to-r from-brand-purple/15 to-brand-cyan/10 border border-brand-purple/30 my-3">
+                <div className="p-3.5 rounded-2xl bg-amber-950/20 border border-amber-500/20 my-3">
                   <div className="flex items-center gap-2 mb-2">
-                    <Sparkles size={14} className="text-brand-gold animate-pulse shrink-0" />
+                    <Sparkles size={14} className="text-amber-400 animate-pulse shrink-0" />
                     <span className="text-xs font-bold text-white font-display">
                       {isArabic ? "المساعد الذكي: معدات موصى بها مع باقتك" : "Smart Production Assistant: Recommended Essentials"}
                     </span>
@@ -357,7 +357,7 @@ export function GearCartDrawer({
                               <span className="text-xs font-bold text-white truncate">
                                 {recName}
                               </span>
-                              <Badge variant={rec.badge === "Essential" ? "purple" : "cyan"} className="text-[8px] px-1.5 py-0 shrink-0">
+                              <Badge variant={rec.badge === "Essential" ? "gold" : "default"} className="text-[8px] px-1.5 py-0 shrink-0">
                                 {isArabic
                                   ? rec.badge === "Essential"
                                     ? "ضروري"
@@ -370,13 +370,13 @@ export function GearCartDrawer({
                             </p>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className="text-[11px] font-mono text-brand-purple-light font-bold">
+                            <span className="text-[11px] font-mono text-amber-400 font-bold">
                               +{formatCurrency(rec.recommendedItem.dailyRate)}{isArabic ? "/يوم" : "/d"}
                             </span>
                             <button
                               type="button"
                               onClick={() => handleAdd(rec.recommendedItem)}
-                              className="px-2.5 py-1 rounded-lg bg-brand-purple hover:bg-brand-purple-light text-white text-[10px] font-bold flex items-center gap-1 transition-all cursor-pointer shadow-sm"
+                              className="px-2.5 py-1 rounded-lg btn-brand text-[10px] font-bold flex items-center gap-1 transition-all cursor-pointer shadow-sm"
                             >
                               <Plus size={11} />
                               <span>{isArabic ? "إضافة" : "Add"}</span>
@@ -398,13 +398,13 @@ export function GearCartDrawer({
                   <button
                     type="button"
                     onClick={() => setEffectiveDeliveryMethod("studio_delivery")}
-                    className={`p-3 rounded-xl border text-start transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple ${
+                    className={`p-3 rounded-xl border text-start transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
                       effectiveDeliveryMethod === "studio_delivery"
-                        ? "bg-brand-purple/15 border-brand-purple/50 text-white"
+                        ? "bg-amber-500/15 border-amber-500/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     }`}
                   >
-                    <Building2 size={16} className="text-brand-purple mb-1.5" />
+                    <Building2 size={16} className="text-amber-400 mb-1.5" />
                     <div className="text-xs font-bold">{isArabic ? "إلى استوديو Yas" : "To Yas Studio"}</div>
                     <div className="text-[10px] text-text-muted">{isArabic ? "مجاناً مع حجز الاستوديو" : "Free with Soundstage"}</div>
                   </button>
@@ -412,13 +412,13 @@ export function GearCartDrawer({
                   <button
                     type="button"
                     onClick={() => setEffectiveDeliveryMethod("courier_dubai")}
-                    className={`p-3 rounded-xl border text-start transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple ${
+                    className={`p-3 rounded-xl border text-start transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
                       effectiveDeliveryMethod === "courier_dubai"
-                        ? "bg-brand-purple/15 border-brand-purple/50 text-white"
+                        ? "bg-amber-500/15 border-amber-500/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     }`}
                   >
-                    <Truck size={16} className="text-brand-cyan mb-1.5" />
+                    <Truck size={16} className="text-amber-400 mb-1.5" />
                     <div className="text-xs font-bold">{isArabic ? "توصيل دبي" : "Dubai Courier"}</div>
                     <div className="text-[10px] text-text-muted">{isArabic ? "+250 درهم توصيل" : "+250 AED Delivery"}</div>
                   </button>
@@ -426,9 +426,9 @@ export function GearCartDrawer({
                   <button
                     type="button"
                     onClick={() => setEffectiveDeliveryMethod("pickup_hub")}
-                    className={`p-3 rounded-xl border text-start transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple ${
+                    className={`p-3 rounded-xl border text-start transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
                       effectiveDeliveryMethod === "pickup_hub"
-                        ? "bg-brand-purple/15 border-brand-purple/50 text-white"
+                        ? "bg-amber-500/15 border-amber-500/50 text-white"
                         : "bg-white/[0.02] border-white/10 text-text-secondary hover:text-white"
                     }`}
                   >
@@ -449,7 +449,7 @@ export function GearCartDrawer({
                     {effectiveDateRange.pickupDate} {isArabic ? "إلى" : "to"} {effectiveDateRange.returnDate} ({effectiveDateRange.totalDays} {isArabic ? "أيام" : "Days"})
                   </span>
                 </span>
-                <span className="text-brand-purple-light font-medium">
+                <span className="text-amber-400 font-medium">
                   {effectiveDateRange.discountPercentage > 0
                     ? isArabic
                       ? `تم تطبيق خصم ${effectiveDateRange.discountPercentage}%`
@@ -479,7 +479,7 @@ export function GearCartDrawer({
                     handleClose();
                     setIsCheckoutOpen(true);
                   }}
-                  className="px-6 py-3 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-purple-light flex items-center gap-2 shadow-lg shadow-brand-purple/30 hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple shrink-0 cursor-pointer"
+                  className="px-6 py-3 rounded-xl font-bold text-xs btn-brand flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 shrink-0 cursor-pointer"
                 >
                   <span>{isArabic ? "تأكيد طلب الحجز" : "Submit Reservation"}</span>
                   <ArrowRight size={14} className="rtl:rotate-180" />

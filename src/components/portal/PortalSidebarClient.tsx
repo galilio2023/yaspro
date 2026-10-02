@@ -9,7 +9,7 @@ import { LogOut, ArrowUpRight, User } from "lucide-react";
 interface PortalSidebarClientProps {
   userName: string;
   userEmail: string;
-  accentColor: "purple" | "emerald";
+  accentColor: "purple" | "emerald" | "amber";
 }
 
 export function PortalSidebarClient({ userName, userEmail, accentColor }: PortalSidebarClientProps) {
@@ -17,11 +17,11 @@ export function PortalSidebarClient({ userName, userEmail, accentColor }: Portal
 
   const accentClass = accentColor === "emerald"
     ? "text-emerald-400"
-    : "text-purple-400";
+    : "text-amber-400";
 
   const linkAccent = accentColor === "emerald"
     ? "text-emerald-400 hover:text-emerald-300"
-    : "text-purple-400 hover:text-purple-300";
+    : "text-amber-400 hover:text-amber-300";
 
   return (
     <div className="pt-6 border-t border-white/10 mt-6">

@@ -52,7 +52,7 @@ export default function EnterprisePage() {
   };
 
   return (
-    <main className="min-h-screen bg-background text-white selection:bg-brand-purple selection:text-white">
+    <main className="min-h-screen bg-background text-white selection:bg-amber-500 selection:text-black">
       {/* 1. Executive Sovereign Hero */}
       <EnterpriseHero
         onOpenRfp={() => handleOpenRfp()}
@@ -104,9 +104,9 @@ export default function EnterprisePage() {
       {/* 9. Sovereign Client Portal & Camera-to-Cloud Vault Banner */}
       <section className="py-16 bg-slate-950/60 border-t border-white/10 relative overflow-hidden">
         <Container className="max-w-6xl relative z-10">
-          <div className="p-8 sm:p-12 rounded-3xl border border-brand-purple/30 bg-gradient-to-r from-card via-slate-900 to-brand-purple/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 shadow-2xl">
+          <div className="p-8 sm:p-12 rounded-3xl border border-amber-500/20 bg-gradient-to-r from-card via-slate-900 to-amber-950/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 shadow-2xl">
             <div className="space-y-3 max-w-xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold bg-brand-purple/20 text-brand-purple-light border border-brand-purple/40">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30">
                 <Lock size={12} />
                 <span>CLIENT OPERATIONS ACCESS</span>
               </div>
@@ -120,7 +120,7 @@ export default function EnterprisePage() {
 
             <Link
               href="/enterprise/portal"
-              className="w-full md:w-auto px-8 py-4 rounded-xl text-xs font-bold btn-brand text-white shadow-xl shadow-brand-purple/25 flex items-center justify-center gap-2.5 shrink-0 transition-transform duration-200 hover:scale-[1.02]"
+              className="w-full md:w-auto px-8 py-4 rounded-xl text-xs font-bold btn-brand flex items-center justify-center gap-2.5 shrink-0 transition-transform duration-200 hover:scale-[1.02]"
             >
               <Video size={15} />
               <span>Launch Client Operations Vault</span>

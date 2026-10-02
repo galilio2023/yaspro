@@ -38,7 +38,7 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
     renderer.toneMappingExposure = 1.3;
     container.appendChild(renderer.domElement);
 
-    // Lighting (metallic silver chrome highlights & cyber-purple glow)
+    // Lighting (metallic silver chrome highlights & warm tungsten amber studio glow)
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     scene.add(ambientLight);
 
@@ -46,17 +46,17 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
     keyLight.position.set(5, 7, 5);
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xa5b4fc, 1.8);
+    const fillLight = new THREE.DirectionalLight(0xfef3c7, 1.8);
     fillLight.position.set(-6, -4, -3);
     scene.add(fillLight);
 
-    const purpleGlowLight = new THREE.PointLight(0xc084fc, 3.5, 12);
-    purpleGlowLight.position.set(-1.8, 1, 1.5);
-    scene.add(purpleGlowLight);
+    const amberGlowLight = new THREE.PointLight(0xf59e0b, 3.5, 12);
+    amberGlowLight.position.set(-1.8, 1, 1.5);
+    scene.add(amberGlowLight);
 
-    const cyanGlowLight = new THREE.PointLight(0x38bdf8, 3.5, 12);
-    cyanGlowLight.position.set(1.8, -1, 1.5);
-    scene.add(cyanGlowLight);
+    const goldGlowLight = new THREE.PointLight(0xfbbf24, 3.5, 12);
+    goldGlowLight.position.set(1.8, -1, 1.5);
+    scene.add(goldGlowLight);
 
     // Materials
     const silverChromeMat = new THREE.MeshStandardMaterial({
@@ -71,10 +71,10 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
       roughness: 0.35,
     });
 
-    const neonPurpleMat = new THREE.MeshBasicMaterial({ color: 0xc084fc });
-    const neonCyanMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
-    const flameMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.9 });
-    const innerCoreMat = new THREE.MeshBasicMaterial({ color: 0x9333ea, wireframe: true, transparent: true, opacity: 0.65 });
+    const studioGoldMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
+    const studioAmberMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
+    const flameMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.9 });
+    const innerCoreMat = new THREE.MeshBasicMaterial({ color: 0xd97706, wireframe: true, transparent: true, opacity: 0.65 });
 
     // ==========================================
     // 1. SILVER HEXAGONAL PERFORATED HOLLOW BALL
@@ -123,20 +123,20 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
       holeMesh.position.z = -0.01;
       hexPort.add(holeMesh);
 
-      // Neon cyan accent rim inside every second hole
+      // Amber accent rim inside every second hole
       if (i % 2 === 0) {
-        const cyanRimGeo = new THREE.RingGeometry(0.06, 0.1, 6);
-        const cyanRimMesh = new THREE.Mesh(cyanRimGeo, neonCyanMat);
-        cyanRimMesh.position.z = 0.01;
-        hexPort.add(cyanRimMesh);
+        const amberRimGeo = new THREE.RingGeometry(0.06, 0.1, 6);
+        const amberRimMesh = new THREE.Mesh(amberRimGeo, studioAmberMat);
+        amberRimMesh.position.z = 0.01;
+        hexPort.add(amberRimMesh);
       }
 
       ballGroup.add(hexPort);
     }
 
-    // Outer orbital holographic ring revolving around the hex ball
+    // Outer orbital ring revolving around the hex ball
     const ringOrbitGeo = new THREE.TorusGeometry(1.65, 0.015, 16, 64);
-    const ringOrbitMesh = new THREE.Mesh(ringOrbitGeo, neonCyanMat);
+    const ringOrbitMesh = new THREE.Mesh(ringOrbitGeo, studioAmberMat);
     ringOrbitMesh.rotation.x = Math.PI / 3;
     ballGroup.add(ringOrbitMesh);
 
@@ -163,7 +163,7 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
 
     // Glowing tip sensor
     const tipGeo = new THREE.SphereGeometry(0.06, 16, 16);
-    const tipMesh = new THREE.Mesh(tipGeo, neonCyanMat);
+    const tipMesh = new THREE.Mesh(tipGeo, studioGoldMat);
     tipMesh.position.y = 2.42;
     rocketGroup.add(tipMesh);
 
@@ -175,19 +175,19 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
     rocketGroup.add(windowRingMesh);
 
     const windowGlassGeo = new THREE.CircleGeometry(0.15, 24);
-    const windowGlassMesh = new THREE.Mesh(windowGlassGeo, neonCyanMat);
+    const windowGlassMesh = new THREE.Mesh(windowGlassGeo, studioAmberMat);
     windowGlassMesh.position.set(0, 0.75, 0.47);
     windowGlassMesh.rotation.x = 0.12;
     rocketGroup.add(windowGlassMesh);
 
-    // Cyber Rings around the fuselage
+    // Precision Rings around the fuselage
     const upperRingGeo = new THREE.TorusGeometry(0.52, 0.02, 16, 32);
-    const upperRingMesh = new THREE.Mesh(upperRingGeo, neonPurpleMat);
+    const upperRingMesh = new THREE.Mesh(upperRingGeo, studioGoldMat);
     upperRingMesh.position.y = 0.05;
     rocketGroup.add(upperRingMesh);
 
     const lowerRingGeo = new THREE.TorusGeometry(0.58, 0.02, 16, 32);
-    const lowerRingMesh = new THREE.Mesh(lowerRingGeo, neonCyanMat);
+    const lowerRingMesh = new THREE.Mesh(lowerRingGeo, studioAmberMat);
     lowerRingMesh.position.y = -0.38;
     rocketGroup.add(lowerRingMesh);
 
@@ -204,7 +204,7 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
       finHolder.add(finMesh);
 
       const edgeGeo = new THREE.BoxGeometry(0.04, 0.74, 0.05);
-      const edgeMesh = new THREE.Mesh(edgeGeo, neonPurpleMat);
+      const edgeMesh = new THREE.Mesh(edgeGeo, studioAmberMat);
       edgeMesh.position.set(0.9, -0.76, 0);
       edgeMesh.rotation.z = -0.38;
       finHolder.add(edgeMesh);
@@ -225,7 +225,7 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
     flameMesh.rotation.x = Math.PI;
     rocketGroup.add(flameMesh);
 
-    const thrusterPointLight = new THREE.PointLight(0x06b6d4, 4, 5);
+    const thrusterPointLight = new THREE.PointLight(0xf59e0b, 4, 5);
     thrusterPointLight.position.y = -1.3;
     rocketGroup.add(thrusterPointLight);
 
@@ -241,10 +241,10 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
       starPositions[i * 3] = (Math.random() - 0.5) * 14;
       starPositions[i * 3 + 1] = (Math.random() - 0.5) * 7;
       starPositions[i * 3 + 2] = (Math.random() - 0.5) * 6;
-      const isPurple = Math.random() > 0.5;
-      starColors[i * 3] = isPurple ? 0.75 : 0.2;
-      starColors[i * 3 + 1] = isPurple ? 0.35 : 0.75;
-      starColors[i * 3 + 2] = 1.0;
+      const isAmber = Math.random() > 0.4;
+      starColors[i * 3] = isAmber ? 0.96 : 0.9;
+      starColors[i * 3 + 1] = isAmber ? 0.62 : 0.9;
+      starColors[i * 3 + 2] = isAmber ? 0.05 : 0.95;
     }
     const starGeo = new THREE.BufferGeometry();
     starGeo.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));

@@ -47,9 +47,9 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
   }, [hub.timeZone, isArabic]);
 
   return (
-    <div className="group relative rounded-2xl bg-card/60 backdrop-blur-xl p-4 flex flex-col justify-between border border-white/[0.08] hover:border-brand-purple/40 hover:bg-brand-purple/[0.06] transition-all duration-300 shadow-lg shadow-black/20 overflow-hidden">
+    <div className="group relative rounded-2xl bg-card/60 backdrop-blur-xl p-4 flex flex-col justify-between border border-white/[0.08] hover:border-amber-500/40 hover:bg-amber-500/[0.04] transition-all duration-300 shadow-lg shadow-black/20 overflow-hidden">
       {/* Subtle hover gradient glow */}
-      <div className="absolute -top-10 -right-10 size-24 bg-brand-purple/10 rounded-full blur-xl group-hover:bg-brand-purple/20 transition-all pointer-events-none" />
+      <div className="absolute -top-10 -right-10 size-24 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all pointer-events-none" />
 
       <div>
         {/* City header with Flag & Live Time */}
@@ -68,15 +68,15 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
           </div>
 
           {time && (
-            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-white/[0.06] border border-white/[0.08] text-[10px] text-brand-purple-light font-mono shrink-0">
-              <Clock size={9} className="text-brand-cyan" />
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-white/[0.06] border border-white/[0.08] text-[10px] text-amber-400 font-mono shrink-0">
+              <Clock size={9} className="text-amber-400" />
               <span>{time}</span>
             </div>
           )}
         </div>
 
         {/* Studio Role */}
-        <p className="text-[11px] font-semibold text-brand-purple-mid mb-1.5 leading-snug">
+        <p className="text-[11px] font-semibold text-amber-400/90 mb-1.5 leading-snug">
           {hub.key ? t(`footer.hubs.${hub.key}.role`) : hub.role}
         </p>
 
@@ -89,7 +89,7 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
             className="text-[11px] text-text-secondary hover:text-white transition-colors leading-relaxed block group/link"
           >
             <span className="flex items-start gap-1">
-              <MapPin size={11} className="shrink-0 text-brand-gold mt-0.5" />
+              <MapPin size={11} className="shrink-0 text-amber-400 mt-0.5" />
               <span className="underline-offset-2 group-hover/link:underline">
                 {hub.key ? t(`footer.hubs.${hub.key}.address`) : hub.address}
               </span>
@@ -97,7 +97,7 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
           </a>
         ) : (
           <p className="text-[11px] text-text-secondary leading-relaxed flex items-start gap-1">
-            <MapPin size={11} className="shrink-0 text-brand-gold mt-0.5" />
+            <MapPin size={11} className="shrink-0 text-amber-400 mt-0.5" />
             <span>{hub.key ? t(`footer.hubs.${hub.key}.address`) : hub.address}</span>
           </p>
         )}
@@ -107,11 +107,11 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
       <div className="mt-3 pt-2.5 border-t border-white/[0.06] flex items-center justify-between text-[10px]">
         <a
           href={`tel:${hub.phone}`}
-          className="inline-flex items-center gap-1.5 text-text-muted hover:text-brand-teal-light transition-colors font-medium py-1 shrink-0 font-latin"
+          className="inline-flex items-center gap-1.5 text-text-muted hover:text-amber-400 transition-colors font-medium py-1 shrink-0 font-latin"
           dir="ltr"
           style={{ direction: "ltr", unicodeBidi: "isolate" }}
         >
-          <Phone size={11} className="text-brand-cyan shrink-0" />
+          <Phone size={11} className="text-amber-400 shrink-0" />
           <span className="font-mono text-[10.5px] whitespace-nowrap">{hub.phone}</span>
         </a>
 
@@ -121,7 +121,7 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             title={t("footer.map")}
-            className="inline-flex items-center gap-1 text-text-muted hover:text-brand-cyan transition-colors py-1 px-1 shrink-0"
+            className="inline-flex items-center gap-1 text-text-muted hover:text-amber-400 transition-colors py-1 px-1 shrink-0"
           >
             <span>{t("footer.map")}</span>
             <ExternalLink size={10} className="rtl:scale-x-[-1] shrink-0" />

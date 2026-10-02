@@ -65,9 +65,9 @@ export default async function ProjectsPage() {
         <ProjectsExplorer initialProjects={initialProjects} />
 
         <FadeUp delay={0.2}>
-          <div className="mt-16 rounded-3xl border border-brand-purple/30 bg-white/[0.03] backdrop-blur-xl p-8 sm:p-12 text-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-brand-purple/10 via-transparent to-brand-cyan/10 pointer-events-none" />
-            <Award className="mx-auto text-brand-purple-light mb-4" size={40} />
+          <div className="mt-16 rounded-3xl border border-white/10 bg-[#0c0b10] backdrop-blur-xl p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl">
+            <div className="absolute inset-0 bg-amber-500/5 pointer-events-none" />
+            <Award className="mx-auto text-amber-400 mb-4" size={40} />
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 font-display">
               Have a Big Production in Mind?
             </h2>
@@ -76,7 +76,7 @@ export default async function ProjectsPage() {
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-white bg-gradient-to-r from-brand-purple to-brand-purple-light text-sm shadow-lg shadow-brand-purple/20 hover:opacity-90 transition-opacity cursor-pointer"
+              className="btn-brand font-bold text-sm px-8 py-3.5 rounded-full inline-flex items-center gap-2 cursor-pointer"
             >
               Discuss Your Project
             </Link>

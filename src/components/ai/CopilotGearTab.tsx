@@ -47,7 +47,7 @@ export function CopilotGearTab() {
                 aria-pressed={isSelected}
                 className={`p-3 rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-between min-h-[44px] text-left w-full ${
                   isSelected
-                    ? "bg-brand-purple/15 border-brand-purple/50 text-white"
+                    ? "bg-amber-500/15 border-amber-500/50 text-white"
                     : "bg-white/[0.02] border-white/5 text-text-secondary hover:border-white/20"
                 }`}
               >
@@ -60,7 +60,7 @@ export function CopilotGearTab() {
                 <div
                   className={`size-5 rounded-md border flex items-center justify-center shrink-0 ${
                     isSelected
-                      ? "bg-brand-purple border-brand-purple text-white"
+                      ? "bg-amber-500 border-amber-500 text-zinc-950 font-bold"
                       : "border-white/20"
                   }`}
                 >
@@ -77,7 +77,7 @@ export function CopilotGearTab() {
         <div className="space-y-4">
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <h5 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <Cpu size={14} className="text-brand-cyan" />
+              <Cpu size={14} className="text-amber-400" />
               <span>Optical & Power Compatibility Analysis</span>
             </h5>
             {compatibilityReport.isCompatible ? (
@@ -110,7 +110,7 @@ export function CopilotGearTab() {
 
           {compatibilityReport.suggestions.length > 0 && (
             <div className="space-y-2">
-              <div className="text-[11px] font-bold text-brand-cyan uppercase tracking-wider">
+              <div className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
                 Recommended Companion Items:
               </div>
               {compatibilityReport.suggestions.map((s, idx) => (
@@ -125,7 +125,7 @@ export function CopilotGearTab() {
                   <button
                     type="button"
                     onClick={() => toggleGearItem(s.item.id)}
-                    className="px-2.5 py-1 rounded-lg bg-brand-purple/20 hover:bg-brand-purple/40 text-brand-purple-light border border-brand-purple/30 text-[11px] font-semibold transition-all shrink-0 min-h-[36px] cursor-pointer"
+                    className="px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-[11px] font-semibold transition-all shrink-0 min-h-[36px] cursor-pointer"
                   >
                     + Add to Rig
                   </button>

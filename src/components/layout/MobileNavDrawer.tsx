@@ -4,7 +4,7 @@ import { useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Sparkles, MapPin, X } from "lucide-react";
+import { ArrowRight, MapPin, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -137,18 +137,22 @@ export function MobileNavDrawer({
             role="dialog"
             aria-modal="true"
             aria-label="Navigation Menu"
-            initial={{ opacity: 0, x: isArabic ? "-100%" : "100%" }}
+            initial={{ opacity: 0, x: "100%" }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: isArabic ? "-100%" : "100%" }}
+            exit={{ opacity: 0, x: "100%" }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:hidden fixed inset-y-0 end-0 w-[85vw] max-w-xs bg-secondary/98 backdrop-blur-2xl border-s border-brand-purple/20 z-[75] flex flex-col justify-between p-5 sm:p-7 overflow-y-auto shadow-2xl shadow-brand-purple/30"
+            dir="ltr"
+            style={{ direction: "ltr" }}
+            className="lg:hidden fixed inset-y-0 right-0 w-[85vw] max-w-xs bg-[#0b0a0f] backdrop-blur-2xl border-l border-white/10 z-[75] flex flex-col justify-between p-5 sm:p-7 overflow-y-auto shadow-2xl shadow-black/80"
           >
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between mb-4 px-1 pb-3 border-b border-white/10">
-                <div dir="ltr" style={{ direction: "ltr" }} className="flex items-center gap-1 font-latin">
-                  <YasproEmblem size={18} idPrefix="drawer-logo" className="filter drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]" />
+                <div dir="ltr" style={{ direction: "ltr" }} className="flex items-center gap-2 font-latin">
+                  <div className="size-7 rounded-xl border border-white/20 bg-white/[0.08] flex items-center justify-center p-0.5 shadow-sm">
+                    <YasproEmblem size={18} idPrefix="drawer-logo" />
+                  </div>
                   <span className="font-extrabold text-sm tracking-tight text-white font-display">
-                    YAS<span className="text-brand-purple-light">PRO</span>
+                    YAS<span className="text-amber-400">PRO</span>
                   </span>
                 </div>
                 <button
@@ -156,13 +160,13 @@ export function MobileNavDrawer({
                   type="button"
                   onClick={onClose}
                   aria-label="Close menu"
-                  className="p-1.5 rounded-lg text-text-muted hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+                  className="p-1.5 rounded-lg text-text-muted hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40"
                 >
                   <X size={18} />
                 </button>
               </div>
 
-              <p className="px-4 text-[10px] uppercase tracking-widest text-text-ghost font-mono mb-1 text-start">
+              <p className="px-4 text-[10px] uppercase tracking-widest text-text-ghost font-mono mb-1 text-left">
                 {isArabic ? "التنقل" : "Navigate"}
               </p>
 
@@ -180,7 +184,7 @@ export function MobileNavDrawer({
                     className={cn(
                       "flex items-center justify-between px-4 py-3.5 rounded-2xl text-sm font-semibold transition-all duration-200",
                       isActive
-                        ? "text-white bg-gradient-brand shadow-lg shadow-brand-purple/30"
+                        ? "text-amber-400 bg-amber-500/10 border border-amber-500/30"
                         : "text-text-secondary hover:text-white hover:bg-white/5"
                     )}
                   >
@@ -189,7 +193,7 @@ export function MobileNavDrawer({
                       size={15}
                       className={cn(
                         "transition-transform rtl:rotate-180",
-                        isActive ? "text-white" : "text-text-ghost"
+                        isActive ? "text-amber-400" : "text-text-ghost"
                       )}
                     />
                   </Link>
@@ -197,25 +201,15 @@ export function MobileNavDrawer({
               })}
             </div>
 
-            <div className="pt-6 border-t border-brand-purple/15 flex flex-col gap-3">
+            <div className="pt-6 border-t border-white/10 flex flex-col gap-3">
               {/* Primary CTA */}
               <Link
                 href="/studio-booking"
                 onClick={onClose}
-                className="relative group w-full flex items-center justify-between px-5 py-3.5 rounded-2xl text-xs font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+                className="w-full btn-brand py-3.5 px-4 rounded-xl flex items-center justify-between text-xs font-bold uppercase tracking-wider"
               >
-                <span className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-teal opacity-60 blur-sm group-hover:opacity-100 transition-all duration-300 pointer-events-none" />
-                <span className="absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-purple via-brand-purple-light/80 to-brand-teal p-[1px] pointer-events-none">
-                  <span className="block size-full rounded-2xl bg-[#090616]" />
-                </span>
-                <span className="absolute inset-[1px] rounded-2xl bg-gradient-to-b from-white/10 via-transparent to-transparent opacity-60 transition-opacity pointer-events-none" />
-                <span className="relative z-10 flex items-center gap-1.5 font-display text-[12px] uppercase tracking-wider">
-                  <Sparkles size={14} className="text-brand-purple-light" />
-                  {t("nav.bookStudio")}
-                </span>
-                <svg viewBox="0 0 16 16" className="relative z-10 size-3.5 text-text-muted rtl:rotate-180" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 12l4-4-4-4" />
-                </svg>
+                <span>{t("nav.bookStudio")}</span>
+                <ArrowRight size={14} className="rtl:rotate-180" />
               </Link>
 
               {/* WhatsApp */}
@@ -265,7 +259,7 @@ export function MobileNavDrawer({
                   <MapPin size={11} className="text-brand-gold" />
                   {isArabic ? "دبي · القاهرة · عَمّان" : "Dubai · Cairo · Amman"}
                 </span>
-                <span className="text-brand-purple-mid font-latin" dir="ltr">400M+ Network</span>
+                <span className="text-amber-400 font-latin" dir="ltr">400M+ Network</span>
               </div>
             </div>
           </motion.div>

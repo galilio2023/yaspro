@@ -20,7 +20,7 @@ export default async function Image() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "60px 70px",
-          backgroundColor: "#03020a",
+          backgroundColor: "#070709",
           position: "relative",
           overflow: "hidden",
         }}
@@ -34,7 +34,7 @@ export default async function Image() {
             width: "550px",
             height: "550px",
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(124, 58, 237, 0.45) 0%, rgba(6, 182, 212, 0.15) 50%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.1) 50%, transparent 70%)",
             display: "flex",
           }}
         />
@@ -46,7 +46,7 @@ export default async function Image() {
             width: "450px",
             height: "450px",
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, rgba(124, 58, 237, 0.1) 60%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, transparent 70%)",
             display: "flex",
           }}
         />
@@ -68,19 +68,19 @@ export default async function Image() {
                 width: "54px",
                 height: "54px",
                 borderRadius: "16px",
-                background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #083344 100%)",
+                background: "linear-gradient(135deg, #18181b 0%, #27272a 100%)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: "1.5px solid rgba(6, 182, 212, 0.4)",
+                border: "1.5px solid rgba(245, 158, 11, 0.4)",
               }}
             >
               <svg width="30" height="30" viewBox="0 0 100 100" fill="none">
-                <circle cx="50" cy="50" r="46" fill="#0f172a" stroke="#38bdf8" strokeWidth="3" />
-                <polygon points="24,24 38,24 50,47 43,53 24,24" fill="#a855f7" />
-                <polygon points="76,24 62,24 50,47 57,53 76,24" fill="#06b6d4" />
-                <polygon points="43,51 57,51 57,78 43,78" fill="#cbd5e1" />
-                <polygon points="43,78 50,84 57,78 50,75" fill="#38bdf8" />
+                <circle cx="50" cy="50" r="46" fill="#18181b" stroke="#f59e0b" strokeWidth="3" />
+                <polygon points="24,24 38,24 50,47 43,53 24,24" fill="#fbbf24" />
+                <polygon points="76,24 62,24 50,47 57,53 76,24" fill="#d97706" />
+                <polygon points="43,51 57,51 57,78 43,78" fill="#e4e4e7" />
+                <polygon points="43,78 50,84 57,78 50,75" fill="#f59e0b" />
               </svg>
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
@@ -100,7 +100,7 @@ export default async function Image() {
                 style={{
                   fontSize: "12px",
                   letterSpacing: "0.2em",
-                  color: "#a78bfa",
+                  color: "#f59e0b",
                   fontWeight: 700,
                   display: "flex",
                 }}
@@ -120,7 +120,7 @@ export default async function Image() {
               borderRadius: "999px",
               backgroundColor: "rgba(255, 255, 255, 0.06)",
               border: "1px solid rgba(255, 255, 255, 0.12)",
-              color: "#c4b5fd",
+              color: "#fbbf24",
               fontSize: "13px",
               fontWeight: 600,
               letterSpacing: "0.04em",
@@ -160,14 +160,14 @@ export default async function Image() {
               flexWrap: "wrap",
             }}
           >
-            <span style={{ display: "flex", marginRight: "14px" }}>Next-Gen Media Production &amp;</span>
+            <span style={{ display: "flex", marginRight: "14px" }}>Cinematic Media Production &amp;</span>
             <span
               style={{
                 display: "flex",
-                color: "#67e8f9",
+                color: "#f59e0b",
               }}
             >
-              AI Soundstage.
+              Soundstages.
             </span>
           </div>
 
@@ -175,7 +175,7 @@ export default async function Image() {
             style={{
               fontSize: "21px",
               lineHeight: 1.45,
-              color: "#beb4db",
+              color: "#a1a1aa",
               fontWeight: 400,
               maxWidth: "840px",
               display: "flex",
@@ -205,9 +205,9 @@ export default async function Image() {
               style={{
                 padding: "8px 16px",
                 borderRadius: "12px",
-                backgroundColor: "rgba(124, 58, 237, 0.12)",
-                border: "1px solid rgba(124, 58, 237, 0.3)",
-                color: "#e0e7ff",
+                backgroundColor: "rgba(245, 158, 11, 0.12)",
+                border: "1px solid rgba(245, 158, 11, 0.3)",
+                color: "#fef3c7",
                 fontSize: "13px",
                 fontWeight: 600,
                 display: "flex",

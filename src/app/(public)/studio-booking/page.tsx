@@ -47,7 +47,7 @@ const STUDIO_BOOKING_SCHEMA = {
 function BookingWizardLoading() {
   return (
     <div className="w-full min-h-[400px] flex flex-col items-center justify-center p-12 text-center border border-white/5 rounded-3xl bg-white/[0.01]">
-      <div className="size-12 rounded-2xl bg-brand-purple/20 border border-brand-purple/30 flex items-center justify-center text-brand-purple-light mb-4 animate-pulse">
+      <div className="size-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-4 animate-pulse">
         <Sparkles size={22} />
       </div>
       <p className="text-sm font-semibold text-white">Initializing Soundstage Engine...</p>
@@ -65,8 +65,8 @@ export default function StudioBookingPage() {
           headingId="booking-title"
           as="h1"
           badge="Professional Studio Space"
-          badgeVariant="default"
-          badgeIcon={<Video size={13} />}
+          badgeVariant="gold"
+          badgeIcon={<Video size={13} className="text-amber-400" />}
           title="Book a"
           gradientText="Studio"
           description="Secure your session in minutes. Fully customizable setups with professional crew, AI-enhanced post-production, and secure Ziina payment."

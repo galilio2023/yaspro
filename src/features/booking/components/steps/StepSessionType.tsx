@@ -16,8 +16,8 @@ export function StepSessionType({ state, update }: WizardStepProps) {
             className={cn(
               "p-5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between",
               isSelected
-                ? "border-brand-purple bg-brand-purple/15 shadow-md shadow-brand-purple/20"
-                : "border-white/10 bg-white/5 hover:border-brand-purple/40 hover:bg-white/[0.08]"
+                ? "border-amber-500 bg-amber-500/15 shadow-md shadow-amber-500/20"
+                : "border-white/10 bg-white/5 hover:border-amber-500/40 hover:bg-white/[0.08]"
             )}
           >
             <div>
@@ -29,7 +29,7 @@ export function StepSessionType({ state, update }: WizardStepProps) {
                 {s.desc}
               </div>
             </div>
-            <div className="mt-4 pt-3 border-t border-white/10 text-[11px] text-brand-purple-light font-medium">
+            <div className="mt-4 pt-3 border-t border-white/10 text-[11px] text-amber-400 font-bold">
               {isSelected ? "Selected ✓" : "Choose type"}
             </div>
           </button>

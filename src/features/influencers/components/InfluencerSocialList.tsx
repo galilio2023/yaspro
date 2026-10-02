@@ -17,7 +17,7 @@ export function InfluencerSocialList({ creator }: InfluencerSocialListProps) {
             href={`https://instagram.com/${creator.instagram}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2.5 min-h-[44px] rounded-xl bg-white/5 hover:bg-brand-purple/20 border border-white/10 text-text-secondary hover:text-white transition-all flex items-center gap-2.5 text-xs font-medium cursor-pointer"
+            className="px-4 py-2.5 min-h-[44px] rounded-xl bg-white/5 hover:bg-amber-500/15 hover:border-amber-500/40 border border-white/10 text-text-secondary hover:text-white transition-all flex items-center gap-2.5 text-xs font-medium cursor-pointer"
           >
             <InstagramIcon size={16} />
             <span>@{creator.instagram}</span>
@@ -39,7 +39,7 @@ export function InfluencerSocialList({ creator }: InfluencerSocialListProps) {
             href={`https://tiktok.com/@${creator.tiktok}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2.5 min-h-[44px] rounded-xl bg-white/5 hover:bg-cyan-500/20 border border-white/10 text-text-secondary hover:text-cyan-400 transition-all flex items-center gap-2.5 text-xs font-medium cursor-pointer"
+            className="px-4 py-2.5 min-h-[44px] rounded-xl bg-white/5 hover:bg-amber-500/10 hover:border-amber-500/30 border border-white/10 text-text-secondary hover:text-amber-300 transition-all flex items-center gap-2.5 text-xs font-medium cursor-pointer"
           >
             <TiktokIcon size={16} />
             <span>@{creator.tiktok}</span>

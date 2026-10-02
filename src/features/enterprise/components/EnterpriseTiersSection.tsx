@@ -20,8 +20,8 @@ export function EnterpriseTiersSection({ onSelectTier }: EnterpriseTiersProps) {
       <Container className="relative z-10 max-w-6xl">
         <SectionHeader
           badge={t("enterprise.tiers.badge")}
-          badgeVariant="purple"
-          badgeIcon={<Sparkles size={13} className="text-brand-purple-light" />}
+          badgeVariant="gold"
+          badgeIcon={<Sparkles size={13} className="text-amber-400" />}
           title={t("enterprise.tiers.title")}
           gradientText={t("enterprise.tiers.gradient")}
           description={t("enterprise.tiers.description")}
@@ -34,12 +34,12 @@ export function EnterpriseTiersSection({ onSelectTier }: EnterpriseTiersProps) {
               key={tier.id}
               className={`rounded-3xl border p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 relative group ${
                 tier.popular
-                  ? "border-brand-purple bg-gradient-to-b from-card via-card to-brand-purple/10 ring-2 ring-brand-purple/40 shadow-2xl shadow-brand-purple/20"
+                  ? "border-amber-500/50 bg-gradient-to-b from-card via-card to-amber-950/20 ring-1 ring-amber-500/30 shadow-2xl shadow-black/40"
                   : "border-white/10 bg-card/60 hover:border-white/20 hover:bg-card/90"
               }`}
             >
               {tier.badge && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-brand-purple to-indigo-600 text-white text-[11px] font-bold px-3.5 py-1 rounded-full uppercase tracking-wider shadow-lg">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-amber-600 text-zinc-950 text-[11px] font-bold px-3.5 py-1 rounded-full uppercase tracking-wider shadow-lg">
                   {tier.badge}
                 </div>
               )}
@@ -47,7 +47,7 @@ export function EnterpriseTiersSection({ onSelectTier }: EnterpriseTiersProps) {
               <div>
                 {/* Header */}
                 <div className="mb-4">
-                  <h3 className="text-xl font-bold text-white mb-1 group-hover:text-brand-purple-lighter transition-colors">
+                  <h3 className="text-xl font-bold text-white mb-1 group-hover:text-amber-300 transition-colors">
                     {isArabic ? tier.arabicName : tier.name}
                   </h3>
                   <div className="text-xs text-text-secondary font-arabic">
@@ -77,7 +77,7 @@ export function EnterpriseTiersSection({ onSelectTier }: EnterpriseTiersProps) {
 
               <div>
                 {/* SLA Tag */}
-                <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-[11px] text-brand-purple-light font-mono mb-4 flex items-center gap-1.5">
+                <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-[11px] text-amber-400 font-mono mb-4 flex items-center gap-1.5">
                   <ShieldCheck size={13} className="shrink-0" />
                   <span>{t("enterprise.tiers.slaPrefix")} {tier.slaGuarantee}</span>
                 </div>
@@ -87,7 +87,7 @@ export function EnterpriseTiersSection({ onSelectTier }: EnterpriseTiersProps) {
                   onClick={() => onSelectTier(tier.name)}
                   className={`w-full py-3 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md ${
                     tier.popular
-                      ? "btn-brand text-white shadow-brand-purple/20 hover:scale-[1.02] active:scale-[0.98]"
+                      ? "btn-brand hover:scale-[1.02] active:scale-[0.98]"
                       : "bg-white/10 hover:bg-white/15 text-white border border-white/15"
                   }`}
                 >

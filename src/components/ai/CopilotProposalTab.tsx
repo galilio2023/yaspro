@@ -77,7 +77,7 @@ export function CopilotProposalTab() {
               value={brief}
               onChange={(e) => setBrief(e.target.value)}
               placeholder="Describe your vision, product, location, or script idea..."
-              className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-3 text-base sm:text-sm text-white placeholder-text-muted focus:outline-none focus:border-brand-purple transition-colors resize-none"
+              className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-3 text-base sm:text-sm text-white placeholder-text-muted focus:outline-none focus:border-amber-500 transition-colors resize-none"
             />
           </div>
 
@@ -108,7 +108,7 @@ export function CopilotProposalTab() {
               <select
                 value={targetMarket}
                 onChange={(e) => setTargetMarket(e.target.value)}
-                className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-purple min-h-[44px] sm:min-h-0"
+                className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-amber-500 min-h-[44px] sm:min-h-0"
               >
                 <option value="GCC / UAE / KSA" className="bg-neutral-900">GCC & Pan-Arab</option>
                 <option value="Saudi Arabia (Riyadh & Jeddah)" className="bg-neutral-900">Saudi Arabia (KSA)</option>
@@ -136,7 +136,7 @@ export function CopilotProposalTab() {
                     setTimelineDays(Math.min(30, Math.max(1, val)));
                   }
                 }}
-                className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-purple min-h-[44px] sm:min-h-0"
+                className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-amber-500 min-h-[44px] sm:min-h-0"
               />
             </div>
           </div>
@@ -151,7 +151,7 @@ export function CopilotProposalTab() {
           <button
             onClick={handleGenerateProposal}
             disabled={isGeneratingProposal}
-            className="w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl font-semibold text-xs text-white bg-gradient-to-r from-brand-purple to-brand-cyan hover:opacity-95 transition-all shadow-lg disabled:opacity-50 cursor-pointer"
+            className="w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl font-bold text-xs btn-brand disabled:opacity-50 cursor-pointer"
           >
             {isGeneratingProposal ? (
               <>
@@ -175,11 +175,11 @@ export function CopilotProposalTab() {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-mono uppercase tracking-wider text-brand-cyan font-bold">
+                    <span className="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold">
                       {proposalResult.creativeTone}
                     </span>
                     {proposalResult.isAiGenerated && (
-                      <span className="px-2 py-0.5 text-[9px] font-mono rounded bg-brand-purple/20 text-brand-purple-light border border-brand-purple/30">
+                      <span className="px-2 py-0.5 text-[9px] font-mono rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">
                         Neural Synthesized
                       </span>
                     )}
@@ -190,7 +190,7 @@ export function CopilotProposalTab() {
                 </div>
                 <div className="text-right shrink-0">
                   <div className="text-[10px] text-text-muted uppercase">Estimated Budget</div>
-                  <div className="text-base font-bold text-brand-gold">
+                  <div className="text-base font-bold text-amber-400">
                     {proposalResult.estimatedTotalAed.toLocaleString()} AED
                   </div>
                 </div>
@@ -199,7 +199,7 @@ export function CopilotProposalTab() {
               {/* Visual Shot List */}
               <div>
                 <h5 className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <Layers size={13} className="text-brand-purple" />
+                  <Layers size={13} className="text-amber-400" />
                   <span>Generated Shot List & Storyboard</span>
                 </h5>
                 <div className="space-y-2">
@@ -210,7 +210,7 @@ export function CopilotProposalTab() {
                     >
                       <div className="flex items-center justify-between text-white font-medium">
                         <span>Shot #{shot.shotNumber}: {shot.cameraAngle}</span>
-                        <span className="text-[10px] font-mono text-brand-cyan">{shot.lightingStyle}</span>
+                        <span className="text-[10px] font-mono text-amber-400">{shot.lightingStyle}</span>
                       </div>
                       <p className="text-[11px] text-text-secondary leading-snug">
                         {shot.description}
@@ -223,7 +223,7 @@ export function CopilotProposalTab() {
               {/* Studio & Gear Matching */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-1">
-                  <div className="flex items-center gap-1.5 text-brand-purple font-semibold">
+                  <div className="flex items-center gap-1.5 text-amber-400 font-semibold">
                     <Building2 size={13} />
                     <span>Recommended Soundstage</span>
                   </div>
@@ -232,7 +232,7 @@ export function CopilotProposalTab() {
                 </div>
 
                 <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 space-y-1">
-                  <div className="flex items-center gap-1.5 text-brand-cyan font-semibold">
+                  <div className="flex items-center gap-1.5 text-amber-400 font-semibold">
                     <Camera size={13} />
                     <span>Matched Gear Manifest</span>
                   </div>
@@ -275,7 +275,7 @@ export function CopilotProposalTab() {
                   return (
                     <Link
                       href={`/studio-booking?studio=${proposalResult.recommendedStudio.id}&gear=${gearPkg}&sessionType=${sessionType}&shootDays=${timelineDays}&aiConfigured=true`}
-                      className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-black bg-white hover:bg-neutral-200 transition-colors shrink-0"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl text-xs font-bold btn-brand text-zinc-950 transition-all shrink-0 hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-amber-500/20"
                     >
                       <span>Lock Stage & Book Package</span>
                       <ArrowRight size={13} className="rtl:rotate-180" />
@@ -286,7 +286,7 @@ export function CopilotProposalTab() {
             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center p-8 space-y-3">
-              <div className="size-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-brand-purple">
+              <div className="size-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-400">
                 <Film size={26} />
               </div>
               <h4 className="text-sm font-semibold text-white">No Blueprint Synthesized Yet</h4>
