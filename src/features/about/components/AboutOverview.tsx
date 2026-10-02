@@ -72,7 +72,7 @@ export function AboutOverview() {
                 <Badge variant="gold" className="px-3.5 py-1 text-xs">
                   {t("about.scaleBadge")}
                 </Badge>
-                <span className="size-2 rounded-full bg-amber-400 animate-pulse" />
+                <span className="size-2 rounded-full bg-amber-400" />
               </div>
 
               <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 font-display tracking-tight">
@@ -156,7 +156,7 @@ export function AboutOverview() {
                     </div>
 
                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono text-emerald-300 bg-emerald-500/10 border border-emerald-500/20">
-                      <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="size-1.5 rounded-full bg-emerald-400" />
                       {isArabic ? hub.arStatus : hub.status}
                     </span>
                   </div>

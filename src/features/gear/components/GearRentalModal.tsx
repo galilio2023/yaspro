@@ -164,7 +164,7 @@ export function GearRentalModal({
           <div>
             <h2 id="gear-modal-title" className="text-lg font-bold text-white font-display">{displayName}</h2>
             <div className="flex items-center gap-2">
-              <span className="size-2 rounded-full bg-amber-400 animate-pulse" />
+              <span className="size-2 rounded-full bg-amber-400" />
               <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
                 {item.categoryLabel} · {isArabic ? "حجز وتأجير فوري" : "Instant Gear Reservation"}
               </span>

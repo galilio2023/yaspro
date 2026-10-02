@@ -81,7 +81,7 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
                 {/* Overlaid Badges */}
                 <div className="absolute top-4 left-4 flex flex-wrap gap-2 pointer-events-none">
                   <div className="bg-black/85 backdrop-blur-md px-3 py-1.5 rounded-full border border-amber-500/40 text-xs font-mono text-amber-400 flex items-center gap-1.5">
-                    <span className="size-2 rounded-full bg-amber-400 animate-ping" />
+                    <span className="size-2 rounded-full bg-amber-400" />
                     <span className="font-bold">UNIT 01: STANDBY / DUBAI IRIS BAY</span>
                   </div>
                 </div>

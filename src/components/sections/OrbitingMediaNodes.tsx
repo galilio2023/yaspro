@@ -67,7 +67,7 @@ export function OrbitingMediaNodes() {
       {/* Top HUD Telemetry Banner */}
       <div className="absolute top-3 sm:top-4 inset-x-4 sm:inset-x-6 flex items-center justify-between pointer-events-none z-30 text-[9px] sm:text-[11px] font-mono uppercase tracking-wider text-text-muted border-b border-white/5 pb-2">
         <div className="flex items-center gap-2">
-          <span className="size-2 rounded-full bg-amber-400 animate-ping" />
+          <span className="size-2 rounded-full bg-amber-400" />
           <span className="text-white/80 font-bold">YAS BROADCAST TELEMETRY v4.2</span>
         </div>
         <div className="flex items-center gap-2">

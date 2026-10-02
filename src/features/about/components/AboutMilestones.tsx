@@ -50,6 +50,7 @@ export function AboutMilestones() {
         badgeVariant="default"
         badgeIcon={<Milestone size={13} />}
         title={t("about.heritageTitle")}
+        gradientText={t("about.heritageGradient")}
         description={t("about.heritageDesc")}
       />
 

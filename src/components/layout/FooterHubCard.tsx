@@ -76,7 +76,7 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
         </div>
 
         {/* Studio Role */}
-        <p className="text-[11px] font-semibold text-amber-400/90 mb-1.5 leading-snug">
+        <p className="text-[11px] font-semibold text-amber-400/90 mb-1.5 leading-snug rtl:font-arabic rtl:leading-normal">
           {hub.key ? t(`footer.hubs.${hub.key}.role`) : hub.role}
         </p>
 
@@ -86,7 +86,7 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
             href={hub.mapUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[11px] text-text-secondary hover:text-white transition-colors leading-relaxed block group/link"
+            className="text-[11px] text-text-secondary hover:text-white transition-colors leading-relaxed rtl:font-arabic rtl:leading-normal block group/link"
           >
             <span className="flex items-start gap-1">
               <MapPin size={11} className="shrink-0 text-amber-400 mt-0.5" />
@@ -96,7 +96,7 @@ export function FooterHubCard({ hub }: FooterHubCardProps) {
             </span>
           </a>
         ) : (
-          <p className="text-[11px] text-text-secondary leading-relaxed flex items-start gap-1">
+          <p className="text-[11px] text-text-secondary leading-relaxed rtl:font-arabic rtl:leading-normal flex items-start gap-1">
             <MapPin size={11} className="shrink-0 text-amber-400 mt-0.5" />
             <span>{hub.key ? t(`footer.hubs.${hub.key}.address`) : hub.address}</span>
           </p>

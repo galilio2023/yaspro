@@ -83,18 +83,30 @@ export function LanguageProvider({
 
   // Reconcile and synchronize client storage & cookies on hydration and language changes
   useEffect(() => {
-    if (!routeLang) {
-      try {
-        const saved = localStorage.getItem("yaspro_lang") as Language;
-        if ((saved === "ar" || saved === "en") && saved !== userLang) {
-          queueMicrotask(() => {
-            setUserLang(saved);
-            syncLocaleStorage(saved);
-          });
+    // If there is an explicit route-level locale (/en or /ar), always trust it.
+    // Never let a stale localStorage value override an explicit URL or server cookie.
+    if (routeLang) {
+      syncLocaleStorage(routeLang);
+      return;
+    }
+
+    // If no route-level locale, and initialLocale came from the server (cookie),
+    // only read localStorage if it matches the server locale to avoid hydration mismatch.
+    try {
+      const saved = localStorage.getItem("yaspro_lang") as Language;
+      if ((saved === "ar" || saved === "en") && saved !== userLang) {
+        // Only override if the server gave us "en" as a fallback (no cookie set),
+        // indicated by initialLocale being the default. This prevents stale Arabic
+        // from a previous session persisting on a fresh EN page load.
+        const hasCookie = document.cookie.includes("NEXT_LOCALE=");
+        if (!hasCookie) {
+          setUserLang(saved);
+          syncLocaleStorage(saved);
           return;
         }
-      } catch {}
-    }
+      }
+    } catch {}
+
     syncLocaleStorage(language);
   }, [routeLang, userLang, language]);
 

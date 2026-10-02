@@ -13,6 +13,8 @@ import { ProjectItem, ProjectCategory } from "@/features/projects/types";
 import { CinemaVideoModal } from "@/components/common/CinemaVideoModal";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { motion } from "framer-motion";
+import { studioSprings } from "@/lib/studio-motion";
 
 function MarqueeColumn({
   items,
@@ -93,32 +95,6 @@ export function PortfolioSection({ limit = 12 }: PortfolioSectionProps) {
       aria-labelledby="portfolio-title"
       className="bg-background border-t border-white/10 relative overflow-hidden"
     >
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes marquee-up {
-          0% { transform: translateY(0); }
-          100% { transform: translateY(-50%); }
-        }
-        @keyframes marquee-down {
-          0% { transform: translateY(-50%); }
-          100% { transform: translateY(0); }
-        }
-        .animate-marquee-up {
-          animation: marquee-up 85s linear infinite;
-        }
-        .animate-marquee-down {
-          animation: marquee-down 85s linear infinite;
-        }
-        .marquee-grid:hover .animate-marquee-up,
-        .marquee-grid:hover .animate-marquee-down {
-          animation-play-state: paused !important;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .animate-marquee-up, .animate-marquee-down {
-            animation: none !important;
-            transform: translateY(0) !important;
-          }
-        }
-      `}} />
       <Container>
         <SectionHeader
           headingId="portfolio-title"
@@ -131,22 +107,30 @@ export function PortfolioSection({ limit = 12 }: PortfolioSectionProps) {
         />
 
         {/* Category Filter Pills */}
-        <div className="flex items-center justify-start sm:justify-center gap-2 sm:gap-3 mb-8 sm:mb-10 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
-          {PROJECT_CATEGORIES.map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => setActiveCategory(cat.id)}
-              className={cn(
-                "px-4 py-2 min-h-[44px] rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer border whitespace-nowrap flex items-center justify-center",
-                activeCategory === cat.id
-                  ? "bg-amber-500 text-zinc-950 font-bold border-amber-500 shadow-lg shadow-amber-500/25 scale-105"
-                  : "bg-zinc-900/70 text-zinc-400 border-white/10 hover:border-white/25 hover:text-white"
-              )}
-            >
-              {isArabic ? (cat.arabicLabel || cat.label) : cat.label}
-            </button>
-          ))}
+        <div className="flex items-center justify-start sm:justify-center gap-1.5 sm:gap-2 mb-8 sm:mb-10 overflow-x-auto p-1.5 bg-zinc-950/70 rounded-full border border-white/10 backdrop-blur-xl scrollbar-none -mx-4 px-4 sm:mx-auto sm:px-1.5 max-w-fit">
+          {PROJECT_CATEGORIES.map((cat) => {
+            const isActive = activeCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setActiveCategory(cat.id)}
+                className={cn(
+                  "relative px-4 py-2 min-h-[40px] rounded-full text-xs font-bold transition-colors duration-200 cursor-pointer whitespace-nowrap flex items-center justify-center z-10",
+                  isActive ? "text-zinc-950" : "text-zinc-400 hover:text-white"
+                )}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activePortfolioPill"
+                    className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 shadow-lg shadow-amber-500/25 -z-10"
+                    transition={studioSprings.snappy}
+                  />
+                )}
+                <span>{isArabic ? (cat.arabicLabel || cat.label) : cat.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Projects Marquee Grid */}

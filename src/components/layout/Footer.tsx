@@ -143,7 +143,7 @@ export default function Footer() {
 
           {/* Column 2: Production Services */}
           <div className="col-span-1 lg:col-span-2 text-left">
-            <h3 className="text-white font-bold text-xs uppercase tracking-widest font-display mb-4 sm:mb-5">
+            <h3 className="text-white font-bold text-xs uppercase tracking-widest rtl:tracking-normal font-display rtl:font-arabic leading-snug mb-4 sm:mb-5">
               {t("footer.productionHeading")}
             </h3>
             <FooterNavLinks links={PRODUCTION_SERVICES} />
@@ -151,7 +151,7 @@ export default function Footer() {
 
           {/* Column 3: Network & Formats */}
           <div className="col-span-1 lg:col-span-2 text-left">
-            <h3 className="text-white font-bold text-xs uppercase tracking-widest font-display mb-4 sm:mb-5">
+            <h3 className="text-white font-bold text-xs uppercase tracking-widest rtl:tracking-normal font-display rtl:font-arabic leading-snug mb-4 sm:mb-5">
               {t("footer.networkHeading")}
             </h3>
             <FooterNavLinks links={NETWORK_LINKS} />
@@ -160,7 +160,7 @@ export default function Footer() {
           {/* Column 4: Regional Hubs */}
           <div className="sm:col-span-2 lg:col-span-4 text-left">
             <div className="flex items-center justify-between mb-4 sm:mb-5">
-              <h3 className="text-white font-bold text-xs uppercase tracking-widest font-display">
+              <h3 className="text-white font-bold text-xs uppercase tracking-widest rtl:tracking-normal font-display rtl:font-arabic leading-snug">
                 {t("footer.studiosHubs")}
               </h3>
               <span className="text-[11px] font-mono text-amber-400">{t("footer.locations")}</span>
@@ -186,7 +186,7 @@ export default function Footer() {
             </Link>
 
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[11px]">
-              <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="size-1.5 rounded-full bg-emerald-400" />
               <span>{t("footer.soundstagesOnline")}</span>
             </span>
           </div>

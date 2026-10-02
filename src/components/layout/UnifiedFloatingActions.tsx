@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { X, ArrowUpRight, Camera, Video, Users, MessageSquare } from "lucide-react";
 import { ProductionCopilotModal } from "@/features/enterprise/components/ai/ProductionCopilotModal";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { motion, AnimatePresence } from "framer-motion";
+import { studioSprings } from "@/lib/studio-motion";
 
 const WHATSAPP_PHONE = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "971554010465";
 
@@ -268,7 +270,7 @@ export function UnifiedFloatingActions() {
                   <div className="size-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
                     <WhatsAppIcon className="size-5" />
                   </div>
-                  <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-emerald-400 ring-2 ring-[#0c0a18] animate-pulse" />
+                  <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-emerald-400 ring-2 ring-[#0c0a18]" />
                 </div>
                 <div className="text-start">
                   <h3 id="unified-concierge-heading" className="text-sm font-bold text-white font-display">
@@ -352,51 +354,74 @@ export function UnifiedFloatingActions() {
         )}
 
         {/* Floating Stack Options Menu (Revealed when clicked) */}
-        {isMenuOpen && (
-          <div
-            role="menu"
-            aria-label="Yas Pro Assistant Options"
-            dir="ltr"
-            style={{ direction: "ltr" }}
-            className="absolute bottom-16 right-0 mb-2 flex flex-col items-end gap-3 animate-fade-up"
-          >
-            {/* Option 1: AI Production Copilot SVG Button */}
-            <div className="flex items-center gap-2.5 group/ai">
-              <span className="text-[11px] sm:text-xs font-semibold text-white/90 bg-[#0d0b12]/90 backdrop-blur-xl border border-amber-500/30 px-3 py-1.5 rounded-full shadow-lg shadow-black/50 pointer-events-none select-none transition-transform group-hover/ai:scale-105 whitespace-nowrap">
-                {t("concierge.aiCopilot")}
-              </span>
-              <button
-                type="button"
-                onClick={handleSelectAi}
-                className="relative size-12 sm:size-13 rounded-2xl bg-amber-500/20 border border-amber-500/40 p-[1.5px] shadow-xl shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-                aria-label={t("concierge.aiCopilot")}
-                title={t("concierge.aiCopilot")}
+        {/* Action Menu (AI Copilot & WhatsApp Options) */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 15, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              transition={studioSprings.snappy}
+              role="menu"
+              aria-label="Yas Pro Assistant Options"
+              dir="ltr"
+              style={{ direction: "ltr" }}
+              className="absolute bottom-16 right-0 mb-2 flex flex-col items-end gap-3"
+            >
+              {/* Option 1: AI Production Copilot SVG Button */}
+              <motion.div
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ ...studioSprings.snappy, delay: 0.04 }}
+                className="flex items-center gap-2.5 group/ai"
               >
-                <div className="size-full bg-[#0d0b12] rounded-[14px] flex items-center justify-center text-amber-400">
-                  <AiCopilotIcon className="size-6" />
-                </div>
-              </button>
-            </div>
+                <span className="text-[11px] sm:text-xs font-semibold text-white/90 bg-[#0d0b12]/90 backdrop-blur-xl border border-amber-500/30 px-3 py-1.5 rounded-full shadow-lg shadow-black/50 pointer-events-none select-none transition-transform group-hover/ai:scale-105 whitespace-nowrap">
+                  {t("concierge.aiCopilot")}
+                </span>
+                <motion.button
+                  type="button"
+                  onClick={handleSelectAi}
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.92 }}
+                  transition={studioSprings.tactile}
+                  className="relative size-12 sm:size-13 rounded-2xl bg-amber-500/20 border border-amber-500/40 p-[1.5px] shadow-xl shadow-amber-500/20 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                  aria-label={t("concierge.aiCopilot")}
+                  title={t("concierge.aiCopilot")}
+                >
+                  <div className="size-full bg-[#0d0b12] rounded-[14px] flex items-center justify-center text-amber-400">
+                    <AiCopilotIcon className="size-6" />
+                  </div>
+                </motion.button>
+              </motion.div>
 
-            {/* Option 2: WhatsApp Concierge SVG Button */}
-            <div className="flex items-center gap-2.5 group/wa">
-              <span className="text-[11px] sm:text-xs font-semibold text-white/90 bg-[#0d0b12]/90 backdrop-blur-xl border border-emerald-500/40 px-3 py-1.5 rounded-full shadow-lg shadow-black/50 pointer-events-none select-none transition-transform group-hover/wa:scale-105 whitespace-nowrap">
-                {t("concierge.whatsApp")}
-              </span>
-              <button
-                type="button"
-                onClick={handleSelectWhatsApp}
-                className="relative size-12 sm:size-13 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 p-[1.5px] shadow-xl shadow-emerald-600/30 hover:shadow-emerald-600/50 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-                aria-label={t("concierge.whatsApp")}
-                title={t("concierge.whatsApp")}
+              {/* Option 2: WhatsApp Concierge SVG Button */}
+              <motion.div
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ ...studioSprings.snappy, delay: 0.08 }}
+                className="flex items-center gap-2.5 group/wa"
               >
-                <div className="size-full bg-[#0a1811] rounded-[14px] flex items-center justify-center text-emerald-400">
-                  <WhatsAppIcon className="size-6" />
-                </div>
-              </button>
-            </div>
-          </div>
-        )}
+                <span className="text-[11px] sm:text-xs font-semibold text-white/90 bg-[#0d0b12]/90 backdrop-blur-xl border border-emerald-500/40 px-3 py-1.5 rounded-full shadow-lg shadow-black/50 pointer-events-none select-none transition-transform group-hover/wa:scale-105 whitespace-nowrap">
+                  {t("concierge.whatsApp")}
+                </span>
+                <motion.button
+                  type="button"
+                  onClick={handleSelectWhatsApp}
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.92 }}
+                  transition={studioSprings.tactile}
+                  className="relative size-12 sm:size-13 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 p-[1.5px] shadow-xl shadow-emerald-600/30 hover:shadow-emerald-600/50 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                  aria-label={t("concierge.whatsApp")}
+                  title={t("concierge.whatsApp")}
+                >
+                  <div className="size-full bg-[#0a1811] rounded-[14px] flex items-center justify-center text-emerald-400">
+                    <WhatsAppIcon className="size-6" />
+                  </div>
+                </motion.button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Master Floating Trigger Button: Housing the Combined Dual SVG */}
         <div className="relative group">
@@ -407,12 +432,15 @@ export function UnifiedFloatingActions() {
             }`}
           />
 
-          {/* Trigger Button */}
-          <button
+          {/* Trigger Button with Tactile Physics */}
+          <motion.button
             ref={triggerRef}
             type="button"
             onClick={handleToggleMenu}
-            className={`relative size-13 sm:size-14 rounded-full bg-[#0b0a0f] border border-amber-500/40 p-[2px] shadow-2xl shadow-black/80 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50`}
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.94 }}
+            transition={studioSprings.snappy}
+            className={`relative size-13 sm:size-14 rounded-full bg-[#0b0a0f] border border-amber-500/40 p-[2px] shadow-2xl shadow-black/80 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50`}
             aria-label={isMenuOpen ? "Close Assistant Options" : "Open Yas Pro Assistant (AI & WhatsApp)"}
             aria-expanded={isMenuOpen}
           >
@@ -423,7 +451,7 @@ export function UnifiedFloatingActions() {
                 <UnifiedDualIcon className="size-8 transition-transform duration-300 group-hover:scale-110" />
               )}
             </div>
-          </button>
+          </motion.button>
         </div>
       </aside>
 

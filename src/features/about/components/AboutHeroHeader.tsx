@@ -13,7 +13,7 @@ export function AboutHeroHeader() {
       {/* Top Accreditation & Government Trust Pill */}
       <FadeUp delay={0.05}>
         <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full border border-white/12 bg-zinc-900/80 backdrop-blur-xl shadow-lg shadow-black/40 text-[11px] sm:text-xs font-semibold text-zinc-300 mb-6">
-          <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="size-2 rounded-full bg-emerald-400" />
           <span className="text-white font-medium">
             {isArabic ? "مرخّص ومعتمد رسمياً منذ 2015" : "Licensed & Accredited in Dubai Since 2015"}
           </span>
@@ -28,10 +28,10 @@ export function AboutHeroHeader() {
       <FadeUp delay={0.1}>
         <h1
           id="about-title"
-          className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.12] rtl:leading-[1.28] font-display mb-6 text-balance"
+          className="page-hero-title mb-6 text-balance"
         >
           {t("about.title")}{" "}
-          <span className="text-amber-400 font-serif italic font-normal">
+          <span className="gradient-text-gold font-serif italic font-normal">
             {t("about.titleGradient")}
           </span>
         </h1>

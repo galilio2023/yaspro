@@ -12,6 +12,7 @@ interface FadeUpProps {
   delay?: number;
   className?: string;
   as?: ElementType;
+  dir?: "ltr" | "rtl" | "auto";
 }
 
 export function FadeUp({
@@ -19,6 +20,7 @@ export function FadeUp({
   delay = 0,
   className,
   as: Tag = "div",
+  dir,
 }: FadeUpProps) {
   const ref = useRef<HTMLElement>(null);
 
@@ -61,7 +63,7 @@ export function FadeUp({
 
   return (
     // @ts-expect-error dynamic polymorphic JSX tag
-    <Tag ref={ref} className={cn("w-full", className)}>
+    <Tag ref={ref} dir={dir} className={cn("w-full", className)}>
       {children}
     </Tag>
   );

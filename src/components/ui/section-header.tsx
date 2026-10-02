@@ -55,10 +55,11 @@ export function SectionHeader({
           {badge && (
             <Badge
               variant={badgeVariant}
-              className="px-3 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest gap-1.5 max-w-full"
+              /* tracking-widest breaks Arabic cursive — override to normal in RTL */
+              className="px-3 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest rtl:tracking-normal gap-1.5 max-w-full"
             >
               {badgeIcon}
-              <span>{badge}</span>
+              <span className="font-latin rtl:font-arabic">{badge}</span>
             </Badge>
           )}
 
@@ -70,11 +71,11 @@ export function SectionHeader({
         {/* Heading */}
         <HeadingTag
           id={headingId}
-          className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-text-primary tracking-tight font-display leading-[1.12] rtl:leading-[1.3] mb-4 sm:mb-5 text-balance"
+          className="text-3xl sm:text-4xl lg:text-5xl xl:text-[3.5rem] font-black text-white tracking-tight font-display leading-[1.1] rtl:leading-[1.35] mb-4 sm:mb-5 text-balance"
         >
           {title}{" "}
           {gradientText && (
-            <span className="gradient-text">
+            <span className="gradient-text-gold">
               {gradientText}
             </span>
           )}{" "}
@@ -85,7 +86,7 @@ export function SectionHeader({
         {description && (
           <p
             className={cn(
-              "text-sm sm:text-base md:text-lg text-text-secondary leading-relaxed max-w-full sm:max-w-2xl",
+              "text-sm sm:text-base md:text-[1.05rem] text-zinc-400 leading-[1.75] max-w-full sm:max-w-2xl rtl:leading-[1.9]",
               isCenter && "mx-auto"
             )}
           >

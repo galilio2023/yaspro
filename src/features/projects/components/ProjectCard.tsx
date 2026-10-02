@@ -6,6 +6,8 @@ import { Play, Tv, Eye, Film, ArrowUpRight } from "lucide-react";
 import { ProjectItem } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { motion } from "framer-motion";
+import { studioSprings } from "@/lib/studio-motion";
 
 export function ProjectCard({
   project,
@@ -28,7 +30,11 @@ export function ProjectCard({
   };
 
   return (
-    <article className="relative group/card flex flex-col justify-between h-full rounded-3xl border border-white/8 bg-zinc-900/90 hover:border-white/20 hover:bg-zinc-900 hover:shadow-2xl hover:shadow-black/70 transition-all duration-300 overflow-hidden shadow-xl shadow-black/40">
+    <motion.article
+      whileHover={{ y: -4 }}
+      transition={studioSprings.cinematic}
+      className="relative group/card flex flex-col justify-between h-full rounded-3xl border border-white/8 bg-zinc-900/90 hover:border-amber-500/30 hover:bg-zinc-900 hover:shadow-2xl hover:shadow-black/70 transition-colors duration-300 overflow-hidden shadow-xl shadow-black/40"
+    >
       {/* Thumbnail Stage */}
       <div className="w-full">
         <div
@@ -45,7 +51,7 @@ export function ProjectCard({
               priority={priority}
               loading={priority ? "eager" : "lazy"}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover transition-transform duration-500 ease-out group-hover/thumb:scale-105"
+              className="object-cover transition-transform duration-700 ease-out group-hover/thumb:scale-108"
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-zinc-950">
@@ -54,7 +60,7 @@ export function ProjectCard({
           )}
 
           {/* Vignette */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/40 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/40 pointer-events-none" />
 
           {/* Top badges */}
           <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10 pointer-events-none">
@@ -68,11 +74,16 @@ export function ProjectCard({
             )}
           </div>
 
-          {/* Play button */}
+          {/* Tactical Spring Play Button */}
           <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-            <div className="size-12 rounded-full bg-black/60 border border-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-xl group-hover/thumb:scale-110 group-hover/thumb:bg-amber-500 group-hover/thumb:text-zinc-950 group-hover/thumb:border-amber-400 transition-all duration-300">
-              <Play size={16} className="fill-current translate-x-0.5 rtl:-translate-x-0.5" />
-            </div>
+            <motion.div
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.94 }}
+              transition={studioSprings.snappy}
+              className="size-13 rounded-full bg-black/60 border border-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-2xl group-hover/thumb:scale-110 group-hover/thumb:bg-amber-500 group-hover/thumb:text-zinc-950 group-hover/thumb:border-amber-400 group-hover/thumb:shadow-[0_0_24px_rgba(245,158,11,0.4)] transition-all duration-300"
+            >
+              <Play size={18} className="fill-current translate-x-0.5 rtl:-translate-x-0.5" />
+            </motion.div>
           </div>
 
           {/* Bottom bar */}
@@ -156,6 +167,6 @@ export function ProjectCard({
           </Link>
         )}
       </div>
-    </article>
+    </motion.article>
   );
 }

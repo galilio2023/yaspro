@@ -20,6 +20,8 @@ import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { ImageCompareSlider } from "@/components/ui/image-compare-slider";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { motion } from "framer-motion";
+import { studioSprings } from "@/lib/studio-motion";
 import {
   VIRTUAL_SCENES,
   type VirtualStudioScene,
@@ -83,9 +85,9 @@ export function VirtualStudioSection() {
             }}
           />
           <div
-            className="absolute bottom-10 right-10 w-[400px] h-[400px] rounded-full pointer-events-none opacity-25"
+            className="absolute bottom-10 right-10 w-[400px] h-[400px] rounded-full pointer-events-none opacity-20"
             style={{
-              background: "radial-gradient(circle, rgba(6,182,212,0.3) 0%, transparent 70%)",
+              background: "radial-gradient(circle, rgba(217,119,6,0.18) 0%, transparent 70%)",
             }}
           />
         </>
@@ -118,12 +120,19 @@ export function VirtualStudioSection() {
                 role="tab"
                 aria-selected={isSelected}
                 onClick={() => setActiveScene(scene)}
-                className={`px-3.5 py-2.5 sm:py-2 rounded-xl border text-xs font-semibold transition-all flex items-center gap-2.5 cursor-pointer shadow-sm shrink-0 whitespace-nowrap min-h-[44px] sm:min-h-0 ${
+                className={`relative px-3.5 py-2.5 sm:py-2 rounded-xl border text-xs font-semibold transition-colors flex items-center gap-2.5 cursor-pointer shrink-0 whitespace-nowrap min-h-[44px] sm:min-h-0 z-10 ${
                   isSelected
-                    ? "border-amber-500/50 bg-zinc-900 text-white shadow-lg shadow-black/60"
+                    ? "border-amber-500/60 text-white shadow-lg shadow-black/60"
                     : "border-white/10 bg-zinc-950/60 text-zinc-400 hover:text-white hover:border-white/20 hover:bg-zinc-900/60"
                 }`}
               >
+                {isSelected && (
+                  <motion.div
+                    layoutId="activeVirtualScenePill"
+                    className="absolute inset-0 rounded-xl bg-zinc-900 shadow-md -z-10"
+                    transition={studioSprings.snappy}
+                  />
+                )}
                 <div className="relative size-6 rounded-md overflow-hidden shrink-0 border border-white/15">
                   <Image
                     src={scene.compositeImage}

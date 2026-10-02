@@ -35,8 +35,8 @@ export default async function EnterprisePortalPage() {
       {/* Status indicators */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Relay Bus", value: "LIVE", color: "text-emerald-400", dot: "bg-emerald-400 animate-pulse" },
-          { label: "SMPTE 2110", value: "SYNCED", color: "text-amber-400", dot: "bg-amber-400 animate-pulse" },
+          { label: "Relay Bus", value: "LIVE", color: "text-emerald-400", dot: "bg-emerald-400" },
+          { label: "SMPTE 2110", value: "SYNCED", color: "text-amber-400", dot: "bg-amber-400" },
           { label: "Vault Status", value: "SECURED", color: "text-amber-400", dot: "bg-amber-400" },
           { label: "SLA Tier", value: "PLATINUM", color: "text-amber-400", dot: "bg-amber-400" },
         ].map((s) => (

@@ -8,6 +8,8 @@ import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import type { InfluencerItem, CreatorDemographics } from "@/features/influencers/types";
 
+import { InfluencersPageHeader } from "@/features/influencers/components/InfluencersPageHeader";
+
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
@@ -42,16 +44,7 @@ export default async function InfluencersPage() {
   return (
     <Section id="influencers-page" aria-labelledby="influencers-title" className="py-12 md:py-20 bg-background">
       <Container>
-        <SectionHeader
-          headingId="influencers-title"
-          as="h1"
-          badge="Creator Production Partner"
-          badgeVariant="default"
-          badgeIcon={<Users size={13} />}
-          title="Where Elite"
-          gradientText="Creators Thrive"
-          description="Trusted by top-tier Arab influencers with over 400M+ combined audience. From podcast spaces to full-scale viral series production."
-        />
+        <InfluencersPageHeader />
 
         <InfluencersExplorer initialInfluencers={initialInfluencers} />
       </Container>

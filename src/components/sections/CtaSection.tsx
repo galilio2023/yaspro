@@ -1,16 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { ArrowRight, Calendar, Video, MapPin } from "lucide-react";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
-// Dynamically import Three.js — SSR-off, zero-placeholder since it's behind the scene
-const RocketAndHexBallCanvas = dynamic(
-  () => import("@/components/3d/RocketAndHexBallCanvas").then((m) => m.RocketAndHexBallCanvas),
-  { ssr: false, loading: () => null }
-);
+import { SoundstageAtmosphere } from "./SoundstageAtmosphere";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 
 interface CtaSectionProps {
   title?: string;
@@ -49,31 +45,27 @@ export function CtaSection({
     <section
       id="cta"
       aria-labelledby="cta-title"
-      className="relative w-full min-h-[480px] sm:min-h-[640px] lg:min-h-[720px] flex items-end justify-center overflow-hidden bg-background py-12 sm:py-16 lg:py-20 film-grain"
+      className="relative w-full min-h-[520px] sm:min-h-[640px] lg:min-h-[720px] flex items-center justify-center overflow-hidden bg-background py-16 sm:py-20 lg:py-28 film-grain"
     >
-      {/* ── Layer 0: Full-bleed 3D Scene ── */}
-      <RocketAndHexBallCanvas className="absolute inset-0 w-full h-full pointer-events-none md:pointer-events-auto" />
-
-      {/* ── Layer 1: Cinematic Vignette (ensures text legibility) ── */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/75 to-transparent" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-background/70" />
+      {/* ── Layer 0: Photorealistic Soundstage Atmosphere (A24 / Sony Cine) ── */}
+      <SoundstageAtmosphere isArabic={isArabic} />
 
       {/* ── Layer 2: Text / CTA Content ── */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 sm:pb-20 md:pb-28 pt-20 sm:pt-36 flex flex-col items-center text-center">
         <FadeUp>
           {/* Live status badge */}
           <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-mono uppercase tracking-wider font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 mb-6 backdrop-blur-md shadow-lg shadow-black/40">
-            <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="size-2 rounded-full bg-emerald-400" />
             <span>{t("cta.liveStatus")}</span>
           </div>
 
           {/* Headline */}
           <h2
             id="cta-title"
-            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-4 sm:mb-6 font-display tracking-tight leading-[1.08] rtl:leading-[1.28] text-balance drop-shadow-[0_2px_24px_rgba(0,0,0,0.9)] text-center"
+            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mb-4 sm:mb-6 font-display rtl:font-arabic tracking-tight rtl:tracking-normal leading-[1.08] rtl:leading-[1.3] text-balance drop-shadow-[0_2px_24px_rgba(0,0,0,0.9)] text-center"
           >
             {displayTitle}{" "}
-            <span className="text-amber-400 font-serif italic font-normal">
+            <span className="gradient-text-gold font-serif italic font-normal">
               {displayGradientText}
             </span>
           </h2>
@@ -98,22 +90,26 @@ export function CtaSection({
 
           {/* Action buttons */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full max-w-xs sm:max-w-none mx-auto">
-            <Link
-              href={primaryCtaHref}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-9 py-3.5 rounded-full font-bold text-sm bg-amber-500 text-zinc-950 hover:bg-amber-400 transition-all duration-200 active:scale-[0.97] shadow-xl shadow-amber-500/25 whitespace-nowrap min-h-[44px]"
-            >
-              <Calendar size={15} />
-              <span>{displayPrimaryText}</span>
-              <ArrowRight size={15} className="rtl:rotate-180 shrink-0 transition-transform" />
-            </Link>
+            <MagneticButton className="w-full sm:w-auto" strength={0.25} radius={90}>
+              <Link
+                href={primaryCtaHref}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-9 py-3.5 rounded-full font-bold text-sm bg-amber-500 text-zinc-950 hover:bg-amber-400 transition-all duration-200 shadow-xl shadow-amber-500/25 whitespace-nowrap min-h-[44px]"
+              >
+                <Calendar size={15} />
+                <span>{displayPrimaryText}</span>
+                <ArrowRight size={15} className="rtl:rotate-180 shrink-0 transition-transform" />
+              </Link>
+            </MagneticButton>
 
-            <Link
-              href={secondaryCtaHref}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-medium text-sm text-zinc-200 border border-white/15 bg-zinc-900/70 hover:bg-zinc-800 hover:border-white/25 transition-all text-center backdrop-blur-md min-h-[44px] whitespace-nowrap active:scale-[0.97]"
-            >
-              <Video size={15} className="text-amber-400" />
-              <span>{displaySecondaryText}</span>
-            </Link>
+            <MagneticButton className="w-full sm:w-auto" strength={0.25} radius={90}>
+              <Link
+                href={secondaryCtaHref}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-medium text-sm text-zinc-200 border border-white/15 bg-zinc-900/70 hover:bg-zinc-800 hover:border-white/25 transition-all text-center backdrop-blur-md min-h-[44px] whitespace-nowrap"
+              >
+                <Video size={15} className="text-amber-400" />
+                <span>{displaySecondaryText}</span>
+              </Link>
+            </MagneticButton>
           </div>
         </FadeUp>
       </div>

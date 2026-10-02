@@ -210,7 +210,7 @@ export function VirtualStageConfigurator() {
         {/* Floating HUD Telemetry */}
         <div className="absolute top-4 left-4 pointer-events-none space-y-1.5 bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10 text-xs font-mono">
           <div className="text-amber-400 font-bold flex items-center gap-1.5">
-            <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="size-2 rounded-full bg-emerald-400" />
             {activePreset.name}
           </div>
           <div className="text-[10px] text-slate-300">

@@ -47,7 +47,7 @@ export function EnterpriseTiersSection({ onSelectTier }: EnterpriseTiersProps) {
               <div>
                 {/* Header */}
                 <div className="mb-4">
-                  <h3 className="text-xl font-bold text-white mb-1 group-hover:text-amber-300 transition-colors">
+                  <h3 className="text-xl font-bold font-display tracking-tight rtl:leading-[1.35] text-white mb-1 group-hover:text-amber-300 transition-colors">
                     {isArabic ? tier.arabicName : tier.name}
                   </h3>
                   <div className="text-xs text-text-secondary font-arabic">

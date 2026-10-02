@@ -30,9 +30,9 @@ export function FooterCtaBanner() {
             <span>{t("footerCta.badge")}</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight font-display mb-3">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight rtl:tracking-normal font-display rtl:font-arabic leading-[1.15] rtl:leading-[1.35] mb-3">
             {t("footerCta.title")}{" "}
-            <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 bg-clip-text text-transparent">
+            <span className="gradient-text-gold">
               {t("footerCta.titleGradient")}
             </span>
           </h2>

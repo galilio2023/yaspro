@@ -231,7 +231,7 @@ export function MobileNavDrawer({
                     onClick={onClose}
                     className="w-full py-2.5 px-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs font-semibold text-center text-emerald-300 flex items-center justify-center gap-2 transition-colors"
                   >
-                    <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="size-2 rounded-full bg-emerald-400" />
                     <span>{session.user.name} ({t("nav.portal")})</span>
                   </Link>
                 ) : (

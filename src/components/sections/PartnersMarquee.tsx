@@ -20,7 +20,7 @@ export function PartnersMarquee() {
       {/* Subtle Production Label */}
       <div className="mb-6 flex items-center justify-center gap-2.5 px-4 text-center">
         <span className="size-1.5 rounded-full bg-amber-500 shrink-0" />
-        <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.18em] sm:tracking-[0.25em] text-zinc-400">
+        <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.18em] rtl:tracking-normal rtl:font-arabic rtl:normal-case text-zinc-400">
           {isArabic
             ? "شريك الإنتاج المعتمد للمؤسسات الحكومية في الإمارات وكبرى العلامات العالمية"
             : "Chosen For UAE Government & Global Brand Productions"}

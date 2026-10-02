@@ -20,7 +20,7 @@ export function EnterpriseHero({ onOpenRfp, onOpenCopilot }: EnterpriseHeroProps
         {/* Top Sovereign Status Bar */}
         <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-3 mb-8 px-1">
           <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-mono font-semibold tracking-wide border border-white/12 bg-zinc-900/80 text-zinc-200 backdrop-blur-md">
-            <span className="size-1.5 sm:size-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            <span className="size-1.5 sm:size-2 rounded-full bg-emerald-400 shrink-0" />
             <span>{t("enterprise.statusDubai")}</span>
           </div>
 
@@ -37,9 +37,9 @@ export function EnterpriseHero({ onOpenRfp, onOpenCopilot }: EnterpriseHeroProps
 
         {/* Main Title & Subtitle */}
         <div className="text-center max-w-4xl mx-auto mb-10">
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1] mb-6 font-display">
+          <h1 className="page-hero-title mb-6">
             {t("enterprise.title1")} <br className="hidden sm:inline" />
-            <span className="text-amber-400 font-serif italic font-normal">
+            <span className="gradient-text-gold font-serif italic font-normal">
               {t("enterprise.titleGradient")}
             </span>
           </h1>

@@ -24,7 +24,7 @@ export function AiEcosystemSection() {
           <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-16">
             <FadeUp>
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono uppercase tracking-wider font-semibold border border-white/12 bg-zinc-900/80 text-zinc-200 mb-5 backdrop-blur-md shadow-lg shadow-black/40">
-                <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="size-2 rounded-full bg-emerald-400" />
                 <span>{t("ai.badge")}</span>
               </div>
 

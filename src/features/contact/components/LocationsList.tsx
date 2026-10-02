@@ -11,7 +11,7 @@ export function LocationsList() {
   return (
     <div className="w-full">
       <FadeUp delay={0.1}>
-        <h2 className="text-white font-bold text-2xl mb-6 font-display">
+        <h2 className="text-white font-black text-2xl sm:text-3xl font-display tracking-tight leading-tight rtl:leading-[1.4] text-balance mb-6">
           {t("contact.studiosTitle")}
         </h2>
       </FadeUp>
@@ -24,7 +24,7 @@ export function LocationsList() {
                 {loc.flag}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-white font-bold font-display text-lg mb-1">
+                <h3 className="text-white font-bold font-display tracking-tight rtl:leading-[1.35] text-lg mb-1">
                   {isArabic && loc.arCountry ? loc.arCountry : loc.country}
                 </h3>
                 <p className="text-text-secondary text-sm flex items-start gap-2 leading-relaxed">

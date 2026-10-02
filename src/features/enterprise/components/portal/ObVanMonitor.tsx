@@ -31,7 +31,7 @@ export function ObVanMonitor({ activeCam }: ObVanMonitorProps) {
       {/* Top Telemetry Overlay */}
       <div className="absolute top-2.5 left-2.5 right-2.5 sm:top-3 sm:left-3 sm:right-3 flex items-center justify-between pointer-events-none gap-2">
         <div className="flex items-center gap-1.5 sm:gap-2 bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-red-500/50 text-[10px] sm:text-xs font-mono text-red-400">
-          <span className="size-1.5 sm:size-2 rounded-full bg-red-500 animate-ping shrink-0" />
+          <span className="size-1.5 sm:size-2 rounded-full bg-red-500 shrink-0" />
           <span className="font-bold">LIVE</span>
           <span className="text-white/40 hidden xs:inline">|</span>
           <span className="text-white/90 truncate max-w-[150px] sm:max-w-none">{activeCam.label}</span>

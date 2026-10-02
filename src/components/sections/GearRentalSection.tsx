@@ -23,6 +23,8 @@ import { GearItem, GearCategory } from "@/features/gear/types";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { GearRentalModal } from "@/features/gear/components/GearRentalModal";
 import { formatCurrency, cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { studioSprings } from "@/lib/studio-motion";
 
 export function GearRentalSection() {
   const { isArabic } = useLanguage();
@@ -76,7 +78,7 @@ export function GearRentalSection() {
           <div
             className="absolute bottom-10 left-1/4 size-[400px] rounded-full pointer-events-none opacity-15"
             style={{
-              background: "radial-gradient(circle, rgba(124,58,237,0.3) 0%, transparent 70%)",
+              background: "radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)",
             }}
           />
         </>
@@ -99,59 +101,46 @@ export function GearRentalSection() {
         />
 
         {/* Pricing Duration Toggle Bar (Immediate Psychological Incentive) */}
-        <FadeUp delay={0.06} className="mt-8 mb-10 flex flex-col sm:flex-row items-center justify-between gap-4 p-3 sm:p-4 rounded-3xl bg-black/40 border border-white/10 backdrop-blur-xl">
+        <FadeUp delay={0.06} className="mt-8 mb-10 flex flex-col sm:flex-row items-center justify-between gap-4 p-3 sm:p-4 rounded-3xl bg-zinc-950/60 border border-white/10 backdrop-blur-xl">
           <div className="flex items-center gap-2.5 px-2">
-            <span className="size-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+            <span className="size-2 rounded-full bg-amber-400 shrink-0" />
             <span className="text-xs font-semibold text-white font-mono uppercase tracking-wider">
               {isArabic ? "اختر مدة التأجير للاستفادة من الخصم:" : "Duration Pricing Tier:"}
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-            <button
-              type="button"
-              onClick={() => setDurationTier(1)}
-              className={cn(
-                "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap cursor-pointer",
-                durationTier === 1
-                  ? "bg-white/15 text-white border border-white/20 shadow-sm"
-                  : "text-text-muted hover:text-white"
-              )}
-            >
-              {isArabic ? "يوم واحد (قياسي)" : "1 Day (Standard)"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setDurationTier(3)}
-              className={cn(
-                "px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5",
-                durationTier === 3
-                  ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm shadow-amber-500/20"
-                  : "text-text-muted hover:text-amber-300"
-              )}
-            >
-              <span>{isArabic ? "عطلة نهاية الأسبوع (3 أيام)" : "3-Day Weekend"}</span>
-              <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-zinc-950 text-[9px] font-black uppercase">
-                -20%
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setDurationTier(7)}
-              className={cn(
-                "px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5",
-                durationTier === 7
-                  ? "bg-amber-400/20 text-amber-300 border border-amber-400/40 shadow-sm shadow-amber-400/20"
-                  : "text-text-muted hover:text-amber-300"
-              )}
-            >
-              <span>{isArabic ? "أسبوعي (7 أيام)" : "Weekly Tier"}</span>
-              <span className="px-1.5 py-0.2 rounded-full bg-amber-400 text-black text-[9px] font-black uppercase">
-                -35%
-              </span>
-            </button>
+          <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto overflow-x-auto p-1 bg-black/40 rounded-full border border-white/8 scrollbar-none">
+            {[
+              { days: 1 as const, label: isArabic ? "يوم واحد (قياسي)" : "1 Day (Standard)", discount: null },
+              { days: 3 as const, label: isArabic ? "عطلة نهاية الأسبوع (3 أيام)" : "3-Day Weekend", discount: "-20%" },
+              { days: 7 as const, label: isArabic ? "أسبوعي (7 أيام)" : "Weekly Tier", discount: "-35%" },
+            ].map((tier) => {
+              const isActive = durationTier === tier.days;
+              return (
+                <button
+                  key={tier.days}
+                  type="button"
+                  onClick={() => setDurationTier(tier.days)}
+                  className="relative px-4 py-1.5 rounded-full text-xs font-bold transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5 z-10"
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeDurationPill"
+                      className="absolute inset-0 rounded-full bg-amber-500/20 border border-amber-500/50 shadow-[0_0_16px_rgba(245,158,11,0.25)] -z-10"
+                      transition={studioSprings.snappy}
+                    />
+                  )}
+                  <span className={isActive ? "text-amber-300" : "text-zinc-400 hover:text-white"}>
+                    {tier.label}
+                  </span>
+                  {tier.discount && (
+                    <span className="px-1.5 py-0.5 rounded-full bg-amber-500 text-zinc-950 text-[9px] font-black uppercase">
+                      {tier.discount}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </FadeUp>
 
@@ -192,7 +181,7 @@ export function GearRentalSection() {
                   {/* Live Status Pill */}
                   <div className="absolute bottom-3.5 start-3.5 z-10 pointer-events-none">
                     <div className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[11px] font-mono text-emerald-400 border border-emerald-500/30 flex items-center gap-2">
-                      <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="size-2 rounded-full bg-emerald-400" />
                       <span>{isArabic ? "جاهز للتسليم الفوري في استوديو دبي" : "In Stock · Calibrated for Set Delivery"}</span>
                     </div>
                   </div>
@@ -258,14 +247,17 @@ export function GearRentalSection() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <button
+                      <motion.button
                         type="button"
                         onClick={() => setSelectedGearItem(spotlightKit)}
-                        className="px-6 py-3 rounded-2xl btn-brand text-xs font-bold transition-all hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-2"
+                        whileHover={{ y: -2, scale: 1.03 }}
+                        whileTap={{ scale: 0.96 }}
+                        transition={studioSprings.snappy}
+                        className="px-6 py-3 rounded-2xl btn-brand text-xs font-bold cursor-pointer flex items-center gap-2"
                       >
                         <Eye size={14} />
                         <span>{isArabic ? "معاينة وحجز الباقة" : "Inspect & Reserve Package"}</span>
-                      </button>
+                      </motion.button>
                     </div>
                   </div>
                 </div>
@@ -301,13 +293,16 @@ export function GearRentalSection() {
 
             return (
               <FadeUp key={item.id} delay={idx * 0.04} className="h-full">
-                <article
+                <motion.article
                   onClick={() => setSelectedGearItem(item)}
-                  className="rounded-3xl border border-white/8 bg-zinc-900/80 hover:bg-zinc-900 hover:border-white/20 backdrop-blur-xl p-4 sm:p-5 flex flex-col justify-between h-full group cursor-pointer transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-black/60 overflow-hidden"
+                  whileHover={{ y: -4, boxShadow: "0 28px 56px -12px rgba(0,0,0,0.75)" }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={studioSprings.cinematic}
+                  className="rounded-3xl border border-white/8 bg-zinc-900/80 hover:bg-zinc-900 hover:border-white/20 backdrop-blur-xl p-4 sm:p-5 flex flex-col justify-between h-full group cursor-pointer shadow-xl overflow-hidden"
                 >
                   <div>
                     {/* Visual */}
-                    <div className="relative w-full aspect-[16/10] mb-4 rounded-2xl overflow-hidden bg-black/60 border border-white/8 group-hover:border-white/20 transition-all duration-300">
+                    <div className="relative w-full aspect-[16/10] mb-4 rounded-2xl overflow-hidden bg-black/60 border border-white/8 group-hover:border-white/20 transition-colors duration-300">
                       {item.image ? (
                         <Image
                           src={item.image}
@@ -380,18 +375,21 @@ export function GearRentalSection() {
                       )}
                     </div>
 
-                    <button
+                    <motion.button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedGearItem(item);
                       }}
-                      className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-amber-500 hover:text-zinc-950 text-white text-xs font-semibold backdrop-blur-md transition-all group-hover:scale-105 active:scale-95 cursor-pointer shadow-md"
+                      whileHover={{ scale: 1.06, backgroundColor: "rgb(245 158 11)", color: "rgb(9 9 11)" }}
+                      whileTap={{ scale: 0.94 }}
+                      transition={studioSprings.snappy}
+                      className="px-3.5 py-1.5 rounded-xl bg-white/10 text-white text-xs font-semibold backdrop-blur-md cursor-pointer shadow-md"
                     >
                       {isArabic ? "حجز" : "Reserve"}
-                    </button>
+                    </motion.button>
                   </div>
-                </article>
+                </motion.article>
               </FadeUp>
             );
           })}

@@ -16,7 +16,7 @@ export interface FooterNavLinksProps {
 }
 
 export function FooterNavLinks({ links }: FooterNavLinksProps) {
-  const { t } = useLanguage();
+  const { t, isArabic } = useLanguage();
 
   return (
     <ul className="space-y-2.5">
@@ -36,7 +36,7 @@ export function FooterNavLinks({ links }: FooterNavLinksProps) {
                     <Icon size={11} />
                   </span>
                 )}
-                <span className="truncate group-hover/item:translate-x-0.5 rtl:group-hover/item:-translate-x-0.5 transition-transform duration-200">
+                <span className="truncate rtl:font-arabic rtl:tracking-normal group-hover/item:translate-x-0.5 rtl:group-hover/item:-translate-x-0.5 transition-transform duration-200">
                   {displayLabel}
                 </span>
               </div>
@@ -44,12 +44,12 @@ export function FooterNavLinks({ links }: FooterNavLinksProps) {
               {link.isExternal ? (
                 <ArrowUpRight
                   size={13}
-                  className="text-text-muted group-hover/item:text-amber-400 group-hover/item:translate-x-0.5 group-hover/item:-translate-y-0.5 rtl:group-hover/item:-translate-x-0.5 rtl:scale-x-[-1] transition-all shrink-0 ms-1.5 opacity-60 group-hover/item:opacity-100"
+                  className="text-text-muted group-hover/item:text-amber-400 group-hover/item:translate-x-0.5 group-hover/item:-translate-y-0.5 transition-all shrink-0 ms-1.5 opacity-60 group-hover/item:opacity-100"
                 />
               ) : (
                 <ChevronRight
                   size={13}
-                  className="text-text-muted group-hover/item:text-amber-400 group-hover/item:translate-x-1 rtl:group-hover/item:-translate-x-1 rtl:rotate-180 transition-all shrink-0 ms-1.5 opacity-40 group-hover/item:opacity-100"
+                  className="text-text-muted group-hover/item:text-amber-400 group-hover/item:translate-x-1 transition-all shrink-0 ms-1.5 opacity-40 group-hover/item:opacity-100"
                 />
               )}
             </Link>

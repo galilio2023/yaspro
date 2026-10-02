@@ -79,7 +79,7 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
         aria-haspopup="true"
         aria-label="User navigation menu"
       >
-        <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+        <span className="size-1.5 rounded-full bg-emerald-400" />
         <span className="max-w-[100px] truncate">{firstName}</span>
         <ChevronDown
           size={11}

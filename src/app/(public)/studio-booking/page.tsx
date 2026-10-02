@@ -7,6 +7,8 @@ import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 
+import { StudioBookingPageHeader } from "@/features/booking/components/StudioBookingPageHeader";
+
 export const metadata: Metadata = {
   title: "Studio Booking",
   description: "Book a professional studio session at Yas Pro. Choose your studio, session type, crew, and post-production services.",
@@ -61,16 +63,7 @@ export default function StudioBookingPage() {
     <Section id="booking-page" aria-labelledby="booking-title" className="py-12 md:py-20 bg-background">
       <JsonLd data={STUDIO_BOOKING_SCHEMA} />
       <Container>
-        <SectionHeader
-          headingId="booking-title"
-          as="h1"
-          badge="Professional Studio Space"
-          badgeVariant="gold"
-          badgeIcon={<Video size={13} className="text-amber-400" />}
-          title="Book a"
-          gradientText="Studio"
-          description="Secure your session in minutes. Fully customizable setups with professional crew, AI-enhanced post-production, and secure Ziina payment."
-        />
+        <StudioBookingPageHeader />
 
         <Suspense fallback={<BookingWizardLoading />}>
           <BookingWizard />

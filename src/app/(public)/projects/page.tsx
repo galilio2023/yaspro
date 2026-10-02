@@ -10,6 +10,8 @@ import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import type { ProjectItem, ProjectCategory } from "@/features/projects/types";
 
+import { ProjectsPageHeader } from "@/features/projects/components/ProjectsPageHeader";
+
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
@@ -51,16 +53,7 @@ export default async function ProjectsPage() {
   return (
     <Section id="projects-page" aria-labelledby="projects-title" className="py-12 md:py-20 bg-background">
       <Container>
-        <SectionHeader
-          headingId="projects-title"
-          as="h1"
-          badge="Portfolio & Masterpieces"
-          badgeVariant="default"
-          badgeIcon={<Film size={13} />}
-          title="Projects That"
-          gradientText="Dominate Screens"
-          description="From official national campaigns to viral series watched by millions across the Middle East. Explore our creative and technical productions."
-        />
+        <ProjectsPageHeader />
 
         <ProjectsExplorer initialProjects={initialProjects} />
 

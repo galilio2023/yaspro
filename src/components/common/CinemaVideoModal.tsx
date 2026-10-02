@@ -235,7 +235,7 @@ export function CinemaVideoModal({
                   className="group relative cursor-pointer flex items-center justify-center size-20 sm:size-24 rounded-full bg-amber-500 text-black shadow-[0_0_50px_rgba(245,158,11,0.35)] hover:bg-amber-400 hover:shadow-[0_0_70px_rgba(245,158,11,0.5)] hover:scale-110 active:scale-95 transition-all duration-300"
                   aria-label="Play video master"
                 >
-                  <div className="absolute inset-0 rounded-full border border-amber-400/50 animate-ping opacity-25" />
+
                   <Play size={32} className="fill-current translate-x-0.5 text-black transition-transform group-hover:scale-110" />
                 </button>
 

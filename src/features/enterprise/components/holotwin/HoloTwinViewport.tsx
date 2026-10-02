@@ -78,7 +78,7 @@ export function HoloTwinViewport({
       {/* Top Left Viewport HUD */}
       <div className="absolute top-3 left-3 sm:top-4 sm:left-4 flex flex-col gap-1 pointer-events-none max-w-[65%] sm:max-w-none">
         <div className="flex items-center gap-1.5 sm:gap-2 bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-amber-500/40 text-[10px] sm:text-xs font-mono text-amber-400">
-          <span className="size-1.5 sm:size-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+          <span className="size-1.5 sm:size-2 rounded-full bg-amber-400 shrink-0" />
           <span className="font-bold">UNREAL 5.4</span>
           <span className="text-white/40 hidden xs:inline">|</span>
           <span className="text-white/90 truncate hidden xs:inline">{selectedTwin.featuredPill}</span>
