@@ -11,6 +11,7 @@ export const bookingSubmissionSchema = z
     sessionType: z.enum([
       "podcast",
       "video_production",
+      "virtual_production",
       "photography",
       "interview",
       "commercial",

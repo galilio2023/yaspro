@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { bookings } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
@@ -95,22 +95,40 @@ export async function markBookingBankTransferPending(
   referenceCode: string
 ): Promise<{ success: boolean; message?: string; error?: string }> {
   try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user?.id) {
+      return { success: false, error: "Unauthorized: Please sign in." };
+    }
     if (!bookingId && !referenceCode) {
       return { success: false, error: "Booking reference is required." };
     }
+    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
+      return { success: false, error: "Booking service is unavailable." };
+    }
 
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-      const updateData = {
-        paymentStatus: "unpaid" as const,
-        paymentReference: `WIRE_PENDING_${Date.now()}`,
-        updatedAt: new Date(),
-      };
+    const isBookingId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(bookingId);
+    const booking = await db.query.bookings.findFirst({
+      where: and(
+        isBookingId
+          ? eq(bookings.id, bookingId)
+          : eq(bookings.referenceCode, referenceCode || bookingId),
+        eq(bookings.userId, session.user.id),
+      ),
+    });
+    if (!booking) {
+      return { success: false, error: "Booking not found." };
+    }
 
-      if (bookingId && bookingId.length > 20) {
-        await db.update(bookings).set(updateData).where(eq(bookings.id, bookingId));
-      } else {
-        await db.update(bookings).set(updateData).where(eq(bookings.referenceCode, referenceCode));
-      }
+    const [updated] = await db.update(bookings).set({
+      paymentReference: `WIRE_PENDING_${Date.now()}`,
+      updatedAt: new Date(),
+    }).where(and(
+      eq(bookings.id, booking.id),
+      eq(bookings.userId, session.user.id),
+      eq(bookings.paymentStatus, "unpaid"),
+    )).returning({ id: bookings.id });
+    if (!updated) {
+      return { success: false, error: "Only unpaid bookings can await bank transfer." };
     }
 
     revalidatePath("/admin/bookings");

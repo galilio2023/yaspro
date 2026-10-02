@@ -8,6 +8,10 @@ import type { WizardStepProps } from "../../types";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { Clock, Sun, Sunset, Moon, Users, AlertCircle, CheckCircle2 } from "lucide-react";
 
+function formatLocalDate(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
 const HEADCOUNT_OPTIONS = [1, 2, 3, 4, 6, "10+"] as const;
 
 interface TimeSlotDefinition {
@@ -109,7 +113,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
                 type="date"
                 value={state.date}
                 onChange={(e) => update({ date: e.target.value })}
-                min={new Date().toISOString().split("T")[0]}
+                min={formatLocalDate(new Date())}
                 className="w-full"
               />
             </div>
@@ -120,7 +124,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
             <button
               type="button"
               onClick={() => {
-                const today = new Date().toISOString().split("T")[0];
+                const today = formatLocalDate(new Date());
                 update({ date: today });
               }}
               className="px-3 py-2 text-xs rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-text-secondary hover:text-white transition-colors cursor-pointer"
@@ -132,7 +136,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
               onClick={() => {
                 const tomorrow = new Date();
                 tomorrow.setDate(tomorrow.getDate() + 1);
-                update({ date: tomorrow.toISOString().split("T")[0] });
+                update({ date: formatLocalDate(tomorrow) });
               }}
               className="px-3 py-2 text-xs rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-text-secondary hover:text-white transition-colors cursor-pointer"
             >
@@ -143,7 +147,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
               onClick={() => {
                 const nextWeek = new Date();
                 nextWeek.setDate(nextWeek.getDate() + 7);
-                update({ date: nextWeek.toISOString().split("T")[0] });
+                update({ date: formatLocalDate(nextWeek) });
               }}
               className="px-3 py-2 text-xs rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-text-secondary hover:text-white transition-colors cursor-pointer"
             >

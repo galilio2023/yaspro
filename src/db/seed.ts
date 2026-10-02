@@ -19,6 +19,12 @@ const sql = neon(process.env.DATABASE_URL);
 const db = drizzle(sql, { schema });
 
 async function seed() {
+  const defaultAdminPassword =
+    process.env.INITIAL_ADMIN_PASSWORD || process.env.ADMIN_SEED_PASSWORD;
+  if (!defaultAdminPassword) {
+    throw new Error("INITIAL_ADMIN_PASSWORD or ADMIN_SEED_PASSWORD must be set to seed accounts.");
+  }
+
   console.log("🌱 Starting Yas Pro comprehensive database seed...");
 
   // 1. Studios
@@ -156,10 +162,6 @@ async function seed() {
     { id: "usr_belal_client", name: "Belal Alaa", email: "eng.belalalaa@gmail.com", role: "client", company: "Independent Creator" },
   ];
 
-  const defaultAdminPassword =
-    process.env.INITIAL_ADMIN_PASSWORD ||
-    process.env.ADMIN_SEED_PASSWORD ||
-    "YasPro@2026!";
   const initialPasswordHash = await hashPassword(defaultAdminPassword);
 
   for (const u of seededUsers) {

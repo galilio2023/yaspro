@@ -54,6 +54,10 @@ test('bookingSubmissionSchema validates correct inputs and rejects malformed fie
     assert.equal(parseResult.data.selectedGearPackage, 'none'); // Default
   }
 
+  assert.equal(bookingSubmissionSchema.safeParse({
+    ...validBooking, sessionType: 'virtual_production',
+  }).success, true);
+
   // Reject missing required name
   const missingName = { ...validBooking, firstName: '' };
   assert.equal(bookingSubmissionSchema.safeParse(missingName).success, false);

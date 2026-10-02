@@ -168,6 +168,7 @@ export function HowToRentGuide() {
               key={s.step}
               type="button"
               onClick={() => setActiveStep(idx)}
+              aria-pressed={isSelected}
               className={cn(
                 "relative text-start p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between cursor-pointer group",
                 isSelected
@@ -287,7 +288,7 @@ export function HowToRentGuide() {
             </p>
             <div className="mt-3 flex items-center gap-4 text-xs font-mono text-text-muted">
               <span>⏰ 09:00 AM – 09:00 PM</span>
-              <span>📍 Business Bay, Dubai</span>
+              <span>📍 {isArabic ? "الخليج التجاري، دبي" : "Business Bay, Dubai"}</span>
             </div>
           </div>
         </div>
@@ -310,8 +311,8 @@ export function HowToRentGuide() {
                 : "Air-conditioned dispatch transport in heavy-duty Pelican air flight cases directly to Dubai Studio City, twofour54 Abu Dhabi, or desert sets."}
             </p>
             <div className="mt-3 flex items-center gap-4 text-xs font-mono text-text-muted">
-              <span>⚡ Same-Day Rush Available</span>
-              <span>🛡️ Fully Insured Transport</span>
+              <span>⚡ {isArabic ? "توصيل عاجل في نفس اليوم" : "Same-Day Rush Available"}</span>
+              <span>🛡️ {isArabic ? "نقل مؤمّن بالكامل" : "Fully Insured Transport"}</span>
             </div>
           </div>
         </div>
@@ -337,6 +338,7 @@ export function HowToRentGuide() {
                 <button
                   type="button"
                   onClick={() => setOpenFaq(isOpen ? null : idx)}
+                  aria-expanded={isOpen}
                   className="w-full p-4 text-start flex items-center justify-between gap-4 cursor-pointer hover:bg-white/[0.02]"
                 >
                   <span className="text-sm font-semibold text-white">{faq.q}</span>

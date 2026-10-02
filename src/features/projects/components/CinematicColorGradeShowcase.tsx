@@ -215,7 +215,7 @@ export function CinematicColorGradeShowcase() {
           }
         }}
         onTouchEnd={handlePointerUp}
-        className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-2xl overflow-hidden select-none cursor-ew-resize border border-white/15 shadow-2xl group bg-black @container"
+        className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-2xl overflow-hidden select-none touch-none cursor-ew-resize border border-white/15 shadow-2xl group bg-black @container"
       >
         {/* AFTER IMAGE (Underneath, Full Grade) */}
         <div className="absolute inset-0">

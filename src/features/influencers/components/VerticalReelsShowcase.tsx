@@ -96,7 +96,6 @@ export function VerticalReelsShowcase() {
 
     if (activeReelId === id && !video.paused) {
       video.pause();
-      setActiveReelId(null);
     } else {
       // Pause any currently playing video
       if (activeReelId && videoRefs.current[activeReelId]) {
@@ -105,11 +104,9 @@ export function VerticalReelsShowcase() {
       setPlaybackError(null);
       try {
         await video.play();
-        setActiveReelId(id);
       } catch (err) {
         console.error("Video playback failed for reel", id, err);
         setPlaybackError(id);
-        setActiveReelId(null);
       }
     }
   };
@@ -183,10 +180,10 @@ export function VerticalReelsShowcase() {
                   preload="metadata"
                   onPlay={() => setActiveReelId(reel.id)}
                   onPause={() => {
-                    if (activeReelId === reel.id) setActiveReelId(null);
+                    setActiveReelId((current) => current === reel.id ? null : current);
                   }}
                   onEnded={() => {
-                    if (activeReelId === reel.id) setActiveReelId(null);
+                    setActiveReelId((current) => current === reel.id ? null : current);
                   }}
                   className={cn(
                     "size-full group-hover:scale-105 transition-transform duration-500",
