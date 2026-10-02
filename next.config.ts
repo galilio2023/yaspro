@@ -15,8 +15,9 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ["image/avif", "image/webp"],
-    minimumCacheTTL: 86400,
+    minimumCacheTTL: 2592000,
     remotePatterns: [
+      { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
       { protocol: "https", hostname: "yasproductions.com" },
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "i.vimeocdn.com" },

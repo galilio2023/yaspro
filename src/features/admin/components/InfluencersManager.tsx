@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Users, Plus, Edit3, Save, X, CheckCircle, ExternalLink, ShieldCheck } from "lucide-react";
 import { upsertCmsInfluencer } from "@/lib/actions/influencers";
 import type { Influencer } from "@/db/schema";
+import { AdminImageUploader } from "@/components/admin/AdminImageUploader";
 import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
 
@@ -273,6 +274,15 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
                     className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-blue-500"
                   />
                 </div>
+              </div>
+
+              <div>
+                <AdminImageUploader
+                  value={editingCreator.imageUrl}
+                  onChange={(url) => setEditingCreator({ ...editingCreator, imageUrl: url })}
+                  label="Creator Avatar / Portrait (Vercel Blob / CDN)"
+                  helperText="Drag & drop creator portrait (PNG, JPG, WEBP up to 10MB)"
+                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

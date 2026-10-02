@@ -15,6 +15,7 @@ import { formatCurrency } from "@/lib/utils";
 import { Dialog } from "@/components/ui/dialog";
 import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
+import { AdminImageUploader } from "@/components/admin/AdminImageUploader";
 
 interface StudiosManagerProps {
   initialStudios: Studio[];
@@ -306,6 +307,15 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                   className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 font-mono"
                 />
               </div>
+            </div>
+
+            <div>
+              <AdminImageUploader
+                value={editingStudio.imageUrl}
+                onChange={(url) => setEditingStudio({ ...editingStudio, imageUrl: url })}
+                label="Studio Soundstage Cover Photo (Vercel Blob / CDN)"
+                helperText="Drag & drop studio or stage photo (PNG, JPG, WEBP up to 10MB)"
+              />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

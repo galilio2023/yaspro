@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { storageProvider } from "@/lib/storage";
+import type { HandleUploadBody } from "@vercel/blob/client";
 import crypto from "crypto";
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
@@ -58,12 +59,59 @@ function detectImageFormat(buffer: Buffer): { ext: string; mime: string } | null
   return null;
 }
 
+export const maxDuration = 60;
+
 /**
  * Direct Admin Media File Upload API.
- * Enforces admin authorization, content-length limits, magic byte image validation, and collision-proof file writing.
+ * Supports:
+ * 1. Native Vercel Blob client direct upload token generation (up to 500MB for 4K video / RAW stills).
+ * 2. Standard Multipart FormData upload with magic byte verification and collision-proof file writing.
  */
 export async function POST(request: Request) {
   try {
+    const contentType = request.headers.get("content-type") || "";
+
+    // A. Handle Vercel Blob Client-Side Direct Upload Token Generation
+    if (contentType.includes("application/json") && process.env.BLOB_READ_WRITE_TOKEN) {
+      const { handleUpload } = await import("@vercel/blob/client");
+      const body = (await request.json()) as HandleUploadBody;
+      try {
+        const jsonResponse = await handleUpload({
+          body,
+          request,
+          onBeforeGenerateToken: async () => {
+            if (process.env.NODE_ENV !== "test") {
+              const session = await auth.api.getSession({
+                headers: await headers(),
+              });
+              if (!session || (session.user as { role?: string })?.role !== "admin") {
+                throw new Error("Unauthorized: Admin credentials required.");
+              }
+            }
+            return {
+              allowedContentTypes: [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+                "video/mp4",
+                "video/quicktime",
+                "application/pdf",
+              ],
+              maximumSizeInBytes: 500 * 1024 * 1024, // 500MB capacity
+            };
+          },
+          onUploadCompleted: async () => {},
+        });
+        return NextResponse.json(jsonResponse);
+      } catch (uploadErr) {
+        return NextResponse.json(
+          { success: false, error: (uploadErr as Error).message },
+          { status: 400 }
+        );
+      }
+    }
+
     // 1. Enforce admin authentication unconditionally (except unit test runner)
     if (process.env.NODE_ENV !== "test") {
       try {

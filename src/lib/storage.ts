@@ -93,8 +93,37 @@ export class S3CompatibleStorageProvider implements StorageProvider {
   }
 }
 
+/**
+ * Vercel Blob cloud storage provider (native Pro edge object store).
+ * Activated automatically when BLOB_READ_WRITE_TOKEN is defined in production.
+ */
+export class VercelBlobStorageProvider implements StorageProvider {
+  async save(filename: string, buffer: Buffer): Promise<UploadResult> {
+    try {
+      const { put } = await import("@vercel/blob");
+      const blob = await put(`yaspro/${filename}`, buffer, {
+        access: "public",
+        addRandomSuffix: false,
+      });
+
+      return {
+        url: blob.url,
+        path: blob.pathname,
+        size: buffer.length,
+      };
+    } catch (err: unknown) {
+      throw new Error(
+        `Failed to persist file to Vercel Blob: ${err instanceof Error ? err.message : String(err)}`
+      );
+    }
+  }
+}
+
 // Singleton storage provider based on environment
 export const storageProvider: StorageProvider =
   process.env.STORAGE_DRIVER === "s3"
     ? new S3CompatibleStorageProvider()
-    : new LocalDiskStorageProvider();
+    : process.env.BLOB_READ_WRITE_TOKEN
+      ? new VercelBlobStorageProvider()
+      : new LocalDiskStorageProvider();
+

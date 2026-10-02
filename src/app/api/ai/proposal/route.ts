@@ -10,6 +10,9 @@ const requestSchema = z.object({
   timelineDays: z.number().int().min(1).max(30).optional(),
 });
 
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
+
 export async function POST(req: Request) {
   try {
     const clientIp = await getClientIdentifier();

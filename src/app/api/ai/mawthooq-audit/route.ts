@@ -10,6 +10,9 @@ const requestSchema = z.object({
   brandCategory: z.string().trim().max(100).optional(),
 });
 
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
+
 export async function POST(req: Request) {
   try {
     const clientIp = await getClientIdentifier();

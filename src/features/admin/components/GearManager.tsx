@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Camera, Plus, Edit3, Save, X, CheckCircle, Tag } from "lucide-react";
 import { upsertCmsEquipment } from "@/lib/actions/equipment-gear";
 import type { Equipment } from "@/db/schema";
+import { AdminImageUploader } from "@/components/admin/AdminImageUploader";
 import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
 
@@ -219,14 +220,11 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
               </div>
 
               <div>
-                <label className="block text-slate-300 font-medium mb-1">Image URL</label>
-                <input
-                  type="text"
-                  value={editingGear.imageUrl || ""}
-                  onChange={(e) =>
-                    setEditingGear({ ...editingGear, imageUrl: e.target.value })
-                  }
-                  className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-emerald-500"
+                <AdminImageUploader
+                  value={editingGear.imageUrl}
+                  onChange={(url) => setEditingGear({ ...editingGear, imageUrl: url })}
+                  label="Equipment Image (Vercel Blob / CDN)"
+                  helperText="Drag & drop camera or gear photo (PNG, JPG, WEBP up to 10MB)"
                 />
               </div>
 
