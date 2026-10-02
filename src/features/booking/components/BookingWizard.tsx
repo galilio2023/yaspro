@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { AlertCircle, Cpu } from "lucide-react";
 import { WIZARD_STEPS } from "../constants";
 import { useBookingWizard } from "../hooks/useBookingWizard";
@@ -64,6 +64,50 @@ export function BookingWizard() {
     setIsAiConfigured(true);
   };
 
+  const [direction, setDirection] = useState(1);
+
+  const handleNextStep = () => {
+    setDirection(1);
+    nextStep();
+  };
+
+  const handlePrevStep = () => {
+    setDirection(-1);
+    prevStep();
+  };
+
+  const handleStepClick = (newStep: number) => {
+    setDirection(newStep > step ? 1 : -1);
+    setStep(newStep);
+  };
+
+  const stepVariants: Variants = {
+    enter: (dir: number) => ({
+      opacity: 0,
+      x: dir > 0 ? 32 : -32,
+      scale: 0.99,
+    }),
+    center: {
+      opacity: 1,
+      x: 0,
+      scale: 1,
+      transition: {
+        x: { type: "spring" as const, stiffness: 320, damping: 30, mass: 0.8 },
+        opacity: { duration: 0.22, ease: "easeOut" },
+        scale: { duration: 0.22 },
+      },
+    },
+    exit: (dir: number) => ({
+      opacity: 0,
+      x: dir > 0 ? -32 : 32,
+      scale: 0.99,
+      transition: {
+        duration: 0.18,
+        ease: "easeIn",
+      },
+    }),
+  };
+
   return (
     <div className="w-full">
       <AiBriefPitchModal
@@ -79,7 +123,7 @@ export function BookingWizard() {
             <BookingProgress
               steps={WIZARD_STEPS}
               currentStep={step}
-              onStepClick={setStep}
+              onStepClick={handleStepClick}
             />
 
             <button
@@ -92,7 +136,7 @@ export function BookingWizard() {
             </button>
           </div>
 
-          <div className="rounded-2xl sm:rounded-3xl border border-white/10 bg-zinc-950/80 backdrop-blur-xl p-4 sm:p-6 lg:p-10 shadow-2xl shadow-black/60">
+          <div className="rounded-2xl sm:rounded-3xl border border-white/10 bg-zinc-950/80 backdrop-blur-xl p-4 sm:p-6 lg:p-10 shadow-2xl shadow-black/60 overflow-hidden">
             {isAiConfigured && (
               <div className="mb-6 p-4 rounded-2xl bg-zinc-900 border border-white/12 flex items-center justify-between gap-3 text-xs">
                 <div className="flex items-center gap-2.5">
@@ -133,13 +177,14 @@ export function BookingWizard() {
               </div>
             )}
 
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={step}
-                initial={{ opacity: 0, x: 15 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -15 }}
-                transition={{ duration: 0.2 }}
+                custom={direction}
+                variants={stepVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
               >
                 {step === 1 && <StepDatetime state={state} update={update} />}
                 {step === 2 && <StepSessionType state={state} update={update} />}
@@ -154,8 +199,8 @@ export function BookingWizard() {
             <BookingStepNavigation
               currentStep={step}
               totalSteps={WIZARD_STEPS.length}
-              onPrev={prevStep}
-              onNext={nextStep}
+              onPrev={handlePrevStep}
+              onNext={handleNextStep}
               onSubmit={handleSubmit}
               isSubmitting={isSubmitting}
             />
