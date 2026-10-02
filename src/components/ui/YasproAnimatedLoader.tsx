@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export interface YasproAnimatedLoaderProps {
@@ -23,13 +23,15 @@ export function YasproAnimatedLoader({
   className,
 }: YasproAnimatedLoaderProps) {
   const [telemetryIndex, setTelemetryIndex] = useState(0);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
+    if (shouldReduceMotion) return;
     const interval = setInterval(() => {
       setTelemetryIndex((prev) => (prev + 1) % TELEMETRY_STAGES.length);
     }, 1200);
     return () => clearInterval(interval);
-  }, []);
+  }, [shouldReduceMotion]);
 
   const isFullscreen = size === "fullscreen";
   const isCompact = size === "compact";
@@ -49,15 +51,19 @@ export function YasproAnimatedLoader({
     >
       {/* Background ambient optical flare (cinematic 3200K tungsten glow) */}
       <div className="absolute pointer-events-none">
-        <div className="w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-amber-500/10 blur-[90px] animate-pulse" />
+        <div className="w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-amber-500/10 blur-[90px] animate-pulse motion-reduce:animate-none" />
       </div>
 
       {/* Main Animated Cinema Sensor SVG */}
       <div className="relative flex items-center justify-center">
         {/* Outer Rotating Calibration HUD Ring */}
         <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+          animate={shouldReduceMotion ? undefined : { rotate: 360 }}
+          transition={
+            shouldReduceMotion
+              ? undefined
+              : { duration: 18, repeat: Infinity, ease: "linear" }
+          }
           className={cn(
             "absolute rounded-full border border-dashed border-amber-400/25 pointer-events-none",
             isCompact ? "w-20 h-20" : "w-36 h-36 sm:w-44 sm:h-44"
@@ -66,8 +72,12 @@ export function YasproAnimatedLoader({
 
         {/* Counter-rotating Precision Lens Markings Ring */}
         <motion.div
-          animate={{ rotate: -360 }}
-          transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
+          animate={shouldReduceMotion ? undefined : { rotate: -360 }}
+          transition={
+            shouldReduceMotion
+              ? undefined
+              : { duration: 24, repeat: Infinity, ease: "linear" }
+          }
           className={cn(
             "absolute rounded-full border border-white/10 pointer-events-none",
             isCompact ? "w-24 h-24" : "w-44 h-44 sm:w-52 sm:h-52"
@@ -152,8 +162,12 @@ export function YasproAnimatedLoader({
           {/* 3. Dynamic Rotating Aperture Blades */}
           <g transform="translate(60, 60)">
             <motion.g
-              animate={{ rotate: 360 }}
-              transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+              animate={shouldReduceMotion ? undefined : { rotate: 360 }}
+              transition={
+                shouldReduceMotion
+                  ? undefined
+                  : { duration: 12, repeat: Infinity, ease: "linear" }
+              }
             >
               {[0, 60, 120, 180, 240, 300].map((angle, i) => (
                 <line
@@ -181,14 +195,22 @@ export function YasproAnimatedLoader({
             strokeLinecap="round"
             filter="url(#yas-loader-bloom)"
             strokeDasharray="90 180"
-            animate={{
-              rotate: [0, 360],
-              strokeDasharray: ["60 180", "140 180", "60 180"],
-            }}
-            transition={{
-              rotate: { duration: 4, repeat: Infinity, ease: "linear" },
-              strokeDasharray: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-            }}
+            animate={
+              shouldReduceMotion
+                ? undefined
+                : {
+                    rotate: [0, 360],
+                    strokeDasharray: ["60 180", "140 180", "60 180"],
+                  }
+            }
+            transition={
+              shouldReduceMotion
+                ? undefined
+                : {
+                    rotate: { duration: 4, repeat: Infinity, ease: "linear" },
+                    strokeDasharray: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                  }
+            }
             style={{ transformOrigin: "60px 60px" }}
           />
 
@@ -224,15 +246,23 @@ export function YasproAnimatedLoader({
               cy="56"
               r="3"
               fill="#ffffff"
-              animate={{
-                scale: [1, 1.45, 1],
-                opacity: [0.8, 1, 0.8],
-              }}
-              transition={{
-                duration: 1.8,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
+              animate={
+                shouldReduceMotion
+                  ? undefined
+                  : {
+                      scale: [1, 1.45, 1],
+                      opacity: [0.8, 1, 0.8],
+                    }
+              }
+              transition={
+                shouldReduceMotion
+                  ? undefined
+                  : {
+                      duration: 1.8,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }
+              }
             />
           </g>
         </svg>
@@ -259,17 +289,17 @@ export function YasproAnimatedLoader({
         <div className="flex items-center gap-2 mt-4 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md">
           {/* Studio Recording Tally Light */}
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+            <span className="animate-ping motion-reduce:animate-none absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
           </span>
 
           <AnimatePresence mode="wait">
             <motion.span
               key={statusText || telemetryIndex}
-              initial={{ opacity: 0, y: 3 }}
+              initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 3 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -3 }}
-              transition={{ duration: 0.25 }}
+              exit={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -3 }}
+              transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.25 }}
               className="text-[10.5px] font-mono tracking-wider text-amber-300/90 whitespace-nowrap"
             >
               {statusText ? statusText : TELEMETRY_STAGES[telemetryIndex]}

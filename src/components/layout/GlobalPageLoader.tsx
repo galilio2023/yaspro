@@ -34,9 +34,11 @@ const FAILSAFE_TIMEOUT_MS = 6000;
 function RouteWatcher({
   onStop,
   isLoading,
+  onPopState,
 }: {
   onStop: () => void;
   isLoading: boolean;
+  onPopState: () => void;
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -47,6 +49,24 @@ function RouteWatcher({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, searchParams]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const currentSearch = new URLSearchParams(window.location.search).toString();
+
+      if (
+        window.location.pathname === pathname &&
+        currentSearch === searchParams.toString()
+      ) {
+        return;
+      }
+
+      onPopState();
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [pathname, searchParams, onPopState]);
 
   return null;
 }
@@ -63,10 +83,22 @@ export function GlobalPageLoaderProvider({
 
   const loadStartTimeRef = useRef<number | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const dismissalTimerRef = useRef<NodeJS.Timeout | null>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const stopLoading = useCallback(() => {
-    if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+    if (dismissalTimerRef.current) {
+      clearTimeout(dismissalTimerRef.current);
+      dismissalTimerRef.current = null;
+    }
 
     if (!loadStartTimeRef.current) {
       setIsLoading(false);
@@ -80,7 +112,8 @@ export function GlobalPageLoaderProvider({
 
     setProgress(100);
 
-    setTimeout(() => {
+    dismissalTimerRef.current = setTimeout(() => {
+      dismissalTimerRef.current = null;
       startTransition(() => {
         setIsLoading(false);
         setCustomStatus(undefined);
@@ -91,6 +124,11 @@ export function GlobalPageLoaderProvider({
   }, []);
 
   const startLoading = useCallback((status?: string) => {
+    if (dismissalTimerRef.current) {
+      clearTimeout(dismissalTimerRef.current);
+      dismissalTimerRef.current = null;
+    }
+
     loadStartTimeRef.current = Date.now();
     setCustomStatus(status);
     setIsLoading(true);
@@ -116,6 +154,7 @@ export function GlobalPageLoaderProvider({
   useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
+      if (dismissalTimerRef.current) clearTimeout(dismissalTimerRef.current);
       if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
     };
   }, []);
@@ -167,23 +206,21 @@ export function GlobalPageLoaderProvider({
       }
     };
 
-    const handlePopState = () => {
-      startLoading();
-    };
-
     document.addEventListener("click", handleDocumentClick, true);
-    window.addEventListener("popstate", handlePopState);
 
     return () => {
       document.removeEventListener("click", handleDocumentClick, true);
-      window.removeEventListener("popstate", handlePopState);
     };
   }, [startLoading]);
 
   return (
     <PageLoaderContext.Provider value={{ isLoading, startLoading, stopLoading }}>
       <Suspense fallback={null}>
-        <RouteWatcher onStop={stopLoading} isLoading={isLoading} />
+        <RouteWatcher
+          onStop={stopLoading}
+          isLoading={isLoading}
+          onPopState={startLoading}
+        />
       </Suspense>
 
       {/* 1. Razor Top Edge Laser Progress Bar (Always physical LTR) */}

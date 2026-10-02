@@ -1,5 +1,10 @@
-import { GearShopSkeleton } from "@/components/ui/skeletons/GearShopSkeleton";
+import { GearShopSkeleton, LoadingFallbackStatus } from "@/components/ui/skeletons";
 
 export default function ShopLoading() {
-  return <GearShopSkeleton />;
+  return (
+    <>
+      <LoadingFallbackStatus label="Loading gear rental catalog..." />
+      <GearShopSkeleton />
+    </>
+  );
 }

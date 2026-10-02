@@ -1,5 +1,10 @@
-import { ProjectsSkeleton } from "@/components/ui/skeletons/ProjectsSkeleton";
+import { ProjectsSkeleton, LoadingFallbackStatus } from "@/components/ui/skeletons";
 
 export default function ProjectsLoading() {
-  return <ProjectsSkeleton />;
+  return (
+    <>
+      <LoadingFallbackStatus label="Loading productions and showcase..." />
+      <ProjectsSkeleton />
+    </>
+  );
 }

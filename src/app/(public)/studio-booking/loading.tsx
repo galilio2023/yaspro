@@ -1,5 +1,10 @@
-import { StudioBookingSkeleton } from "@/components/ui/skeletons/StudioBookingSkeleton";
+import { StudioBookingSkeleton, LoadingFallbackStatus } from "@/components/ui/skeletons";
 
 export default function StudioBookingLoading() {
-  return <StudioBookingSkeleton />;
+  return (
+    <>
+      <LoadingFallbackStatus label="Loading soundstage booking..." />
+      <StudioBookingSkeleton />
+    </>
+  );
 }
