@@ -292,7 +292,7 @@ export function GearRentalSection() {
             const itemName = isArabic && item.arabicName ? item.arabicName : item.name;
 
             return (
-              <FadeUp key={item.id} delay={idx * 0.04} className="h-full">
+              <FadeUp key={item.id} delay={Math.min(idx * 0.07, 0.45)} className="h-full">
                 <motion.article
                   onClick={() => setSelectedGearItem(item)}
                   whileHover={{ y: -4, boxShadow: "0 28px 56px -12px rgba(0,0,0,0.75)" }}

@@ -7,6 +7,7 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 
 import { SoundstageAtmosphere } from "./SoundstageAtmosphere";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { Section } from "@/components/ui/section";
 
 interface CtaSectionProps {
   title?: string;
@@ -42,10 +43,10 @@ export function CtaSection({
   const displaySecondaryText = secondaryCtaText || (isArabic ? t("cta.talkProducers") : "Talk to Producers");
 
   return (
-    <section
+    <Section
       id="cta"
       aria-labelledby="cta-title"
-      className="relative w-full min-h-[520px] sm:min-h-[640px] lg:min-h-[720px] flex items-center justify-center overflow-hidden bg-background py-16 sm:py-20 lg:py-28 film-grain"
+      className="relative w-full min-h-[520px] sm:min-h-[640px] lg:min-h-[720px] flex items-center justify-center overflow-hidden bg-background !py-16 sm:!py-20 lg:!py-28 film-grain"
     >
       {/* ── Layer 0: Photorealistic Soundstage Atmosphere (A24 / Sony Cine) ── */}
       <SoundstageAtmosphere isArabic={isArabic} />
@@ -113,6 +114,6 @@ export function CtaSection({
           </div>
         </FadeUp>
       </div>
-    </section>
+    </Section>
   );
 }
