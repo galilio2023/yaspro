@@ -37,10 +37,13 @@ export function GearRentalSection() {
   // Discount rule
   const discountMultiplier = durationTier === 7 ? 0.65 : durationTier === 3 ? 0.8 : 1.0;
 
-  // Filtered gear
+  // Filtered gear: Curated landing page spotlight (capped at 6 items to protect DOM & bandwidth)
   const filteredGear = useMemo(() => {
-    if (activeCategory === "all") return GEAR_DATA;
-    return GEAR_DATA.filter((g) => g.category === activeCategory);
+    const list =
+      activeCategory === "all"
+        ? GEAR_DATA.filter((g) => g.isPopular || g.isKit || g.category === "bundles" || g.category === "cameras")
+        : GEAR_DATA.filter((g) => g.category === activeCategory);
+    return list.slice(0, 6);
   }, [activeCategory]);
 
   // Featured flagship kit (Spotlight card)

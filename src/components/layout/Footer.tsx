@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { FooterHubCard, RegionalHub } from "./FooterHubCard";
 import { FooterSocialLinks } from "./FooterSocialLinks";
 import { BrandLogo } from "./BrandLogo";
 import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { FooterNavLinks } from "./FooterNavLinks";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { YAS_GROUP_COMPANIES } from "@/features/group/data";
 
 import {
   Calendar,
@@ -173,8 +175,39 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Yas Media Group Conglomerate Network Strip */}
+        <div className="mt-12 sm:mt-16 pt-8 border-t border-white/[0.08]" dir="ltr" style={{ direction: "ltr" }}>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-5 text-left">
+            <span className="text-[11px] font-mono tracking-wider uppercase text-zinc-400 font-semibold flex items-center gap-2">
+              <span className="size-1.5 rounded-full bg-amber-500" />
+              <span>{t("footer.companiesHeading")}</span>
+            </span>
+            <span className="text-[10px] font-mono text-zinc-500">
+              DUBAI • CAIRO • AMMAN
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3" dir="ltr" style={{ direction: "ltr" }}>
+            {YAS_GROUP_COMPANIES.map((company) => (
+              <div
+                key={company.id}
+                title={`${company.name} — ${company.division}`}
+                className="h-14 rounded-xl bg-black/40 border border-white/8 hover:border-amber-500/40 p-2 flex items-center justify-center transition-all duration-300 group cursor-default"
+              >
+                <Image
+                  src={company.logo}
+                  alt={company.name}
+                  width={140}
+                  height={50}
+                  className="max-h-full max-w-full h-auto w-auto object-contain opacity-70 group-hover:opacity-100 filter group-hover:brightness-110 transition-all duration-300"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Bottom Bar: Telemetry & Legal */}
-        <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400 text-center sm:text-left" dir="ltr" style={{ direction: "ltr" }}>
+        <div className="mt-8 pt-6 sm:pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400 text-center sm:text-left" dir="ltr" style={{ direction: "ltr" }}>
           <p>© {currentYear} YAS PRO MEDIA LLC. {t("footer.allRights")}</p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">

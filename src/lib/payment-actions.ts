@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { bookings } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
@@ -82,3 +82,69 @@ export async function processBookingOnlinePayment(
     };
   }
 }
+
+/**
+ * Server action to mark a studio booking reservation as awaiting bank transfer confirmation.
+ * Preserves the booking as unpaid/pending with a recorded wire payment reference.
+ *
+ * @param bookingId - UUID or reference code of the booking.
+ * @param referenceCode - Booking reference code (e.g. YAS-ABC123).
+ */
+export async function markBookingBankTransferPending(
+  bookingId: string,
+  referenceCode: string
+): Promise<{ success: boolean; message?: string; error?: string }> {
+  try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user?.id) {
+      return { success: false, error: "Unauthorized: Please sign in." };
+    }
+    if (!bookingId && !referenceCode) {
+      return { success: false, error: "Booking reference is required." };
+    }
+    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
+      return { success: false, error: "Booking service is unavailable." };
+    }
+
+    const isBookingId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(bookingId);
+    const booking = await db.query.bookings.findFirst({
+      where: and(
+        isBookingId
+          ? eq(bookings.id, bookingId)
+          : eq(bookings.referenceCode, referenceCode || bookingId),
+        eq(bookings.userId, session.user.id),
+      ),
+    });
+    if (!booking) {
+      return { success: false, error: "Booking not found." };
+    }
+
+    const [updated] = await db.update(bookings).set({
+      paymentReference: `WIRE_PENDING_${Date.now()}`,
+      updatedAt: new Date(),
+    }).where(and(
+      eq(bookings.id, booking.id),
+      eq(bookings.userId, session.user.id),
+      eq(bookings.paymentStatus, "unpaid"),
+    )).returning({ id: bookings.id });
+    if (!updated) {
+      return { success: false, error: "Only unpaid bookings can await bank transfer." };
+    }
+
+    revalidatePath("/admin/bookings");
+    revalidatePath("/portal");
+    revalidatePath("/studio-booking");
+
+    return {
+      success: true,
+      message: "Booking marked as awaiting corporate bank transfer.",
+    };
+  } catch (error) {
+    console.error("markBookingBankTransferPending error:", error);
+    return {
+      success: false,
+      error: (error as Error).message || "Failed to record wire transfer request.",
+    };
+  }
+}
+

@@ -8,11 +8,16 @@ export interface BookingState {
   headcount: number;
   // Step 2: Session Type
   sessionType: string;
+  turnkeyPackageId?: string;
   // Step 3: Studio Selection
   studioId: string;
   // Step 4: Crew & Gear
   needsCrew: boolean;
   selectedGearPackage: string;
+  hasTeleprompter?: boolean;
+  extraMicsCount?: number;
+  hasRushDelivery?: boolean;
+  promoCode?: string;
   equipmentNotes: string;
   // Step 5: Props & Set
   propsNotes: string;

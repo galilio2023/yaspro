@@ -54,6 +54,10 @@ test('bookingSubmissionSchema validates correct inputs and rejects malformed fie
     assert.equal(parseResult.data.selectedGearPackage, 'none'); // Default
   }
 
+  assert.equal(bookingSubmissionSchema.safeParse({
+    ...validBooking, sessionType: 'virtual_production',
+  }).success, true);
+
   // Reject missing required name
   const missingName = { ...validBooking, firstName: '' };
   assert.equal(bookingSubmissionSchema.safeParse(missingName).success, false);
@@ -69,6 +73,36 @@ test('bookingSubmissionSchema validates correct inputs and rejects malformed fie
   // Reject duration < 1 hour
   const zeroDuration = { ...validBooking, durationHours: 0 };
   assert.equal(bookingSubmissionSchema.safeParse(zeroDuration).success, false);
+
+  // Reject operating hours violation (before 09:00 or after 21:00)
+  const tooEarly = { ...validBooking, scheduledAt: '2026-10-15T06:30:00' };
+  assert.equal(bookingSubmissionSchema.safeParse(tooEarly).success, false);
+
+  const tooLate = { ...validBooking, scheduledAt: '2026-10-15T22:30:00' };
+  assert.equal(bookingSubmissionSchema.safeParse(tooLate).success, false);
+
+  const missingTime = { ...validBooking, scheduledAt: '2026-10-15' };
+  assert.equal(bookingSubmissionSchema.safeParse(missingTime).success, false);
+
+  // Accept valid boundary times (09:00 and 21:00) with turnkey packages and add-ons
+  const boundaryBooking = {
+    ...validBooking,
+    scheduledAt: '2026-10-15T09:00',
+    turnkeyPackageId: 'podcast-package',
+    hasTeleprompter: true,
+    extraMicsCount: 2,
+    hasRushDelivery: true,
+    promoCode: 'YAS10',
+  };
+  const boundaryResult = bookingSubmissionSchema.safeParse(boundaryBooking);
+  assert.equal(boundaryResult.success, true);
+  if (boundaryResult.success) {
+    assert.equal(boundaryResult.data.turnkeyPackageId, 'podcast-package');
+    assert.equal(boundaryResult.data.hasTeleprompter, true);
+    assert.equal(boundaryResult.data.extraMicsCount, 2);
+    assert.equal(boundaryResult.data.hasRushDelivery, true);
+    assert.equal(boundaryResult.data.promoCode, 'YAS10');
+  }
 });
 
 test('inquirySubmissionSchema enforces minimum message length and valid categories', () => {

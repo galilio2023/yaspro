@@ -477,6 +477,8 @@ export function GearCheckoutModal({
           bookingId={createdBooking.bookingId}
           referenceCode={createdBooking.referenceCode}
           totalAmount={createdBooking.totalAmount}
+          securityDeposit={totalDeposit}
+          orderTitle={isArabic ? "طلب تأجير باقة معدات" : "Cinema Gear Package"}
           onPaymentSuccess={handlePaymentSuccess}
         />
       )}

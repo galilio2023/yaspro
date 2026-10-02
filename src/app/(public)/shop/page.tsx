@@ -9,6 +9,7 @@ import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import type { GearItem, GearCategory } from "@/features/gear/types";
 import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
+import { HowToRentGuide } from "@/features/gear/components/HowToRentGuide";
 
 export const revalidate = 3600;
 
@@ -88,6 +89,8 @@ export default async function ShopPage() {
         <Suspense fallback={<div className="min-h-[400px]" />}>
           <GearExplorer initialGear={initialGear} />
         </Suspense>
+
+        <HowToRentGuide />
       </Container>
     </Section>
   );

@@ -1,6 +1,7 @@
 import { GearCategory, GearItem } from "./types";
+import { WORDPRESS_GEAR_INVENTORY } from "./wordpress-inventory";
 
-export const GEAR_DATA: GearItem[] = [
+const FLAGSHIP_PACKAGES: GearItem[] = [
   {
     id: "arri-alexa-mini-lf",
     name: "ARRI Alexa Mini LF",
@@ -221,6 +222,11 @@ export const GEAR_DATA: GearItem[] = [
     description: "Turnkey outside broadcast truck with full engineering crew for stadium, concert, or festival live streaming across GCC.",
     arabicDescription: "وحدة نقل خارجي متنقلة متكاملة مزودة بـ 6 كاميرات تلفزيونية 4K ونظام الإعادة البطيئة وطاقم مهندسين للبث الميداني والفعاليات الكبرى.",
   },
+];
+
+export const GEAR_DATA: GearItem[] = [
+  ...FLAGSHIP_PACKAGES,
+  ...WORDPRESS_GEAR_INVENTORY,
 ];
 
 export const GEAR_CATEGORIES: { id: GearCategory; label: string; arabicLabel?: string }[] = [

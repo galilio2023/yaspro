@@ -10,6 +10,7 @@ import { Container } from "@/components/ui/container";
 import type { ProjectItem, ProjectCategory } from "@/features/projects/types";
 
 import { ProjectsPageHeader } from "@/features/projects/components/ProjectsPageHeader";
+import { CinematicColorGradeShowcase } from "@/features/projects/components/CinematicColorGradeShowcase";
 
 export const revalidate = 3600;
 
@@ -55,6 +56,8 @@ export default async function ProjectsPage() {
         <ProjectsPageHeader />
 
         <ProjectsExplorer initialProjects={initialProjects} />
+
+        <CinematicColorGradeShowcase />
 
         <FadeUp delay={0.2}>
           <div className="mt-16 rounded-3xl border border-white/10 bg-[#0c0b10] backdrop-blur-xl p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl">

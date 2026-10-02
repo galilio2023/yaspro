@@ -73,8 +73,8 @@ export function StepCrewEquipment({ state, update }: WizardStepProps) {
         </div>
       </div>
 
-      {/* 2. Dedicated Production Crew Add-on */}
-      <div className="pt-2">
+      {/* 2. Production Crew & Studio Add-ons */}
+      <div className="pt-2 space-y-3">
         <label className="flex items-center justify-between p-4 rounded-2xl border border-white/10 hover:border-amber-500/40 bg-white/5 cursor-pointer transition-all">
           <div className="flex items-center gap-3.5">
             <input
@@ -93,6 +93,44 @@ export function StepCrewEquipment({ state, update }: WizardStepProps) {
             </div>
           </div>
           <Users size={20} className="text-amber-400 shrink-0 hidden sm:block" />
+        </label>
+
+        <label className="flex items-center justify-between p-4 rounded-2xl border border-white/10 hover:border-amber-500/40 bg-white/5 cursor-pointer transition-all">
+          <div className="flex items-center gap-3.5">
+            <input
+              type="checkbox"
+              checked={state.hasTeleprompter}
+              onChange={(e) => update({ hasTeleprompter: e.target.checked })}
+              className="accent-amber-500 size-5 rounded cursor-pointer"
+            />
+            <div>
+              <span className="text-white font-semibold text-sm block">
+                Professional Scrolling Teleprompter (+85 AED / hr)
+              </span>
+              <span className="text-text-muted text-xs">
+                17-inch presidential prompter rig with remote speed controller for scripted delivery.
+              </span>
+            </div>
+          </div>
+        </label>
+
+        <label className="flex items-center justify-between p-4 rounded-2xl border border-white/10 hover:border-amber-500/40 bg-white/5 cursor-pointer transition-all">
+          <div className="flex items-center gap-3.5">
+            <input
+              type="checkbox"
+              checked={(state.extraMicsCount || 0) > 0}
+              onChange={(e) => update({ extraMicsCount: e.target.checked ? 1 : 0 })}
+              className="accent-amber-500 size-5 rounded cursor-pointer"
+            />
+            <div>
+              <span className="text-white font-semibold text-sm block">
+                Additional Shure SM7B Vocal Microphone (+120 AED)
+              </span>
+              <span className="text-text-muted text-xs">
+                Additional studio microphone with boom arm and balanced XLR channel for guest speakers.
+              </span>
+            </div>
+          </div>
         </label>
       </div>
 

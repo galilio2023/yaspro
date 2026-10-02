@@ -769,3 +769,66 @@ test('emptying the cart while checkout is open keeps the checkout component moun
   assert.equal(nodes(tree, (n) => n.type === 'Checkout')[0].props.isOpen, true);
   assert.equal(nodes(tree, (n) => n.type === 'aside').length, 0);
 });
+
+function reviewComponent(file, globals = {}) {
+  const harness = hookHarness();
+  const Component = loadSource(file, {
+    react: harness.hooks,
+    'lucide-react': new Proxy({}, { get: (_, key) => key }),
+    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic: false }) },
+    '@/lib/utils': { cn: (...args) => args.filter(Boolean).join(' ') },
+    '@/components/ui/form-field': { FormField: 'FormField' },
+    '@/components/ui/input': { Input: 'Input' },
+  }, globals);
+  return (name, props) => harness.render(() => Component[name](props));
+}
+
+for (const [zone, instant, expected] of [
+  ['Asia/Dubai', '2026-01-31T21:30:00Z', ['2026-02-01', '2026-02-02', '2026-02-08']],
+  ['America/Los_Angeles', '2026-01-01T02:30:00Z', ['2025-12-31', '2026-01-01', '2026-01-07']],
+  ['America/New_York', '2026-03-08T05:30:00Z', ['2026-03-08', '2026-03-09', '2026-03-15']],
+]) {
+  test(`booking dates use local calendar at ${instant} in ${zone}`, () => {
+    const previousZone = process.env.TZ;
+    process.env.TZ = zone;
+    try {
+      class FixedDate extends Date { constructor(...args) { super(...(args.length ? args : [instant])); } }
+      const render = reviewComponent('src/features/booking/components/steps/StepDatetime.tsx', { Date: FixedDate });
+      const updates = [];
+      const tree = render('StepDatetime', { state: { date: '', time: '10:00', durationHours: 2 }, update: (value) => updates.push(value.date) });
+      assert.equal(nodes(tree, (n) => n.type === 'Input' && n.props.type === 'date')[0].props.min, expected[0]);
+      for (const label of ['Today', 'Tomorrow', '+1 Week']) {
+        nodes(tree, (n) => n.type === 'button' && n.props.children === label)[0].props.onClick();
+      }
+      assert.deepEqual(updates, expected);
+    } finally {
+      if (previousZone === undefined) delete process.env.TZ;
+      else process.env.TZ = previousZone;
+    }
+  });
+}
+
+test('reel playback follows events and stale callbacks preserve a newer active reel', async () => {
+  const renderComponent = reviewComponent('src/features/influencers/components/VerticalReelsShowcase.tsx', { console: { error() {} } });
+  const render = () => renderComponent('VerticalReelsShowcase');
+  const players = (tree) => nodes(tree, (n) => n.type === 'div' && n.props.onClick);
+  const videos = (tree) => nodes(tree, (n) => n.type === 'video');
+  const isPlaying = (player) => nodes(player, (n) => n.type === 'Pause').length === 1;
+  const initial = render();
+  let finishPlay;
+  const pendingPlay = new Promise((resolve) => { finishPlay = resolve; });
+  videos(initial)[0].props.ref({ paused: true, play: () => pendingPlay, pause() {} });
+  const click = players(initial)[0].props.onClick();
+  assert.equal(isPlaying(players(render())[0]), false);
+  videos(initial)[0].props.onPlay();
+  const oldHandlers = videos(render())[0].props;
+  videos(initial)[1].props.onPlay();
+  oldHandlers.onPause();
+  oldHandlers.onEnded();
+  finishPlay();
+  await click;
+  assert.equal(isPlaying(players(render())[0]), false);
+  assert.equal(isPlaying(players(render())[1]), true);
+  videos(render())[1].props.onPause();
+  assert.equal(isPlaying(players(render())[1]), false);
+});

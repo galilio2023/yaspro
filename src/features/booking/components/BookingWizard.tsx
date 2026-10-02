@@ -32,6 +32,7 @@ export function BookingWizard() {
     studio,
     sessionTypeObj,
     total,
+    breakdown,
     isSubmitting,
     confirmed,
     referenceCode,
@@ -213,6 +214,7 @@ export function BookingWizard() {
           studio={studio}
           sessionTypeObj={sessionTypeObj}
           total={total}
+          breakdown={breakdown}
         />
       </div>
     </div>

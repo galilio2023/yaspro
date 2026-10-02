@@ -97,11 +97,23 @@ export function GearExplorer({
     }));
   }, [initialGear, isArabic]);
 
+  const [visibleCount, setVisibleCount] = useState<number>(12);
+
   const filteredGear = useMemo(() => {
     return selectedCategory === "all"
       ? initialGear
       : initialGear.filter((g) => g.category === selectedCategory);
   }, [selectedCategory, initialGear]);
+
+  // Reset pagination when category changes
+  const handleCategoryChange = (cat: GearCategory) => {
+    setSelectedCategory(cat);
+    setVisibleCount(12);
+  };
+
+  const displayedGear = useMemo(() => {
+    return filteredGear.slice(0, visibleCount);
+  }, [filteredGear, visibleCount]);
 
   const toggleCart = (id: string) => {
     const item = initialGear.find((g) => g.id === id) || GEAR_DATA.find((g) => g.id === id);
@@ -288,23 +300,59 @@ export function GearExplorer({
         <CategoryFilterBar
           categories={categoriesWithOptions}
           selected={selectedCategory}
-          onSelect={setSelectedCategory}
+          onSelect={handleCategoryChange}
         />
       </FadeUp>
 
-      {/* 3. Gear Grid or Empty State */}
+      {/* 3. Catalog Status & Count Bar */}
+      {filteredGear.length > 0 && (
+        <div className="flex items-center justify-between py-3 mb-4 text-xs text-text-muted font-mono border-b border-white/5">
+          <span>
+            {isArabic
+              ? `معاينة ${displayedGear.length} من أصل ${filteredGear.length} قطعة ومعدة سينمائية`
+              : `Showing ${displayedGear.length} of ${filteredGear.length} calibrated cinema units`}
+          </span>
+          <span className="hidden sm:inline text-amber-400">
+            {Math.round((displayedGear.length / filteredGear.length) * 100)}% Loaded
+          </span>
+        </div>
+      )}
+
+      {/* 4. Gear Grid or Empty State */}
       {filteredGear.length > 0 ? (
-        <StaggerContainer as="ul" role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 items-stretch">
-          {filteredGear.map((item) => (
-            <StaggerItem as="li" key={item.id} className="h-full">
-              <GearCard
-                item={item}
-                inCart={isInCart(item.id)}
-                onToggle={toggleCart}
-              />
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+        <>
+          <StaggerContainer as="ul" role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8 items-stretch">
+            {displayedGear.map((item) => (
+              <StaggerItem as="li" key={item.id} className="h-full">
+                <GearCard
+                  item={item}
+                  inCart={isInCart(item.id)}
+                  onToggle={toggleCart}
+                />
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+
+          {/* Load More Button */}
+          {visibleCount < filteredGear.length && (
+            <div className="flex flex-col items-center justify-center mt-12 space-y-3">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((prev) => prev + 12)}
+                className="px-8 py-3.5 rounded-full border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 hover:text-amber-200 text-xs font-bold transition-all shadow-lg shadow-amber-500/10 cursor-pointer flex items-center gap-2"
+              >
+                <span>
+                  {isArabic
+                    ? `عرض المزيد من المعدات (+12 من أصل ${filteredGear.length - visibleCount} متبقية)`
+                    : `Load More Cinema Gear (+12 of ${filteredGear.length - visibleCount} remaining)`}
+                </span>
+              </button>
+              <span className="text-[11px] font-mono text-text-muted">
+                {isArabic ? "تحميل تقدمي سريع للأداء العالي" : "Fast progressive loading for optimum performance"}
+              </span>
+            </div>
+          )}
+        </>
       ) : (
         <EmptyState
           title={isArabic ? "لا توجد معدات متوفرة حالياً" : "No Equipment Found"}
