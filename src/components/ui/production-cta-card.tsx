@@ -19,8 +19,8 @@ export function ProductionCtaCard({
   secondaryHref = "/contact",
 }: ProductionCtaCardProps) {
   return (
-    <div className="rounded-3xl border border-brand-purple/30 bg-white/[0.03] backdrop-blur-xl p-6 sm:p-8 relative overflow-hidden shadow-xl shadow-black/20">
-      <div className="absolute inset-0 bg-gradient-to-r from-brand-purple/10 via-transparent to-brand-cyan/10 pointer-events-none" />
+    <div className="rounded-3xl border border-amber-500/20 bg-white/[0.03] backdrop-blur-xl p-6 sm:p-8 relative overflow-hidden shadow-xl shadow-black/20">
+      <div className="absolute inset-0 bg-gradient-to-r from-amber-500/10 via-transparent to-amber-600/10 pointer-events-none" />
       <h3 className="text-lg font-bold mb-2 text-white font-display">
         {title}
       </h3>
@@ -28,7 +28,7 @@ export function ProductionCtaCard({
         {description}
       </p>
       <div className="flex flex-col sm:flex-row gap-3">
-        <Button asChild variant="brand" size="default" className="flex-1 rounded-xl text-xs font-semibold">
+        <Button asChild variant="brand-gold" size="default" className="flex-1 rounded-xl text-xs font-semibold">
           <Link href={primaryHref}>{primaryText}</Link>
         </Button>
         <Button asChild variant="outline" size="default" className="flex-1 rounded-xl text-xs font-semibold">

@@ -6,7 +6,6 @@ import Image from "next/image";
 import {
   ArrowRight,
   Camera,
-  Sparkles,
   ShieldCheck,
   CheckCircle2,
   Truck,
@@ -24,7 +23,6 @@ import { GearItem, GearCategory } from "@/features/gear/types";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { GearRentalModal } from "@/features/gear/components/GearRentalModal";
 import { formatCurrency, cn } from "@/lib/utils";
-import { BorderBeam } from "@/components/magicui/border-beam";
 
 export function GearRentalSection() {
   const { isArabic } = useLanguage();
@@ -103,7 +101,7 @@ export function GearRentalSection() {
         {/* Pricing Duration Toggle Bar (Immediate Psychological Incentive) */}
         <FadeUp delay={0.06} className="mt-8 mb-10 flex flex-col sm:flex-row items-center justify-between gap-4 p-3 sm:p-4 rounded-3xl bg-black/40 border border-white/10 backdrop-blur-xl">
           <div className="flex items-center gap-2.5 px-2">
-            <span className="size-2 rounded-full bg-brand-cyan animate-pulse shrink-0" />
+            <span className="size-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
             <span className="text-xs font-semibold text-white font-mono uppercase tracking-wider">
               {isArabic ? "اختر مدة التأجير للاستفادة من الخصم:" : "Duration Pricing Tier:"}
             </span>
@@ -129,12 +127,12 @@ export function GearRentalSection() {
               className={cn(
                 "px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5",
                 durationTier === 3
-                  ? "bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/40 shadow-sm shadow-brand-cyan/20"
-                  : "text-text-muted hover:text-brand-cyan"
+                  ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm shadow-amber-500/20"
+                  : "text-text-muted hover:text-amber-300"
               )}
             >
               <span>{isArabic ? "عطلة نهاية الأسبوع (3 أيام)" : "3-Day Weekend"}</span>
-              <span className="px-1.5 py-0.2 rounded-full bg-brand-cyan text-black text-[9px] font-black uppercase">
+              <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-zinc-950 text-[9px] font-black uppercase">
                 -20%
               </span>
             </button>
@@ -157,15 +155,13 @@ export function GearRentalSection() {
           </div>
         </FadeUp>
 
-        {/* ── Spotlight Hero Card (The Visual "Pop") ── */}
+        {/* ── Spotlight Hero Card (Studio Flagship Kit) ── */}
         {spotlightKit && (
           <FadeUp delay={0.1} className="mb-12">
-            <div className="relative rounded-3xl border border-white/15 bg-gradient-to-br from-[#120f29] via-[#0d0a1e] to-black p-6 sm:p-8 lg:p-10 overflow-hidden shadow-2xl shadow-brand-purple/20">
-              <BorderBeam size={320} duration={12} colorFrom="var(--brand-gold)" colorTo="var(--brand-purple)" />
-
+            <div className="relative rounded-3xl border border-white/12 bg-zinc-950 p-6 sm:p-8 lg:p-10 overflow-hidden shadow-2xl shadow-black/80">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 {/* Visual Stage */}
-                <div className="lg:col-span-6 relative aspect-[16/10] rounded-2xl overflow-hidden bg-black/80 border border-white/15 group">
+                <div className="lg:col-span-6 relative aspect-[16/10] rounded-2xl overflow-hidden bg-black/80 border border-white/12 group">
                   {spotlightKit.image && (
                     <Image
                       src={spotlightKit.image}
@@ -182,12 +178,12 @@ export function GearRentalSection() {
                   {/* Badges */}
                   <div className="absolute top-3.5 inset-x-3.5 flex items-center justify-between z-10 pointer-events-none">
                     <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[11px] font-mono font-bold text-amber-300 border border-amber-400/30 flex items-center gap-1.5 shadow-md">
-                      <Sparkles size={12} />
+                      <Camera size={12} className="text-amber-400" />
                       {isArabic ? "الباقة الإعلانية الرائدة" : "Featured Production Rig"}
                     </span>
 
                     {discountMultiplier < 1 && (
-                      <span className="px-2.5 py-1 rounded-full bg-brand-cyan/20 backdrop-blur-md text-brand-cyan border border-brand-cyan/40 text-[10px] font-mono font-bold">
+                      <span className="px-2.5 py-1 rounded-full bg-emerald-500/15 backdrop-blur-md text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-bold">
                         {isArabic ? `وفر ${Math.round((1 - discountMultiplier) * 100)}%` : `Save ${Math.round((1 - discountMultiplier) * 100)}% on Kit`}
                       </span>
                     )}
@@ -206,7 +202,7 @@ export function GearRentalSection() {
                 <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs font-mono uppercase tracking-wider text-brand-cyan font-bold">
+                      <span className="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold">
                         {isArabic ? "باقة سينمائية متكاملة (Turnkey A-Cam)" : "Turnkey Cinema Package"}
                       </span>
                     </div>
@@ -222,14 +218,14 @@ export function GearRentalSection() {
                     {/* Included Gear Inclusions Pills */}
                     {spotlightKit.includedInKit && (
                       <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-2">
-                        <span className="text-[11px] uppercase font-mono font-bold text-brand-purple-light flex items-center gap-1.5">
+                        <span className="text-[11px] uppercase font-mono font-bold text-amber-400 flex items-center gap-1.5">
                           <Box size={13} />
                           {isArabic ? "تجهيزات ومحتويات الباقة الكاملة:" : "Production Kit Inclusions:"}
                         </span>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-text-secondary pt-1">
                           {spotlightKit.includedInKit.map((inc) => (
                             <div key={inc} className="flex items-center gap-1.5 truncate">
-                              <CheckCircle2 size={13} className="text-brand-cyan shrink-0" />
+                              <CheckCircle2 size={13} className="text-emerald-400 shrink-0" />
                               <span className="truncate">{inc}</span>
                             </div>
                           ))}
@@ -254,7 +250,7 @@ export function GearRentalSection() {
                           </span>
                         )}
                       </div>
-                      <span className="text-[11px] text-brand-purple-light font-mono block mt-0.5">
+                      <span className="text-[11px] text-amber-400 font-mono block mt-0.5">
                         {durationTier === 1
                           ? isArabic ? "تسليم مع كابلات وبطاريات كاملة" : "Includes full power & wireless feed"
                           : isArabic ? `تم احتساب خصم باقة ${durationTier} أيام` : `${durationTier}-Day production rate applied`}
@@ -265,7 +261,7 @@ export function GearRentalSection() {
                       <button
                         type="button"
                         onClick={() => setSelectedGearItem(spotlightKit)}
-                        className="px-6 py-3 rounded-2xl bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-cyan text-white text-xs font-bold transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-lg shadow-brand-purple/30 flex items-center gap-2"
+                        className="px-6 py-3 rounded-2xl btn-brand text-xs font-bold transition-all hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-2"
                       >
                         <Eye size={14} />
                         <span>{isArabic ? "معاينة وحجز الباقة" : "Inspect & Reserve Package"}</span>
@@ -288,7 +284,7 @@ export function GearRentalSection() {
               className={cn(
                 "px-4 py-2 min-h-[44px] rounded-full text-xs font-medium transition-all duration-200 cursor-pointer border whitespace-nowrap flex items-center justify-center",
                 activeCategory === cat.id
-                  ? "bg-brand-purple text-white border-brand-purple shadow-lg shadow-brand-purple/30 scale-105"
+                  ? "bg-amber-500 text-zinc-950 font-bold border-amber-500 shadow-lg shadow-amber-500/20 scale-105"
                   : "bg-white/5 text-text-secondary border-white/10 hover:border-white/20 hover:text-white"
               )}
             >
@@ -307,11 +303,11 @@ export function GearRentalSection() {
               <FadeUp key={item.id} delay={idx * 0.04} className="h-full">
                 <article
                   onClick={() => setSelectedGearItem(item)}
-                  className="rounded-3xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-brand-purple/40 backdrop-blur-xl p-4 sm:p-5 flex flex-col justify-between h-full group cursor-pointer transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-brand-purple/15 overflow-hidden"
+                  className="rounded-3xl border border-white/8 bg-zinc-900/80 hover:bg-zinc-900 hover:border-white/20 backdrop-blur-xl p-4 sm:p-5 flex flex-col justify-between h-full group cursor-pointer transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-black/60 overflow-hidden"
                 >
                   <div>
                     {/* Visual */}
-                    <div className="relative w-full aspect-[16/10] mb-4 rounded-2xl overflow-hidden bg-black/60 border border-white/10 group-hover:border-brand-purple/30 transition-all duration-300">
+                    <div className="relative w-full aspect-[16/10] mb-4 rounded-2xl overflow-hidden bg-black/60 border border-white/8 group-hover:border-white/20 transition-all duration-300">
                       {item.image ? (
                         <Image
                           src={item.image}
@@ -322,7 +318,7 @@ export function GearRentalSection() {
                         />
                       ) : (
                         <div className="flex items-center justify-center size-full">
-                          <Camera size={36} className="text-text-muted" />
+                          <Camera size={36} className="text-zinc-500" />
                         </div>
                       )}
 
@@ -341,7 +337,7 @@ export function GearRentalSection() {
 
                       {item.isKit && (
                         <div className="absolute bottom-2.5 start-2.5 z-10 pointer-events-none">
-                          <span className="px-2 py-0.5 rounded-md bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/40 text-[9.5px] font-bold flex items-center gap-1">
+                          <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9.5px] font-bold flex items-center gap-1">
                             <Box size={10} />
                             <span>{isArabic ? "باقة كاملة" : "Turnkey Kit"}</span>
                           </span>
@@ -349,17 +345,17 @@ export function GearRentalSection() {
                       )}
                     </div>
 
-                    <h4 className="text-base font-bold text-white mb-1.5 font-display group-hover:text-brand-purple-light transition-colors line-clamp-1">
+                    <h4 className="text-base font-bold text-white mb-1.5 font-display group-hover:text-amber-400 transition-colors line-clamp-1">
                       {itemName}
                     </h4>
 
-                    <p className="text-xs text-text-secondary leading-relaxed mb-4 line-clamp-2">
+                    <p className="text-xs text-zinc-400 leading-relaxed mb-4 line-clamp-2">
                       {isArabic && item.arabicDescription ? item.arabicDescription : item.description}
                     </p>
 
                     <div className="flex flex-wrap gap-1 mb-4">
                       {item.specs.slice(0, 2).map((s) => (
-                        <span key={s} className="text-[10px] px-2 py-0.5 rounded bg-white/5 border border-white/5 text-text-muted font-mono truncate max-w-full">
+                        <span key={s} className="text-[10px] px-2 py-0.5 rounded bg-white/5 border border-white/5 text-zinc-400 font-mono truncate max-w-full">
                           {s}
                         </span>
                       ))}
@@ -373,12 +369,12 @@ export function GearRentalSection() {
                         <span className="text-lg font-black text-white font-display">
                           {formatCurrency(effectivePrice)}
                         </span>
-                        <span className="text-[10px] text-text-muted">
+                        <span className="text-[10px] text-zinc-400">
                           / {isArabic ? "يوم" : "Day"}
                         </span>
                       </div>
                       {discountMultiplier < 1 && (
-                        <span className="text-[10px] text-brand-cyan font-mono block">
+                        <span className="text-[10px] text-emerald-400 font-mono block">
                           {isArabic ? `وفر ${Math.round((1 - discountMultiplier) * 100)}%` : `Save ${Math.round((1 - discountMultiplier) * 100)}%`}
                         </span>
                       )}
@@ -390,7 +386,7 @@ export function GearRentalSection() {
                         e.stopPropagation();
                         setSelectedGearItem(item);
                       }}
-                      className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-brand-purple text-white text-xs font-semibold backdrop-blur-md transition-all group-hover:scale-105 active:scale-95 cursor-pointer shadow-md"
+                      className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-amber-500 hover:text-zinc-950 text-white text-xs font-semibold backdrop-blur-md transition-all group-hover:scale-105 active:scale-95 cursor-pointer shadow-md"
                     >
                       {isArabic ? "حجز" : "Reserve"}
                     </button>
@@ -403,8 +399,8 @@ export function GearRentalSection() {
 
         {/* ── Risk-Reversal & Trust Strip (Production Houses & DPs) ── */}
         <FadeUp delay={0.15} className="mt-14 pt-10 border-t border-white/10 grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-            <div className="size-10 rounded-xl bg-brand-purple/20 border border-brand-purple/30 text-brand-purple-light flex items-center justify-center shrink-0">
+          <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-zinc-900/50 border border-white/8">
+            <div className="size-10 rounded-xl bg-zinc-800 border border-white/12 text-amber-400 flex items-center justify-center shrink-0">
               <ShieldCheck size={20} />
             </div>
             <div>
@@ -420,7 +416,7 @@ export function GearRentalSection() {
           </div>
 
           <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-            <div className="size-10 rounded-xl bg-brand-cyan/20 border border-brand-cyan/30 text-brand-cyan flex items-center justify-center shrink-0">
+            <div className="size-10 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0">
               <Clock size={20} />
             </div>
             <div>

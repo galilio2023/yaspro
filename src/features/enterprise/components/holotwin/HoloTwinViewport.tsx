@@ -27,20 +27,20 @@ export function HoloTwinViewport({
       case "high_noon":
         return "bg-gradient-to-b from-white/20 via-sky-300/10 to-transparent mix-blend-screen";
       case "cyber_night":
-        return "bg-gradient-to-tr from-purple-900/40 via-cyan-900/20 to-transparent mix-blend-color-dodge";
+        return "bg-gradient-to-tr from-amber-950/40 via-stone-900/30 to-transparent mix-blend-color-dodge";
       case "blue_hour":
-        return "bg-gradient-to-t from-blue-900/40 via-indigo-950/20 to-transparent mix-blend-multiply";
+        return "bg-gradient-to-t from-slate-900/50 via-slate-950/30 to-transparent mix-blend-multiply";
     }
   };
 
   const getLightingKelvin = () => {
     switch (lighting) {
       case "golden_hour":
-        return "3,200K Warm";
+        return "3,200K Warm Tungsten";
       case "high_noon":
         return "5,600K Daylight";
       case "cyber_night":
-        return "7,800K Cyber";
+        return "6,500K Studio Xenon";
       case "blue_hour":
         return "4,100K Twilight";
     }
@@ -69,7 +69,7 @@ export function HoloTwinViewport({
           className="absolute inset-0 pointer-events-none opacity-40"
           style={{
             backgroundImage:
-              "linear-gradient(to right, #06b6d4 1px, transparent 1px), linear-gradient(to bottom, #06b6d4 1px, transparent 1px)",
+              "linear-gradient(to right, #f59e0b 1px, transparent 1px), linear-gradient(to bottom, #f59e0b 1px, transparent 1px)",
             backgroundSize: "24px 24px",
           }}
         />
@@ -77,8 +77,8 @@ export function HoloTwinViewport({
 
       {/* Top Left Viewport HUD */}
       <div className="absolute top-3 left-3 sm:top-4 sm:left-4 flex flex-col gap-1 pointer-events-none max-w-[65%] sm:max-w-none">
-        <div className="flex items-center gap-1.5 sm:gap-2 bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-brand-purple/40 text-[10px] sm:text-xs font-mono text-brand-purple-light">
-          <span className="size-1.5 sm:size-2 rounded-full bg-brand-purple-light animate-pulse shrink-0" />
+        <div className="flex items-center gap-1.5 sm:gap-2 bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-amber-500/40 text-[10px] sm:text-xs font-mono text-amber-400">
+          <span className="size-1.5 sm:size-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
           <span className="font-bold">UNREAL 5.4</span>
           <span className="text-white/40 hidden xs:inline">|</span>
           <span className="text-white/90 truncate hidden xs:inline">{selectedTwin.featuredPill}</span>
@@ -90,8 +90,8 @@ export function HoloTwinViewport({
 
       {/* Top Right Live Telemetry */}
       <div className="absolute top-3 right-3 sm:top-4 sm:right-4 flex items-center gap-1.5 sm:gap-2 pointer-events-none">
-        <div className="bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-brand-teal/40 text-[10px] sm:text-xs font-mono text-brand-teal-light flex items-center gap-1 sm:gap-1.5">
-          <CheckCircle2 size={12} className="shrink-0 text-brand-teal" />
+        <div className="bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-emerald-500/40 text-[10px] sm:text-xs font-mono text-emerald-300 flex items-center gap-1 sm:gap-1.5">
+          <CheckCircle2 size={12} className="shrink-0 text-emerald-400" />
           <span className="font-bold">120 FPS</span>
           <span className="text-white/40 hidden sm:inline">|</span>
           <span className="text-white/90 hidden sm:inline">1.8ms</span>
@@ -101,9 +101,9 @@ export function HoloTwinViewport({
       {/* Bottom Left Crosshair & Optics */}
       <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 flex items-center gap-2 pointer-events-none">
         <div className="bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-white/10 text-[10px] sm:text-[11px] font-mono text-white/80 flex items-center gap-1.5 sm:gap-2">
-          <Crosshair size={12} className="text-brand-gold shrink-0" />
+          <Crosshair size={12} className="text-amber-400 shrink-0" />
           <span className="hidden sm:inline">ARRI Alexa 35</span>
-          <span className="text-brand-cyan font-bold">{focalLength}mm</span>
+          <span className="text-amber-400 font-bold">{focalLength}mm</span>
         </div>
       </div>
 
@@ -113,7 +113,7 @@ export function HoloTwinViewport({
           {lighting === "golden_hour" || lighting === "high_noon" ? (
             <Sun size={12} className="text-amber-400 shrink-0" />
           ) : (
-            <Moon size={12} className="text-brand-cyan shrink-0" />
+            <Moon size={12} className="text-amber-300 shrink-0" />
           )}
           <span>{getLightingKelvin()}</span>
         </div>

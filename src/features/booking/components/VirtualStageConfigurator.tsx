@@ -24,7 +24,7 @@ const PRESETS: StagePreset[] = [
     ledCurve: 270,
     lightingRigs: 6,
     cameraTrack: "optical",
-    ambientColor: "#7c3aed",
+    ambientColor: "#f59e0b",
     gridDensity: 1.2,
     description: "Curved panoramic LED wall synced with Unreal Engine 5.4 LiveLink optical tracking.",
   },
@@ -34,7 +34,7 @@ const PRESETS: StagePreset[] = [
     ledCurve: 90,
     lightingRigs: 8,
     cameraTrack: "rail",
-    ambientColor: "#06b6d4",
+    ambientColor: "#d97706",
     gridDensity: 0.8,
     description: "Full white/green infinity cyclorama with ceiling motorized SkyPanels for high-fashion.",
   },
@@ -65,10 +65,10 @@ function VirtualStage3DModel({
         args={[10, 10]}
         cellSize={0.5}
         cellThickness={1}
-        cellColor="#7c3aed"
+        cellColor="#f59e0b"
         sectionSize={2.5}
         sectionThickness={1.5}
-        sectionColor="#06b6d4"
+        sectionColor="#d97706"
         fadeDistance={12}
         fadeStrength={1.5}
       />
@@ -115,13 +115,13 @@ function VirtualStage3DModel({
       {/* Central Actor / Prop Target Marker */}
       <mesh position={[0, -0.9, 0]}>
         <cylinderGeometry args={[0.8, 0.8, 0.05, 32]} />
-        <meshStandardMaterial color="#06b6d4" emissive="#06b6d4" emissiveIntensity={0.3} />
+        <meshStandardMaterial color="#f59e0b" emissive="#f59e0b" emissiveIntensity={0.3} />
       </mesh>
 
       {/* Camera Position Marker */}
       <mesh position={[0, -0.2, 2]}>
         <boxGeometry args={[0.3, 0.25, 0.4]} />
-        <meshStandardMaterial color="#c4b5fd" metalness={0.9} roughness={0.1} />
+        <meshStandardMaterial color="#d4d4d8" metalness={0.9} roughness={0.1} />
       </mesh>
 
       <ambientLight intensity={0.5} />
@@ -148,7 +148,7 @@ export function VirtualStageConfigurator() {
       {/* Top Banner */}
       <div className="p-4 sm:p-5 border-b border-white/10 flex flex-wrap items-center justify-between gap-3 bg-white/[0.02]">
         <div className="flex items-center gap-2.5">
-          <div className="size-8 rounded-xl bg-brand-purple/20 text-brand-purple-light flex items-center justify-center">
+          <div className="size-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
             <Layers size={16} />
           </div>
           <div>
@@ -156,7 +156,7 @@ export function VirtualStageConfigurator() {
               <span className="text-xs sm:text-sm font-bold text-white font-display">
                 Interactive 3D Virtual Production Stage Preview
               </span>
-              <Badge variant="cyan" className="text-[9px] uppercase tracking-wider font-mono">
+              <Badge variant="gold" className="text-[9px] uppercase tracking-wider font-mono">
                 WebGL 3D
               </Badge>
             </div>
@@ -178,7 +178,7 @@ export function VirtualStageConfigurator() {
                 onClick={() => setActivePreset(p)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   isSelected
-                    ? "bg-brand-purple text-white shadow-md shadow-brand-purple/20 font-bold border border-brand-purple-light/40"
+                    ? "bg-amber-500 text-black font-extrabold shadow-md shadow-amber-500/20 border border-amber-400"
                     : "bg-white/5 text-text-muted hover:text-white border border-white/5"
                 }`}
               >
@@ -209,7 +209,7 @@ export function VirtualStageConfigurator() {
 
         {/* Floating HUD Telemetry */}
         <div className="absolute top-4 left-4 pointer-events-none space-y-1.5 bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10 text-xs font-mono">
-          <div className="text-brand-purple-light font-bold flex items-center gap-1.5">
+          <div className="text-amber-400 font-bold flex items-center gap-1.5">
             <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
             {activePreset.name}
           </div>
@@ -235,7 +235,7 @@ export function VirtualStageConfigurator() {
         <p className="text-text-secondary leading-relaxed" aria-live="polite">
           {activePreset.description}
         </p>
-        <span className="text-brand-cyan font-mono text-[11px] shrink-0 font-bold">
+        <span className="text-amber-400 font-mono text-[11px] shrink-0 font-bold">
           Calibrated for Unreal 5.4 LiveLink
         </span>
       </div>

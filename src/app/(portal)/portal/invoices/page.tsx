@@ -12,7 +12,7 @@ export const metadata = { title: "Billing & Invoices | Client Portal" };
 
 const PAYMENT_CONFIG: Record<string, { label: string; color: string }> = {
   paid: { label: "Paid in Full", color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30" },
-  deposit_paid: { label: "Deposit Paid", color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30" },
+  deposit_paid: { label: "Deposit Paid", color: "text-emerald-300 bg-emerald-500/10 border-emerald-500/30" },
   unpaid: { label: "Awaiting Payment", color: "text-amber-400 bg-amber-500/10 border-amber-500/30" },
 };
 
@@ -94,7 +94,7 @@ export default async function InvoicesPage() {
 
       {/* Tax invoice notice */}
       <div className="flex items-start gap-3 p-4 rounded-2xl bg-slate-800/60 border border-white/10">
-        <MessageSquare size={16} className="text-purple-400 shrink-0 mt-0.5" />
+        <MessageSquare size={16} className="text-amber-400 shrink-0 mt-0.5" />
         <div className="text-xs text-slate-300 leading-relaxed">
           For official VAT tax invoices, contact your production concierge directly.{" "}
           <a href="https://wa.me/971554010465" target="_blank" rel="noopener noreferrer"
@@ -102,7 +102,7 @@ export default async function InvoicesPage() {
             WhatsApp +971 55 401 0465
           </a>
           {" "}or{" "}
-          <Link href="/portal/support" className="text-purple-400 hover:text-purple-300 font-semibold transition-colors">
+          <Link href="/portal/support" className="text-amber-400 hover:text-amber-300 font-semibold transition-colors">
             open a support ticket
           </Link>.
         </div>

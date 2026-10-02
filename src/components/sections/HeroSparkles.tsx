@@ -21,7 +21,7 @@ export function HeroSparkles() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse at 48% 44%, rgba(255,255,255,0.07) 0%, rgba(124,58,237,0.06) 30%, transparent 65%)",
+            "radial-gradient(ellipse at 48% 44%, rgba(255,255,255,0.07) 0%, rgba(245,158,11,0.06) 30%, transparent 65%)",
         }}
       />
 

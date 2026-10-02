@@ -38,7 +38,7 @@ export default function ErrorBoundary({
           </button>
           <Link
             href="/"
-            className="flex-1 inline-flex items-center justify-center py-3 rounded-xl font-semibold text-white text-xs bg-gradient-to-r from-brand-purple to-brand-purple-light hover:opacity-90 transition-opacity"
+            className="flex-1 inline-flex items-center justify-center py-3 rounded-xl font-bold text-xs btn-brand"
           >
             Back Home
           </Link>

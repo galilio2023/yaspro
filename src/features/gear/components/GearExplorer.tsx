@@ -117,16 +117,16 @@ export function GearExplorer({
 
       {/* AI Production Kit Matcher */}
       <FadeUp delay={0.08}>
-        <div className="mb-6 sm:mb-8 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl bg-slate-950/80 border border-brand-purple/30 backdrop-blur-xl shadow-xl shadow-brand-purple/5 relative overflow-hidden">
+        <div className="mb-6 sm:mb-8 p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl bg-slate-950/80 border border-amber-500/20 backdrop-blur-xl shadow-xl shadow-amber-500/5 relative overflow-hidden">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2.5">
-              <div className="size-9 rounded-xl bg-gradient-to-tr from-brand-purple to-brand-cyan flex items-center justify-center shadow-md shadow-brand-purple/20">
-                <Bot size={18} className="text-white" />
+              <div className="size-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                <Bot size={18} />
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-bold text-white">AI Production Kit Matcher</h3>
-                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-brand-purple/20 text-brand-purple-light border border-brand-purple/30 font-bold">
+                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">
                     Intelligent Builder
                   </span>
                 </div>
@@ -157,14 +157,14 @@ export function GearExplorer({
                   if (e.key === "Enter") handleMatchPackage();
                 }}
                 placeholder="e.g. Anamorphic commercial in Dubai desert or run & gun doc interview..."
-                className="w-full bg-slate-900 border border-white/15 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-brand-purple transition-all"
+                className="w-full bg-slate-900 border border-white/15 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-amber-500 transition-all"
               />
             </div>
             <button
               type="button"
               onClick={() => handleMatchPackage()}
               disabled={isMatching || !aiPrompt.trim()}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-purple/20 hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer shrink-0"
+              className="px-5 py-2.5 rounded-xl btn-brand text-xs font-bold flex items-center justify-center gap-2 disabled:opacity-50 transition-all cursor-pointer shrink-0"
             >
               {isMatching ? (
                 <span className="animate-pulse">Matching Cinema Gear...</span>
@@ -192,7 +192,7 @@ export function GearExplorer({
                   setAiPrompt(p.prompt);
                   handleMatchPackage(p.prompt);
                 }}
-                className="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-brand-purple-light border border-white/5 transition-colors cursor-pointer"
+                className="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-amber-400 border border-white/5 transition-colors cursor-pointer"
               >
                 {p.label}
               </button>
@@ -208,14 +208,14 @@ export function GearExplorer({
 
           {/* AI Matched Package Card */}
           {matchedKit && (
-            <div className="mt-4 p-4 sm:p-5 rounded-2xl bg-black/60 border border-brand-purple/40 space-y-4 animate-fade-in">
+            <div className="mt-4 p-4 sm:p-5 rounded-2xl bg-black/60 border border-amber-500/30 space-y-4 animate-fade-in">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-brand-cyan font-bold bg-brand-cyan/10 px-2 py-0.5 rounded border border-brand-cyan/20">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
                       {matchedKit.targetGenre}
                     </span>
-                    <span className="text-[10px] font-mono text-brand-teal-light bg-brand-teal/15 px-2 py-0.5 rounded border border-brand-teal/30">
+                    <span className="text-[10px] font-mono text-emerald-300 bg-emerald-500/15 px-2 py-0.5 rounded border border-emerald-500/30">
                       12% Package Discount
                     </span>
                   </div>
@@ -227,7 +227,7 @@ export function GearExplorer({
                   <div className="text-xs text-text-muted line-through font-mono">
                     {formatCurrency(matchedKit.totalDailyRate)} / day
                   </div>
-                  <div className="text-xl font-bold font-mono text-brand-teal-light">
+                  <div className="text-xl font-bold font-mono text-amber-400">
                     {formatCurrency(matchedKit.packageDailyRate)}
                     <span className="text-xs font-normal text-text-muted"> / day</span>
                   </div>
@@ -242,7 +242,7 @@ export function GearExplorer({
                     className="p-3 rounded-xl bg-slate-900/80 border border-white/10 flex flex-col justify-between"
                   >
                     <div>
-                      <div className="flex items-center justify-between text-[11px] font-mono text-brand-purple-light mb-1">
+                      <div className="flex items-center justify-between text-[11px] font-mono text-amber-400 mb-1">
                         <span>{m.role}</span>
                         <span className="text-white font-bold">{formatCurrency(m.item.dailyRate)}</span>
                       </div>
@@ -257,7 +257,7 @@ export function GearExplorer({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-white/10">
                 <div className="flex items-center gap-2 text-xs">
                   {matchedKit.compatibility.isCompatible ? (
-                    <div className="flex items-center gap-1.5 text-brand-teal font-mono font-medium">
+                    <div className="flex items-center gap-1.5 text-emerald-400 font-mono font-medium">
                       <ShieldCheck size={15} />
                       <span>Optical &amp; Power Compatibility Cleared</span>
                     </div>
@@ -272,7 +272,7 @@ export function GearExplorer({
                 <button
                   type="button"
                   onClick={handleAddAllToCart}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-purple via-[#6d28d9] to-brand-teal hover:opacity-95 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-purple/25 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                  className="px-5 py-2.5 rounded-xl btn-brand text-xs font-bold flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Layers size={14} />
                   <span>Add Entire Kit to Cart ({matchedKit.items.length} items)</span>

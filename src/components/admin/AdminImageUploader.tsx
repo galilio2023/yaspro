@@ -140,14 +140,14 @@ export function AdminImageUploader({
               fileInputRef.current?.click();
             }
           }}
-          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/50 ${
+          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500/50 ${
             dragActive
-              ? "border-purple-500 bg-purple-500/10"
+              ? "border-amber-500 bg-amber-500/10"
               : "border-white/15 hover:border-white/30 bg-white/[0.02]"
           }`}
         >
           <div className="flex flex-col items-center justify-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+            <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
               {isUploading ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
             </div>
             <p className="text-xs sm:text-sm font-medium text-white">
@@ -166,7 +166,7 @@ export function AdminImageUploader({
           value={value || ""}
           placeholder="Or paste external CDN / image URL..."
           onChange={(e) => onChange(e.target.value)}
-          className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
+          className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
         />
       </div>
 

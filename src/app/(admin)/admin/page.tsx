@@ -27,7 +27,7 @@ export default async function AdminDashboardPage() {
       description: "Verified media clients & accounts",
       href: "/admin/users",
       icon: UserCheck,
-      color: "from-violet-500/20 to-purple-500/10 border-violet-500/30 text-violet-400",
+      color: "from-amber-500/20 to-amber-600/10 border-amber-500/30 text-amber-400",
     },
     {
       title: "Client Leads & Inquiries",
@@ -36,7 +36,7 @@ export default async function AdminDashboardPage() {
       description: "Contact briefs, quotes & RFPs",
       href: "/admin/inquiries",
       icon: MessageSquare,
-      color: "from-blue-500/20 to-indigo-500/10 border-blue-500/30 text-blue-400",
+      color: "from-zinc-500/20 to-zinc-600/10 border-zinc-500/30 text-zinc-300",
     },
     {
       title: "Soundstages & Rates",
@@ -45,7 +45,7 @@ export default async function AdminDashboardPage() {
       description: "Hourly rates, capacity & amenities",
       href: "/admin/studios",
       icon: Layers,
-      color: "from-cyan-500/20 to-teal-500/10 border-cyan-500/30 text-cyan-400",
+      color: "from-amber-600/20 to-yellow-600/10 border-amber-600/30 text-amber-300",
     },
     {
       title: "Studio Bookings",
@@ -63,7 +63,7 @@ export default async function AdminDashboardPage() {
       description: "Government & VIP broadcast tenders",
       href: "/admin/rfps",
       icon: FileSpreadsheet,
-      color: "from-rose-500/20 to-pink-500/10 border-rose-500/30 text-rose-400",
+      color: "from-amber-600/20 to-amber-500/10 border-amber-500/30 text-amber-300",
     },
     {
       title: "Broadcast & OB Van",
@@ -72,7 +72,7 @@ export default async function AdminDashboardPage() {
       description: "Ka-band telemetry & C2C ingest",
       href: "/admin/broadcast",
       icon: Radio,
-      color: "from-emerald-500/20 to-green-500/10 border-emerald-500/30 text-emerald-400",
+      color: "from-emerald-500/20 to-emerald-600/10 border-emerald-500/30 text-emerald-400",
     },
     {
       title: "Gear & Studio Inventory",
@@ -80,7 +80,7 @@ export default async function AdminDashboardPage() {
       description: "Cinema cameras, lighting, & kits",
       href: "/admin/gear",
       icon: Camera,
-      color: "from-teal-500/20 to-emerald-500/10 border-teal-500/30 text-teal-400",
+      color: "from-emerald-600/20 to-emerald-500/10 border-emerald-500/30 text-emerald-300",
     },
     {
       title: "Projects Portfolio",
@@ -88,7 +88,7 @@ export default async function AdminDashboardPage() {
       description: "Live commercial & government films",
       href: "/admin/projects",
       icon: Film,
-      color: "from-purple-500/20 to-indigo-500/10 border-purple-500/30 text-purple-400",
+      color: "from-amber-500/20 to-amber-600/10 border-amber-500/30 text-amber-400",
     },
     {
       title: "Creator Roster",
@@ -96,16 +96,16 @@ export default async function AdminDashboardPage() {
       description: "Mawthooq licensed Arab influencers",
       href: "/admin/influencers",
       icon: Users,
-      color: "from-fuchsia-500/20 to-pink-500/10 border-fuchsia-500/30 text-fuchsia-400",
+      color: "from-amber-400/20 to-amber-500/10 border-amber-400/30 text-amber-300",
     },
   ];
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-purple-950/40 via-slate-900/60 to-slate-900 border border-purple-500/20 backdrop-blur-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl bg-[#0c0b10] border border-amber-500/20 backdrop-blur-xl">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-mono uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono uppercase tracking-wider mb-2">
             <Server size={12} /> Neon Serverless + Drizzle ORM
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
@@ -127,7 +127,7 @@ export default async function AdminDashboardPage() {
           </Link>
           <Link
             href="/admin/projects"
-            className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition-colors shadow-lg shadow-purple-600/30 flex items-center gap-2"
+            className="px-4 py-2.5 rounded-xl btn-brand text-xs font-bold transition-all flex items-center gap-2"
           >
             Manage Content <Layers size={14} />
           </Link>
@@ -178,7 +178,7 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="p-6 rounded-2xl bg-slate-900/60 border border-white/10 backdrop-blur-xl space-y-4">
           <div className="flex items-center gap-2 text-sm font-semibold text-white">
-            <TrendingUp size={16} className="text-purple-400" />
+            <TrendingUp size={16} className="text-amber-400" />
             <span>Fast Management Tasks</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -186,14 +186,14 @@ export default async function AdminDashboardPage() {
               href="/admin/projects"
               className="p-3.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-colors block"
             >
-              <span className="font-semibold text-purple-300 block mb-1">Add Portfolio Film</span>
+              <span className="font-semibold text-amber-300 block mb-1">Add Portfolio Film</span>
               <span className="text-slate-400">Add high-resolution project with 4K Vimeo embedding</span>
             </Link>
             <Link
               href="/admin/influencers"
               className="p-3.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-colors block"
             >
-              <span className="font-semibold text-blue-300 block mb-1">Sync Creator Media Kit</span>
+              <span className="font-semibold text-amber-300 block mb-1">Sync Creator Media Kit</span>
               <span className="text-slate-400">Update follower stats & Mawthooq compliance records</span>
             </Link>
             <Link
@@ -207,7 +207,7 @@ export default async function AdminDashboardPage() {
               href="/admin/rfps"
               className="p-3.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-colors block"
             >
-              <span className="font-semibold text-rose-300 block mb-1">Tender Status Board</span>
+              <span className="font-semibold text-stone-300 block mb-1">Tender Status Board</span>
               <span className="text-slate-400">Update milestone approvals & client notifications</span>
             </Link>
           </div>
@@ -221,7 +221,7 @@ export default async function AdminDashboardPage() {
           <ul className="space-y-3 text-xs text-slate-300">
             <li className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
               <span>Database Provider</span>
-              <span className="font-mono text-purple-300">Neon Serverless (PostgreSQL 16)</span>
+              <span className="font-mono text-amber-300">Neon Serverless (PostgreSQL 16)</span>
             </li>
             <li className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
               <span>Type-Safe ORM</span>
@@ -229,7 +229,7 @@ export default async function AdminDashboardPage() {
             </li>
             <li className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
               <span>Seed & Catalog Sync</span>
-              <span className="font-mono text-cyan-300">npm run db:push / npm run seed</span>
+              <span className="font-mono text-amber-300">npm run db:push / npm run seed</span>
             </li>
             <li className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
               <span>Availability Strategy</span>

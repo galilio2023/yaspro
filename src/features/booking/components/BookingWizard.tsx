@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertCircle, Sparkles } from "lucide-react";
+import { AlertCircle, Cpu } from "lucide-react";
 import { WIZARD_STEPS } from "../constants";
 import { useBookingWizard } from "../hooks/useBookingWizard";
 import { BookingProgress } from "./BookingProgress";
@@ -85,23 +85,23 @@ export function BookingWizard() {
             <button
               type="button"
               onClick={() => setIsAiModalOpen(true)}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-brand-purple to-brand-cyan hover:opacity-95 text-white flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-brand-purple/20 shrink-0 self-end sm:self-auto"
+              className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-zinc-900 border border-white/15 hover:bg-zinc-800 hover:border-white/30 text-zinc-200 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shrink-0 self-end sm:self-auto active:scale-[0.97]"
             >
-              <Sparkles size={13} />
-              <span>AI Pitch Assistant</span>
+              <Cpu size={13} className="text-amber-400" />
+              <span>Production Brief Assistant</span>
             </button>
           </div>
 
-          <div className="rounded-2xl sm:rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 sm:p-6 lg:p-10 shadow-xl shadow-black/20">
+          <div className="rounded-2xl sm:rounded-3xl border border-white/10 bg-zinc-950/80 backdrop-blur-xl p-4 sm:p-6 lg:p-10 shadow-2xl shadow-black/60">
             {isAiConfigured && (
-              <div className="mb-6 p-4 rounded-2xl bg-brand-purple/15 border border-brand-purple/30 flex items-center justify-between gap-3 text-xs">
+              <div className="mb-6 p-4 rounded-2xl bg-zinc-900 border border-white/12 flex items-center justify-between gap-3 text-xs">
                 <div className="flex items-center gap-2.5">
-                  <div className="size-7 rounded-lg bg-brand-purple/30 flex items-center justify-center text-brand-purple-light shrink-0">
-                    <Sparkles size={14} className="animate-pulse" />
+                  <div className="size-7 rounded-lg bg-zinc-800 border border-white/10 flex items-center justify-center text-amber-400 shrink-0">
+                    <Cpu size={14} />
                   </div>
                   <div>
-                    <div className="text-white font-bold">Configured by AI Production Copilot</div>
-                    <div className="text-text-muted text-[11px]">
+                    <div className="text-white font-bold">Configured by Production Advisor</div>
+                    <div className="text-zinc-400 text-[11px]">
                       Soundstage ({studio?.name}), gear package, and session hours have been automatically synchronized with your blueprint.
                     </div>
                   </div>
@@ -109,7 +109,7 @@ export function BookingWizard() {
                 <button
                   type="button"
                   onClick={() => setIsAiConfigured(false)}
-                  className="text-text-muted hover:text-white text-[11px] underline shrink-0 cursor-pointer"
+                  className="text-zinc-400 hover:text-white text-[11px] underline shrink-0 cursor-pointer"
                 >
                   Dismiss
                 </button>

@@ -20,8 +20,8 @@ export default async function EnterprisePortalPage() {
   return (
     <div className="space-y-8 max-w-5xl">
       {/* Header */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-purple-950/50 via-slate-900/60 to-slate-900 border border-purple-500/20 backdrop-blur-xl">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-semibold mb-3">
+      <div className="p-6 sm:p-8 rounded-3xl bg-[#0c0b10] border border-amber-500/20 backdrop-blur-xl">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold mb-3">
           <ShieldCheck size={14} /> Sovereign Enterprise Access
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
@@ -36,8 +36,8 @@ export default async function EnterprisePortalPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: "Relay Bus", value: "LIVE", color: "text-emerald-400", dot: "bg-emerald-400 animate-pulse" },
-          { label: "SMPTE 2110", value: "SYNCED", color: "text-cyan-400", dot: "bg-cyan-400 animate-pulse" },
-          { label: "Vault Status", value: "SECURED", color: "text-purple-400", dot: "bg-purple-400" },
+          { label: "SMPTE 2110", value: "SYNCED", color: "text-amber-400", dot: "bg-amber-400 animate-pulse" },
+          { label: "Vault Status", value: "SECURED", color: "text-amber-400", dot: "bg-amber-400" },
           { label: "SLA Tier", value: "PLATINUM", color: "text-amber-400", dot: "bg-amber-400" },
         ].map((s) => (
           <div key={s.label} className="p-4 rounded-2xl bg-slate-900/60 border border-white/10 flex flex-col gap-2">
@@ -53,33 +53,33 @@ export default async function EnterprisePortalPage() {
       {/* Module grid */}
       <div>
         <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-          <Zap size={12} className="text-purple-400" /> Production Modules
+          <Zap size={12} className="text-amber-400" /> Production Modules
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
             {
               href: "/enterprise/portal/dailies",
               icon: Video,
-              iconBg: "bg-purple-500/20",
-              iconColor: "text-purple-400",
-              hoverBorder: "hover:border-purple-500/40",
-              actionColor: "text-purple-400",
+              iconBg: "bg-amber-500/20",
+              iconColor: "text-amber-400",
+              hoverBorder: "hover:border-amber-500/40",
+              actionColor: "text-amber-400",
               title: "C2C Dailies Vault",
               desc: "Review frame-accurate camera-to-cloud footage with timecoded annotations from colorists and executive producers.",
               tag: "Live Ingest",
-              tagColor: "text-purple-300 bg-purple-500/10 border-purple-500/20",
+              tagColor: "text-amber-300 bg-amber-500/10 border-amber-500/20",
             },
             {
               href: "/enterprise/portal/rfps",
               icon: FileText,
-              iconBg: "bg-cyan-500/20",
-              iconColor: "text-cyan-400",
-              hoverBorder: "hover:border-cyan-500/40",
-              actionColor: "text-cyan-400",
+              iconBg: "bg-amber-500/10",
+              iconColor: "text-amber-300",
+              hoverBorder: "hover:border-amber-500/30",
+              actionColor: "text-amber-300",
               title: "Active Tenders & RFPs",
               desc: "Track proposal statuses, Mawthooq compliance flags, and SLA reference codes for government and enterprise RFPs.",
               tag: "Tender Ledger",
-              tagColor: "text-cyan-300 bg-cyan-500/10 border-cyan-500/20",
+              tagColor: "text-amber-200 bg-amber-500/10 border-amber-500/20",
             },
             {
               href: "/enterprise/portal/stages",

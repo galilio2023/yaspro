@@ -52,20 +52,20 @@ const siteUrl = getSiteUrl();
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "YASPRO | AI Media Hub & Virtual Production",
+    default: "YASPRO | Cinema Studios & Virtual Production Dubai",
     template: "%s | YASPRO",
   },
   description:
-    "The fastest-growing production company in the Gulf region. AI-powered media production, studio booking, equipment rental, and influencer content creation.",
+    "The premier human-crafted production company in the Gulf region. Cinema soundstages, robotic camera systems, equipment rental, and high-impact commercial production.",
   keywords: [
-    "media production",
-    "AI media",
-    "studio booking",
-    "UAE production",
-    "influencer production",
+    "cinema production",
+    "virtual production",
+    "soundstage booking",
+    "UAE film production",
+    "commercial production",
     "OB Van",
     "live broadcast",
-    "Dubai media",
+    "Dubai media studios",
   ],
   icons: {
     icon: [
@@ -83,8 +83,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    siteName: "Yas Pro | AI Media Hub",
-    title: "Yas Pro | AI Media Hub & Virtual Production Dubai",
+    siteName: "Yas Pro | Cinema Studios",
+    title: "Yas Pro | Cinema Studios & Virtual Production Dubai",
     description:
       "Premier Dubai media production house: 4K virtual production soundstages, turnkey cinema camera & lighting rental, MENA creator roster, and live stadium broadcasting.",
     images: [
@@ -93,14 +93,14 @@ export const metadata: Metadata = {
         secureUrl: `${siteUrl}/opengraph-image`,
         width: 1200,
         height: 630,
-        alt: "Yas Pro | AI Media Hub & Virtual Production Dubai",
+        alt: "Yas Pro | Cinema Studios & Virtual Production Dubai",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Yas Pro | AI Media Hub & Virtual Production Dubai",
+    title: "Yas Pro | Cinema Studios & Virtual Production Dubai",
     description:
       "Premier Dubai media production house: 4K virtual production soundstages, turnkey cinema camera & lighting rental, MENA creator roster, and live stadium broadcasting.",
     images: [`${siteUrl}/opengraph-image`],

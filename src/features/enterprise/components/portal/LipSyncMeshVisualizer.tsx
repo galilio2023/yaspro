@@ -45,12 +45,12 @@ export function LipSyncMeshVisualizer({
       {/* Top Header */}
       <div className="flex items-center justify-between gap-2 mb-3">
         <div className="flex items-center gap-2">
-          <span className={`size-2 rounded-full ${isPlaying ? "bg-brand-teal animate-pulse" : "bg-white/30"}`} />
+          <span className={`size-2 rounded-full ${isPlaying ? "bg-emerald-400 animate-pulse" : "bg-white/30"}`} />
           <span className="text-[11px] font-mono font-bold text-white uppercase tracking-wider">
             Neural Viseme Tracker
           </span>
         </div>
-        <span className="text-[10px] font-mono text-brand-teal-light bg-brand-teal/15 px-2 py-0.5 rounded border border-brand-teal/30">
+        <span className="text-[10px] font-mono text-emerald-300 bg-emerald-500/15 px-2 py-0.5 rounded border border-emerald-500/30">
           {accuracy}
         </span>
       </div>
@@ -61,7 +61,7 @@ export function LipSyncMeshVisualizer({
         <div
           className="absolute inset-0 opacity-15 pointer-events-none"
           style={{
-            backgroundImage: "radial-gradient(#a855f7 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(#f59e0b 1px, transparent 1px)",
             backgroundSize: "16px 16px",
           }}
         />
@@ -70,16 +70,16 @@ export function LipSyncMeshVisualizer({
         <svg viewBox="0 0 160 100" className="w-36 sm:w-44 h-auto">
           {/* Facial Landmark Target Crosshairs */}
           <circle cx="80" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.08)" strokeDasharray="3 3" />
-          <circle cx="45" cy="50" r="2" fill="#06b6d4" opacity="0.6" />
-          <circle cx="115" cy="50" r="2" fill="#06b6d4" opacity="0.6" />
-          <circle cx="80" cy="24" r="2" fill="#a855f7" opacity="0.6" />
-          <circle cx="80" cy="76" r="2" fill="#a855f7" opacity="0.6" />
+          <circle cx="45" cy="50" r="2" fill="#f59e0b" opacity="0.6" />
+          <circle cx="115" cy="50" r="2" fill="#f59e0b" opacity="0.6" />
+          <circle cx="80" cy="24" r="2" fill="#d97706" opacity="0.6" />
+          <circle cx="80" cy="76" r="2" fill="#d97706" opacity="0.6" />
 
           {/* Dynamic Interpolated Lip Curves */}
           <path
             d={`M ${80 - baseWide} 50 Q 80 ${50 - baseOpen} ${80 + baseWide} 50 Q 80 ${50 + baseOpen} ${80 - baseWide} 50 Z`}
-            fill={isPlaying ? "url(#lipGlow)" : "rgba(168,85,247,0.15)"}
-            stroke={isPlaying ? "#06b6d4" : "rgba(255,255,255,0.3)"}
+            fill={isPlaying ? "url(#lipGlow)" : "rgba(245,158,11,0.15)"}
+            stroke={isPlaying ? "#f59e0b" : "rgba(255,255,255,0.3)"}
             strokeWidth="1.8"
             className="transition-all duration-75"
           />
@@ -92,7 +92,7 @@ export function LipSyncMeshVisualizer({
               rx={baseWide * 0.7}
               ry={baseOpen * 0.65}
               fill="#020617"
-              stroke="#a855f7"
+              stroke="#f59e0b"
               strokeWidth="0.8"
               opacity="0.8"
               className="transition-all duration-75"
@@ -102,14 +102,14 @@ export function LipSyncMeshVisualizer({
           {/* Gradients */}
           <defs>
             <linearGradient id="lipGlow" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#a855f7" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.4" />
+              <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#d97706" stopOpacity="0.4" />
             </linearGradient>
           </defs>
         </svg>
 
         {/* Live Active Viseme Tag */}
-        <div className="absolute bottom-2 left-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono text-brand-cyan border border-white/10 flex items-center gap-1">
+        <div className="absolute bottom-2 left-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono text-amber-400 border border-white/10 flex items-center gap-1">
           <Activity size={10} className="shrink-0" />
           <span>Viseme: {isPlaying ? currentPhoneme.symbol : "/idle/"}</span>
         </div>
@@ -122,10 +122,10 @@ export function LipSyncMeshVisualizer({
       {/* Footer Metrics */}
       <div className="flex items-center justify-between text-[10px] font-mono text-text-secondary pt-2 border-t border-white/5">
         <span className="flex items-center gap-1">
-          <Sparkles size={11} className="text-brand-purple-light" />
+          <Sparkles size={11} className="text-amber-400" />
           <span>ARKit 52 Blendshapes</span>
         </span>
-        <span className="text-brand-cyan font-bold">120 FPS Sub-pixel</span>
+        <span className="text-amber-400 font-bold">120 FPS Sub-pixel</span>
       </div>
     </div>
   );

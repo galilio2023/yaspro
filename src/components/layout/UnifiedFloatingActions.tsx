@@ -51,15 +51,15 @@ function UnifiedDualIcon({ className = "size-7" }: { className?: string }) {
     >
       <defs>
         <linearGradient id="yasproDualRing" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#A855F7" />
-          <stop offset="0.48" stopColor="#6366F1" />
+          <stop stopColor="#f59e0b" />
+          <stop offset="0.5" stopColor="#d97706" />
           <stop offset="1" stopColor="#10B981" />
         </linearGradient>
 
         <linearGradient id="yasproAiStarGrad" x1="5" y1="5" x2="19" y2="19" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#E9D5FF" />
-          <stop offset="0.4" stopColor="#C084FC" />
-          <stop offset="1" stopColor="#818CF8" />
+          <stop stopColor="#fef3c7" />
+          <stop offset="0.5" stopColor="#fbbf24" />
+          <stop offset="1" stopColor="#f59e0b" />
         </linearGradient>
 
         <linearGradient id="yasproWaHandsetGrad" x1="13" y1="12" x2="23" y2="23" gradientUnits="userSpaceOnUse">
@@ -76,8 +76,8 @@ function UnifiedDualIcon({ className = "size-7" }: { className?: string }) {
       {/* Modern stylized speech bubble frame with dynamic dual-gradient stroke */}
       <path
         d="M26.2 14.5C26.2 20.6 21.2 25.5 15 25.5C13.2 25.5 11.45 25.07 9.9 24.3L4.5 26.1L6.25 21C5.35 19.35 4.8 17.5 4.8 15.5C4.8 9.4 9.8 4.5 16 4.5C22.2 4.5 26.2 8.7 26.2 14.5Z"
-        fill="#0b0914"
-        fillOpacity="0.9"
+        fill="#0b0a0f"
+        fillOpacity="0.95"
         stroke="url(#yasproDualRing)"
         strokeWidth="1.75"
         strokeLinecap="round"
@@ -93,7 +93,7 @@ function UnifiedDualIcon({ className = "size-7" }: { className?: string }) {
       <circle cx="12.5" cy="12" r="1.1" fill="#FFFFFF" />
 
       {/* Micro-spark accent */}
-      <circle cx="8" cy="7.5" r="0.9" fill="#E9D5FF" />
+      <circle cx="8" cy="7.5" r="0.9" fill="#fde68a" />
 
       {/* Right/Bottom WhatsApp Phone Handset Glyph */}
       <path
@@ -135,9 +135,9 @@ function AiCopilotIcon({ className = "size-5" }: { className?: string }) {
     >
       <defs>
         <linearGradient id="aiFabGrad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#F3E8FF" />
-          <stop offset="0.5" stopColor="#C084FC" />
-          <stop offset="1" stopColor="#67E8F9" />
+          <stop stopColor="#fef3c7" />
+          <stop offset="0.5" stopColor="#fbbf24" />
+          <stop offset="1" stopColor="#f59e0b" />
         </linearGradient>
         <filter id="aiCoreGlow" x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur stdDeviation="0.8" result="blur" />
@@ -157,11 +157,11 @@ function AiCopilotIcon({ className = "size-5" }: { className?: string }) {
       {/* Secondary companion star */}
       <path
         d="M18.8 14.8L19.7 17.2L22.1 18.1L19.7 19L18.8 21.4L17.9 19L15.5 18.1L17.9 17.2L18.8 14.8Z"
-        fill="#A78BFA"
+        fill="#f59e0b"
       />
 
       {/* Subtle micro spark */}
-      <circle cx="6" cy="6.2" r="1.1" fill="#F472B6" />
+      <circle cx="6" cy="6.2" r="1.1" fill="#fcd34d" />
     </svg>
   );
 }
@@ -339,7 +339,7 @@ export function UnifiedFloatingActions() {
                       : "Hello Yas Pro Dubai team, I have a general production inquiry."
                   )
                 }
-                className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:opacity-95 flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/30 hover:shadow-emerald-900/50 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 hover:opacity-95 flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/30 hover:shadow-emerald-900/50 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
               >
                 <MessageSquare size={14} />
                 <span>{t("concierge.customChat")}</span>
@@ -357,31 +357,31 @@ export function UnifiedFloatingActions() {
           >
             {/* Option 1: AI Production Copilot SVG Button */}
             <div className="flex items-center gap-2.5 group/ai">
-              <span className="text-[11px] sm:text-xs font-semibold text-white/90 bg-[#0d0b1a]/90 backdrop-blur-xl border border-brand-purple/40 px-3 py-1.5 rounded-full shadow-lg shadow-black/50 pointer-events-none select-none transition-transform group-hover/ai:scale-105 whitespace-nowrap">
+              <span className="text-[11px] sm:text-xs font-semibold text-white/90 bg-[#0d0b12]/90 backdrop-blur-xl border border-amber-500/30 px-3 py-1.5 rounded-full shadow-lg shadow-black/50 pointer-events-none select-none transition-transform group-hover/ai:scale-105 whitespace-nowrap">
                 {t("concierge.aiCopilot")}
               </span>
               <button
                 type="button"
                 onClick={handleSelectAi}
-                className="relative size-12 sm:size-13 rounded-2xl bg-gradient-to-tr from-brand-purple via-indigo-600 to-purple-500 p-[1.5px] shadow-xl shadow-brand-purple/40 hover:shadow-brand-purple/60 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+                className="relative size-12 sm:size-13 rounded-2xl bg-amber-500/20 border border-amber-500/40 p-[1.5px] shadow-xl shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 aria-label={t("concierge.aiCopilot")}
                 title={t("concierge.aiCopilot")}
               >
-                <div className="size-full bg-[#0d0b1a] rounded-[14px] flex items-center justify-center">
-                  <AiCopilotIcon className="size-6 text-brand-purple-light" />
+                <div className="size-full bg-[#0d0b12] rounded-[14px] flex items-center justify-center text-amber-400">
+                  <AiCopilotIcon className="size-6" />
                 </div>
               </button>
             </div>
 
             {/* Option 2: WhatsApp Concierge SVG Button */}
             <div className="flex items-center gap-2.5 group/wa">
-              <span className="text-[11px] sm:text-xs font-semibold text-white/90 bg-[#0d0b1a]/90 backdrop-blur-xl border border-emerald-500/40 px-3 py-1.5 rounded-full shadow-lg shadow-black/50 pointer-events-none select-none transition-transform group-hover/wa:scale-105 whitespace-nowrap">
+              <span className="text-[11px] sm:text-xs font-semibold text-white/90 bg-[#0d0b12]/90 backdrop-blur-xl border border-emerald-500/40 px-3 py-1.5 rounded-full shadow-lg shadow-black/50 pointer-events-none select-none transition-transform group-hover/wa:scale-105 whitespace-nowrap">
                 {t("concierge.whatsApp")}
               </span>
               <button
                 type="button"
                 onClick={handleSelectWhatsApp}
-                className="relative size-12 sm:size-13 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-emerald-400 p-[1.5px] shadow-xl shadow-emerald-600/30 hover:shadow-emerald-600/50 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                className="relative size-12 sm:size-13 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 p-[1.5px] shadow-xl shadow-emerald-600/30 hover:shadow-emerald-600/50 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
                 aria-label={t("concierge.whatsApp")}
                 title={t("concierge.whatsApp")}
               >
@@ -397,8 +397,8 @@ export function UnifiedFloatingActions() {
         <div className="relative group">
           {/* Ambient Glow Aura */}
           <div
-            className={`absolute -inset-1.5 rounded-full bg-gradient-to-r from-brand-purple via-indigo-600 to-emerald-500 blur-md transition-opacity duration-300 ${
-              isMenuOpen ? "opacity-100 scale-105" : "opacity-70 group-hover:opacity-100"
+            className={`absolute -inset-1 rounded-full bg-gradient-to-r from-amber-500 to-emerald-500 blur-md transition-opacity duration-300 ${
+              isMenuOpen ? "opacity-100 scale-105" : "opacity-60 group-hover:opacity-100"
             }`}
           />
 
@@ -407,11 +407,11 @@ export function UnifiedFloatingActions() {
             ref={triggerRef}
             type="button"
             onClick={handleToggleMenu}
-            className={`relative size-13 sm:size-14 rounded-full bg-gradient-to-tr from-brand-purple via-indigo-600 to-emerald-500 p-[2px] shadow-2xl shadow-black/80 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple`}
+            className={`relative size-13 sm:size-14 rounded-full bg-[#0b0a0f] border border-amber-500/40 p-[2px] shadow-2xl shadow-black/80 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50`}
             aria-label={isMenuOpen ? "Close Assistant Options" : "Open Yas Pro Assistant (AI & WhatsApp)"}
             aria-expanded={isMenuOpen}
           >
-            <div className="size-full bg-[#090714] rounded-full flex items-center justify-center transition-colors group-hover:bg-[#0c091d]">
+            <div className="size-full bg-[#0b0a0f] rounded-full flex items-center justify-center transition-colors group-hover:bg-[#121118]">
               {isMenuOpen ? (
                 <X className="size-6 text-white transition-transform duration-300 rotate-90" />
               ) : (

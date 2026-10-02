@@ -12,11 +12,11 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div className="lg:col-span-12">
           <div className="flex flex-wrap items-center gap-3 mb-3">
-            <Badge variant="cyan" className="text-xs font-semibold">
+            <Badge variant="gold" className="text-xs font-semibold">
               {project.categoryLabel}
             </Badge>
-            <div className="flex items-center gap-1.5 text-xs text-brand-purple-light font-medium">
-              <ShieldCheck size={14} className="text-brand-purple" />
+            <div className="flex items-center gap-1.5 text-xs text-amber-300 font-medium">
+              <ShieldCheck size={14} className="text-amber-400" />
               <span>Commissioned by {project.client}</span>
             </div>
           </div>

@@ -21,7 +21,7 @@ export function ContactInquirySelector({
         {INQUIRY_TYPES.map((typeItem) => (
           <label
             key={typeItem.id}
-            className="flex items-center gap-2.5 p-3 min-h-[44px] rounded-2xl border border-white/10 hover:border-brand-purple/40 cursor-pointer text-sm text-text-secondary hover:text-white transition-all bg-white/5 select-none"
+            className="flex items-center gap-2.5 p-3 min-h-[44px] rounded-2xl border border-white/10 hover:border-amber-500/40 cursor-pointer text-sm text-text-secondary hover:text-white transition-all bg-white/5 select-none"
           >
             <input
               type="radio"
@@ -29,7 +29,7 @@ export function ContactInquirySelector({
               value={typeItem.id}
               checked={selected === typeItem.id}
               onChange={(e) => onChange(e.target.value)}
-              className="accent-brand-purple shrink-0 size-4"
+              className="accent-amber-500 shrink-0 size-4"
             />
             <span className="shrink-0">{typeItem.icon}</span>
             <span className="text-xs font-medium">

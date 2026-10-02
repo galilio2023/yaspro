@@ -10,7 +10,7 @@ interface PortalSidebarProps {
   userName: string;
   userEmail: string;
   userRole: "client" | "enterprise";
-  accentColor: "purple" | "emerald";
+  accentColor: "purple" | "emerald" | "amber";
 }
 
 export function PortalSidebar({
@@ -23,20 +23,20 @@ export function PortalSidebar({
   const isEmerald = accentColor === "emerald";
 
   const gradientClass = isEmerald
-    ? "from-emerald-600 via-emerald-700 to-teal-500"
-    : "from-purple-600 via-purple-700 to-indigo-500";
+    ? "from-emerald-600 via-emerald-700 to-emerald-800"
+    : "from-amber-500 via-amber-600 to-amber-700";
 
   const shadowClass = isEmerald
     ? "shadow-emerald-500/25 border-emerald-400/30"
-    : "shadow-purple-500/25 border-purple-400/30";
+    : "shadow-amber-500/20 border-amber-500/30";
 
-  const subtitleClass = isEmerald ? "text-emerald-400" : "text-purple-400";
+  const subtitleClass = isEmerald ? "text-emerald-400" : "text-amber-400";
 
-  const iconClass = isEmerald ? "text-emerald-400/80" : "text-purple-400/80";
+  const iconClass = isEmerald ? "text-emerald-400/80" : "text-amber-400/80";
 
   const logoHoverClass = isEmerald
     ? "group-hover:text-emerald-300"
-    : "group-hover:text-purple-300";
+    : "group-hover:text-amber-300";
 
   const subtitle = userRole === "client" ? "CLIENT PORTAL" : "ENTERPRISE VAULT";
 

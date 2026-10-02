@@ -104,7 +104,7 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
                   <div className="flex items-center justify-end gap-1.5">
                     <button
                       onClick={() => setInspectRfp(rfp)}
-                      className="px-2.5 py-1 rounded bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 text-[11px] font-medium transition-colors cursor-pointer flex items-center gap-1"
+                      className="px-2.5 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[11px] font-medium transition-colors cursor-pointer flex items-center gap-1"
                       title="Inspect full RFP proposal"
                     >
                       <Eye size={12} />
@@ -120,7 +120,7 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
                     <button
                       disabled={updatingId !== null}
                       onClick={() => handleStatusChange(rfp.id, "sla_active")}
-                      className="px-2 py-1 rounded bg-brand-teal/20 hover:bg-brand-teal/30 border border-brand-teal/30 text-brand-teal-light text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
+                      className="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
                     >
                       SLA
                     </button>
@@ -192,7 +192,7 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
                 </div>
                 <div>
                   <span className="text-[10px] text-slate-500 uppercase font-mono block">Budget Tier</span>
-                  <span className="font-bold text-purple-300 capitalize block mt-0.5">{inspectRfp.estimatedBudget.replace(/_/g, " ")}</span>
+                  <span className="font-bold text-amber-300 capitalize block mt-0.5">{inspectRfp.estimatedBudget.replace(/_/g, " ")}</span>
                 </div>
                 <div>
                   <span className="text-[10px] text-slate-500 uppercase font-mono block">Timeline</span>
@@ -213,7 +213,7 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
                       <span className="text-slate-400 block text-[11px]">Selected Creators:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {(inspectRfp.selectedCreators as string[]).map((c) => (
-                          <span key={c} className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-mono text-[10px]">
+                          <span key={c} className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono text-[10px]">
                             {c}
                           </span>
                         ))}
@@ -223,7 +223,7 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
                   {inspectRfp.digitalTwinEnvironment && (
                     <div className="mt-2">
                       <span className="text-slate-400 block text-[11px]">Digital Twin Environment:</span>
-                      <span className="font-mono text-cyan-300 text-[11px]">{inspectRfp.digitalTwinEnvironment}</span>
+                      <span className="font-mono text-amber-300 text-[11px]">{inspectRfp.digitalTwinEnvironment}</span>
                     </div>
                   )}
                 </div>
@@ -245,7 +245,7 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
                   disabled={updatingId !== null}
                   value={inspectRfp.status}
                   onChange={(e) => handleStatusChange(inspectRfp.id, e.target.value)}
-                  className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/20 text-white text-xs font-medium cursor-pointer focus:outline-none focus:border-purple-500"
+                  className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/20 text-white text-xs font-medium cursor-pointer focus:outline-none focus:border-amber-500"
                 >
                   <option value="pending_review" className="bg-slate-900 text-white">Pending Review</option>
                   <option value="approved" className="bg-slate-900 text-white">Approved</option>

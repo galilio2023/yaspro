@@ -33,7 +33,7 @@ export default async function Image({
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "60px 70px",
-          backgroundColor: "#03020a",
+          backgroundColor: "#070709",
           position: "relative",
           overflow: "hidden",
         }}
@@ -47,7 +47,7 @@ export default async function Image({
             width: "500px",
             height: "500px",
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(124, 58, 237, 0.4) 0%, rgba(6, 182, 212, 0.12) 50%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.1) 50%, transparent 70%)",
             display: "flex",
           }}
         />
@@ -67,26 +67,26 @@ export default async function Image({
                 width: "48px",
                 height: "48px",
                 borderRadius: "14px",
-                background: "linear-gradient(135deg, #7c3aed 0%, #4c1d95 60%, #06b6d4 100%)",
+                background: "linear-gradient(135deg, #18181b 0%, #27272a 100%)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: "1.5px solid rgba(196, 181, 253, 0.4)",
+                border: "1.5px solid rgba(245, 158, 11, 0.4)",
               }}
             >
               <svg width="26" height="26" viewBox="0 0 100 100" fill="none">
-                <circle cx="50" cy="50" r="46" fill="#0f172a" stroke="#38bdf8" strokeWidth="3" />
-                <polygon points="24,24 38,24 50,47 43,53 24,24" fill="#a855f7" />
-                <polygon points="76,24 62,24 50,47 57,53 76,24" fill="#06b6d4" />
-                <polygon points="43,51 57,51 57,78 43,78" fill="#cbd5e1" />
-                <polygon points="43,78 50,84 57,78 50,75" fill="#38bdf8" />
+                <circle cx="50" cy="50" r="46" fill="#18181b" stroke="#f59e0b" strokeWidth="3" />
+                <polygon points="24,24 38,24 50,47 43,53 24,24" fill="#fbbf24" />
+                <polygon points="76,24 62,24 50,47 57,53 76,24" fill="#d97706" />
+                <polygon points="43,51 57,51 57,78 43,78" fill="#e4e4e7" />
+                <polygon points="43,78 50,84 57,78 50,75" fill="#f59e0b" />
               </svg>
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div style={{ fontSize: "24px", fontWeight: 800, color: "#ffffff", display: "flex" }}>
                 YASPRO
               </div>
-              <div style={{ fontSize: "11px", letterSpacing: "0.2em", color: "#a78bfa", fontWeight: 700, display: "flex" }}>
+              <div style={{ fontSize: "11px", letterSpacing: "0.2em", color: "#f59e0b", fontWeight: 700, display: "flex" }}>
                 PORTFOLIO CASE STUDY
               </div>
             </div>

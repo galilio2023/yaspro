@@ -6,7 +6,6 @@ import { FooterSocialLinks } from "./FooterSocialLinks";
 import { BrandLogo } from "./BrandLogo";
 import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { FooterNavLinks } from "./FooterNavLinks";
-import { BackgroundBeams } from "@/components/aceternity/background-beams";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 import {
@@ -84,56 +83,58 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-[#03020a] border-t border-white/[0.08] relative overflow-hidden">
-      {/* Dynamic Background Beams and Grid Pattern */}
-      <BackgroundBeams className="opacity-60" />
+    <footer
+      dir="ltr"
+      style={{ direction: "ltr" }}
+      className="w-full bg-background border-t border-white/[0.08] relative overflow-hidden film-grain"
+    >
+      {/* Architectural Subtle Grid */}
+      <div
+        className="absolute inset-0 opacity-[0.025] pointer-events-none"
+        style={{
+          backgroundImage: "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
 
-      {/* Subtle Aurora Ambient Flares */}
-      <div className="absolute top-1/4 -left-32 size-96 bg-brand-purple/15 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-10 right-1/4 size-96 bg-brand-cyan/10 rounded-full blur-[140px] pointer-events-none" />
-
-      {/* Massive Luxury Watermark Typography in Background */}
+      {/* Massive Architectural Watermark Typography */}
       <div
         aria-hidden="true"
         dir="ltr"
-        className="pointer-events-none absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 select-none overflow-hidden flex items-center justify-center gap-2 sm:gap-4 font-black tracking-tighter leading-none whitespace-nowrap font-display z-0 opacity-15"
+        className="pointer-events-none absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 select-none overflow-hidden flex items-center justify-center gap-2 sm:gap-4 font-black tracking-tighter leading-none whitespace-nowrap font-display z-0 opacity-10"
       >
         <YasproEmblem
           size="15vw"
           idPrefix="footer-bg-emblem"
-          className="filter drop-shadow-[0_0_60px_rgba(6,182,212,0.4)]"
+          className="filter opacity-40"
         />
         <span
-          className="text-[17vw] tracking-tighter"
+          className="text-[17vw] tracking-tighter text-white"
           style={{
-            background: "linear-gradient(180deg, rgba(167, 139, 250, 0.9) 0%, rgba(6, 182, 212, 0.6) 60%, rgba(255, 255, 255, 0.2) 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
             WebkitTextStroke: "1px rgba(255, 255, 255, 0.15)",
-            textShadow: "0 0 80px rgba(124, 58, 237, 0.25)",
           }}
         >
           YASPRO
         </span>
       </div>
 
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 relative z-10">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 relative z-10" dir="ltr" style={{ direction: "ltr" }}>
         {/* Main Footer Directory */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-16 text-left" dir="ltr" style={{ direction: "ltr" }}>
           {/* Column 1: Brand Info & Socials */}
-          <div className="sm:col-span-2 lg:col-span-4 flex flex-col justify-between">
+          <div className="sm:col-span-2 lg:col-span-4 flex flex-col justify-between text-left">
             <div>
               <div className="mb-5">
                 <BrandLogo showIndicator={false} />
               </div>
 
-              <p className="text-text-secondary text-sm leading-relaxed mb-6 max-w-sm text-start">
+              <p className="text-zinc-400 text-sm leading-relaxed mb-6 max-w-sm text-left">
                 {t("footer.brandDesc")}
               </p>
             </div>
 
-            <div className="pt-2 text-start">
-              <span className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">
+            <div className="pt-2 text-left">
+              <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">
                 {t("footer.officialChannels")}
               </span>
               <FooterSocialLinks />
@@ -141,7 +142,7 @@ export default function Footer() {
           </div>
 
           {/* Column 2: Production Services */}
-          <div className="col-span-1 lg:col-span-2 text-start">
+          <div className="col-span-1 lg:col-span-2 text-left">
             <h3 className="text-white font-bold text-xs uppercase tracking-widest font-display mb-4 sm:mb-5">
               {t("footer.productionHeading")}
             </h3>
@@ -149,7 +150,7 @@ export default function Footer() {
           </div>
 
           {/* Column 3: Network & Formats */}
-          <div className="col-span-1 lg:col-span-2 text-start">
+          <div className="col-span-1 lg:col-span-2 text-left">
             <h3 className="text-white font-bold text-xs uppercase tracking-widest font-display mb-4 sm:mb-5">
               {t("footer.networkHeading")}
             </h3>
@@ -157,12 +158,12 @@ export default function Footer() {
           </div>
 
           {/* Column 4: Regional Hubs */}
-          <div className="sm:col-span-2 lg:col-span-4 text-start">
+          <div className="sm:col-span-2 lg:col-span-4 text-left">
             <div className="flex items-center justify-between mb-4 sm:mb-5">
               <h3 className="text-white font-bold text-xs uppercase tracking-widest font-display">
                 {t("footer.studiosHubs")}
               </h3>
-              <span className="text-[11px] font-mono text-brand-cyan">{t("footer.locations")}</span>
+              <span className="text-[11px] font-mono text-amber-400">{t("footer.locations")}</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
               {REGIONAL_HUBS.map((hub) => (
@@ -173,7 +174,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar: Telemetry & Legal */}
-        <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted text-center sm:text-start">
+        <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400 text-center sm:text-left" dir="ltr" style={{ direction: "ltr" }}>
           <p>© {currentYear} YAS PRO MEDIA LLC. {t("footer.allRights")}</p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
@@ -184,8 +185,8 @@ export default function Footer() {
               {t("footer.terms")}
             </Link>
 
-            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-brand-teal/15 border border-brand-teal/30 text-brand-teal-light font-mono text-[11px]">
-              <span className="size-1.5 rounded-full bg-brand-teal" />
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[11px]">
+              <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
               <span>{t("footer.soundstagesOnline")}</span>
             </span>
           </div>

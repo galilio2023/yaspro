@@ -28,7 +28,7 @@ export function YasproBrandSparkleBadge({ className = "" }: YasproBrandSparkleBa
     };
     window.addEventListener("resize", handleResize);
 
-    const colors = ["#a78bfa", "#c4b5fd", "#06b6d4", "#67e8f9", "#f59e0b", "#ffffff"];
+    const colors = ["#f59e0b", "#fbbf24", "#d97706", "#fef3c7", "#fde68a", "#ffffff"];
     const count = 42;
 
     const sparkles = Array.from({ length: count }, () => ({
@@ -122,7 +122,7 @@ export function YasproBrandSparkleBadge({ className = "" }: YasproBrandSparkleBa
       ref={containerRef}
       dir="ltr"
       style={{ direction: "ltr" }}
-      className={`relative inline-flex items-center gap-3.5 px-4 py-2 rounded-2xl border border-white/15 bg-white/[0.04] backdrop-blur-md overflow-hidden group shadow-lg shadow-brand-purple/10 ${className}`}
+      className={`relative inline-flex items-center gap-3.5 px-4 py-2 rounded-2xl border border-white/15 bg-white/[0.04] backdrop-blur-md overflow-hidden group shadow-lg shadow-amber-500/10 ${className}`}
     >
       {/* Sparkles Canvas Inside Badge */}
       <canvas
@@ -137,19 +137,19 @@ export function YasproBrandSparkleBadge({ className = "" }: YasproBrandSparkleBa
         <YasproEmblem
           size={22}
           idPrefix="badge-logo"
-          className="filter drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]"
+          className="filter drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]"
         />
-        <span className="font-extrabold text-base tracking-wider bg-gradient-to-r from-white via-brand-purple-light to-brand-cyan bg-clip-text text-transparent drop-shadow-sm font-display font-latin">
+        <span className="font-extrabold text-base tracking-wider bg-gradient-to-r from-white via-amber-200 to-amber-500 bg-clip-text text-transparent drop-shadow-sm font-display font-latin">
           YASPRO
         </span>
         <span className="h-3 w-[1px] bg-white/20 inline-block self-center mx-1" />
         <span className="text-xs font-medium text-text-secondary tracking-wide">
-          AI Media Hub · UAE · Egypt · Jordan
+          Cinema Studios & Virtual Production · Dubai
         </span>
       </div>
 
       {/* Subtle border glow animation */}
-      <div className="absolute inset-0 rounded-2xl pointer-events-none border border-brand-purple/20 group-hover:border-brand-purple/40 transition-colors" />
+      <div className="absolute inset-0 rounded-2xl pointer-events-none border border-amber-500/20 group-hover:border-amber-500/40 transition-colors" />
     </div>
   );
 }

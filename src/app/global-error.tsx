@@ -38,10 +38,7 @@ export default function GlobalError({
               onClick={() => {
                 if (typeof window !== "undefined") window.location.reload();
               }}
-              className="flex-1 inline-flex items-center justify-center py-3 px-4 rounded-xl font-semibold text-white text-xs cursor-pointer"
-              style={{
-                background: "linear-gradient(90deg, var(--brand-purple) 0%, var(--brand-purple-light) 100%)",
-              }}
+              className="flex-1 inline-flex items-center justify-center py-3 px-4 rounded-xl font-bold btn-brand text-zinc-950 text-xs cursor-pointer shadow-lg shadow-amber-500/20"
             >
               Reload Page
             </button>

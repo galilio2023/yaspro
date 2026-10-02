@@ -14,31 +14,31 @@ export function AboutMilestones() {
       icon: Flag,
       title: t("about.milestones.m2015.title"),
       desc: t("about.milestones.m2015.desc"),
-      accent: "from-brand-purple to-indigo-600",
-      badgeColor: "border-brand-purple/40 text-brand-purple-light",
+      accent: "from-amber-600 to-amber-500",
+      badgeColor: "border-amber-500/40 text-amber-300",
     },
     {
       year: "2019",
       icon: Building2,
       title: t("about.milestones.m2019.title"),
       desc: t("about.milestones.m2019.desc"),
-      accent: "from-brand-cyan to-teal-500",
-      badgeColor: "border-brand-cyan/40 text-brand-cyan",
+      accent: "from-amber-500 to-amber-400",
+      badgeColor: "border-amber-400/40 text-amber-300",
     },
     {
       year: "2023",
       icon: Radio,
       title: t("about.milestones.m2023.title"),
       desc: t("about.milestones.m2023.desc"),
-      accent: "from-brand-gold to-amber-500",
-      badgeColor: "border-brand-gold/40 text-brand-gold",
+      accent: "from-amber-500 to-amber-600",
+      badgeColor: "border-amber-500/40 text-amber-400",
     },
     {
       year: "2026",
       icon: Sparkles,
       title: t("about.milestones.m2026.title"),
       desc: t("about.milestones.m2026.desc"),
-      accent: "from-emerald-400 to-teal-500",
+      accent: "from-emerald-400 to-emerald-600",
       badgeColor: "border-emerald-400/40 text-emerald-300",
     },
   ];
@@ -56,14 +56,14 @@ export function AboutMilestones() {
       {/* Interactive Timeline Stepper */}
       <div className="relative mt-12 sm:mt-16">
         {/* Horizontal glowing track (hidden on mobile, visible md+) */}
-        <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 -translate-y-1/2 bg-gradient-to-r from-brand-purple/40 via-brand-cyan/40 to-emerald-400/40 pointer-events-none" />
+        <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 -translate-y-1/2 bg-gradient-to-r from-amber-600/40 via-amber-500/40 to-emerald-400/40 pointer-events-none" />
 
         <StaggerContainer className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10 items-stretch">
           {MILESTONES.map((m) => {
             const Icon = m.icon;
             return (
               <StaggerItem key={m.year} className="h-full">
-                <div className="rounded-3xl border border-white/10 bg-[#0d0a1d]/90 backdrop-blur-xl p-6 h-full flex flex-col justify-between hover:border-white/25 hover:shadow-2xl hover:shadow-brand-purple/20 transition-all duration-300 group text-start">
+                <div className="rounded-3xl border border-white/10 bg-[#070709]/90 backdrop-blur-xl p-6 h-full flex flex-col justify-between hover:border-amber-500/40 hover:shadow-2xl hover:shadow-black/80 transition-all duration-300 group text-start">
                   <div>
                     {/* Header with Year & Beacon */}
                     <div className="flex items-center justify-between mb-5">
@@ -76,7 +76,7 @@ export function AboutMilestones() {
                       </div>
                     </div>
 
-                    <h4 className="text-base font-bold text-white mb-2 font-display group-hover:text-brand-purple-light transition-colors">
+                    <h4 className="text-base font-bold text-white mb-2 font-display group-hover:text-amber-400 transition-colors">
                       {m.title}
                     </h4>
 

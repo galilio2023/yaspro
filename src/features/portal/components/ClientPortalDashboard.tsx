@@ -105,7 +105,7 @@ export function ClientPortalDashboard({ user, bookings }: ClientPortalDashboardP
       <Container className="max-w-6xl space-y-8">
 
         {/* Welcome Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-purple-950/40 via-slate-900/60 to-slate-900 border border-purple-500/20 backdrop-blur-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-amber-950/20 via-slate-900/60 to-slate-900 border border-amber-500/20 backdrop-blur-xl">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold mb-3">
               <ShieldCheck size={14} /> {t("accountBadge")}
@@ -121,7 +121,7 @@ export function ClientPortalDashboard({ user, bookings }: ClientPortalDashboardP
           <div className="flex items-center gap-3 shrink-0 flex-wrap">
             <Link
               href="/studio-booking"
-              className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shadow-lg shadow-purple-600/30 flex items-center gap-2 transition-colors whitespace-nowrap"
+              className="btn-brand px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-amber-500/20 flex items-center gap-2 transition-all whitespace-nowrap"
             >
               <Sparkles size={14} /> {t("bookSession")}
             </Link>
@@ -157,7 +157,7 @@ export function ClientPortalDashboard({ user, bookings }: ClientPortalDashboardP
               <button
                 type="button"
                 onClick={() => setIsEditingProfile(true)}
-                className="px-4 py-2.5 rounded-xl border border-white/10 hover:border-purple-500/40 hover:bg-purple-500/10 text-slate-300 hover:text-purple-300 text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
+                className="px-4 py-2.5 rounded-xl border border-white/10 hover:border-amber-500/40 hover:bg-amber-500/10 text-slate-300 hover:text-amber-300 text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
               >
                 <Pencil size={14} /> Edit Profile
               </button>
@@ -179,7 +179,7 @@ export function ClientPortalDashboard({ user, bookings }: ClientPortalDashboardP
         {/* Client Metadata Strip */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 shrink-0">
+            <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 shrink-0">
               <Building size={18} />
             </div>
             <div className="min-w-0 flex-1">
@@ -190,7 +190,7 @@ export function ClientPortalDashboard({ user, bookings }: ClientPortalDashboardP
                   value={editCompany}
                   onChange={(e) => setEditCompany(e.target.value)}
                   placeholder={t("independent")}
-                  className="w-full text-xs font-bold text-white bg-white/5 border border-purple-500/40 rounded-lg px-2 py-1 mt-0.5 outline-none focus:border-purple-400/70 placeholder:text-slate-500"
+                  className="w-full text-xs font-bold text-white bg-white/5 border border-amber-500/40 rounded-lg px-2 py-1 mt-0.5 outline-none focus:border-amber-400/70 placeholder:text-slate-500"
                 />
               ) : (
                 <div className="text-xs font-bold text-white truncate">{user.company || t("independent")}</div>
@@ -199,7 +199,7 @@ export function ClientPortalDashboard({ user, bookings }: ClientPortalDashboardP
           </div>
 
           <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 shrink-0">
+            <div className="p-2.5 rounded-xl bg-stone-500/15 text-stone-300 shrink-0">
               <Mail size={18} />
             </div>
             <div className="min-w-0">
@@ -265,10 +265,10 @@ export function ClientPortalDashboard({ user, bookings }: ClientPortalDashboardP
           {/* Card 1: Dailies & Deliverables → Enterprise Portal */}
           <Link
             href="/enterprise/portal"
-            className="p-6 rounded-3xl bg-slate-900/60 border border-white/10 flex flex-col justify-between hover:border-purple-500/40 transition-colors group"
+            className="p-6 rounded-3xl bg-slate-900/60 border border-white/10 flex flex-col justify-between hover:border-amber-500/40 transition-colors group"
           >
             <div>
-              <div className="size-10 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-4 group-hover:bg-purple-500/30 transition-colors">
+              <div className="size-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center mb-4 group-hover:bg-amber-500/30 transition-colors">
                 <Camera size={20} />
               </div>
               <h2 className="text-base font-bold text-white font-display">{t("cards.dailies.title")}</h2>
@@ -278,7 +278,7 @@ export function ClientPortalDashboard({ user, bookings }: ClientPortalDashboardP
             </div>
             <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
               <span className="text-xs text-slate-500">{t("cards.dailies.status")}</span>
-              <span className="text-xs font-bold text-purple-400 flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span className="text-xs font-bold text-amber-400 flex items-center gap-1 group-hover:gap-2 transition-all">
                 {t("cards.dailies.action")} <ArrowRight size={14} className="rtl:rotate-180" />
               </span>
             </div>
@@ -287,10 +287,10 @@ export function ClientPortalDashboard({ user, bookings }: ClientPortalDashboardP
           {/* Card 2: Soundstage Schedule → Studio Booking */}
           <Link
             href="/studio-booking"
-            className="p-6 rounded-3xl bg-slate-900/60 border border-white/10 flex flex-col justify-between hover:border-cyan-500/40 transition-colors group"
+            className="p-6 rounded-3xl bg-slate-900/60 border border-white/10 flex flex-col justify-between hover:border-stone-500/40 transition-colors group"
           >
             <div>
-              <div className="size-10 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mb-4 group-hover:bg-cyan-500/30 transition-colors">
+              <div className="size-10 rounded-2xl bg-stone-500/20 text-stone-300 flex items-center justify-center mb-4 group-hover:bg-stone-500/30 transition-colors">
                 <Calendar size={20} />
               </div>
               <h2 className="text-base font-bold text-white font-display">{t("cards.schedule.title")}</h2>
@@ -300,7 +300,7 @@ export function ClientPortalDashboard({ user, bookings }: ClientPortalDashboardP
             </div>
             <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
               <span className="text-xs text-slate-500">{t("cards.schedule.status")}</span>
-              <span className="text-xs font-bold text-cyan-400 flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span className="text-xs font-bold text-stone-300 flex items-center gap-1 group-hover:gap-2 transition-all">
                 {t("cards.schedule.action")} <ArrowRight size={14} className="rtl:rotate-180" />
               </span>
             </div>
@@ -330,16 +330,16 @@ export function ClientPortalDashboard({ user, bookings }: ClientPortalDashboardP
         </div>
 
         {/* My Bookings — Real data from DB */}
-        <div className="rounded-3xl bg-gradient-to-r from-purple-900/20 via-slate-900 to-slate-900 border border-purple-500/20 overflow-hidden">
+        <div className="rounded-3xl bg-gradient-to-r from-amber-950/20 via-slate-900 to-slate-900 border border-amber-500/20 overflow-hidden">
           <div className="flex items-center justify-between p-6 border-b border-white/10">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <Calendar size={16} className="text-purple-400" />
+              <Calendar size={16} className="text-amber-400" />
               {t("sessions.title")}
             </h3>
             <div className="flex items-center gap-3">
               <span className="text-[11px] text-slate-400">{t("sessions.sync")}</span>
               {bookings.length > 0 && (
-                <span className="text-[11px] font-mono text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20">
+                <span className="text-[11px] font-mono text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
                   {bookings.length} total
                 </span>
               )}
@@ -354,7 +354,7 @@ export function ClientPortalDashboard({ user, bookings }: ClientPortalDashboardP
               <p className="text-xs text-slate-400 mb-3">{t("sessions.empty")}</p>
               <Link
                 href="/studio-booking"
-                className="inline-flex items-center gap-1.5 text-xs text-purple-400 hover:text-purple-300 font-semibold transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 font-semibold transition-colors"
               >
                 {t("sessions.scheduleCta")} <ArrowRight size={12} className="rtl:rotate-180" />
               </Link>

@@ -2,16 +2,16 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { FadeUp } from "@/components/animations/MotionWrappers";
+import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
-import { ShimmerButton } from "@/components/magicui/shimmer-button";
+import { FadeUp } from "@/components/animations/MotionWrappers";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import { HeroStats } from "./HeroStats";
-import { HeroSparkles } from "./HeroSparkles";
-import { YasproBrandSparkleBadge } from "./YasproBrandSparkleBadge";
+import { StudioBadge } from "@/components/common/StudioBadge";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { CinemaVideoModal } from "@/components/common/CinemaVideoModal";
+import { studioSprings } from "@/lib/studio-motion";
 
 export default function HeroSection() {
   const { t, isArabic } = useLanguage();
@@ -21,13 +21,13 @@ export default function HeroSection() {
     <Section
       id="hero"
       aria-labelledby="hero-title"
-      className="min-h-[calc(100dvh-3.5rem)] sm:min-h-[calc(100dvh-4.5rem)] flex items-center justify-center py-8 sm:py-12 md:py-20 bg-background relative overflow-hidden"
+      className="min-h-[calc(100dvh-3.5rem)] sm:min-h-[calc(100dvh-4.5rem)] flex items-center justify-center py-8 sm:py-12 md:py-20 bg-background relative overflow-hidden film-grain"
     >
       {/* ── Cinematic 3D Virtual Production Soundstage Background ── */}
       <div className="absolute inset-0 pointer-events-none select-none z-0 overflow-hidden">
         {/* The 16:9 3D Cinema Robot & Soundstage Image */}
         <div
-          className={`absolute inset-0 bg-cover bg-[80%_center] lg:bg-right bg-no-repeat opacity-90 transition-opacity duration-700 ${
+          className={`absolute inset-0 bg-cover bg-center bg-no-repeat opacity-90 transition-opacity duration-700 ${
             isArabic ? "-scale-x-100" : ""
           }`}
           style={{
@@ -35,49 +35,45 @@ export default function HeroSection() {
           }}
         />
 
-        {/* Deep Vignette Blends:
-            1. Directional gradient from start edge to guarantee maximum typography contrast
-            2. Bottom gradient for seamless transition to partners/stats
-            3. Top gradient for navbar harmony */}
+        {/* Deep Studio Vignettes: Directional key light with obsidian shadows */}
         <div 
-          className={`absolute inset-y-0 w-full lg:w-3/5 from-background via-background/90 to-transparent ${
+          className={`absolute inset-y-0 w-full lg:w-3/5 from-background/90 via-background/65 to-transparent ${
             isArabic ? "right-0 bg-gradient-to-l" : "left-0 bg-gradient-to-r"
           }`} 
         />
-        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-background via-background/70 to-transparent" />
         <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-background/80 via-background/20 to-transparent" />
         <div className="absolute inset-0 bg-black/35 lg:bg-black/20" />
       </div>
 
-      <HeroSparkles />
-
       <Container className="relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-16 items-center">
 
-          {/* ── Left Column: Hero Content ── */}
+          {/* ── Left Column: Editorial Studio Content ── */}
           <FadeUp className="lg:col-span-7 flex flex-col items-center text-center lg:items-start lg:text-start">
             <div className="mb-6 flex justify-center lg:justify-start">
-              <YasproBrandSparkleBadge />
+              <StudioBadge
+                stage="STAGE 01"
+                label={isArabic ? "استوديو الإنتاج الافتراضي الفائق" : "VIRTUAL PRODUCTION & CINE STUDIOS"}
+              />
             </div>
 
             <h1
               id="hero-title"
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-6 font-display tracking-tight leading-[1.1] rtl:leading-[1.28] text-balance drop-shadow-md"
+              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-6 font-display tracking-tight leading-[1.1] rtl:leading-[1.28] text-balance drop-shadow-lg"
             >
               {isArabic ? (
-                // Arabic: fluid phrase with gradient on AI keywords
                 <>
                   {t("hero.title1")}{" "}
-                  <span className="bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-cyan bg-clip-text text-transparent">
+                  <span className="text-amber-400 font-serif font-normal">
                     {t("hero.ai")}
                   </span>{" "}
                   {t("hero.title2")}
                 </>
               ) : (
-                // English: split on "AI" to apply gradient
                 <>
                   Where{" "}
-                  <span className="bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-cyan bg-clip-text text-transparent">
+                  <span className="text-amber-400 font-serif italic font-normal">
                     AI
                   </span>{" "}
                   Meets <br className="hidden sm:inline" />
@@ -86,41 +82,51 @@ export default function HeroSection() {
               )}
             </h1>
 
-            <p className="text-base sm:text-lg text-text-secondary mb-8 max-w-full sm:max-w-xl text-balance leading-relaxed">
+            <p className="text-base sm:text-lg text-zinc-300 mb-8 max-w-full sm:max-w-xl text-balance leading-relaxed font-normal">
               {t("hero.subtitle")}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-10 w-full">
-              <ShimmerButton
-                asChild
-                shimmerColor="var(--brand-purple-light)"
-                shimmerDuration="2.5s"
-                className="w-full sm:w-auto px-6 sm:px-8 py-3.5 font-semibold text-sm gap-2"
+              {/* Primary Studio Action */}
+              <motion.div
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                transition={studioSprings.snappy}
+                className="w-full sm:w-auto"
               >
-                <Link href="/studio-booking" className="inline-flex items-center gap-2 whitespace-nowrap">
+                <Link
+                  href="/studio-booking"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-bold text-sm bg-amber-500 text-zinc-950 hover:bg-amber-400 transition-all shadow-xl shadow-amber-500/25 whitespace-nowrap"
+                >
                   <span>{t("hero.bookStudio")}</span>
-                  {/* Forward arrow: points Left in Arabic, Right in English */}
                   <ArrowRight
                     size={16}
                     className={`shrink-0 transition-transform ${isArabic ? "rotate-180" : ""}`}
                   />
                 </Link>
-              </ShimmerButton>
+              </motion.div>
 
-              <button
+              {/* Secondary Reel Action with Film Pulse */}
+              <motion.button
                 type="button"
                 onClick={() => setIsPlayingReel(true)}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-medium text-sm text-white border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/25 transition-all text-center backdrop-blur-sm whitespace-nowrap cursor-pointer shadow-lg shadow-black/40"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                transition={studioSprings.snappy}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full font-medium text-sm text-zinc-200 border border-white/12 bg-zinc-900/70 hover:bg-zinc-800 hover:border-white/20 transition-all backdrop-blur-md whitespace-nowrap cursor-pointer shadow-lg shadow-black/50"
               >
-                {/* Play triangle: mirrors in Arabic, normal in English */}
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
+                </span>
                 <span>{t("hero.watchReel")}</span>
                 <Play
-                  size={14}
-                  className={`text-brand-purple fill-current shrink-0 transition-transform ${
+                  size={13}
+                  className={`text-zinc-200 fill-current shrink-0 ${
                     isArabic ? "scale-x-[-1]" : ""
                   }`}
                 />
-              </button>
+              </motion.button>
             </div>
 
             <HeroStats />

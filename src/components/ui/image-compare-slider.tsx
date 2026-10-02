@@ -127,7 +127,7 @@ export function ImageCompareSlider({
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       className={cn(
-        "relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 select-none cursor-ew-resize group bg-black/60 shadow-2xl focus:outline-none focus:ring-2 focus:ring-brand-purple/50",
+        "relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 select-none cursor-ew-resize group bg-black/60 shadow-2xl focus:outline-none focus:ring-2 focus:ring-amber-500/50",
         aspectRatio,
         className
       )}
@@ -174,11 +174,11 @@ export function ImageCompareSlider({
 
       {/* Divider Line & Handle */}
       <div
-        className="absolute top-0 bottom-0 w-0.5 bg-gradient-to-b from-brand-purple-light via-white to-brand-purple z-20 pointer-events-none"
+        className="absolute top-0 bottom-0 w-0.5 bg-gradient-to-b from-amber-300 via-white to-amber-500 z-20 pointer-events-none"
         style={{ left: `${sliderPosition}%` }}
         suppressHydrationWarning
       >
-        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-9 rounded-full bg-slate-900 border-2 border-brand-purple shadow-xl shadow-brand-purple/50 flex items-center justify-center text-brand-purple-light group-hover:scale-110 transition-transform">
+        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-9 rounded-full bg-slate-900 border-2 border-amber-500 shadow-xl shadow-amber-500/40 flex items-center justify-center text-amber-300 group-hover:scale-110 transition-transform">
           <SplitSquareVertical size={16} />
         </div>
       </div>

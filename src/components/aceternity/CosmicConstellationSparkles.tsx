@@ -8,13 +8,13 @@ export interface CosmicConstellationSparklesProps {
   className?: string;
 }
 
-// Bright, beautiful neon and cosmic palette
+// Warm cinema tungsten & amber studio palette
 const PALETTE = [
-  "14, 182, 212",   // Brand Cyan
-  "139, 92, 246",   // Brand Purple
-  "245, 158, 11",   // Brand Gold
-  "16, 185, 129",   // Emerald
-  "236, 72, 153",   // Pink
+  "245, 158, 11",   // Cinema Amber
+  "251, 191, 36",   // Warm Gold
+  "217, 119, 6",    // Tungsten Bronze
+  "254, 243, 199",  // Warm Ivory
+  "255, 255, 255",  // Specular White
 ];
 
 interface Particle {

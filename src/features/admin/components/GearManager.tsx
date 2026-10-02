@@ -95,7 +95,7 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
 
         <button
           onClick={handleOpenNew}
-          className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-purple to-brand-teal hover:opacity-95 text-white text-xs font-semibold shadow-lg shadow-brand-purple/25 flex items-center justify-center gap-2 transition-all shrink-0"
+          className="px-4 py-2.5 rounded-xl btn-brand text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shrink-0"
         >
           <Plus size={16} /> Add Equipment
         </button>
@@ -268,7 +268,7 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-2 rounded-lg bg-brand-purple hover:bg-brand-purple/90 text-white font-semibold flex items-center gap-2 disabled:opacity-50 shadow-md shadow-brand-purple/20 transition-all cursor-pointer"
+                  className="px-4 py-2 rounded-lg btn-brand text-zinc-950 font-bold flex items-center gap-2 disabled:opacity-50 shadow-md shadow-amber-500/20 transition-all cursor-pointer"
                 >
                   <Save size={14} /> Save Equipment
                 </button>
@@ -312,7 +312,7 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
                     </div>
                   </td>
                   <td className="py-3 px-4">
-                    <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-brand-purple-light font-medium">
+                    <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-amber-400 font-medium">
                       {g.category}
                     </span>
                   </td>
@@ -329,7 +329,7 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
                         clearFeedback();
                         setEditingGear(g);
                       }}
-                      className="p-1.5 rounded-lg bg-brand-purple/20 hover:bg-brand-purple/30 text-brand-purple-light border border-brand-purple/30 transition-colors"
+                      className="p-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 transition-colors"
                       title="Edit Equipment"
                     >
                       <Edit3 size={14} />

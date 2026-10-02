@@ -96,13 +96,13 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
   return (
     <section id="khaleeji-ai" className="py-16 sm:py-20 bg-slate-950 border-b border-white/10 relative overflow-hidden">
       {/* Ambient background glow */}
-      <div className="absolute top-1/2 right-1/4 w-[500px] h-[350px] bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 right-1/4 w-[500px] h-[350px] bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
 
       <Container className="relative z-10 max-w-6xl">
         <SectionHeader
           badge="Khaleeji-AI™ Neural Transmutation"
-          badgeVariant="purple"
-          badgeIcon={<Languages size={13} className="text-brand-purple-light" />}
+          badgeVariant="gold"
+          badgeIcon={<Languages size={13} className="text-amber-400" />}
           title="Autonomous Multi-Dialect"
           gradientText="Arabic Voice & Lip-Sync Studio"
           description="Shoot your commercial once in Dubai or Cairo. Deploy across Saudi Arabia, UAE, Kuwait, and Egypt with authentic regional Arabic dialect transmutation and sub-millimeter lip re-targeting."
@@ -122,7 +122,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
               }}
               className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 activeTab === "preset"
-                  ? "bg-brand-purple text-white shadow-sm"
+                  ? "bg-amber-500 text-zinc-950 font-bold shadow-sm shadow-amber-500/20"
                   : "text-text-muted hover:text-white"
               }`}
             >
@@ -136,11 +136,11 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
               }}
               className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeTab === "custom"
-                  ? "bg-brand-purple text-white shadow-sm"
+                  ? "bg-amber-500 text-zinc-950 font-bold shadow-sm shadow-amber-500/20"
                   : "text-text-muted hover:text-white"
               }`}
             >
-              <Sparkles size={13} className="text-brand-gold" />
+              <Sparkles size={13} className="text-amber-400" />
               <span>Live Script AI Transmuter</span>
             </button>
           </div>
@@ -148,13 +148,13 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
 
         {/* ─── Live Custom Script Input Deck ─── */}
         {activeTab === "custom" && (
-          <div className="p-5 rounded-2xl bg-gradient-to-r from-brand-purple/15 via-slate-900 to-brand-cyan/10 border border-brand-purple/30 mb-8 backdrop-blur-md">
+          <div className="p-5 rounded-2xl bg-amber-950/20 border border-amber-500/20 mb-8 backdrop-blur-md">
             <label className="block text-xs font-mono font-bold text-white mb-2 flex items-center justify-between">
               <span className="flex items-center gap-2">
-                <Sparkles size={14} className="text-brand-gold" />
+                <Sparkles size={14} className="text-amber-400" />
                 <span>Enter English or Arabic Brand Copy to Localize:</span>
               </span>
-              <span className="text-[10px] text-brand-cyan">Neural Adapter Ready</span>
+              <span className="text-[10px] text-amber-400">Neural Adapter Ready</span>
             </label>
             <div className="flex flex-col sm:flex-row gap-3">
               <input
@@ -162,14 +162,14 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                 value={customScriptInput}
                 onChange={(e) => setCustomScriptInput(e.target.value)}
                 placeholder="e.g. 'Our new energy drink gives you wings and power for your workout here in Riyadh!'"
-                className="flex-1 bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-brand-purple"
+                className="flex-1 bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-amber-500"
                 onKeyDown={(e) => e.key === "Enter" && handleTransmuteCustomScript()}
               />
               <button
                 type="button"
                 onClick={handleTransmuteCustomScript}
                 disabled={isTransmuting || !customScriptInput.trim()}
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-purple to-indigo-600 text-white font-bold text-xs flex items-center justify-center gap-2 hover:opacity-95 disabled:opacity-50 cursor-pointer shadow-lg shadow-brand-purple/30 shrink-0"
+                className="px-6 py-3 rounded-xl btn-brand text-xs font-bold flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shrink-0"
               >
                 {isTransmuting ? (
                   <span className="animate-pulse">Transmuting Dialect...</span>
@@ -187,7 +187,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                 <button
                   type="button"
                   onClick={() => setCustomScriptInput("الإنتاج هنا ممتاز جداً ونريد تصوير الإعلان الآن بدون قلق")}
-                  className="text-brand-purple-light hover:underline font-arabic text-xs"
+                  className="text-amber-400 hover:underline font-arabic text-xs"
                 >
                   &ldquo;الإنتاج هنا ممتاز جداً ونريد تصوير الإعلان الآن بدون قلق&rdquo;
                 </button>
@@ -207,7 +207,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                 onClick={() => handleSelectDialect(preset)}
                 className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden group flex flex-col justify-between ${
                   isSelected
-                    ? "border-brand-purple bg-gradient-to-b from-card via-card to-brand-purple/15 ring-2 ring-brand-purple/40 shadow-xl shadow-brand-purple/20"
+                    ? "border-amber-500/80 bg-gradient-to-b from-card via-card to-amber-950/20 ring-1 ring-amber-500/30 shadow-xl shadow-black/40"
                     : "border-white/10 bg-slate-900/60 hover:border-white/20 hover:bg-slate-900"
                 }`}
               >
@@ -217,7 +217,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                   <span
                     className={`text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-md border ${
                       isSelected
-                        ? "text-brand-purple-light bg-brand-purple/20 border-brand-purple/40 font-bold"
+                        ? "text-amber-300 bg-amber-500/20 border-amber-500/40 font-bold"
                         : "text-text-muted bg-white/5 border-white/10"
                     }`}
                   >
@@ -247,7 +247,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                   <div
                     className={`size-2 rounded-full transition-all ${
                       isSelected
-                        ? "bg-brand-purple-light shadow-sm shadow-brand-purple animate-pulse"
+                        ? "bg-amber-400 shadow-sm shadow-amber-500 animate-pulse"
                         : "bg-white/20"
                     }`}
                   />
@@ -267,7 +267,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                   {selectedDialect.name}
                 </h3>
               </div>
-              <div className="text-xs sm:text-sm font-arabic text-brand-purple-light font-medium">
+              <div className="text-xs sm:text-sm font-arabic text-amber-400 font-medium">
                 {selectedDialect.arabicName}
               </div>
               <div className="text-xs text-text-muted mt-1">
@@ -278,7 +278,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
             {/* Tone Selector & Telemetry Chips */}
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-1.5 bg-black/60 p-1.5 rounded-xl border border-white/10">
-                <Sliders size={12} className="text-brand-purple-light ml-1.5 shrink-0" />
+                <Sliders size={12} className="text-amber-400 ml-1.5 shrink-0" />
                 <span className="text-[10px] font-mono text-text-muted uppercase px-1 hidden xs:inline">Tone:</span>
                 {selectedDialect.preferredTones.map((tone) => (
                   <button
@@ -287,7 +287,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                     onClick={() => setSelectedTone(tone)}
                     className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer ${
                       selectedTone === tone
-                        ? "bg-brand-purple text-white shadow-sm"
+                        ? "bg-amber-500 text-zinc-950 font-bold shadow-sm shadow-amber-500/20"
                         : "text-text-secondary hover:text-white"
                     }`}
                   >
@@ -308,7 +308,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
 
                 <div className="text-left pl-3">
                   <div className="text-[9px] text-text-muted font-mono uppercase">Alignment</div>
-                  <div className="text-xs font-black text-brand-cyan font-mono mt-0.5">0.4ms Jitter</div>
+                  <div className="text-xs font-black text-amber-400 font-mono mt-0.5">0.4ms Jitter</div>
                 </div>
               </div>
             </div>
@@ -321,7 +321,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
               <div>
                 <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3 mb-4">
                   <span className="text-xs font-mono font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
-                    <Mic size={13} className="text-brand-purple-light shrink-0" />
+                    <Mic size={13} className="text-amber-400 shrink-0" />
                     <span>Culturally Localized Script:</span>
                   </span>
 
@@ -331,8 +331,8 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                     onClick={handleToggleAudio}
                     className={`w-full xs:w-auto px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md ${
                       isPlayingAudio
-                        ? "bg-brand-purple text-white shadow-brand-purple/40 ring-2 ring-brand-purple/50 animate-pulse"
-                        : "bg-white text-black hover:bg-white/90"
+                        ? "btn-brand ring-2 ring-amber-500/50 animate-pulse"
+                        : "btn-brand text-zinc-950 hover:brightness-110"
                     }`}
                   >
                     {isPlayingAudio ? <Volume2 size={14} /> : <VolumeX size={14} />}
@@ -341,7 +341,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                 </div>
 
                 {/* Arabic Script Display with Interactive Word Highlight */}
-                <div className="text-lg sm:text-2xl font-arabic font-bold text-white leading-loose text-right dir-rtl mb-4 selection:bg-brand-purple">
+                <div className="text-lg sm:text-2xl font-arabic font-bold text-white leading-loose text-right dir-rtl mb-4 selection:bg-amber-500 selection:text-black">
                   {words.map((word, idx) => {
                     const isSpoken = idx === activeWordIndex;
                     return (
@@ -349,7 +349,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                         key={idx}
                         className={`transition-all duration-150 inline-block px-1 rounded ${
                           isSpoken
-                            ? "bg-brand-purple text-white scale-105 shadow-sm shadow-brand-purple"
+                            ? "bg-amber-500 text-zinc-950 font-bold scale-105 shadow-sm shadow-amber-500"
                             : "text-white/90"
                         }`}
                       >
@@ -379,7 +379,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
                       key={idx}
                       className={`flex-1 rounded-full transition-all duration-100 ${
                         isActive
-                          ? "bg-gradient-to-t from-brand-purple to-brand-cyan"
+                          ? "bg-gradient-to-t from-amber-500 to-amber-300"
                           : "bg-white/10"
                       }`}
                       style={{ height: `${Math.min(100, Math.max(15, randomHeight))}%` }}
@@ -417,7 +417,7 @@ export function KhaleejiAiTransmuter({ onSelectDialectForRfp }: KhaleejiAiTransm
               <button
                 type="button"
                 onClick={() => onSelectDialectForRfp(selectedDialect.name)}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-bold text-xs btn-brand text-white flex items-center justify-center gap-1.5 shrink-0 cursor-pointer shadow-lg hover:shadow-brand-purple/25 transition-all"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-bold text-xs btn-brand text-zinc-950 flex items-center justify-center gap-1.5 shrink-0 cursor-pointer shadow-lg hover:shadow-amber-500/25 transition-all"
               >
                 <span>Deploy {selectedDialect.name.split(" ")[0]}</span>
                 <ArrowRight size={13} className="rtl:rotate-180" />

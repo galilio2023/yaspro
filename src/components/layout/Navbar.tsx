@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Sparkles, Search, ShoppingBag } from "lucide-react";
+import { Menu, X, Search, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BrandLogo } from "./BrandLogo";
 import { MobileNavDrawer, NavLinkItem } from "./MobileNavDrawer";
@@ -48,6 +48,8 @@ export default function Navbar() {
 
   return (
     <header
+      dir="ltr"
+      style={{ direction: "ltr" }}
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
         scrolled
@@ -56,10 +58,12 @@ export default function Navbar() {
       )}
     >
       <nav
+        dir="ltr"
+        style={{ direction: "ltr" }}
         className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
         aria-label="Main navigation"
       >
-        <div className="flex items-center justify-between h-14 sm:h-16 lg:h-18">
+        <div className="flex items-center justify-between h-14 sm:h-16 lg:h-18" dir="ltr" style={{ direction: "ltr" }}>
 
           {/* ── Left: Brand ── */}
           <BrandLogo />
@@ -96,25 +100,25 @@ export default function Navbar() {
             <button
               onClick={() => window.dispatchEvent(new CustomEvent("open-command-palette"))}
               type="button"
-              className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-slate-300 hover:text-white px-2.5 py-1.5 rounded-full border border-white/10 hover:border-purple-500/40 bg-white/5 hover:bg-purple-950/20 transition-all cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-zinc-300 hover:text-white px-2.5 py-1.5 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all cursor-pointer"
               title="Quick Search & Navigation (Ctrl+K / ⌘K)"
               aria-label="Open command palette"
             >
-              <Search size={12} className="text-purple-400" />
-              <kbd className="text-[9px] font-mono text-purple-300 opacity-80">⌘K</kbd>
+              <Search size={12} className="text-zinc-400" />
+              <kbd className="text-[9px] font-mono text-zinc-400">⌘K</kbd>
             </button>
 
             {/* Persistent Gear Cart Trigger */}
             <button
               onClick={openCart}
               type="button"
-              className="relative p-2 rounded-full border border-white/10 hover:border-purple-500/40 bg-white/5 hover:bg-purple-950/20 text-slate-300 hover:text-white transition-all cursor-pointer"
+              className="relative p-2 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white transition-all cursor-pointer"
               title={language === "ar" ? "سلة استئجار المعدات" : "Cinema Gear Cart"}
               aria-label="View Cinema Gear Cart"
             >
-              <ShoppingBag size={13} className="text-purple-300" />
+              <ShoppingBag size={14} className="text-zinc-300" />
               {totalCount > 0 && (
-                <span className="absolute -top-1 -right-1 size-4 bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-md animate-scale-in">
+                <span className="absolute -top-1 -right-1 size-4 bg-amber-500 text-black text-[9px] font-bold rounded-full flex items-center justify-center shadow-md animate-scale-in">
                   {totalCount}
                 </span>
               )}
@@ -124,7 +128,7 @@ export default function Navbar() {
             <button
               onClick={toggleLanguage}
               type="button"
-              className="text-[11px] font-bold text-slate-300 hover:text-white px-2.5 py-1.5 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all cursor-pointer font-latin"
+              className="text-[11px] font-semibold text-zinc-300 hover:text-white px-2.5 py-1.5 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all cursor-pointer font-latin"
               aria-label="Switch language"
             >
               {language === "en" ? "العربية" : "EN"}
@@ -136,28 +140,13 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-300/90 hover:text-white px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-all"
+                className="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-300 hover:text-white px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-all"
               >
-                <span className="size-1.5 rounded-full bg-brand-cyan/80" />
+                <span className="size-1.5 rounded-full bg-emerald-400" />
                 <span className="max-w-[110px] truncate">{t("nav.portal")}</span>
               </Link>
             )}
 
-            {/* Primary CTA: Book Studio */}
-            <Link
-              href="/studio-booking"
-              className="relative group inline-flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs font-bold tracking-wide text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple whitespace-nowrap shrink-0"
-            >
-              <span className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-teal opacity-50 blur-sm group-hover:opacity-100 group-hover:blur-md transition-all duration-300 pointer-events-none" />
-              <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-brand-purple via-brand-purple-light/80 to-brand-teal p-[1px] pointer-events-none">
-                <span className="block size-full rounded-xl bg-[#090616]" />
-              </span>
-              <span className="absolute inset-[1px] rounded-xl bg-gradient-to-b from-white/10 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
-              <span className="relative z-10 flex items-center gap-1.5 font-display text-[11px] sm:text-[12px] uppercase tracking-wider rtl:tracking-normal whitespace-nowrap">
-                <Sparkles size={12} className="text-brand-purple-light group-hover:text-brand-cyan transition-colors" />
-                <span>{t("nav.bookStudio")}</span>
-              </span>
-            </Link>
 
             {/* Mobile Hamburger */}
             <button

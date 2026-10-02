@@ -32,7 +32,7 @@ export function FooterNavLinks({ links }: FooterNavLinksProps) {
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 {Icon && (
-                  <span className="flex items-center justify-center size-5 rounded-md bg-white/[0.04] group-hover/item:bg-brand-purple/20 text-brand-purple-mid group-hover/item:text-brand-purple-light border border-white/[0.06] group-hover/item:border-brand-purple/30 transition-all shrink-0">
+                  <span className="flex items-center justify-center size-5 rounded-md bg-white/[0.04] group-hover/item:bg-amber-500/15 text-amber-400/80 group-hover/item:text-amber-400 border border-white/[0.06] group-hover/item:border-amber-500/30 transition-all shrink-0">
                     <Icon size={11} />
                   </span>
                 )}
@@ -44,12 +44,12 @@ export function FooterNavLinks({ links }: FooterNavLinksProps) {
               {link.isExternal ? (
                 <ArrowUpRight
                   size={13}
-                  className="text-text-muted group-hover/item:text-brand-cyan group-hover/item:translate-x-0.5 group-hover/item:-translate-y-0.5 rtl:group-hover/item:-translate-x-0.5 rtl:scale-x-[-1] transition-all shrink-0 ms-1.5 opacity-60 group-hover/item:opacity-100"
+                  className="text-text-muted group-hover/item:text-amber-400 group-hover/item:translate-x-0.5 group-hover/item:-translate-y-0.5 rtl:group-hover/item:-translate-x-0.5 rtl:scale-x-[-1] transition-all shrink-0 ms-1.5 opacity-60 group-hover/item:opacity-100"
                 />
               ) : (
                 <ChevronRight
                   size={13}
-                  className="text-text-muted group-hover/item:text-brand-purple-light group-hover/item:translate-x-1 rtl:group-hover/item:-translate-x-1 rtl:rotate-180 transition-all shrink-0 ms-1.5 opacity-40 group-hover/item:opacity-100"
+                  className="text-text-muted group-hover/item:text-amber-400 group-hover/item:translate-x-1 rtl:group-hover/item:-translate-x-1 rtl:rotate-180 transition-all shrink-0 ms-1.5 opacity-40 group-hover/item:opacity-100"
                 />
               )}
             </Link>

@@ -15,10 +15,10 @@ function SplineFallback() {
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
       {/* 3D Orb / Hologram visual loader */}
       <div className="relative flex items-center justify-center">
-        <div className="size-48 sm:size-64 rounded-full border border-brand-purple/30 bg-gradient-to-tr from-brand-purple/20 via-brand-cyan/10 to-transparent blur-md animate-pulse-glow" />
-        <div className="absolute size-32 sm:size-40 rounded-full border border-brand-cyan/40 bg-brand-purple/10 backdrop-blur-sm animate-spin-around [animation-duration:12s]" />
+        <div className="size-48 sm:size-64 rounded-full border border-amber-500/30 bg-gradient-to-tr from-amber-500/20 via-amber-600/10 to-transparent blur-md animate-pulse-glow" />
+        <div className="absolute size-32 sm:size-40 rounded-full border border-amber-500/30 bg-amber-500/10 backdrop-blur-sm animate-spin-around [animation-duration:12s]" />
         <div className="absolute flex flex-col items-center justify-center text-center p-4">
-          <div className="size-3 rounded-full bg-brand-purple animate-ping mb-2" />
+          <div className="size-3 rounded-full bg-amber-500 animate-ping mb-2" />
           <span className="text-xs uppercase tracking-widest text-text-secondary font-mono">
             3D Media Engine
           </span>

@@ -46,14 +46,14 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
       {/* Mobile Top Bar — hidden on md+ */}
       <header className="md:hidden flex items-center justify-between px-4 py-3 bg-slate-900/80 backdrop-blur-xl border-b border-white/10 sticky top-0 z-40">
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="size-8 rounded-xl bg-gradient-to-tr from-purple-600 via-purple-700 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/25 border border-purple-400/30">
-            <YasproEmblem size={16} idPrefix="mob-emblem" className="filter drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]" />
+          <div className="size-8 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/25 border border-amber-400/30">
+            <YasproEmblem size={16} idPrefix="mob-emblem" className="filter drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]" />
           </div>
           <div className="flex items-center">
-            <span className="font-extrabold tracking-tight text-white group-hover:text-purple-300 transition-colors">
+            <span className="font-extrabold tracking-tight text-white group-hover:text-amber-300 transition-colors">
               YASPRO
             </span>
-            <span className="ml-1 text-xs font-bold text-purple-400">CMS</span>
+            <span className="ml-1 text-xs font-bold text-amber-400">STUDIO CMS</span>
           </div>
         </Link>
 
@@ -89,18 +89,18 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
                 className="flex items-center gap-2.5 group"
                 onClick={() => setIsOpen(false)}
               >
-                <div className="size-9 rounded-xl bg-gradient-to-tr from-purple-600 via-purple-700 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/25 border border-purple-400/30">
-                  <YasproEmblem size={18} idPrefix="mob-panel-emblem" className="filter drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]" />
+                <div className="size-9 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/25 border border-amber-400/30">
+                  <YasproEmblem size={18} idPrefix="mob-panel-emblem" className="filter drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]" />
                 </div>
                 <div>
                   <div className="flex items-center">
-                    <span className="font-extrabold tracking-tight text-white group-hover:text-purple-300 transition-colors">
+                    <span className="font-extrabold tracking-tight text-white group-hover:text-amber-300 transition-colors">
                       YASPRO
                     </span>
-                    <span className="ml-1 text-xs font-bold text-purple-400">CMS</span>
+                    <span className="ml-1 text-xs font-bold text-amber-400">CMS</span>
                   </div>
-                  <span className="block text-[10px] text-purple-400 font-mono tracking-wider uppercase">
-                    Neon • Drizzle
+                  <span className="block text-[10px] text-amber-400 font-mono tracking-wider uppercase">
+                    Cinema Studio Core
                   </span>
                 </div>
               </Link>
@@ -125,7 +125,7 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.06] transition-all"
                   >
-                    <Icon size={18} className="text-purple-400/80 shrink-0" />
+                    <Icon size={18} className="text-amber-400/80 shrink-0" />
                     <span>{item.label}</span>
                   </Link>
                 );
@@ -134,13 +134,13 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
 
             {/* Footer */}
             <div className="px-4 pb-6 pt-4 border-t border-white/10">
-              <div className="p-3 rounded-xl bg-purple-950/30 border border-purple-800/30 text-xs">
-                <div className="flex items-center gap-2 text-purple-300 font-medium">
-                  <Database size={14} className="text-purple-400" />
-                  <span>PostgreSQL Connection</span>
+              <div className="p-3 rounded-xl bg-amber-950/20 border border-amber-800/30 text-xs">
+                <div className="flex items-center gap-2 text-amber-300 font-medium">
+                  <Database size={14} className="text-amber-400" />
+                  <span>Production Database</span>
                 </div>
                 <p className="text-[11px] text-slate-400 mt-1">
-                  Connected to Neon serverless database with automated fallback.
+                  Connected to Studio Engine with automated cloud sync.
                 </p>
               </div>
 
@@ -155,7 +155,7 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
                 <Link
                   href="/"
                   target="_blank"
-                  className="flex items-center gap-1 text-purple-400 hover:text-purple-300 shrink-0"
+                  className="flex items-center gap-1 text-amber-400 hover:text-amber-300 shrink-0"
                   onClick={() => setIsOpen(false)}
                 >
                   Public Site <ArrowUpRight size={12} className="rtl:scale-x-[-1]" />

@@ -219,7 +219,7 @@ export function GradientBorder({
     <div
       className={cn(
         "relative rounded-2xl p-px",
-        "bg-gradient-to-r from-brand-purple via-brand-purple-light to-brand-cyan",
+        "bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600",
         className
       )}
     >

@@ -85,21 +85,21 @@ export function ProductionCopilotModal({
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className="relative w-full max-w-3xl max-h-[90vh] flex flex-col rounded-3xl border border-brand-purple/40 bg-slate-950 shadow-2xl overflow-hidden text-white outline-none"
+        className="relative w-full max-w-3xl max-h-[90vh] flex flex-col rounded-3xl border border-amber-500/30 bg-[#0b0a0f] shadow-2xl overflow-hidden text-white outline-none"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-white/10 bg-slate-900/80">
+        <div className="flex items-center justify-between p-5 border-b border-white/10 bg-[#121118]">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-2xl bg-gradient-to-tr from-brand-purple to-brand-cyan flex items-center justify-center shadow-lg shadow-brand-purple/30">
-              <Bot size={22} className="text-white" />
+            <div className="size-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-lg shadow-amber-500/10">
+              <Bot size={22} />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 id="copilot-dialog-title" className="font-display font-bold text-lg text-white">
                   Autonomous Production &amp; RFP Copilot
                 </h3>
-                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-brand-teal/15 text-brand-teal-light border border-brand-teal/30 font-bold">
-                  AI Active
+                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 font-bold">
+                  Telemetry Active
                 </span>
               </div>
               <p className="text-xs text-text-muted">
@@ -120,9 +120,9 @@ export function ProductionCopilotModal({
         {/* Content Body */}
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
           {/* Brief Input Card */}
-          <div className="p-4 rounded-2xl bg-slate-900/90 border border-white/10 space-y-3">
+          <div className="p-4 rounded-2xl bg-[#121118] border border-white/10 space-y-3">
             <label className="text-xs font-mono font-bold text-text-muted uppercase flex items-center gap-2">
-              <Sparkles size={13} className="text-brand-gold" />
+              <Sparkles size={13} className="text-amber-400" />
               <span>Describe Your Production Brief &amp; Deliverables:</span>
             </label>
             <textarea
@@ -130,7 +130,7 @@ export function ProductionCopilotModal({
               value={briefInput}
               onChange={(e) => setBriefInput(e.target.value)}
               placeholder="e.g. 3-day high-end electric car commercial shoot in Riyadh with night desert tracking shots, overhead cooking scenes, and two certified Mawthooq tech reviewers."
-              className="w-full bg-black/60 border border-white/15 rounded-xl p-3 text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-brand-purple resize-none"
+              className="w-full bg-black/60 border border-white/15 rounded-xl p-3 text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-amber-500/60 resize-none"
             />
 
             <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
@@ -144,7 +144,7 @@ export function ProductionCopilotModal({
                       onClick={() => setTimelineDays(d)}
                       className={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono transition-all cursor-pointer ${
                         timelineDays === d
-                          ? "bg-brand-purple text-white shadow-sm"
+                          ? "bg-amber-500 text-black font-extrabold shadow-sm"
                           : "bg-white/5 text-text-muted hover:text-white"
                       }`}
                     >
@@ -158,7 +158,7 @@ export function ProductionCopilotModal({
                 type="button"
                 onClick={() => handleGenerate()}
                 disabled={isThinking || !briefInput.trim()}
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-brand-purple/20 hover:opacity-95 disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2.5 rounded-xl btn-brand text-xs font-bold flex items-center gap-2 disabled:opacity-50 cursor-pointer"
               >
                 {isThinking ? (
                   <span className="animate-pulse">Synthesizing Proposal...</span>
@@ -181,7 +181,7 @@ export function ProductionCopilotModal({
                   setBriefInput(text);
                   handleGenerate(text);
                 }}
-                className="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-brand-purple-light border border-white/5 cursor-pointer"
+                className="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-amber-300 border border-white/5 cursor-pointer"
               >
                 🇸🇦 Riyadh Automotive TVC
               </button>
@@ -192,7 +192,7 @@ export function ProductionCopilotModal({
                   setBriefInput(text);
                   handleGenerate(text);
                 }}
-                className="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-brand-cyan border border-white/5 cursor-pointer"
+                className="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-amber-400 border border-white/5 cursor-pointer"
               >
                 🎙️ Gaming Podcast Stream
               </button>
@@ -210,9 +210,9 @@ export function ProductionCopilotModal({
           {proposal && (
             <div className="space-y-5 animate-fade-up">
               {/* Proposal Header & Budget Summary */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-brand-purple/20 via-black to-brand-cyan/20 border border-brand-purple/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-brand-teal font-bold">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 font-bold">
                     Optimized Package Blueprint
                   </span>
                   <h4 className="text-base font-bold text-white mt-0.5">
@@ -221,7 +221,7 @@ export function ProductionCopilotModal({
                 </div>
                 <div className="text-left sm:text-right shrink-0">
                   <span className="text-[10px] text-text-muted font-mono uppercase">Estimated Turnkey Cost</span>
-                  <div className="text-xl sm:text-2xl font-black text-brand-purple-light font-mono">
+                  <div className="text-xl sm:text-2xl font-black text-amber-400 font-mono">
                     {formatCurrency(proposal.estimatedTotalAed)}
                   </div>
                 </div>
@@ -232,7 +232,7 @@ export function ProductionCopilotModal({
                 {/* Studio Card */}
                 <div className="p-4 rounded-2xl bg-black/60 border border-white/10 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-mono uppercase text-text-muted font-bold">
-                    <Building size={14} className="text-brand-purple-light" />
+                    <Building size={14} className="text-amber-400" />
                     <span>Allocated Studio Stage</span>
                   </div>
                   <div className="text-sm font-bold text-white">
@@ -241,7 +241,7 @@ export function ProductionCopilotModal({
                   <p className="text-xs text-text-secondary leading-relaxed">
                     {proposal.recommendedStudio.reason}
                   </p>
-                  <div className="text-[11px] font-mono text-brand-teal-light pt-1">
+                  <div className="text-[11px] font-mono text-amber-300 pt-1">
                     Rate: {formatCurrency(proposal.recommendedStudio.dailyRate)} / day
                   </div>
                 </div>
@@ -249,7 +249,7 @@ export function ProductionCopilotModal({
                 {/* Mawthooq Creator Card */}
                 <div className="p-4 rounded-2xl bg-black/60 border border-white/10 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-mono uppercase text-text-muted font-bold">
-                    <Users size={14} className="text-brand-cyan" />
+                    <Users size={14} className="text-amber-400" />
                     <span>Certified Mawthooq Talent</span>
                   </div>
                   {proposal.recommendedInfluencers.map((inf) => (
@@ -270,7 +270,7 @@ export function ProductionCopilotModal({
               {/* Recommended Gear Package */}
               <div className="p-4 rounded-2xl bg-black/60 border border-white/10 space-y-3">
                 <div className="flex items-center gap-2 text-xs font-mono uppercase text-text-muted font-bold">
-                  <Camera size={14} className="text-brand-gold" />
+                  <Camera size={14} className="text-amber-400" />
                   <span>Cinematography &amp; Audio Kit Recommended ({proposal.recommendedGear.length})</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -287,7 +287,7 @@ export function ProductionCopilotModal({
                           {gear.fitReason}
                         </div>
                       </div>
-                      <div className="text-[10px] font-mono text-brand-purple-light font-bold mt-2">
+                      <div className="text-[10px] font-mono text-amber-400 font-bold mt-2">
                         {formatCurrency(gear.dailyRate)} / day
                       </div>
                     </div>
@@ -298,7 +298,7 @@ export function ProductionCopilotModal({
               {/* Timeline Phases */}
               <div className="p-4 rounded-2xl bg-black/60 border border-white/10 space-y-3">
                 <div className="flex items-center gap-2 text-xs font-mono uppercase text-text-muted font-bold">
-                  <Calendar size={14} className="text-brand-purple-light" />
+                  <Calendar size={14} className="text-amber-400" />
                   <span>Milestone Production Pipeline</span>
                 </div>
                 <div className="space-y-2">
@@ -307,11 +307,11 @@ export function ProductionCopilotModal({
                       key={idx}
                       className="flex items-start gap-3 p-2.5 rounded-xl bg-white/[0.02] border border-white/5"
                     >
-                      <CheckCircle2 size={16} className="text-brand-teal shrink-0 mt-0.5" />
+                      <CheckCircle2 size={16} className="text-amber-400 shrink-0 mt-0.5" />
                       <div>
                         <div className="text-xs font-bold text-white flex items-center gap-2">
                           <span>{item.phase}</span>
-                          <span className="text-[10px] font-mono text-brand-cyan">({item.duration})</span>
+                          <span className="text-[10px] font-mono text-amber-300">({item.duration})</span>
                         </div>
                         <div className="text-[11px] text-text-muted mt-0.5">
                           {item.deliverables.join(" • ")}
@@ -323,9 +323,9 @@ export function ProductionCopilotModal({
               </div>
 
               {/* GCC Sovereign & Compliance Note */}
-              <div className="p-3 rounded-xl bg-brand-purple/15 border border-brand-purple/30 flex items-center gap-3">
-                <ShieldAlert size={16} className="text-brand-purple-light shrink-0" />
-                <p className="text-[11px] text-brand-purple-light">
+              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-3">
+                <ShieldAlert size={16} className="text-amber-400 shrink-0" />
+                <p className="text-[11px] text-amber-300">
                   Fully compliant with Saudi GCAM Mawthooq advertising licensing and GCC Sovereign Cloud data residency.
                 </p>
               </div>
@@ -335,7 +335,7 @@ export function ProductionCopilotModal({
 
         {/* Footer Actions */}
         {proposal && (
-          <div className="p-4 border-t border-white/10 bg-slate-900/90 flex items-center justify-between gap-3">
+          <div className="p-4 border-t border-white/10 bg-[#121118] flex items-center justify-between gap-3">
             <button
               type="button"
               onClick={() => setProposal(null)}
@@ -350,7 +350,7 @@ export function ProductionCopilotModal({
                   onApplyToRfp(proposal);
                   onClose();
                 }}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-purple to-brand-cyan text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-brand-purple/30 cursor-pointer"
+                className="px-6 py-2.5 rounded-xl btn-brand text-xs font-bold flex items-center gap-2 cursor-pointer"
               >
                 <span>Export to Enterprise RFP</span>
                 <ArrowRight size={14} className="rtl:rotate-180" />

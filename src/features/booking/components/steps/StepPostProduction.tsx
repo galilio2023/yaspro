@@ -44,21 +44,21 @@ export function StepPostProduction({ state, update }: WizardStepProps) {
           key={field}
           className={`flex items-start gap-3.5 cursor-pointer p-4 rounded-2xl border transition-all ${
             state[field]
-              ? "bg-brand-purple/15 border-brand-purple shadow-lg shadow-brand-purple/10"
-              : "border-white/10 hover:border-brand-purple/40 bg-white/5"
+              ? "bg-amber-500/15 border-amber-500 shadow-lg shadow-amber-500/10"
+              : "border-white/10 hover:border-amber-500/40 bg-white/5"
           }`}
         >
           <input
             type="checkbox"
             checked={state[field]}
             onChange={(e) => update({ [field]: e.target.checked })}
-            className="accent-brand-purple size-5 rounded mt-0.5 cursor-pointer"
+            className="accent-amber-500 size-5 rounded mt-0.5 cursor-pointer"
           />
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-0.5">
               <span className="text-white font-semibold text-sm block">{label}</span>
               {isAi && (
-                <Badge variant="cyan" className="text-[10px] px-2 py-0 gap-1">
+                <Badge variant="gold" className="text-[10px] px-2 py-0 gap-1">
                   <Sparkles size={10} /> Yas AI
                 </Badge>
               )}

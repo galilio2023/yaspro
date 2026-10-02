@@ -132,7 +132,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
       <div
         ref={modalPanelRef}
         tabIndex={-1}
-        className="relative w-full h-full sm:h-auto sm:max-h-[90vh] sm:w-[90vw] sm:max-w-3xl rounded-none sm:rounded-3xl border border-white/20 bg-slate-950 p-4 sm:p-8 shadow-2xl my-0 sm:my-8 overflow-y-auto"
+        className="relative w-full h-full sm:h-auto sm:max-h-[90vh] sm:w-[90vw] sm:max-w-3xl rounded-none sm:rounded-3xl border border-white/10 bg-[#070709] p-4 sm:p-8 shadow-[0_25px_70px_rgba(0,0,0,0.85)] my-0 sm:my-8 overflow-y-auto"
       >
         {/* Close Button */}
         <button
@@ -158,7 +158,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
             <div className="p-4 rounded-2xl bg-white/5 border border-white/10 max-w-sm mx-auto mb-6">
               <div className="text-[11px] font-mono text-text-muted">REFERENCE CODE</div>
               <div className="flex items-center justify-center gap-2 mt-1">
-                <span className="text-xl font-black text-brand-cyan font-mono">
+                <span className="text-xl font-black text-amber-400 font-mono">
                   {successResult.referenceCode}
                 </span>
                 <button
@@ -177,7 +177,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
 
             <button
               onClick={onClose}
-              className="px-6 py-2.5 rounded-xl font-bold text-xs bg-white text-black hover:bg-white/90 transition-colors cursor-pointer shadow-lg"
+              className="px-6 py-2.5 rounded-xl font-bold text-xs btn-brand text-zinc-950 transition-colors cursor-pointer shadow-lg"
             >
               Return to Portal
             </button>
@@ -185,7 +185,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-mono text-brand-purple-light bg-brand-purple/10 border border-brand-purple/30 mb-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-mono text-amber-400 bg-amber-500/10 border border-amber-500/30 mb-2">
                 <Building2 size={12} />
                 <span>CONFIDENTIAL PROCUREMENT INTAKE</span>
               </div>
@@ -217,7 +217,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                   placeholder="e.g. Dubai Municipality / Zain Group"
                   value={formData.organizationName}
                   onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-amber-500 focus:outline-none"
                 />
               </div>
 
@@ -233,7 +233,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                       organizationType: e.target.value as EnterpriseRfpInput["organizationType"],
                     })
                   }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-amber-500 focus:outline-none"
                 >
                   <option value="government_ministry">Government Ministry / Sovereign Authority</option>
                   <option value="giga_project">Giga-Project (NEOM / Diriyah / Red Sea)</option>
@@ -257,7 +257,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                   placeholder="e.g. Ahmed Al-Mansoori (Director of Media)"
                   value={formData.contactName}
                   onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-amber-500 focus:outline-none"
                 />
               </div>
 
@@ -271,7 +271,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                   placeholder="name@organization.gov.ae"
                   value={formData.workEmail}
                   onChange={(e) => setFormData({ ...formData, workEmail: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-amber-500 focus:outline-none"
                 />
               </div>
             </div>
@@ -288,7 +288,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                   placeholder="+971 50 000 0000"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-amber-500 focus:outline-none"
                 />
               </div>
 
@@ -304,7 +304,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                       country: e.target.value as EnterpriseRfpInput["country"],
                     })
                   }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-amber-500 focus:outline-none"
                 >
                   <option value="UAE">🇦🇪 United Arab Emirates</option>
                   <option value="Saudi Arabia">🇸🇦 Kingdom of Saudi Arabia</option>
@@ -331,7 +331,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                       projectScope: e.target.value as EnterpriseRfpInput["projectScope"],
                     })
                   }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-amber-500 focus:outline-none"
                 >
                   <option value="virtual_production_xr">HoloTwin™ In-Camera VFX & Virtual Production</option>
                   <option value="ob_van_live_broadcast">OB-VAN Multi-Cam Live Broadcast</option>
@@ -353,7 +353,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                       estimatedBudget: e.target.value as EnterpriseRfpInput["estimatedBudget"],
                     })
                   }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-brand-purple focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-base sm:text-sm focus:border-amber-500 focus:outline-none"
                 >
                   <option value="50k_to_150k">$50,000 – $150,000 USD (AED 180k–550k)</option>
                   <option value="150k_to_500k">$150,000 – $500,000 USD (AED 550k–1.8M)</option>
@@ -380,7 +380,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                       onClick={() => handleLocationToggle(loc)}
                       className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
                         isChecked
-                          ? "bg-brand-purple text-white border-brand-purple"
+                          ? "bg-amber-500 text-zinc-950 font-bold border-amber-500"
                           : "bg-slate-900 text-text-secondary border-white/10 hover:border-white/20"
                       }`}
                     >
@@ -414,10 +414,10 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                   type="checkbox"
                   checked={formData.requiresObVan}
                   onChange={(e) => setFormData({ ...formData, requiresObVan: e.target.checked })}
-                  className="rounded accent-brand-cyan"
+                  className="rounded accent-amber-500"
                 />
                 <span className="flex items-center gap-1 font-semibold text-white">
-                  <Radio size={13} className="text-brand-cyan" />
+                  <Radio size={13} className="text-amber-400" />
                   Include Mobile OB-VAN Unit
                 </span>
               </label>
@@ -433,7 +433,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
                 placeholder="Describe your production requirements, creative brief, or tender timeline..."
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-brand-purple focus:outline-none resize-none"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:border-amber-500 focus:outline-none resize-none"
               />
             </div>
 
@@ -441,7 +441,7 @@ function EnterpriseRfpDialog({ onClose, initialData }: Omit<EnterpriseRfpModalPr
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3.5 px-6 rounded-xl font-bold text-xs bg-gradient-to-r from-brand-purple to-indigo-600 hover:from-brand-purple-light hover:to-indigo-500 text-white shadow-xl shadow-brand-purple/25 flex items-center justify-center gap-2 cursor-pointer transition-all duration-200 disabled:opacity-50"
+              className="w-full py-3.5 px-6 rounded-xl font-bold text-xs btn-brand flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {isSubmitting ? (
                 <span>Generating Proposal Code...</span>

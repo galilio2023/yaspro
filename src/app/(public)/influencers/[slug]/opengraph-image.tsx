@@ -33,7 +33,7 @@ export default async function Image({
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "60px 70px",
-          backgroundColor: "#03020a",
+          backgroundColor: "#070709",
           position: "relative",
           overflow: "hidden",
         }}
@@ -47,7 +47,7 @@ export default async function Image({
             width: "550px",
             height: "550px",
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(234, 179, 8, 0.25) 0%, rgba(124, 58, 237, 0.2) 50%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.1) 50%, transparent 70%)",
             display: "flex",
           }}
         />
@@ -67,11 +67,11 @@ export default async function Image({
                 width: "48px",
                 height: "48px",
                 borderRadius: "14px",
-                background: "linear-gradient(135deg, #eab308 0%, #7c3aed 100%)",
+                background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: "1.5px solid rgba(253, 224, 71, 0.4)",
+                border: "1.5px solid rgba(245, 158, 11, 0.4)",
               }}
             >
               <span style={{ fontSize: "24px" }}>{flag}</span>

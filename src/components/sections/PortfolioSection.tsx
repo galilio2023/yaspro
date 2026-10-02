@@ -123,7 +123,7 @@ export function PortfolioSection({ limit = 12 }: PortfolioSectionProps) {
         <SectionHeader
           headingId="portfolio-title"
           badge={t("portfolio.badge")}
-          badgeVariant="cyan"
+          badgeVariant="gold"
           badgeIcon={<Award size={13} />}
           title={isArabic ? t("portfolio.title") : "Our Latest"}
           gradientText={isArabic ? t("portfolio.titleGradient") : "Masterpieces"}
@@ -140,8 +140,8 @@ export function PortfolioSection({ limit = 12 }: PortfolioSectionProps) {
               className={cn(
                 "px-4 py-2 min-h-[44px] rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer border whitespace-nowrap flex items-center justify-center",
                 activeCategory === cat.id
-                  ? "bg-brand-purple text-white border-brand-purple shadow-lg shadow-brand-purple/30 scale-105"
-                  : "bg-white/5 text-text-secondary border-white/10 hover:border-white/20 hover:text-white"
+                  ? "bg-amber-500 text-zinc-950 font-bold border-amber-500 shadow-lg shadow-amber-500/25 scale-105"
+                  : "bg-zinc-900/70 text-zinc-400 border-white/10 hover:border-white/25 hover:text-white"
               )}
             >
               {isArabic ? (cat.arabicLabel || cat.label) : cat.label}
@@ -181,7 +181,7 @@ export function PortfolioSection({ limit = 12 }: PortfolioSectionProps) {
         <FadeUp delay={0.15} className="flex justify-center mt-12">
           <Link
             href="/projects"
-            className="inline-flex items-center gap-2 px-7 py-3 rounded-full border border-brand-purple/40 text-brand-purple-light hover:bg-brand-purple/15 hover:border-brand-purple hover:scale-105 transition-all text-xs font-bold shadow-md shadow-brand-purple/10"
+            className="inline-flex items-center gap-2 px-7 py-3 rounded-full border border-white/15 bg-zinc-900/80 text-zinc-200 hover:bg-amber-500 hover:text-zinc-950 hover:border-amber-400 transition-all text-xs font-semibold shadow-lg shadow-black/50"
           >
             <span>
               {t("portfolio.viewAll")} ({PROJECTS_DATA.length}+ {isArabic ? "عمل" : "Projects"})

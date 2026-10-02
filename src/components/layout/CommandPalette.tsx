@@ -368,12 +368,12 @@ export function CommandPalette() {
       <div
         ref={panelRef}
         tabIndex={-1}
-        className="w-full max-w-xl bg-slate-900 border border-purple-500/30 rounded-2xl sm:rounded-3xl shadow-2xl shadow-purple-900/30 overflow-hidden flex flex-col max-h-[75vh]"
+        className="w-full max-w-xl bg-slate-900 border border-amber-500/30 rounded-2xl sm:rounded-3xl shadow-2xl shadow-amber-900/20 overflow-hidden flex flex-col max-h-[75vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
         <div className="flex items-center px-4 py-3.5 border-b border-white/10 gap-3 bg-white/[0.02]">
-          <Search size={18} className="text-purple-400 shrink-0" />
+          <Search size={18} className="text-amber-400 shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -426,7 +426,7 @@ export function CommandPalette() {
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center justify-between gap-3 text-xs transition-colors cursor-pointer ${
                     isSelected
-                      ? "bg-purple-600/30 text-white border border-purple-500/40"
+                      ? "bg-amber-500/20 text-white border border-amber-500/40"
                       : "text-slate-300 hover:bg-white/5 border border-transparent"
                   }`}
                 >
@@ -434,8 +434,8 @@ export function CommandPalette() {
                     <div
                       className={`size-7 rounded-lg flex items-center justify-center shrink-0 ${
                         isSelected
-                          ? "bg-purple-600 text-white"
-                          : "bg-white/5 text-purple-400"
+                          ? "bg-amber-500 text-slate-950 font-bold"
+                          : "bg-white/5 text-amber-400"
                       }`}
                     >
                       <Icon size={14} />
@@ -450,12 +450,12 @@ export function CommandPalette() {
 
                   <div className="flex items-center gap-2 shrink-0">
                     {cmd.badge && (
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">
                         {cmd.badge}
                       </span>
                     )}
                     {isSelected && (
-                      <ArrowRight size={13} className="text-purple-400 rtl:rotate-180" />
+                      <ArrowRight size={13} className="text-amber-400 rtl:rotate-180" />
                     )}
                   </div>
                 </button>
@@ -470,9 +470,9 @@ export function CommandPalette() {
             <span>&uarr;&darr; Navigate</span>
             <span>&crarr; Select</span>
           </div>
-          <div className="flex items-center gap-1.5 text-purple-400">
+          <div className="flex items-center gap-1.5 text-amber-400">
             <Command size={12} />
-            <span>YasPro Quick Control</span>
+            <span>YasPro Studio Control</span>
           </div>
         </div>
       </div>

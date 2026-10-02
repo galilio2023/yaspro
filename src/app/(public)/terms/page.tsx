@@ -31,7 +31,7 @@ export default function TermsOfServicePage() {
         <div className="space-y-8 text-sm text-text-secondary leading-relaxed mt-10">
           <section className="p-6 sm:p-8 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl">
             <div className="flex items-center gap-3 text-white font-bold text-base mb-3 font-display">
-              <Shield size={18} className="text-brand-purple-light" />
+              <Shield size={18} className="text-amber-400" />
               <h2>1. Studio &amp; Equipment Rental Terms</h2>
             </div>
             <p className="mb-3">
@@ -46,7 +46,7 @@ export default function TermsOfServicePage() {
 
           <section className="p-6 sm:p-8 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl">
             <div className="flex items-center gap-3 text-white font-bold text-base mb-3 font-display">
-              <AlertTriangle size={18} className="text-brand-gold" />
+              <AlertTriangle size={18} className="text-amber-400" />
               <h2>2. Cancellation &amp; Rescheduling Policy</h2>
             </div>
             <p className="mb-3">
@@ -61,7 +61,7 @@ export default function TermsOfServicePage() {
 
           <section className="p-6 sm:p-8 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl">
             <div className="flex items-center gap-3 text-white font-bold text-base mb-3 font-display">
-              <Scale size={18} className="text-brand-teal" />
+              <Scale size={18} className="text-emerald-400" />
               <h2>3. Governing Jurisdiction</h2>
             </div>
             <p className="text-text-secondary">

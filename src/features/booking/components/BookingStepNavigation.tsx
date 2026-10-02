@@ -55,7 +55,7 @@ export function BookingStepNavigation({
           size="default"
           onClick={onSubmit}
           disabled={isSubmitting}
-          className="w-full sm:w-auto min-h-[44px] sm:ms-auto rounded-xl px-8 text-xs font-semibold gap-2 shadow-lg shadow-brand-purple/25"
+          className="w-full sm:w-auto min-h-[44px] sm:ms-auto rounded-xl px-8 text-xs font-semibold gap-2 shadow-lg shadow-amber-500/20"
         >
           {isSubmitting ? (
             <span>{isArabic ? "جاري معالجة الحجز..." : "Processing Booking..."}</span>

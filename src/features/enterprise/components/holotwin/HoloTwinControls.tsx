@@ -45,7 +45,7 @@ export function HoloTwinControls({
           onClick={() => onSelectLighting("high_noon")}
           className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 shrink-0 ${
             lighting === "high_noon"
-              ? "bg-white text-black shadow-md font-bold"
+              ? "bg-amber-400 text-zinc-950 shadow-md shadow-amber-400/20 font-bold"
               : "bg-white/5 text-text-secondary hover:text-white"
           }`}
         >
@@ -57,7 +57,7 @@ export function HoloTwinControls({
           onClick={() => onSelectLighting("cyber_night")}
           className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 shrink-0 ${
             lighting === "cyber_night"
-              ? "bg-brand-purple text-white shadow-md shadow-brand-purple/40 font-bold"
+              ? "bg-amber-500 text-zinc-950 shadow-md shadow-amber-500/20 font-bold"
               : "bg-white/5 text-text-secondary hover:text-white"
           }`}
         >
@@ -69,7 +69,7 @@ export function HoloTwinControls({
           onClick={() => onSelectLighting("blue_hour")}
           className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 shrink-0 ${
             lighting === "blue_hour"
-              ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold"
+              ? "bg-amber-600 text-zinc-950 shadow-md shadow-amber-600/30 font-bold"
               : "bg-white/5 text-text-secondary hover:text-white"
           }`}
         >
@@ -90,7 +90,7 @@ export function HoloTwinControls({
             step="5"
             value={focalLength}
             onChange={(e) => onChangeFocalLength(Number(e.target.value))}
-            className="w-20 sm:w-24 accent-brand-cyan cursor-pointer"
+            className="w-20 sm:w-24 accent-amber-500 cursor-pointer"
             title="Virtual Focal Length"
             aria-label="Virtual camera focal length in millimeters"
           />
@@ -101,7 +101,7 @@ export function HoloTwinControls({
           onClick={onToggleWireframe}
           className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
             showWireframe
-              ? "bg-brand-cyan text-black font-bold"
+              ? "btn-brand text-zinc-950 font-bold"
               : "bg-white/5 text-text-secondary hover:text-white border border-white/10"
           }`}
         >

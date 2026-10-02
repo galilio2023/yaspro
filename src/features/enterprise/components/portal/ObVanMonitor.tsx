@@ -37,8 +37,8 @@ export function ObVanMonitor({ activeCam }: ObVanMonitorProps) {
           <span className="text-white/90 truncate max-w-[150px] sm:max-w-none">{activeCam.label}</span>
         </div>
 
-        <div className="bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-brand-teal/40 text-[10px] sm:text-xs font-mono text-brand-teal-light flex items-center gap-1 sm:gap-1.5">
-          <Activity size={12} className="shrink-0 text-brand-teal" />
+        <div className="bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-emerald-500/40 text-[10px] sm:text-xs font-mono text-emerald-400 flex items-center gap-1 sm:gap-1.5">
+          <Activity size={12} className="shrink-0 text-emerald-400" />
           <span className="hidden xs:inline">12G-SDI</span>
           <span>11.88 Gbps</span>
         </div>
@@ -47,10 +47,10 @@ export function ObVanMonitor({ activeCam }: ObVanMonitorProps) {
       {/* Bottom Monitor Overlay */}
       <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-3 sm:left-3 sm:right-3 flex items-center justify-between pointer-events-none text-[10px] sm:text-xs font-mono text-white/80 bg-black/80 backdrop-blur-md px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border border-white/10">
         <div className="flex items-center gap-1.5 sm:gap-2 truncate mr-2">
-          <span className="text-brand-gold font-bold">SOURCE:</span>
+          <span className="text-amber-400 font-bold">SOURCE:</span>
           <span className="truncate">{activeCam.source}</span>
         </div>
-        <div className="text-brand-cyan font-bold shrink-0">{activeCam.resolution}</div>
+        <div className="text-amber-400 font-bold shrink-0">{activeCam.resolution}</div>
       </div>
     </div>
   );

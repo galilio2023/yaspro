@@ -116,7 +116,7 @@ export function PortalSettingsForm({ user }: PortalSettingsFormProps) {
 
         {/* Email — read only */}
         <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/10">
-          <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 shrink-0">
+          <div className="p-2 rounded-xl bg-stone-500/15 text-stone-300 shrink-0">
             <Mail size={16} />
           </div>
           <div className="min-w-0">
@@ -151,7 +151,7 @@ export function PortalSettingsForm({ user }: PortalSettingsFormProps) {
 
         {/* Company — editable */}
         <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/10">
-          <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400 shrink-0">
+          <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 shrink-0">
             <Building size={16} />
           </div>
           <div className="min-w-0 flex-1">
@@ -163,7 +163,7 @@ export function PortalSettingsForm({ user }: PortalSettingsFormProps) {
                 value={editCompany}
                 onChange={(e) => setEditCompany(e.target.value)}
                 placeholder="Independent"
-                className="w-full text-sm font-semibold text-white bg-white/5 border border-purple-500/40 rounded-lg px-3 py-1.5 outline-none focus:border-purple-400/70 placeholder:text-slate-500"
+                className="w-full text-sm font-semibold text-white bg-white/5 border border-amber-500/40 rounded-lg px-3 py-1.5 outline-none focus:border-amber-400/70 placeholder:text-slate-500"
               />
             ) : (
               <div className="text-sm font-semibold text-white">{savedCompany || "Independent"}</div>

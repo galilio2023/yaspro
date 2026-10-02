@@ -130,7 +130,7 @@ export default async function PortalDashboardPage() {
 
         <div className="p-5 rounded-2xl bg-slate-900/60 border border-white/10 flex flex-col gap-2">
           <div className="flex items-center gap-2 text-xs text-slate-400 font-medium uppercase tracking-wide">
-            <CalendarCheck size={14} className="text-cyan-400" /> Active Sessions
+            <CalendarCheck size={14} className="text-amber-400" /> Active Sessions
           </div>
           <div className="text-3xl font-extrabold text-white">{activeSessions}</div>
         </div>
@@ -148,7 +148,7 @@ export default async function PortalDashboardPage() {
 
         <div className="p-5 rounded-2xl bg-slate-900/60 border border-white/10 flex flex-col gap-2">
           <div className="flex items-center gap-2 text-xs text-slate-400 font-medium uppercase tracking-wide">
-            <Clock size={14} className="text-purple-400" /> Next Session
+            <Clock size={14} className="text-amber-400" /> Next Session
           </div>
           <div className="text-sm font-bold text-white">
             {nextSession ? formatDate(nextSession) : "None scheduled"}
@@ -164,44 +164,44 @@ export default async function PortalDashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Link
             href="/studio-booking"
-            className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-white/10 hover:border-emerald-500/40 hover:bg-emerald-500/5 transition-all group"
+            className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-white/10 hover:border-amber-500/40 hover:bg-amber-500/5 transition-all group"
           >
-            <div className="size-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/20 transition-colors">
+            <div className="size-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 group-hover:bg-amber-500/20 transition-colors">
               <Sparkles size={18} />
             </div>
             <div>
               <div className="text-sm font-semibold text-white">Book Studio</div>
               <div className="text-[11px] text-slate-400">Reserve a soundstage</div>
             </div>
-            <ArrowRight size={16} className="ml-auto text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all rtl:rotate-180" />
+            <ArrowRight size={16} className="ml-auto text-slate-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all rtl:rotate-180" />
           </Link>
 
           <Link
             href="/shop"
-            className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-white/10 hover:border-cyan-500/40 hover:bg-cyan-500/5 transition-all group"
+            className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-white/10 hover:border-amber-500/40 hover:bg-amber-500/5 transition-all group"
           >
-            <div className="size-9 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center shrink-0 group-hover:bg-cyan-500/20 transition-colors">
+            <div className="size-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 group-hover:bg-amber-500/20 transition-colors">
               <Camera size={18} />
             </div>
             <div>
               <div className="text-sm font-semibold text-white">Rent Gear</div>
               <div className="text-[11px] text-slate-400">Cinema & broadcast equipment</div>
             </div>
-            <ArrowRight size={16} className="ml-auto text-slate-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all rtl:rotate-180" />
+            <ArrowRight size={16} className="ml-auto text-slate-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all rtl:rotate-180" />
           </Link>
 
           <Link
             href="/portal/support"
-            className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-white/10 hover:border-purple-500/40 hover:bg-purple-500/5 transition-all group"
+            className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-white/10 hover:border-amber-500/40 hover:bg-amber-500/5 transition-all group"
           >
-            <div className="size-9 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0 group-hover:bg-purple-500/20 transition-colors">
+            <div className="size-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 group-hover:bg-amber-500/20 transition-colors">
               <Headphones size={18} />
             </div>
             <div>
               <div className="text-sm font-semibold text-white">Contact Concierge</div>
               <div className="text-[11px] text-slate-400">Priority production support</div>
             </div>
-            <ArrowRight size={16} className="ml-auto text-slate-500 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-all rtl:rotate-180" />
+            <ArrowRight size={16} className="ml-auto text-slate-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all rtl:rotate-180" />
           </Link>
         </div>
       </div>

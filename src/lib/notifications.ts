@@ -34,11 +34,11 @@ export async function sendBookingConfirmationNotification(
     <html>
       <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #020617; color: #f8fafc; padding: 24px;">
         <div style="max-width: 600px; margin: 0 auto; background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 32px;">
-          <h2 style="color: #a855f7; margin-top: 0;">Yas Productions &bull; Stage Call Sheet</h2>
+          <h2 style="color: #f59e0b; margin-top: 0;">Yas Productions &bull; Stage Call Sheet</h2>
           <p style="font-size: 14px; color: #94a3b8;">Your stage reservation has been confirmed and scheduled on sovereign UAE studio infrastructure.</p>
           
-          <div style="background: #1e1b4b; border: 1px solid #3b0764; border-radius: 12px; padding: 16px; margin: 20px 0;">
-            <p style="margin: 0; font-size: 11px; text-transform: uppercase; color: #c084fc; font-family: monospace;">Booking Reference</p>
+          <div style="background: #1c1917; border: 1px solid #78350f; border-radius: 12px; padding: 16px; margin: 20px 0;">
+            <p style="margin: 0; font-size: 11px; text-transform: uppercase; color: #fbbf24; font-family: monospace;">Booking Reference</p>
             <p style="margin: 4px 0 0 0; font-size: 20px; font-weight: bold; color: #ffffff; font-family: monospace;">${booking.referenceCode}</p>
           </div>
 

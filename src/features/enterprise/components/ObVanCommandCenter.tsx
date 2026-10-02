@@ -51,13 +51,13 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
 
   return (
     <section id="ob-van-command" className="py-12 sm:py-16 lg:py-28 bg-slate-950 border-b border-white/10 relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-brand-cyan/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
 
       <Container className="relative z-10 max-w-6xl">
         <SectionHeader
           badge={t("enterprise.obVan.badge")}
-          badgeVariant="cyan"
-          badgeIcon={<Radio size={13} className="text-brand-cyan" />}
+          badgeVariant="gold"
+          badgeIcon={<Radio size={13} className="text-amber-400" />}
           title={t("enterprise.obVan.title")}
           gradientText={t("enterprise.obVan.gradient")}
           description={t("enterprise.obVan.description")}
@@ -80,15 +80,15 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
 
                 {/* Overlaid Badges */}
                 <div className="absolute top-4 left-4 flex flex-wrap gap-2 pointer-events-none">
-                  <div className="bg-black/85 backdrop-blur-md px-3 py-1.5 rounded-full border border-brand-cyan/40 text-xs font-mono text-brand-cyan flex items-center gap-1.5">
-                    <span className="size-2 rounded-full bg-brand-cyan animate-ping" />
+                  <div className="bg-black/85 backdrop-blur-md px-3 py-1.5 rounded-full border border-amber-500/40 text-xs font-mono text-amber-400 flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-amber-400 animate-ping" />
                     <span className="font-bold">UNIT 01: STANDBY / DUBAI IRIS BAY</span>
                   </div>
                 </div>
 
                 <div className="absolute top-4 right-4 pointer-events-none">
-                  <div className="bg-black/85 backdrop-blur-md px-3 py-1.5 rounded-full border border-brand-teal/40 text-xs font-mono text-brand-teal-light flex items-center gap-1.5">
-                    <Wifi size={13} className="text-brand-teal" />
+                  <div className="bg-black/85 backdrop-blur-md px-3 py-1.5 rounded-full border border-emerald-500/40 text-xs font-mono text-emerald-400 flex items-center gap-1.5">
+                    <Wifi size={13} className="text-emerald-400" />
                     <span>ENCRYPTED SATELLITE UPLINK</span>
                   </div>
                 </div>
@@ -109,7 +109,7 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
           {/* Right Column: 8-Second AI Viral Clip Engine Simulation */}
           <div className="lg:col-span-5 flex flex-col justify-center">
             <div className="p-6 rounded-3xl border border-white/10 bg-slate-900/80 backdrop-blur-xl shadow-xl">
-              <div className="flex items-center gap-2 text-xs font-mono font-bold text-brand-cyan mb-2">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400 mb-2">
                 <Sparkles size={14} />
                 <span>AUTONOMOUS EDGE COMPUTE</span>
               </div>
@@ -124,7 +124,7 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
               <div className="p-4 rounded-2xl border border-white/10 bg-black/60 mb-6">
                 <div className="flex items-center justify-between text-xs font-mono mb-2">
                   <span className="text-text-secondary">AI Ingestion Pipeline:</span>
-                  <span className="font-bold text-brand-cyan">
+                  <span className="font-bold text-amber-400">
                     {isProcessingClip
                       ? `Processing... ${clipSeconds}s`
                       : clipDone
@@ -136,7 +136,7 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
                 {/* Progress Bar */}
                 <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-brand-cyan via-brand-purple to-brand-teal transition-all duration-100"
+                    className="h-full bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-400 transition-all duration-100"
                     style={{
                       width: isProcessingClip
                         ? `${(clipSeconds / 8.4) * 100}%`
@@ -148,8 +148,8 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
                 </div>
 
                 {clipDone && (
-                  <div className="mt-3 p-2.5 rounded-xl bg-brand-teal/15 border border-brand-teal/30 flex items-center gap-2 text-xs text-brand-teal-light font-mono">
-                    <CheckCircle2 size={14} className="shrink-0 text-brand-teal" />
+                  <div className="mt-3 p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center gap-2 text-xs text-emerald-400 font-mono">
+                    <CheckCircle2 size={14} className="shrink-0 text-emerald-400" />
                     <span>Master Vertical 9:16 Clip Syndicated to TikTok & X</span>
                   </div>
                 )}
@@ -160,7 +160,7 @@ export function ObVanCommandCenter({ onReserveObVan }: ObVanProps) {
                 <button
                   onClick={triggerAiSyndicationDemo}
                   disabled={isProcessingClip}
-                  className="flex-1 py-3 px-4 rounded-xl text-xs font-bold bg-brand-cyan hover:bg-brand-cyan/80 text-black shadow-lg shadow-brand-cyan/20 flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
+                  className="flex-1 py-3 px-4 rounded-xl text-xs font-bold btn-brand text-zinc-950 shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
                 >
                   {isProcessingClip ? (
                     <>

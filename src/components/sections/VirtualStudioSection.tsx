@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Sparkles,
   ArrowRight,
   Play,
   Pause,
@@ -97,8 +96,8 @@ export function VirtualStudioSection() {
         <SectionHeader
           headingId="virtual-studio-title"
           badge={t("virtualStudio.badge")}
-          badgeVariant="default"
-          badgeIcon={<Video size={13} className="text-brand-purple-light" />}
+          badgeVariant="gold"
+          badgeIcon={<Video size={13} className="text-amber-400" />}
           title={t("virtualStudio.title")}
           gradientText={t("virtualStudio.titleGradient")}
           description={t("virtualStudio.subtitle")}
@@ -121,8 +120,8 @@ export function VirtualStudioSection() {
                 onClick={() => setActiveScene(scene)}
                 className={`px-3.5 py-2.5 sm:py-2 rounded-xl border text-xs font-semibold transition-all flex items-center gap-2.5 cursor-pointer shadow-sm shrink-0 whitespace-nowrap min-h-[44px] sm:min-h-0 ${
                   isSelected
-                    ? "border-brand-purple ring-2 ring-brand-purple/30 bg-card text-white shadow-brand-purple/10"
-                    : "border-white/10 bg-card/60 text-text-secondary hover:text-white hover:border-white/20 hover:bg-card/90"
+                    ? "border-amber-500/50 bg-zinc-900 text-white shadow-lg shadow-black/60"
+                    : "border-white/10 bg-zinc-950/60 text-zinc-400 hover:text-white hover:border-white/20 hover:bg-zinc-900/60"
                 }`}
               >
                 <div className="relative size-6 rounded-md overflow-hidden shrink-0 border border-white/15">
@@ -160,8 +159,8 @@ export function VirtualStudioSection() {
           >
             {/* TOP BROADCAST HUD OVERLAYS */}
             <div className="absolute top-2.5 left-2.5 sm:top-3.5 sm:left-3.5 pointer-events-none flex items-center gap-2 z-30">
-              <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-brand-teal/40 text-[10px] sm:text-xs font-mono text-brand-teal-light font-latin">
-                <span className="size-1.5 sm:size-2 rounded-full bg-brand-teal" />
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-emerald-500/30 text-[10px] sm:text-xs font-mono text-emerald-400 font-latin">
+                <span className="size-1.5 sm:size-2 rounded-full bg-emerald-500" />
                 <span className="font-bold">PHYSICAL STAGE</span>
                 <span className="text-white/40 hidden sm:inline">|</span>
                 <span className="text-white/80 hidden sm:inline">Green Cyclorama</span>
@@ -169,8 +168,8 @@ export function VirtualStudioSection() {
             </div>
 
             <div className="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 pointer-events-none flex items-center gap-2 z-30">
-              <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-brand-purple/40 text-[10px] sm:text-xs font-mono text-brand-purple-light font-latin">
-                <Sparkles size={12} className="text-brand-purple-light" />
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-amber-500/30 text-[10px] sm:text-xs font-mono text-amber-300 font-latin">
+                <Cpu size={12} className="text-amber-400" />
                 <span className="font-bold">UNREAL 5.4</span>
                 <span className="text-white/40 hidden sm:inline">|</span>
                 <span className="text-white/80 hidden sm:inline">{activeScene.badge}</span>
@@ -185,10 +184,10 @@ export function VirtualStudioSection() {
                   GENLOCK 120 FPS
                 </span>
                 <span className="hidden sm:inline text-white/60">LATENCY 2.1ms</span>
-                <span className="hidden md:inline text-brand-cyan">10-BIT HDR BROADCAST PIPELINE</span>
+                <span className="hidden md:inline text-amber-400">10-BIT HDR BROADCAST PIPELINE</span>
               </div>
 
-              <div className="flex items-center gap-1.5 text-brand-gold font-bold">
+              <div className="flex items-center gap-1.5 text-amber-400 font-bold">
                 <Crosshair size={12} />
                 <span className="hidden sm:inline">TRACKING:</span>
                 <span>{activeScene.trackingEngine}</span>
@@ -198,7 +197,7 @@ export function VirtualStudioSection() {
             {/* Hover Drag Cue */}
             <div className="absolute inset-x-0 bottom-11 flex justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-30">
               <div className="bg-black/85 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 text-[11px] text-white font-medium flex items-center gap-1.5 shadow-2xl">
-                <SplitSquareVertical size={12} className="text-brand-cyan" />
+                <SplitSquareVertical size={12} className="text-amber-400" />
                 <span>{t("virtualStudio.dragPrompt")}</span>
               </div>
             </div>
@@ -212,7 +211,7 @@ export function VirtualStudioSection() {
               onClick={() => setIsAutoWiping(!isAutoWiping)}
               className={`px-3.5 py-2 sm:py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer min-h-[40px] sm:min-h-0 ${
                 isAutoWiping
-                  ? "bg-brand-cyan text-black shadow-lg shadow-brand-cyan/20"
+                  ? "bg-amber-500 text-zinc-950 font-bold shadow-lg shadow-amber-500/20"
                   : "bg-white/10 text-white hover:bg-white/15"
               }`}
             >
@@ -242,7 +241,7 @@ export function VirtualStudioSection() {
                 }}
                 className={`px-2.5 py-2 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap cursor-pointer min-h-[40px] ${
                   sliderPosition > 40 && sliderPosition < 60
-                    ? "bg-brand-purple text-white shadow"
+                    ? "bg-amber-500 text-zinc-950 font-bold shadow"
                     : "text-text-secondary hover:text-white bg-white/5"
                 }`}
               >
@@ -286,7 +285,7 @@ export function VirtualStudioSection() {
               }}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 sliderPosition > 40 && sliderPosition < 60
-                  ? "bg-brand-purple text-white shadow"
+                  ? "bg-amber-500 text-zinc-950 font-bold shadow"
                   : "text-text-secondary hover:text-white bg-white/5"
               }`}
             >
@@ -311,7 +310,7 @@ export function VirtualStudioSection() {
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <Link
               href="/studio-booking"
-              className="btn-brand w-full sm:w-auto py-2.5 sm:py-1.5 px-4 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold shadow-md hover:shadow-brand-purple/20 transition-all min-h-[40px] sm:min-h-0"
+              className="btn-brand w-full sm:w-auto py-2.5 sm:py-1.5 px-4 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold shadow-md hover:shadow-amber-500/20 transition-all min-h-[40px] sm:min-h-0"
             >
               <span>{t("virtualStudio.bookVirtual")}</span>
               <ArrowRight size={13} className="rtl:rotate-180 shrink-0 transition-transform" />
@@ -322,7 +321,7 @@ export function VirtualStudioSection() {
         {/* ─── 4. SLIM FEATURE BADGES ROW ─── */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-card/60 rounded-xl border border-white/5 px-4 py-3 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-brand-purple/10 text-brand-purple-light shrink-0">
+            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
               <Cpu size={16} />
             </div>
             <div>
@@ -332,7 +331,7 @@ export function VirtualStudioSection() {
           </div>
 
           <div className="bg-card/60 rounded-xl border border-white/5 px-4 py-3 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-brand-cyan/10 text-brand-cyan shrink-0">
+            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
               <Layers size={16} />
             </div>
             <div>
@@ -342,7 +341,7 @@ export function VirtualStudioSection() {
           </div>
 
           <div className="bg-card/60 rounded-xl border border-white/5 px-4 py-3 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-amber-500/10 text-brand-gold shrink-0">
+            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
               <Zap size={16} />
             </div>
             <div>

@@ -13,7 +13,7 @@ export function StepCrewEquipment({ state, update }: WizardStepProps) {
           <label className="block text-xs uppercase tracking-wider font-semibold text-text-secondary">
             Select Studio Camera &amp; Lighting Rig
           </label>
-          <span className="text-[11px] text-brand-purple-light font-mono">
+          <span className="text-[11px] text-amber-400 font-mono">
             Calibrated on Soundstage Arrival
           </span>
         </div>
@@ -27,7 +27,7 @@ export function StepCrewEquipment({ state, update }: WizardStepProps) {
                 onClick={() => update({ selectedGearPackage: pkg.id })}
                 className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-4 ${
                   isSelected
-                    ? "bg-brand-purple/15 border-brand-purple shadow-lg shadow-brand-purple/10"
+                    ? "bg-amber-500/15 border-amber-500 shadow-lg shadow-amber-500/10"
                     : "bg-white/[0.03] border-white/10 hover:border-white/20 hover:bg-white/[0.05]"
                 }`}
               >
@@ -35,7 +35,7 @@ export function StepCrewEquipment({ state, update }: WizardStepProps) {
                   <div
                     className={`size-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
                       isSelected
-                        ? "bg-brand-purple text-white"
+                        ? "bg-amber-500 text-zinc-950 font-bold"
                         : "bg-white/5 text-text-muted"
                     }`}
                   >
@@ -47,7 +47,7 @@ export function StepCrewEquipment({ state, update }: WizardStepProps) {
                         {pkg.name}
                       </span>
                       {pkg.rate > 0 && (
-                        <Badge variant="cyan" className="text-[10px] px-2 py-0">
+                        <Badge variant="gold" className="text-[10px] px-2 py-0">
                           +{formatCurrency(pkg.rate)}
                         </Badge>
                       )}
@@ -61,7 +61,7 @@ export function StepCrewEquipment({ state, update }: WizardStepProps) {
                 <div
                   className={`size-6 rounded-full border flex items-center justify-center shrink-0 mt-1 ${
                     isSelected
-                      ? "border-brand-purple bg-brand-purple text-white"
+                      ? "border-amber-500 bg-amber-500 text-zinc-950 font-bold"
                       : "border-white/20 bg-transparent"
                   }`}
                 >
@@ -75,13 +75,13 @@ export function StepCrewEquipment({ state, update }: WizardStepProps) {
 
       {/* 2. Dedicated Production Crew Add-on */}
       <div className="pt-2">
-        <label className="flex items-center justify-between p-4 rounded-2xl border border-white/10 hover:border-brand-purple/40 bg-white/5 cursor-pointer transition-all">
+        <label className="flex items-center justify-between p-4 rounded-2xl border border-white/10 hover:border-amber-500/40 bg-white/5 cursor-pointer transition-all">
           <div className="flex items-center gap-3.5">
             <input
               type="checkbox"
               checked={state.needsCrew}
               onChange={(e) => update({ needsCrew: e.target.checked })}
-              className="accent-brand-purple size-5 rounded cursor-pointer"
+              className="accent-amber-500 size-5 rounded cursor-pointer"
             />
             <div>
               <span className="text-white font-semibold text-sm block">
@@ -92,7 +92,7 @@ export function StepCrewEquipment({ state, update }: WizardStepProps) {
               </span>
             </div>
           </div>
-          <Users size={20} className="text-brand-purple shrink-0 hidden sm:block" />
+          <Users size={20} className="text-amber-400 shrink-0 hidden sm:block" />
         </label>
       </div>
 
@@ -106,7 +106,7 @@ export function StepCrewEquipment({ state, update }: WizardStepProps) {
           value={state.equipmentNotes}
           onChange={(e) => update({ equipmentNotes: e.target.value })}
           placeholder="Specify if you require wireless lavaliers, teleprompter, ARRI/Sony anamorphic optics, or green screen chroma keying..."
-          className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-text-muted focus:border-brand-purple focus:ring-1 focus:ring-brand-purple outline-none resize-none transition-all text-sm"
+          className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-text-muted focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none resize-none transition-all text-sm"
         />
       </div>
     </div>

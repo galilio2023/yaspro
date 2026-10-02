@@ -106,9 +106,9 @@ export default function RegisterPage() {
   return (
     <div className="min-h-[85vh] flex items-center justify-center p-4 py-12 sm:py-16">
       {/* Ambient Glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[450px] bg-brand-purple/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[450px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 w-full max-w-lg mx-auto p-6 sm:p-10 rounded-3xl bg-slate-900/80 border border-white/10 backdrop-blur-2xl shadow-2xl">
+      <div className="relative z-10 w-full max-w-lg mx-auto p-6 sm:p-10 rounded-3xl bg-[#0c0b10] border border-white/10 backdrop-blur-2xl shadow-2xl">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mx-auto mb-5">
             <BrandLogo size="large" href="/" />
@@ -122,7 +122,7 @@ export default function RegisterPage() {
         </div>
 
         {claimNotice && (
-          <div role="status" className="mb-6 p-3.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs">
+          <div role="status" className="mb-6 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
             {t("claimBookingsNotice")}
           </div>
         )}
@@ -146,7 +146,7 @@ export default function RegisterPage() {
                 onClick={() => setAccountType("creator")}
                 className={`py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                   accountType === "creator"
-                    ? "bg-purple-600 text-white shadow-md shadow-purple-600/30"
+                    ? "bg-amber-500 text-black font-extrabold shadow-md shadow-amber-500/20"
                     : "text-slate-400 hover:text-white hover:bg-white/5"
                 }`}
               >
@@ -159,7 +159,7 @@ export default function RegisterPage() {
                 onClick={() => setAccountType("enterprise")}
                 className={`py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                   accountType === "enterprise"
-                    ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/30 font-bold"
+                    ? "bg-amber-500 text-black font-extrabold shadow-md shadow-amber-500/20"
                     : "text-slate-400 hover:text-white hover:bg-white/5"
                 }`}
               >
@@ -179,7 +179,7 @@ export default function RegisterPage() {
                   placeholder={t("fullNamePlaceholder")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
+                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/60 transition-colors text-base sm:text-sm"
                 />
                 <User size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
@@ -201,11 +201,7 @@ export default function RegisterPage() {
                   placeholder={t("companyPlaceholder")}
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
-                  className={`w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border text-white placeholder:text-slate-500 focus:outline-none transition-colors text-base sm:text-sm ${
-                    accountType === "enterprise"
-                      ? "border-amber-500/40 focus:border-amber-400"
-                      : "border-white/10 focus:border-purple-500"
-                  }`}
+                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/60 transition-colors text-base sm:text-sm"
                 />
                 <Building size={16} className={`absolute start-3.5 top-1/2 -translate-y-1/2 pointer-events-none ${
                   accountType === "enterprise" ? "text-amber-400" : "text-slate-400"
@@ -224,7 +220,7 @@ export default function RegisterPage() {
                   placeholder={t("emailPlaceholder")}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
+                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/60 transition-colors text-base sm:text-sm"
                 />
                 <Mail size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
@@ -238,7 +234,7 @@ export default function RegisterPage() {
                   placeholder={t("phonePlaceholder")}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
+                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/60 transition-colors text-base sm:text-sm"
                 />
                 <Phone size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
@@ -255,7 +251,7 @@ export default function RegisterPage() {
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500 transition-colors text-base sm:text-sm"
+                className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/60 transition-colors text-base sm:text-sm"
               />
               <Lock size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             </div>
@@ -264,7 +260,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full min-h-[44px] py-3.5 rounded-xl bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:opacity-95 text-white font-semibold text-sm tracking-wide shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 mt-6"
+            className="w-full min-h-[44px] py-3.5 rounded-xl btn-brand text-xs font-bold tracking-wide flex items-center justify-center gap-2 disabled:opacity-50 mt-6 cursor-pointer"
           >
             {isLoading ? t("submittingBtn") : t("submitBtn")}
             <ArrowRight size={14} className="rtl:rotate-180" />
@@ -273,12 +269,12 @@ export default function RegisterPage() {
 
         <div className="mt-8 pt-6 border-t border-white/10 text-center text-xs text-slate-400">
           <span>{t("hasAccount")}{" "}</span>
-          <Link href="/login" className="text-purple-400 hover:text-purple-300 font-semibold inline-block py-1">
+          <Link href="/login" className="text-amber-400 hover:text-amber-300 font-semibold inline-block py-1">
             {t("loginLink")}
           </Link>
         </div>
 
-        <div className="mt-4 p-3 rounded-xl bg-purple-950/20 border border-purple-800/20 text-[11px] text-slate-400 flex items-center gap-2">
+        <div className="mt-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300 flex items-center gap-2">
           <ShieldCheck size={14} className="text-emerald-400 shrink-0" />
           <span>{t("securityBadge")}</span>
         </div>

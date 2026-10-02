@@ -26,8 +26,8 @@ export function GearSelectButton({
       className={cn(
         "px-4 py-2.5 sm:py-3 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-md shrink-0 whitespace-nowrap",
         inCart
-          ? "bg-brand-teal/20 text-brand-teal-light border border-brand-teal/40 shadow-brand-teal/15"
-          : "bg-brand-purple text-white hover:bg-brand-purple-dark shadow-brand-purple/20",
+          ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-emerald-500/10"
+          : "btn-brand shadow-amber-500/10",
         className
       )}
     >

@@ -20,11 +20,11 @@ export function InfluencerProfileCard({ creator }: InfluencerProfileCardProps) {
   return (
     <>
       <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-8 relative overflow-hidden shadow-2xl shadow-black/40">
-        <BorderBeam size={220} duration={12} colorFrom="var(--brand-cyan)" colorTo="var(--brand-purple)" />
+        <BorderBeam size={220} duration={12} colorFrom="#f59e0b" colorTo="#d97706" />
 
         <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-5 mb-6">
           <div className="relative shrink-0">
-            <div className="size-20 sm:size-24 rounded-3xl bg-gradient-to-br from-brand-purple to-brand-purple-dark flex items-center justify-center text-white font-extrabold text-2xl sm:text-3xl shadow-xl shadow-brand-purple/30 border border-white/20 font-display overflow-hidden relative">
+            <div className="size-20 sm:size-24 rounded-3xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white font-extrabold text-2xl sm:text-3xl shadow-xl shadow-amber-500/20 border border-white/20 font-display overflow-hidden relative">
               {creator.avatar ? (
                 <Image
                   src={creator.avatar}
@@ -37,7 +37,7 @@ export function InfluencerProfileCard({ creator }: InfluencerProfileCardProps) {
                 <span>{initials}</span>
               )}
             </div>
-            <div className="absolute -bottom-1 -right-1 size-6 rounded-full bg-brand-cyan flex items-center justify-center text-black shadow-md z-10">
+            <div className="absolute -bottom-1 -right-1 size-6 rounded-full bg-amber-400 flex items-center justify-center text-black shadow-md z-10">
               <CheckCircle2 size={15} className="text-black" />
             </div>
           </div>
@@ -47,8 +47,8 @@ export function InfluencerProfileCard({ creator }: InfluencerProfileCardProps) {
               <Badge variant="secondary" className="text-xs">
                 {creator.flag} {creator.nationality}
               </Badge>
-              <Badge variant="default" className="text-xs font-bold gap-1.5 shadow-sm shadow-brand-purple/20">
-                <Users size={12} className="text-brand-purple-light" />
+              <Badge variant="default" className="text-xs font-bold gap-1.5 shadow-sm shadow-black/20">
+                <Users size={12} className="text-amber-400" />
                 <span>{creator.totalFollowers} Reach</span>
               </Badge>
             </div>
@@ -57,7 +57,7 @@ export function InfluencerProfileCard({ creator }: InfluencerProfileCardProps) {
               {creator.name}
             </h1>
 
-            <p className="text-sm text-brand-purple-light font-semibold mt-1">
+            <p className="text-sm text-amber-400 font-semibold mt-1">
               {creator.role}
             </p>
           </div>

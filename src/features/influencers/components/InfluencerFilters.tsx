@@ -43,7 +43,7 @@ export function InfluencerFilters({
             className={cn(
               "px-3.5 py-2 sm:py-1.5 min-h-[44px] sm:min-h-0 rounded-full text-xs font-semibold transition-all capitalize cursor-pointer shrink-0 whitespace-nowrap flex items-center justify-center",
               selectedNationality === nation
-                ? "bg-brand-purple text-white shadow-md shadow-brand-purple/20"
+                ? "bg-amber-500 text-zinc-950 font-bold shadow-md shadow-amber-500/20"
                 : "bg-white/5 text-text-secondary hover:text-white hover:bg-white/10 border border-white/5"
             )}
           >

@@ -31,7 +31,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
           <label className="text-xs uppercase tracking-wider font-semibold text-text-secondary">
             Session Duration
           </label>
-          <span className="text-brand-purple-light font-bold text-sm">
+          <span className="text-amber-400 font-bold text-sm">
             {state.durationHours} Hours
           </span>
         </div>
@@ -41,7 +41,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
           max={12}
           value={state.durationHours}
           onChange={(e) => update({ durationHours: Number(e.target.value) })}
-          className="w-full accent-brand-purple cursor-pointer h-2 bg-white/10 rounded-lg appearance-none"
+          className="w-full accent-amber-500 cursor-pointer h-2 bg-white/10 rounded-lg appearance-none"
         />
         <div className="flex justify-between text-xs text-text-muted mt-1">
           <span>1h (Quick Session)</span>
@@ -67,8 +67,8 @@ export function StepDatetime({ state, update }: WizardStepProps) {
                 className={cn(
                   "px-5 py-3 rounded-xl border text-sm font-semibold transition-all cursor-pointer",
                   isSelected
-                    ? "bg-brand-purple border-brand-purple text-white shadow-md shadow-brand-purple/25"
-                    : "bg-white/5 border-white/10 text-text-secondary hover:border-brand-purple/50 hover:text-white"
+                    ? "bg-amber-500 border-amber-500 text-zinc-950 font-bold shadow-md shadow-amber-500/20"
+                    : "bg-white/5 border-white/10 text-text-secondary hover:border-amber-500/50 hover:text-white"
                 )}
               >
                 {n} {typeof n === "number" && n === 1 ? "Person" : "People"}

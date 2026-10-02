@@ -71,8 +71,8 @@ export function ObVanTelemetryDashboard({ onDispatchVan }: ObVanTelemetryProps) 
       <Container className="relative z-10 max-w-6xl">
         <SectionHeader
           badge="Broadcast Command & Telemetry Matrix"
-          badgeVariant="cyan"
-          badgeIcon={<Radio size={13} className="text-brand-cyan" />}
+          badgeVariant="gold"
+          badgeIcon={<Radio size={13} className="text-amber-400" />}
           title="12-Channel Live Tactical Grid &"
           gradientText="Mobile Command Cockpit"
           description="Interactive multi-camera switcher connected directly to Yas Pro's Mercedes Actros broadcast vehicle. Ingesting SMPTE ST 2110 IP fiber feeds across the Gulf."
