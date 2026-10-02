@@ -31,7 +31,12 @@ export default function InfluencersSection() {
           description={t("creators.description")}
         />
 
-        <StaggerContainer as="ul" role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 items-stretch w-full">
+        <StaggerContainer
+          as="ul"
+          role="list"
+          staggerDelay={0.08}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 items-stretch w-full"
+        >
           {featuredInfluencers.map((creator) => (
             <StaggerItem as="li" key={creator.id} className="h-full">
               <InfluencerCard creator={creator} />

@@ -20,6 +20,7 @@ import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { ImageCompareSlider } from "@/components/ui/image-compare-slider";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { StaggerContainer, StaggerItem, FadeUp } from "@/components/animations/MotionWrappers";
 import { motion } from "framer-motion";
 import { studioSprings } from "@/lib/studio-motion";
 import {
@@ -153,9 +154,10 @@ export function VirtualStudioSection() {
         </div>
 
         {/* ─── 2. MAIN CINEMA STAGE VIEWPORT (ImageCompareSlider) ─── */}
-        <div className="mb-3" dir="ltr">
-          <ImageCompareSlider
-            beforeImage={activeScene.rawImage}
+        <FadeUp delay={0.08} className="mb-3">
+          <div dir="ltr">
+            <ImageCompareSlider
+              beforeImage={activeScene.rawImage}
             afterImage={activeScene.compositeImage}
             beforeAlt={`${activeScene.name} Raw Green Screen Soundstage`}
             afterAlt={`${activeScene.name} 3D Virtual Production Composite`}
@@ -212,6 +214,7 @@ export function VirtualStudioSection() {
             </div>
           </ImageCompareSlider>
         </div>
+      </FadeUp>
 
         {/* ─── 3. INTEGRATED BOTTOM CONTROLS & PRODUCTION ACTIONS ─── */}
         <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-between gap-3 p-3 sm:p-4 bg-card/90 rounded-xl sm:rounded-2xl border border-white/10 mb-5 sm:mb-6">
@@ -328,37 +331,43 @@ export function VirtualStudioSection() {
         </div>
 
         {/* ─── 4. SLIM FEATURE BADGES ROW ─── */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="bg-card/60 rounded-xl border border-white/5 px-4 py-3 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
-              <Cpu size={16} />
+        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <StaggerItem>
+            <div className="bg-card/60 rounded-xl border border-white/5 px-4 py-3 flex items-center gap-3 h-full">
+              <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
+                <Cpu size={16} />
+              </div>
+              <div>
+                <div className="text-xs font-bold text-white">Mo-Sys Optical Sync</div>
+                <div className="text-[11px] text-text-secondary">Sub-mm tracking, 2.1ms genlock</div>
+              </div>
             </div>
-            <div>
-              <div className="text-xs font-bold text-white">Mo-Sys Optical Sync</div>
-              <div className="text-[11px] text-text-secondary">Sub-mm tracking, 2.1ms genlock</div>
-            </div>
-          </div>
+          </StaggerItem>
 
-          <div className="bg-card/60 rounded-xl border border-white/5 px-4 py-3 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
-              <Layers size={16} />
+          <StaggerItem>
+            <div className="bg-card/60 rounded-xl border border-white/5 px-4 py-3 flex items-center gap-3 h-full">
+              <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
+                <Layers size={16} />
+              </div>
+              <div>
+                <div className="text-xs font-bold text-white">200 sqm Cyclorama</div>
+                <div className="text-[11px] text-text-secondary">Motorized ARRI SkyPanel RGBWW grid</div>
+              </div>
             </div>
-            <div>
-              <div className="text-xs font-bold text-white">200 sqm Cyclorama</div>
-              <div className="text-[11px] text-text-secondary">Motorized ARRI SkyPanel RGBWW grid</div>
-            </div>
-          </div>
+          </StaggerItem>
 
-          <div className="bg-card/60 rounded-xl border border-white/5 px-4 py-3 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
-              <Zap size={16} />
+          <StaggerItem>
+            <div className="bg-card/60 rounded-xl border border-white/5 px-4 py-3 flex items-center gap-3 h-full">
+              <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
+                <Zap size={16} />
+              </div>
+              <div>
+                <div className="text-xs font-bold text-white">Unreal Engine 5.4 Live</div>
+                <div className="text-[11px] text-text-secondary">Full realtime photorealistic In-Camera VFX</div>
+              </div>
             </div>
-            <div>
-              <div className="text-xs font-bold text-white">Unreal Engine 5.4 Live</div>
-              <div className="text-[11px] text-text-secondary">Full realtime photorealistic In-Camera VFX</div>
-            </div>
-          </div>
-        </div>
+          </StaggerItem>
+        </StaggerContainer>
       </Container>
     </Section>
   );

@@ -33,28 +33,28 @@ export function FadeUp({
     const isAlreadyInView = rect.top < window.innerHeight && rect.bottom > 0;
 
     if (isAlreadyInView) {
-      // Element is already in view (e.g. hero/above-the-fold) — keep visible immediately
       el.style.opacity = "1";
       el.style.transform = "none";
       return;
     }
 
-    // Start hidden for below-the-fold elements
+    // Start hidden with hardware-accelerated translate3d
     el.style.opacity = "0";
-    el.style.transform = "translateY(24px)";
-    el.style.transition = `opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s`;
+    el.style.transform = "translate3d(0, 32px, 0)";
+    el.style.willChange = "opacity, transform";
+    el.style.transition = `opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s`;
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             el.style.opacity = "1";
-            el.style.transform = "translateY(0)";
+            el.style.transform = "translate3d(0, 0, 0)";
             observer.unobserve(el);
           }
         });
       },
-      { threshold: 0.05, rootMargin: "0px 0px 80px 0px" }
+      { threshold: 0.05, rootMargin: "0px 0px -8% 0px" }
     );
 
     observer.observe(el);
@@ -64,6 +64,66 @@ export function FadeUp({
   return (
     // @ts-expect-error dynamic polymorphic JSX tag
     <Tag ref={ref} dir={dir} className={cn("w-full", className)}>
+      {children}
+    </Tag>
+  );
+}
+
+// ─── StudioScrollSection ───────────────────────────────────────────────────────
+// Full-width section scroll reveal powered by pure GPU-composited CSS keyframes.
+// Zero JS execution loop on scroll. Smooth, cinematic film camera aperture entry.
+
+interface StudioScrollSectionProps {
+  children: React.ReactNode;
+  className?: string;
+  as?: ElementType;
+  id?: string;
+}
+
+export function StudioScrollSection({
+  children,
+  className,
+  as: Tag = "div",
+  id,
+}: StudioScrollSectionProps) {
+  const ref = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const rect = el.getBoundingClientRect();
+    const isAlreadyInView = rect.top < window.innerHeight && rect.bottom > 0;
+
+    if (isAlreadyInView) {
+      el.style.opacity = "1";
+      el.style.transform = "none";
+      return;
+    }
+
+    // Initial hidden state
+    el.style.opacity = "0";
+    el.style.transform = "translate3d(0, 28px, 0) scale3d(0.985, 0.985, 1)";
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            el.classList.add("studio-scroll-reveal");
+            observer.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.04, rootMargin: "0px 0px -30px 0px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    // @ts-expect-error dynamic polymorphic JSX tag
+    <Tag ref={ref} id={id} className={cn("w-full", className)}>
       {children}
     </Tag>
   );
@@ -106,8 +166,9 @@ export function StaggerContainer({
 
     items.forEach((item, i) => {
       item.style.opacity = "0";
-      item.style.transform = "translateY(18px)";
-      item.style.transition = `opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${i * staggerDelay}s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${i * staggerDelay}s`;
+      item.style.transform = "translate3d(0, 20px, 0)";
+      item.style.willChange = "opacity, transform";
+      item.style.transition = `opacity 0.44s cubic-bezier(0.16, 1, 0.3, 1) ${i * staggerDelay}s, transform 0.44s cubic-bezier(0.16, 1, 0.3, 1) ${i * staggerDelay}s`;
     });
 
     const observer = new IntersectionObserver(
@@ -116,13 +177,13 @@ export function StaggerContainer({
           if (entry.isIntersecting) {
             items.forEach((item) => {
               item.style.opacity = "1";
-              item.style.transform = "translateY(0)";
+              item.style.transform = "translate3d(0, 0, 0)";
             });
             observer.unobserve(container);
           }
         });
       },
-      { threshold: 0.05, rootMargin: "0px 0px 80px 0px" }
+      { threshold: 0.05, rootMargin: "0px 0px -30px 0px" }
     );
 
     observer.observe(container);

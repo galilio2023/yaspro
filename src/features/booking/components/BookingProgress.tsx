@@ -1,5 +1,8 @@
+"use client";
+
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import { WizardStepItem } from "../types";
 
 interface BookingProgressProps {
@@ -8,21 +11,34 @@ interface BookingProgressProps {
   onStepClick: (stepId: number) => void;
 }
 
+const STEP_PROGRESS_LABELS_AR: Record<number, string> = {
+  1: "الموعد",
+  2: "نوع الجلسة",
+  3: "الاستوديو",
+  4: "المعدات",
+  5: "الديكور",
+  6: "المونتاج",
+  7: "التأكيد",
+};
+
 export function BookingProgress({
   steps,
   currentStep,
   onStepClick,
 }: BookingProgressProps) {
+  const { isArabic } = useLanguage();
+
   return (
     <div
       role="navigation"
-      aria-label="Booking steps"
+      aria-label={isArabic ? "مراحل الحجز" : "Booking steps"}
       className="flex items-center gap-1 p-2 rounded-2xl border border-white/10 bg-card/60 backdrop-blur-xl overflow-x-auto scrollbar-none"
     >
       {steps.map((s, idx) => {
         const isCurrent = currentStep === s.id;
         const isCompleted = currentStep > s.id;
         const Icon = s.icon;
+        const label = isArabic && STEP_PROGRESS_LABELS_AR[s.id] ? STEP_PROGRESS_LABELS_AR[s.id] : s.label;
 
         return (
           <div key={s.id} className="flex items-center gap-1 shrink-0">
@@ -30,7 +46,7 @@ export function BookingProgress({
               type="button"
               onClick={() => isCompleted && onStepClick(s.id)}
               disabled={!isCompleted && !isCurrent}
-              title={s.label}
+              title={label}
               className={cn(
                 "flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200",
                 isCurrent
@@ -57,7 +73,7 @@ export function BookingProgress({
                 )}
               </span>
               <span className="text-[11px] hidden sm:inline font-semibold tracking-wide">
-                {s.label}
+                {label}
               </span>
             </button>
             {idx < steps.length - 1 && (

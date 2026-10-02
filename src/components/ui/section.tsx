@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
@@ -6,15 +8,54 @@ export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
   ariaLabelledby?: string;
   ariaLabel?: string;
   background?: React.ReactNode;
+  animateIn?: boolean;
 }
 
 export const Section = React.forwardRef<HTMLElement, SectionProps>(function Section(
-  { id, ariaLabelledby, ariaLabel, background, className, children, ...props },
-  ref
+  { id, ariaLabelledby, ariaLabel, background, className, children, animateIn, ...props },
+  forwardedRef
 ) {
+  const innerRef = React.useRef<HTMLElement>(null);
+
+  React.useImperativeHandle(forwardedRef, () => innerRef.current as HTMLElement);
+
+  React.useEffect(() => {
+    // Only animate sections if explicitly requested or if below hero and not prefers-reduced-motion
+    if (animateIn === false || id === "hero") return;
+
+    const el = innerRef.current;
+    if (!el) return;
+
+    const rect = el.getBoundingClientRect();
+    const isAlreadyInView = rect.top < window.innerHeight && rect.bottom > 0;
+    if (isAlreadyInView) {
+      el.style.opacity = "1";
+      el.style.transform = "none";
+      return;
+    }
+
+    el.style.opacity = "0";
+    el.style.transform = "translate3d(0, 44px, 0) scale3d(0.975, 0.975, 1)";
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            el.classList.add("studio-scroll-reveal");
+            observer.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.05, rootMargin: "0px 0px -8% 0px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [animateIn, id]);
+
   return (
     <section
-      ref={ref}
+      ref={innerRef}
       id={id}
       aria-labelledby={ariaLabelledby}
       aria-label={ariaLabel}
