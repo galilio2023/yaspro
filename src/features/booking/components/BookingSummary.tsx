@@ -173,7 +173,7 @@ export function BookingSummary({
                 WebkitTextFillColor: "transparent",
               }}
             >
-              {formatCurrency(Math.round(displayTotal), currency)}
+              {formatCurrency(displayTotal, currency)}
             </motion.div>
           </div>
         </div>

@@ -42,6 +42,8 @@ export function BookingWizard() {
     handleSubmit,
   } = useBookingWizard();
 
+  const [direction, setDirection] = useState(1);
+
   if (confirmed) {
     return (
       <BookingConfirmation
@@ -63,8 +65,6 @@ export function BookingWizard() {
     });
     setIsAiConfigured(true);
   };
-
-  const [direction, setDirection] = useState(1);
 
   const handleNextStep = () => {
     setDirection(1);
