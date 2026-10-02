@@ -7,7 +7,7 @@ import { formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { BookingState, SessionTypeItem, StudioItem } from "../types";
-import { STUDIO_GEAR_PACKAGES } from "../constants";
+import { STUDIO_GEAR_PACKAGES, TURNKEY_STUDIO_PACKAGES } from "../constants";
 
 interface BookingSummaryProps {
   state: BookingState;
@@ -29,6 +29,10 @@ export function BookingSummary({
 
   const selectedGear = STUDIO_GEAR_PACKAGES.find(
     (g) => g.id === state.selectedGearPackage
+  );
+
+  const selectedTurnkey = TURNKEY_STUDIO_PACKAGES.find(
+    (p) => p.id === state.turnkeyPackageId && p.id !== "none"
   );
 
   return (
@@ -121,6 +125,16 @@ export function BookingSummary({
             </div>
           ))}
 
+          {selectedTurnkey && (
+            <div className="flex justify-between items-center pt-1 border-t border-white/5">
+              <span className="flex items-center gap-1.5 text-amber-400 font-semibold truncate pr-2">
+                <Sparkles size={13} className="shrink-0" />
+                <span className="truncate">{selectedTurnkey.name}</span>
+              </span>
+              <span className="text-amber-400 font-bold shrink-0">+{formatCurrency(selectedTurnkey.rate)}</span>
+            </div>
+          )}
+
           {selectedGear && selectedGear.id !== "none" && (
             <div className="flex justify-between items-center pt-1 border-t border-white/5">
               <span className="flex items-center gap-1.5 text-text-secondary truncate pr-2">
@@ -138,6 +152,20 @@ export function BookingSummary({
             </div>
           )}
 
+          {state.hasTeleprompter && (
+            <div className="flex justify-between items-center">
+              <span className="text-text-secondary">{isArabic ? "شاشة تلقين احترافية:" : "Teleprompter:"}</span>
+              <span className="text-amber-400 font-bold">+{formatCurrency(85 * state.durationHours)}</span>
+            </div>
+          )}
+
+          {(state.extraMicsCount || 0) > 0 && (
+            <div className="flex justify-between items-center">
+              <span className="text-text-secondary">{isArabic ? "ميكروفون Shure إضافي:" : "Extra SM7B Mic:"}</span>
+              <span className="text-amber-400 font-bold">+{formatCurrency((state.extraMicsCount || 1) * 120)}</span>
+            </div>
+          )}
+
           {state.needsAiAutoCut && (
             <div className="flex justify-between items-center">
               <span className="flex items-center gap-1.5 text-text-secondary">
@@ -145,6 +173,13 @@ export function BookingSummary({
                 <span>{isArabic ? "مونتاج ذكاء اصطناعي وترجمة:" : "AI Auto-Cut & Subtitles:"}</span>
               </span>
               <span className="text-amber-400 font-bold">+450 AED</span>
+            </div>
+          )}
+
+          {state.promoCode && (
+            <div className="flex justify-between items-center pt-1 border-t border-white/5 text-emerald-400 font-semibold">
+              <span>{isArabic ? "كوبون الخصم:" : "Promo Voucher:"} ({state.promoCode})</span>
+              <span>Applied ✓</span>
             </div>
           )}
         </div>

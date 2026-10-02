@@ -2,6 +2,7 @@ import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";
 import * as dotenv from "dotenv";
+import { hashPassword } from "better-auth/crypto";
 import { PROJECTS_DATA } from "../features/projects/data";
 import { INFLUENCERS_DATA } from "../features/influencers/data";
 import { GEAR_DATA } from "../features/gear/data";
@@ -24,6 +25,15 @@ async function seed() {
   await db
     .insert(schema.studios)
     .values([
+      {
+        slug: "studio-xr",
+        name: "Studio XR — Virtual Production Stage",
+        description: "270° Micro-LED volume with Unreal Engine 5.4 LiveSync, Mo-Sys optical tracking, and genlock synchronization.",
+        capacity: 35,
+        hourlyRate: "1500.00",
+        amenities: ["Micro-LED Volume", "Unreal Engine 5.4", "Mo-Sys StarTracker", "Dedicated DIT Station"],
+        isActive: true,
+      },
       {
         slug: "studio-a",
         name: "Studio A — Main Stage",
@@ -130,6 +140,93 @@ async function seed() {
         isKit: !!gear.isKit,
         includedInKit: gear.includedInKit || [],
         isAvailable: true,
+      })
+      .onConflictDoNothing();
+  }
+
+  // 5. Team Users (Imported from legacy WordPress admin directory)
+  console.log("Seeding Administrative and Team Accounts with login passwords...");
+  const teamUsers = [
+    { id: "usr_yaman_ceo", name: "Yaman Alomari", email: "ceo@yasproductions.com", role: "admin", company: "Yas Productions" },
+    { id: "usr_yaspro_admin", name: "YASPRO Master", email: "pressyaman@gmail.com", role: "admin", company: "Yas Productions" },
+    { id: "usr_ahmad_lead", name: "Ahmad Wadi", email: "ahmedwadi978@gmail.com", role: "admin", company: "Yas Productions" },
+    { id: "usr_yaspro_hq", name: "YASPRO Operations", email: "info@yasproductions.com", role: "admin", company: "Yas Productions" },
+    { id: "usr_walaa_admin", name: "Walaa Ali", email: "walaa.ali131@gmail.com", role: "admin", company: "Yas Productions" },
+  ];
+
+  const initialPasswordHash = await hashPassword("YasPro@2026!");
+
+  for (const u of teamUsers) {
+    await db
+      .insert(schema.users)
+      .values({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        role: u.role,
+        company: u.company,
+        emailVerified: true,
+      })
+      .onConflictDoUpdate({
+        target: schema.users.email,
+        set: {
+          role: u.role,
+          emailVerified: true,
+          company: u.company,
+          updatedAt: new Date(),
+        },
+      });
+
+    await db
+      .insert(schema.accounts)
+      .values({
+        id: `acc_${u.id}`,
+        accountId: u.id,
+        providerId: "credential",
+        userId: u.id,
+        password: initialPasswordHash,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: schema.accounts.id,
+        set: {
+          password: initialPasswordHash,
+          updatedAt: new Date(),
+        },
+      });
+  }
+
+  // 6. Historical Bookings (Preserved from WordPress studio reservations)
+  console.log("Seeding Historical Bookings from WordPress...");
+  const studioA = await db.query.studios.findFirst({ where: (s, { eq }) => eq(s.slug, "studio-a") });
+  const studioId = studioA?.id;
+
+  const historicalReservations = [
+    { code: "YAS-1C1B9C03", email: "ceo@yasproductions.com", name: "Yaman Alomari", total: "4500.00", date: "2026-03-11T09:00:00Z", status: "confirmed" as const },
+    { code: "YAS-2843A111", email: "walaa.ali131@gmail.com", name: "Walaa Ali", total: "4536.00", date: "2026-03-11T09:00:00Z", status: "confirmed" as const },
+    { code: "YAS-314F3545", email: "walaa.ali131@gmail.com", name: "Walaa Ali", total: "4536.00", date: "2026-03-14T09:00:00Z", status: "confirmed" as const },
+    { code: "YAS-60C62277", email: "pressyaman@gmail.com", name: "Yaman Alomari", total: "4800.00", date: "2026-03-25T09:00:00Z", status: "confirmed" as const },
+    { code: "YAS-8754143B", email: "walaa.ali131@gmail.com", name: "Walaa Ali", total: "4536.00", date: "2026-03-25T09:00:00Z", status: "confirmed" as const },
+    { code: "YAS-BD2A04FD", email: "eng.belalalaa@gmail.com", name: "Belal Alaa", total: "4536.00", date: "2026-09-27T09:00:00Z", status: "pending" as const },
+  ];
+
+  for (const b of historicalReservations) {
+    const user = await db.query.users.findFirst({ where: (u, { eq }) => eq(u.email, b.email) });
+    await db
+      .insert(schema.bookings)
+      .values({
+        referenceCode: b.code,
+        userId: user?.id,
+        studioId: studioId,
+        sessionType: "podcast",
+        status: b.status,
+        scheduledAt: new Date(b.date),
+        durationHours: 3,
+        headcount: 3,
+        totalAmount: b.total,
+        currency: "AED",
+        paymentStatus: b.status === "confirmed" ? "paid" : "unpaid",
       })
       .onConflictDoNothing();
   }

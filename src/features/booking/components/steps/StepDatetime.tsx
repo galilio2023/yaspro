@@ -17,10 +17,12 @@ export function StepDatetime({ state, update }: WizardStepProps) {
             min={new Date().toISOString().split("T")[0]}
           />
         </FormField>
-        <FormField label="Start Time">
+        <FormField label="Start Time (09:00 AM – 09:00 PM)">
           <Input
             type="time"
             value={state.time}
+            min="09:00"
+            max="21:00"
             onChange={(e) => update({ time: e.target.value })}
           />
         </FormField>

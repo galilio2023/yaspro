@@ -25,7 +25,11 @@ function loadSource(file, mocks = {}, globals = {}) {
 
 const sanitizeModule = loadSource('src/lib/ai/sanitize.ts');
 
-const gearDataModule = loadSource('src/features/gear/data.ts', { './types': {} });
+const wpInventoryModule = loadSource('src/features/gear/wordpress-inventory.ts', { './types': {} });
+const gearDataModule = loadSource('src/features/gear/data.ts', {
+  './types': {},
+  './wordpress-inventory': wpInventoryModule,
+});
 const compatibilityModule = loadSource('src/features/gear/lib/compatibility.ts', {
   '../data': gearDataModule,
   '../types': {},

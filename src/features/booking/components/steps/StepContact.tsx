@@ -91,13 +91,22 @@ export function StepContact({ state, update }: WizardStepProps) {
         </FormField>
       </div>
 
-      <FormField label="Company / Production Name">
-        <Input
-          value={state.company}
-          onChange={(e) => update({ company: e.target.value })}
-          placeholder="Optional company or production name"
-        />
-      </FormField>
+      <div className="grid sm:grid-cols-2 gap-4">
+        <FormField label="Company / Production Name">
+          <Input
+            value={state.company}
+            onChange={(e) => update({ company: e.target.value })}
+            placeholder="Optional company or production name"
+          />
+        </FormField>
+        <FormField label="Promo Code / Voucher">
+          <Input
+            value={state.promoCode || ""}
+            onChange={(e) => update({ promoCode: e.target.value.toUpperCase() })}
+            placeholder="e.g. YAS10, YASPRO"
+          />
+        </FormField>
+      </div>
 
       <FormField label="Special Requests">
         <Textarea
