@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { Section } from "@/components/ui/section";
@@ -11,7 +10,6 @@ import { HeroStats } from "./HeroStats";
 import { StudioBadge } from "@/components/common/StudioBadge";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { CinemaVideoModal } from "@/components/common/CinemaVideoModal";
-import { studioSprings } from "@/lib/studio-motion";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 
 export default function HeroSection() {

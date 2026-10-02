@@ -1,8 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { BookingWizard } from "@/features/booking/components/BookingWizard";
-import { SectionHeader } from "@/components/ui/section-header";
-import { Video, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";

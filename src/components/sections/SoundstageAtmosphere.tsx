@@ -10,7 +10,7 @@ interface SoundstageAtmosphereProps {
   isArabic?: boolean;
 }
 
-export function SoundstageAtmosphere({ className = "", isArabic = false }: SoundstageAtmosphereProps) {
+export function SoundstageAtmosphere({ className = "", isArabic: _isArabic = false }: SoundstageAtmosphereProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
 

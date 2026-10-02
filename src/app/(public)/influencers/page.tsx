@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { InfluencersExplorer } from "@/features/influencers/components/InfluencersExplorer";
 import { INFLUENCERS_DATA } from "@/features/influencers/data";
 import { getCachedInfluencers } from "@/lib/cached-queries";
-import { SectionHeader } from "@/components/ui/section-header";
-import { Users } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import type { InfluencerItem, CreatorDemographics } from "@/features/influencers/types";

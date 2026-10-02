@@ -100,6 +100,7 @@ export function LanguageProvider({
         // from a previous session persisting on a fresh EN page load.
         const hasCookie = document.cookie.includes("NEXT_LOCALE=");
         if (!hasCookie) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setUserLang(saved);
           syncLocaleStorage(saved);
           return;

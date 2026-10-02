@@ -16,7 +16,7 @@ export interface FooterNavLinksProps {
 }
 
 export function FooterNavLinks({ links }: FooterNavLinksProps) {
-  const { t, isArabic } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <ul className="space-y-2.5">
