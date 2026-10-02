@@ -17,7 +17,17 @@ export const Section = React.forwardRef<HTMLElement, SectionProps>(function Sect
 ) {
   const innerRef = React.useRef<HTMLElement>(null);
 
-  React.useImperativeHandle(forwardedRef, () => innerRef.current as HTMLElement);
+  const setRefs = React.useCallback(
+    (node: HTMLElement | null) => {
+      (innerRef as React.MutableRefObject<HTMLElement | null>).current = node;
+      if (typeof forwardedRef === "function") {
+        forwardedRef(node);
+      } else if (forwardedRef && typeof forwardedRef === "object") {
+        (forwardedRef as React.MutableRefObject<HTMLElement | null>).current = node;
+      }
+    },
+    [forwardedRef]
+  );
 
   React.useEffect(() => {
     // Only animate sections if explicitly requested or if below hero and not prefers-reduced-motion
@@ -55,7 +65,7 @@ export const Section = React.forwardRef<HTMLElement, SectionProps>(function Sect
 
   return (
     <section
-      ref={innerRef}
+      ref={setRefs}
       id={id}
       aria-labelledby={ariaLabelledby}
       aria-label={ariaLabel}
