@@ -36,7 +36,7 @@ function loadSource(file, mocks = {}, globals = {}) {
   return exports;
 }
 
-const tableMock = { id: Symbol('id'), slug: Symbol('slug') };
+const tableMock = { id: Symbol('id'), slug: Symbol('slug'), userId: Symbol('userId') };
 const schemaMock = {
   projects: tableMock,
   influencers: tableMock,
@@ -46,6 +46,8 @@ const schemaMock = {
   inquiries: tableMock,
   users: tableMock,
   studios: tableMock,
+  sessions: tableMock,
+  accounts: tableMock,
 };
 
 test('updateInquiryStatus updates resolved state with database mock', async () => {
@@ -431,3 +433,59 @@ test('an empty CMS studio table does not resurrect the static catalog', async ()
   });
   assert.equal((await getCmsStudios()).length, 0);
 });
+
+test('deleteCmsUser protects self and primary CEO accounts and safely unlinks references in transaction', async () => {
+  const operations = [];
+  const mockDb = {
+    update: (tbl) => ({
+      set: (val) => ({
+        where: (clause) => {
+          operations.push({ op: 'update', tbl, val, clause });
+          return Promise.resolve();
+        },
+      }),
+    }),
+    delete: (tbl) => ({
+      where: (clause) => {
+        operations.push({ op: 'delete', tbl, clause });
+        return Promise.resolve();
+      },
+    }),
+  };
+
+  let currentAdminSession = { user: { id: 'usr_admin_1', role: 'admin' } };
+
+  const { deleteCmsUser } = loadSource('src/lib/actions/users-client-operations.ts', {
+    '@/db': { db: mockDb },
+    '@/db/schema': schemaMock,
+    'drizzle-orm': { eq: (col, val) => ({ col, val }), desc: () => {} },
+    'next/cache': { revalidatePath: () => {} },
+    './shared': {
+      isDbAvailable: () => true,
+      requireAdmin: async () => currentAdminSession,
+    },
+  });
+
+  // 1. Should reject deleting own account
+  const selfRes = await deleteCmsUser('usr_admin_1');
+  assert.equal(selfRes.success, false);
+  assert.match(selfRes.error, /own active administrator account/i);
+
+  // 2. Should reject deleting primary CEO
+  const ceoRes = await deleteCmsUser('usr_yaman_ceo');
+  assert.equal(ceoRes.success, false);
+  assert.match(ceoRes.error, /primary CEO executive account/i);
+
+  // 3. Should safely delete user (unlinking bookings/rfps, deleting sessions/accounts, deleting user)
+  const successRes = await deleteCmsUser('usr_walaa_admin');
+  assert.equal(successRes.success, true);
+  assert.equal(operations.length, 5);
+  assert.equal(operations[0].op, 'update');
+  assert.equal(operations[0].val.userId, null);
+  assert.equal(operations[1].op, 'update');
+  assert.equal(operations[1].val.userId, null);
+  assert.equal(operations[2].op, 'delete');
+  assert.equal(operations[3].op, 'delete');
+  assert.equal(operations[4].op, 'delete');
+});
+

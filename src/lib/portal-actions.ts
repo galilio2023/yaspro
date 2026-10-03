@@ -97,8 +97,8 @@ export async function lookupEnterpriseRfp(referenceCode: string): Promise<Enterp
       }
     }
 
-    // Demo lookup fallbacks for instant client evaluation
-    if (code === "EXP-9182-DXB" || code.startsWith("EXP-")) {
+    // Demo lookup fallbacks for instant client evaluation (non-production only)
+    if (process.env.NODE_ENV !== "production" && (code === "EXP-9182-DXB" || code.startsWith("EXP-"))) {
       if (userRole !== "admin" && userRole !== "enterprise") {
         return {
           found: false,

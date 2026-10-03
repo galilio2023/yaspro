@@ -6,19 +6,20 @@ import { sendBookingConfirmationNotification } from "@/lib/notifications";
 import { revalidatePath, updateTag } from "next/cache";
 import crypto from "crypto";
 
-interface WebhookPayload {
-  event: string;
-  referenceCode?: string;
-  bookingId?: string;
-  paymentReference?: string;
-  amount?: string | number;
-  currency?: string;
-  customerEmail?: string;
-  status?: string;
+interface ZiinaWebhookPayload {
+  event?: string;
+  data?: {
+    id?: string;
+    amount?: number;
+    currency_code?: string;
+    status?: string;
+    metadata?: { bookingId?: string; referenceCode?: string; paymentType?: string };
+  };
 }
 
 /**
- * Validates HMAC SHA-256 signature when WEBHOOK_SECRET is configured.
+ * Validates Ziina's `X-Hmac-Signature` header: hex-encoded HMAC-SHA256 of the raw body,
+ * keyed with the secret supplied when the webhook was registered (WEBHOOK_SECRET).
  */
 function verifyHmacSignature(rawBody: string, signatureHeader: string | null): boolean {
   const secret = process.env.WEBHOOK_SECRET;
@@ -46,15 +47,12 @@ function verifyHmacSignature(rawBody: string, signatureHeader: string | null): b
   }
 
   try {
-    const computedSignature = crypto
-      .createHmac("sha256", secret)
-      .update(rawBody, "utf8")
-      .digest("hex");
-
-    return crypto.timingSafeEqual(
-      Buffer.from(computedSignature, "hex"),
-      Buffer.from(signatureHeader.replace(/^sha256=/, ""), "hex")
+    const computed = Buffer.from(
+      crypto.createHmac("sha256", secret).update(rawBody, "utf8").digest("hex"),
+      "hex"
     );
+    const provided = Buffer.from(signatureHeader.trim().replace(/^sha256=/, ""), "hex");
+    return provided.length === computed.length && crypto.timingSafeEqual(computed, provided);
   } catch (err) {
     console.error("Webhook signature verification error:", err);
     return false;
@@ -69,14 +67,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, error: "Failed to read request body" }, { status: 400 });
   }
 
-  // 1. Verify HMAC signature ahead of processing
-  const signatureHeader = request.headers.get("x-signature") || request.headers.get("x-hub-signature-256");
+  // 1. Verify HMAC signature ahead of processing (Ziina sends X-Hmac-Signature)
+  const signatureHeader =
+    request.headers.get("x-hmac-signature") ||
+    request.headers.get("x-signature") ||
+    request.headers.get("x-hub-signature-256");
   if (!verifyHmacSignature(rawBodyText, signatureHeader)) {
     return NextResponse.json({ success: false, error: "Invalid webhook signature" }, { status: 401 });
   }
 
   // 2. Parse JSON body
-  let body: WebhookPayload;
+  let body: ZiinaWebhookPayload;
   try {
     body = JSON.parse(rawBodyText);
   } catch {
@@ -89,136 +90,125 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: "Missing event identifier" }, { status: 400 });
     }
 
-    // ── Payment Reconciliation Event Handler ─────────────────────────────────
-    if (event === "payment.completed" || event === "payment.success" || event === "checkout.session.completed") {
-      const targetReference = body.referenceCode;
-      const targetId = body.bookingId;
+    // ── Ziina payment reconciliation ─────────────────────────────────────────
+    if (event === "payment_intent.status.updated") {
+      const data = body.data;
+      const intentId = data?.id;
+      if (!intentId) {
+        return NextResponse.json({ success: false, error: "Missing payment intent id" }, { status: 400 });
+      }
 
-      if (!targetReference && !targetId) {
+      // Only a completed payment confirms a booking; acknowledge everything else.
+      if (data?.status !== "completed") {
+        return NextResponse.json({ success: true, event, status: "ignored_non_completed" });
+      }
+
+      if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
+        return NextResponse.json({ success: false, error: "Booking service is unavailable." }, { status: 503 });
+      }
+
+      // The intent id is stored on the booking when the intent is created.
+      const meta = data.metadata;
+      const bookingRecord = await db.query.bookings.findFirst({
+        where: or(
+          eq(bookings.paymentReference, intentId),
+          meta?.bookingId ? eq(bookings.id, meta.bookingId) : undefined
+        ),
+        with: { user: true },
+      });
+
+      if (!bookingRecord) {
         return NextResponse.json(
-          { success: false, error: "Missing booking referenceCode or bookingId in payment payload" },
-          { status: 400 }
+          { success: false, error: "Booking record not found for reconciliation" },
+          { status: 404 }
         );
       }
 
-      if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-        // Find matching booking
-        const bookingRecord = await db.query.bookings.findFirst({
-          where: or(
-            targetReference ? eq(bookings.referenceCode, targetReference) : undefined,
-            targetId ? eq(bookings.id, targetId) : undefined
-          ),
-          with: {
-            user: true,
-          },
-        });
-
-        if (!bookingRecord) {
-          return NextResponse.json(
-            { success: false, error: "Booking record not found for reconciliation" },
-            { status: 404 }
-          );
-        }
-
-        const reconciledReference = body.paymentReference || `PAY-WH-${Date.now().toString(36).toUpperCase()}`;
-
-        // Idempotency check: if already paid with same paymentReference, skip redundant updates
-        if (bookingRecord.paymentStatus === "paid" && bookingRecord.paymentReference === reconciledReference) {
-          return NextResponse.json({
-            success: true,
-            event,
-            bookingReference: bookingRecord.referenceCode,
-            status: "already_reconciled",
-            timestamp: new Date().toISOString(),
-          });
-        }
-
-        // Validate amount match if passed in payload
-        if (body.amount !== undefined) {
-          const payloadAmt = Number(body.amount);
-          const bookingAmt = Number(bookingRecord.totalAmount);
-          const depositAmt = Math.round(bookingAmt * 0.5);
-
-          // Allow either full or deposit amount match
-          if (!isNaN(payloadAmt) && payloadAmt !== bookingAmt && payloadAmt !== depositAmt) {
-            console.warn(`Webhook amount mismatch: received ${payloadAmt}, expected ${bookingAmt} or ${depositAmt}`);
-          }
-        }
-
-        // Determine target status: default to "paid" for payment.completed unless explicitly a partial deposit
-        const isPartialDeposit =
-          body.amount !== undefined && Number(body.amount) < Number(bookingRecord.totalAmount);
-        const targetPaymentStatus = isPartialDeposit ? "deposit_paid" : "paid";
-
-        // Update booking status in database
-        await db
-          .update(bookings)
-          .set({
-            paymentStatus: targetPaymentStatus,
-            status: "confirmed",
-            paymentReference: reconciledReference,
-            updatedAt: new Date(),
-          })
-          .where(eq(bookings.id, bookingRecord.id));
-
-        // Purge caches
-        try {
-          updateTag("studios");
-          revalidatePath("/admin/bookings");
-          revalidatePath("/portal");
-        } catch (cacheErr) {
-          console.warn("Webhook cache revalidation notice:", cacheErr);
-        }
-
-        // Send email call sheet notification to verified customer account only
-        const recipientEmail = bookingRecord.user?.email;
-
-        if (recipientEmail) {
-          await sendBookingConfirmationNotification(
-            {
-              referenceCode: bookingRecord.referenceCode,
-              totalAmount: bookingRecord.totalAmount,
-              currency: bookingRecord.currency,
-              scheduledAt: bookingRecord.scheduledAt,
-              durationHours: bookingRecord.durationHours,
-              sessionType: bookingRecord.sessionType,
-              propsNotes: bookingRecord.propsNotes,
-              specialRequests: bookingRecord.specialRequests,
-            },
-            recipientEmail
-          );
-        }
-
+      // Idempotency: this intent was already applied.
+      if (
+        bookingRecord.paymentReference === intentId &&
+        (bookingRecord.paymentStatus === "paid" || bookingRecord.paymentStatus === "deposit_paid") &&
+        bookingRecord.status === "confirmed"
+      ) {
         return NextResponse.json({
           success: true,
           event,
           bookingReference: bookingRecord.referenceCode,
-          paymentStatus: targetPaymentStatus,
-          status: "confirmed",
-          notificationSentTo: recipientEmail || "skipped_no_user_email",
-          timestamp: new Date().toISOString(),
+          status: "already_reconciled",
         });
       }
 
-      // Preview / Offline DB mode simulation
+      // Amount validation in fils against what this booking can legitimately be charged.
+      const totalFils = Math.round(Number(bookingRecord.totalAmount)) * 100;
+      const depositFils = Math.round(Math.round(Number(bookingRecord.totalAmount)) * 0.5) * 100;
+      const paidAmount = Number(data.amount);
+      let targetPaymentStatus: "paid" | "deposit_paid" | null = null;
+
+      if (bookingRecord.paymentStatus === "deposit_paid") {
+        if (paidAmount === totalFils - depositFils) targetPaymentStatus = "paid";
+      } else if (paidAmount === totalFils) {
+        targetPaymentStatus = "paid";
+      } else if (paidAmount === depositFils) {
+        targetPaymentStatus = "deposit_paid";
+      }
+
+      if (!targetPaymentStatus || (data.currency_code && data.currency_code !== "AED")) {
+        console.error(
+          `Webhook amount/currency mismatch for ${bookingRecord.referenceCode}: received ${data.amount} ${data.currency_code}`
+        );
+        // 422: not retried as a transient failure, but NOT confirmed either.
+        return NextResponse.json(
+          { success: false, error: "Payment amount does not match booking" },
+          { status: 422 }
+        );
+      }
+
+      await db
+        .update(bookings)
+        .set({
+          paymentStatus: targetPaymentStatus,
+          status: "confirmed",
+          paymentReference: intentId,
+          updatedAt: new Date(),
+        })
+        .where(eq(bookings.id, bookingRecord.id));
+
+      try {
+        updateTag("studios");
+        revalidatePath("/admin/bookings");
+        revalidatePath("/portal");
+      } catch (cacheErr) {
+        console.warn("Webhook cache revalidation notice:", cacheErr);
+      }
+
+      const recipientEmail = bookingRecord.user?.email;
+      if (recipientEmail) {
+        await sendBookingConfirmationNotification(
+          {
+            referenceCode: bookingRecord.referenceCode,
+            totalAmount: bookingRecord.totalAmount,
+            currency: bookingRecord.currency,
+            scheduledAt: bookingRecord.scheduledAt,
+            durationHours: bookingRecord.durationHours,
+            sessionType: bookingRecord.sessionType,
+            propsNotes: bookingRecord.propsNotes,
+            specialRequests: bookingRecord.specialRequests,
+          },
+          recipientEmail
+        );
+      }
+
       return NextResponse.json({
         success: true,
         event,
-        referenceCode: targetReference || targetId,
-        paymentStatus: "paid",
-        status: "confirmed (preview mode)",
-        timestamp: new Date().toISOString(),
+        bookingReference: bookingRecord.referenceCode,
+        paymentStatus: targetPaymentStatus,
+        status: "confirmed",
       });
     }
 
-    // Default acknowledgement for SMPTE / telemetry / other production events
-    return NextResponse.json({
-      success: true,
-      event,
-      timestamp: new Date().toISOString(),
-      status: "acknowledged",
-      relayNodes: ["dxb-edge-01", "ruh-edge-02"],
-    });
+    // Any other event: acknowledge so the sender does not retry.
+    return NextResponse.json({ success: true, event, status: "acknowledged" });
   } catch (error) {
     console.error("Webhook processing failure:", error);
     return NextResponse.json(
@@ -229,17 +219,5 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-  return NextResponse.json({
-    status: "online",
-    service: "Yas Pro Production Event Bridge & Payment Webhooks",
-    version: "2.1.0",
-    supportedEvents: [
-      "payment.completed",
-      "payment.success",
-      "checkout.session.completed",
-      "telemetry.smpte",
-      "ob_van.dispatch",
-    ],
-    timestamp: new Date().toISOString(),
-  });
+  return NextResponse.json({ status: "online" });
 }

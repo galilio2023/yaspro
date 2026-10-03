@@ -163,7 +163,7 @@ export const bookings = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     referenceCode: text("reference_code").notNull().unique(),
-    userId: text("user_id").references(() => users.id),
+    userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
     studioId: uuid("studio_id").references(() => studios.id),
     sessionType: sessionTypeEnum("session_type").notNull(),
     status: bookingStatusEnum("status").notNull().default("pending"),
@@ -278,7 +278,7 @@ export const enterpriseRfps = pgTable(
   "enterprise_rfps",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: text("user_id").references(() => users.id),
+    userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
     referenceCode: text("reference_code").notNull().unique(),
     organizationName: text("organization_name").notNull(),
     organizationType: text("organization_type").notNull().default("enterprise"),

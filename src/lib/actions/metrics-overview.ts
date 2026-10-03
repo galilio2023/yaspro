@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 import { db } from "@/db";
 import {
@@ -29,14 +29,14 @@ export async function getCmsOverviewStats() {
     if (isDbAvailable()) {
       const [allProjects, allInfluencers, allGear, allBookings, allRfps, allInquiries, allUsers, allStudios] =
         await Promise.all([
-          db.select().from(projects),
-          db.select().from(influencers),
-          db.select().from(equipment),
-          db.select().from(bookings),
-          db.select().from(enterpriseRfps),
-          db.select().from(inquiries),
-          db.select().from(users),
-          db.select().from(studios),
+          db.select({ id: projects.id }).from(projects),
+          db.select({ id: influencers.id }).from(influencers),
+          db.select({ id: equipment.id }).from(equipment),
+          db.select({ id: bookings.id, status: bookings.status }).from(bookings),
+          db.select({ id: enterpriseRfps.id, status: enterpriseRfps.status }).from(enterpriseRfps),
+          db.select({ id: inquiries.id, isResolved: inquiries.isResolved }).from(inquiries),
+          db.select({ id: users.id, role: users.role }).from(users),
+          db.select({ id: studios.id, isActive: studios.isActive }).from(studios),
         ]);
 
       return {
@@ -57,10 +57,30 @@ export async function getCmsOverviewStats() {
       };
     }
   } catch (err) {
-    console.error("getCmsOverviewStats DB error, using fallbacks:", err);
+    console.error("getCmsOverviewStats DB error:", err);
   }
 
-  // Graceful fallback when DB is offline or local preview
+  // In production, never return fabricated statistics
+  if (process.env.NODE_ENV === "production") {
+    return {
+      totalProjects: PROJECTS_DATA.length,
+      totalInfluencers: INFLUENCERS_DATA.length,
+      totalGear: GEAR_DATA.length,
+      totalBookings: 0,
+      pendingBookings: 0,
+      totalRfps: 0,
+      pendingRfps: 0,
+      totalInquiries: 0,
+      pendingInquiries: 0,
+      totalUsers: 0,
+      clientUsers: 0,
+      adminUsers: 0,
+      totalStudios: STUDIOS.length,
+      activeStudios: STUDIOS.length,
+    };
+  }
+
+  // Local development / mock preview fallback
   return {
     totalProjects: PROJECTS_DATA.length,
     totalInfluencers: INFLUENCERS_DATA.length,

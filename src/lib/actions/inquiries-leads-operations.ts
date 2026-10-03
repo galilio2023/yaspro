@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 import { db } from "@/db";
 import {
@@ -25,7 +25,11 @@ export async function getCmsInquiries(): Promise<Inquiry[]> {
     console.error("getCmsInquiries error:", e);
   }
 
-  // Preview mode demo inquiries
+  if (process.env.NODE_ENV === "production") {
+    return [];
+  }
+
+  // Preview mode demo inquiries (non-production local dev only)
   return [
     {
       id: "inq-01",

@@ -1,6 +1,6 @@
 "use server";
 
-import { calculateGearCartTotals } from "../../features/gear/lib/cart-pricing";
+import { calculateGearCartTotals, calculateRentalMultiplier } from "../../features/gear/lib/cart-pricing";
 import { addCalendarDays, isRentalScheduleConsistent } from "../../features/gear/lib/rental-schedule";
 import { checkRateLimit, getClientIdentifier } from "../rate-limit";
 import { z } from "zod";
@@ -254,6 +254,12 @@ export async function submitGearReservation(
     if (!Number.isFinite(dailyRate) || dailyRate < 0) {
       return { success: false, error: "Unable to price this equipment. Please contact us on WhatsApp." };
     }
+    if (input.startDate) {
+      const startMs = new Date(input.startDate).getTime();
+      if (startMs < Date.now() - 24 * 60 * 60 * 1000) {
+        return { success: false, error: "startDate: Please select a shoot date in the future." };
+      }
+    }
     const discountMultiplier = input.durationDays >= 7 ? 0.65 : input.durationDays >= 3 ? 0.8 : 1;
     const total = Math.round(dailyRate * discountMultiplier) * input.durationDays
       + (input.deliveryMethod === "dubai_courier" ? 250 : 0);
@@ -353,7 +359,17 @@ export async function createGearBookingOrder(
       if (!item) {
         return { success: false, error: `Equipment item ${gearId} was not found.` };
       }
+      if (item.isAvailable === false) {
+        return { success: false, error: `Equipment item "${item.name}" is currently unavailable for rental.` };
+      }
       pricedItems.push({ dailyRate: Number(item.dailyRate) });
+    }
+
+    if (input.startDate) {
+      const startMs = new Date(input.startDate).getTime();
+      if (startMs < Date.now() - 24 * 60 * 60 * 1000) {
+        return { success: false, error: "Please select a rental start date in the future." };
+      }
     }
 
     const { grandTotal } = calculateGearCartTotals(pricedItems, { totalDays: input.durationDays }, input.deliveryMethod);
