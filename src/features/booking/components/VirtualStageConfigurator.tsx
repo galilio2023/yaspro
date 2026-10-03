@@ -198,6 +198,7 @@ export function VirtualStageConfigurator() {
         >
           <OrbitControls
             enablePan={false}
+            enableZoom={false}
             maxPolarAngle={Math.PI / 2.05}
             minDistance={3}
             maxDistance={8}

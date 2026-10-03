@@ -12,8 +12,12 @@ export function AboutCtaBanner() {
     <FadeUp delay={0.1}>
       <div className="relative rounded-3xl overflow-hidden border border-white/12 bg-zinc-950 p-8 sm:p-12 lg:p-16 text-center shadow-2xl shadow-black/80 mb-8 film-grain">
         <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-mono uppercase tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 mb-6 backdrop-blur-md">
-            <span>{t("about.cta.badge")}</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[11px] sm:text-xs font-mono uppercase tracking-wider rtl:font-arabic rtl:tracking-normal text-amber-400 bg-amber-500/10 border border-amber-500/30 mb-6 backdrop-blur-md whitespace-nowrap shrink-0 max-w-full">
+            <span className="relative flex size-2 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+              <span className="relative inline-flex rounded-full size-2 bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+            </span>
+            <span className="whitespace-nowrap font-latin rtl:font-arabic">{t("about.cta.badge")}</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white font-display tracking-tight leading-tight mb-4">

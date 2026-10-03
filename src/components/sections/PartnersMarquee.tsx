@@ -42,7 +42,7 @@ export function PartnersMarquee() {
                 alt={gov.name}
                 width={160}
                 height={55}
-                className="h-9 sm:h-11 w-auto object-contain filter brightness-90 group-hover:brightness-100 transition-all duration-300"
+                className="h-9 sm:h-11 w-auto object-contain filter brightness-90 group-hover:brightness-100 transition-all duration-300 mix-blend-screen"
               />
             </div>
           ))}

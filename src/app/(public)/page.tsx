@@ -4,6 +4,7 @@ import { VirtualStudioSection } from "@/components/sections/VirtualStudioSection
 import { PortfolioSection } from "@/components/sections/PortfolioSection";
 import { GearRentalSection } from "@/components/sections/GearRentalSection";
 import InfluencersSection from "@/components/sections/InfluencersSection";
+import { YasGroupEcosystem } from "@/components/sections/YasGroupEcosystem";
 import { CtaSection } from "@/components/sections/CtaSection";
 
 export default function HomePage() {
@@ -20,6 +21,7 @@ export default function HomePage() {
         {/*<AiEcosystemSection />*/}
       <GearRentalSection />
       <InfluencersSection />
+      <YasGroupEcosystem />
       <CtaSection />
     </>
   );

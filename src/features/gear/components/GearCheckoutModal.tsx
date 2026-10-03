@@ -153,14 +153,14 @@ export function GearCheckoutModal({
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-xl animate-fade-up overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-xl animate-fade-up overflow-y-auto overscroll-contain"
         >
           <div className="fixed inset-0" onClick={handleClose} aria-hidden="true" />
 
           <div
             ref={dialogRef}
             tabIndex={-1}
-            className="relative w-full max-w-4xl my-auto rounded-3xl border border-white/10 bg-[#070709] shadow-2xl shadow-black/80 overflow-hidden z-10 flex flex-col max-h-[92vh]"
+            className="relative w-full max-w-4xl my-auto rounded-3xl border border-white/10 bg-[#070709] shadow-2xl shadow-black/80 overflow-hidden z-10 flex flex-col max-h-[92vh] overscroll-contain"
           >
             {/* Header */}
             <div className="relative px-6 py-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">

@@ -51,7 +51,7 @@ export function EnterpriseTrustLogos() {
                   alt={gov.name}
                   width={150}
                   height={50}
-                  className="max-h-full max-w-full h-auto w-auto object-contain filter group-hover:brightness-110 group-hover:drop-shadow-[0_0_12px_rgba(245,158,11,0.3)] transition-all duration-300"
+                  className="max-h-full max-w-full h-auto w-auto object-contain filter group-hover:brightness-110 group-hover:drop-shadow-[0_0_12px_rgba(245,158,11,0.3)] transition-all duration-300 mix-blend-screen"
                 />
               </div>
               <div className="hidden md:flex flex-col text-left border-l border-white/10 pl-3">

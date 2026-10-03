@@ -73,12 +73,12 @@ export function CustomCinemaCursor() {
 
       {/* Outer Magnetic Aura / Shimmer Ring */}
       <motion.div
-        className={`fixed top-0 left-0 rounded-full flex items-center justify-center transition-colors duration-200 backdrop-blur-[2px] ${
+        className={`fixed top-0 left-0 rounded-full flex items-center justify-center transition-colors duration-200 pointer-events-none will-change-transform ${
           cursorText
-            ? "size-20 -ml-10 -mt-10 bg-amber-500/20 border border-amber-500/40 shadow-[0_0_20px_rgba(245,158,11,0.4)]"
+            ? "size-20 -ml-10 -mt-10 bg-amber-500/20 border border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.4)]"
             : isPointer
-            ? "size-12 -ml-6 -mt-6 bg-amber-500/15 border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.3)]"
-            : "size-8 -ml-4 -mt-4 border border-white/20 bg-white/[0.02]"
+            ? "size-12 -ml-6 -mt-6 bg-amber-500/15 border border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.3)]"
+            : "size-8 -ml-4 -mt-4 border border-white/20 bg-white/[0.04]"
         }`}
         style={{
           x: cursorX,

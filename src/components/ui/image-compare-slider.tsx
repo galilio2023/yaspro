@@ -64,6 +64,8 @@ export function ImageCompareSlider({
     });
   }, [setPosition]);
 
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsDragging(true);
@@ -71,9 +73,8 @@ export function ImageCompareSlider({
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    setIsDragging(true);
     if (e.touches[0]) {
-      updateSliderFromClientX(e.touches[0].clientX);
+      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
     }
   };
 
@@ -84,12 +85,31 @@ export function ImageCompareSlider({
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!isDragging || !e.touches[0]) return;
-      updateSliderFromClientX(e.touches[0].clientX);
+      if (!e.touches[0] || !touchStartRef.current) return;
+      const touch = e.touches[0];
+      const dx = Math.abs(touch.clientX - touchStartRef.current.x);
+      const dy = Math.abs(touch.clientY - touchStartRef.current.y);
+
+      // If user is predominantly scrolling vertically, do NOT drag the slider
+      if (!isDragging) {
+        if (dy > dx && dy > 6) {
+          // Vertical swipe: let page scroll natively
+          touchStartRef.current = null;
+          return;
+        }
+        if (dx > 8 && dx > dy) {
+          setIsDragging(true);
+        }
+      }
+
+      if (isDragging) {
+        updateSliderFromClientX(touch.clientX);
+      }
     };
 
     const handleMouseUp = () => {
       if (isDragging) setIsDragging(false);
+      touchStartRef.current = null;
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -127,7 +147,7 @@ export function ImageCompareSlider({
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       className={cn(
-        "relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 select-none cursor-ew-resize group bg-black/60 shadow-2xl focus:outline-none focus:ring-2 focus:ring-amber-500/50",
+        "relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 select-none cursor-ew-resize group bg-black/60 shadow-2xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 touch-pan-y",
         aspectRatio,
         className
       )}

@@ -152,13 +152,13 @@ export function GearRentalModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="gear-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-xl animate-fade-up overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-xl animate-fade-up overflow-y-auto overscroll-contain"
     >
       {/* Backdrop click to close */}
       <div className="fixed inset-0" onClick={onClose} aria-hidden="true" />
 
       {/* Modal Dialog Card */}
-      <div ref={dialogRef} tabIndex={-1} className="relative w-full max-w-3xl my-auto rounded-3xl border border-white/10 bg-[#070709] shadow-2xl shadow-black/80 overflow-hidden z-10 flex flex-col max-h-[92vh]">
+      <div ref={dialogRef} tabIndex={-1} className="relative w-full max-w-3xl my-auto rounded-3xl border border-white/10 bg-[#070709] shadow-2xl shadow-black/80 overflow-hidden z-10 flex flex-col max-h-[92vh] overscroll-contain">
         {/* Header Bar */}
         <div className="relative px-6 py-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
           <div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, RefObject } from "react";
+import { lockScroll, unlockScroll } from "./useScrollLock";
 
 const activeTraps: { containerRef: RefObject<HTMLElement | null>; focus: () => void }[] = [];
 
@@ -10,6 +11,7 @@ export interface UseFocusTrapOptions {
   containerRef: RefObject<HTMLElement | null>;
   initialFocusRef?: RefObject<HTMLElement | null>;
   autoRestoreFocus?: boolean;
+  lockScroll?: boolean;
 }
 
 /**
@@ -19,6 +21,7 @@ export interface UseFocusTrapOptions {
  * - Escape key dismissal
  * - Active element restoration upon close
  * - Initial focus targeting
+ * - Automatic background body/html scroll locking (with scrollbar width compensation)
  */
 export function useFocusTrap({
   isOpen,
@@ -26,6 +29,7 @@ export function useFocusTrap({
   containerRef,
   initialFocusRef,
   autoRestoreFocus = true,
+  lockScroll: shouldLockScroll = true,
 }: UseFocusTrapOptions) {
   const triggerRef = useRef<HTMLElement | null>(null);
   const onCloseRef = useRef(onClose);
@@ -36,6 +40,10 @@ export function useFocusTrap({
 
   useEffect(() => {
     if (!isOpen) return;
+
+    if (shouldLockScroll) {
+      lockScroll();
+    }
 
     // Capture currently focused element before trap activates
     triggerRef.current = document.activeElement as HTMLElement | null;
@@ -76,6 +84,9 @@ export function useFocusTrap({
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
+      if (shouldLockScroll) {
+        unlockScroll();
+      }
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("focusin", handleFocusIn);
       const wasTopmost = activeTraps.at(-1) === trap;
@@ -91,5 +102,5 @@ export function useFocusTrap({
         previous.focus();
       }
     };
-  }, [isOpen, containerRef, initialFocusRef, autoRestoreFocus]);
+  }, [isOpen, containerRef, initialFocusRef, autoRestoreFocus, shouldLockScroll]);
 }

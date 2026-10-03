@@ -55,11 +55,10 @@ export function SectionHeader({
           {badge && (
             <Badge
               variant={badgeVariant}
-              /* tracking-widest breaks Arabic cursive — override to normal in RTL */
-              className="px-3 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest rtl:tracking-normal gap-1.5 max-w-full"
+              className="px-3.5 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider rtl:tracking-normal gap-1.5 whitespace-nowrap shrink-0 max-w-full"
             >
               {badgeIcon}
-              <span className="font-latin rtl:font-arabic">{badge}</span>
+              <span className="whitespace-nowrap font-latin rtl:font-arabic leading-none">{badge}</span>
             </Badge>
           )}
 

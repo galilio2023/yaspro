@@ -51,6 +51,9 @@ export function FadeUp({
             el.style.opacity = "1";
             el.style.transform = "translate3d(0, 0, 0)";
             observer.unobserve(el);
+            setTimeout(() => {
+              if (el) el.style.willChange = "auto";
+            }, 650);
           }
         });
       },
@@ -180,6 +183,11 @@ export function StaggerContainer({
               item.style.transform = "translate3d(0, 0, 0)";
             });
             observer.unobserve(container);
+            setTimeout(() => {
+              items.forEach((item) => {
+                if (item) item.style.willChange = "auto";
+              });
+            }, (items.length * staggerDelay + 0.5) * 1000);
           }
         });
       },

@@ -4,6 +4,7 @@ import React, { useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Film, X, ExternalLink, Play, Sparkles, CheckCircle2, ShieldCheck } from "lucide-react";
+import { lockScroll, unlockScroll } from "@/hooks/useScrollLock";
 
 const emptySubscribe = () => () => {};
 
@@ -102,17 +103,12 @@ export function CinemaVideoModal({
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    const originalBodyOverflow = document.body.style.overflow;
-    const originalHtmlOverflow = document.documentElement.style.overflow;
-    
-    document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
+    lockScroll();
 
     return () => {
       window.dispatchEvent(new CustomEvent("yaspro:cinema-modal-close"));
       window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = originalBodyOverflow;
-      document.documentElement.style.overflow = originalHtmlOverflow;
+      unlockScroll();
     };
   }, [isOpen, onClose]);
 

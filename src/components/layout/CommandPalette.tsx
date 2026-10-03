@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo, useId } from "react";
+import React, { useState, useEffect, useRef, useMemo, useId, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import {
   Search,
@@ -38,7 +39,10 @@ interface PaletteCommand {
   badge?: string;
 }
 
+const emptySubscribe = () => () => {};
+
 export function CommandPalette() {
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -355,12 +359,17 @@ export function CommandPalette() {
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-md flex items-start justify-center p-3 sm:p-6 pt-[12vh] animate-fade-in select-none"
+      className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-md flex items-start justify-center p-3 sm:p-6 pt-[12vh] animate-fade-in select-none overscroll-contain touch-none"
       onClick={() => setIsOpen(false)}
+      onWheel={(e) => {
+        if (e.target === e.currentTarget) {
+          e.preventDefault();
+        }
+      }}
       role="dialog"
       aria-modal="true"
       aria-label="Universal Command Palette"
@@ -368,7 +377,7 @@ export function CommandPalette() {
       <div
         ref={panelRef}
         tabIndex={-1}
-        className="w-full max-w-xl bg-slate-900 border border-amber-500/30 rounded-2xl sm:rounded-3xl shadow-2xl shadow-amber-900/20 overflow-hidden flex flex-col max-h-[75vh]"
+        className="w-full max-w-xl bg-slate-900 border border-amber-500/30 rounded-2xl sm:rounded-3xl shadow-2xl shadow-amber-900/20 overflow-hidden flex flex-col max-h-[75vh] overscroll-contain"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
@@ -405,7 +414,7 @@ export function CommandPalette() {
         </div>
 
         {/* Results List */}
-        <div ref={listRef} id={resultsId} role="listbox" aria-label="Commands" className="flex-1 overflow-y-auto p-2 space-y-1">
+        <div ref={listRef} id={resultsId} role="listbox" aria-label="Commands" className="flex-1 overflow-y-auto overscroll-contain p-2 space-y-1">
           {filtered.length === 0 ? (
             <div className="py-10 text-center text-slate-500 text-xs">
               No matching modules or actions found for &ldquo;{query}&rdquo;
@@ -476,6 +485,7 @@ export function CommandPalette() {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -81,15 +81,6 @@ export function GearCartDrawer({
     initialFocusRef: closeButtonRef,
   });
 
-  // Lock body scroll when breakdown modal is open
-  useEffect(() => {
-    if (!isOpen) return;
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = originalOverflow || "";
-    };
-  }, [isOpen]);
 
   // Signal to global floating widgets (e.g. WhatsApp concierge) that bottom cart bar is active
   useEffect(() => {
