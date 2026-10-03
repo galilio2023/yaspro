@@ -7,6 +7,10 @@ import { Check } from "lucide-react";
 import { VirtualStageConfigurator } from "../VirtualStageConfigurator";
 
 export function StepStudio({ state, update }: WizardStepProps) {
+  const visibleStudios = STUDIOS.filter(
+    (s) => !["studio-a", "studio-b", "studio-c"].includes(s.id) || state.studioId === s.id
+  );
+
   return (
     <div className="space-y-6">
       <VirtualStageConfigurator />
@@ -21,7 +25,7 @@ export function StepStudio({ state, update }: WizardStepProps) {
       </div>
 
       <div className="space-y-3">
-      {STUDIOS.map((s) => {
+      {visibleStudios.map((s) => {
         const isSelected = state.studioId === s.id;
 
         return (

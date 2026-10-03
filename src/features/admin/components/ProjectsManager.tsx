@@ -2,12 +2,15 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Film, Plus, Trash2, Edit3, CheckCircle, ExternalLink, Save, X } from "lucide-react";
+import { Film, Plus, Trash2, Edit3, CheckCircle, ExternalLink, Save, X, Search, Sparkles } from "lucide-react";
 import { upsertCmsProject, deleteCmsProject } from "@/lib/actions/projects";
 import { AdminImageUploader } from "@/components/admin/AdminImageUploader";
 import type { Project } from "@/db/schema";
 import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { useCrud } from "@/hooks/useCrud";
+import { usePagination } from "@/hooks/usePagination";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { DataTableEmpty } from "@/components/ui/data-table";
 
 interface ProjectsManagerProps {
   initialProjects: Project[];
@@ -15,6 +18,8 @@ interface ProjectsManagerProps {
 
 export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
   const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   const {
     dataList: projectList,
@@ -51,12 +56,26 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
     onSuccessMessage: "Project successfully updated!",
   });
 
+  const filteredProjects = projectList.filter((proj) => {
+    const q = searchQuery.toLowerCase();
+    const matchesSearch =
+      !q ||
+      proj.title.toLowerCase().includes(q) ||
+      (proj.arabicTitle && proj.arabicTitle.toLowerCase().includes(q)) ||
+      (proj.client && proj.client.toLowerCase().includes(q)) ||
+      proj.slug.toLowerCase().includes(q);
+    const matchesCategory = selectedCategory === "all" || proj.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const pagination = usePagination(filteredProjects, 15);
+
   return (
     <div className="space-y-6">
       {/* Top action bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
+          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5 font-display">
             <Film className="text-amber-400" /> Projects CMS Management
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
@@ -66,10 +85,85 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
 
         <button
           onClick={handleOpenNew}
-          className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition-colors shrink-0"
+          className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition-colors shrink-0 cursor-pointer"
         >
           <Plus size={16} /> Add New Project
         </button>
+      </div>
+
+      {/* KPI Summary Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
+          <span className="text-[11px] text-slate-400 font-mono uppercase block">Total Portfolio</span>
+          <span className="text-xl font-bold text-white font-mono mt-1 block">{projectList.length}</span>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
+          <span className="text-[11px] text-amber-400 font-mono uppercase block">Commercial &amp; Brand</span>
+          <span className="text-xl font-bold text-amber-300 font-mono mt-1 block">{projectList.filter(p => p.category === "commercial").length}</span>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
+          <span className="text-[11px] text-emerald-400 font-mono uppercase block">Sovereign &amp; Gov</span>
+          <span className="text-xl font-bold text-emerald-300 font-mono mt-1 block">{projectList.filter(p => p.category === "government").length}</span>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
+          <span className="text-[11px] text-purple-400 font-mono uppercase block">Live Shows &amp; Events</span>
+          <span className="text-xl font-bold text-purple-300 font-mono mt-1 block">{projectList.filter(p => p.category === "shows" || p.category === "event").length}</span>
+        </div>
+      </div>
+
+      {/* Search and Category Filter Bar */}
+      <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="relative w-full sm:w-80">
+            <input
+              type="text"
+              placeholder="Search films by title, client, slug..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                pagination.resetPage();
+              }}
+              className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
+            />
+            <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
+          </div>
+        </div>
+
+        {/* Category Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pt-1 pb-0.5 scrollbar-none">
+          {[
+            { id: "all", label: "All Films", count: projectList.length },
+            { id: "commercial", label: "Commercial", count: projectList.filter(p => p.category === "commercial").length },
+            { id: "government", label: "Government", count: projectList.filter(p => p.category === "government").length },
+            { id: "shows", label: "Live Shows", count: projectList.filter(p => p.category === "shows").length },
+            { id: "documentary", label: "Documentary", count: projectList.filter(p => p.category === "documentary").length },
+            { id: "event", label: "Events", count: projectList.filter(p => p.category === "event").length },
+          ].map((cat) => {
+            const isActive = selectedCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => {
+                  setSelectedCategory(cat.id);
+                  pagination.resetPage();
+                }}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition-all cursor-pointer ${
+                  isActive
+                    ? "bg-white/15 text-white border border-white/20 shadow-md"
+                    : "bg-white/[0.03] text-slate-400 hover:text-white border border-white/5 hover:bg-white/[0.06]"
+                }`}
+              >
+                <span>{cat.label}</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                  isActive ? "bg-amber-500 text-slate-950 font-bold" : "bg-white/10 text-slate-400"
+                }`}>
+                  {cat.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Edit / Create Drawer Modal */}
@@ -254,71 +348,88 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {projectList.map((proj) => (
-                <tr key={proj.id} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-3">
-                      <div className="relative size-10 rounded-lg overflow-hidden shrink-0 border border-white/10 bg-slate-800">
-                        {proj.coverImageUrl && (
-                          <Image
-                            src={proj.coverImageUrl}
-                            alt={proj.title}
-                            fill
-                            className="object-cover"
-                          />
-                        )}
+              {filteredProjects.length === 0 ? (
+                <DataTableEmpty colSpan={5} message="No projects found matching your category or search query." />
+              ) : (
+                pagination.paginatedItems.map((proj) => (
+                  <tr key={proj.id} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-3">
+                        <div className="relative size-10 rounded-lg overflow-hidden shrink-0 border border-white/10 bg-slate-800">
+                          {proj.coverImageUrl && (
+                            <Image
+                              src={proj.coverImageUrl}
+                              alt={proj.title}
+                              fill
+                              className="object-cover"
+                            />
+                          )}
+                        </div>
+                        <div>
+                          <span className="font-semibold text-white block">{proj.title}</span>
+                          {proj.arabicTitle && (
+                            <span className="text-[11px] text-slate-400 font-arabic block">{proj.arabicTitle}</span>
+                          )}
+                          <span className="text-[11px] text-slate-400 font-mono">
+                            /{proj.slug}
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <span className="font-semibold text-white block">{proj.title}</span>
-                        <span className="text-[11px] text-slate-400 font-mono">
-                          /{proj.slug}
-                        </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-amber-300 font-medium capitalize">
+                        {proj.category}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-slate-300">{proj.client || "—"}</td>
+                    <td className="py-3 px-4 text-slate-400 font-mono">{proj.year || "—"}</td>
+                    <td className="py-3 px-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <a
+                          href={`/projects/${proj.slug}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+                          title="View Public Page"
+                        >
+                          <ExternalLink size={14} />
+                        </a>
+                        <button
+                          onClick={() => {
+                            setError(null);
+                            clearFeedback();
+                            setEditingProject(proj);
+                          }}
+                          className="p-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 transition-colors cursor-pointer"
+                          title="Edit Project"
+                        >
+                          <Edit3 size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(proj.id, proj.slug)}
+                          className="p-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 transition-colors cursor-pointer"
+                          title="Delete Project"
+                        >
+                          <Trash2 size={14} />
+                        </button>
                       </div>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-amber-300 font-medium">
-                      {proj.category}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-slate-300">{proj.client || "—"}</td>
-                  <td className="py-3 px-4 text-slate-400">{proj.year || "—"}</td>
-                  <td className="py-3 px-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <a
-                        href={`/projects/${proj.slug}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white"
-                        title="View Public Page"
-                      >
-                        <ExternalLink size={14} />
-                      </a>
-                      <button
-                        onClick={() => {
-                          setError(null);
-                          clearFeedback();
-                          setEditingProject(proj);
-                        }}
-                        className="p-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300"
-                        title="Edit Project"
-                      >
-                        <Edit3 size={14} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(proj.id, proj.slug)}
-                        className="p-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-300"
-                        title="Delete Project"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
+
+        <PaginationControls
+          currentPage={pagination.currentPage}
+          pageCount={pagination.pageCount}
+          total={pagination.total}
+          startIndex={pagination.startIndex}
+          endIndex={pagination.endIndex}
+          onPrev={pagination.prevPage}
+          onNext={pagination.nextPage}
+        />
       </div>
     </div>
   );

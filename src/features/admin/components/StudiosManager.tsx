@@ -4,18 +4,21 @@ import React, { useState, useCallback } from "react";
 import {
   Layers,
   Edit2,
+  Trash2,
   Plus,
   Users,
   DollarSign,
   Save,
+  Search,
 } from "lucide-react";
-import { upsertCmsStudio, toggleStudioActiveStatus } from "@/lib/actions/studios-soundstages-operations";
+import { upsertCmsStudio, toggleStudioActiveStatus, deleteCmsStudio } from "@/lib/actions/studios-soundstages-operations";
 import type { Studio } from "@/db/schema";
 import { formatCurrency } from "@/lib/utils";
 import { Dialog } from "@/components/ui/dialog";
 import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
 import { AdminImageUploader } from "@/components/admin/AdminImageUploader";
+import { AdminConfirmModal } from "@/components/admin/AdminConfirmModal";
 
 interface StudiosManagerProps {
   initialStudios: Studio[];
@@ -24,9 +27,61 @@ interface StudiosManagerProps {
 export function StudiosManager({ initialStudios }: StudiosManagerProps) {
   const [studiosList, setStudiosList] = useState<Studio[]>(initialStudios);
   const [editingStudio, setEditingStudio] = useState<Partial<Studio> | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "maintenance">("all");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [studioToDelete, setStudioToDelete] = useState<Studio | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3000);
+  const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(4000);
+
+  const handleConfirmDelete = async () => {
+    if (!studioToDelete) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      const targetId = studioToDelete.id || studioToDelete.slug;
+      const res = await deleteCmsStudio(targetId);
+      if (res.success) {
+        setStudiosList((prev) => prev.filter((s) => s.id !== studioToDelete.id && s.slug !== studioToDelete.slug));
+        showFeedback(`Soundstage "${studioToDelete.name}" deleted successfully.`);
+        setStudioToDelete(null);
+      } else {
+        setDeleteError(res.error || "Failed to delete studio stage.");
+      }
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : "Failed to delete studio stage.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const activeCount = studiosList.filter((s) => s.isActive).length;
+  const maintenanceCount = studiosList.filter((s) => !s.isActive).length;
+  const avgHourlyRate =
+    studiosList.length > 0
+      ? Math.round(
+          studiosList.reduce((acc, s) => acc + (parseFloat(s.hourlyRate) || 0), 0) /
+            studiosList.length
+        )
+      : 0;
+
+  const filteredStudios = studiosList.filter((studio) => {
+    const q = searchQuery.toLowerCase();
+    const matchesSearch =
+      !q ||
+      studio.name.toLowerCase().includes(q) ||
+      studio.slug.toLowerCase().includes(q) ||
+      (studio.description && studio.description.toLowerCase().includes(q)) ||
+      (Array.isArray(studio.amenities) &&
+        (studio.amenities as string[]).some((a) => a.toLowerCase().includes(q)));
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "active" && studio.isActive) ||
+      (statusFilter === "maintenance" && !studio.isActive);
+    return matchesSearch && matchesStatus;
+  });
 
   const handleCloseDialog = useCallback(() => {
     setEditingStudio(null);
@@ -143,9 +198,92 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
         </div>
       </div>
 
+      {/* Top KPI Metrics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <div className="p-4 rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-xl">
+          <span className="text-[10px] text-slate-400 uppercase tracking-wider font-mono font-medium">Total Soundstages</span>
+          <div className="flex items-baseline gap-2 mt-1">
+            <span className="text-xl sm:text-2xl font-bold text-white font-mono">{studiosList.length}</span>
+            <span className="text-[11px] text-amber-400 font-medium">Stages</span>
+          </div>
+        </div>
+        <div className="p-4 rounded-2xl border border-emerald-500/20 bg-emerald-950/20 backdrop-blur-xl">
+          <span className="text-[10px] text-emerald-400 uppercase tracking-wider font-mono font-medium">Active / Bookable</span>
+          <div className="flex items-baseline gap-2 mt-1">
+            <span className="text-xl sm:text-2xl font-bold text-emerald-400 font-mono">{activeCount}</span>
+            <span className="text-[11px] text-emerald-400/80 font-medium">Live</span>
+          </div>
+        </div>
+        <div className="p-4 rounded-2xl border border-amber-500/20 bg-amber-950/20 backdrop-blur-xl">
+          <span className="text-[10px] text-amber-400 uppercase tracking-wider font-mono font-medium">Maintenance Mode</span>
+          <div className="flex items-baseline gap-2 mt-1">
+            <span className="text-xl sm:text-2xl font-bold text-amber-400 font-mono">{maintenanceCount}</span>
+            <span className="text-[11px] text-amber-400/80 font-medium">Offline</span>
+          </div>
+        </div>
+        <div className="p-4 rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-xl">
+          <span className="text-[10px] text-slate-400 uppercase tracking-wider font-mono font-medium">Average Rate</span>
+          <div className="flex items-baseline gap-2 mt-1">
+            <span className="text-xl sm:text-2xl font-bold text-white font-mono">{formatCurrency(avgHourlyRate)}</span>
+            <span className="text-[11px] text-slate-400 font-medium">/hr</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Search & Status Filters */}
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/50 border border-white/10">
+        <div className="relative flex-1">
+          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search soundstages by name, slug, amenities or specs..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-amber-500/50"
+          />
+        </div>
+        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+          {[
+            { id: "all", label: "All Stages", count: studiosList.length },
+            { id: "active", label: "Active", count: activeCount },
+            { id: "maintenance", label: "Maintenance", count: maintenanceCount },
+          ].map((status) => {
+            const isActive = statusFilter === status.id;
+            return (
+              <button
+                key={status.id}
+                type="button"
+                onClick={() => setStatusFilter(status.id as "all" | "active" | "maintenance")}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition-all cursor-pointer ${
+                  isActive
+                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-md"
+                    : "bg-white/[0.03] text-slate-400 hover:text-white border border-white/5 hover:bg-white/[0.06]"
+                }`}
+              >
+                <span>{status.label}</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                  isActive ? "bg-amber-400 text-slate-950 font-bold" : "bg-white/10 text-slate-400"
+                }`}>
+                  {status.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Studio Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {studiosList.map((studio) => {
+        {filteredStudios.length === 0 ? (
+          <div className="col-span-full py-12 text-center rounded-3xl border border-white/5 bg-slate-900/30">
+            <Layers size={36} className="mx-auto text-slate-600 mb-3" />
+            <h4 className="text-sm font-bold text-white mb-1">No Soundstages Match Filters</h4>
+            <p className="text-xs text-slate-400">
+              Try adjusting your search query or status filter to locate stages.
+            </p>
+          </div>
+        ) : (
+          filteredStudios.map((studio) => {
           const rateNum = parseFloat(studio.hourlyRate) || 0;
           return (
             <div
@@ -231,18 +369,31 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                   {studio.isActive ? "Instant Cal Sync" : "Stage Blocked"}
                 </span>
 
-                <button
-                  type="button"
-                  onClick={() => setEditingStudio(studio)}
-                  className="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <Edit2 size={12} />
-                  <span>Edit Stage Specs</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingStudio(studio)}
+                    className="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <Edit2 size={12} />
+                    <span>Edit Stage Specs</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeleteError(null);
+                      setStudioToDelete(studio);
+                    }}
+                    className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors cursor-pointer"
+                    title="Delete Soundstage"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                </div>
               </div>
             </div>
           );
-        })}
+        }))}
       </div>
 
       {/* Edit / Create Studio Modal */}
@@ -313,8 +464,8 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
               <AdminImageUploader
                 value={editingStudio.imageUrl}
                 onChange={(url) => setEditingStudio({ ...editingStudio, imageUrl: url })}
-                label="Studio Soundstage Cover Photo (Vercel Blob / CDN)"
-                helperText="Drag & drop studio or stage photo (PNG, JPG, WEBP up to 10MB)"
+                label="Studio Soundstage Cover Photo (Cloudinary / CDN)"
+                helperText="Drag & drop studio or stage photo (PNG, JPG, WEBP up to 25MB)"
               />
             </div>
 
@@ -340,6 +491,29 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                   className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 resize-none font-arabic"
                 />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-slate-300 font-medium mb-1.5">Stage Amenities (Comma separated)</label>
+              <input
+                type="text"
+                placeholder="10Gbps Symmetrical Fiber, Green Room, Hair & Makeup Suite, Sound Isolated"
+                value={
+                  Array.isArray(editingStudio.amenities)
+                    ? (editingStudio.amenities as string[]).join(", ")
+                    : ""
+                }
+                onChange={(e) =>
+                  setEditingStudio({
+                    ...editingStudio,
+                    amenities: e.target.value
+                      .split(",")
+                      .map((s) => s.trim())
+                      .filter(Boolean),
+                  })
+                }
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500"
+              />
             </div>
 
             <div className="flex items-center gap-2 pt-2">
@@ -375,6 +549,24 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
           </form>
         )}
       </Dialog>
+      {studioToDelete && (
+        <AdminConfirmModal
+          isOpen={Boolean(studioToDelete)}
+          onClose={() => {
+            setStudioToDelete(null);
+            setDeleteError(null);
+          }}
+          onConfirm={handleConfirmDelete}
+          title="Delete Soundstage"
+          message={
+            deleteError ||
+            `Are you sure you want to permanently remove "${studioToDelete.name}" (${studioToDelete.slug})? If there are any associated bookings, deletion will be blocked.`
+          }
+          confirmLabel={deleteError ? "Understood" : "Delete Soundstage"}
+          variant={deleteError ? "warning" : "danger"}
+          isSubmitting={isDeleting}
+        />
+      )}
     </div>
   );
 }

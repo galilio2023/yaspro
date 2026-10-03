@@ -10,6 +10,7 @@ interface AdminImageUploaderProps {
   onUploadingChange?: (isUploading: boolean) => void;
   label?: string;
   helperText?: string;
+  accept?: string;
 }
 
 export function AdminImageUploader({
@@ -17,7 +18,8 @@ export function AdminImageUploader({
   onChange,
   onUploadingChange,
   label = "Cover Image / Media Asset",
-  helperText = "Drag & drop or click to upload PNG, JPG, or WEBP (up to 10MB)",
+  helperText = "Drag & drop or click to upload PNG, JPG, WEBP, or MP4 (up to 25MB)",
+  accept = "image/png,image/jpeg,image/webp,image/avif,image/gif,video/mp4",
 }: AdminImageUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -99,14 +101,25 @@ export function AdminImageUploader({
 
       {value ? (
         <div className="relative rounded-xl border border-white/15 bg-white/5 overflow-hidden p-3 flex items-center gap-4">
-          <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-white/10 shrink-0 bg-slate-900">
-            <Image
-              src={value}
-              alt="Media Preview"
-              fill
-              className="object-cover"
-              unoptimized={value.startsWith("/uploads/") || value.startsWith("http")}
-            />
+          <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-white/10 shrink-0 bg-slate-900 flex items-center justify-center">
+            {/\.(mp4|webm|mov|m4v)(\?.*)?$/i.test(value) || value.includes("/video/upload/") ? (
+              <video
+                src={value}
+                muted
+                autoPlay
+                loop
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <Image
+                src={value}
+                alt="Media Preview"
+                fill
+                className="object-cover"
+                unoptimized={value.startsWith("/uploads/") || value.startsWith("http")}
+              />
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-medium mb-1">
@@ -175,7 +188,7 @@ export function AdminImageUploader({
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/png,image/jpeg,image/webp,image/avif,image/gif"
+        accept={accept}
         onChange={handleChange}
         className="hidden"
       />

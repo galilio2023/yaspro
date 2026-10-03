@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 import { db } from "@/db";
 import {
@@ -94,6 +94,31 @@ export async function upsertCmsInfluencer(data: Partial<Influencer> & { name: st
     updateTag("influencers");
     updateTag(`influencer:${data.slug}`);
     return { success: true, message: "Creator updated successfully in Neon DB." };
+  } catch (error) {
+    return { success: false, error: (error as Error).message };
+  }
+}
+
+/**
+ * Deletes a creator profile from Neon PostgreSQL.
+ *
+ * @param id - UUID or slug of the creator profile to remove.
+ * @returns CMS response confirming deletion.
+ */
+export async function deleteCmsInfluencer(id: string): Promise<CmsResponse> {
+  try {
+    await requireAdmin();
+    if (isDbAvailable()) {
+      if (isUuid(id)) {
+        await db.delete(influencers).where(eq(influencers.id, id));
+      } else {
+        await db.delete(influencers).where(eq(influencers.slug, id));
+      }
+    }
+    revalidatePath("/influencers");
+    revalidatePath("/admin/influencers");
+    updateTag("influencers");
+    return { success: true, message: "Creator profile removed from directory." };
   } catch (error) {
     return { success: false, error: (error as Error).message };
   }

@@ -26,7 +26,7 @@ import { FooterLinkItem } from "./FooterNavLinks";
 
 const PRODUCTION_SERVICES: readonly FooterLinkItem[] = [
   { key: "footer.services.enterprise", label: "Enterprise Sovereign Solutions", href: "/enterprise", icon: Building2 },
-  { key: "footer.services.studios", label: "Studio Stage Bookings", href: "/studio-booking", icon: Calendar },
+  { key: "footer.services.studios", label: "Soundstages & Studios Hub", href: "/studios", icon: Calendar },
   { key: "footer.services.obVan", label: "OB-VAN Live Broadcast", href: "/enterprise#ob-van-command", icon: Radio },
   { key: "footer.services.gear", label: "Equipment Rental", href: "/shop", icon: Camera },
   { key: "footer.services.bundles", label: "Production Bundles", href: "/shop?category=bundles", icon: Layers },

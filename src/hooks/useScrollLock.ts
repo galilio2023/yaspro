@@ -13,17 +13,24 @@ export function lockScroll() {
 
   if (lockCount === 0) {
     // Measure scrollbar width before locking to avoid layout jump
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    const docEl = document.documentElement;
+    const scrollbarWidth =
+      docEl && typeof docEl.clientWidth === "number" && typeof window.innerWidth === "number"
+        ? Math.max(0, window.innerWidth - docEl.clientWidth)
+        : 0;
 
-    originalBodyOverflow = document.body.style.overflow;
-    originalHtmlOverflow = document.documentElement.style.overflow;
-    originalBodyPaddingRight = document.body.style.paddingRight;
+    if (document.body?.style) {
+      originalBodyOverflow = document.body.style.overflow;
+      originalBodyPaddingRight = document.body.style.paddingRight;
+      document.body.style.overflow = "hidden";
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+    }
 
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    if (docEl?.style) {
+      originalHtmlOverflow = docEl.style.overflow;
+      docEl.style.overflow = "hidden";
     }
   }
   lockCount++;
@@ -35,9 +42,13 @@ export function unlockScroll() {
   lockCount = Math.max(0, lockCount - 1);
 
   if (lockCount === 0) {
-    document.documentElement.style.overflow = originalHtmlOverflow;
-    document.body.style.overflow = originalBodyOverflow;
-    document.body.style.paddingRight = originalBodyPaddingRight;
+    if (document.documentElement?.style) {
+      document.documentElement.style.overflow = originalHtmlOverflow;
+    }
+    if (document.body?.style) {
+      document.body.style.overflow = originalBodyOverflow;
+      document.body.style.paddingRight = originalBodyPaddingRight;
+    }
   }
 }
 

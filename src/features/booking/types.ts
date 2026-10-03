@@ -48,6 +48,7 @@ export interface StudioItem {
   desc: string;
   rate: number;
   image?: string;
+  isActive?: boolean;
 }
 
 export interface StudioGearPackage {

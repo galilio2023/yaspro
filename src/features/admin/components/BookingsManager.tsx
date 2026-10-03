@@ -4,6 +4,13 @@ import React, { useState, useRef, useCallback } from "react";
 import {
   CalendarCheck,
   FileText,
+  Search,
+  Clock,
+  CheckCircle2,
+  DollarSign,
+  Filter,
+  Layers,
+  AlertCircle,
 } from "lucide-react";
 import { updateBookingStatus, updateBookingPaymentStatus, type EnrichedBooking } from "@/lib/actions/bookings-rfp-operations";
 import { formatCurrency } from "@/lib/utils";
@@ -21,13 +28,39 @@ interface BookingsManagerProps {
 
 export function BookingsManager({ initialBookings }: BookingsManagerProps) {
   const [bookingList, setBookingList] = useState<EnrichedBooking[]>(initialBookings);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "confirmed" | "completed" | "cancelled">("all");
+  const [paymentFilter, setPaymentFilter] = useState<"all" | "unpaid" | "deposit_paid" | "paid" | "refunded">("all");
   const [updatingIds, setUpdatingIds] = useState<Set<string>>(new Set());
   const [callSheetBookingId, setCallSheetBookingId] = useState<string | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3000);
 
-  const pagination = usePagination(bookingList, 20);
+  const filteredBookings = bookingList.filter((b) => {
+    const q = searchQuery.toLowerCase();
+    const matchesSearch =
+      !q ||
+      b.referenceCode.toLowerCase().includes(q) ||
+      (b.userName && b.userName.toLowerCase().includes(q)) ||
+      (b.userEmail && b.userEmail.toLowerCase().includes(q)) ||
+      (b.userPhone && b.userPhone.toLowerCase().includes(q)) ||
+      (b.userCompany && b.userCompany.toLowerCase().includes(q)) ||
+      (b.studioName && b.studioName.toLowerCase().includes(q)) ||
+      b.sessionType.toLowerCase().includes(q);
+
+    const matchesStatus = statusFilter === "all" || b.status === statusFilter;
+    const matchesPayment = paymentFilter === "all" || b.paymentStatus === paymentFilter;
+
+    return matchesSearch && matchesStatus && matchesPayment;
+  });
+
+  const pagination = usePagination(filteredBookings, 20);
+
+  const totalPending = bookingList.filter((b) => b.status === "pending").length;
+  const totalConfirmed = bookingList.filter((b) => b.status === "confirmed").length;
+  const totalCompleted = bookingList.filter((b) => b.status === "completed").length;
+  const totalPaid = bookingList.filter((b) => b.paymentStatus === "paid" || b.paymentStatus === "deposit_paid").length;
 
   const callSheetBooking =
     bookingList.find((b) => b.id === callSheetBookingId) ?? null;
@@ -114,6 +147,101 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         )}
       </div>
 
+      {/* KPI Summary Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
+          <span className="text-[11px] text-slate-400 font-mono uppercase block">Total Bookings</span>
+          <span className="text-xl font-bold text-white font-mono mt-1 block">{bookingList.length}</span>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
+          <span className="text-[11px] text-amber-400 font-mono uppercase block">Pending Approval</span>
+          <span className="text-xl font-bold text-amber-300 font-mono mt-1 block">{totalPending}</span>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
+          <span className="text-[11px] text-emerald-400 font-mono uppercase block">Confirmed Sessions</span>
+          <span className="text-xl font-bold text-emerald-300 font-mono mt-1 block">{totalConfirmed}</span>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
+          <span className="text-[11px] text-blue-400 font-mono uppercase block">Paid / Deposit Paid</span>
+          <span className="text-xl font-bold text-blue-300 font-mono mt-1 block">{totalPaid}</span>
+        </div>
+      </div>
+
+      {/* Search and Filter Controls */}
+      <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="relative w-full sm:w-80">
+            <input
+              type="text"
+              placeholder="Search reference, client, email, studio..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                pagination.resetPage();
+              }}
+              className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
+            />
+            <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
+          </div>
+
+          {/* Payment Status Quick Filter Pills */}
+          <div className="flex items-center gap-1.5 self-end sm:self-auto flex-wrap">
+            {(["all", "paid", "deposit_paid", "unpaid"] as const).map((payStatus) => (
+              <button
+                key={payStatus}
+                type="button"
+                onClick={() => {
+                  setPaymentFilter(payStatus);
+                  pagination.resetPage();
+                }}
+                className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize transition-all cursor-pointer ${
+                  paymentFilter === payStatus
+                    ? "bg-amber-500 text-slate-950 font-bold shadow-lg shadow-amber-500/20"
+                    : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                {payStatus === "all" ? "All Payments" : payStatus.replace("_", " ")}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Booking Status Tabs */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pt-1 pb-0.5 scrollbar-none">
+          {[
+            { id: "all", label: "All Bookings", count: bookingList.length },
+            { id: "pending", label: "Pending", count: totalPending },
+            { id: "confirmed", label: "Confirmed", count: totalConfirmed },
+            { id: "completed", label: "Completed", count: totalCompleted },
+            { id: "cancelled", label: "Cancelled", count: bookingList.filter(b => b.status === "cancelled").length },
+          ].map((tab) => {
+            const isActive = statusFilter === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => {
+                  setStatusFilter(tab.id as any);
+                  pagination.resetPage();
+                }}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition-all cursor-pointer ${
+                  isActive
+                    ? "bg-white/15 text-white border border-white/20 shadow-md"
+                    : "bg-white/[0.03] text-slate-400 hover:text-white border border-white/5 hover:bg-white/[0.06]"
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                  isActive ? "bg-amber-500 text-slate-950 font-bold" : "bg-white/10 text-slate-400"
+                }`}>
+                  {tab.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Bookings Table */}
       <DataTable>
         <DataTableHeader>
@@ -130,8 +258,8 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
           </tr>
         </DataTableHeader>
         <DataTableBody>
-          {bookingList.length === 0 ? (
-            <DataTableEmpty colSpan={9} message="No bookings logged yet in the database." />
+          {filteredBookings.length === 0 ? (
+            <DataTableEmpty colSpan={9} message="No bookings matching your search or filters." />
           ) : (
             pagination.paginatedItems.map((b) => (
               <DataTableRow key={b.id}>

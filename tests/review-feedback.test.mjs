@@ -15,8 +15,14 @@ function loadSource(file, mocks, globals = {}) {
     },
   });
   const exports = {};
+  const defaultDocument = {
+    body: { style: {} },
+    documentElement: { style: {}, clientWidth: 1024 },
+    getElementById: () => null,
+  };
   vm.runInNewContext(outputText, {
     exports, Error, Date, setTimeout: () => 1, clearTimeout() {},
+    document: defaultDocument,
     require: (name) => {
       if (Object.hasOwn(mocks, name)) return mocks[name];
       if (name.startsWith('.')) return loadSource(path.resolve(path.dirname(file), `${name}.ts`), mocks, globals);
@@ -48,6 +54,8 @@ function hookHarness() {
     useCallback: (fn) => fn,
     useMemo: (fn) => fn(),
     useEffect(effect) { effects.push(effect); },
+    useSyncExternalStore: (_subscribe, getSnapshot, getServerSnapshot) =>
+      getSnapshot ? getSnapshot() : getServerSnapshot ? getServerSnapshot() : undefined,
   };
   return {
     hooks,
@@ -77,18 +85,22 @@ function managerFixture([name, prop, action, editTitle, fields], save, rowOverri
     react: harness.hooks,
     'next/image': 'Image',
     'lucide-react': new Proxy({}, { get: (_, key) => key }),
-    '@/lib/cms-actions': { [action]: save },
-    '@/lib/actions/equipment-gear': { [action]: save },
-    '@/lib/actions/influencers': { [action]: save },
+    '@/lib/cms-actions': { [action]: save, deleteCmsEquipment: async () => ({ success: true }), deleteCmsStudio: async () => ({ success: true }), deleteCmsInfluencer: async () => ({ success: true }) },
+    '@/lib/actions/equipment-gear': { [action]: save, deleteCmsEquipment: async () => ({ success: true }) },
+    '@/lib/actions/influencers': { [action]: save, deleteCmsInfluencer: async () => ({ success: true }) },
     '@/lib/actions/projects': { [action]: save },
-    '@/lib/actions/studios-soundstages-operations': { [action]: save },
+    '@/lib/actions/studios-soundstages-operations': { [action]: save, deleteCmsStudio: async () => ({ success: true }) },
     '@/lib/utils': { formatCurrency: String },
     '@/components/ui/dialog': { Dialog: 'Dialog' },
     '@/components/ui/feedback-alert': { FeedbackAlert: 'FeedbackAlert' },
     '@/components/admin/AdminImageUploader': { AdminImageUploader: 'Uploader' },
+    '@/components/admin/AdminConfirmModal': { AdminConfirmModal: () => null },
+    '@/components/ui/pagination-controls': { PaginationControls: 'PaginationControls' },
+    '@/components/ui/data-table': { DataTableEmpty: 'DataTableEmpty' },
   };
   mocks['@/hooks/useFeedbackAlert'] = loadSource('src/hooks/useFeedbackAlert.ts', mocks);
   mocks['@/hooks/useCrud'] = loadSource('src/hooks/useCrud.ts', mocks);
+  mocks['@/hooks/usePagination'] = loadSource('src/hooks/usePagination.ts', mocks);
   const Component = loadSource(`src/features/admin/components/${name}.tsx`, mocks, {
     alert: (message) => alerts.push(message),
   })[name];
@@ -704,6 +716,7 @@ test('command palette exposes and scrolls the active option as arrow keys wrap a
   const scrolled = [];
   const { CommandPalette } = loadSource('src/components/layout/CommandPalette.tsx', {
     react: { ...harness.hooks, useId: () => 'palette-test' },
+    'react-dom': { createPortal: (node) => node },
     'next/navigation': { useRouter: () => ({ push() {} }) },
     'lucide-react': new Proxy({}, { get: (_, key) => key }),
     '@/hooks/useFocusTrap': { useFocusTrap() {} },

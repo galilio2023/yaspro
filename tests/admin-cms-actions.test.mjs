@@ -285,3 +285,137 @@ test('reservations reject inconsistent schedules before database work and derive
     assert.match(fixture.inserts[0].message, /Shoot Dates: 2026-12-30 to 2027-01-02/);
   }
 });
+
+test('deleteCmsEquipment deletes record by id or slug and triggers revalidation', async () => {
+  let deletedWhere = null;
+  const revalidatedPaths = [];
+  const updatedTags = [];
+
+  const mockDb = {
+    delete: () => ({
+      where: (clause) => {
+        deletedWhere = clause;
+        return Promise.resolve();
+      },
+    }),
+  };
+
+  const { deleteCmsEquipment } = loadSource('src/lib/actions/equipment-gear.ts', {
+    '@/db': { db: mockDb },
+    '@/db/schema': schemaMock,
+    'drizzle-orm': { eq: (col, val) => ({ col, val }), desc: () => {} },
+    'next/cache': {
+      revalidatePath: (p) => revalidatedPaths.push(p),
+      updateTag: (t) => updatedTags.push(t),
+    },
+    './shared': {
+      isDbAvailable: () => true,
+      requireAdmin: async () => {},
+      isUuid: (id) => id?.includes('-'),
+    },
+    '../../features/gear/lib/cart-pricing': { calculateGearCartTotals: () => {} },
+    '../../features/gear/lib/rental-schedule': { addCalendarDays: () => {}, isRentalScheduleConsistent: () => true },
+    '../rate-limit': { checkRateLimit: () => ({ success: true }), getClientIdentifier: () => 'test' },
+    '@/features/gear/data': { GEAR_DATA: [] },
+    '@/lib/utils': { slugify: (s) => s, generateBookingReference: () => 'REF' },
+  });
+
+  const resUuid = await deleteCmsEquipment('12345678-1234-1234-1234-123456789abc');
+  assert.equal(resUuid.success, true);
+  assert.equal(deletedWhere.val, '12345678-1234-1234-1234-123456789abc');
+
+  const resSlug = await deleteCmsEquipment('arri-alexa-mini');
+  assert.equal(resSlug.success, true);
+  assert.equal(deletedWhere.val, 'arri-alexa-mini');
+  assert.ok(revalidatedPaths.includes('/shop'));
+  assert.ok(revalidatedPaths.includes('/admin/gear'));
+  assert.ok(updatedTags.includes('gear'));
+});
+
+test('deleteCmsStudio guards against active bookings and deletes when unencumbered', async () => {
+  let bookingsQueryCount = 0;
+  let deletedWhere = null;
+  let existingBookings = [{ id: 'booking-1' }];
+
+  const mockDb = {
+    select: () => ({
+      from: () => ({
+        where: () => ({
+          limit: async () => existingBookings,
+        }),
+      }),
+    }),
+    delete: () => ({
+      where: (clause) => {
+        deletedWhere = clause;
+        return Promise.resolve();
+      },
+    }),
+  };
+
+  const { deleteCmsStudio } = loadSource('src/lib/actions/studios-soundstages-operations.ts', {
+    '@/db': { db: mockDb },
+    '@/db/schema': schemaMock,
+    'drizzle-orm': { eq: (col, val) => ({ col, val }), desc: () => {} },
+    'next/cache': {
+      revalidatePath: () => {},
+      updateTag: () => {},
+    },
+    './shared': {
+      isDbAvailable: () => true,
+      requireAdmin: async () => {},
+      isUuid: (id) => id?.includes('-'),
+    },
+    '@/features/booking/constants': { STUDIOS: [] },
+  });
+
+  // 1. Should fail when studio has existing bookings
+  const blockedRes = await deleteCmsStudio('11111111-2222-3333-4444-555555555555');
+  assert.equal(blockedRes.success, false);
+  assert.match(blockedRes.error, /associated bookings/);
+  assert.equal(deletedWhere, null);
+
+  // 2. Should succeed when no bookings exist
+  existingBookings = [];
+  const allowedRes = await deleteCmsStudio('11111111-2222-3333-4444-555555555555');
+  assert.equal(allowedRes.success, true);
+  assert.equal(deletedWhere.val, '11111111-2222-3333-4444-555555555555');
+});
+
+test('deleteCmsInfluencer removes creator profile and revalidates caches', async () => {
+  let deletedWhere = null;
+  const revalidatedPaths = [];
+  const updatedTags = [];
+
+  const mockDb = {
+    delete: () => ({
+      where: (clause) => {
+        deletedWhere = clause;
+        return Promise.resolve();
+      },
+    }),
+  };
+
+  const { deleteCmsInfluencer } = loadSource('src/lib/actions/influencers.ts', {
+    '@/db': { db: mockDb },
+    '@/db/schema': schemaMock,
+    'drizzle-orm': { eq: (col, val) => ({ col, val }), desc: () => {} },
+    'next/cache': {
+      revalidatePath: (p) => revalidatedPaths.push(p),
+      updateTag: (t) => updatedTags.push(t),
+    },
+    './shared': {
+      isDbAvailable: () => true,
+      requireAdmin: async () => {},
+      isUuid: (id) => id?.includes('-'),
+    },
+    '@/features/influencers/data': { INFLUENCERS_DATA: [] },
+  });
+
+  const res = await deleteCmsInfluencer('aboflah');
+  assert.equal(res.success, true);
+  assert.equal(deletedWhere.val, 'aboflah');
+  assert.ok(revalidatedPaths.includes('/influencers'));
+  assert.ok(revalidatedPaths.includes('/admin/influencers'));
+  assert.ok(updatedTags.includes('influencers'));
+});

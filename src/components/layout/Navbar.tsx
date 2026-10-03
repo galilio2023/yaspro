@@ -20,6 +20,7 @@ export interface NavItemConfig extends NavLinkItem {
 
 const NAV_LINKS: readonly NavItemConfig[] = [
   { key: "nav.productions", label: "Productions", href: "/projects" },
+  { key: "nav.soundstages", label: "Soundstages", href: "/studios" },
   { key: "nav.gear", label: "Gear Rental", href: "/shop" },
   { key: "nav.creators", label: "Creators", href: "/influencers" },
   { key: "nav.enterprise", label: "Enterprise", href: "/enterprise" },

@@ -427,3 +427,28 @@ export async function createGearBookingOrder(
     };
   }
 }
+
+/**
+ * Deletes an equipment item from the catalog in Neon PostgreSQL.
+ *
+ * @param id - UUID or slug of the equipment item to remove.
+ * @returns CMS response confirming deletion.
+ */
+export async function deleteCmsEquipment(id: string): Promise<CmsResponse> {
+  try {
+    await requireAdmin();
+    if (isDbAvailable()) {
+      if (isUuid(id)) {
+        await db.delete(equipment).where(eq(equipment.id, id));
+      } else {
+        await db.delete(equipment).where(eq(equipment.slug, id));
+      }
+    }
+    revalidatePath("/shop");
+    revalidatePath("/admin/gear");
+    updateTag("gear");
+    return { success: true, message: "Equipment item removed from fleet catalog." };
+  } catch (error) {
+    return { success: false, error: (error as Error).message };
+  }
+}
