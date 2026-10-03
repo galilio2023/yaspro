@@ -17,7 +17,7 @@ import {
 
 interface BookingSummaryProps {
   state: BookingState;
-  studio: StudioItem;
+  studio?: StudioItem;
   sessionTypeObj?: SessionTypeItem;
   total: number;
   breakdown?: BookingPricingBreakdown;
@@ -95,12 +95,12 @@ export function BookingSummary({
             {isArabic ? "الاستوديو المحدد" : "Reserved Stage"}
           </span>
           <p className="text-base font-bold text-text-primary font-display">
-            {studio.name}
+            {(studio?.name || "Select a studio")}
           </p>
           <div className="flex items-center justify-between text-xs text-amber-400 font-semibold mt-1.5">
-            <span>{formatCurrency(studio.rate * exchangeRate, currency)} {isArabic ? "/ ساعة" : "/ hour"}</span>
+            <span>{formatCurrency((studio?.rate || 0) * exchangeRate, currency)} {isArabic ? "/ ساعة" : "/ hour"}</span>
             <span className="font-mono text-text-primary">
-              {formatCurrency((breakdown ? breakdown.studioCost : studio.rate * state.durationHours) * exchangeRate, currency)}
+              {formatCurrency((breakdown ? breakdown.studioCost : (studio?.rate || 0) * state.durationHours) * exchangeRate, currency)}
             </span>
           </div>
         </div>
@@ -253,7 +253,7 @@ export function BookingSummary({
         {/* WhatsApp Fast Dispatch CTA */}
         <a
           href={`https://wa.me/971554010465?text=${encodeURIComponent(
-            `Hello Yas Pro Dubai Studio Team,\n\nI am requesting a studio booking hold:\n• Studio: ${studio.name}\n• Date: ${state.date || "To be confirmed"}\n• Duration: ${state.durationHours} Hours\n• Type: ${sessionTypeObj?.label || "Production"}\n• Estimated Total: ${formatCurrency(total)}\n\nPlease confirm availability and lock the calendar hold for us.`
+            `Hello Yas Pro Dubai Studio Team,\n\nI am requesting a studio booking hold:\n• Studio: ${(studio?.name || "Select a studio")}\n• Date: ${state.date || "To be confirmed"}\n• Duration: ${state.durationHours} Hours\n• Type: ${sessionTypeObj?.label || "Production"}\n• Estimated Total: ${formatCurrency(total)}\n\nPlease confirm availability and lock the calendar hold for us.`
           )}`}
           target="_blank"
           rel="noopener noreferrer"

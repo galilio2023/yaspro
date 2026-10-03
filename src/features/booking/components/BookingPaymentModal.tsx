@@ -153,14 +153,14 @@ export function BookingPaymentModal({
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[60] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+    <div className="fixed inset-0 z-[60] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto overscroll-contain">
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label="Secure UAE Checkout"
         tabIndex={-1}
-        className="relative w-full max-w-lg my-auto rounded-3xl bg-[#090a0f] border border-white/10 shadow-2xl p-6 sm:p-8 text-start animate-fade-up max-h-[92vh] overflow-y-auto"
+        className="relative w-full max-w-lg my-auto rounded-3xl bg-[#090a0f] border border-white/10 shadow-2xl p-6 sm:p-8 text-start animate-fade-up max-h-[92vh] overflow-y-auto overscroll-contain"
       >
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-5">

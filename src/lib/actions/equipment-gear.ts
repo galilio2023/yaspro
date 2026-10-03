@@ -1,6 +1,7 @@
 "use server";
 
 import { calculateGearCartTotals } from "../../features/gear/lib/cart-pricing";
+import { addCalendarDays, isRentalScheduleConsistent } from "../../features/gear/lib/rental-schedule";
 import { checkRateLimit, getClientIdentifier } from "../rate-limit";
 import { z } from "zod";
 import { db } from "@/db";
@@ -211,11 +212,16 @@ const gearReservationSchema = z.object({
   phone: z.string().trim().regex(/^\+?[\d\s()-]{7,30}$/, "Please provide a valid phone number.")
     .refine((value) => value.replace(/\D/g, "").length >= 7, "Please provide a valid phone number."),
   company: z.string().trim().max(200, "Company name is too long.").optional(),
-  durationDays: z.number().refine((days) => [1, 3, 7].includes(days), "Please select a rental duration of 1, 3, or 7 days."),
+  durationDays: z.number().int().min(1, "Rental duration must be at least 1 day.").max(365, "Rental duration cannot exceed 365 days."),
   deliveryMethod: z.enum(["soundstage", "dubai_courier", "hub_pickup"], {
     error: "Please select a valid delivery method.",
   }).default("soundstage"),
   notes: z.string().trim().max(2000, "Notes must be 2000 characters or fewer.").optional(),
+  startDate: z.iso.date().optional(),
+  returnDate: z.iso.date().optional(),
+}).refine(isRentalScheduleConsistent, {
+  path: ["returnDate"],
+  message: "Return date must follow the start date by exactly durationDays calendar days.",
 });
 
 export type GearReservationInput = z.input<typeof gearReservationSchema>;
@@ -256,6 +262,7 @@ export async function submitGearReservation(
       `[GEAR RENTAL RESERVATION - ${referenceCode}]`,
       `Item: ${gear.name} (ID: ${gear.id})`,
       `Duration: ${input.durationDays} Day(s)`,
+      input.startDate ? `Shoot Dates: ${input.startDate} to ${input.returnDate || addCalendarDays(input.startDate, input.durationDays)}` : "",
       `Delivery Method: ${input.deliveryMethod}`,
       `Estimated Amount: AED ${total.toLocaleString()}`,
       input.notes ? `Client Notes: ${input.notes}` : "",
@@ -299,6 +306,10 @@ const gearOrderSchema = z.object({
   deliveryMethod: z.enum(["studio_delivery", "courier_dubai", "pickup_hub"]).default("studio_delivery"),
   notes: z.string().optional(),
   startDate: z.iso.date().optional(),
+  returnDate: z.iso.date().optional(),
+}).refine(isRentalScheduleConsistent, {
+  path: ["returnDate"],
+  message: "Return date must follow the start date by exactly durationDays calendar days.",
 });
 
 export type GearOrderInput = z.input<typeof gearOrderSchema>;
@@ -355,6 +366,10 @@ export async function createGearBookingOrder(
       // 3. Insert into bookings
       const referenceCode = generateBookingReference();
       const scheduledAtDate = input.startDate ? new Date(input.startDate) : new Date();
+      const returnDateStr = input.returnDate || (input.startDate ? addCalendarDays(input.startDate, input.durationDays) : null);
+      const scheduleSummary = input.startDate
+        ? ` | Shoot Schedule: ${input.startDate} to ${returnDateStr} (${input.durationDays}d)`
+        : ` | Duration: ${input.durationDays}d`;
 
       const [newBooking] = await db
         .insert(bookings)
@@ -367,7 +382,7 @@ export async function createGearBookingOrder(
           durationHours: input.durationDays * 24,
           headcount: 1,
           equipmentIds: input.gearIds,
-          propsNotes: `Gear Delivery: ${input.deliveryMethod}`,
+          propsNotes: `Gear Delivery: ${input.deliveryMethod}${scheduleSummary}`,
           specialRequests: finalUserId
             ? input.notes || null
             : `[Contact: ${input.customerName} | ${input.email} | ${input.phone}${input.company ? ` | ${input.company}` : ""}]${input.notes ? ` — ${input.notes}` : ""}`,
@@ -410,5 +425,30 @@ export async function createGearBookingOrder(
       success: false,
       error: "Unable to process gear rental booking. Please retry or contact us on WhatsApp.",
     };
+  }
+}
+
+/**
+ * Deletes an equipment item from the catalog in Neon PostgreSQL.
+ *
+ * @param id - UUID or slug of the equipment item to remove.
+ * @returns CMS response confirming deletion.
+ */
+export async function deleteCmsEquipment(id: string): Promise<CmsResponse> {
+  try {
+    await requireAdmin();
+    if (isDbAvailable()) {
+      if (isUuid(id)) {
+        await db.delete(equipment).where(eq(equipment.id, id));
+      } else {
+        await db.delete(equipment).where(eq(equipment.slug, id));
+      }
+    }
+    revalidatePath("/shop");
+    revalidatePath("/admin/gear");
+    updateTag("gear");
+    return { success: true, message: "Equipment item removed from fleet catalog." };
+  } catch (error) {
+    return { success: false, error: (error as Error).message };
   }
 }

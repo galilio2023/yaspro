@@ -1,12 +1,13 @@
 import Image from "next/image";
 import { cn, formatCurrency } from "@/lib/utils";
-import type { WizardStepProps } from "../../types";
-import { STUDIOS } from "../../constants";
+import type { StudioItem, WizardStepProps } from "../../types";
 import { Check } from "lucide-react";
 
 import { VirtualStageConfigurator } from "../VirtualStageConfigurator";
 
-export function StepStudio({ state, update }: WizardStepProps) {
+export function StepStudio({ state, update, studios }: WizardStepProps & { studios: StudioItem[] }) {
+  const visibleStudios = studios.filter((studio) => studio.isActive !== false);
+
   return (
     <div className="space-y-6">
       <VirtualStageConfigurator />
@@ -21,7 +22,7 @@ export function StepStudio({ state, update }: WizardStepProps) {
       </div>
 
       <div className="space-y-3">
-      {STUDIOS.map((s) => {
+      {visibleStudios.map((s) => {
         const isSelected = state.studioId === s.id;
 
         return (

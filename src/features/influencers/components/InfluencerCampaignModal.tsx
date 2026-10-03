@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useSyncExternalStore } from "react";
+import { useState, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { X, Sparkles, CheckCircle2, Send, Building, DollarSign, Calendar, AlertCircle } from "lucide-react";
 import { submitInfluencerCampaignRequest } from "@/lib/actions";
@@ -68,15 +68,6 @@ export function InfluencerCampaignModal({
     initialFocusRef: closeButtonRef,
   });
 
-  // Lock body scroll
-  useEffect(() => {
-    if (!isOpen) return;
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = originalOverflow || "";
-    };
-  }, [isOpen]);
 
   if (!mounted || !isOpen) return null;
 

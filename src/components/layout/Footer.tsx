@@ -26,7 +26,7 @@ import { FooterLinkItem } from "./FooterNavLinks";
 
 const PRODUCTION_SERVICES: readonly FooterLinkItem[] = [
   { key: "footer.services.enterprise", label: "Enterprise Sovereign Solutions", href: "/enterprise", icon: Building2 },
-  { key: "footer.services.studios", label: "Studio Stage Bookings", href: "/studio-booking", icon: Calendar },
+  { key: "footer.services.studios", label: "Soundstages & Studios Hub", href: "/studios", icon: Calendar },
   { key: "footer.services.obVan", label: "OB-VAN Live Broadcast", href: "/enterprise#ob-van-command", icon: Radio },
   { key: "footer.services.gear", label: "Equipment Rental", href: "/shop", icon: Camera },
   { key: "footer.services.bundles", label: "Production Bundles", href: "/shop?category=bundles", icon: Layers },
@@ -187,21 +187,22 @@ export default function Footer() {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3" dir="ltr" style={{ direction: "ltr" }}>
+          <div className="flex items-center gap-2.5 overflow-x-auto lg:grid lg:grid-cols-7 scrollbar-none pb-2 lg:pb-0" dir="ltr" style={{ direction: "ltr" }}>
             {YAS_GROUP_COMPANIES.map((company) => (
-              <div
+              <Link
                 key={company.id}
+                href="/about#conglomerate"
                 title={`${company.name} — ${company.division}`}
-                className="h-14 rounded-xl bg-black/40 border border-white/8 hover:border-amber-500/40 p-2 flex items-center justify-center transition-all duration-300 group cursor-default"
+                className="h-13 w-32 lg:w-auto px-2.5 rounded-xl bg-black/40 border border-white/8 hover:border-amber-500/40 flex items-center justify-center transition-all duration-300 group shrink-0 cursor-pointer"
               >
                 <Image
                   src={company.logo}
                   alt={company.name}
-                  width={140}
-                  height={50}
+                  width={120}
+                  height={38}
                   className="max-h-full max-w-full h-auto w-auto object-contain opacity-70 group-hover:opacity-100 filter group-hover:brightness-110 transition-all duration-300"
                 />
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -218,8 +219,8 @@ export default function Footer() {
               {t("footer.terms")}
             </Link>
 
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[11px]">
-              <span className="size-1.5 rounded-full bg-emerald-400" />
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 font-mono text-[11px]">
+              <span className="size-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.7)]" />
               <span>{t("footer.soundstagesOnline")}</span>
             </span>
           </div>

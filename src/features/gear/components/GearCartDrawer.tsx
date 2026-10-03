@@ -14,6 +14,8 @@ import {
   Trash2,
   Sparkles,
   Plus,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { GearItem, RentalDateRange } from "../types";
@@ -24,6 +26,8 @@ import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { useCart } from "@/components/providers/CartProvider";
 import { GearCheckoutModal } from "./GearCheckoutModal";
+
+import { addCalendarDays, getLocalCalendarDate, normalizeRentalDateRange } from "../lib/rental-schedule";
 
 const emptySubscribe = () => () => {};
 
@@ -47,13 +51,29 @@ export function GearCartDrawer({
   const cartContext = useCart();
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
+  const [isEditingSchedule, setIsEditingSchedule] = useState(false);
+  const todayStr = getLocalCalendarDate();
+
   const effectiveItems = items ?? cartContext.items;
-  const effectiveDateRange = dateRange ?? cartContext.dateRange;
+  const [editedDateRange, setEditedDateRange] = useState<RentalDateRange | null>(null);
+  const effectiveDateRange = editedDateRange ?? dateRange ?? cartContext.dateRange;
   const effectiveDeliveryMethod = cartContext.deliveryMethod;
   const setEffectiveDeliveryMethod = cartContext.setDeliveryMethod;
   const handleRemove = onRemoveItem ?? cartContext.removeItem;
   const handleAdd = onAddItem ?? cartContext.addItem;
   const handleClear = onClearCart ?? cartContext.clearCart;
+
+  const handleScheduleChange = (pickup: string, returnDateStr: string) => {
+    const range = normalizeRentalDateRange(pickup, returnDateStr);
+    if (!range) return;
+    if (dateRange) setEditedDateRange(range);
+    cartContext.setDateRange(range);
+  };
+
+  const handleSchedulePreset = (days: number) => {
+    const pickup = getLocalCalendarDate();
+    handleScheduleChange(pickup, addCalendarDays(pickup, days));
+  };
 
   const [localOpen, setLocalOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -81,15 +101,6 @@ export function GearCartDrawer({
     initialFocusRef: closeButtonRef,
   });
 
-  // Lock body scroll when breakdown modal is open
-  useEffect(() => {
-    if (!isOpen) return;
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = originalOverflow || "";
-    };
-  }, [isOpen]);
 
   // Signal to global floating widgets (e.g. WhatsApp concierge) that bottom cart bar is active
   useEffect(() => {
@@ -440,24 +451,117 @@ export function GearCartDrawer({
               </div>
             </div>
 
-            {/* Footer Summary */}
-            <div className="pt-4 border-t border-white/10 space-y-2">
-              <div className="flex items-center justify-between text-xs text-text-secondary">
-                <span className="flex items-center gap-1.5">
-                  <Calendar size={13} className="text-text-muted shrink-0" />
-                  <span>
-                    {effectiveDateRange.pickupDate} {isArabic ? "إلى" : "to"} {effectiveDateRange.returnDate} ({effectiveDateRange.totalDays} {isArabic ? "أيام" : "Days"})
+            {/* Footer Summary & Interactive Schedule Customizer */}
+            <div className="pt-3.5 border-t border-white/10 space-y-2.5">
+              {/* Schedule Card & Inline Toggle */}
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3 space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <Calendar size={13} className="text-amber-400 shrink-0" />
+                    <span className="text-white font-mono text-[11px] truncate">
+                      {effectiveDateRange.pickupDate} → {effectiveDateRange.returnDate}
+                    </span>
+                    <span className="text-[10px] text-zinc-400 font-mono">
+                      ({effectiveDateRange.totalDays} {isArabic ? "أيام" : "d"})
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingSchedule((prev) => !prev)}
+                    className="text-[11px] font-semibold text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer shrink-0 transition-colors"
+                    aria-expanded={isEditingSchedule}
+                  >
+                    <span>{isEditingSchedule ? (isArabic ? "إخفاء" : "Done") : (isArabic ? "تعديل التواريخ" : "Change Dates")}</span>
+                    {isEditingSchedule ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                  </button>
+                </div>
+
+                {/* Inline Collapsible Schedule Editor */}
+                {isEditingSchedule && (
+                  <div className="pt-2 border-t border-white/10 space-y-2.5 animate-fade-in">
+                    {/* Quick Presets */}
+                    <div className="grid grid-cols-3 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleSchedulePreset(1)}
+                        className={`px-2 py-1.5 rounded-lg text-[10px] font-semibold transition-all cursor-pointer text-center ${
+                          effectiveDateRange.totalDays === 1
+                            ? "bg-amber-500 text-zinc-950 font-bold"
+                            : "bg-white/5 text-zinc-300 hover:bg-white/10"
+                        }`}
+                      >
+                        {isArabic ? "يوم واحد" : "1 Day"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSchedulePreset(3)}
+                        className={`px-2 py-1.5 rounded-lg text-[10px] font-semibold transition-all cursor-pointer text-center relative ${
+                          effectiveDateRange.totalDays === 3
+                            ? "bg-amber-500 text-zinc-950 font-bold"
+                            : "bg-white/5 text-zinc-300 hover:bg-white/10"
+                        }`}
+                      >
+                        {isArabic ? "عطلة (3 أيام)" : "Weekend (3d)"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSchedulePreset(7)}
+                        className={`px-2 py-1.5 rounded-lg text-[10px] font-semibold transition-all cursor-pointer text-center relative ${
+                          effectiveDateRange.totalDays === 7
+                            ? "bg-amber-500 text-zinc-950 font-bold"
+                            : "bg-white/5 text-zinc-300 hover:bg-white/10"
+                        }`}
+                      >
+                        {isArabic ? "أسبوع (7 أيام)" : "Weekly (7d)"}
+                      </button>
+                    </div>
+
+                    {/* Dual Date Inputs */}
+                    <div className="grid grid-cols-2 gap-2 pt-0.5">
+                      <div>
+                        <label className="block text-[9px] font-mono uppercase tracking-wider text-zinc-400 mb-1">
+                          {isArabic ? "تاريخ الاستلام" : "Pickup Date"}
+                        </label>
+                        <input
+                          type="date"
+                          min={todayStr}
+                          value={effectiveDateRange.pickupDate}
+                          onChange={(e) => handleScheduleChange(e.target.value, effectiveDateRange.returnDate)}
+                          className="w-full bg-black/80 border border-white/15 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[9px] font-mono uppercase tracking-wider text-zinc-400 mb-1">
+                          {isArabic ? "تاريخ الإرجاع" : "Return Date"}
+                        </label>
+                        <input
+                          type="date"
+                          min={addCalendarDays(effectiveDateRange.pickupDate, 1)}
+                          value={effectiveDateRange.returnDate}
+                          onChange={(e) => handleScheduleChange(effectiveDateRange.pickupDate, e.target.value)}
+                          className="w-full bg-black/80 border border-white/15 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Tier Discount Status */}
+                <div className="flex items-center justify-between text-[11px] pt-0.5">
+                  <span className="text-zinc-400">
+                    {isArabic ? "مستوى الخصم المطبق:" : "Tier Applied:"}
                   </span>
-                </span>
-                <span className="text-amber-400 font-medium">
-                  {effectiveDateRange.discountPercentage > 0
-                    ? isArabic
-                      ? `تم تطبيق خصم ${effectiveDateRange.discountPercentage}%`
-                      : `${effectiveDateRange.discountPercentage}% Discount Applied`
-                    : isArabic
-                    ? "السعر اليومي القياسي"
-                    : "Standard Tier"}
-                </span>
+                  <span className="text-amber-400 font-semibold font-mono">
+                    {effectiveDateRange.discountPercentage > 0
+                      ? isArabic
+                        ? `خصم ${effectiveDateRange.discountPercentage}%`
+                        : `${effectiveDateRange.discountPercentage}% Discount Applied`
+                      : isArabic
+                      ? "السعر اليومي القياسي"
+                      : "Standard Daily Rate"}
+                  </span>
+                </div>
               </div>
 
               <div className="flex items-center justify-between text-xs text-text-secondary">

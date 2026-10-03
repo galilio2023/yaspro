@@ -1,5 +1,6 @@
 "use client";
 
+import type { StudioItem } from "../types";
 import { useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { AlertCircle, Cpu } from "lucide-react";
@@ -20,7 +21,7 @@ import { StepProps } from "./steps/StepProps";
 import { StepPostProduction } from "./steps/StepPostProduction";
 import { StepContact } from "./steps/StepContact";
 
-export function BookingWizard() {
+export function BookingWizard({ studios }: { studios: StudioItem[] }) {
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const {
     step,
@@ -41,7 +42,7 @@ export function BookingWizard() {
     isAiConfigured,
     setIsAiConfigured,
     handleSubmit,
-  } = useBookingWizard();
+  } = useBookingWizard(studios);
 
   const [direction, setDirection] = useState(1);
 
@@ -60,7 +61,7 @@ export function BookingWizard() {
 
   const handleApplyAiPreset = (studioId: string, gearPackageId: string, hours: number) => {
     update({
-      studioId,
+      studioId: studios.find((studio) => studio.id === studioId || studio.slug === studioId)?.id || "",
       selectedGearPackage: gearPackageId,
       durationHours: hours,
     });
@@ -189,7 +190,7 @@ export function BookingWizard() {
               >
                 {step === 1 && <StepDatetime state={state} update={update} />}
                 {step === 2 && <StepSessionType state={state} update={update} />}
-                {step === 3 && <StepStudio state={state} update={update} />}
+                {step === 3 && <StepStudio state={state} update={update} studios={studios} />}
                 {step === 4 && <StepCrewEquipment state={state} update={update} />}
                 {step === 5 && <StepProps state={state} update={update} />}
                 {step === 6 && <StepPostProduction state={state} update={update} />}

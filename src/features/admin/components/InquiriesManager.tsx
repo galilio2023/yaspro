@@ -23,6 +23,7 @@ import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { usePagination } from "@/hooks/usePagination";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
+import { AdminConfirmModal } from "@/components/admin/AdminConfirmModal";
 
 interface InquiriesManagerProps {
   initialInquiries: Inquiry[];
@@ -52,6 +53,9 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
   const [filterType, setFilterType] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<"all" | "open" | "resolved">("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [inquiryToDelete, setInquiryToDelete] = useState<Inquiry | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3000);
 
@@ -80,6 +84,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
   const handleToggleResolved = async (inquiry: Inquiry) => {
     const newStatus = !inquiry.isResolved;
     setUpdatingId(inquiry.id);
+    setErrorMessage(null);
     const res = await updateInquiryStatus(inquiry.id, newStatus);
     if (res.success) {
       setInquiriesList((prev) =>
@@ -87,22 +92,31 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
       );
       showFeedback(`Inquiry marked as ${newStatus ? "resolved" : "open"}`);
     } else {
-      alert(res.error || "Failed to update status");
+      setErrorMessage(res.error || "Failed to update status");
     }
     setUpdatingId(null);
   };
 
-  const handleDelete = async (inquiry: Inquiry) => {
-    if (!confirm(`Delete inquiry from ${inquiry.name}? This action cannot be undone.`)) return;
-    setUpdatingId(inquiry.id);
-    const res = await deleteCmsInquiry(inquiry.id);
-    if (res.success) {
-      setInquiriesList((prev) => prev.filter((i) => i.id !== inquiry.id));
-      showFeedback("Inquiry deleted");
-    } else {
-      alert(res.error || "Failed to delete inquiry");
+  const handleConfirmDelete = async () => {
+    if (!inquiryToDelete) return;
+    setIsDeleting(true);
+    setErrorMessage(null);
+    setUpdatingId(inquiryToDelete.id);
+    try {
+      const res = await deleteCmsInquiry(inquiryToDelete.id);
+      if (res.success) {
+        setInquiriesList((prev) => prev.filter((i) => i.id !== inquiryToDelete.id));
+        showFeedback(`Inquiry from ${inquiryToDelete.name} deleted.`);
+        setInquiryToDelete(null);
+      } else {
+        setErrorMessage(res.error || "Failed to delete inquiry");
+      }
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Failed to delete inquiry");
+    } finally {
+      setIsDeleting(false);
+      setUpdatingId(null);
     }
-    setUpdatingId(null);
   };
 
   return (
@@ -118,9 +132,14 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
             Incoming briefs from contact inquiries, OB Van quotes, and influencer collaboration forms.
           </p>
         </div>
-        {feedback && (
-          <FeedbackAlert type="success" message={feedback} onDismiss={clearFeedback} />
-        )}
+        <div className="flex flex-col gap-2">
+          {feedback && (
+            <FeedbackAlert type="success" message={feedback} onDismiss={clearFeedback} />
+          )}
+          {errorMessage && (
+            <FeedbackAlert type="error" message={errorMessage} onDismiss={() => setErrorMessage(null)} />
+          )}
+        </div>
       </div>
 
       {/* KPI Cards */}
@@ -282,7 +301,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
 
                   <button
                     type="button"
-                    onClick={() => handleDelete(inq)}
+                    onClick={() => setInquiryToDelete(inq)}
                     disabled={updatingId === inq.id}
                     className="p-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer disabled:opacity-50 self-end"
                     title="Delete Inquiry"
@@ -306,6 +325,19 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
         onNext={pagination.nextPage}
         variant="card"
       />
+
+      {inquiryToDelete && (
+        <AdminConfirmModal
+          isOpen={Boolean(inquiryToDelete)}
+          onClose={() => setInquiryToDelete(null)}
+          onConfirm={handleConfirmDelete}
+          title="Delete Client Inquiry"
+          message={`Are you sure you want to permanently delete the inquiry from "${inquiryToDelete.name}" (${inquiryToDelete.email})? This action cannot be undone.`}
+          confirmLabel="Delete Inquiry"
+          variant="danger"
+          isSubmitting={isDeleting}
+        />
+      )}
     </div>
   );
 }

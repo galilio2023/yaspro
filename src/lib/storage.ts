@@ -94,26 +94,55 @@ export class S3CompatibleStorageProvider implements StorageProvider {
 }
 
 /**
- * Vercel Blob cloud storage provider (native Pro edge object store).
- * Activated automatically when BLOB_READ_WRITE_TOKEN is defined in production.
+ * Cloudinary storage provider (Smart Media DAM + Global CDN).
+ * Activated automatically when CLOUDINARY_CLOUD_NAME is defined,
+ * or when STORAGE_DRIVER === "cloudinary".
  */
-export class VercelBlobStorageProvider implements StorageProvider {
+export class CloudinaryStorageProvider implements StorageProvider {
+  private folder: string;
+
+  constructor(folder = process.env.CLOUDINARY_FOLDER || "yaspro") {
+    this.folder = folder;
+  }
+
   async save(filename: string, buffer: Buffer): Promise<UploadResult> {
     try {
-      const { put } = await import("@vercel/blob");
-      const blob = await put(`yaspro/${filename}`, buffer, {
-        access: "public",
-        addRandomSuffix: false,
+      const { v2: cloudinary } = await import("cloudinary");
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+        secure: true,
       });
 
-      return {
-        url: blob.url,
-        path: blob.pathname,
-        size: buffer.length,
-      };
+      // Strip extension for Cloudinary public_id
+      const publicId = filename.replace(/\.[^/.]+$/, "");
+
+      return new Promise<UploadResult>((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: this.folder,
+            public_id: publicId,
+            resource_type: "auto",
+            overwrite: true,
+          },
+          (error, result) => {
+            if (error || !result) {
+              return reject(new Error(error?.message || "Cloudinary upload failed"));
+            }
+            resolve({
+              url: result.secure_url,
+              path: result.public_id,
+              size: result.bytes || buffer.length,
+            });
+          }
+        );
+
+        uploadStream.end(buffer);
+      });
     } catch (err: unknown) {
       throw new Error(
-        `Failed to persist file to Vercel Blob: ${err instanceof Error ? err.message : String(err)}`
+        `Failed to persist file to Cloudinary: ${err instanceof Error ? err.message : String(err)}`
       );
     }
   }
@@ -121,9 +150,11 @@ export class VercelBlobStorageProvider implements StorageProvider {
 
 // Singleton storage provider based on environment
 export const storageProvider: StorageProvider =
-  process.env.STORAGE_DRIVER === "s3"
-    ? new S3CompatibleStorageProvider()
-    : process.env.BLOB_READ_WRITE_TOKEN
-      ? new VercelBlobStorageProvider()
+  process.env.STORAGE_DRIVER === "cloudinary" ||
+  Boolean(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY)
+    ? new CloudinaryStorageProvider()
+    : process.env.STORAGE_DRIVER === "s3"
+      ? new S3CompatibleStorageProvider()
       : new LocalDiskStorageProvider();
+
 

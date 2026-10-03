@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { FileSpreadsheet, MapPin, Building, Eye, Mail, Phone } from "lucide-react";
+import { FileSpreadsheet, MapPin, Building, Eye, Mail, Phone, Search } from "lucide-react";
 import { updateEnterpriseRfpStatus } from "@/lib/actions/bookings-rfp-operations";
 import type { EnterpriseRfp } from "@/db/schema";
 import { DataTable, DataTableHeader, DataTableBody, DataTableRow, DataTableEmpty } from "@/components/ui/data-table";
@@ -18,10 +18,30 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
   const [rfpList, setRfpList] = useState<EnterpriseRfp[]>(initialRfps);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [inspectRfp, setInspectRfp] = useState<EnterpriseRfp | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
 
   const updatePending = useRef(false);
 
-  const pagination = usePagination(rfpList, 20);
+  const totalCount = rfpList.length;
+  const pendingCount = rfpList.filter((r) => r.status === "pending_review").length;
+  const inProductionCount = rfpList.filter((r) => r.status === "in_production").length;
+  const approvedCount = rfpList.filter((r) => r.status === "approved" || r.status === "sla_active").length;
+
+  const filteredRfps = rfpList.filter((rfp) => {
+    const q = searchQuery.toLowerCase();
+    const matchesSearch =
+      !q ||
+      rfp.referenceCode.toLowerCase().includes(q) ||
+      rfp.organizationName.toLowerCase().includes(q) ||
+      rfp.contactName.toLowerCase().includes(q) ||
+      rfp.workEmail.toLowerCase().includes(q) ||
+      rfp.projectScope.toLowerCase().includes(q);
+    const matchesStatus = selectedStatus === "all" || rfp.status === selectedStatus;
+    return matchesSearch && matchesStatus;
+  });
+
+  const pagination = usePagination(filteredRfps, 20);
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     if (updatePending.current) return;
@@ -52,6 +72,81 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
         </p>
       </div>
 
+      {/* KPI Metrics Summary */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
+          <span className="text-[11px] text-slate-400 font-mono uppercase block">Total Proposals</span>
+          <span className="text-xl font-bold text-white font-mono mt-1 block">{totalCount}</span>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-amber-500/20 bg-amber-950/10">
+          <span className="text-[11px] text-amber-400 font-mono uppercase block">Pending Review</span>
+          <span className="text-xl font-bold text-amber-300 font-mono mt-1 block">{pendingCount}</span>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-blue-500/20 bg-blue-950/10">
+          <span className="text-[11px] text-blue-400 font-mono uppercase block">In Production</span>
+          <span className="text-xl font-bold text-blue-300 font-mono mt-1 block">{inProductionCount}</span>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-emerald-500/20 bg-emerald-950/10">
+          <span className="text-[11px] text-emerald-400 font-mono uppercase block">Approved / SLA</span>
+          <span className="text-xl font-bold text-emerald-300 font-mono mt-1 block">{approvedCount}</span>
+        </div>
+      </div>
+
+      {/* Search and Status Filters */}
+      <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="relative w-full sm:w-80">
+            <input
+              type="text"
+              placeholder="Search RFPs by code, organization, contact..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                pagination.resetPage();
+              }}
+              className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-rose-500 transition-colors"
+            />
+            <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
+          </div>
+        </div>
+
+        {/* Status Filter Tabs */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pt-1 pb-0.5 scrollbar-none">
+          {[
+            { id: "all", label: "All Proposals", count: totalCount },
+            { id: "pending_review", label: "Pending Review", count: pendingCount },
+            { id: "in_production", label: "In Production", count: inProductionCount },
+            { id: "approved", label: "Approved", count: rfpList.filter(r => r.status === "approved").length },
+            { id: "sla_active", label: "SLA Active", count: rfpList.filter(r => r.status === "sla_active").length },
+            { id: "rejected", label: "Rejected", count: rfpList.filter(r => r.status === "rejected").length },
+          ].map((tab) => {
+            const isActive = selectedStatus === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => {
+                  setSelectedStatus(tab.id);
+                  pagination.resetPage();
+                }}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition-all cursor-pointer ${
+                  isActive
+                    ? "bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-md"
+                    : "bg-white/[0.03] text-slate-400 hover:text-white border border-white/5 hover:bg-white/[0.06]"
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                  isActive ? "bg-rose-500 text-white font-bold" : "bg-white/10 text-slate-400"
+                }`}>
+                  {tab.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       <DataTable>
         <DataTableHeader>
           <tr>
@@ -65,8 +160,8 @@ export function RfpsManager({ initialRfps }: RfpsManagerProps) {
           </tr>
         </DataTableHeader>
         <DataTableBody>
-          {rfpList.length === 0 ? (
-            <DataTableEmpty colSpan={7} message="No enterprise RFPs submitted yet in database." />
+          {filteredRfps.length === 0 ? (
+            <DataTableEmpty colSpan={7} message="No enterprise RFPs match your current search and filters." />
           ) : (
             pagination.paginatedItems.map((rfp) => (
               <DataTableRow key={rfp.id}>

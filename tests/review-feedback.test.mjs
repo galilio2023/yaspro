@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import path from 'node:path';
 import vm from 'node:vm';
 import { createRequire } from 'node:module';
 import ts from 'typescript';
@@ -14,9 +15,19 @@ function loadSource(file, mocks, globals = {}) {
     },
   });
   const exports = {};
+  const defaultDocument = {
+    body: { style: {} },
+    documentElement: { style: {}, clientWidth: 1024 },
+    getElementById: () => null,
+  };
   vm.runInNewContext(outputText, {
     exports, Error, Date, setTimeout: () => 1, clearTimeout() {},
-    require: (name) => Object.hasOwn(mocks, name) ? mocks[name] : require(name),
+    document: defaultDocument,
+    require: (name) => {
+      if (Object.hasOwn(mocks, name)) return mocks[name];
+      if (name.startsWith('.')) return loadSource(path.resolve(path.dirname(file), `${name}.ts`), mocks, globals);
+      return require(name);
+    },
     ...globals,
   });
   return exports;
@@ -31,7 +42,7 @@ function hookHarness() {
   const hooks = {
     useState(initial) {
       const index = cursor++;
-      if (!(index in slots)) slots[index] = initial;
+      if (!(index in slots)) slots[index] = typeof initial === 'function' ? initial() : initial;
       return [slots[index], (next) => {
         slots[index] = typeof next === 'function' ? next(slots[index]) : next;
       }];
@@ -43,6 +54,8 @@ function hookHarness() {
     useCallback: (fn) => fn,
     useMemo: (fn) => fn(),
     useEffect(effect) { effects.push(effect); },
+    useSyncExternalStore: (_subscribe, getSnapshot, getServerSnapshot) =>
+      getSnapshot ? getSnapshot() : getServerSnapshot ? getServerSnapshot() : undefined,
   };
   return {
     hooks,
@@ -72,18 +85,22 @@ function managerFixture([name, prop, action, editTitle, fields], save, rowOverri
     react: harness.hooks,
     'next/image': 'Image',
     'lucide-react': new Proxy({}, { get: (_, key) => key }),
-    '@/lib/cms-actions': { [action]: save },
-    '@/lib/actions/equipment-gear': { [action]: save },
-    '@/lib/actions/influencers': { [action]: save },
+    '@/lib/cms-actions': { [action]: save, deleteCmsEquipment: async () => ({ success: true }), deleteCmsStudio: async () => ({ success: true }), deleteCmsInfluencer: async () => ({ success: true }) },
+    '@/lib/actions/equipment-gear': { [action]: save, deleteCmsEquipment: async () => ({ success: true }) },
+    '@/lib/actions/influencers': { [action]: save, deleteCmsInfluencer: async () => ({ success: true }) },
     '@/lib/actions/projects': { [action]: save },
-    '@/lib/actions/studios-soundstages-operations': { [action]: save },
+    '@/lib/actions/studios-soundstages-operations': { [action]: save, deleteCmsStudio: async () => ({ success: true }) },
     '@/lib/utils': { formatCurrency: String },
     '@/components/ui/dialog': { Dialog: 'Dialog' },
     '@/components/ui/feedback-alert': { FeedbackAlert: 'FeedbackAlert' },
     '@/components/admin/AdminImageUploader': { AdminImageUploader: 'Uploader' },
+    '@/components/admin/AdminConfirmModal': { AdminConfirmModal: () => null },
+    '@/components/ui/pagination-controls': { PaginationControls: 'PaginationControls' },
+    '@/components/ui/data-table': { DataTableEmpty: 'DataTableEmpty' },
   };
   mocks['@/hooks/useFeedbackAlert'] = loadSource('src/hooks/useFeedbackAlert.ts', mocks);
   mocks['@/hooks/useCrud'] = loadSource('src/hooks/useCrud.ts', mocks);
+  mocks['@/hooks/usePagination'] = loadSource('src/hooks/usePagination.ts', mocks);
   const Component = loadSource(`src/features/admin/components/${name}.tsx`, mocks, {
     alert: (message) => alerts.push(message),
   })[name];
@@ -699,6 +716,7 @@ test('command palette exposes and scrolls the active option as arrow keys wrap a
   const scrolled = [];
   const { CommandPalette } = loadSource('src/components/layout/CommandPalette.tsx', {
     react: { ...harness.hooks, useId: () => 'palette-test' },
+    'react-dom': { createPortal: (node) => node },
     'next/navigation': { useRouter: () => ({ push() {} }) },
     'lucide-react': new Proxy({}, { get: (_, key) => key }),
     '@/hooks/useFocusTrap': { useFocusTrap() {} },
@@ -832,3 +850,175 @@ test('reel playback follows events and stale callbacks preserve a newer active r
   videos(render())[1].props.onPause();
   assert.equal(isPlaying(players(render())[1]), false);
 });
+
+test('drawer schedule edits override a supplied range for the editor, quote and checkout', () => {
+  const harness = hookHarness();
+  const supplied = { pickupDate: '2026-10-01', returnDate: '2026-10-08', totalDays: 7, billingMultiplier: 4, discountPercentage: 43 };
+  const cart = {
+    items: [{ id: 'camera', name: 'Camera', dailyRate: 100 }],
+    dateRange: supplied, deliveryMethod: 'pickup_hub', isCartOpen: true,
+    setDateRange(range) { this.dateRange = range; },
+  };
+  const { GearCartDrawer } = loadSource('src/features/gear/components/GearCartDrawer.tsx', {
+    react: { ...harness.hooks, useSyncExternalStore: (_subscribe, snapshot) => snapshot() },
+    'react-dom': { createPortal: (content) => content }, 'next/image': 'Image',
+    'lucide-react': new Proxy({}, { get: (_, key) => key }),
+    '@/lib/utils': { formatCurrency: String }, '@/components/ui/badge': { Badge: 'Badge' },
+    '../lib/gear-rules': { getGearRecommendations: () => [] },
+    '@/hooks/useFocusTrap': { useFocusTrap() {} },
+    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic: false }) },
+    '@/components/providers/CartProvider': { useCart: () => cart },
+    './GearCheckoutModal': { GearCheckoutModal: 'Checkout' },
+  }, { document: { body: {} } });
+  const render = () => harness.render(() => GearCartDrawer({ dateRange: supplied }));
+  nodes(render(), n => n.type === 'button' && String(n.props.onClick).includes('setIsEditingSchedule'))[0].props.onClick();
+  const dates = () => nodes(render(), n => n.type === 'input' && n.props.type === 'date');
+  dates()[1].props.onChange({ target: { value: '2026-10-01' } });
+  assert.equal(dates()[1].props.value, '2026-10-02');
+  const checkout = nodes(render(), n => n.type === 'Checkout')[0];
+  assert.equal(checkout.props.dateRange.totalDays, 1);
+  assert.equal(checkout.props.dateRange.returnDate, '2026-10-02');
+  assert.equal(checkout.props.grandTotal, 100);
+  assert.equal(cart.dateRange.returnDate, '2026-10-02');
+});
+
+test('touch cancellation clears slider gestures without committing a tap and removes its listener', () => {
+  const harness = hookHarness();
+  const listeners = new Map();
+  const frames = new Map();
+  const changes = [];
+  let frameId = 0;
+  const { ImageCompareSlider } = loadSource('src/components/ui/image-compare-slider.tsx', {
+    react: harness.hooks, 'next/image': 'Image',
+    'lucide-react': { SplitSquareVertical: 'Icon' }, '@/lib/utils': { cn: () => '' },
+  }, {
+    window: { addEventListener: (name, fn) => listeners.set(name, fn), removeEventListener: (name) => listeners.delete(name) },
+    requestAnimationFrame: fn => { frames.set(++frameId, fn); return frameId; },
+    cancelAnimationFrame: id => frames.delete(id),
+  });
+  const tree = harness.render(() => ImageCompareSlider({ beforeImage: '/before', afterImage: '/after', onPositionChange: pos => changes.push(pos) }));
+  tree.props.ref.current = { getBoundingClientRect: () => ({ left: 0, width: 100 }) };
+  harness.commit();
+  const touch = (x, y = 0) => ({ touches: [{ clientX: x, clientY: y }] });
+  for (const gesture of ['tap', 'drag', 'scroll']) {
+    tree.props.onTouchStart(touch(20));
+    if (gesture === 'drag') listeners.get('touchmove')(touch(70));
+    if (gesture === 'scroll') listeners.get('touchmove')(touch(20, 30));
+    listeners.get('touchcancel')();
+    listeners.get('touchend')();
+    listeners.get('touchmove')(touch(90));
+    assert.equal(frames.size, 0);
+  }
+  assert.equal(changes.length, 0);
+  tree.props.onTouchStart(touch(60));
+  listeners.get('touchend')();
+  for (const fn of frames.values()) fn();
+  assert.deepEqual(changes, [60]);
+  harness.unmount();
+  assert.equal(listeners.has('touchcancel'), false);
+});
+
+test('studio catalog preserves CMS deletions, including an empty catalog', () => {
+  const { getDynamicSoundstages, SOUNDSTAGES_CATALOG } = loadSource('src/features/studios/data.ts', {});
+  const kept = SOUNDSTAGES_CATALOG[0];
+  const studios = getDynamicSoundstages([
+    { id: 'cms-id', slug: kept.slug, name: 'CMS name', hourlyRate: '321', isActive: false },
+    { id: 'custom-id', slug: 'custom-room', name: 'Custom Room', hourlyRate: '765', isActive: true },
+  ]);
+  assert.equal(studios.length, 2);
+  assert.equal(studios[0].name, 'CMS name');
+  assert.equal(studios[0].isActive, false);
+  assert.equal(studios[0].rate, 321);
+  assert.equal(studios[1].name, 'Custom Room');
+  assert.equal(getDynamicSoundstages([]).length, 0);
+  assert.equal(getDynamicSoundstages().length, SOUNDSTAGES_CATALOG.length);
+});
+
+test('studio choices and wizard preserve CMS IDs, rates, and active status', async () => {
+  const studios = [
+    { id: 'inactive-id', slug: 'closed', name: 'Closed Room', rate: 100, isActive: false },
+    { id: 'cms-id', slug: 'custom-room', name: 'Custom Room', desc: 'New room', rate: 777, isActive: true },
+  ];
+  const { StepStudio } = loadSource('src/features/booking/components/steps/StepStudio.tsx', {
+    'next/image': 'Image', '@/lib/utils': { cn: () => '', formatCurrency: String },
+    '../VirtualStageConfigurator': { VirtualStageConfigurator: 'Configurator' },
+  });
+  let selected;
+  const tree = StepStudio({ studios, state: { studioId: 'inactive-id' }, update: (value) => { selected = value.studioId; } });
+  const buttons = nodes(tree, (node) => node.type === 'button');
+  assert.equal(buttons.length, 1);
+  buttons[0].props.onClick();
+  assert.equal(selected, 'cms-id');
+  assert.ok(nodes(tree, (node) => node.props.children === '777').length);
+
+  const harness = hookHarness();
+  let params = new URLSearchParams('studio=custom-room');
+  const { useBookingWizard } = loadSource('src/features/booking/hooks/useBookingWizard.ts', {
+    react: harness.hooks, 'next/navigation': { useSearchParams: () => params },
+    '@/lib/utils': {}, '@/lib/actions': { createBooking: () => assert.fail('unavailable studio submitted') },
+  });
+  const render = (records = studios) => harness.render(() => useBookingWizard(records));
+  let wizard = render();
+  assert.equal(wizard.state.studioId, 'cms-id');
+  assert.equal(wizard.studio.rate, 777);
+  assert.equal(wizard.breakdown.studioCost, 1554);
+  params = new URLSearchParams('studio=closed');
+  render();
+  wizard = render();
+  assert.equal(wizard.state.studioId, 'cms-id');
+  wizard = render([]);
+  assert.equal(wizard.studio, undefined);
+  await wizard.handleSubmit();
+  assert.match(render([]).errorMessage, /available studio/);
+});
+
+test('reload restoration stops after navigation, including return to the initial route', () => {
+  const harness = hookHarness();
+  let pathname = '/studios';
+  const scrolls = [];
+  const anchors = [];
+  const window = {
+    location: { hash: '' }, scrollY: 0,
+    scrollTo: ({ top }) => { scrolls.push(top); window.scrollY = top; },
+    addEventListener() {}, removeEventListener() {},
+  };
+  const hooks = { ...harness.hooks, useLayoutEffect: harness.hooks.useEffect };
+  const { SmoothScrollProvider } = loadSource('src/components/providers/SmoothScrollProvider.tsx', {
+    react: hooks, 'next/navigation': { usePathname: () => pathname },
+    '@/components/ui/CustomCinemaCursor': { CustomCinemaCursor: 'Cursor' },
+  }, {
+    window, performance: { getEntriesByType: () => [{ type: 'reload' }] },
+    sessionStorage: { getItem: () => '450', removeItem() {} },
+    document: { querySelector: () => ({ scrollIntoView: () => anchors.push(pathname) }) },
+  });
+  const render = () => { harness.render(() => SmoothScrollProvider({ children: null })); harness.commit(); };
+  render();
+  assert.deepEqual(scrolls, [450]);
+  harness.unmount();
+  render(); // Strict Mode effect replay still restores the document route.
+  assert.deepEqual(scrolls, [450, 450]);
+  pathname = '/studio-booking';
+  render();
+  pathname = '/studios';
+  render();
+  assert.deepEqual(scrolls, [450, 450]);
+  window.location.hash = '#tour';
+  pathname = '/studio-booking';
+  render();
+  assert.deepEqual(anchors, ['/studio-booking']);
+  harness.unmount();
+});
+
+for (const nationality of ['UAE', 'KSA', 'Egypt', 'Jordan', 'MENA', null]) {
+  test(`regional influencer filter agrees with its count for ${nationality}`, () => {
+    const fixture = managerFixture(managers[1], async () => ({ success: true }), { nationality });
+    const choose = (key) => nodes(fixture.render(), (n) => n.type === 'button' && n.key === key)[0].props.onClick();
+    const rowCount = () => nodes(fixture.render(), (n) => n.type === 'button' && n.props.title === 'Edit Creator').length;
+    choose('MENA');
+    assert.equal(rowCount(), ['UAE', 'KSA', 'Egypt'].includes(nationality) ? 0 : 1);
+    choose('UAE');
+    assert.equal(rowCount(), nationality === 'UAE' ? 1 : 0);
+    choose('all');
+    assert.equal(rowCount(), 1);
+  });
+}

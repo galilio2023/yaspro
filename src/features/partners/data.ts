@@ -27,12 +27,6 @@ export const GOV_LOGOS: readonly GovernmentLogo[] = [
     glowColor: "rgba(255,255,255,0.4)",
   },
   {
-    id: "etihad-ensany",
-    name: "Etihad Ensany Foundation",
-    logo: "/images/partners/etihad-ensany.png",
-    glowColor: "rgba(34,197,94,0.4)",
-  },
-  {
     id: "presidential-affairs",
     name: "Ministry of Presidential Affairs",
     logo: "/images/partners/ministry-of-presidential-affairs.png",
@@ -131,49 +125,68 @@ export const BRAND_LOGOS: readonly BrandLogoItem[] = [
   {
     id: "hbo-max",
     name: "HBO Max",
-    logo: "/images/partners/hbo-max.svg",
     color: "#5822b4",
+    svg: `<svg viewBox="0 0 130 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-auto">
+      <path d="M4 10h5.5v6h6V10H21v16h-5.5v-6h-6v6H4V10z" fill="#FFFFFF"/>
+      <path d="M26 10h8c4.2 0 6.8 2.2 6.8 5.4 0 2-1.2 3.6-2.9 4.4 2.2.9 3.5 2.6 3.5 5 0 3.7-3.1 6-7.4 6H26V10zm5.6 4.6v3.5h2.4c1.3 0 2.2-.7 2.2-1.8s-.9-1.7-2.2-1.7h-2.4zm0 6v3.9h2.8c1.4 0 2.4-.8 2.4-2s-1-1.9-2.4-1.9h-2.8z" fill="#FFFFFF"/>
+      <path d="M51 18c0-4.6 3.7-8.2 8.3-8.2s8.3 3.6 8.3 8.2-3.7 8.2-8.3 8.2-8.3-3.6-8.3-8.2zm11 0c0-2.6-1.1-4.6-2.7-4.6s-2.7 2-2.7 4.6 1.1 4.6 2.7 4.6 2.7-2 2.7-4.6z" fill="#FFFFFF"/>
+      <text x="75" y="24" fill="#A855F7" font-family="system-ui, sans-serif" font-weight="900" font-size="17" letter-spacing="1">MAX</text>
+    </svg>`,
   },
   {
     id: "hulu",
     name: "Hulu",
-    logo: "/images/partners/hulu.svg",
     color: "#1ce783",
+    svg: `<svg viewBox="0 0 90 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-7 w-auto">
+      <text x="2" y="25" fill="#1CE783" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="24" letter-spacing="-0.8">hulu</text>
+    </svg>`,
   },
   {
-    id: "copper",
-    name: "Copper Media",
-    logo: "/images/partners/copper.png",
-    color: "#c87d55",
-  },
-  {
-    id: "flair",
-    name: "Flair Event Production",
-    logo: "/images/partners/flair.png",
+    id: "osn",
+    name: "OSN+",
     color: "#e11d48",
+    svg: `<svg viewBox="0 0 105 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-auto">
+      <text x="4" y="25" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="900" font-size="22" letter-spacing="1.5">osn</text>
+      <text x="64" y="25" fill="#E11D48" font-family="system-ui, sans-serif" font-weight="900" font-size="22">+</text>
+    </svg>`,
+  },
+  {
+    id: "vox",
+    name: "VOX Cinemas",
+    color: "#fbbf24",
+    svg: `<svg viewBox="0 0 145 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-auto">
+      <text x="4" y="25" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="900" font-size="21" letter-spacing="2">VOX</text>
+      <text x="68" y="24" fill="#9CA3AF" font-family="system-ui, sans-serif" font-weight="600" font-size="12" letter-spacing="3">CINEMAS</text>
+    </svg>`,
   },
   {
     id: "dmx",
     name: "DMX Global",
-    logo: "/images/partners/dmx.png",
     color: "#f59e0b",
+    svg: `<svg viewBox="0 0 125 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-auto">
+      <text x="4" y="25" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="900" font-size="22" letter-spacing="1">dm</text>
+      <text x="48" y="25" fill="#f59e0b" font-family="system-ui, sans-serif" font-weight="900" font-size="22">x</text>
+      <text x="70" y="22" fill="#9ca3af" font-family="system-ui, sans-serif" font-weight="700" font-size="10" letter-spacing="1.5">GLOBAL</text>
+    </svg>`,
   },
   {
     id: "hatta",
     name: "Hatta Dubai",
-    logo: "/images/partners/hatta.png",
     color: "#22c55e",
+    svg: `<svg viewBox="0 0 115 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-auto">
+      <path d="M10 24L20 8l10 16H10z" stroke="#FFFFFF" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+      <path d="M17 18h6" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="36" y="23" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="800" font-size="16" letter-spacing="2.5">HATTA</text>
+    </svg>`,
   },
   {
     id: "delos",
     name: "Delos",
-    logo: "/images/partners/delos.png",
     color: "#d97706",
-  },
-  {
-    id: "bassem-yakhour",
-    name: "Bassem Yakhour Show",
-    logo: "/images/partners/bassem-yakhour.png",
-    color: "#eab308",
+    svg: `<svg viewBox="0 0 115 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-auto">
+      <circle cx="16" cy="18" r="10" stroke="#FFFFFF" stroke-width="2.5" fill="none"/>
+      <path d="M12 18a4 4 0 0 1 8 0" stroke="#d97706" stroke-width="2.5"/>
+      <text x="34" y="24" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="800" font-size="19" letter-spacing="-0.5">delos</text>
+    </svg>`,
   },
 ];

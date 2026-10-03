@@ -44,10 +44,12 @@ export interface SessionTypeItem {
 
 export interface StudioItem {
   id: string;
+  slug?: string;
   name: string;
   desc: string;
   rate: number;
   image?: string;
+  isActive?: boolean;
 }
 
 export interface StudioGearPackage {

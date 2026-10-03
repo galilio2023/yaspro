@@ -52,7 +52,7 @@ export function Dialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto overscroll-contain bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -65,7 +65,7 @@ export function Dialog({
         aria-label={typeof title === "string" ? title : undefined}
         tabIndex={-1}
         className={cn(
-          "w-full bg-slate-900/95 border border-white/10 rounded-3xl shadow-2xl p-6 sm:p-8 relative text-white backdrop-blur-xl animate-in zoom-in-95 duration-200 outline-none my-8 max-h-[90vh] overflow-y-auto",
+          "w-full bg-slate-900/95 border border-white/10 rounded-3xl shadow-2xl p-6 sm:p-8 relative text-white backdrop-blur-xl animate-in zoom-in-95 duration-200 outline-none my-8 max-h-[90vh] overflow-y-auto overscroll-contain",
           MAX_WIDTH_MAP[maxWidth],
           className
         )}

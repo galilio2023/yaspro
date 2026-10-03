@@ -15,6 +15,7 @@ import {
   Building,
   CreditCard,
   ArrowRight,
+  Calendar,
 } from "lucide-react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { calculateGearCartTotals, calculateRentalMultiplier } from "../lib/cart-pricing";
@@ -25,6 +26,8 @@ import { createGearBookingOrder } from "@/lib/actions/equipment-gear";
 import { useSession } from "@/lib/auth-client";
 import { BookingPaymentModal } from "@/features/booking/components/BookingPaymentModal";
 import Link from "next/link";
+
+import { addCalendarDays, getLocalCalendarDate, normalizeRentalDateRange } from "../lib/rental-schedule";
 
 const emptySubscribe = () => () => {};
 
@@ -45,7 +48,10 @@ export function GearRentalModal({
   const { data: session } = useSession();
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
-  const [durationDays, setDurationDays] = useState<number>(initialDurationDays);
+  const todayStr = getLocalCalendarDate();
+  const [pickupDate, setPickupDate] = useState(getLocalCalendarDate);
+  const [returnDate, setReturnDate] = useState(() => addCalendarDays(getLocalCalendarDate(), initialDurationDays || 1));
+  const [durationDays, setDurationDays] = useState(initialDurationDays || 1);
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("studio_delivery");
   const [viewMode, setViewMode] = useState<"overview" | "form" | "confirmed">("overview");
 
@@ -67,8 +73,10 @@ export function GearRentalModal({
 
   useEffect(() => {
     if (isOpen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setDurationDays(initialDurationDays);
+      const today = getLocalCalendarDate();
+      setPickupDate(today);
+      setReturnDate(addCalendarDays(today, initialDurationDays || 1));
+      setDurationDays(initialDurationDays || 1);
       setViewMode("overview");
       setErrorMessage(null);
       setConfirmationCode(null);
@@ -81,6 +89,19 @@ export function GearRentalModal({
       }
     }
   }, [isOpen, initialDurationDays, session]);
+
+  const handleDateChange = (pickup: string, returnStr: string) => {
+    const range = normalizeRentalDateRange(pickup, returnStr);
+    if (!range) return;
+    setPickupDate(range.pickupDate);
+    setReturnDate(range.returnDate);
+    setDurationDays(range.totalDays);
+  };
+
+  const handleTierSelect = (days: number) => {
+    setDurationDays(days);
+    setReturnDate(addCalendarDays(pickupDate, days));
+  };
 
   useFocusTrap({ isOpen: mounted && isOpen && hasItem, onClose, containerRef: dialogRef });
 
@@ -103,7 +124,7 @@ export function GearRentalModal({
 
   // WhatsApp Pre-filled Link
   const waText = encodeURIComponent(
-    `Hello Yas Pro Gear Team! 🎬\nI want to reserve the *${item.name}* (${item.categoryLabel}).\n- Duration: ${durationDays} Day(s)\n- Delivery: ${deliveryMethod}\n- Estimated Rental: AED ${grandTotal.toLocaleString()}\nPlease confirm availability for upcoming shoot dates.`
+    `Hello Yas Pro Gear Team! 🎬\nI want to reserve the *${item.name}* (${item.categoryLabel}).\n- Shoot Schedule: ${pickupDate} to ${returnDate} (${durationDays} Day${durationDays > 1 ? "s" : ""})\n- Delivery: ${deliveryMethod}\n- Estimated Rental: AED ${grandTotal.toLocaleString()}\nPlease confirm gear availability for our shoot dates.`
   );
   const whatsAppUrl = `https://wa.me/971501234567?text=${waText}`;
 
@@ -127,6 +148,8 @@ export function GearRentalModal({
         durationDays,
         deliveryMethod,
         notes,
+        startDate: pickupDate,
+        returnDate,
       });
 
       if (res.success && res.data?.referenceCode) {
@@ -152,13 +175,13 @@ export function GearRentalModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="gear-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-xl animate-fade-up overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-xl animate-fade-up overflow-y-auto overscroll-contain"
     >
       {/* Backdrop click to close */}
       <div className="fixed inset-0" onClick={onClose} aria-hidden="true" />
 
       {/* Modal Dialog Card */}
-      <div ref={dialogRef} tabIndex={-1} className="relative w-full max-w-3xl my-auto rounded-3xl border border-white/10 bg-[#070709] shadow-2xl shadow-black/80 overflow-hidden z-10 flex flex-col max-h-[92vh]">
+      <div ref={dialogRef} tabIndex={-1} className="relative w-full max-w-3xl my-auto rounded-3xl border border-white/10 bg-[#070709] shadow-2xl shadow-black/80 overflow-hidden z-10 flex flex-col max-h-[92vh] overscroll-contain">
         {/* Header Bar */}
         <div className="relative px-6 py-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
           <div>
@@ -198,13 +221,24 @@ export function GearRentalModal({
                   : "Your equipment reservation has been booked and linked to your Client Portal. You can pay online via Ziina or follow up with dispatch."}
               </p>
 
-              <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 inline-block text-center font-mono">
-                <span className="text-[11px] text-text-muted uppercase block">
-                  {isArabic ? "رقم المرجع التأجيري" : "Booking Reference"}
-                </span>
-                <span className="text-xl font-bold text-amber-400 tracking-wider">
-                  {confirmationCode}
-                </span>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 inline-block text-center font-mono">
+                  <span className="text-[11px] text-text-muted uppercase block">
+                    {isArabic ? "رقم المرجع التأجيري" : "Booking Reference"}
+                  </span>
+                  <span className="text-xl font-bold text-amber-400 tracking-wider">
+                    {confirmationCode}
+                  </span>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 inline-block text-center font-mono">
+                  <span className="text-[11px] text-text-muted uppercase block">
+                    {isArabic ? "فترة التصوير المحجوزة" : "Reserved Shoot Window"}
+                  </span>
+                  <span className="text-sm font-bold text-white tracking-wide">
+                    {pickupDate} → {returnDate}
+                  </span>
+                </div>
               </div>
 
               <div className="pt-4 flex flex-wrap justify-center gap-3">
@@ -439,18 +473,30 @@ export function GearRentalModal({
                 </div>
               )}
 
-              {/* Interactive Duration Selector */}
-              <div className="space-y-2">
-                <span className="text-xs font-bold text-white font-mono uppercase tracking-wider block">
-                  {isArabic ? "اختر مدة التأجير:" : "Select Rental Duration Tier:"}
-                </span>
+              {/* Interactive Duration & Shoot Date Selector */}
+              <div className="space-y-3 p-4 rounded-2xl bg-white/[0.02] border border-white/10">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-white font-mono uppercase tracking-wider flex items-center gap-1.5">
+                    <Calendar size={13} className="text-amber-400" />
+                    <span>{isArabic ? "جدول التصوير والمدة:" : "Shoot Dates & Rental Tier:"}</span>
+                  </span>
+                  <span className="text-[11px] font-mono text-amber-400 font-semibold">
+                    {durationDays} {durationDays === 1 ? (isArabic ? "يوم" : "Day") : (isArabic ? "أيام" : "Days")}
+                    {multiplier !== durationDays && (
+                      <span className="text-zinc-400 font-normal ms-1">
+                        ({isArabic ? `احتساب ${multiplier} أيام` : `billed as ${multiplier}d`})
+                      </span>
+                    )}
+                  </span>
+                </div>
 
-                <div className="grid grid-cols-3 gap-2.5">
+                {/* Quick Presets */}
+                <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
-                    onClick={() => setDurationDays(1)}
+                    onClick={() => handleTierSelect(1)}
                     className={cn(
-                      "p-3 rounded-2xl border text-center transition-all cursor-pointer",
+                      "p-2.5 rounded-xl border text-center transition-all cursor-pointer",
                       durationDays === 1
                         ? "bg-amber-500/20 border-amber-500 text-white shadow-lg shadow-amber-500/20"
                         : "bg-white/[0.03] border-white/10 text-text-secondary hover:border-white/20"
@@ -462,37 +508,66 @@ export function GearRentalModal({
 
                   <button
                     type="button"
-                    onClick={() => setDurationDays(3)}
+                    onClick={() => handleTierSelect(3)}
                     className={cn(
-                      "p-3 rounded-2xl border text-center transition-all cursor-pointer relative",
+                      "p-2.5 rounded-xl border text-center transition-all cursor-pointer relative",
                       durationDays === 3
                         ? "bg-amber-500/20 border-amber-500 text-white shadow-lg shadow-amber-500/20"
                         : "bg-white/[0.03] border-white/10 text-text-secondary hover:border-white/20"
                     )}
                   >
-                    <span className="absolute -top-2 inset-x-0 mx-auto w-max px-2 py-0.2 rounded-full bg-amber-400 text-black text-[9px] font-extrabold uppercase">
+                    <span className="absolute -top-2 inset-x-0 mx-auto w-max px-1.5 py-0.2 rounded-full bg-amber-400 text-black text-[8px] font-extrabold uppercase">
                       {isArabic ? `خصم ${calculateRentalMultiplier(3).discountPct}%` : `${calculateRentalMultiplier(3).discountPct}% Off`}
                     </span>
-                    <div className="text-xs font-bold">{isArabic ? "عطلة نهاية الأسبوع (3 أيام)" : "3-Day Weekend"}</div>
-                    <div className="text-[10px] text-amber-400/90 mt-0.5">{isArabic ? "عرض عطلة نهاية الأسبوع" : "Weekend Deal"}</div>
+                    <div className="text-xs font-bold">{isArabic ? "عطلة أسبوع" : "3-Day Weekend"}</div>
+                    <div className="text-[10px] text-amber-400/90 mt-0.5">{isArabic ? "عرض خاص" : "Weekend Deal"}</div>
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => setDurationDays(7)}
+                    onClick={() => handleTierSelect(7)}
                     className={cn(
-                      "p-3 rounded-2xl border text-center transition-all cursor-pointer relative",
+                      "p-2.5 rounded-xl border text-center transition-all cursor-pointer relative",
                       durationDays === 7
                         ? "bg-amber-500/15 border-amber-500/60 text-white shadow-lg shadow-amber-500/10"
                         : "bg-white/[0.03] border-white/10 text-text-secondary hover:border-white/20"
                     )}
                   >
-                    <span className="absolute -top-2 inset-x-0 mx-auto w-max px-2 py-0.2 rounded-full bg-amber-400 text-black text-[9px] font-extrabold uppercase">
+                    <span className="absolute -top-2 inset-x-0 mx-auto w-max px-1.5 py-0.2 rounded-full bg-amber-400 text-black text-[8px] font-extrabold uppercase">
                       {isArabic ? `خصم ${calculateRentalMultiplier(7).discountPct}%` : `${calculateRentalMultiplier(7).discountPct}% Off`}
                     </span>
-                    <div className="text-xs font-bold">{isArabic ? "أسبوعي (7 أيام)" : "Weekly Tier"}</div>
-                    <div className="text-[10px] text-amber-300/90 mt-0.5">{isArabic ? "أفضل قيمة للإنتاج" : "Best Production Value"}</div>
+                    <div className="text-xs font-bold">{isArabic ? "أسبوعي" : "Weekly (7d)"}</div>
+                    <div className="text-[10px] text-amber-300/90 mt-0.5">{isArabic ? "أفضل قيمة" : "Best Value"}</div>
                   </button>
+                </div>
+
+                {/* Calendar Date Pickers */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                  <div>
+                    <label className="block text-[10px] font-mono uppercase tracking-wider text-text-muted mb-1">
+                      {isArabic ? "تاريخ الاستلام والتجهيز" : "Pickup / Prep Date"}
+                    </label>
+                    <input
+                      type="date"
+                      min={todayStr}
+                      value={pickupDate}
+                      onChange={(e) => handleDateChange(e.target.value, returnDate)}
+                      className="w-full bg-black/60 border border-white/15 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-mono uppercase tracking-wider text-text-muted mb-1">
+                      {isArabic ? "تاريخ الإرجاع والتسليم" : "Return / Wrap Date"}
+                    </label>
+                    <input
+                      type="date"
+                      min={addCalendarDays(pickupDate, 1)}
+                      value={returnDate}
+                      onChange={(e) => handleDateChange(pickupDate, e.target.value)}
+                      className="w-full bg-black/60 border border-white/15 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                    />
+                  </div>
                 </div>
               </div>
 

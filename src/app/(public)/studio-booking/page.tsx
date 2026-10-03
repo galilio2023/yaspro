@@ -1,3 +1,4 @@
+import { getCachedStudios } from "@/lib/cached-queries";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { BookingWizard } from "@/features/booking/components/BookingWizard";
@@ -57,7 +58,17 @@ function BookingWizardLoading() {
   );
 }
 
-export default function StudioBookingPage() {
+export default async function StudioBookingPage() {
+  const cmsStudios = await getCachedStudios();
+  const studios = cmsStudios.filter((studio) => studio.isActive).map((studio) => ({
+    id: studio.id,
+    slug: studio.slug,
+    name: studio.name,
+    desc: studio.description || "",
+    rate: Number(studio.hourlyRate),
+    image: studio.imageUrl || undefined,
+    isActive: studio.isActive,
+  }));
   return (
     <Section id="booking-page" aria-labelledby="booking-title" className="py-12 md:py-20 bg-background">
       <JsonLd data={STUDIO_BOOKING_SCHEMA} />
@@ -65,7 +76,7 @@ export default function StudioBookingPage() {
         <StudioBookingPageHeader />
 
         <Suspense fallback={<BookingWizardLoading />}>
-          <BookingWizard />
+          <BookingWizard studios={studios} />
         </Suspense>
       </Container>
     </Section>

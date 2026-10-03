@@ -2,15 +2,14 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { storageProvider } from "@/lib/storage";
-import type { HandleUploadBody } from "@vercel/blob/client";
 import crypto from "crypto";
 
-const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
+const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024; // 25MB
 
 /**
- * Magic bytes validator to verify real image contents (ignoring spoofed headers/extensions).
+ * Magic bytes validator to verify real media contents (ignoring spoofed headers/extensions).
  */
-function detectImageFormat(buffer: Buffer): { ext: string; mime: string } | null {
+function detectMediaFormat(buffer: Buffer): { ext: string; mime: string } | null {
   if (buffer.length < 12) return null;
 
   // JPEG: FF D8 FF
@@ -56,6 +55,17 @@ function detectImageFormat(buffer: Buffer): { ext: string; mime: string } | null
     return { ext: "webp", mime: "image/webp" };
   }
 
+  // MP4 / QuickTime: bytes 4-7 are 'ftyp'
+  if (
+    buffer.length >= 8 &&
+    buffer[4] === 0x66 &&
+    buffer[5] === 0x74 &&
+    buffer[6] === 0x79 &&
+    buffer[7] === 0x70
+  ) {
+    return { ext: "mp4", mime: "video/mp4" };
+  }
+
   return null;
 }
 
@@ -64,52 +74,43 @@ export const maxDuration = 60;
 /**
  * Direct Admin Media File Upload API.
  * Supports:
- * 1. Native Vercel Blob client direct upload token generation (up to 500MB for 4K video / RAW stills).
- * 2. Standard Multipart FormData upload with magic byte verification and collision-proof file writing.
+ * 1. Cloudinary direct client upload signature generation.
+ * 2. Standard Multipart FormData upload with magic byte verification and Cloudinary/storageProvider persistence.
  */
 export async function POST(request: Request) {
   try {
     const contentType = request.headers.get("content-type") || "";
 
-    // A. Handle Vercel Blob Client-Side Direct Upload Token Generation
-    if (contentType.includes("application/json") && process.env.BLOB_READ_WRITE_TOKEN) {
-      const { handleUpload } = await import("@vercel/blob/client");
-      const body = (await request.json()) as HandleUploadBody;
-      try {
-        const jsonResponse = await handleUpload({
-          body,
-          request,
-          onBeforeGenerateToken: async () => {
-            if (process.env.NODE_ENV !== "test") {
-              const session = await auth.api.getSession({
-                headers: await headers(),
-              });
-              if (!session || (session.user as { role?: string })?.role !== "admin") {
-                throw new Error("Unauthorized: Admin credentials required.");
-              }
-            }
-            return {
-              allowedContentTypes: [
-                "image/jpeg",
-                "image/png",
-                "image/webp",
-                "image/gif",
-                "video/mp4",
-                "video/quicktime",
-                "application/pdf",
-              ],
-              maximumSizeInBytes: 500 * 1024 * 1024, // 500MB capacity
-            };
-          },
-          onUploadCompleted: async () => {},
+    // A. Handle Cloudinary Client-Side Direct Upload Signature Generation
+    if (contentType.includes("application/json") && process.env.CLOUDINARY_API_SECRET) {
+      if (process.env.NODE_ENV !== "test") {
+        const session = await auth.api.getSession({
+          headers: await headers(),
         });
-        return NextResponse.json(jsonResponse);
-      } catch (uploadErr) {
-        return NextResponse.json(
-          { success: false, error: (uploadErr as Error).message },
-          { status: 400 }
-        );
+        if (!session || (session.user as { role?: string })?.role !== "admin") {
+          return NextResponse.json(
+            { success: false, error: "Unauthorized: Admin credentials required." },
+            { status: 401 }
+          );
+        }
       }
+
+      const { v2: cloudinary } = await import("cloudinary");
+      const timestamp = Math.round(new Date().getTime() / 1000);
+      const folder = process.env.CLOUDINARY_FOLDER || "yaspro";
+      const signature = cloudinary.utils.api_sign_request(
+        { folder, timestamp },
+        process.env.CLOUDINARY_API_SECRET
+      );
+
+      return NextResponse.json({
+        success: true,
+        signature,
+        timestamp,
+        folder,
+        apiKey: process.env.CLOUDINARY_API_KEY,
+        cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+      });
     }
 
     // 1. Enforce admin authentication unconditionally (except unit test runner)
@@ -160,16 +161,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // 5. Detect and validate image bytes
+    // 5. Detect and validate media bytes
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const detectedFormat = detectImageFormat(buffer);
+    const detectedFormat = detectMediaFormat(buffer);
 
     if (!detectedFormat) {
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid file content. Uploaded file must be a genuine JPEG, PNG, WEBP, or GIF image.",
+          error: "Invalid file content. Uploaded file must be a genuine JPEG, PNG, WEBP, GIF, or MP4 media file.",
         },
         { status: 400 }
       );

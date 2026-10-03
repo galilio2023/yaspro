@@ -2,6 +2,8 @@ import { z } from "zod";
 import type { GearItem, RentalDateRange, DeliveryMethod } from "../types";
 import { calculateRentalMultiplier } from "./cart-pricing";
 
+import { addCalendarDays, getLocalCalendarDate, isRentalScheduleConsistent } from "./rental-schedule";
+
 const optionalString = z.string().optional().catch(undefined);
 const optionalBoolean = z.boolean().optional().catch(undefined);
 const optionalStrings = z.array(z.string()).optional().catch(undefined);
@@ -28,13 +30,15 @@ const dateRangeSchema = z.object({
   totalDays: z.number().int().min(1).max(365),
   billingMultiplier: z.number().positive().max(365),
   discountPercentage: z.number().min(0).max(100),
-}).refine((range) => range.returnDate >= range.pickupDate &&
-  range.totalDays === Math.max(1, (Date.parse(range.returnDate) - Date.parse(range.pickupDate)) / 86400000));
+}).refine((range) => isRentalScheduleConsistent({
+  startDate: range.pickupDate, returnDate: range.returnDate, durationDays: range.totalDays,
+}));
 const deliverySchema = z.enum(["studio_delivery", "courier_dubai", "pickup_hub"]);
 
 export function getInitialDateRange(): RentalDateRange {
-  const today = new Date().toISOString().split("T")[0];
-  return { pickupDate: today, returnDate: today, totalDays: 1, billingMultiplier: 1, discountPercentage: 0 };
+  const today = getLocalCalendarDate();
+  const tomorrow = addCalendarDays(today, 1);
+  return { pickupDate: today, returnDate: tomorrow, totalDays: 1, billingMultiplier: 1, discountPercentage: 0 };
 }
 
 /** Treat storage from this or another tab as untrusted and restore fields independently. */

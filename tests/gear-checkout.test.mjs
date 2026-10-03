@@ -111,7 +111,7 @@ test('gear orders link only the authenticated session, preserve defaults, and th
   for (let attempt = 0; attempt < 5; attempt++) assert.equal((await h.submit()).success, true);
   assert.equal(h.writes[0].userId, 'session-owner');
   assert.equal(h.writes[0].durationHours, 24);
-  assert.equal(h.writes[0].propsNotes, 'Gear Delivery: studio_delivery');
+  assert.equal(h.writes[0].propsNotes, 'Gear Delivery: studio_delivery | Duration: 1d');
   assert.equal((await h.submit()).success, false);
   assert.equal(h.writes.length, 5);
   assert.equal(h.reads(), 5);
@@ -129,4 +129,63 @@ test('gear order rejects unbounded input, unsupported delivery and invalid calen
     assert.equal(h.writes.length, 0);
   }
   assert.equal((await orderFixture().submit({ startDate: '2028-02-29' })).success, true);
+});
+
+const schedule = loadSource('src/features/gear/lib/rental-schedule.ts');
+
+test('customer calendar dates and presets remain stable across timezones and DST', () => {
+  const originalTZ = process.env.TZ;
+  try {
+    for (const zone of ['America/Los_Angeles', 'Asia/Dubai', 'Pacific/Kiritimati', 'UTC']) {
+      process.env.TZ = zone;
+      for (const [year, month, day] of [[2026, 2, 8], [2026, 10, 1], [2028, 1, 28], [2026, 11, 31]]) {
+        for (const hour of [0, 23]) {
+          const local = new Date(year, month, day, hour, 30);
+          const pickup = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          assert.equal(schedule.getLocalCalendarDate(local), pickup);
+          for (const days of [1, 3, 7]) {
+            const end = schedule.addCalendarDays(pickup, days);
+            assert.equal((Date.parse(end) - Date.parse(pickup)) / 86400000, days);
+            assert.equal(schedule.normalizeRentalDateRange(pickup, end).totalDays, days);
+          }
+        }
+      }
+    }
+  } finally {
+    if (originalTZ === undefined) delete process.env.TZ;
+    else process.env.TZ = originalTZ;
+  }
+});
+
+test('manual schedule edits normalize both dates and pricing and ignore cleared inputs', () => {
+  for (const end of ['2026-10-01', '2026-09-30']) {
+    const range = schedule.normalizeRentalDateRange('2026-10-01', end);
+    assert.equal(range.returnDate, '2026-10-02');
+    assert.equal(range.totalDays, 1);
+    assert.equal(range.billingMultiplier, 1);
+  }
+  assert.equal(schedule.normalizeRentalDateRange('', '2026-10-01'), null);
+  assert.equal(schedule.normalizeRentalDateRange('2026-10-01', ''), null);
+  assert.equal(schedule.addCalendarDays('2028-02-28', 1), '2028-02-29');
+  assert.equal(schedule.addCalendarDays('2026-12-31', 1), '2027-01-01');
+});
+
+test('orders reject inconsistent schedules before equipment reads or writes', async () => {
+  for (const dates of [
+    { startDate: '2026-10-01', returnDate: '2026-09-30' },
+    { startDate: '2026-10-01', returnDate: '2026-10-01' },
+    { startDate: '2026-10-01', returnDate: '2026-10-03' },
+    { returnDate: '2026-10-02' },
+  ]) {
+    const fixture = orderFixture();
+    assert.equal((await fixture.submit(dates)).success, false);
+    assert.equal(fixture.reads(), 0);
+    assert.equal(fixture.writes.length, 0);
+  }
+  for (const returnDate of [undefined, '2026-11-03']) {
+    const fixture = orderFixture();
+    assert.equal((await fixture.submit({ startDate: '2026-10-31', returnDate, durationDays: 3 })).success, true);
+    assert.match(fixture.writes[0].propsNotes, /2026-10-31 to 2026-11-03 \(3d\)/);
+    assert.equal(fixture.writes[0].durationHours, 72);
+  }
 });

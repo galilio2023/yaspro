@@ -25,9 +25,12 @@ export function FooterCtaBanner() {
       <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
         {/* Left Column: Copy & Live Status */}
         <div className="max-w-2xl text-start">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] border border-white/10 text-xs text-amber-400 font-medium mb-4 backdrop-blur-md">
-            <span className="size-2 rounded-full bg-emerald-400" />
-            <span>{t("footerCta.badge")}</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-[11px] sm:text-xs font-mono uppercase tracking-wider rtl:font-arabic rtl:tracking-normal text-amber-400 font-semibold mb-4 backdrop-blur-md whitespace-nowrap shrink-0 max-w-full">
+            <span className="relative flex size-2 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+              <span className="relative inline-flex rounded-full size-2 bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+            </span>
+            <span className="whitespace-nowrap font-latin rtl:font-arabic">{t("footerCta.badge")}</span>
           </div>
 
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight rtl:tracking-normal font-display rtl:font-arabic leading-[1.15] rtl:leading-[1.35] mb-3">

@@ -186,7 +186,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen w-full bg-background text-foreground antialiased overflow-x-hidden">
+      <body className="min-h-screen w-full bg-background text-foreground antialiased overflow-x-clip">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <LanguageProvider initialLocale={locale}>
             <GlobalPageLoaderProvider>

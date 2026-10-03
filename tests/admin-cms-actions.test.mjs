@@ -224,7 +224,7 @@ test('gear reservation uses database name and rate for both UUID and slug lookup
 test('gear reservation rejects invalid fields and unknown or unavailable gear without inserting', async () => {
   for (const [field, value] of [
     ['customerName', ' '], ['email', 'invalid'], ['phone', '-------'],
-    ['durationDays', 0], ['durationDays', -3], ['durationDays', 1.5], ['durationDays', 2],
+    ['durationDays', 0], ['durationDays', -3], ['durationDays', 1.5],
     ['durationDays', '7'], ['durationDays', Infinity], ['deliveryMethod', 'free_courier'],
     ['gearId', 'missing'], ['notes', 'x'.repeat(2001)],
   ]) {
@@ -264,4 +264,170 @@ test('studio metrics distinguish an empty table from zero active rows', async ()
     });
     assert.equal((await getCmsOverviewStats()).activeStudios, expected);
   }
+});
+
+
+test('reservations reject inconsistent schedules before database work and derive omitted returns', async () => {
+  for (const dates of [
+    { startDate: '2026-10-01', returnDate: '2026-09-30' },
+    { startDate: '2026-10-01', returnDate: '2026-10-01' },
+    { startDate: '2026-10-01', returnDate: '2026-10-03' },
+    { returnDate: '2026-10-02' },
+  ]) {
+    const fixture = gearReservationFixture();
+    assert.equal((await fixture.submit(dates)).success, false);
+    assert.equal(fixture.queries.length, 0);
+    assert.equal(fixture.inserts.length, 0);
+  }
+  for (const returnDate of [undefined, '2027-01-02']) {
+    const fixture = gearReservationFixture();
+    assert.equal((await fixture.submit({ startDate: '2026-12-30', returnDate, durationDays: 3 })).success, true);
+    assert.match(fixture.inserts[0].message, /Shoot Dates: 2026-12-30 to 2027-01-02/);
+  }
+});
+
+test('deleteCmsEquipment deletes record by id or slug and triggers revalidation', async () => {
+  let deletedWhere = null;
+  const revalidatedPaths = [];
+  const updatedTags = [];
+
+  const mockDb = {
+    delete: () => ({
+      where: (clause) => {
+        deletedWhere = clause;
+        return Promise.resolve();
+      },
+    }),
+  };
+
+  const { deleteCmsEquipment } = loadSource('src/lib/actions/equipment-gear.ts', {
+    '@/db': { db: mockDb },
+    '@/db/schema': schemaMock,
+    'drizzle-orm': { eq: (col, val) => ({ col, val }), desc: () => {} },
+    'next/cache': {
+      revalidatePath: (p) => revalidatedPaths.push(p),
+      updateTag: (t) => updatedTags.push(t),
+    },
+    './shared': {
+      isDbAvailable: () => true,
+      requireAdmin: async () => {},
+      isUuid: (id) => id?.includes('-'),
+    },
+    '../../features/gear/lib/cart-pricing': { calculateGearCartTotals: () => {} },
+    '../../features/gear/lib/rental-schedule': { addCalendarDays: () => {}, isRentalScheduleConsistent: () => true },
+    '../rate-limit': { checkRateLimit: () => ({ success: true }), getClientIdentifier: () => 'test' },
+    '@/features/gear/data': { GEAR_DATA: [] },
+    '@/lib/utils': { slugify: (s) => s, generateBookingReference: () => 'REF' },
+  });
+
+  const resUuid = await deleteCmsEquipment('12345678-1234-1234-1234-123456789abc');
+  assert.equal(resUuid.success, true);
+  assert.equal(deletedWhere.val, '12345678-1234-1234-1234-123456789abc');
+
+  const resSlug = await deleteCmsEquipment('arri-alexa-mini');
+  assert.equal(resSlug.success, true);
+  assert.equal(deletedWhere.val, 'arri-alexa-mini');
+  assert.ok(revalidatedPaths.includes('/shop'));
+  assert.ok(revalidatedPaths.includes('/admin/gear'));
+  assert.ok(updatedTags.includes('gear'));
+});
+
+test('deleteCmsStudio guards against active bookings and deletes when unencumbered', async () => {
+  let bookingsQueryCount = 0;
+  let deletedWhere = null;
+  let existingBookings = [{ id: 'booking-1' }];
+
+  const mockDb = {
+    select: () => ({
+      from: () => ({
+        where: () => ({
+          limit: async () => existingBookings,
+        }),
+      }),
+    }),
+    delete: () => ({
+      where: (clause) => {
+        deletedWhere = clause;
+        return Promise.resolve();
+      },
+    }),
+  };
+
+  const { deleteCmsStudio } = loadSource('src/lib/actions/studios-soundstages-operations.ts', {
+    '@/db': { db: mockDb },
+    '@/db/schema': schemaMock,
+    'drizzle-orm': { eq: (col, val) => ({ col, val }), desc: () => {} },
+    'next/cache': {
+      revalidatePath: () => {},
+      updateTag: () => {},
+    },
+    './shared': {
+      isDbAvailable: () => true,
+      requireAdmin: async () => {},
+      isUuid: (id) => id?.includes('-'),
+    },
+    '@/features/booking/constants': { STUDIOS: [] },
+  });
+
+  // 1. Should fail when studio has existing bookings
+  const blockedRes = await deleteCmsStudio('11111111-2222-3333-4444-555555555555');
+  assert.equal(blockedRes.success, false);
+  assert.match(blockedRes.error, /associated bookings/);
+  assert.equal(deletedWhere, null);
+
+  // 2. Should succeed when no bookings exist
+  existingBookings = [];
+  const allowedRes = await deleteCmsStudio('11111111-2222-3333-4444-555555555555');
+  assert.equal(allowedRes.success, true);
+  assert.equal(deletedWhere.val, '11111111-2222-3333-4444-555555555555');
+});
+
+test('deleteCmsInfluencer removes creator profile and revalidates caches', async () => {
+  let deletedWhere = null;
+  const revalidatedPaths = [];
+  const updatedTags = [];
+
+  const mockDb = {
+    delete: () => ({
+      where: (clause) => {
+        deletedWhere = clause;
+        return Promise.resolve();
+      },
+    }),
+  };
+
+  const { deleteCmsInfluencer } = loadSource('src/lib/actions/influencers.ts', {
+    '@/db': { db: mockDb },
+    '@/db/schema': schemaMock,
+    'drizzle-orm': { eq: (col, val) => ({ col, val }), desc: () => {} },
+    'next/cache': {
+      revalidatePath: (p) => revalidatedPaths.push(p),
+      updateTag: (t) => updatedTags.push(t),
+    },
+    './shared': {
+      isDbAvailable: () => true,
+      requireAdmin: async () => {},
+      isUuid: (id) => id?.includes('-'),
+    },
+    '@/features/influencers/data': { INFLUENCERS_DATA: [] },
+  });
+
+  const res = await deleteCmsInfluencer('aboflah');
+  assert.equal(res.success, true);
+  assert.equal(deletedWhere.val, 'aboflah');
+  assert.ok(revalidatedPaths.includes('/influencers'));
+  assert.ok(revalidatedPaths.includes('/admin/influencers'));
+  assert.ok(updatedTags.includes('influencers'));
+});
+
+test('an empty CMS studio table does not resurrect the static catalog', async () => {
+  const { getCmsStudios } = loadSource('src/lib/actions/studios-soundstages-operations.ts', {
+    '@/db': { db: { select: () => ({ from: () => ({ orderBy: async () => [] }) }) } },
+    '@/db/schema': schemaMock,
+    'drizzle-orm': { desc: () => {} },
+    'next/cache': {},
+    './shared': { isDbAvailable: () => true },
+    '@/features/booking/constants': { STUDIOS: [{ id: 'deleted', rate: 800 }] },
+  });
+  assert.equal((await getCmsStudios()).length, 0);
 });

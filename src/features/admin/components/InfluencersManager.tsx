@@ -2,12 +2,16 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Users, Plus, Edit3, Save, X, CheckCircle, ExternalLink, ShieldCheck } from "lucide-react";
-import { upsertCmsInfluencer } from "@/lib/actions/influencers";
+import { Users, Plus, Edit3, Trash2, Save, X, CheckCircle, ExternalLink, ShieldCheck, Search, Globe } from "lucide-react";
+import { upsertCmsInfluencer, deleteCmsInfluencer } from "@/lib/actions/influencers";
 import type { Influencer } from "@/db/schema";
 import { AdminImageUploader } from "@/components/admin/AdminImageUploader";
+import { AdminConfirmModal } from "@/components/admin/AdminConfirmModal";
 import { FeedbackAlert } from "@/components/ui/feedback-alert";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
+import { usePagination } from "@/hooks/usePagination";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { DataTableEmpty } from "@/components/ui/data-table";
 
 interface InfluencersManagerProps {
   initialInfluencers: Influencer[];
@@ -16,10 +20,52 @@ interface InfluencersManagerProps {
 export function InfluencersManager({ initialInfluencers }: InfluencersManagerProps) {
   const [creators, setCreators] = useState<Influencer[]>(initialInfluencers);
   const [editingCreator, setEditingCreator] = useState<Partial<Influencer> | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState<string>("all");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [creatorToDelete, setCreatorToDelete] = useState<Influencer | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(1200);
+  const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(2500);
+
+  const handleConfirmDelete = async () => {
+    if (!creatorToDelete) return;
+    setIsDeleting(true);
+    try {
+      const targetId = creatorToDelete.id || creatorToDelete.slug;
+      const res = await deleteCmsInfluencer(targetId);
+      if (res.success) {
+        setCreators((prev) => prev.filter((c) => c.id !== creatorToDelete.id && c.slug !== creatorToDelete.slug));
+        showFeedback(`Removed creator "${creatorToDelete.name}" from directory.`);
+        setCreatorToDelete(null);
+      } else {
+        setError(res.error || "Failed to delete creator.");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete creator.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const filteredCreators = creators.filter((c) => {
+    const q = searchQuery.toLowerCase();
+    const matchesSearch =
+      !q ||
+      c.name.toLowerCase().includes(q) ||
+      (c.slug && c.slug.toLowerCase().includes(q)) ||
+      (c.role && c.role.toLowerCase().includes(q)) ||
+      (c.instagramHandle && c.instagramHandle.toLowerCase().includes(q)) ||
+      (c.youtubeHandle && c.youtubeHandle.toLowerCase().includes(q));
+    const matchesCountry = selectedCountry === "all" ||
+      (selectedCountry === "MENA"
+        ? !["UAE", "KSA", "Egypt"].includes(c.nationality || "")
+        : c.nationality === selectedCountry);
+    return matchesSearch && matchesCountry;
+  });
+
+  const pagination = usePagination(filteredCreators, 15);
 
   const handleOpenNew = () => {
     setError(null);
@@ -92,8 +138,8 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <Users className="text-blue-400" /> Creators & Influencers Roster
+          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5 font-display">
+            <Users className="text-blue-400" /> Creators &amp; Influencers Roster
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Manage Arab talent, social metrics, and Mawthooq licensing details in Neon PostgreSQL.
@@ -102,10 +148,84 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
 
         <button
           onClick={handleOpenNew}
-          className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-colors shrink-0"
+          className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-colors shrink-0 cursor-pointer"
         >
           <Plus size={16} /> Add New Creator
         </button>
+      </div>
+
+      {/* KPI Summary Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
+          <span className="text-[11px] text-slate-400 font-mono uppercase block">Total Roster</span>
+          <span className="text-xl font-bold text-white font-mono mt-1 block">{creators.length}</span>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
+          <span className="text-[11px] text-emerald-400 font-mono uppercase block">Featured Talent</span>
+          <span className="text-xl font-bold text-emerald-300 font-mono mt-1 block">{creators.filter(c => c.isFeatured).length}</span>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
+          <span className="text-[11px] text-blue-400 font-mono uppercase block">UAE &amp; GCC</span>
+          <span className="text-xl font-bold text-blue-300 font-mono mt-1 block">{creators.filter(c => c.nationality === "UAE" || c.nationality === "KSA").length}</span>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
+          <span className="text-[11px] text-amber-400 font-mono uppercase block">Combined Audience</span>
+          <span className="text-xl font-bold text-amber-300 font-mono mt-1 block">120M+ MENA</span>
+        </div>
+      </div>
+
+      {/* Search and Country Filter Bar */}
+      <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="relative w-full sm:w-80">
+            <input
+              type="text"
+              placeholder="Search creator by name, handle, role..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                pagination.resetPage();
+              }}
+              className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+            />
+            <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
+          </div>
+        </div>
+
+        {/* Country Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pt-1 pb-0.5 scrollbar-none">
+          {[
+            { id: "all", label: "All Regions", count: creators.length },
+            { id: "UAE", label: "🇦🇪 UAE", count: creators.filter(c => c.nationality === "UAE").length },
+            { id: "KSA", label: "🇸🇦 KSA", count: creators.filter(c => c.nationality === "KSA").length },
+            { id: "Egypt", label: "🇪🇬 Egypt", count: creators.filter(c => c.nationality === "Egypt").length },
+            { id: "MENA", label: "🌟 Regional MENA", count: creators.filter(c => !["UAE", "KSA", "Egypt"].includes(c.nationality || "")).length },
+          ].map((cat) => {
+            const isActive = selectedCountry === cat.id;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => {
+                  setSelectedCountry(cat.id);
+                  pagination.resetPage();
+                }}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition-all cursor-pointer ${
+                  isActive
+                    ? "bg-white/15 text-white border border-white/20 shadow-md"
+                    : "bg-white/[0.03] text-slate-400 hover:text-white border border-white/5 hover:bg-white/[0.06]"
+                }`}
+              >
+                <span>{cat.label}</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                  isActive ? "bg-blue-500 text-white font-bold" : "bg-white/10 text-slate-400"
+                }`}>
+                  {cat.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Edit Drawer Modal */}
@@ -280,8 +400,8 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
                 <AdminImageUploader
                   value={editingCreator.imageUrl}
                   onChange={(url) => setEditingCreator({ ...editingCreator, imageUrl: url })}
-                  label="Creator Avatar / Portrait (Vercel Blob / CDN)"
-                  helperText="Drag & drop creator portrait (PNG, JPG, WEBP up to 10MB)"
+                  label="Creator Avatar / Portrait (Cloudinary / CDN)"
+                  helperText="Drag & drop creator portrait (PNG, JPG, WEBP up to 25MB)"
                 />
               </div>
 
@@ -347,70 +467,109 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {creators.map((c) => (
-                <tr key={c.id} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-3">
-                      <div className="relative size-10 rounded-full overflow-hidden shrink-0 border border-white/10 bg-slate-800">
-                        {c.imageUrl && (
-                          <Image src={c.imageUrl} alt={c.name} fill className="object-cover" />
-                        )}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-semibold text-white">{c.name}</span>
-                          <ShieldCheck size={13} className="text-emerald-400" />
+              {filteredCreators.length === 0 ? (
+                <DataTableEmpty
+                  colSpan={5}
+                  message="No creators found matching your search query or region filter."
+                />
+              ) : (
+                pagination.paginatedItems.map((c) => (
+                  <tr key={c.id} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-3">
+                        <div className="relative size-10 rounded-full overflow-hidden shrink-0 border border-white/10 bg-slate-800">
+                          {c.imageUrl && (
+                            <Image src={c.imageUrl} alt={c.name} fill className="object-cover" />
+                          )}
                         </div>
-                        <span className="text-[11px] text-slate-400 font-mono">
-                          /{c.slug}
-                        </span>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-semibold text-white">{c.name}</span>
+                            <ShieldCheck size={13} className="text-emerald-400" />
+                          </div>
+                          <span className="text-[11px] text-slate-400 font-mono">
+                            /{c.slug}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <span className="text-slate-300">
-                      {c.flag} {c.nationality || "MENA"}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 font-semibold text-white">
-                    {c.totalFollowers || "—"}
-                  </td>
-                  <td className="py-3 px-4 text-slate-400">
-                    <div className="flex items-center gap-2 text-[11px]">
-                      {c.instagramHandle && <span>IG: @{c.instagramHandle}</span>}
-                      {c.youtubeHandle && <span>YT: @{c.youtubeHandle}</span>}
-                    </div>
-                  </td>
-                  <td className="py-3 px-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <a
-                        href={`/influencers/${c.slug}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white"
-                        title="View Public Profile"
-                      >
-                        <ExternalLink size={14} />
-                      </a>
-                      <button
-                        onClick={() => {
-                          setError(null);
-                          clearFeedback();
-                          setEditingCreator(c);
-                        }}
-                        className="p-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/40 text-blue-300"
-                        title="Edit Creator"
-                      >
-                        <Edit3 size={14} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="text-slate-300">
+                        {c.flag} {c.nationality || "MENA"}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 font-semibold text-white">
+                      {c.totalFollowers || "—"}
+                    </td>
+                    <td className="py-3 px-4 text-slate-400">
+                      <div className="flex items-center gap-2 text-[11px]">
+                        {c.instagramHandle && <span>IG: @{c.instagramHandle}</span>}
+                        {c.youtubeHandle && <span>YT: @{c.youtubeHandle}</span>}
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <a
+                          href={`/influencers/${c.slug}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white"
+                          title="View Public Profile"
+                        >
+                          <ExternalLink size={14} />
+                        </a>
+                        <button
+                          onClick={() => {
+                            setError(null);
+                            clearFeedback();
+                            setEditingCreator(c);
+                          }}
+                          className="p-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/40 text-blue-300"
+                          title="Edit Creator"
+                        >
+                          <Edit3 size={14} />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setError(null);
+                            setCreatorToDelete(c);
+                          }}
+                          className="p-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 transition-colors cursor-pointer"
+                          title="Delete Creator"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
+        <PaginationControls
+          currentPage={pagination.currentPage}
+          pageCount={pagination.pageCount}
+          total={pagination.total}
+          startIndex={pagination.startIndex}
+          endIndex={pagination.endIndex}
+          onPrev={pagination.prevPage}
+          onNext={pagination.nextPage}
+        />
       </div>
+
+      {creatorToDelete && (
+        <AdminConfirmModal
+          isOpen={Boolean(creatorToDelete)}
+          onClose={() => setCreatorToDelete(null)}
+          onConfirm={handleConfirmDelete}
+          title="Delete Creator Profile"
+          message={`Are you sure you want to remove "${creatorToDelete.name}" from the talent directory? This action cannot be undone.`}
+          confirmLabel="Delete Creator"
+          variant="danger"
+          isSubmitting={isDeleting}
+        />
+      )}
     </div>
   );
 }

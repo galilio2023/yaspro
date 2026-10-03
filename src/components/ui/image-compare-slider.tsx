@@ -64,47 +64,96 @@ export function ImageCompareSlider({
     });
   }, [setPosition]);
 
+  const isDraggingRef = useRef(false);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const isSwipingVerticalRef = useRef(false);
+
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
+    isDraggingRef.current = true;
     setIsDragging(true);
     updateSliderFromClientX(e.clientX);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    setIsDragging(true);
     if (e.touches[0]) {
-      updateSliderFromClientX(e.touches[0].clientX);
+      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      isSwipingVerticalRef.current = false;
     }
   };
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging) return;
+      if (!isDraggingRef.current) return;
       updateSliderFromClientX(e.clientX);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!isDragging || !e.touches[0]) return;
-      updateSliderFromClientX(e.touches[0].clientX);
+      if (!e.touches[0] || !touchStartRef.current || isSwipingVerticalRef.current) return;
+      const touch = e.touches[0];
+      const dx = Math.abs(touch.clientX - touchStartRef.current.x);
+      const dy = Math.abs(touch.clientY - touchStartRef.current.y);
+
+      // If user is predominantly scrolling vertically, do NOT drag the slider
+      if (!isDraggingRef.current) {
+        if (dy > dx && dy > 6) {
+          // Vertical swipe: let page scroll natively and do not commit as tap
+          isSwipingVerticalRef.current = true;
+          return;
+        }
+        if (dx > 8 && dx > dy) {
+          isDraggingRef.current = true;
+          setIsDragging(true);
+          updateSliderFromClientX(touch.clientX);
+        }
+      } else {
+        updateSliderFromClientX(touch.clientX);
+      }
     };
 
     const handleMouseUp = () => {
-      if (isDragging) setIsDragging(false);
+      if (isDraggingRef.current) {
+        isDraggingRef.current = false;
+        setIsDragging(false);
+      }
+    };
+
+    const handleTouchEnd = () => {
+      // If user tapped without dragging or vertical swipe, commit tap position
+      if (touchStartRef.current && !isSwipingVerticalRef.current && !isDraggingRef.current) {
+        updateSliderFromClientX(touchStartRef.current.x);
+      }
+      if (isDraggingRef.current) {
+        isDraggingRef.current = false;
+        setIsDragging(false);
+      }
+      touchStartRef.current = null;
+      isSwipingVerticalRef.current = false;
+    };
+
+    const handleTouchCancel = () => {
+      isDraggingRef.current = false;
+      setIsDragging(false);
+      touchStartRef.current = null;
+      isSwipingVerticalRef.current = false;
+      if (rafDragRef.current) cancelAnimationFrame(rafDragRef.current);
     };
 
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
     window.addEventListener("touchmove", handleTouchMove, { passive: true });
-    window.addEventListener("touchend", handleMouseUp);
+    window.addEventListener("touchend", handleTouchEnd);
+    window.addEventListener("touchcancel", handleTouchCancel);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("touchend", handleMouseUp);
+      window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("touchcancel", handleTouchCancel);
       if (rafDragRef.current) cancelAnimationFrame(rafDragRef.current);
     };
-  }, [isDragging, updateSliderFromClientX]);
+  }, [updateSliderFromClientX]);
 
   return (
     <div
@@ -127,7 +176,7 @@ export function ImageCompareSlider({
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       className={cn(
-        "relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 select-none cursor-ew-resize group bg-black/60 shadow-2xl focus:outline-none focus:ring-2 focus:ring-amber-500/50",
+        "relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 select-none cursor-ew-resize group bg-black/60 shadow-2xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 touch-pan-y",
         aspectRatio,
         className
       )}

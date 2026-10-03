@@ -12,7 +12,7 @@ export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 export const Section = React.forwardRef<HTMLElement, SectionProps>(function Section(
-  { id, ariaLabelledby, ariaLabel, background, className, children, animateIn, ...props },
+  { id, ariaLabelledby, ariaLabel, background, className, children, animateIn = false, ...props },
   forwardedRef
 ) {
   const innerRef = React.useRef<HTMLElement>(null);
@@ -30,8 +30,9 @@ export const Section = React.forwardRef<HTMLElement, SectionProps>(function Sect
   );
 
   React.useEffect(() => {
-    // Only animate sections if explicitly requested or if below hero and not prefers-reduced-motion
-    if (animateIn === false || id === "hero") return;
+    // Only run container-level fade if explicitly requested (animateIn === true)
+    // and never on the hero section to protect LCP, scroll restoration, and prevent layout shifts.
+    if (!animateIn || id === "hero") return;
 
     const el = innerRef.current;
     if (!el) return;
@@ -40,23 +41,22 @@ export const Section = React.forwardRef<HTMLElement, SectionProps>(function Sect
     const isAlreadyInView = rect.top < window.innerHeight && rect.bottom > 0;
     if (isAlreadyInView) {
       el.style.opacity = "1";
-      el.style.transform = "none";
       return;
     }
 
     el.style.opacity = "0";
-    el.style.transform = "translate3d(0, 44px, 0) scale3d(0.975, 0.975, 1)";
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            el.classList.add("studio-scroll-reveal");
+            el.style.transition = "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)";
+            el.style.opacity = "1";
             observer.unobserve(el);
           }
         });
       },
-      { threshold: 0.05, rootMargin: "0px 0px -8% 0px" }
+      { threshold: 0.05, rootMargin: "0px 0px -5% 0px" }
     );
 
     observer.observe(el);

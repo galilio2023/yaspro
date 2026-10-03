@@ -20,6 +20,7 @@ import { DataTable, DataTableHeader, DataTableBody, DataTableRow, DataTableEmpty
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { usePagination } from "@/hooks/usePagination";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
+import { AdminConfirmModal } from "@/components/admin/AdminConfirmModal";
 
 interface UsersManagerProps {
   initialUsers: User[];
@@ -30,6 +31,10 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "client" | "enterprise" | "admin">("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [roleTarget, setRoleTarget] = useState<{ user: User; newRole: "client" | "enterprise" | "admin" } | null>(null);
+  const [isSubmittingAction, setIsSubmittingAction] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3000);
 
@@ -50,33 +55,56 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
   const totalEnterprise = usersList.filter((u) => u.role === "enterprise").length;
   const totalAdmins = usersList.filter((u) => u.role === "admin").length;
 
-  const handleRoleChange = async (user: User, newRole: "client" | "enterprise" | "admin") => {
+  const handleRoleSelect = (user: User, newRole: "client" | "enterprise" | "admin") => {
     if (user.role === newRole) return;
-    if (!confirm(`Are you sure you want to change ${user.name}'s role to "${newRole}"?`)) return;
-    setUpdatingId(user.id);
-    const res = await updateUserRole(user.id, newRole);
-    if (res.success) {
-      setUsersList((prev) =>
-        prev.map((u) => (u.id === user.id ? { ...u, role: newRole } : u))
-      );
-      showFeedback(`Updated ${user.name} to ${newRole}`);
-    } else {
-      alert(res.error || "Failed to update role");
-    }
-    setUpdatingId(null);
+    setRoleTarget({ user, newRole });
   };
 
-  const handleDeleteUser = async (user: User) => {
-    if (!confirm(`Permanently delete account for ${user.name} (${user.email})? This action cannot be undone.`)) return;
+  const handleConfirmRoleChange = async () => {
+    if (!roleTarget) return;
+    const { user, newRole } = roleTarget;
+    setIsSubmittingAction(true);
+    setErrorMessage(null);
     setUpdatingId(user.id);
-    const res = await deleteCmsUser(user.id);
-    if (res.success) {
-      setUsersList((prev) => prev.filter((u) => u.id !== user.id));
-      showFeedback(`User ${user.name} deleted`);
-    } else {
-      alert(res.error || "Failed to delete user");
+    try {
+      const res = await updateUserRole(user.id, newRole);
+      if (res.success) {
+        setUsersList((prev) =>
+          prev.map((u) => (u.id === user.id ? { ...u, role: newRole } : u))
+        );
+        showFeedback(`Updated ${user.name}'s role to ${newRole}`);
+        setRoleTarget(null);
+      } else {
+        setErrorMessage(res.error || "Failed to update role");
+      }
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Failed to update role");
+    } finally {
+      setIsSubmittingAction(false);
+      setUpdatingId(null);
     }
-    setUpdatingId(null);
+  };
+
+  const handleConfirmDeleteUser = async () => {
+    if (!userToDelete) return;
+    setIsSubmittingAction(true);
+    setErrorMessage(null);
+    setUpdatingId(userToDelete.id);
+    try {
+      const res = await deleteCmsUser(userToDelete.id);
+      if (res.success) {
+        setUsersList((prev) => prev.filter((u) => u.id !== userToDelete.id));
+        showFeedback(`User account for ${userToDelete.name} deleted.`);
+        setUserToDelete(null);
+      } else {
+        setErrorMessage(res.error || "Failed to delete user");
+      }
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Failed to delete user");
+    } finally {
+      setIsSubmittingAction(false);
+      setUpdatingId(null);
+    }
   };
 
   return (
@@ -92,9 +120,14 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
             Real production clients, verified phone contacts, and enterprise administrators.
           </p>
         </div>
-        {feedback && (
-          <FeedbackAlert type="success" message={feedback} onDismiss={clearFeedback} />
-        )}
+        <div className="flex flex-col gap-2">
+          {feedback && (
+            <FeedbackAlert type="success" message={feedback} onDismiss={clearFeedback} />
+          )}
+          {errorMessage && (
+            <FeedbackAlert type="error" message={errorMessage} onDismiss={() => setErrorMessage(null)} />
+          )}
+        </div>
       </div>
 
       {/* KPI Cards */}
@@ -212,7 +245,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                     value={user.role}
                     disabled={updatingId === user.id}
                     onChange={(e) =>
-                      handleRoleChange(
+                      handleRoleSelect(
                         user,
                         e.target.value as "client" | "enterprise" | "admin"
                       )
@@ -246,7 +279,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                   <div className="flex items-center justify-end gap-1.5">
                     <button
                       type="button"
-                      onClick={() => handleDeleteUser(user)}
+                      onClick={() => setUserToDelete(user)}
                       disabled={updatingId === user.id}
                       className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer disabled:opacity-50"
                       title="Delete User"
@@ -271,6 +304,34 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
         onNext={pagination.nextPage}
         variant="table"
       />
+
+      {/* Delete User Confirmation Modal */}
+      {userToDelete && (
+        <AdminConfirmModal
+          isOpen={Boolean(userToDelete)}
+          onClose={() => setUserToDelete(null)}
+          onConfirm={handleConfirmDeleteUser}
+          title="Delete Account"
+          message={`Are you sure you want to permanently delete the account for ${userToDelete.name} (${userToDelete.email})? This action cannot be undone.`}
+          confirmLabel="Delete Account"
+          variant="danger"
+          isSubmitting={isSubmittingAction}
+        />
+      )}
+
+      {/* Role Change Confirmation Modal */}
+      {roleTarget && (
+        <AdminConfirmModal
+          isOpen={Boolean(roleTarget)}
+          onClose={() => setRoleTarget(null)}
+          onConfirm={handleConfirmRoleChange}
+          title="Change User Access Role"
+          message={`Are you sure you want to change ${roleTarget.user.name}'s role from "${roleTarget.user.role}" to "${roleTarget.newRole}"?`}
+          confirmLabel="Update Role"
+          variant="warning"
+          isSubmitting={isSubmittingAction}
+        />
+      )}
     </div>
   );
 }

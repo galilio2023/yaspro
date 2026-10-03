@@ -146,3 +146,46 @@ test('createBooking rejects studio double-booking when schedule overlaps', async
   assert.equal(result.success, false);
   assert.match(result.message, /already reserved during your selected time window/i);
 });
+
+test('booking uses CMS IDs and rates and rejects deleted or inactive studios', async () => {
+  const studioId = '11111111-2222-3333-4444-555555555555';
+  let studioRecord = { id: studioId, slug: 'custom-room', name: 'Custom Room', hourlyRate: '777.00', isActive: true };
+  const schemas = { studios: { id: 'studio-id', slug: 'studio-slug' }, bookings: {}, users: {} };
+  const writes = [];
+  let lookup;
+  const constants = loadSource('src/features/booking/constants.ts');
+  const { createBooking } = loadSource('src/lib/actions.ts', {
+    '@/db': { db: {
+      query: { studios: { findFirst: async ({ where }) => { lookup = where; return studioRecord; } } },
+      select: () => ({ from: () => ({ where: async () => [] }) }),
+      insert: (table) => ({ values: (values) => {
+        writes.push({ table, values });
+        return { onConflictDoUpdate: () => ({ returning: async () => [{ id: 'user' }] }), returning: async () => [{ id: 'booking' }] };
+      } }),
+    } },
+    '@/db/schema': schemas,
+    'drizzle-orm': { eq: (col, val) => ({ col, val }), and() {}, inArray() {} },
+    'next/cache': { revalidatePath() {} },
+    'next/headers': {}, '@/lib/auth': {},
+    '@/lib/utils': { generateBookingReference: () => 'REF' },
+    '@/features/booking/constants': constants,
+    './validations': { bookingSubmissionSchema: { safeParse: (data) => ({ success: true, data }) } },
+    '@/lib/rate-limit': { getClientIdentifier: async () => 'local', checkRateLimit: () => ({ allowed: true }), checkIdempotency: () => true },
+    '@/lib/notifications': { sendBookingConfirmationNotification: async () => {} },
+  });
+  const input = { studioId, firstName: 'Local', lastName: 'Tester', email: 'local@example.com', scheduledAt: '2026-10-15T10:00', durationHours: 2, totalAmount: 1 };
+  assert.equal((await createBooking(input)).success, true);
+  assert.deepEqual(lookup, { col: 'studio-id', val: studioId });
+  const booking = writes.find((write) => write.table === schemas.bookings).values;
+  assert.equal(booking.studioId, studioId);
+  assert.equal(booking.totalAmount, '1631.70');
+  writes.length = 0;
+  assert.equal((await createBooking({ ...input, studioId: 'custom-room' })).success, true);
+  assert.deepEqual(lookup, { col: 'studio-slug', val: 'custom-room' });
+  writes.length = 0;
+  studioRecord = { ...studioRecord, isActive: false };
+  assert.equal((await createBooking(input)).success, false);
+  studioRecord = undefined;
+  assert.equal((await createBooking(input)).success, false);
+  assert.equal(writes.length, 0);
+});

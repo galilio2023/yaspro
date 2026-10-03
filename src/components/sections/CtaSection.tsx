@@ -55,9 +55,12 @@ export function CtaSection({
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 sm:pb-20 md:pb-28 pt-20 sm:pt-36 flex flex-col items-center text-center">
         <FadeUp>
           {/* Live status badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-mono uppercase tracking-wider font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 mb-6 backdrop-blur-md shadow-lg shadow-black/40">
-            <span className="size-2 rounded-full bg-emerald-400" />
-            <span>{t("cta.liveStatus")}</span>
+          <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-mono uppercase tracking-wider rtl:font-arabic rtl:tracking-normal font-semibold border border-amber-500/30 bg-amber-500/10 text-amber-400 mb-6 backdrop-blur-md shadow-lg shadow-black/40 whitespace-nowrap shrink-0 max-w-full">
+            <span className="relative flex size-2 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+              <span className="relative inline-flex rounded-full size-2 bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+            </span>
+            <span className="whitespace-nowrap font-latin rtl:font-arabic">{t("cta.liveStatus")}</span>
           </div>
 
           {/* Headline */}

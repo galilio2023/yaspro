@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { X, ArrowUpRight, Camera, Video, Users, MessageSquare } from "lucide-react";
+import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { ProductionCopilotModal } from "@/features/enterprise/components/ai/ProductionCopilotModal";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { motion, AnimatePresence } from "framer-motion";
@@ -40,130 +41,93 @@ const QUICK_INQUIRIES = [
 ];
 
 /**
- * Bespoke Hybrid SVG: Merges the AI Production Spark with the WhatsApp Concierge Chat Bubble
+ * Smart Enhanced WhatsApp SVG Icon
+ * Featuring emerald depth gradients, optical white handset, and smart live signal beacon
  */
-function UnifiedDualIcon({ className = "size-7" }: { className?: string }) {
+function SmartWhatsAppIcon({ className = "size-6" }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 32 32"
+      viewBox="0 0 28 28"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id="yasproDualRing" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#f59e0b" />
-          <stop offset="0.5" stopColor="#d97706" />
-          <stop offset="1" stopColor="#10B981" />
-        </linearGradient>
-
-        <linearGradient id="yasproAiStarGrad" x1="5" y1="5" x2="19" y2="19" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#fef3c7" />
-          <stop offset="0.5" stopColor="#fbbf24" />
-          <stop offset="1" stopColor="#f59e0b" />
-        </linearGradient>
-
-        <linearGradient id="yasproWaHandsetGrad" x1="13" y1="12" x2="23" y2="23" gradientUnits="userSpaceOnUse">
+        <linearGradient id="waSmartGrad" x1="4" y1="4" x2="24" y2="24" gradientUnits="userSpaceOnUse">
           <stop stopColor="#34D399" />
-          <stop offset="1" stopColor="#10B981" />
+          <stop offset="0.55" stopColor="#10B981" />
+          <stop offset="1" stopColor="#059669" />
         </linearGradient>
-
-        <filter id="yasproDualGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="1.2" result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
-      </defs>
-
-      {/* Modern stylized speech bubble frame with dynamic dual-gradient stroke */}
-      <path
-        d="M26.2 14.5C26.2 20.6 21.2 25.5 15 25.5C13.2 25.5 11.45 25.07 9.9 24.3L4.5 26.1L6.25 21C5.35 19.35 4.8 17.5 4.8 15.5C4.8 9.4 9.8 4.5 16 4.5C22.2 4.5 26.2 8.7 26.2 14.5Z"
-        fill="#0b0a0f"
-        fillOpacity="0.95"
-        stroke="url(#yasproDualRing)"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-
-      {/* Left/Top AI Star Sparkle Glyph */}
-      <path
-        d="M12.5 7L13.8 10.7L17.5 12L13.8 13.3L12.5 17L11.2 13.3L7.5 12L11.2 10.7L12.5 7Z"
-        fill="url(#yasproAiStarGrad)"
-        filter="url(#yasproDualGlow)"
-      />
-      <circle cx="12.5" cy="12" r="1.1" fill="#FFFFFF" />
-
-      {/* Micro-spark accent */}
-      <circle cx="8" cy="7.5" r="0.9" fill="#fde68a" />
-
-      {/* Right/Bottom WhatsApp Phone Handset Glyph */}
-      <path
-        d="M21.2 18.2C20.95 18.05 19.85 17.5 19.6 17.4C19.35 17.3 19.2 17.25 19.05 17.5C18.85 17.75 18.35 18.35 18.2 18.5C18.05 18.65 17.9 18.7 17.65 18.55C17.4 18.4 16.55 18.1 15.55 17.2C14.75 16.5 14.25 15.7 14.05 15.4C13.9 15.15 14.05 15 14.15 14.9C14.25 14.8 14.4 14.6 14.55 14.45C14.65 14.3 14.7 14.2 14.75 14C14.8 13.85 14.75 13.7 14.7 13.6C14.65 13.5 14.15 12.2 13.95 11.7C13.75 11.2 13.55 11.3 13.4 11.3H12.95C12.75 11.3 12.5 11.35 12.3 11.6C12.05 11.85 11.45 12.45 11.45 13.65C11.45 14.85 12.3 16 12.45 16.15C12.6 16.3 14.15 18.7 16.55 19.7C18.95 20.7 18.95 20.35 19.4 20.3C19.85 20.25 20.8 19.7 21 19.15C21.2 18.6 21.2 18.15 21.15 18.05C21.1 17.95 20.95 17.9 20.7 17.8"
-        fill="url(#yasproWaHandsetGrad)"
-      />
-    </svg>
-  );
-}
-
-/**
- * Bespoke WhatsApp SVG Icon
- */
-function WhatsAppIcon({ className = "size-5" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      aria-hidden="true"
-    >
-      <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23-1.48 0-2.93-.39-4.19-1.15l-.3-.17-3.12.82.83-3.04-.2-.31a8.188 8.188 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.71 4.3 3.8 2.53 1.09 2.53.73 2.99.68.46-.04 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29" />
-    </svg>
-  );
-}
-
-/**
- * Bespoke AI Production Copilot SVG Icon
- */
-function AiCopilotIcon({ className = "size-5" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id="aiFabGrad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#fef3c7" />
-          <stop offset="0.5" stopColor="#fbbf24" />
-          <stop offset="1" stopColor="#f59e0b" />
-        </linearGradient>
-        <filter id="aiCoreGlow" x="-20%" y="-20%" width="140%" height="140%">
+        <filter id="waSmartGlow" x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur stdDeviation="0.8" result="blur" />
           <feComposite in="SourceGraphic" in2="blur" operator="over" />
         </filter>
       </defs>
 
-      {/* Central 4-pointed radiant neural star */}
+      {/* Modern stylized speech bubble frame */}
       <path
-        d="M12 2L14.4 8.6L21 11L14.4 13.4L12 20L9.6 13.4L3 11L9.6 8.6L12 2Z"
-        fill="url(#aiFabGrad)"
-        filter="url(#aiCoreGlow)"
-      />
-      {/* Precision optical lens core */}
-      <circle cx="12" cy="11" r="1.8" fill="#FFFFFF" />
-
-      {/* Secondary companion star */}
-      <path
-        d="M18.8 14.8L19.7 17.2L22.1 18.1L19.7 19L18.8 21.4L17.9 19L15.5 18.1L17.9 17.2L18.8 14.8Z"
-        fill="#f59e0b"
+        d="M14 3.5C8.2 3.5 3.5 8.2 3.5 14C3.5 15.85 4 17.58 4.88 19.08L3.5 24.5L9.08 23.14C10.54 23.99 12.22 24.5 14 24.5C19.8 24.5 24.5 19.8 24.5 14C24.5 8.2 19.8 3.5 14 3.5Z"
+        fill="url(#waSmartGrad)"
+        filter="url(#waSmartGlow)"
       />
 
-      {/* Subtle micro spark */}
-      <circle cx="6" cy="6.2" r="1.1" fill="#fcd34d" />
+      {/* Crisp Optical Handset */}
+      <path
+        d="M18.8 16.9C18.55 16.77 17.35 16.18 17.12 16.1C16.9 16.02 16.73 15.98 16.57 16.23C16.4 16.48 15.93 17.04 15.79 17.2C15.65 17.37 15.5 17.39 15.25 17.26C15 17.13 14.19 16.87 13.22 16.01C12.47 15.34 11.96 14.51 11.81 14.26C11.66 14.01 11.8 13.88 11.92 13.75C12.03 13.64 12.18 13.46 12.3 13.32C12.42 13.17 12.46 13.07 12.54 12.9C12.62 12.73 12.58 12.59 12.52 12.46C12.46 12.33 11.96 11.1 11.75 10.6C11.55 10.11 11.34 10.18 11.19 10.17H10.71C10.54 10.17 10.27 10.23 10.04 10.48C9.81 10.73 9.16 11.34 9.16 12.58C9.16 13.82 10.06 15.02 10.19 15.19C10.32 15.36 11.97 17.9 14.49 18.99C17.02 20.08 17.02 19.72 17.48 19.67C17.94 19.63 18.95 19.07 19.16 18.49C19.37 17.91 19.37 17.42 19.31 17.31C19.25 17.2 19.05 17.03 18.8 16.9Z"
+        fill="#FFFFFF"
+      />
+
+      {/* Smart Live Signal Pulse Ring */}
+      <circle cx="21" cy="7" r="2.4" fill="#10B981" stroke="#06110c" strokeWidth="1" />
+      <circle cx="21" cy="7" r="1.3" fill="#E6FFFA" />
+    </svg>
+  );
+}
+
+/**
+ * Smart Enhanced AI Production Copilot SVG Icon
+ * Featuring neural radiant aperture, concentric optical core, and satellite nodes in tungsten amber
+ */
+function SmartAiIcon({ className = "size-6" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 28 28"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="smartAiNeuralGrad" x1="3" y1="3" x2="25" y2="25" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#fef3c7" />
+          <stop offset="0.4" stopColor="#fbbf24" />
+          <stop offset="1" stopColor="#d97706" />
+        </linearGradient>
+        <linearGradient id="smartAiCoreGrad" x1="10" y1="10" x2="18" y2="18" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#ffffff" />
+          <stop offset="1" stopColor="#fbbf24" />
+        </linearGradient>
+        <filter id="smartAiGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="0.9" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+      </defs>
+
+      {/* Outer 4-Pointed Neural Cinema Star */}
+      <path
+        d="M14 2L16.8 9.8C17.2 10.9 18.1 11.8 19.2 12.2L27 15L19.2 17.8C18.1 18.2 17.2 19.1 16.8 20.2L14 28L11.2 20.2C10.8 19.1 9.9 18.2 8.8 17.8L1 15L8.8 12.2C9.9 11.8 10.8 10.9 11.2 9.8L14 2Z"
+        fill="url(#smartAiNeuralGrad)"
+        filter="url(#smartAiGlow)"
+      />
+
+      {/* Optical Lens Iris Pupil */}
+      <circle cx="14" cy="15" r="3.2" fill="#0d0b12" stroke="url(#smartAiCoreGrad)" strokeWidth="1.2" />
+      <circle cx="14" cy="15" r="1.6" fill="url(#smartAiCoreGrad)" />
+
+      {/* Intelligent Node Constellation Sparks */}
+      <circle cx="21.5" cy="8.5" r="1.6" fill="#fde68a" />
+      <circle cx="6.5" cy="21.5" r="1.2" fill="#fbbf24" />
     </svg>
   );
 }
@@ -268,7 +232,7 @@ export function UnifiedFloatingActions() {
               <div className="flex items-center gap-2.5">
                 <div className="relative">
                   <div className="size-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
-                    <WhatsAppIcon className="size-5" />
+                    <SmartWhatsAppIcon className="size-5" />
                   </div>
                   <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-emerald-400 ring-2 ring-[#0c0a18]" />
                 </div>
@@ -354,7 +318,7 @@ export function UnifiedFloatingActions() {
         )}
 
         {/* Floating Stack Options Menu (Revealed when clicked) */}
-        {/* Action Menu (AI Copilot & WhatsApp Options) */}
+        {/* Tooltip-free clean circular buttons with smart SVGs */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
@@ -366,69 +330,45 @@ export function UnifiedFloatingActions() {
               aria-label="Yas Pro Assistant Options"
               dir="ltr"
               style={{ direction: "ltr" }}
-              className="absolute bottom-16 right-0 mb-2 flex flex-col items-end gap-3"
+              className="absolute bottom-16 right-0 mb-2 flex flex-col items-center gap-3 w-13 sm:w-14"
             >
-              {/* Option 1: AI Production Copilot SVG Button */}
-              <motion.div
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ ...studioSprings.snappy, delay: 0.04 }}
-                className="flex items-center gap-2.5 group/ai"
+              {/* Option 1: AI Production Copilot with Smart AI SVG */}
+              <motion.button
+                type="button"
+                onClick={handleSelectAi}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.92 }}
+                transition={studioSprings.tactile}
+                className="relative size-12 sm:size-13 rounded-full bg-gradient-to-b from-[#181410] to-[#0c0a08] border border-amber-500/50 shadow-xl shadow-amber-500/20 hover:border-amber-400 hover:shadow-amber-500/40 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 group"
+                aria-label={t("concierge.aiCopilot")}
+                title={t("concierge.aiCopilot")}
               >
-                <span className="text-[11px] sm:text-xs font-semibold text-white/90 bg-[#0d0b12]/90 backdrop-blur-xl border border-amber-500/30 px-3 py-1.5 rounded-full shadow-lg shadow-black/50 pointer-events-none select-none transition-transform group-hover/ai:scale-105 whitespace-nowrap">
-                  {t("concierge.aiCopilot")}
-                </span>
-                <motion.button
-                  type="button"
-                  onClick={handleSelectAi}
-                  whileHover={{ scale: 1.08 }}
-                  whileTap={{ scale: 0.92 }}
-                  transition={studioSprings.tactile}
-                  className="relative size-12 sm:size-13 rounded-2xl bg-amber-500/20 border border-amber-500/40 p-[1.5px] shadow-xl shadow-amber-500/20 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-                  aria-label={t("concierge.aiCopilot")}
-                  title={t("concierge.aiCopilot")}
-                >
-                  <div className="size-full bg-[#0d0b12] rounded-[14px] flex items-center justify-center text-amber-400">
-                    <AiCopilotIcon className="size-6" />
-                  </div>
-                </motion.button>
-              </motion.div>
+                <SmartAiIcon className="size-6 text-amber-400 group-hover:scale-105 transition-transform" />
+              </motion.button>
 
-              {/* Option 2: WhatsApp Concierge SVG Button */}
-              <motion.div
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ ...studioSprings.snappy, delay: 0.08 }}
-                className="flex items-center gap-2.5 group/wa"
+              {/* Option 2: WhatsApp Concierge with Smart WhatsApp SVG */}
+              <motion.button
+                type="button"
+                onClick={handleSelectWhatsApp}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.92 }}
+                transition={studioSprings.tactile}
+                className="relative size-12 sm:size-13 rounded-full bg-gradient-to-b from-[#0e1d16] to-[#06110c] border border-emerald-500/50 shadow-xl shadow-emerald-600/30 hover:border-emerald-400 hover:shadow-emerald-600/50 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 group"
+                aria-label={t("concierge.whatsApp")}
+                title={t("concierge.whatsApp")}
               >
-                <span className="text-[11px] sm:text-xs font-semibold text-white/90 bg-[#0d0b12]/90 backdrop-blur-xl border border-emerald-500/40 px-3 py-1.5 rounded-full shadow-lg shadow-black/50 pointer-events-none select-none transition-transform group-hover/wa:scale-105 whitespace-nowrap">
-                  {t("concierge.whatsApp")}
-                </span>
-                <motion.button
-                  type="button"
-                  onClick={handleSelectWhatsApp}
-                  whileHover={{ scale: 1.08 }}
-                  whileTap={{ scale: 0.92 }}
-                  transition={studioSprings.tactile}
-                  className="relative size-12 sm:size-13 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 p-[1.5px] shadow-xl shadow-emerald-600/30 hover:shadow-emerald-600/50 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-                  aria-label={t("concierge.whatsApp")}
-                  title={t("concierge.whatsApp")}
-                >
-                  <div className="size-full bg-[#0a1811] rounded-[14px] flex items-center justify-center text-emerald-400">
-                    <WhatsAppIcon className="size-6" />
-                  </div>
-                </motion.button>
-              </motion.div>
+                <SmartWhatsAppIcon className="size-6 group-hover:scale-105 transition-transform" />
+              </motion.button>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Master Floating Trigger Button: Housing the Combined Dual SVG */}
+        {/* Master Floating Trigger Button: Housing the Official Brand Logo SVG */}
         <div className="relative group">
           {/* Ambient Glow Aura */}
           <div
-            className={`absolute -inset-1 rounded-full bg-gradient-to-r from-amber-500 to-emerald-500 blur-md transition-opacity duration-300 ${
-              isMenuOpen ? "opacity-100 scale-105" : "opacity-60 group-hover:opacity-100"
+            className={`absolute -inset-1 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 blur-md transition-opacity duration-300 ${
+              isMenuOpen ? "opacity-90 scale-105" : "opacity-50 group-hover:opacity-100"
             }`}
           />
 
@@ -440,7 +380,7 @@ export function UnifiedFloatingActions() {
             whileHover={{ scale: 1.06 }}
             whileTap={{ scale: 0.94 }}
             transition={studioSprings.snappy}
-            className={`relative size-13 sm:size-14 rounded-full bg-[#0b0a0f] border border-amber-500/40 p-[2px] shadow-2xl shadow-black/80 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50`}
+            className="relative size-13 sm:size-14 rounded-full bg-[#0b0a0f] border border-amber-500/50 p-[2px] shadow-2xl shadow-black/80 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
             aria-label={isMenuOpen ? "Close Assistant Options" : "Open Yas Pro Assistant (AI & WhatsApp)"}
             aria-expanded={isMenuOpen}
           >
@@ -448,7 +388,11 @@ export function UnifiedFloatingActions() {
               {isMenuOpen ? (
                 <X className="size-6 text-white transition-transform duration-300 rotate-90" />
               ) : (
-                <UnifiedDualIcon className="size-8 transition-transform duration-300 group-hover:scale-110" />
+                <YasproEmblem
+                  size={30}
+                  idPrefix="fab-master-emblem"
+                  className="filter drop-shadow-[0_2px_8px_rgba(245,158,11,0.45)] transition-transform duration-300 group-hover:scale-108"
+                />
               )}
             </div>
           </motion.button>
