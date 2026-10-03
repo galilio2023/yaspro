@@ -1,371 +1,203 @@
-# 🎬 YAS PRO — Client Handover, User Guide & Platform Architecture
-## وثيقة تسليم المشروع، دليل المستخدم الشامل، ودليل المبيعات للمنصة الرقمية
-**Yas Productions LLC • Dubai, United Arab Emirates**  
-*Official Enterprise Documentation for System Owner & Leadership Team*
+# 🎬 YAS PRO — دليل المالك والتسليم التنفيذي الشامل للمنصة
+## Official Client Handover, System Architecture & Operational Reality Report
+**Yas Productions LLC • Dubai Studio City, UAE**  
+*وثيقة التسليم الرسمية الصادقة والشفافة من فريق التطوير إلى إدارة وقيادة ياس برودكشنز*
 
 ---
 
-# 📑 Table of Contents / جدول المحتويات
+# 📑 جدول المحتويات / Table of Contents
 
-1. [Executive Summary & Welcome / المقدمة التنفيذية والترحيب](#1-executive-summary--welcome--المقدمة-التنفيذية-والترحيب)
-2. [Master Admin Credentials & Testing Guide / بيانات الدخول الإدارية ودليل الاختبار](#2-master-admin-credentials--testing-guide--بيانات-الدخول-الإدارية-ودليل-الاختبار)
-3. [Complete Routes, Pages & Sections Catalog / الفهرس الشامل لجميع الصفحات والأقسام](#3-complete-routes-pages--sections-catalog--الفهرس-الشامل-لجميع-الصفحات-والأقسام)
-4. [The 8 Major Sales Points & Competitive Edge / أهم 8 نقاط بيع ومزايا تنافسية](#4-the-8-major-sales-points--competitive-edge--أهم-8-نقاط-بيع-ومزايا-تنافسية)
-5. [Database Architecture & Data Inventory / هيكلية قاعدة البيانات وحصر البيانات](#5-database-architecture--data-inventory--هيكلية-قاعدة-البيانات-وحصر-البيانات)
-6. [Core Operations & Step-by-Step User Workflows / خطوات الاستخدام والتشغيل العملي](#6-core-operations--step-by-step-user-workflows--خطوات-الاستخدام-والتشغيل-العملي)
-7. [Production Go-Live & Maintenance Checklist / قائمة الإطلاق الرسمي والتشغيل النهائي](#7-production-go-live--maintenance-checklist--قائمة-الإطلاق-الرسمي-والتشغيل-النهائي)
-8. [The 20-Point Client Directives: Compliance & Enhancement Audit / مصفوفة مطابقة توجيهات العميل العشرين](#8-the-20-point-client-directives-compliance--enhancement-audit--مصفوفة-مطابقة-توجيهات-العميل-العشرين)
-
----
-
-# 1. Executive Summary & Welcome / المقدمة التنفيذية والترحيب
-
-### English
-Welcome to the official handover documentation for **Yas Pro** — the premier sovereign digital media hub, soundstage booking engine, and cinema equipment rental ecosystem built specifically for Dubai, the UAE, and the broader MENA region.
-
-This platform replaces outdated, slow, and insecure legacy WordPress installations with a bespoke, ultra-fast, modern web application built on **Next.js 15 (React 19)**, backed by a resilient serverless **Neon PostgreSQL** database, protected by **Better-Auth** enterprise authentication, and integrated with the **Ziina UAE Payment Gateway** for seamless credit card and Apple Pay transactions in AED.
-
-### العربية
-أهلاً بكم في وثيقة التسليم الرسمية لمنصة **ياس برو (Yas Pro)** — المنصة الرقمية السينمائية الرائدة في دبي ودولة الإمارات العربية المتحدة لحجز استوديوهات الإنتاج الافتراضي (Virtual Production)، وتأجير معدات السينما الاحترافية، وإدارة عقود الإنتاج السيادي والمؤثرين.
-
-تم بناء هذه المنصة بالكامل لتكون بديلاً متطوراً للمواقع التقليدية القديمة (WordPress)، حيث تعتمد على أحدث تقنيات الويب العالمية: **Next.js 15 (React 19)**، وقاعدة بيانات سحابية فائقة السرعة **Neon PostgreSQL**، وبوابة الدفع الوطنية المعتمدة في الإمارات **Ziina** (المتوافقة مع Apple Pay والبطاقات البنكية بالدرهم الإماراتي)، مع نظام حماية وأمان متقدم **Better-Auth**.
+1. [مقدمة واقعية بلهجة هندسية مباشرة / Honest Executive Handover](#1-مقدمة-واقعية-بلهجة-هندسية-مباشرة--honest-executive-handover)
+2. [المطابقة الصادقة لتوجيهات العميل العشرين (من ملف client-instructions.txt) / The 20-Point Client Directive Audit](#2-المطابقة-الصادقة-لتوجيهات-العميل-العشرين-من-ملف-client-instructionstxt--the-20-point-client-directive-audit)
+3. [خطة نقل الملكية الكاملة للحسابات للشركة / Account Ownership Handover Plan](#3-خطة-نقل-الملكية-الكاملة-للحسابات-للشركة--account-ownership-handover-plan)
+4. [الشرح التفصيلي لجميع مزايا وأقسام المنصة / Detailed Feature-by-Feature Guide](#4-الشرح-التفصيلي-لجميع-مزايا-وأقسام-المنصة--detailed-feature-by-feature-guide)
+5. [الفهرس الكامل لجميع المسارات والصفحات (35 صفحة) / Complete 35-Route Inventory](#5-الفهرس-الكامل-لجميع-المسارات-والصفحات-35-صفحة--complete-35-route-inventory)
+6. [بيانات الدخول الإدارية ودليل الاختبار / Master Admin Credentials & Testing Guide](#6-بيانات-الدخول-الإدارية-ودليل-الاختبار--master-admin-credentials--testing-guide)
+7. [بنية قاعدة البيانات الحالية (Neon PostgreSQL) / Database Architecture & Inventory](#7-بنية-قاعدة-البيانات-الحالية-neon-postgresql--database-architecture--inventory)
+8. [خطوات الإطلاق الرسمي (Go-Live) وبروتوكول الدومين والإيميلات / Production Launch & DNS Protocol](#8-خطوات-الإطلاق-الرسمي-go-live-وبروتوكول-الدومين-والإيميلات--production-launch--dns-protocol)
 
 ---
 
-# 2. Master Admin Credentials & Testing Guide / بيانات الدخول الإدارية ودليل الاختبار
+# 1. مقدمة واقعية بلهجة هندسية مباشرة / Honest Executive Handover
 
-### 🔑 Verified System Credentials / بيانات تسجيل الدخول الرسمية
+### بالعربية (رسالة الفريق الهندسي للأستاذ يمان وإدارة ياس برودكشنز)
+أهلاً بك يا فندم. الغرض من هذا التقرير هو تقديم **تسليم حقيقي، شفاف، وواقعي 100%** لمنصة **Yas Pro**. 
+نحن هنا لا نبيع كلاماً تسويقياً ولا ندعي أن كل شيء مكتمل بنسبة 100% لمجرد إغلاق المشروع. هدفنا هو أن تكون على دراية كاملة بما تم بناؤه فعلياً، وما يعمل الآن في النظام، وما تم برمجته بالكود ولكنه ينتظر مفاتيح وحسابات شركتكم الرسمية لتفعيله، وما هو مقترح للمرحلة القادمة، مع خطة واضحة ومحددة لنقل ملكية الحسابات البرمجية من حسابات المطور الشخصية لتكون بالكامل تحت ملكية وإدارة شركة ياس برودكشنز.
 
-To test all administrative, client, and production capabilities, the following accounts are pre-configured in the live **Neon PostgreSQL** database:
+المنصة اليوم تمثل نقلة نوعية ضخمة تنقلكم من موقع ووردبريس قديم بطيء ومليء بروبوتات السبام إلى منصة رقمية فائقة السرعة مبنية على **Next.js 15 (React 19)** و **Neon Serverless PostgreSQL** وبوابة دفع وطنية إماراتية **Ziina**.
 
-| User / Role | Name | Email | Password | Access Level / الصلاحيات |
-| :--- | :--- | :--- | :--- | :--- |
-| **CEO / Master Admin** | Yaman Alomari | `ceo@yasproductions.com` | `YasPro@2026!` | Full Master Admin (All Hubs) |
-| **YASPRO Master** | YASPRO Admin | `pressyaman@gmail.com` | `YasPro@2026!` | Full Admin (Content & Gear) |
-| **Operations Lead** | Ahmad Wadi | `ahmedwadi978@gmail.com` | `YasPro@2026!` | Admin (Bookings & Stages) |
-| **HQ Operations** | Operations Desk | `info@yasproductions.com` | `YasPro@2026!` | Admin (Inquiries & Support) |
-| **Production Manager**| Walaa Ali | `walaa.ali131@gmail.com` | `YasPro@2026!` | Admin (Equipment Fleet) |
-| **Verified Test Client** | ibrahim galal | `ahmed@gmail.com` | `YasPro@2026!` | Client Portal (`/portal`) |
-| **Creator Client** | Belal Alaa | `eng.belalalaa@gmail.com` | `YasPro@2026!` | Client Portal (`/portal`) |
-
-> [!IMPORTANT]
-> **Production Password Notice:** The initial testing password across all seeded administrative and team accounts is: `YasPro@2026!`. You can change this password at any time inside the Admin/User settings or directly via the database.
+### In English (Engineering Lead Delivery Statement)
+This documentation provides an authentic, transparent, and rigorous technical delivery report for **Yas Pro**. Rather than generic claims, this guide offers an itemized audit of every single requirement from your strategic directives (`client-instructions.txt`). It clearly separates what is 100% live and operational today, what is built in code pending your company's production credentials, and the exact roadmap for transferring account ownership from developer accounts to your corporate entities.
 
 ---
 
-### 🧪 Step-by-Step Testing Guide / خطوات اختبار كل وظائف المنصة
+# 2. المطابقة الصادقة لتوجيهات العميل العشرين (من ملف client-instructions.txt) / The 20-Point Client Directive Audit
 
-Follow these practical steps to verify all features of the application:
+قمنا بمراجعة دقيقة لملف التوجيهات (`client-instructions.txt`)، وإليك الموقف الفعلي والواقعي لكل بند من البنود العشرين:
 
-#### Test Scenario 1: Administrative Control Center (`/admin`)
-1. Open your browser and go to `/login` (or click **Sign In** in the top navigation).
-2. Enter email: `ceo@yasproductions.com` and password: `YasPro@2026!`.
-3. Upon authentication, you will be automatically routed to the **Admin Operations Dashboard** (`/admin`).
-4. **Manage Equipment (`/admin/gear`):**
-   * Review all 173 active camera kits, lighting, lenses, and audio gear.
-   * Click **Add New Gear** to test adding a new piece of equipment.
-   * Click **Edit** on any item to update rates, specs, or upload new images.
-   * Click **Delete** to see the custom `AdminConfirmModal` dialog ensuring zero accidental deletions.
-5. **Manage Studios (`/admin/studios`):**
-   * View the 4 soundstages: Studio A Main Stage, Studio B Podcast Suite, Studio C Cyclorama Stage, and Studio XR Virtual Production Stage.
-   * Adjust hourly rates (AED) and toggle maintenance mode.
-6. **Manage Bookings (`/admin/bookings`):**
-   * Inspect existing reservations (`YAS-1C1B9C03`, `YAS-VBOTWY`).
-   * Update booking status from `pending` to `confirmed` or `completed`.
-7. **Manage Client Inquiries (`/admin/inquiries`):**
-   * Inspect client rental requests (e.g. reservation from ibrahim galal for Sony FX6).
-   * Mark inquiries as resolved once handled by your sales team.
-
-#### Test Scenario 2: Public Client Gear Rental Journey (`/shop`)
-1. Navigate to `/shop` as a customer.
-2. Use the interactive category filters: **Cameras**, **Lenses**, **Lighting**, **Audio**, and **Master Bundles**.
-3. Click on any product (e.g. *ARRI Alexa Mini LF* or *Sony FX3*) to inspect the detailed specs modal and rental policies.
-4. Select a rental duration (e.g. 3 days) and click **Add to Cart**.
-5. Notice the **Tiered Discount Engine** automatically calculating discounts for multi-day rentals.
-6. Open the Cart Drawer and click **Checkout / Reserve**.
-7. Submit the reservation inquiry with client name and contact details — it immediately syncs to the Neon database and `/admin/inquiries`.
-
-#### Test Scenario 3: Soundstage & Virtual Production Booking (`/studio-booking`)
-1. Go to `/studio-booking` or click **Book a Studio** from the Navbar.
-2. **Step 1:** Select a soundstage (e.g. *Studio XR — Virtual Production Stage*).
-3. **Step 2:** Pick a calendar date and an operating slot between 09:00 and 21:00.
-4. **Step 3:** Choose optional crew & add-ons (DIT station, sound engineer, lighting technician).
-5. **Step 4:** Review the total quote with VAT calculation.
-6. **Step 5 (Payment):** Test the Ziina UAE checkout flow. In development/simulation mode, it completes instantly and issues a verified booking reference code (`YAS-XXXXXX`).
+### تصنيف حالات التنفيذ:
+* ✅ **جاهز ويعمل 100% (Done & Fully Operational):** ميزات مبنية وشغالة ومربوطة بالكامل.
+* ⚙️ **مبني بالكود ومحتاج حسابات/مفاتيح شركتكم (Built in Code - Needs Company Accounts/Keys):** البرمجة مكتملة لكن تحتاج مفتاح الـ API الرسمي للشركة.
+* 🚨 **إجراء تسليم ملكية للشركة (Ownership Handover Required):** الحسابات حالياً باسم المطور ويجب نقلها للعميل.
+* ⏳ **قيد التجهيز / للمرحلة القادمة (Phase 2 Scope):** نقاط تحتاج إضافات مثل المدونة (Blog) أو تحويل الـ DNS الفعلي.
 
 ---
 
-# 3. Complete Routes, Pages & Sections Catalog / الفهرس الشامل لجميع الصفحات والأقسام
+| # | توجيه العميل (من الملف) | الحالة الواقعية | الشرح الهندسي الدقيق وما تم إنجازه وما تفوقنا فيه | الخطوة المتبقية على العميل |
+| :-: | :--- | :--- | :--- | :--- |
+| **1** | **الحفاظ على الـ User Experience والـ Navigation** | ✅ **100% مكتمل ومطور** | حافظنا على كافة مسارات الموقع المألوفة (`/shop`, `/studios`, `/projects`, `/about`, `/contact`).<br>• **قاعدة معمارية خاصة:** تم تثبيت الهيدر والفوتر واللوجو اتجاه LTR فيزيائياً حتى لا تنقلب القوائم يميناً ويساراً عند اختيار اللغة العربية وتشتت المستخدم.<br>• **ما تم التفوق فيه:** إضافة فيزياء حركة سلسة وسلايدر تفاعلي لتصحيح الألوان. | لا شيء (جاهز للاستخدام) |
+| **2** | **Mobile-First والسرعة القصوى** | ✅ **100% مكتمل** | الموقع متجاوب بالكامل مع شبكة Tailwind CSS.<br>• ضغط الصور تلقائياً عبر Next.js 15 Image.<br>• استجابة قاعدة البيانات في أقل من 50 ميلي ثانية.<br>• **ما تم التفوق فيه:** تقليص معروضات الصفحة الرئيسية لـ 6 معدات لمنع استهلاك باقة الموبايل. | تجربة التصفح على أجهزة متعددة |
+| **3** | **الحفاظ على الـ SEO والروابط المؤرشفة** | ⚙️ **جاهز بالكود (محتاج ربط حساباتكم)** | تم تجهيز وسوم Canonical، خريطة الموقع sitemap، ملف robots.txt، بيانات JSON-LD المهيكلة، وبنية تحويلات 301 للروابط السابقة.<br>• المتبقي فقط هو قيام العميل بربط دومينه في Google Search Console وإضافة كود Google Analytics الخاص بشركته. | ربط حساب Google Search Console & Analytics |
+| **4** | **نقل نظام الحجز بالكامل بدون فقدان بيانات** | ✅ **100% مكتمل بقاعدة البيانات** | تم استيراد هيكل وسجلات الحجوزات السابقة إلى Neon.<br>• تم بناء معالج حجز من 5 خطوات في `/studio-booking`.<br>• **ما تم التفوق فيه:** نظام ذكي يمنع التعارض (Double Booking) تماماً بين 09:00 و 21:00. | لا شيء |
+| **5** | **هندسة بيانات للمعدات والأسعار ومنع الحجز المزدوج** | ✅ **100% مكتمل** | تم فرز وتنظيف أسطول المعدات لـ 173 معدة سينمائية حقيقية عبر 5 تصنيفات رئيسية.<br>• تم حقن **158 وصفاً فنياً باللغة العربية** مأخوذة من الموقع القديم.<br>• **ما تم التفوق فيه:** نظام خصم ديناميكي تلقائي للأيام المتعددة (15% من 3-6 أيام، و25% للأسبوع فأكثر). | لا شيء |
+| **6** | **إدارة الخدمات والباقات ديناميكياً من لوحة التحكم** | ⚙️ **المعدات والاستوديوهات ديناميكية 100%** | لوحات تحكم تفاعلية كاملة في `/admin/gear` و `/admin/studios` لإضافة وتعديل وحذف المعدات والاستوديوهات.<br>• **ما تم التفوق فيه:** إضافة نوافذ تأكيد حماية (`AdminConfirmModal`) لمنع الحذف بالخطأ.<br>• *ملاحظة:* الباقات المستقلة كخدمات كاملة تُدار حالياً عبر تصنيف Bundles في المعدات، ويمكن توسيعها كقسم مستقل في المرحلة القادمة. | تجربة التعديل من لوحة التحكم |
+| **7** | **تخزين الميديا على Cloudinary وعدم حشو Neon** | ⚙️ **الكود مجهز (محتاج حساب Cloudinary للشركة)** | تم فصل البيانات تماماً: Neon تخزن فقط الروابط والميتاداتا، بينما كود التخزين مجهز للربط بـ Cloudinary عبر `src/lib/storage.ts`.<br>• الفيديوهات حالياً معروضة عبر مشغلات Vimeo و YouTube العالمية.<br>• لتمكين رفع الصور والفيديوهات مباشرة من لوحة التحكم، مطلوب إنشاء حساب Cloudinary باسم شركتكم وتزويدنا بمفاتيحه. | إنشاء حساب Cloudinary وتزويدنا بالمفاتيح |
+| **8** | **مدونة سهلة ومحسنة للـ SEO (Blog)** | ⏳ **قيد التجهيز / مقترح للمرحلة الثانية** | **بكل شفافية:** النسخة الحالية تركز على أسطول المعدات، حجز الاستوديوهات، ومعرض المشاريع السينمائية الفاخرة (`/projects`) مع كواليس التصوير والكاميرات المستخدمة.<br>• لا يوجد قسم مخصص لمقالات البلوج الإخبارية التقليدية (`/blog`)، ويمكننا إضافته كملحق في المرحلة الثانية بسهولة إذا كان أساسياً بالنسبة لكم. | تأكيد الرغبة في إضافة نظام Blog |
+| **9** | **لوحة تحكم شاملة لكافة عناصر الموقع** | ⚙️ **معمولة للبيانات الأساسية (80% من المنصة)** | 10 أقسام متخصصة في `/admin` لإدارة: المعدات، الاستوديوهات، الحجوزات، الاستفسارات، المناقصات الحكومية، المؤثرين، المشاريع، والمستخدمين.<br>• النصوص الثابتة لصفحة "من نحن" وبيانات التواصل تُدار حالياً من الكود لضمان ثبات الهوية البصرية، ويمكن جعلها ديناميكية بالكامل. | تجربة التعديل من لوحة التحكم |
+| **10** | **الجاهزية للربط المستقبلي (APIs, AI, WhatsApp, CRM)** | ⚙️ **المعمارية مبنية (محتاجة تفعيل الخدمات المدفوعة)** | واجهات برمجية REST endpoints جاهزة (`/api/gear`, `/api/webhooks/production`).<br>• زر الواتساب التفاعلي موجود، وبوابة العميل للمتابعة جاهزة.<br>• للربط مع WhatsApp Business API الرسمي أو أنظمة CRM خارجية، يتطلب ذلك اشتراكات مدفوعة باسم الشركة في تلك الخدمات. | توفير حسابات الخدمات الخارجية المرغوبة |
+| **11** | **وصول الـ AI Chatbot لبيانات الشركة من قاعدة البيانات** | ⚙️ **قاعدة البيانات مهيكلة والأدوات البرمجية جاهزة** | جداول قاعدة البيانات موثقة ومنظمة عبر Drizzle ORM وجاهزة لربطها بأي نموذج ذكاء اصطناعي عبر RAG Pipeline أو Function Calling.<br>• تم برمجة أدوات الذكاء الاصطناعي لفحص ترخيص موثوق ومطابقة أطقم الكاميرات في `src/lib/ai/`. | توفير مفتاح OpenAI أو Gemini باسم الشركة |
+| **12** | **بوابات الدفع وعدم تخزين بيانات البطاقات نهائياً** | ⚙️ **مدمجة وتعمل في بيئة الاختبار (محتاجة مفتاح الإنتاج)** | تم ربط بوابة **Ziina الإماراتية** بالكامل لدعم Apple Pay وفيزا وماستركارد بالدرهم الإماراتي.<br>• لا يتم تخزين أي بطاقة بنكية على خوادمنا نهائياً (أمان 100%).<br>• النظام يعمل حالياً في وضع المحاكاة/التجربة (Sandbox). للانتقال للدفع الحقيقي، يجب فتح حساب تجاري رسمي للشركة في Ziina الإمارات وتزويدنا بمفتاح الإنتاج. | تفعيل حساب الشركة التجاري في Ziina الإمارات |
+| **13** | **حماية إيميلات الشركة في GoDaddy بدون أي انقطاع** | ⏳ **مضمونة وموثقة (في انتظار لحظة التحويل)** | **الواقع الحالي:** الدومين لا يزال يوجه لخادمكم القديم، وإيميلاتكم الحالية (`ceo@...`, `marketing@...`) تعمل بشكل طبيعي 100%.<br>• عند الإطلاق، سنقوم بتعديل سجل الـ `A` و `CNAME` فقط ليوجه إلى Vercel، دون المساس بسجلات الـ MX نهائياً. **ضمان عدم انقطاع الإيميلات.** | اتباع بروتوكول DNS عند الإطلاق |
+| **14** | **نسخة Staging كاملة للتجربة قبل النقل النهائي** | ✅ **100% شغالة ومتاحة الآن** | النسخة التجريبية الحية مرفوعة ومحدثة باستمرار على الرابط:<br>[https://yaspro-tablawy.vercel.app](https://yaspro-tablawy.vercel.app)<br>يمكنكم تجربتها بحرية تامة على الهواتف وأجهزة الكمبيوتر قبل أي قرار لنقل الدومين. | تجربة الفريق للنسخة التجريبية |
+| **15** | **قائمة الفحص والتحقق قبل الإطلاق الرسمي** | ✅ **100% مجتازة برمجياً** | **128 فحصاً برمجياً آلياً اجتاز بنجاح (`npm test`)** بدون أي خطأ، تشمل التحقق من الحسابات، الدفع، الحجوزات، ومنع الحجز المزدوج. | المراجعة التشغيلية النهائية مع الفريق |
+| **16** | **ملكية كاملة لحسابات الشركة والكود والبيانات** | 🚨 **الحسابات حالياً بحساب المطور (مطلوب نقلها فوراً)** | **بكل صراحة وأمانة:** الكود حالياً على حساب المطور في GitHub (`galilio2023`)، والاستضافة على حساب المطور في Vercel، وقاعدة البيانات على حساب Neon الخاص بالمطور.<br>• مطلوب من الشركة إنشاء حسابات رسمية لنقوم بنقل الملكية بالكامل (Transfer Ownership) لتكونوا المالك الوحيد قانونياً وتقنياً. | إنشاء حسابات GitHub, Vercel, Neon للشركة |
+| **17** | **توثيق الكود والمعمارية لعدم الاعتماد على مبرمج واحد** | ✅ **100% موثق وشامل** | تم إعداد ملف `README.md` مفصل برسم بياني ERD ومعمارية النظام، بالإضافة لهذا الدليل التنفيذي الشامل باللغتين العربية والإنجليزية. | أرشفة الوثائق في الشركة |
+| **18** | **بيئات عمل منفصلة (Dev / Staging / Production)** | ✅ **مهيأة برمجياً** | بيئة التطوير المحلي، وبيئة العرض التجريبية على فروع Vercel، والفرع الإنتاجي الرئيسي. | لا شيء |
+| **19** | **بنية قاعدة بيانات Neon نظيفة وقابلة للتوسع** | ✅ **100% مهيكلة ونظيفة** | 11 جدولاً مهيكلاً مع فهارس للأداء العالي (Indexes) وعلاقات واضحة (Foreign Keys)، وتم التخلص تماماً من روبوتات السبام التي كانت في ووردبريس. | لا شيء |
+| **20** | **رؤية منصة ياس الرقمية المتكاملة (YAS Digital Platform)** | ⚙️ **الأساس مبني بالكامل وجاهز للتوسع** | المنصة الحالية بنيت بالفعل لتكون الأساس المتكامل: موقع + حجز استوديوهات + تأجير معدات + دفع إلكتروني + بوابة عملاء + ذكاء اصطناعي لموثوق. | استكمال الربط الحي لحسابات الشركة |
 
-Below is the complete architectural map of every single route, page, and UI section built in the application:
+---
 
-### 🌐 Section A: Public & Marketing Pages / الصفحات العامة والتسويقية
+# 3. خطة نقل الملكية الكاملة للحسابات للشركة / Account Ownership Handover Plan
 
-| URL Route | Page Title / Name | Target Audience | Key Sections & Features Included |
+نظراً لأهمية البند رقم 16 في تعليماتكم، وحتى لا تظل المنصة مرتبطة بالحسابات الشخصية للمطور، فهذه هي **خطة التسليم الميداني خطوة بخطوة**:
+
+```text
+[حسابات المطور الحالية]                    [الحسابات الرسمية المطلوبة للشركة]
+GitHub: galilio2023/yaspro          --->   GitHub Organization: YasProductions
+Vercel: yaspro-tablawy.vercel.app   --->   Vercel Team: Yas Productions
+Neon DB: ep-patient-dawn (Dev Acc)  --->   Neon Cloud Project: Yas Productions
+Cloudinary: Not Configured          --->   Cloudinary Company Account
+Ziina: Sandbox Test Mode            --->   Ziina UAE Corporate Merchant Account
+```
+
+### الخطوات العملية المطلوبة من إدارة ياس برودكشنز:
+1. **حساب GitHub:** إنشاء حساب باسم الشركة على [github.com](https://github.com) وإرسال اسم المستخدم للمطور ليقوم بعمل **Transfer Repository**.
+2. **حساب Vercel:** إنشاء حساب على [vercel.com](https://vercel.com) باسم الشركة، وسيقوم المطور بدعوتكم كـ **Owner** ونقل المشروع بالكامل.
+3. **قاعدة بيانات Neon:** إنشاء حساب على [neon.tech](https://neon.tech)، ونقل قاعدة البيانات أو إعطاء صلاحيات المالك للشركة.
+4. **بوابة الدفع Ziina:** تفعيل الحساب التجاري برخصة الشركة في دبي، وتزويدنا بالمفتاح الحي (`Live API Key`).
+5. **خدمة التخزين Cloudinary:** إنشاء حساب مجاني أو مدفوع على [cloudinary.com](https://cloudinary.com) وتزويدنا بالمفاتيح لربط رفع الصور والفيديوهات مباشرة.
+
+---
+
+# 4. الشرح التفصيلي لجميع مزايا وأقسام المنصة / Detailed Feature-by-Feature Guide
+
+### 1. 🎥 أسطول معدات السينما ومحرك التأجير الذكي (`/shop`)
+* **173 معدة سينمائية حقيقية:** تشمل كاميرات ARRI Alexa Mini LF، RED V-Raptor XL، Sony FX3/FX6/FX9، وعدسات سينمائية، وإضاءات أستيرا وأبوتشر، ومعدات صوت سنهيزر.
+* **نظام الخصم التلقائي حسب المدة (Dynamic Tier Pricing):**
+  * يوم أو يومان: السعر اليومي الأساسي كامل.
+  * من 3 إلى 6 أيام: خصم تلقائي 15% لدعم إنتاج المشاريع القصيرة.
+  * 7 أيام فأكثر: خصم أسبوعي تلقائي 25% لفرق التصوير الاحترافية.
+* **نافذة المواصفات الفنية المزدوجة:** شرح فني تفصيلي متوفر بالإنجليزية وبالعربية (*أهم المواصفات الفنية: المستشعر، معالج الصور، دقة الفيديو ومعدل الإطارات*).
+* **سلة التأجير الذكية (Cart Drawer):** حساب فوري لإجمالي الأيام مع ملخص مبالغ التأمين المستردة (Security Deposit).
+
+### 2. 🎙️ استوديوهات ومسارح الإنتاج الافتراضي (`/studios` & `/studio-booking`)
+* **4 استوديوهات متخصصة:**
+  1. **Studio A — Main Stage (800 درهم/ساعة):** استوديو عازل للصوت بمساحة 200م² مجهز بشاشة خضراء (Green Screen) وشبكة إضاءة معلقة وغرف تبديل ملابس.
+  2. **Studio B — Podcast Suite (400 درهم/ساعة):** جناح بودكاست معزول صوتياً ومجهز بـ 4 ميكروفونات Shure SM7B ومكسر ATEM وإضاءات Astera RGB.
+  3. **Studio C — Cyclorama Stage (600 درهم/ساعة):** مسرح سايكلو أبيض لانهائي مجهز بنظام سوفت بوكس معلق للتصوير التجاري والأزياء.
+  4. **Studio XR — Virtual Production Stage (1500 درهم/ساعة):** مسرح إنتاج افتراضي 270 درجة بشاشات Micro-LED ومحرك Unreal Engine 5.4 ونظام تتبع الكاميرات البصري Mo-Sys.
+* **معالج الحجز الذكي (Booking Wizard):** اختيار الاستوديو، تحديد التاريخ والوقت المتاح حصراً بين 09:00 صباحاً و21:00 مساءً، إضافة الخدمات المساعدة (مهندس صوت، مهندس إضاءة، محطة DIT)، واحتساب الضريبة (5% VAT).
+* **حظر التعارض التام (Conflict-Free Scheduling):** النظام يمنع برمجياً أي حجز مزدوج لنفس الاستوديو في نفس الساعة.
+
+### 3. 💳 بوابة الدفع الوطنية الإماراتية (Ziina UAE Payments)
+* تحصيل الدفعات ومبالغ التأمين بالدرهم الإماراتي (AED) عبر **Apple Pay** وبطاقات **Visa** و **Mastercard**.
+* خيار التحويل البنكي الرسمي للشركات والمؤسسات مع إظهار أرقام الحسابات ورمز الحجز المرجعي.
+* معالج إشعارات الدفع التلقائي (`/api/webhooks/production`) لتحديث حالة الحجز إلى "مؤكد" بمجرد إتمام العملية.
+
+### 4. 🛡️ مدقق الامتثال لتراخيص موثوق الإعلانية (Mawthooq AI Auditor)
+* أداة ذكاء اصطناعي تفحص نصوص الإعلانات وحملات المؤثرين للتأكد من مطابقتها لتعليمات الهيئة العامة لتنظيم الإعلام في الإمارات ووسم `#إعلان` وتراخيص موثوق الرسمية لحماية الشركة وعملائها من المخالفات.
+
+### 5. 💼 بوابة العميل الرقمية للخدمة الذاتية (`/portal`)
+* لوحة تحكم للعميل يستطيع من خلالها متابعة مواعيد تصويره القادمة، تحميل فواتيره الضريبية الرسمية، واستخراج أكواد الدخول الإلكترونية (QR / Reference Code) لتقديمها عند بوابة الاستوديو دون الحاجة للاتصال بموظفي الاستقبال.
+
+### 6. ⚡ لوحة العمليات الإدارية المركزية (`/admin`)
+* مركز قيادة يضم 10 أدوات تحكم: إدارة المعدات والأسعار وتوفرها، إدارة الاستوديوهات والصيانة، جدول الحجوزات وتغيير حالتها، صندوق استقبال طلبات واستفسارات التأجير مع زر معالجة بنقرة واحدة، واستعراض طلبات المناقصات الحكومية.
+
+---
+
+# 5. الفهرس الكامل لجميع المسارات والصفحات (35 صفحة) / Complete 35-Route Inventory
+
+| المسار | اسم الصفحة | الجمهور المستهدف | الوظائف والمحتويات الأساسية |
 | :--- | :--- | :--- | :--- |
-| `/` | **Home Landing Page** | Public Visitors, Brands, Directors | • **Hero Section:** 3D Cinematic typography, reel showcase, instant CTA.<br>• **Soundstage Showcase:** Carousel of 4 studio spaces with hourly rates.<br>• **Curated Gear Spotlight:** Top 6 high-demand cinema packages.<br>• **Mawthooq Compliance Badge:** Official UAE ad regulatory credentials.<br>• **Client Marquee:** Prominent logos (Dubai Municipality, UAE Flag Day, Talabat, Orange).<br>• **Interactive Split Color-Grade:** Slider showing Log vs Rec.709 vs Film LUT.<br>• **Floating AI Concierge:** WhatsApp & automated booking assistant (anchored bottom-right). |
-| `/shop` | **Cinema Equipment Fleet** | DPs, Filmmakers, Production Houses | • **Live Search & Category Facets:** Real-time search across 173 items.<br>• **Dynamic Day-Rate Matrix:** 1-2 Days, 3-6 Days, 7+ Days discounts.<br>• **Product Cards:** High-res image, daily rate in AED, specs preview.<br>• **Bilingual Specs Modal:** Complete English & Arabic technical details.<br>• **Sticky Cart Drawer:** Live total calculation, security deposit summary.<br>• **Direct Reservation Modal:** Generates instant quote and inquiry. |
-| `/studios` | **Soundstages & Studios** | Producers, Directors, Agencies | • **Studio Directory:** Detailed overview of Studio A, B, C, and XR.<br>• **Technical Floorplans & Specs:** Dimensions, power grid, acoustic ratings.<br>• **Equipment Inclusions:** Pre-rigged lights, consoles, switchers.<br>• **Direct Booking Trigger:** Fast-links directly to `/studio-booking`. |
-| `/studio-booking` | **Studio Booking Wizard** | Clients booking studio time | • **Step 1 - Stage Picker:** Visual selection of studio space.<br>• **Step 2 - Slot Calendar:** Real-time 09:00-21:00 conflict-free slots.<br>• **Step 3 - Add-ons & Gear:** Optional lighting, DIT, crew packages.<br>• **Step 4 - Review & Quote:** Transparent breakdown with 5% UAE VAT.<br>• **Step 5 - Ziina Checkout:** Instant card, Apple Pay, or corporate wire. |
-| `/enterprise` | **Sovereign Enterprise & Media** | Government Entities, Semi-Gov | • **Sovereign Media Suite:** High-security workflows & dedicated OB-Vans.<br>• **Mawthooq AI Auditor:** Automated check for UAE media licensing.<br>• **Enterprise RFP Wizard:** Multi-step tender submission form.<br>• **Dedicated SLAs:** 24/7 technical deployment protocols. |
-| `/influencers` | **Creator Network** | Brands, Marketing Agencies | • **Talent Showcase:** Verified profiles for Abo Flah, Noor Stars, Narins, etc.<br>• **Vertical 9:16 Reels:** Interactive TikTok/Reels video playback.<br>• **Audience Demographics:** GCC reach, engagement rate, top follower countries.<br>• **Direct Booking Button:** Instant campaign inquiry for specific creators. |
-| `/influencers/[slug]`| **Creator Profile Detail** | Brands, Talent Buyers | • **Biography & Achievements:** Career highlights & signature productions.<br>• **Social Footprint:** Instagram, TikTok, YouTube handles & follower counts.<br>• **Campaign Request Form:** Dedicated booking form for the selected creator. |
-| `/projects` | **Portfolio & Films** | Agencies, Enterprise Clients | • **Filterable Showcase:** Government, Commercial, Documentary, Shows.<br>• **Flagship Film Previews:** UAE Flag Day, DMX, GITEX Global, Talabat.<br>• **Cinematic Color Grading:** Split before/after interactive color slider. |
-| `/projects/[slug]` | **Project Case Study** | Producers, Art Directors | • **High-Def Film Embed:** Vimeo/YouTube 4K playback.<br>• **Production Deliverables:** Formats delivered (DCP, ProRes, Social 9:16).<br>• **Camera & Tech Stack:** Cameras, lenses, and lights used on set. |
-| `/about` | **About Yas Productions** | Prospective Clients & Partners | • **Our Story & Heritage:** Roots in Dubai Studio City.<br>• **Sister Companies:** Yas Pro Media Group subsidiaries.<br>• **Leadership & Executive Team:** Vision, directors, and core team.<br>• **Infrastructure Overview:** Soundstages, OB-van fleet, gear warehouse. |
-| `/contact` | **Contact & Location** | All Inquiring Clients | • **Direct Production Desk Form:** Category-specific inquiry dispatch.<br>• **Dubai Studio City Map:** Integrated location map and coordinates.<br>• **Official Channels:** Phone (+971), official emails, WhatsApp link. |
-| `/login` | **Client & Admin Sign In** | Returning Users & Administrators | • **Unified Better-Auth Portal:** Email & password authentication.<br>• **Intelligent Role Routing:** Admins redirect to `/admin`, clients to `/portal`.<br>• **Session Security:** 7-day secure session token generation. |
-| `/register` | **Client Account Sign Up** | New Production Clients | • **Instant Onboarding:** Name, company, email, phone, and password.<br>• **Auto Verification:** Immediate access to client portal and quote tracking. |
-| `/privacy-policy` | **Privacy Policy** | Legal Compliance | • **UAE PDPL Compliance:** Data privacy adherence under UAE federal law. |
-| `/terms` | **Terms of Service** | Legal Compliance | • **Film Equipment & Rental Agreement:** Insurance, deposits, liability terms. |
+| `/` | الصفحة الرئيسية | عام | هيدر سينمائي 3D، استعراض الاستوديوهات الأربعة، 6 معدات مميزة، رخصة موثوق، سلايدر تصحيح الألوان، والمساعد العائم. |
+| `/shop` | أسطول المعدات | صناع الأفلام | بحث وتصفية لـ 173 معدة عبر 5 أقسام، حاسبة الخصومات، نافذة المواصفات بالعربي والإنجليزي، وسلة التأجير. |
+| `/studios` | دليل الاستوديوهات | المخرجون والمنتجون | استعراض استوديو A و B و C و XR مع المساحات ودرجات العزل الصوتي والمعدات المدمجة. |
+| `/studio-booking` | معالج حجز الاستوديوهات | العملاء | 5 خطوات: اختيار الاستوديو، التاريخ والوقت (09:00-21:00)، الإضافات والطواقم، الضريبة، والدفع عبر Ziina. |
+| `/enterprise` | الإعلام والإنتاج السيادي | الجهات الحكومية | سيارات البث الخارجي المباشر OB-Van، مدقق موثوق، ومعالج تقديم المناقصات والعقود الكبرى. |
+| `/influencers` | شبكة المؤثرين | الوكالات والعلامات التجارية | ملفات المشاهير (أبو فلة، نور ستارس...)، مشغل ريلز عمودية 9:16، ديموغرافيا الجمهور، وحجز الحملات. |
+| `/projects` | معرض الأفلام والأعمال | المخرجون والوكالات | أعمال يوم العلم، دبي، جيتكس، أفلام الإعلانات التجارية، وسلايدر مقارنة الألوان السينمائية. |
+| `/portal` | بوابة العميل | العملاء المسجلون | متابعة الحجوزات القادمة، تحميل الفواتير الضريبية، وأكواد الدخول السريع للاستوديوهات. |
+| `/admin` | لوحة الإدارة العامة | قيادة الشركة والمدراء | إحصائيات الإيرادات، عداد المعدات (173)، جدول الحجوزات، وأزرار الإجراءات السريعة. |
+| `/admin/gear` | إدارة المعدات | مسؤولو المستودع | إضافة وتعديل وحذف المعدات والأسعار وتوفرها مع نافذة تأكيد الحماية لمنع الحذف بالخطأ. |
+| `/admin/studios` | إدارة الاستوديوهات | مسؤولو التشغيل | تحديث أسعار ساعات الاستوديوهات بالدرهم، السعة الاستيعابية، وحظر المواعيد للصيانة. |
+| `/admin/bookings` | سجل الحجوزات | مكتب العمليات | إدارة دورة حياة الحجز (معلق ➔ مؤكد ➔ مكتمل ➔ ملغى) ومطابقة المدفوعات. |
+| `/admin/inquiries` | استفسارات وطلبات التأجير | فريق المبيعات | صندوق وارد لطلبات التأجير مع بيانات العميل والمعدات المطلوبة وزر إغلاق الطلب بعد معالجته. |
+| `/admin/rfps` | مناقصات المشاريع الكبرى | الإدارة العليا | دراسة عروض المشاريع السيادية، التحقق من اشتراطات موثوق، والموافقة على الميزانيات. |
+| `/admin/users` | إدارة المستخدمين | المدير العام | استعراض العملاء المسجلين والموظفين مع أدوات ترقية الصلاحيات ومتابعة الجلسات النشطة. |
 
 ---
 
-### 💼 Section B: Client Self-Service Portal (`/portal`) / بوابة العميل
+# 6. بيانات الدخول الإدارية ودليل الاختبار / Master Admin Credentials & Testing Guide
 
-| URL Route | Page Title / Purpose | Key Features & Sections |
-| :--- | :--- | :--- |
-| `/portal` | **Client Dashboard Overview** | • **Executive Summary:** Quick stats on active rentals, upcoming studio sessions, and open invoices.<br>• **Quick Action Cards:** "Book New Studio", "Rent Cinema Gear", "Request Custom Quote".<br>• **Recent Activity Feed:** Timeline of booking updates and receipts. |
-| `/portal/bookings` | **My Production Bookings** | • **Active & Past Bookings:** Filterable list of all soundstage and gear reservations.<br>• **Reference Code Cards:** Digital QR/Reference code for on-site studio access.<br>• **Status Tracking:** Real-time updates (Pending, Confirmed, In Progress, Completed). |
-| `/portal/invoices` | **Billing & VAT Invoices** | • **Downloadable Receipts:** Itemized breakdown of all paid deposits and balances.<br>• **Ziina Transaction Logs:** Digital payment references and VAT compliance receipts.<br>• **Bank Wire Confirmations:** Instructions and uploaded wire proof. |
-| `/portal/settings` | **Account & Company Profile** | • **Contact Info:** Update phone number, designated company name, and billing address.<br>• **Security Settings:** Change account password and manage active login sessions. |
-| `/portal/support` | **Production Support Desk** | • **Dedicated Ticket Intake:** Inquire regarding an existing booking or rental schedule.<br>• **Direct WhatsApp Hotlink:** 1-click connection to the live on-duty studio engineer. |
+جميع الحسابات التالية مفعلة في قاعدة بيانات **Neon PostgreSQL** بكلمة المرور الموحدة للاختبار:
+* **كلمة المرور الموحدة (Master Password):** `YasPro@2026!`
 
----
-
-### 🏛️ Section C: Sovereign Enterprise Portal (`/enterprise/portal`) / بوابة العقود السيادية
-
-| URL Route | Page Title / Purpose | Key Features & Sections |
-| :--- | :--- | :--- |
-| `/enterprise/portal` | **Sovereign Media Command** | • **High-Security Portal:** Dedicated to government ministries, broadcasters, and sovereign entities.<br>• **Production Fleet Tracker:** Real-time readiness of OB-Van broadcast trucks and cinema teams. |
-| `/enterprise/portal/rfps`| **Tenders & RFP Management** | • **Submitted Proposals:** Review status of active tenders, budget estimates, and timelines.<br>• **Mawthooq Approvals:** Compliance audit certificates for government broadcast campaigns. |
-| `/enterprise/portal/stages`| **Multi-Stage Studio Bookings**| • **Bulk Soundstage Locking:** Consecutive multi-week block bookings for large television series. |
-| `/enterprise/portal/dailies`| **Secure Production Dailies**| • **Encrypted Video Screening:** Watermarked review copies of raw daily takes for executive directors. |
-| `/enterprise/portal/telemetry`| **Broadcast Telemetry & Uptime**| • **Live Link Quality:** Satellite and 5G bonding telemetry for on-location broadcast vans. |
+| الصلاحية | الاسم | البريد الإلكتروني | مسار تسجيل الدخول | نطاق الصلاحيات |
+| :--- | :--- | :--- | :--- | :--- |
+| **الرئيس التنفيذي (CEO)** | Yaman Alomari | `ceo@yasproductions.com` | `/admin` | وصول كامل لكافة إعدادات المنصة |
+| **مدير العمليات الرئيسي** | YASPRO Admin | `pressyaman@gmail.com` | `/admin` | إدارة المحتوى والأسطول والمشاريع |
+| **مسؤول حجوزات الاستوديوهات**| Ahmad Wadi | `ahmedwadi978@gmail.com` | `/admin/bookings` | إدارة الاستوديوهات وجداول الحجز |
+| **مسؤول الدعم والاستفسارات** | Operations Desk | `info@yasproductions.com` | `/admin/inquiries` | متابعة طلبات العملاء والمبيعات |
+| **مدير أسطول المعدات** | Walaa Ali | `walaa.ali131@gmail.com` | `/admin/gear` | تعديل وتحديث أسعار ومعدات الأسطول |
+| **حساب عميل حقيقي للاختبار** | ibrahim galal | `ahmed@gmail.com` | `/portal` | تجربة بوابة العميل واستعراض الفواتير |
 
 ---
 
-### ⚡ Section D: Admin Operations Hub (`/admin`) / لوحة التحكم الإدارية المركزية
+# 7. بنية قاعدة البيانات الحالية (Neon PostgreSQL) / Database Architecture & Inventory
 
-| URL Route | Page Title / Operational Tool | Features & Admin Powers |
-| :--- | :--- | :--- |
-| `/admin` | **Master Admin Command Center** | • **Executive Metrics Bar:** Total gear items (173), registered clients, active bookings, open revenue.<br>• **Quick Dispatch Actions:** Fast buttons to add gear, review bookings, and audit RFPs.<br>• **Recent Activity Ledger:** Live stream of recent database changes and inquiries. |
-| `/admin/gear` | **Equipment Fleet CRUD Manager**| • **Complete 173-Item Inventory:** Paginated table with high-res thumbnails and categories.<br>• **Create New Equipment:** Full modal with bilingual fields (English & Arabic specs).<br>• **Instant Price & Availability Edits:** Toggle `is_available` or `is_popular` on the fly.<br>• **Safe Deletion Guard:** Custom `AdminConfirmModal` dialog preventing accidental clicks. |
-| `/admin/studios` | **Soundstages & Studios Manager**| • **Studio Suite Controls:** Manage Studio A, B, C, and XR.<br>• **Pricing Overrides:** Update hourly rates (AED) and stage capacity.<br>• **Booking Protection:** Deletion safety check prevents deleting a studio with active bookings. |
-| `/admin/bookings` | **Reservations & Orders Ledger** | • **Unified Booking Ledger:** All studio sessions and commercial rentals.<br>• **Status Lifecycle:** Transition records: `pending` ➔ `confirmed` ➔ `completed` ➔ `cancelled`.<br>• **Payment Status Toggles:** Mark payments as `paid`, `unpaid`, or `refunded`. |
-| `/admin/inquiries` | **Client Rental Inquiries Inbox** | • **Reservation Lead Pipeline:** Client contact info, equipment requested, duration, client notes.<br>• **Resolution Toggle:** 1-click button to mark inquiry as resolved once dispatched. |
-| `/admin/rfps` | **Enterprise RFPs & Tenders** | • **Government Proposals Inbox:** Comprehensive review of incoming sovereign tender briefs.<br>• **Mawthooq Compliance Flags:** Identifies whether the project requires UAE Mawthooq licensing. |
-| `/admin/projects` | **Portfolio & Film Showcase Manager**| • **Add New Productions:** Upload cover art, embed Vimeo/YouTube links, define deliverables.<br>• **Category & Client Tags:** Categorize under Government, Commercial, or Shows. |
-| `/admin/influencers`| **Creator Network Manager** | • **Roster Management:** Add or edit talent profiles, follower counters, and social handles.<br>• **Featured Highlights:** Toggle creators to appear on the homepage and main roster. |
-| `/admin/users` | **Client & Team User Management** | • **User Directory:** View all registered client accounts and internal staff.<br>• **Role Escalation:** Promote client accounts to administrative roles when needed. |
-| `/admin/broadcast` | **Broadcast & Telemetry Operations**| • **Fleet Dispatch:** Manage remote OB-Van deployment logs and mobile live-stream units. |
+قاعدة البيانات الحية نظيفة ومفهرسة بالكامل وتضم البيانات الفعلية التالية:
 
----
-
-# 4. The 8 Major Sales Points & Competitive Edge / أهم 8 نقاط بيع ومزايا تنافسية
-
-When presenting or selling this platform to executive leadership, investors, or clients, emphasize these **8 transformative sales pillars**:
-
-```mermaid
-mindmap
-  root((YAS PRO\nSales Advantage))
-    Prestige Cinema Branding
-      Visual storytelling
-      Interactive color grade slider
-      Dubai Studio City luxury aesthetic
-    173-Item Modern Fleet
-      No duplicate products
-      Bilingual technical specs
-      Multi-day dynamic discount tiers
-    Instant UAE Payments
-      Ziina Gateway integration
-      Apple Pay & Visa / Mastercard in AED
-      Automated VAT invoice receipts
-    Sovereign Soundstage Hub
-      4 distinct production stages
-      Real-time slot locking 09:00-21:00
-      XR Virtual Production volume
-    Mawthooq UAE AI Auditor
-      Compliance with UAE Media Council
-      Automated ad disclosure detection
-      Regulatory protection for creators
-    Enterprise Client Portal
-      Self-service booking ledger
-      Downloadable tax invoices
-      QR studio check-in codes
-    Serverless Speed & Security
-      Sub-50ms Neon PostgreSQL queries
-      Better-Auth session security
-      Zero WordPress plugin bloat
-    Strict Bilingual Usability
-      Physical LTR navigation anchor
-      Fluid RTL Arabic content
-      Zero disorienting layout flips
-```
+* **`equipment` (173 معدة):** 115 كاميرا، 21 صوت، 13 إضاءة، 12 عدسة، 12 باقة شاملة مع أوصاف فنية بالعربية والإنجليزية وبدون أي تكرار.
+* **`studios` (4 استوديوهات):** استوديو A الرئيسي، استوديو B بودكاست، سايكلو C، واستوديو XR للإنتاج الافتراضي.
+* **`users` (8 حسابات):** 5 مدراء تنفيذيين + 3 عملاء حقيقيين (خالٍ تماماً من روبوتات السبام).
+* **`accounts` (7 حسابات):** سجلات التشفير والمصادقة الأمنية (Better-Auth).
+* **`sessions` (8 جلسات):** جلسات تسجيل الدخول النشطة والآمنة لمدة 7 أيام.
+* **`bookings` (8 حجوزات):** سجلات الحجوزات السابقة والحالية مع أكواد مرجعية YAS وقيم مالية بالدرهم.
+* **`projects` (9 أفلام):** أعمال يوم العلم الإماراتي، بلدية دبي، جيتكس، أورانج، وطلبات.
+* **`influencers` (8 مؤثرين):** أبرز صناع المحتوى في الخليج مع أعداد المتابعين والريلز.
+* **`inquiries` (1 استفسار):** طلب تأجير كاميرا سوني FX6 من العميل إبراهيم جلال.
+* **`enterprise_rfps` & `verifications`:** جداول مفعلة لاستقبال مناقصات الإنتاج وتأكيد الحسابات.
 
 ---
 
-### Detailed Value Propositions / تفصيل المزايا التنافسية:
+# 8. خطوات الإطلاق الرسمي (Go-Live) وبروتوكول الدومين والإيميلات / Production Launch & DNS Protocol
 
-#### 1. 🏆 Luxury Dubai Studio City Aesthetic (الهوية السينمائية الفاخرة)
-* Unlike generic e-commerce templates, Yas Pro features high-end human-crafted design: obsidian dark mode, brushed gold accents, tactile spring physics, and an interactive **Split-Screen Before/After Color Grading Slider** showcasing Log vs Film LUTs.
+لإطلاق المنصة رسمياً للجمهور دون حدوث أي خطأ، يجب اتباع الترتيب التالي:
 
-#### 2. ⚡ 173 Curated Cinema Gear Fleet with Tiered Day-Rates (أسطول المعدات والتسعير الذكي)
-* 173 high-value production tools across Cameras, Lenses, Lighting, Audio, and Master Kits.
-* **Smart Dynamic Pricing:** The cart automatically computes discounts based on rental duration:
-  * `1–2 Days`: Full daily rate.
-  * `3–6 Days`: 15% multi-day production discount.
-  * `7+ Days`: 25% weekly cinema discount.
-
-#### 3. 💳 Sovereign UAE Payments via Ziina (الدفع الوطني الفوري عبر Ziina)
-* Full integration with **Ziina**, the UAE’s premier licensed financial payment gateway.
-* Supports **Apple Pay**, **Visa**, and **Mastercard** natively in UAE Dirhams (AED), plus automated bank wire instructions for enterprise clients.
-
-#### 4. 🎙️ 4 Specialized Soundstages with Conflict-Free Booking (حجز الاستوديوهات بدون تعارض)
-* Includes Studio A (Main Stage 200 sqm), Studio B (Podcast Suite with 4x Shure SM7B), Studio C (Infinite White Cyclorama), and Studio XR (270° Virtual Production Volume with Unreal Engine 5.4).
-* The booking engine enforces **strict slot conflict locking between 09:00 and 21:00**, completely eliminating double bookings.
-
-#### 5. 🛡️ UAE Mawthooq Ad Compliance AI Engine (مدقق موثوق لتراخيص الإعلانات)
-* A specialized built-in compliance tool that audits commercial scripts and marketing proposals to ensure adherence to the UAE General Authority of Media Regulation (GAMR) **Mawthooq** licensing requirements and `#إعلان` disclosure rules.
-
-#### 6. 💼 Dedicated Self-Service Client Portal (`/portal`) (بوابة العميل الرقمية)
-* Clients do not need to call or email to check order status. They can log into `/portal` to inspect their upcoming shoot dates, retrieve check-in reference codes, and download official UAE VAT tax invoices.
-
-#### 7. 🛡️ Enterprise Security & Serverless Performance (أمان فائق وأداء استثنائي)
-* Powered by **Neon Serverless PostgreSQL** and **Next.js 15 Server Actions**.
-* Eliminates the vulnerabilities, slow database queries, and plugin crashes of legacy WordPress. All database queries execute in under 50ms with zero spam bot pollution.
-
-#### 8. 🌐 Flawless Bilingual Architecture without Inversion (نظام ثنائي اللغة متزن)
-* Fully supporting English and Arabic.
-* **Strict Layout Invariance:** Under project rules, the top Navbar, Brand Logo (`AI MEDIA HUB • DUBAI`), and bottom Footer remain anchored in physical Left-to-Right orientation across both languages. Toggling to Arabic flips text direction smoothly without flipping the entire interface backwards.
+1. **نقل ملكية الحسابات (Account Handover):** إنشاء حسابات الشركة على GitHub و Vercel و Neon ونقل المشاريع إليها.
+2. **تفعيل بوابة Ziina الحية:** إدخال مفتاح `ZIINA_API_KEY` الحقيقي في متغيرات Vercel وتحويل البيئة إلى `production`.
+3. **ربط دومين الشركة على GoDaddy (دون لمس الإيميلات):**
+   * الدخول للوحة تحكم GoDaddy ➔ قسم إدارة الـ DNS لدومين `yasproductions.com`.
+   * تعديل سجل الـ **`A Record`** للرمز `@` ليشير إلى IP سيرفر فيرسل: `76.76.21.21`.
+   * تعديل سجل الـ **`CNAME Record`** للرمز `www` ليشير إلى: `cname.vercel-dns.com`.
+   * **تحذير هام:** لا تقم بتغيير الـ Nameservers أو لمس سجلات الـ **MX** أو **TXT** أو **SPF** الخاصة بإيميلات `ceo@yasproductions.com` و `marketing@yasproductions.com`. هذا يضمن بقاء الإيميلات تعمل دون انقطاع ثانية واحدة.
+4. **ربط أدوات التتبع والتحليل:** إضافة معرفات Google Search Console و Google Analytics في لوحة التحكم.
 
 ---
 
-# 5. Database Architecture & Data Inventory / هيكلية قاعدة البيانات وحصر البيانات
-
-The live **Neon PostgreSQL** database (`neondb`) is normalized, indexed, and actively populated with the following verified records:
-
-```
-┌─────────────────────────┬──────────────┬────────────────────────────────────────────────────────┐
-│ Database Table Name     │ Row Count    │ Purpose & Current Contents                             │
-├─────────────────────────┼──────────────┼────────────────────────────────────────────────────────┤
-│ equipment               │ 173 items    │ Cameras (115), Audio (21), Lighting (13), Lenses (12), │
-│                         │              │ Master Packages (12). Bilingual with clean slugs.       │
-│ studios                 │ 4 stages     │ Studio A, Studio B, Studio C, and Studio XR Stage.     │
-│ users                   │ 8 users      │ 5 Verified Admins (Yaman, Ahmad, Walaa, Info, Master)   │
-│                         │              │ + 3 Registered Production Clients.                     │
-│ accounts                │ 7 accounts   │ Better-Auth hashed credential authenticators.          │
-│ sessions                │ 8 sessions   │ Active authenticated web session tokens.               │
-│ bookings                │ 8 bookings   │ Real-time and historical studio & gear reservations.   │
-│ projects                │ 9 films      │ UAE Flag Day, DMX, GITEX Global, Talabat, Orange, etc. │
-│ influencers             │ 8 creators   │ Abo Flah, Noor Stars, Narins, Osama Marwah, etc.       │
-│ inquiries               │ 1 inquiry    │ Sony FX6 reservation lead from client ibrahim galal.   │
-│ enterprise_rfps         │ Active Table │ Sovereign government media tender intake schema.       │
-│ verifications           │ Active Table │ Email verification security tokens.                    │
-└─────────────────────────┴──────────────┴────────────────────────────────────────────────────────┘
-```
-
-### Bilingual Technical Specifications / المواصفات الفنية باللغتين
-Unlike legacy WordPress which duplicated each product into two separate posts to handle languages, your database stores both languages inside a **single unified record**:
-* `name`: Standard international equipment model name (e.g. `Sony Cinema Line FX3 ILME`).
-* `description`: Comprehensive English technical specifications and included accessories.
-* `arabic_description`: Authentic Arabic technical specifications (*أهم المواصفات الفنية: نوع المستشعر، معالج الصور، دقة الفيديو*).
-* `specs`: Searchable JSON array of key capabilities (e.g. `["4K/120p", "10-bit 4:2:2", "Dual Base ISO"]`).
-
----
-
-# 6. Core Operations & Step-by-Step User Workflows / خطوات الاستخدام والتشغيل العملي
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Client as Production Client
-    participant Web as Yas Pro Web (/shop & /studios)
-    participant Auth as Better-Auth Engine
-    participant DB as Neon PostgreSQL
-    participant Ziina as Ziina UAE Gateway
-    actor Admin as Yas Pro Admin (/admin)
-
-    Note over Client,Web: 1. Booking & Rental Selection
-    Client->>Web: Selects Gear / Studio XR & picks shoot dates
-    Web->>Web: Dynamic pricing applies multi-day discount
-
-    Note over Client,Ziina: 2. Checkout & Payment
-    Client->>Web: Clicks "Reserve & Checkout"
-    Web->>Ziina: Creates payment intent (AED deposit)
-    Ziina-->>Client: Renders Apple Pay / Card checkout
-    Client->>Ziina: Confirms payment
-    Ziina->>Web: Webhook confirms transaction
-
-    Note over Web,DB: 3. Order Generation & Sync
-    Web->>DB: Inserts booking record (Status: Confirmed, Ref: YAS-XXXXXX)
-    Web-->>Client: Displays confirmed voucher & check-in QR
-
-    Note over Admin,DB: 4. Operations Dispatch
-    Admin->>Web: Opens /admin/bookings
-    Web->>DB: Fetches live confirmed bookings
-    Admin->>Admin: Preps soundstage & cinema camera package
-```
-
----
-
-# 7. Production Go-Live & Maintenance Checklist / قائمة الإطلاق الرسمي والتشغيل النهائي
-
-Before launching public commercial marketing campaigns, execute this brief operational checklist:
-
-1. **Custom Domain Setup (Vercel DNS):**
-   * Point your official production domain `yasproductions.com` to Vercel CNAME/A records.
-2. **Switch Ziina Gateway to Production:**
-   * In `.env.local` (and Vercel Environment Variables):
-     * Set `ZIINA_ENVIRONMENT="production"`
-     * Set `ZIINA_API_KEY="sec_prod_your_real_key"`
-     * Set `ZIINA_SIMULATE_PAYMENTS="false"`
-3. **Configure Media Cloudinary CDN (Optional):**
-   * Provide `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` to enable live video and photo uploads directly from the Admin Hub.
-4. **Email Dispatch (Resend API):**
-   * Configure `RESEND_API_KEY` to automatically email clients their booking confirmation vouchers and PDF VAT invoices.
-5. **Admin Password Personalization:**
-   * Log into `/admin` with `ceo@yasproductions.com` and update passwords to your team's preferred private keys.
-
----
-
-# 8. The 20-Point Client Directives: Compliance & Enhancement Audit / مصفوفة مطابقة توجيهات العميل العشرين
-
-This section provides an itemized audit against the **20 official client directives** outlined in `client-instructions.txt`. It details how each requirement was satisfied, where the actual implementation **exceeded or improved** upon the original request, and what operational steps remain for the client's team.
-
-يقدم هذا القسم تحليلاً ومقارنة تفصيلية نقطة بنقطة مع **التوجيهات العشرين الرسمية** المحددة من قِبل العميل في وثيقة `client-instructions.txt`، موضحاً ما تم إنجازه، وما تم التفوق فيه وتقديمه بمستوى أعلى من المتوقع، والخطوات المتبقية لفريق العميل:
-
----
-
-| # | Client Directive / توجيه العميل | Implementation Status / حالة التنفيذ في التطبيق | What We Built & How It Exceeded Expectations / ما تم بناؤه وكيف تفوقنا فيه | Remaining Actions for Client / المتبقي على العميل |
-| :-: | :--- | :---: | :--- | :--- |
-| **1** | **Preserve UX & Navigation Flows**<br>الحفاظ على الـUser Experience الحالية والـflows التي اعتاد عليها المستخدم | <span style="color:#10b981; font-weight:700;">✓ 100% Implemented & Enhanced</span> | • Maintained all core flows (`/shop`, `/studios`, `/projects`, `/about`, `/contact`).<br>• Enforced strict physical LTR Navbar and Footer anchoring (per `AGENTS.md`) so Arabic mode does not disorient users.<br>• **Enhanced:** Added tactile spring physics, luxury dark mode, and mobile drawer. | None (Ready for use) |
-| **2** | **Mobile-First & Ultra Fast Performance**<br>موقع Mobile-First وسريع جداً مع تحسين Core Web Vitals | <span style="color:#10b981; font-weight:700;">✓ 100% Implemented & Enhanced</span> | • Fully responsive grid via Tailwind CSS.<br>• Next.js 15 automated image optimization (`next/image`).<br>• Serverless Neon database queries execute in under 50ms.<br>• **Enhanced:** Curated 6-item landing gear spotlight preventing mobile data overfetching. | Test on various mobile devices |
-| **3** | **SEO Migration & URL Protection**<br>عدم خسارة الـranking والروابط المؤرشفة (URLs, 301, Meta, Schema, Sitemap, OG) | <span style="color:#10b981; font-weight:700;">✓ 100% Implemented & Enhanced</span> | • Canonical URLs, OpenGraph social tags, structured JSON-LD schemas, robots.txt, dynamic sitemap.<br>• Configured Next.js 301 redirect architecture.<br>• **Enhanced:** Bilingual metadata supporting both English and Arabic search crawlers. | Connect Google Search Console & Analytics IDs |
-| **4** | **Booking System Migration & Data Preservation**<br>نقل نظام الحجز بالكامل بدون فقدان الـworkflow أو البيانات | <span style="color:#10b981; font-weight:700;">✓ 100% Implemented & Enhanced</span> | • All historical bookings preserved in Neon (`YAS-1C1B9C03`, `YAS-2843A111`, etc.).<br>• Modern 5-step wizard at `/studio-booking`.<br>• **Enhanced:** Strict 09:00-21:00 conflict-free slot locking with automated overlapping booking rejection. | None |
-| **5** | **Equipment & Studio Rental Architecture**<br>بنية قاعدة بيانات تدعم المعدات، التوفر، التواريخ، الأسعار، الباقات، ومنع Double Booking | <span style="color:#10b981; font-weight:700;">✓ 100% Implemented & Enhanced</span> | • Structured tables for `equipment` (173 items), `studios` (4 stages), `bookings`, `inquiries`.<br>• Automated double-booking rejection constraint.<br>• **Enhanced:** 158 authentic Arabic technical descriptions injected, plus automated multi-day rental discount tiers (15% for 3-6 days, 25% for 7+ days). | None |
-| **6** | **Dynamic CMS for Services & Packages**<br>إدارة الخدمات والباقات من لوحة التحكم وليس تعديلها من الكود | <span style="color:#10b981; font-weight:700;">✓ 100% Implemented & Enhanced</span> | • Interactive CRUD managers under `/admin/gear` and `/admin/studios`.<br>• Real-time updates to rates, amenities, and availability.<br>• **Enhanced:** Custom `AdminConfirmModal` dialogs preventing accidental deletions. | Familiarize team with `/admin` |
-| **7** | **Portfolio Media Storage (No DB Bloat)**<br>ملفات الميديا على Object Storage (Cloudinary) والبيانات والروابط في Neon | <span style="color:#10b981; font-weight:700;">✓ 100% Implemented & Enhanced</span> | • Neon database stores strictly typed metadata, URLs, tags, and video IDs.<br>• Storage driver configured for Cloudinary CDN (`STORAGE_DRIVER="cloudinary"` in `src/lib/storage.ts`).<br>• **Enhanced:** Interactive Vimeo/YouTube embeds and 9:16 vertical reels. | Add Cloudinary API keys to `.env.local` |
-| **8** | **SEO-Friendly Content & Case Studies**<br>إمكانية إضافة وتعديل المقالات والمشاريع بسهولة بدون تدخل مبرمج | <span style="color:#10b981; font-weight:700;">✓ 100% Implemented & Enhanced</span> | • Portfolio & Showcase manager at `/admin/projects` with rich deliverables and tags.<br>• **Enhanced:** Interactive split-screen before/after cinema color grade slider. | Post future project case studies |
-| **9** | **Comprehensive Admin Dashboard**<br>لوحة تحكم كاملة لتعديل المشاريع، الفيديوهات، الصور، من نحن، الحجوزات والمعدات | <span style="color:#10b981; font-weight:700;">✓ 100% Implemented & Enhanced</span> | • 10 dedicated admin panels: Overview, Gear, Studios, Bookings, Inquiries, RFPs, Projects, Influencers, Users, Broadcast Telemetry.<br>• **Enhanced:** Live revenue counters and 1-click inquiry resolution. | None |
-| **10** | **Future-Ready API Integrations**<br>الجاهزية للـAI Chatbot، CRM، WhatsApp، Email، Gateways، Quotations، Client Portal | <span style="color:#10b981; font-weight:700;">✓ 100% Implemented & Enhanced</span> | • Client Portal (`/portal`), WhatsApp Concierge, Ziina payment gateway, REST endpoints (`/api/gear`, `/api/webhooks/production`).<br>• **Enhanced:** Built-in UAE Mawthooq compliance auditor, AI Kit Matcher, GCC dialect engine. | Connect live production APIs |
-| **11** | **AI Chatbot Database Access**<br>تمكين الـAI Chatbot من الوصول لبيانات الشركة والخدمات والأسعار من DB | <span style="color:#10b981; font-weight:700;">✓ 100% Implemented & Enhanced</span> | • Normalized tables in Neon PostgreSQL with typed Drizzle ORM schema ready for any LLM function-calling or RAG vector pipeline.<br>• AI utility modules already built in `src/lib/ai/`. | None |
-| **12** | **Payment Gateways & Zero Card Storage Risk**<br>عدم تخزين بيانات البطاقات، والاعتماد على مزود الدفع والـWebhooks | <span style="color:#10b981; font-weight:700;">✓ 100% Implemented & Enhanced</span> | • Direct integration with **Ziina UAE Gateway** (Apple Pay, Visa, Mastercard in AED).<br>• Zero card data touches your servers.<br>• Idempotent webhook reconciler at `/api/webhooks/production`.<br>• **Enhanced:** Corporate bank wire fallback with automated payment instructions. | Switch Ziina keys from Sandbox to Live |
-| **13** | **Company Email & Domain Protection (GoDaddy)**<br>الحفاظ على إيميلات الشركة الحالية (`CEO@...`) على GoDaddy بدون أي انقطاع | <span style="color:#10b981; font-weight:700;">✓ 100% Protected & Documented</span> | • Explicit DNS protocol provided: Point only the website (`A`/`CNAME`) to Vercel, leaving GoDaddy MX, SPF, DKIM, DMARC records 100% intact.<br>• **Zero email interruption guaranteed.** | Follow DNS record update guide |
-| **14** | **Staging / Preview Version Before DNS Switch**<br>نسخة Staging كاملة يجربها العميل والفريق قبل توجيه الدومين | <span style="color:#10b981; font-weight:700;">✓ 100% Live & Available</span> | • Deployed on Vercel preview: `https://yaspro-tablawy.vercel.app`.<br>• Automatically reflects every git commit in real-time for team inspection. | Team testing on mobile & desktop |
-| **15** | **Pre-Go Live Quality & Verification Checklist**<br>التحقق الشامل من الحجز، التأجير، الدفع، النماذج، السرعة، الأمان، الباك أب | <span style="color:#10b981; font-weight:700;">✓ 100% Verified</span> | • **117 automated unit and integration tests passing (`npm test`)** verifying all edge cases, schedule overlaps, payment intents, and rate limits. | Review checklist in Section 7 |
-| **16** | **Full Company Ownership of Accounts & Code**<br>جميع الحسابات (GitHub, Vercel, Neon, Domain) ملك للشركة بصلاحيات Owner كاملة | <span style="color:#10b981; font-weight:700;">✓ Ready for Handover</span> | • All environment credentials, repository files, and database connection strings are fully documented and handed over. | Add company owner accounts to Vercel/Neon |
-| **17** | **Documented Architecture & Independence**<br>توثيق الكود والـSchema والـEnv حتى لا يعتمد المشروع على مبرمج واحد | <span style="color:#10b981; font-weight:700;">✓ 100% Documented</span> | • Comprehensive `README.md` with Mermaid diagrams, ERD, and this bilingual `CLIENT_HANDOVER_AND_USER_GUIDE`. | Store docs in company knowledge base |
-| **18** | **Multi-Environment Architecture (Dev / Staging / Prod)**<br>بيئات منفصلة لتجربة التعديلات قبل الموقع الحقيقي | <span style="color:#10b981; font-weight:700;">✓ Configured</span> | • Local environment (`localhost:3000`), Vercel preview branches, and main production branch. | None |
-| **19** | **Clean, Scalable Neon PostgreSQL Architecture**<br>بنية قاعدة بيانات نظيفة وقابلة للتوسع وليست مجرد جداول مؤقتة | <span style="color:#10b981; font-weight:700;">✓ 100% Normalized</span> | • 11 normalized tables with indexes on high-traffic queries, foreign keys, JSONB for extensible attributes, and zero spam bot pollution. | None |
-| **20** | **The YAS Digital Platform Vision**<br>بناء أساس يتحول إلى المنصة المتكاملة: Website + Booking + Rental + Payments + CRM + AI + Client Portal + Automation | <span style="color:#10b981; font-weight:700; font-size:14px;">🌟 100% FULFILLED TODAY</span> | • **Every single one of these 8 pillars is already built and working today in your application!**<br>1. Website (Next.js 15)<br>2. Booking (4 soundstages)<br>3. Rental (173 cinema items)<br>4. Payments (Ziina UAE Gateway)<br>5. CRM / Leads (`/admin/inquiries`)<br>6. AI (Mawthooq Auditor, AI Matcher, Dialect Engine)<br>7. Client Portal (`/portal`)<br>8. Automation (Webhooks, quote generation). | Celebrate and launch! |
-
----
-
-### 🏁 Document Sign-Off & Official Acceptance
-
-* **Delivered by:** Engineering & Development Team
-* **Delivered to:** Yas Productions Leadership Team (Dubai, UAE)
-* **Status:** Verified, Tested (117/117 Test Suite Passed), and Production-Ready
-* **Date:** October 2026
-
+### 🏁 توقيع واعتماد التسليم الرسمي / Official Sign-Off
+* **مُسلّم من:** الفريق الهندسي والتطويري للمشروع
+* **مُسلّم إلى:** الأستاذ يمان وإدارة شركة ياس برودكشنز (دبي، الإمارات)
+* **الحالة:** تم الفحص والاختبار (128/128 فحص آلي ناجح) وجاهز لنقل الملكية والإطلاق الرسمي
+* **التاريخ:** أكتوبر 2026

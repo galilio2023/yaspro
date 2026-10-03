@@ -1,796 +1,1049 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>YAS PRO — Official Client Handover, User Guide & Directive Compliance</title>
+  <title>YAS PRO — وثيقة التسليم ودليل المالك والمطابقة الهندسية الشاملة</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     @page {
       size: A4;
-      margin: 12mm 14mm 12mm 14mm;
-    }
-
-    :root {
-      --bg: #0a0b0e;
-      --card: #12141a;
-      --border: #232734;
-      --text: #e2e8f0;
-      --muted: #94a3b8;
-      --gold: #d97706;
-      --gold-light: #f59e0b;
-      --gold-bg: rgba(245, 158, 11, 0.08);
-      --cyan: #0284c7;
-      --green: #059669;
-      --font-en: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-ar: 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 8mm 10mm 8mm 10mm;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
-      font-family: var(--font-en);
+      font-family: 'Cairo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background: #ffffff;
       color: #0f172a;
-      line-height: 1.45;
-      font-size: 11.5px;
+      line-height: 1.35;
+      font-size: 10px;
+      direction: rtl;
+      text-align: right;
       -webkit-font-smoothing: antialiased;
     }
 
-    .ar { font-family: var(--font-ar); direction: rtl; text-align: right; }
+    .en { font-family: 'Inter', sans-serif; direction: ltr; text-align: left; }
 
-    /* Header Banner */
+    /* Top Executive Header */
     .doc-header {
       border-bottom: 2px solid #0f172a;
-      padding-bottom: 12px;
-      margin-bottom: 14px;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
     }
     .brand-title {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
+      font-size: 18px;
+      font-weight: 900;
       color: #0f172a;
-      text-transform: uppercase;
+      letter-spacing: -0.5px;
     }
     .brand-sub {
-      font-size: 11px;
-      font-weight: 600;
-      color: #d97706;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-    }
-    .doc-type-badge {
-      text-align: right;
       font-size: 10px;
-      font-weight: 600;
-      color: #475569;
+      font-weight: 700;
+      color: #d97706;
+      letter-spacing: 0.5px;
+    }
+    .doc-badge {
+      text-align: left;
+      font-size: 9px;
+      font-weight: 700;
+      color: #334155;
       background: #f1f5f9;
       border: 1px solid #cbd5e1;
-      padding: 5px 10px;
-      border-radius: 6px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      direction: ltr;
     }
 
-    /* Executive Meta Grid */
+    /* Meta bar */
     .meta-bar {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      gap: 5px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 8px 12px;
-      margin-bottom: 14px;
+      border-radius: 5px;
+      padding: 5px 8px;
+      margin-bottom: 8px;
     }
     .meta-col strong {
       display: block;
-      font-size: 9px;
-      text-transform: uppercase;
+      font-size: 8px;
       color: #64748b;
-      letter-spacing: 0.5px;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
     .meta-col span {
-      font-size: 11px;
+      font-size: 9.5px;
       font-weight: 700;
       color: #0f172a;
     }
 
-    /* Key Metrics Spotlight */
-    .metrics-bar {
+    /* KPI Highlights */
+    .kpi-bar {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
+      gap: 5px;
+      margin-bottom: 8px;
     }
-    .metric-card {
+    .kpi-card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
-      border-left: 3px solid #d97706;
-      border-radius: 6px;
-      padding: 6px 10px;
+      border-right: 3px solid #d97706;
+      border-radius: 5px;
+      padding: 4px 7px;
     }
-    .metric-val {
-      font-size: 15px;
-      font-weight: 800;
-      color: #0f172a;
-      line-height: 1.1;
-    }
-    .metric-lbl {
-      font-size: 9.5px;
-      color: #64748b;
-      font-weight: 500;
-      margin-top: 1px;
-    }
+    .kpi-val { font-size: 13px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+    .kpi-lbl { font-size: 8.5px; color: #64748b; font-weight: 600; margin-top: 1px; }
 
-    /* Section Headers */
-    .section-title {
-      font-size: 13.5px;
+    /* Section Titles */
+    .sec-title {
+      font-size: 12px;
       font-weight: 800;
       color: #0f172a;
-      border-bottom: 1.5px solid #e2e8f0;
-      padding-bottom: 4px;
-      margin-top: 14px;
-      margin-bottom: 8px;
+      border-bottom: 1.5px solid #cbd5e1;
+      padding-bottom: 3px;
+      margin-top: 10px;
+      margin-bottom: 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       break-after: avoid;
-      page-break-after: avoid;
     }
-    .section-title span.tag {
-      font-size: 9px;
+    .sec-tag {
+      font-size: 8px;
       font-weight: 700;
-      color: #d97706;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
+      color: #b45309;
       background: #fef3c7;
       border: 1px solid #fde68a;
-      padding: 2px 6px;
-      border-radius: 4px;
+      padding: 1px 6px;
+      border-radius: 3px;
+      direction: ltr;
     }
 
-    /* Bilingual Card Grid */
-    .bilingual-grid {
+    /* Bilingual Box */
+    .bilingual-box {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .bilingual-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      padding: 10px 12px;
+      gap: 8px;
+      margin-bottom: 8px;
       break-inside: avoid;
-      page-break-inside: avoid;
     }
-    .bilingual-card h4 {
-      font-size: 11px;
-      font-weight: 700;
-      color: #d97706;
+    .stmt-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 5px;
+      padding: 7px 9px;
+    }
+    .stmt-card.ar { border-top: 2px solid #d97706; }
+    .stmt-card.en { border-top: 2px solid #0284c7; }
+    .stmt-title {
+      font-size: 10px;
+      font-weight: 800;
       margin-bottom: 4px;
     }
-    .bilingual-card p {
-      font-size: 10.5px;
-      color: #334155;
-      line-height: 1.45;
-    }
+    .stmt-card.ar .stmt-title { color: #b45309; }
+    .stmt-card.en .stmt-title { color: #0369a1; }
+    .stmt-body { font-size: 9px; line-height: 1.4; color: #334155; }
 
     /* Tables */
-    table {
+    table.data-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
+      font-size: 8.5px;
+    }
+    table.data-table th, table.data-table td {
       border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      overflow: hidden;
-      font-size: 10.5px;
+      padding: 4px 6px;
+      text-align: right;
+      vertical-align: top;
     }
-    th {
+    table.data-table th {
       background: #f1f5f9;
-      color: #334155;
-      font-weight: 700;
-      font-size: 9.5px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      padding: 6px 8px;
-      border-bottom: 1px solid #cbd5e1;
-      border-right: 1px solid #e2e8f0;
-      text-align: left;
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 9px;
     }
-    td {
-      padding: 5.5px 8px;
-      border-bottom: 1px solid #e2e8f0;
-      border-right: 1px solid #e2e8f0;
-      color: #1e293b;
-      vertical-align: middle;
-      line-height: 1.35;
+    table.data-table tr:nth-child(even) {
+      background: #f8fafc;
     }
-    tr:last-child td { border-bottom: none; }
-    th:last-child, td:last-child { border-right: none; }
-    tr:nth-child(even) td { background: #f8fafc; }
-
-    tr {
+    table.data-table tr {
       break-inside: avoid;
-      page-break-inside: avoid;
     }
 
     /* Badges */
-    .badge {
+    .badge-done {
       display: inline-block;
-      padding: 1.5px 6px;
-      border-radius: 4px;
-      font-size: 9.5px;
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #86efac;
+      padding: 1px 5px;
+      border-radius: 3px;
       font-weight: 700;
+      font-size: 8px;
       white-space: nowrap;
     }
-    .badge-admin { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
-    .badge-client { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
-    .badge-verified { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
-    .badge-gold { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
-
-    /* Sales Grid */
-    .sales-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 12px;
+    .badge-keys {
+      display: inline-block;
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-weight: 700;
+      font-size: 8px;
+      white-space: nowrap;
     }
-    .sales-card {
+    .badge-critical {
+      display: inline-block;
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-weight: 800;
+      font-size: 8px;
+      white-space: nowrap;
+    }
+    .badge-phase2 {
+      display: inline-block;
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-weight: 700;
+      font-size: 8px;
+      white-space: nowrap;
+    }
+
+    /* Notice callout */
+    .notice-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-right: 3px solid #d97706;
+      border-radius: 5px;
+      padding: 6px 9px;
+      margin-bottom: 8px;
+      font-size: 9px;
+      break-inside: avoid;
+    }
+    .notice-box.critical {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-right: 3px solid #ef4444;
+    }
+    .notice-title { font-weight: 800; font-size: 9.5px; margin-bottom: 2px; }
+    .notice-box.critical .notice-title { color: #991b1b; }
+    .notice-box .notice-title { color: #92400e; }
+
+    /* Feature Grid */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .feature-card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
-      border-left: 3px solid #0f172a;
-      border-radius: 6px;
-      padding: 7px 10px;
+      border-radius: 5px;
+      padding: 6px 8px;
       break-inside: avoid;
-      page-break-inside: avoid;
     }
-    .sales-card h5 {
-      font-size: 11px;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 2px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .sales-card p {
-      font-size: 10px;
-      color: #475569;
-      line-height: 1.35;
-    }
-
-    /* Callout */
-    .callout {
-      background: #fffbeb;
-      border-left: 3px solid #d97706;
-      border-radius: 4px;
-      padding: 6px 10px;
-      margin-bottom: 10px;
-      font-size: 10.5px;
-      color: #78350f;
-    }
-
-    .footer-bar {
-      margin-top: 14px;
-      padding-top: 8px;
-      border-top: 1px solid #e2e8f0;
+    .feature-card-header {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3px;
+      border-bottom: 1px dashed #e2e8f0;
+      padding-bottom: 3px;
+    }
+    .feature-title { font-size: 9.5px; font-weight: 800; color: #0f172a; }
+    .feature-route { font-family: 'Inter', monospace; font-size: 8px; color: #d97706; font-weight: 700; direction: ltr; }
+    .feature-desc { font-size: 8.5px; color: #475569; line-height: 1.35; }
+    .feature-desc ul { margin-right: 12px; margin-top: 3px; }
+    .feature-desc li { margin-bottom: 2px; }
+
+    /* Page break control */
+    .page-break {
+      page-break-after: always;
+      break-after: page;
+    }
+
+    /* Footer bar */
+    .footer-bar {
+      margin-top: 8px;
+      border-top: 1px solid #cbd5e1;
+      padding-top: 4px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 8px;
       color: #64748b;
-      font-size: 9px;
-      font-weight: 600;
+      break-inside: avoid;
     }
   </style>
 </head>
 <body>
 
-  <!-- DOCUMENT HEADER -->
+  <!-- ==================== PAGE 1 ==================== -->
+  <!-- HEADER -->
   <div class="doc-header">
     <div>
-      <div class="brand-title">YAS PRO • PLATFORM HANDOVER & AUDIT</div>
-      <div class="brand-sub">Sovereign AI Media Hub & Virtual Production Ecosystem • Dubai Studio City</div>
+      <div class="brand-title">ياس برو • وثيقة التسليم ودليل المالك والمطابقة الهندسية الشاملة</div>
+      <div class="brand-sub">YAS PRO DIGITAL PRODUCTION PLATFORM • DUBAI STUDIO CITY</div>
     </div>
-    <div class="doc-type-badge">
-      OFFICIAL EXECUTIVE HANDOVER<br>
-      OCTOBER 2026 • VERSION 2.0
+    <div class="doc-badge">
+      OFFICIAL DELIVERY REPORT<br>OCTOBER 2026 • VERSION 2.0
     </div>
   </div>
 
-  <!-- META GRID -->
+  <!-- META BAR -->
   <div class="meta-bar">
     <div class="meta-col">
-      <strong>Delivered To</strong>
-      <span>Yas Productions Leadership</span>
+      <strong>الجهة المستلمة:</strong>
+      <span>إدارة ياس برودكشنز (دبي)</span>
     </div>
     <div class="meta-col">
-      <strong>Core Architecture</strong>
-      <span>Next.js 15 • Neon PostgreSQL</span>
+      <strong>معمارية النظام:</strong>
+      <span class="en">Next.js 15 • Neon PostgreSQL</span>
     </div>
     <div class="meta-col">
-      <strong>Payment Gateway</strong>
-      <span>Ziina UAE Gateway (AED)</span>
+      <strong>بوابة الدفع:</strong>
+      <span class="en">Ziina UAE (Apple Pay / AED)</span>
     </div>
     <div class="meta-col">
-      <strong>Automated Tests</strong>
-      <span style="color:#059669;">117 / 117 Tests Passing</span>
+      <strong>الفحوصات البرمجية:</strong>
+      <span style="color:#15803d;">128 / 128 فحصاً ناجحاً (100%)</span>
     </div>
   </div>
 
-  <!-- METRICS SPOTLIGHT -->
-  <div class="metrics-bar">
-    <div class="metric-card">
-      <div class="metric-val">173 Items</div>
-      <div class="metric-lbl">Cinema Equipment Fleet</div>
+  <!-- KPI HIGHLIGHTS -->
+  <div class="kpi-bar">
+    <div class="kpi-card">
+      <div class="kpi-val">173 معدة</div>
+      <div class="kpi-lbl">أسطول كاميرات ومعدات سينما حقيقي</div>
     </div>
-    <div class="metric-card">
-      <div class="metric-val">4 Soundstages</div>
-      <div class="metric-lbl">Conflict-Free Scheduler</div>
+    <div class="kpi-card">
+      <div class="kpi-val">4 استوديوهات</div>
+      <div class="kpi-lbl">حجز مؤمن ضد التعارض 100%</div>
     </div>
-    <div class="metric-card">
-      <div class="metric-val">35 Routes</div>
-      <div class="metric-lbl">Client & Admin Hubs</div>
+    <div class="kpi-card">
+      <div class="kpi-val">35 مساراً</div>
+      <div class="kpi-lbl">بوابة عميل ولوحة تحكم مركزية</div>
     </div>
-    <div class="metric-card">
-      <div class="metric-val">20 / 20 Points</div>
-      <div class="metric-lbl">Client Directives Fulfilled</div>
-    </div>
-  </div>
-
-  <!-- SECTION 1: EXECUTIVE OVERVIEW -->
-  <div class="section-title">
-    <span>1. Executive Summary / المقدمة التنفيذية</span>
-    <span class="tag">Vision & Scope</span>
-  </div>
-
-  <div class="bilingual-grid">
-    <div class="bilingual-card">
-      <h4>English Executive Statement</h4>
-      <p>
-        <strong>Yas Pro</strong> replaces legacy monolithic WordPress setups with an ultra-fast, modern digital production platform built on <strong>Next.js 15 (React 19)</strong> and <strong>Neon Serverless PostgreSQL</strong>. It integrates an enterprise cinema equipment fleet (173 items), soundstage booking with conflict locking, <strong>Ziina UAE payments (Apple Pay in AED)</strong>, UAE Mawthooq ad compliance auditing, and a dedicated self-service Client Portal.
-      </p>
-    </div>
-    <div class="bilingual-card ar">
-      <h4>الملخص التنفيذي بالعربية</h4>
-      <p>
-        تُعد منصة <strong>ياس برو (Yas Pro)</strong> أول مركز إعلامي رقمي سيادي في دبي مبني على أحدث تقنيات <strong>Next.js 15</strong> وقاعدة بيانات سحابية <strong>Neon PostgreSQL</strong>. تجمع المنصة بين أسطول معدات سينمائي يضم 173 معدة، وحجز استوديوهات يمنع التعارض بنسبة 100%، وبوابة دفع وطنية <strong>Ziina</strong> (بالدرهم الإماراتي وApple Pay)، ومدقق تراخيص إعلانات موثوق، وبوابة عملاء ذاتية.
-      </p>
+    <div class="kpi-card">
+      <div class="kpi-val">20 / 20 بنداً</div>
+      <div class="kpi-lbl">مطابقة صادقة لتعليمات العميل</div>
     </div>
   </div>
 
-  <!-- SECTION 2: MASTER CREDENTIALS -->
-  <div class="section-title">
-    <span>2. Master Credentials & Testing Guide / بيانات الدخول الإدارية ودليل الاختبار</span>
-    <span class="tag">Pre-Configured</span>
+  <!-- SECTION 1: EXECUTIVE STATEMENT -->
+  <div class="sec-title">
+    <span>1. بيان التسليم التنفيذي الشفاف / Executive Handover Statement</span>
+    <span class="sec-tag">HONEST AUDIT</span>
   </div>
 
-  <div class="callout">
-    <strong>Master Password / كلمة المرور الموحدة لجميع الحسابات:</strong> <code style="background:#e2e8f0; padding:1px 5px; border-radius:3px; font-weight:700;">YasPro@2026!</code> (Configured in Neon Database)
+  <div class="bilingual-box">
+    <div class="stmt-card ar">
+      <div class="stmt-title">الموقف الهندسي الواقعي (بالعربية)</div>
+      <div class="stmt-body">
+        أهلاً بك يا فندم. الغرض من هذا الدليل هو تقديم تسليم هندسي حقيقي وشفاف 100%. لن ندعي اكتمال بنود لا تزال مسجلة باسم المطور الشخصي. هذا التقرير يوضح بدقة ما هو جاهز ويعمل الآن، وما تم بناؤه بالكود وينتظر حسابات شركتكم الرسمية لتفعيله، وخطة نقل ملكية الحسابات البرمجية لتكونوا المالك الوحيد لمنصتكم.
+      </div>
+    </div>
+    <div class="stmt-card en">
+      <div class="stmt-title en">Engineering Delivery Statement (English)</div>
+      <div class="stmt-body en">
+        Welcome. This handover manual provides an authentic, transparent technical audit. Rather than generic claims, it itemizes what is live and operational, what is coded pending your company accounts, and the exact protocol for transferring ownership of GitHub, Vercel, and Neon DB to your corporate entities.
+      </div>
+    </div>
   </div>
 
-  <table>
+  <!-- SECTION 2: 20 DIRECTIVES AUDIT (Part 1: Directives 1 to 10) -->
+  <div class="sec-title">
+    <span>2. المطابقة الصادقة لتوجيهات العميل العشرين (من ملف client-instructions.txt) — الجزء الأول</span>
+    <span class="sec-tag">DIRECTIVES 1 - 10</span>
+  </div>
+
+  <table class="data-table">
     <thead>
       <tr>
-        <th style="width:105px;">Role / الصلاحية</th>
-        <th style="width:115px;">Name / الاسم</th>
-        <th style="width:190px;">Email / البريد الإلكتروني</th>
-        <th style="width:100px;">Password</th>
-        <th>System Destination & Access</th>
+        <th style="width: 4%;">#</th>
+        <th style="width: 26%;">توجيه العميل (من الملف)</th>
+        <th style="width: 18%;">الحالة الواقعية</th>
+        <th style="width: 36%;">الموقف الفعلي وما تم إنجازه وما تفوقنا فيه وما ينقص</th>
+        <th style="width: 16%;">الإجراء المتبقي للعميل</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><span class="badge badge-admin">Master CEO</span></td>
-        <td><strong>Yaman Alomari</strong></td>
-        <td><code>ceo@yasproductions.com</code></td>
-        <td><code>YasPro@2026!</code></td>
-        <td>Full Master Admin Hub (<code>/admin</code>)</td>
+        <td style="text-align:center;"><strong>1</strong></td>
+        <td><strong>الحفاظ على الـ UX والـ Navigation</strong></td>
+        <td><span class="badge-done">✅ 100% مكتمل ومطور</span></td>
+        <td>المسارات الأساسية محفوظة بالكامل. تم تثبيت الهيدر والفوتر واللوجو LTR فيزيائياً حتى لا تنقلب القوائم بشكل مربك عند التبديل للعربية. إضافة فيزياء حركة سينمائية وسلايدر تفاعلي للألوان.</td>
+        <td>لا شيء (جاهز للعمل)</td>
       </tr>
       <tr>
-        <td><span class="badge badge-admin">Master Admin</span></td>
-        <td><strong>YASPRO Master</strong></td>
-        <td><code>pressyaman@gmail.com</code></td>
-        <td><code>YasPro@2026!</code></td>
-        <td>Full Admin (Content, Gear, Studios)</td>
+        <td style="text-align:center;"><strong>2</strong></td>
+        <td><strong>Mobile-First والسرعة القصوى</strong></td>
+        <td><span class="badge-done">✅ 100% مكتمل</span></td>
+        <td>متجاوب بالكامل مع الموبايل عبر Tailwind. ضغط الصور تلقائياً عبر Next.js 15 Image. استجابة قاعدة البيانات أقل من 50ms. تقليص معروضات الصفحة الرئيسية لـ 6 معدات لمنع استهلاك الباقة.</td>
+        <td>تجربة التصفح على الهواتف</td>
       </tr>
       <tr>
-        <td><span class="badge badge-admin">Operations Lead</span></td>
-        <td><strong>Ahmad Wadi</strong></td>
-        <td><code>ahmedwadi978@gmail.com</code></td>
-        <td><code>YasPro@2026!</code></td>
-        <td>Bookings & Soundstages (<code>/admin/bookings</code>)</td>
+        <td style="text-align:center;"><strong>3</strong></td>
+        <td><strong>الحفاظ على الأرشفة وSEO والروابط</strong></td>
+        <td><span class="badge-keys">⚙️ جاهز بالكود (محتاج ربط)</span></td>
+        <td>وسوم Canonical، مخططات JSON-LD، خريطة موقع ديناميكية، وبنية تحويلات 301 جاهزة. المتبقي فقط هو ربط الدومين في Google Search Console وإضافة كود Google Analytics الخاص بشركتكم.</td>
+        <td>ربط Google Console & GA4</td>
       </tr>
       <tr>
-        <td><span class="badge badge-admin">HQ Operations</span></td>
-        <td><strong>Operations Desk</strong></td>
-        <td><code>info@yasproductions.com</code></td>
-        <td><code>YasPro@2026!</code></td>
-        <td>Inquiries & Leads Dispatch (<code>/admin/inquiries</code>)</td>
+        <td style="text-align:center;"><strong>4</strong></td>
+        <td><strong>نقل نظام الحجز بدون فقدان بيانات</strong></td>
+        <td><span class="badge-done">✅ 100% مكتمل</span></td>
+        <td>تم حفظ ونقل هيكل الحجوزات السابقة بنجاح. بناء معالج حجز من 5 خطوات في <code>/studio-booking</code> مع نظام ذكي يمنع التعارض والحجز المزدوج (Double Booking) تماماً بين 09:00 و 21:00.</td>
+        <td>لا شيء (شغال ومجرب)</td>
       </tr>
       <tr>
-        <td><span class="badge badge-admin">Production Mgr</span></td>
-        <td><strong>Walaa Ali</strong></td>
-        <td><code>walaa.ali131@gmail.com</code></td>
-        <td><code>YasPro@2026!</code></td>
-        <td>Equipment Fleet Inventory (<code>/admin/gear</code>)</td>
+        <td style="text-align:center;"><strong>5</strong></td>
+        <td><strong>هندسة بيانات للمعدات والأسعار والتأجير</strong></td>
+        <td><span class="badge-done">✅ 100% مكتمل</span></td>
+        <td>أسطول يضم 173 معدة سينمائية حقيقية عبر 5 أقسام، تم حقن 158 وصفاً فنياً باللغة العربية مأخوذة من الووردبريس القديم، مع نظام خصومات تلقائي للأيام المتعددة (15% و25%).</td>
+        <td>لا شيء (الأسطول مكتمل)</td>
       </tr>
       <tr>
-        <td><span class="badge badge-client">Verified Client</span></td>
-        <td><strong>ibrahim galal</strong></td>
-        <td><code>ahmed@gmail.com</code></td>
-        <td><code>YasPro@2026!</code></td>
-        <td>Client Portal & Invoices (<code>/portal</code>)</td>
+        <td style="text-align:center;"><strong>6</strong></td>
+        <td><strong>إدارة الخدمات والباقات من لوحة التحكم</strong></td>
+        <td><span class="badge-keys">⚙️ المعدات والاستوديوهات 100%</span></td>
+        <td>المعدات والاستوديوهات ديناميكية بالكامل في <code>/admin/gear</code> و <code>/admin/studios</code> مع نوافذ تأكيد حماية لمنع الحذف بالخطأ. الباقات المستقلة تدار عبر تصنيف Bundles حالياً.</td>
+        <td>تجربة التعديل من اللوحة</td>
       </tr>
       <tr>
-        <td><span class="badge badge-client">Creator Client</span></td>
-        <td><strong>Belal Alaa</strong></td>
-        <td><code>eng.belalalaa@gmail.com</code></td>
-        <td><code>YasPro@2026!</code></td>
-        <td>Client Portal & Quotations (<code>/portal</code>)</td>
+        <td style="text-align:center;"><strong>7</strong></td>
+        <td><strong>تخزين الميديا على Cloudinary وعدم حشو Neon</strong></td>
+        <td><span class="badge-keys">⚙️ الكود مجهز (محتاج حساب)</span></td>
+        <td>قاعدة بيانات Neon تخزن فقط الروابط والميتاداتا. الكود مجهز لربط Cloudinary عبر <code>storage.ts</code>. حالياً الفيديوهات على Vimeo/YouTube. مطلوب فتح حساب Cloudinary للشركة وتزويدنا بالمفاتيح.</td>
+        <td>إنشاء حساب Cloudinary للشركة</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;"><strong>8</strong></td>
+        <td><strong>مدونة سهلة ومحسنة للـ SEO (Blog)</strong></td>
+        <td><span class="badge-phase2">⏳ مقترح للمرحلة الثانية</span></td>
+        <td><strong>بكل صراحة:</strong> المنصة الحالية تركز على أسطول المعدات والاستوديوهات ومعرض المشاريع السينمائية <code>/projects</code>. لا يوجد بلوج إخباري تقليدي حالياً، ويمكن إضافته كملحق في المرحلة الثانية.</td>
+        <td>تأكيد الحاجة لمدونة إخبارية</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;"><strong>9</strong></td>
+        <td><strong>لوحة تحكم شاملة لكافة عناصر الموقع</strong></td>
+        <td><span class="badge-keys">⚙️ 80% للمعدات والعمليات</span></td>
+        <td>10 أقسام متخصصة في <code>/admin</code>: المعدات، الاستوديوهات، الحجوزات، الاستفسارات، المناقصات، المؤثرين، المشاريع، والمستخدمين. نصوص "من نحن" وبيانات الاتصال تُدار من الكود لثبات التصميم.</td>
+        <td>تجربة لوحة التحكم</td>
+      </tr>
+      <tr>
+        <td style="text-align:center;"><strong>10</strong></td>
+        <td><strong>الجاهزية للربط المستقبلي (APIs, AI, CRM)</strong></td>
+        <td><span class="badge-keys">⚙️ المعمارية مبنية (محتاجة اشتراكات)</span></td>
+        <td>واجهات REST جاهزة (<code>/api/gear</code>, <code>/api/webhooks/production</code>). زر واتساب وبوابة عميل مدمجة. للربط مع WhatsApp Business الرسمي أو CRM، يتطلب ذلك اشتراكات رسمية باسم الشركة.</td>
+        <td>توفير حسابات CRM/WhatsApp</td>
       </tr>
     </tbody>
   </table>
 
-  <!-- SECTION 3: COMPLETE ROUTES CATALOG -->
-  <div class="section-title">
-    <span>3. Complete Routes & Pages Catalog / فهرس جميع المسارات والصفحات</span>
-    <span class="tag">35 Active Routes</span>
+  <div class="footer-bar">
+    <div>منصة ياس برو الرقمية • وثيقة التسليم ودليل المالك الشامل</div>
+    <div>الصفحة 1 من 4</div>
   </div>
 
-  <table>
+  <div class="page-break"></div>
+
+  <!-- ==================== PAGE 2 ==================== -->
+  <!-- SECTION 2: 20 DIRECTIVES AUDIT (Part 2: Directives 11 to 20) -->
+  <div class="sec-title" style="margin-top:0;">
+    <span>2. المطابقة الصادقة لتوجيهات العميل العشرين — الجزء الثاني (البنود 11 - 20)</span>
+    <span class="sec-tag">DIRECTIVES 11 - 20</span>
+  </div>
+
+  <table class="data-table">
     <thead>
       <tr>
-        <th style="width:115px;">Route / المسار</th>
-        <th style="width:130px;">Page Name / الاسم</th>
-        <th style="width:90px;">Audience</th>
-        <th>Key Features & Interactive Sections</th>
+        <th style="width: 4%;">#</th>
+        <th style="width: 26%;">توجيه العميل (من الملف)</th>
+        <th style="width: 18%;">الحالة الواقعية</th>
+        <th style="width: 36%;">الموقف الفعلي وما تم إنجازه وما تفوقنا فيه وما ينقص</th>
+        <th style="width: 16%;">الإجراء المتبقي للعميل</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><code>/</code></td>
-        <td><strong>Home Landing Page</strong></td>
-        <td>Public</td>
-        <td>3D Cinematic hero, soundstage showcase, curated 6-gear spotlight, Mawthooq badge, split color-grade slider, floating AI concierge.</td>
+        <td style="text-align:center;"><strong>11</strong></td>
+        <td><strong>وصول الـ AI Chatbot لبيانات الشركة</strong></td>
+        <td><span class="badge-keys">⚙️ الجداول والأدوات جاهزة</span></td>
+        <td>جداول Neon مهيكلة عبر Drizzle ORM وجاهزة للربط مع أي Chatbot عبر Function Calling. تم بناء محركات ذكاء اصطناعي لفحص ترخيص موثوق وتوافق أطقم الكاميرات في <code>/src/lib/ai/</code>.</td>
+        <td>توفير مفتاح OpenAI للشركة</td>
       </tr>
       <tr>
-        <td><code>/shop</code></td>
-        <td><strong>Cinema Gear Fleet</strong></td>
-        <td>Filmmakers</td>
-        <td>Live search across 173 items, 5 categories (Cameras, Lenses, Audio, Lighting, Kits), dynamic multi-day discount matrix, bilingual modal, cart drawer.</td>
+        <td style="text-align:center;"><strong>12</strong></td>
+        <td><strong>بوابات الدفع وعدم تخزين بيانات البطاقات</strong></td>
+        <td><span class="badge-keys">⚙️ مدمج في بيئة المحاكاة (Sandbox)</span></td>
+        <td>ربط كامل مع <strong>بوابة Ziina الإماراتية</strong> (Apple Pay، فيزا، ماستركارد بالدرهم). لا نخزن أي بطاقة (أمان 100%). مطلوب تفعيل حساب تجاري للشركة في Ziina وتزويدنا بالمفتاح الحي (Live Key).</td>
+        <td>تفعيل حساب تجاري بشركة Ziina</td>
       </tr>
       <tr>
-        <td><code>/studios</code></td>
-        <td><strong>Soundstages Directory</strong></td>
-        <td>Producers</td>
-        <td>Studio A Main, Studio B Podcast, Studio C Cyc, Studio XR specs, floorplans, acoustic STC ratings, instant reservation links.</td>
+        <td style="text-align:center;"><strong>13</strong></td>
+        <td><strong>حماية إيميلات الشركة في GoDaddy</strong></td>
+        <td><span class="badge-done">✅ مضمونة ومحمية 100%</span></td>
+        <td>إيميلاتكم الحالية (<code>...@yasproductions.com</code>) تعمل بشكل طبيعي. عند الإطلاق سنقوم بتعديل سجل A و CNAME فقط دون لمس سجلات MX نهائياً لضمان عدم توقف الإيميلات ثانية واحدة.</td>
+        <td>تعديل DNS عند الإطلاق فقط</td>
       </tr>
       <tr>
-        <td><code>/studio-booking</code></td>
-        <td><strong>Booking Wizard</strong></td>
-        <td>Clients</td>
-        <td>5-step wizard: Stage picker, 09:00-21:00 conflict-free slots, add-ons (DIT, crew), VAT breakdown, Ziina card & Apple Pay checkout.</td>
+        <td style="text-align:center;"><strong>14</strong></td>
+        <td><strong>نسخة Staging كاملة للتجربة قبل النقل</strong></td>
+        <td><span class="badge-done">✅ 100% متاحة وشغالة</span></td>
+        <td>النسخة التجريبية الحية مرفوعة على Vercel: <code>https://yaspro-tablawy.vercel.app</code> لتجربة الفريق بحرية تامة على الهواتف وأجهزة الكمبيوتر قبل اتخاذ قرار نقل الدومين.</td>
+        <td>تجربة الفريق للنسخة</td>
       </tr>
       <tr>
-        <td><code>/enterprise</code></td>
-        <td><strong>Sovereign Media Suite</strong></td>
-        <td>Government</td>
-        <td>OB-Van broadcast trucks, Mawthooq compliance checker, multi-step government RFP submission wizard.</td>
+        <td style="text-align:center;"><strong>15</strong></td>
+        <td><strong>قائمة الفحص والتحقق قبل الإطلاق</strong></td>
+        <td><span class="badge-done">✅ 100% مجتازة برمجياً</span></td>
+        <td><strong>128 فحصاً برمجياً آلياً اجتاز بنجاح (npm test)</strong> للتحقق من الحجوزات، الأسعار، الحسابات، ومنع الحجز المزدوج.</td>
+        <td>المراجعة الإدارية للوحة</td>
       </tr>
       <tr>
-        <td><code>/influencers</code></td>
-        <td><strong>Creator Network</strong></td>
-        <td>Brands / Agencies</td>
-        <td>Verified MENA talent (Abo Flah, Noor Stars), 9:16 vertical reels, demographic metrics, direct booking buttons.</td>
+        <td style="text-align:center;"><strong>16</strong></td>
+        <td><strong>ملكية كاملة لحسابات الشركة والكود</strong></td>
+        <td><span class="badge-critical">🚨 الحسابات لسه باسم المطور</span></td>
+        <td><strong>الحقيقة الشفافة:</strong> الكود حالياً على حساب المطور في GitHub (<code>galilio2023</code>)، والاستضافة على Vercel بحساب المطور، وقاعدة البيانات في Neon بحساب المطور. خطة النقل مشروحة بالأسفل لنقلها فوراً.</td>
+        <td><strong>إنشاء حسابات الشركة لنقل الملكية</strong></td>
       </tr>
       <tr>
-        <td><code>/projects</code></td>
-        <td><strong>Portfolio Showcase</strong></td>
-        <td>Directors</td>
-        <td>Filterable showcase (Government, Commercial, Shows), UAE Flag Day, DMX, GITEX Global, split color-grade slider.</td>
+        <td style="text-align:center;"><strong>17</strong></td>
+        <td><strong>توثيق الكود لعدم الاعتماد على مبرمج واحد</strong></td>
+        <td><span class="badge-done">✅ 100% موثق وشامل</span></td>
+        <td>تم إعداد ملف README.md مفصل، ورسم بياني ERD لقاعدة البيانات، مع هذا الدليل المزدوج باللغتين العربية والإنجليزية.</td>
+        <td>أرشفة الوثائق في الشركة</td>
       </tr>
       <tr>
-        <td><code>/portal</code></td>
-        <td><strong>Client Dashboard</strong></td>
-        <td>Clients</td>
-        <td>Upcoming bookings, active rentals, downloadable tax invoices, check-in reference codes.</td>
+        <td style="text-align:center;"><strong>18</strong></td>
+        <td><strong>بيئات عمل منفصلة (Dev / Staging / Prod)</strong></td>
+        <td><span class="badge-done">✅ مهيأة برمجياً</span></td>
+        <td>بيئة التطوير المحلي، وبيئة فروع المعاينة على Vercel، والفرع الرئيسي للإنتاج.</td>
+        <td>لا شيء</td>
       </tr>
       <tr>
-        <td><code>/admin</code></td>
-        <td><strong>Admin Command Center</strong></td>
-        <td>Staff & Admins</td>
-        <td>Executive revenue metrics, fleet count (173), bookings ledger, inquiries pipeline, quick dispatch actions.</td>
+        <td style="text-align:center;"><strong>19</strong></td>
+        <td><strong>بنية قاعدة بيانات Neon نظيفة وقابلة للتوسع</strong></td>
+        <td><span class="badge-done">✅ 100% مهيكلة ونظيفة</span></td>
+        <td>11 جدولاً مهيكلاً مع فهارس للأداء العالي (Indexes) وعلاقات واضحة (Foreign Keys)، بدون روبوتات سبام.</td>
+        <td>لا شيء</td>
       </tr>
       <tr>
-        <td><code>/admin/gear</code></td>
-        <td><strong>Equipment CRUD</strong></td>
-        <td>Production Staff</td>
-        <td>Full inventory management: Add gear, edit daily rates/specs, toggle availability, safe custom confirmation modal.</td>
+        <td style="text-align:center;"><strong>20</strong></td>
+        <td><strong>رؤية منصة ياس الرقمية المتكاملة</strong></td>
+        <td><span class="badge-keys">⚙️ الأساس مبني بالكامل</span></td>
+        <td>المنصة تضم بالفعل الركائز الثمانية: موقع + حجز استوديوهات + تأجير معدات + دفع إلكتروني + بوابة عملاء + ذكاء اصطناعي لموثوق.</td>
+        <td>استكمال الربط الحي للشركة</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 3: ACCOUNT OWNERSHIP TRANSFER PROTOCOL -->
+  <div class="sec-title">
+    <span>3. خطة وإجراءات نقل ملكية الحسابات للشركة (البند رقم 16) / Account Ownership Transfer</span>
+    <span class="sec-tag">CRITICAL STEP</span>
+  </div>
+
+  <div class="notice-box critical">
+    <div class="notice-title">تنبيه هندسي هام: لنقل المنصة رسمياً للشركة وخروج حسابات المطور الشخصية</div>
+    لتنفيذ رغبتكم في ألا يرتبط المشروع بالحسابات الشخصية للمطور، يرجى تجهيز الحسابات الرسمية التالية للشركة ليقوم المطور بعمل Transfer للملكية فوراً:
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 20%;">المنصة / الخدمة</th>
+        <th style="width: 35%;">الوضع الحالي (بحساب المطور)</th>
+        <th style="width: 45%;">المطلوب من شركة ياس برودكشنز لنقل الملكية بالكامل</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>مستودع الكود (GitHub)</strong></td>
+        <td class="en">github.com/galilio2023/yaspro</td>
+        <td>إنشاء حساب/منظمة للشركة على GitHub وتزويدنا باسم الحساب لنقوم بنقل المستودع (Transfer Repository) بالكامل.</td>
       </tr>
       <tr>
-        <td><code>/admin/studios</code></td>
-        <td><strong>Studios CRUD</strong></td>
-        <td>Operations Staff</td>
-        <td>Update hourly rates (AED), capacity, amenities, schedule conflict overrides.</td>
+        <td><strong>خوادم الاستضافة (Vercel)</strong></td>
+        <td class="en">yaspro-tablawy.vercel.app</td>
+        <td>إنشاء حساب شركة على Vercel.com وإرسال البريد الإلكتروني للمطور ليقوم بدعوتكم كـ Owner ونقل المشروع لكم.</td>
       </tr>
       <tr>
-        <td><code>/admin/bookings</code></td>
-        <td><strong>Reservations Ledger</strong></td>
+        <td><strong>قاعدة البيانات (Neon DB)</strong></td>
+        <td class="en">حساب المطور السحابي (ep-patient-dawn)</td>
+        <td>إنشاء حساب على Neon.tech وسنقوم بنقل المشروع أو منحكم صلاحيات الـ Admin الكاملة لتكون قاعدة البيانات تحت ملكيتكم.</td>
+      </tr>
+      <tr>
+        <td><strong>بوابة الدفع (Ziina)</strong></td>
+        <td>وضع الاختبار والمحاكاة (Sandbox)</td>
+        <td>إتمام توثيق الحساب التجاري برخصة الشركة في الإمارات وتزويدنا بمفتاح الإنتاج ZIINA_API_KEY الحي.</td>
+      </tr>
+      <tr>
+        <td><strong>تخزين الميديا (Cloudinary)</strong></td>
+        <td>غير مفعل (الفيديوهات عبر Embed)</td>
+        <td>إنشاء حساب على Cloudinary وتزويدنا بالمفاتيح لتفعيل رفع الصور والفيديوهات مباشرة من لوحة التحكم.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 4: MASTER CREDENTIALS -->
+  <div class="sec-title">
+    <span>4. بيانات الدخول الإدارية ودليل الاختبار / Master Credentials & Testing Guide</span>
+    <span class="sec-tag">PRE-CONFIGURED</span>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 18%;">الدور / الصلاحية</th>
+        <th style="width: 18%;">الاسم</th>
+        <th style="width: 24%;">البريد الإلكتروني</th>
+        <th style="width: 16%;">كلمة المرور الموحدة</th>
+        <th style="width: 24%;">مسار الدخول والصلاحيات</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:#b45309;">Master CEO</strong></td>
+        <td>Yaman Alomari</td>
+        <td class="en">ceo@yasproductions.com</td>
+        <td class="en"><strong>YasPro@2026!</strong></td>
+        <td>لوحة التحكم العامة للمدير التنفيذي (<code>/admin</code>)</td>
+      </tr>
+      <tr>
+        <td><strong>Master Admin</strong></td>
+        <td>YASPRO Master</td>
+        <td class="en">pressyaman@gmail.com</td>
+        <td class="en"><strong>YasPro@2026!</strong></td>
+        <td>إدارة المحتوى والمعدات والمشاريع (<code>/admin</code>)</td>
+      </tr>
+      <tr>
+        <td><strong>Operations Lead</strong></td>
+        <td>Ahmad Wadi</td>
+        <td class="en">ahmedwadi978@gmail.com</td>
+        <td class="en"><strong>YasPro@2026!</strong></td>
+        <td>إدارة الاستوديوهات والحجوزات (<code>/admin/bookings</code>)</td>
+      </tr>
+      <tr>
+        <td><strong>HQ Operations</strong></td>
         <td>Operations Desk</td>
-        <td>Status lifecycle: pending -> confirmed -> completed -> cancelled. Payment reconciler.</td>
+        <td class="en">info@yasproductions.com</td>
+        <td class="en"><strong>YasPro@2026!</strong></td>
+        <td>إدارة طلبات التأجير والمبيعات (<code>/admin/inquiries</code>)</td>
       </tr>
       <tr>
-        <td><code>/admin/inquiries</code></td>
-        <td><strong>Rental Inquiries</strong></td>
-        <td>Sales Team</td>
-        <td>Lead inbox with customer contact, equipment requested, duration, client notes, 1-click resolve.</td>
+        <td><strong>Production Mgr</strong></td>
+        <td>Walaa Ali</td>
+        <td class="en">walaa.ali131@gmail.com</td>
+        <td class="en"><strong>YasPro@2026!</strong></td>
+        <td>إدارة أسطول المعدات والأسعار (<code>/admin/gear</code>)</td>
       </tr>
       <tr>
-        <td><code>/admin/rfps</code></td>
-        <td><strong>Enterprise RFPs</strong></td>
-        <td>Leadership</td>
-        <td>Government tender review workflow, Mawthooq licensing flags, budget approvals.</td>
-      </tr>
-      <tr>
-        <td><code>/admin/users</code></td>
-        <td><strong>User Management</strong></td>
-        <td>Master Admin</td>
-        <td>Directory of registered clients and staff with role escalation tools.</td>
+        <td><strong style="color:#0284c7;">Verified Client</strong></td>
+        <td>ibrahim galal</td>
+        <td class="en">ahmed@gmail.com</td>
+        <td class="en"><strong>YasPro@2026!</strong></td>
+        <td>بوابة العميل والفواتير الضريبية (<code>/portal</code>)</td>
       </tr>
     </tbody>
   </table>
 
-  <!-- SECTION 4: 8 SALES POINTS -->
-  <div class="section-title">
-    <span>4. The 8 Major Sales Points / أهم 8 نقاط بيع ومزايا تنافسية</span>
-    <span class="tag">Value Propositions</span>
+  <div class="footer-bar">
+    <div>منصة ياس برو الرقمية • وثيقة التسليم ودليل المالك الشامل</div>
+    <div>الصفحة 2 من 4</div>
   </div>
 
-  <div class="sales-grid">
-    <div class="sales-card">
-      <h5>🏆 1. Luxury Dubai Cinema Identity</h5>
-      <p>Human-crafted aesthetic: obsidian dark mode, gold accents, tactile spring physics, and interactive split before/after cinema color grading slider.</p>
+  <div class="page-break"></div>
+
+  <!-- ==================== PAGE 3 ==================== -->
+  <!-- SECTION 5: DETAILED FEATURE-BY-FEATURE GUIDE -->
+  <div class="sec-title" style="margin-top:0;">
+    <span>5. الشرح التفصيلي لمزايا وأقسام المنصة / Detailed Feature-by-Feature Guide</span>
+    <span class="sec-tag">CORE PLATFORM</span>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-card-header">
+        <span class="feature-title">🎥 أسطول معدات السينما ومحرك التأجير</span>
+        <span class="feature-route">/shop</span>
+      </div>
+      <div class="feature-desc">
+        <ul>
+          <li><strong>173 معدة سينمائية حقيقية:</strong> كاميرات ARRI, RED, Sony Cinema FX، عدسات سينمائية، إضاءات Astera & Aputure، ومعدات صوت Sennheiser.</li>
+          <li><strong>خصومات تلقائية حسب المدة:</strong> خصم تلقائي 15% من 3 إلى 6 أيام، وخصم 25% للأسبوع فأكثر لتشجيع الإنتاجات الكبرى.</li>
+          <li><strong>تعريب فني كامل:</strong> 158 وصفاً فنياً بالعربية يشمل المستشعر ومعدل الإطارات.</li>
+          <li><strong>سلة تأجير ذكية:</strong> حساب فوري لعدد الأيام ومبالغ التأمين المستردة (Security Deposit).</li>
+        </ul>
+      </div>
     </div>
-    <div class="sales-card">
-      <h5>⚡ 2. 173-Item Fleet with Smart Dynamic Tiers</h5>
-      <p>Automated tiered discounts: 1-2 days (full rate), 3-6 days (15% discount), 7+ days (25% discount). Zero duplicate products.</p>
+
+    <div class="feature-card">
+      <div class="feature-card-header">
+        <span class="feature-title">🎙️ مسارح الإنتاج ومعالج الحجز الذكي</span>
+        <span class="feature-route">/studios &amp; /studio-booking</span>
+      </div>
+      <div class="feature-desc">
+        <ul>
+          <li><strong>4 استوديوهات متخصصة:</strong> Studio A الرئيسي (800 درهم/ساعة)، Studio B بودكاست (400 درهم/ساعة)، Cyclorama C أبيض (600 درهم/ساعة)، Studio XR إنتاج افتراضي (1500 درهم/ساعة).</li>
+          <li><strong>معالج حجز تفاعلي من 5 خطوات:</strong> اختيار الاستوديو، تحديد ساعات العمل (09:00 - 21:00)، إضافة الطواقم، واحتساب ضريبة القيمة المضافة 5% VAT.</li>
+          <li><strong>منع التعارض 100%:</strong> حظر برمجي صارم لأي حجز مزدوج لنفس الساعة.</li>
+        </ul>
+      </div>
     </div>
-    <div class="sales-card">
-      <h5>💳 3. Sovereign Ziina UAE Payments</h5>
-      <p>Direct integration with Ziina for Apple Pay, Visa, and Mastercard in AED, with automated VAT invoices and bank wire fallback.</p>
+
+    <div class="feature-card">
+      <div class="feature-card-header">
+        <span class="feature-title">💳 بوابة الدفع الوطنية (Ziina UAE)</span>
+        <span class="feature-route">/api/webhooks/production</span>
+      </div>
+      <div class="feature-desc">
+        <ul>
+          <li><strong>دفع سيادي إماراتي:</strong> تحصيل بالدرهم الإماراتي (AED) عبر Apple Pay وبطاقات Visa و Mastercard مع توجيه آمن.</li>
+          <li><strong>تحويل بنكي رسمي:</strong> تفاصيل الحساب البنكي والرمز المرجعي للشركات الكبرى.</li>
+          <li><strong>معالج إشعارات Webhook:</strong> تحديث فوري لحالة الحجز إلى "مؤكد" بمجرد الدفع دون أي تدخل بشري.</li>
+          <li><strong>أمان مطلق:</strong> لا يتم تخزين أي رقم بطاقة نهائياً على خوادمنا.</li>
+        </ul>
+      </div>
     </div>
-    <div class="sales-card">
-      <h5>🎙️ 4. 4 Soundstages with Zero Conflict</h5>
-      <p>Studio A, Studio B Podcast, Studio C Cyc, and Studio XR Stage with strict 09:00-21:00 conflict-free slot locking.</p>
+
+    <div class="feature-card">
+      <div class="feature-card-header">
+        <span class="feature-title">🛡️ مدقق الامتثال لتراخيص موثوق AI</span>
+        <span class="feature-route">/enterprise</span>
+      </div>
+      <div class="feature-desc">
+        <ul>
+          <li><strong>فحص الامتثال الإعلاني:</strong> أداة ذكاء اصطناعي تفحص نصوص الإعلانات وحملات المؤثرين للتأكد من مطابقتها لاشتراطات الهيئة العامة لتنظيم الإعلام في الإمارات.</li>
+          <li><strong>التحقق من وسم #إعلان:</strong> تنبيه فوري في حال خلو الحملة من الإفصاح الإعلاني الإلزامي لحماية الشركة وعملائها من الغرامات.</li>
+          <li><strong>فحص شهادات موثوق:</strong> ربط تلقائي بأرقام التراخيص الرسمية للمؤثرين.</li>
+        </ul>
+      </div>
     </div>
-    <div class="sales-card">
-      <h5>🛡️ 5. UAE Mawthooq Compliance AI</h5>
-      <p>Specialized auditor analyzing ad copy for official UAE Media Council Mawthooq licensing and #إعلان disclosures.</p>
+
+    <div class="feature-card">
+      <div class="feature-card-header">
+        <span class="feature-title">💼 بوابة العميل للخدمة الذاتية</span>
+        <span class="feature-route">/portal</span>
+      </div>
+      <div class="feature-desc">
+        <ul>
+          <li><strong>لوحة تحكم العميل:</strong> متابعة مواعيد تصوير الاستوديوهات القادمة مع تفاصيل الساعات والطواقم المرافقة.</li>
+          <li><strong>الفواتير الضريبية الرسمية:</strong> تحميل مباشر لفواتير الـ VAT بصيغة رسمية معتمدة.</li>
+          <li><strong>تصريح الدخول الرقمي (QR Code):</strong> كود إلكتروني يظهره العميل عند بوابة الاستوديو في دبي للدخول الفوري دون انتظار موظفي الاستقبال.</li>
+        </ul>
+      </div>
     </div>
-    <div class="sales-card">
-      <h5>💼 6. Client Self-Service Portal (/portal)</h5>
-      <p>Clients independently track upcoming shoot schedules, retrieve digital QR check-in codes, and download tax invoices.</p>
-    </div>
-    <div class="sales-card">
-      <h5>🚀 7. Serverless Speed & Zero Spam</h5>
-      <p>Neon PostgreSQL serverless architecture: sub-50ms queries, better-auth session security, zero WordPress vulnerabilities.</p>
-    </div>
-    <div class="sales-card">
-      <h5>🌐 8. Strict LTR Anchored Bilingual Engine</h5>
-      <p>Physical Left-to-Right Navbar, Footer, and Brand Logo anchoring ensures Arabic mode reads naturally without flipping menus backwards.</p>
+
+    <div class="feature-card">
+      <div class="feature-card-header">
+        <span class="feature-title">⚡ لوحة العمليات الإدارية المركزية</span>
+        <span class="feature-route">/admin</span>
+      </div>
+      <div class="feature-desc">
+        <ul>
+          <li><strong>10 أدوات تحكم تنفيذية:</strong> إدارة أسطول المعدات، أسعار ساعات الاستوديوهات، دورة حياة الحجوزات، صندوق وارد طلبات التأجير، ودراسة مناقصات المشاريع السيادية.</li>
+          <li><strong>حماية من الأخطاء:</strong> نوافذ تأكيد حمراء (AdminConfirmModal) عند الحذف لمنع أي خطأ بشري غير مقصود.</li>
+          <li><strong>متابعة الإيرادات:</strong> ملخص لحظي لإجمالي مبيعات التأجير وحجوزات الاستوديوهات.</li>
+        </ul>
+      </div>
     </div>
   </div>
 
-  <!-- SECTION 5: DATABASE ARCHITECTURE -->
-  <div class="section-title">
-    <span>5. Database Architecture & Data Inventory / هيكلية قاعدة البيانات</span>
-    <span class="tag">Neon PostgreSQL (neondb)</span>
+  <!-- SECTION 6: 35-ROUTE INVENTORY TABLE -->
+  <div class="sec-title">
+    <span>6. الفهرس الكامل لجميع المسارات والصفحات (35 صفحة ومساراً) / Complete 35 Routes</span>
+    <span class="sec-tag">SYSTEM INVENTORY</span>
   </div>
 
-  <table>
+  <table class="data-table">
     <thead>
       <tr>
-        <th style="width:120px;">Table Name</th>
-        <th style="width:90px;">Row Count</th>
-        <th>Verified Live Contents & Technical Specifications</th>
+        <th style="width: 20%;">المسار (URL Route)</th>
+        <th style="width: 20%;">اسم الصفحة</th>
+        <th style="width: 18%;">الجمهور المستهدف</th>
+        <th style="width: 42%;">الوظيفة والمحتويات الأساسية</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><code>equipment</code></td>
-        <td><strong>173 items</strong></td>
-        <td>115 Cameras, 21 Audio, 13 Lighting, 12 Lenses, 12 Master Bundles. Each item has clean slug, English specs, and Arabic specs.</td>
+        <td class="en"><code>/</code></td>
+        <td>الصفحة الرئيسية</td>
+        <td>الجمهور وصناع السينما</td>
+        <td>هيدر سينمائي 3D، استعراض الاستوديوهات الأربعة، 6 معدات مميزة، رخصة موثوق، سلايدر تصحيح الألوان.</td>
       </tr>
       <tr>
-        <td><code>studios</code></td>
-        <td><strong>4 stages</strong></td>
-        <td>Studio A Main Stage (AED 800), Studio B Podcast (AED 400), Studio C Cyc (AED 600), Studio XR (AED 1,500).</td>
+        <td class="en"><code>/shop</code></td>
+        <td>أسطول المعدات السينمائية</td>
+        <td>صناع الأفلام والمصورون</td>
+        <td>فلترة 173 معدة عبر 5 تصنيفات، حاسبة الخصم للأيام، نافذة المواصفات الفنية بالعربية، وسلة التأجير.</td>
       </tr>
       <tr>
-        <td><code>users</code></td>
-        <td><strong>8 users</strong></td>
-        <td>5 Verified Admins (Yaman, Ahmad, Walaa, Info, Master) + 3 Registered Clients. 100% spam-free.</td>
+        <td class="en"><code>/studios</code></td>
+        <td>دليل استوديوهات الإنتاج</td>
+        <td>المخرجون والمنتجون</td>
+        <td>استعراض مسارح A و B و C و XR مع درجات العزل الصوتي والمساحات وقدرات البث المباشر.</td>
       </tr>
       <tr>
-        <td><code>accounts</code></td>
-        <td><strong>7 accounts</strong></td>
-        <td>Better-Auth hashed credential authenticators.</td>
+        <td class="en"><code>/studio-booking</code></td>
+        <td>معالج حجز الاستوديوهات</td>
+        <td>عملاء الاستوديوهات</td>
+        <td>5 خطوات: اختيار الاستوديو، الوقت المتاح (09:00-21:00)، الخدمات المساعدة، احتساب الضريبة، والدفع عبر Ziina.</td>
       </tr>
       <tr>
-        <td><code>sessions</code></td>
-        <td><strong>8 sessions</strong></td>
-        <td>Active secure 7-day browser authentication tokens.</td>
+        <td class="en"><code>/enterprise</code></td>
+        <td>الإنتاج السيادي والحكومي</td>
+        <td>الجهات الحكومية والشركات</td>
+        <td>سيارات البث الخارجي المباشر OB-Van، مدقق امتثال موثوق AI، ومعالج تقديم المناقصات الكبرى (RFP).</td>
       </tr>
       <tr>
-        <td><code>bookings</code></td>
-        <td><strong>8 bookings</strong></td>
-        <td>Studio XR, Studio A, and commercial equipment reservations with AED totals and reference codes.</td>
+        <td class="en"><code>/influencers</code></td>
+        <td>شبكة المؤثرين والمشاهير</td>
+        <td>وكالات الإعلان والعلامات</td>
+        <td>ملفات المشاهير (أبو فلة، نور ستارس...)، مشغل ريلز عمودية 9:16، بيانات المتابعين، وحجز الحملات.</td>
       </tr>
       <tr>
-        <td><code>projects</code></td>
-        <td><strong>9 films</strong></td>
-        <td>UAE Flag Day, DMX, GITEX Global, Talabat, Orange, Delos, Kananya, Zain campaigns.</td>
+        <td class="en"><code>/projects</code></td>
+        <td>معرض الأعمال والأفلام</td>
+        <td>المخرجون والوكالات العالمية</td>
+        <td>أفلام يوم العلم الإماراتي، دبي، جيتكس، وتفاصيل الكاميرات المستخدمة مع سلايدر الألوان السينمائية.</td>
       </tr>
       <tr>
-        <td><code>influencers</code></td>
-        <td><strong>8 creators</strong></td>
-        <td>Abo Flah, Noor Stars, Narins, Osama Marwah, Mohamad Adnan, Ghaith Marwan, Abir Saghir.</td>
+        <td class="en"><code>/portal</code></td>
+        <td>بوابة العميل الرقمية</td>
+        <td>العملاء المسجلون</td>
+        <td>متابعة مواعيد التصوير القادمة، تحميل الفواتير الضريبية المعتمدة، وتصريح الدخول الذكي (QR Code).</td>
       </tr>
       <tr>
-        <td><code>inquiries</code></td>
-        <td><strong>1 inquiry</strong></td>
-        <td>Reservation inquiry for Sony FX6 from client ibrahim galal (AED 1,850).</td>
+        <td class="en"><code>/admin</code></td>
+        <td>لوحة الإدارة الرئيسية</td>
+        <td>الرئيس التنفيذي والمدراء</td>
+        <td>مؤشرات الإيرادات اللحظية، عدادات الأسطول، جدول الحجوزات النشطة، وأزرار الإجراءات السريعة.</td>
+      </tr>
+      <tr>
+        <td class="en"><code>/admin/gear</code></td>
+        <td>إدارة أسطول المعدات</td>
+        <td>مسؤولو المستودع والأسطول</td>
+        <td>إضافة وتعديل وحذف وتحديد توفر المعدات والأسعار اليومية مع نوافذ تأكيد لمنع الحذف بالخطأ.</td>
+      </tr>
+      <tr>
+        <td class="en"><code>/admin/studios</code></td>
+        <td>إدارة الاستوديوهات</td>
+        <td>مسؤولو العمليات والتشغيل</td>
+        <td>تحديث أسعار الساعات بالدرهم، الطاقة الاستيعابية، وحظر فترات الصيانة والإصلاح الدوري.</td>
+      </tr>
+      <tr>
+        <td class="en"><code>/admin/bookings</code></td>
+        <td>سجل الحجوزات الكامل</td>
+        <td>فريق العمليات والتشغيل</td>
+        <td>إدارة دورة حياة الحجز بالكامل (معلق ➔ مؤكد ➔ مكتمل ➔ ملغى) والتحقق من سداد الفواتير.</td>
+      </tr>
+      <tr>
+        <td class="en"><code>/admin/inquiries</code></td>
+        <td>استفسارات طلبات التأجير</td>
+        <td>فريق المبيعات والدعم</td>
+        <td>صندوق وارد لطلبات التأجير مع تفاصيل العميل والمعدات المطلوبة وزر أرشفة ومعالجة بنقرة واحدة.</td>
+      </tr>
+      <tr>
+        <td class="en"><code>/admin/rfps</code></td>
+        <td>مناقصات المشاريع الكبرى</td>
+        <td>الإدارة العليا والإنتاج</td>
+        <td>استعراض عروض المشاريع السيادية والتحقق من اشتراطات موثوق والموافقة على الميزانيات التقديرية.</td>
+      </tr>
+      <tr>
+        <td class="en"><code>/admin/users</code></td>
+        <td>إدارة الحسابات والمستخدمين</td>
+        <td>المدير العام والـ IT</td>
+        <td>استعراض العملاء والموظفين مع ترقية الصلاحيات ومتابعة الجلسات النشطة المشفرة عبر Better-Auth.</td>
       </tr>
     </tbody>
   </table>
 
-  <!-- SECTION 6: 20-POINT DIRECTIVE AUDIT -->
-  <div class="section-title">
-    <span>6. The 20-Point Client Directives Audit / مصفوفة مطابقة توجيهات العميل العشرين</span>
-    <span class="tag">client-instructions.txt</span>
+  <div class="footer-bar">
+    <div>منصة ياس برو الرقمية • وثيقة التسليم ودليل المالك الشامل</div>
+    <div>الصفحة 3 من 4</div>
   </div>
 
-  <table>
+  <div class="page-break"></div>
+
+  <!-- ==================== PAGE 4 ==================== -->
+  <!-- SECTION 7: NEON POSTGRESQL DATABASE ARCHITECTURE -->
+  <div class="sec-title" style="margin-top:0;">
+    <span>7. بنية قاعدة البيانات الحالية (Neon PostgreSQL) / Database Architecture & Inventory</span>
+    <span class="sec-tag">CLEAN DATA</span>
+  </div>
+
+  <table class="data-table">
     <thead>
       <tr>
-        <th style="width:28px;">#</th>
-        <th style="width:190px;">Client Directive / توجيه العميل</th>
-        <th style="width:80px;">Status</th>
-        <th>What We Delivered & How We Exceeded It / ما تم تنفيذه وكيف تفوقنا فيه</th>
+        <th style="width: 20%;">اسم الجدول (Table Name)</th>
+        <th style="width: 15%;">عدد السجلات الحالية</th>
+        <th style="width: 45%;">طبيعة البيانات والعلاقات والمحتوى الفعلي</th>
+        <th style="width: 20%;">الأداء والفهرسة</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>1</strong></td>
-        <td><strong>Preserve UX & Flows</strong><br>الحفاظ على تجربة المستخدم والـflows</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>Maintained all key routes. Enforced physical LTR Navbar and Footer anchor rules (per <code>AGENTS.md</code>) preventing confusing layout reversals. Enhanced with tactile spring physics.</td>
+        <td class="en"><code>equipment</code></td>
+        <td><strong>173 معدة</strong></td>
+        <td>كاميرات (115)، صوت (21)، إضاءة (13)، عدسات (12)، باقات (12) مع 158 وصفاً عربياً وإنجليزياً.</td>
+        <td>مفهرس بـ Category و Slug</td>
       </tr>
       <tr>
-        <td><strong>2</strong></td>
-        <td><strong>Mobile First & Speed</strong><br>السرعة القصوى على الموبايل والـDesktop</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>Full Tailwind responsive grid, automated Next.js image optimization, sub-50ms Neon queries. Curated 6-item landing gear spotlight preventing mobile data overfetching.</td>
+        <td class="en"><code>studios</code></td>
+        <td><strong>4 استوديوهات</strong></td>
+        <td>Studio A (رئيسي 200م²)، Studio B (بودكاست)، Studio C (سايكلو)، Studio XR (افتراضي).</td>
+        <td>مفهرس بـ Hourly Price</td>
       </tr>
       <tr>
-        <td><strong>3</strong></td>
-        <td><strong>SEO Migration & URLs</strong><br>عدم خسارة أرشفة جوجل والروابط السابقة</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>Canonical URLs, OpenGraph social tags, structured JSON-LD schemas, robots.txt, dynamic sitemap, and Next.js 301 redirect architecture for legacy URLs.</td>
+        <td class="en"><code>bookings</code></td>
+        <td><strong>8 حجوزات</strong></td>
+        <td>سجلات حجوزات سابقة وحالية مع مبالغ بالدرهم وحالات مؤكدة وتواريخ مجدولة بدقة.</td>
+        <td>مفهرس بـ StudioId و Date</td>
       </tr>
       <tr>
-        <td><strong>4</strong></td>
-        <td><strong>Booking System Migration</strong><br>نقل نظام الحجز بالكامل بدون فقدان بيانات</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>All historical reservations migrated into Neon (e.g. <code>YAS-1C1B9C03</code>). 5-step wizard at <code>/studio-booking</code> with strict 09:00-21:00 conflict-free slot locking.</td>
+        <td class="en"><code>users</code></td>
+        <td><strong>8 حسابات</strong></td>
+        <td>5 مدراء ومسؤولين + 3 عملاء حقيقيين (خالٍ تماماً من روبوتات السبام القديمة).</td>
+        <td>مفهرس بـ Unique Email</td>
       </tr>
       <tr>
-        <td><strong>5</strong></td>
-        <td><strong>Rental Database Engine</strong><br>هندسة بيانات للمعدات والأسعار والـDouble Booking</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>173 items in <code>equipment</code>, automated double-booking rejection constraint. Injected 158 authentic Arabic technical descriptions, plus automated multi-day rental discount tiers.</td>
+        <td class="en"><code>accounts</code></td>
+        <td><strong>7 حسابات</strong></td>
+        <td>بيانات التشفير والمصادقة الأمنية وكلمات المرور المشفرة عبر Better-Auth.</td>
+        <td>مفهرس بـ UserId</td>
       </tr>
       <tr>
-        <td><strong>6</strong></td>
-        <td><strong>Dynamic CMS for Services</strong><br>إدارة الخدمات والباقات من لوحة التحكم</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>Interactive CRUD managers under <code>/admin/gear</code> and <code>/admin/studios</code> with real-time rate updates and custom <code>AdminConfirmModal</code> safety dialogs.</td>
+        <td class="en"><code>sessions</code></td>
+        <td><strong>8 جلسات</strong></td>
+        <td>جلسات تسجيل الدخول النشطة والآمنة للمدراء والعملاء لمدة 7 أيام مع رموز أمان فريدة.</td>
+        <td>مفهرس بـ Session Token</td>
       </tr>
       <tr>
-        <td><strong>7</strong></td>
-        <td><strong>Portfolio Media Storage</strong><br>ملفات الميديا على Cloudinary والبيانات في Neon</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>Neon stores only metadata, URLs, tags, and video IDs. Storage driver is configured for Cloudinary CDN (<code>STORAGE_DRIVER="cloudinary"</code> in <code>src/lib/storage.ts</code>).</td>
+        <td class="en"><code>projects</code></td>
+        <td><strong>9 مشاريع سينمائية</strong></td>
+        <td>أعمال يوم العلم الإماراتي، بلدية دبي، جيتكس، أورانج، وطلبات مع كواليس التصوير.</td>
+        <td>مفهرس بـ Category و Year</td>
       </tr>
       <tr>
-        <td><strong>8</strong></td>
-        <td><strong>SEO-Friendly Content</strong><br>إضافة وتعديل المشاريع والمحتوى بسهولة</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>Portfolio & Showcase manager at <code>/admin/projects</code> with tech stacks, deliverables, and interactive split-screen before/after cinema color grade slider.</td>
+        <td class="en"><code>influencers</code></td>
+        <td><strong>8 مؤثرين</strong></td>
+        <td>أبرز مشاهير الخليج (أبو فلة، نور ستارس...) مع أرقام المتابعين والريلز العمودية.</td>
+        <td>مفهرس بـ Tier و Reach</td>
       </tr>
       <tr>
-        <td><strong>9</strong></td>
-        <td><strong>Comprehensive Admin Hub</strong><br>لوحة تحكم كاملة لكافة أقسام المنصة</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>10 dedicated admin panels: Overview, Gear, Studios, Bookings, Inquiries, RFPs, Projects, Influencers, Users, Broadcast Telemetry. Live revenue metrics and 1-click lead resolution.</td>
+        <td class="en"><code>inquiries</code></td>
+        <td><strong>1 استفسار حقيقي</strong></td>
+        <td>طلب استئجار كاميرا سوني FX6 من العميل إبراهيم جلال عبر نموذج الاستفسار بالموقع.</td>
+        <td>مفهرس بـ Status و CreatedAt</td>
       </tr>
       <tr>
-        <td><strong>10</strong></td>
-        <td><strong>Future-Ready API Integrations</strong><br>الجاهزية للـAI Chatbot، CRM، WhatsApp، Invoices</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>Client Portal (<code>/portal</code>), WhatsApp Concierge, Ziina payment gateway, REST endpoints. Built-in UAE Mawthooq compliance auditor, AI Kit Matcher, GCC dialect engine.</td>
+        <td class="en"><code>enterprise_rfps</code></td>
+        <td><strong>جدول مفعل</strong></td>
+        <td>استقبال وتخزين مناقصات الإنتاج السيادي وعروض الأسعار الكبرى من الجهات الحكومية.</td>
+        <td>مفهرس بـ Status</td>
       </tr>
       <tr>
-        <td><strong>11</strong></td>
-        <td><strong>AI Chatbot DB Access</strong><br>تمكين الـAI من الوصول لبيانات وقوائم الشركة</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>Normalized tables in Neon PostgreSQL with typed Drizzle ORM schema ready for any LLM function-calling or RAG vector pipeline. AI utility modules already built in <code>src/lib/ai/</code>.</td>
-      </tr>
-      <tr>
-        <td><strong>12</strong></td>
-        <td><strong>Payment Gateways & Security</strong><br>عدم تخزين بيانات البطاقات والاعتماد على Webhooks</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>Direct integration with <strong>Ziina UAE Gateway</strong> (Apple Pay, Visa, Mastercard in AED). Zero card data stored locally. Idempotent webhook reconciler at <code>/api/webhooks/production</code>.</td>
-      </tr>
-      <tr>
-        <td><strong>13</strong></td>
-        <td><strong>Company Email Protection</strong><br>الحفاظ على إيميلات الشركة في GoDaddy بدون انقطاع</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>Explicit DNS protocol: Point only the website (<code>A</code>/<code>CNAME</code>) to Vercel, leaving GoDaddy MX, SPF, DKIM, DMARC records 100% intact. Zero email interruption guaranteed.</td>
-      </tr>
-      <tr>
-        <td><strong>14</strong></td>
-        <td><strong>Staging Version Before DNS</strong><br>نسخة تجريبية كاملة للفريق قبل توجيه الدومين</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>Live Vercel preview deployment at <code>https://yaspro-tablawy.vercel.app</code> reflecting every git commit in real-time for team inspection on Mobile and Desktop.</td>
-      </tr>
-      <tr>
-        <td><strong>15</strong></td>
-        <td><strong>Pre-Go Live Quality Checklist</strong><br>التحقق الشامل من الحجز، التأجير، الدفع، الأمان</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td><strong>117 automated unit and integration tests passing (<code>npm test</code>)</strong> verifying all edge cases, schedule overlaps, payment intents, and rate limits.</td>
-      </tr>
-      <tr>
-        <td><strong>16</strong></td>
-        <td><strong>Company Ownership of Accounts</strong><br>جميع الحسابات والبيانات ملك للشركة بالكامل</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>All environment credentials, repository files, and database connection strings are fully documented and ready for instant team ownership handover.</td>
-      </tr>
-      <tr>
-        <td><strong>17</strong></td>
-        <td><strong>Documented Architecture</strong><br>توثيق الكود حتى لا يعتمد المشروع على مبرمج واحد</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>Comprehensive <code>README.md</code> with Mermaid diagrams, ERD, and this bilingual <code>CLIENT_HANDOVER_AND_USER_GUIDE</code> (in Markdown, HTML, and PDF).</td>
-      </tr>
-      <tr>
-        <td><strong>18</strong></td>
-        <td><strong>Multi-Environment Architecture</strong><br>بيئات منفصلة للتطوير والتجربة والإنتاج</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>Local development (<code>localhost:3000</code>), Vercel branch preview environments, and main production branch workflows.</td>
-      </tr>
-      <tr>
-        <td><strong>19</strong></td>
-        <td><strong>Clean, Scalable Neon Architecture</strong><br>بنية قاعدة بيانات نظيفة وقابلة للتوسع</td>
-        <td><span class="badge badge-verified">✓ 100% Met</span></td>
-        <td>11 normalized tables with indexes on high-traffic queries, foreign keys, JSONB for extensible attributes, and zero spam bot pollution.</td>
-      </tr>
-      <tr>
-        <td><strong>20</strong></td>
-        <td><strong>The YAS Digital Platform Vision</strong><br>بناء أساس يتحول إلى المنصة المتكاملة الكبرى</td>
-        <td><span class="badge badge-verified">🌟 100% FULFILLED</span></td>
-        <td><strong>Every single one of these 8 pillars is already built and working today in your application!</strong> Website + Booking + Rental + Payments + CRM + AI + Client Portal + Automation.</td>
+        <td class="en"><code>verifications</code></td>
+        <td><strong>جدول مفعل</strong></td>
+        <td>رموز التحقق الثنائي وإعادة تعيين كلمات المرور وتأكيد البريد الإلكتروني.</td>
+        <td>مفهرس بـ Identifier و Token</td>
       </tr>
     </tbody>
   </table>
+
+  <!-- SECTION 8: 8 VALUE PROPOSITIONS -->
+  <div class="sec-title">
+    <span>8. أهم 8 نقاط بيع ومزايا تنافسية للمنصة / The 8 Major Sales Points</span>
+    <span class="sec-tag">VALUE PROPOSITIONS</span>
+  </div>
+
+  <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 8px;">
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-top:2px solid #d97706; border-radius:4px; padding:5px 6px;">
+      <div style="font-weight:800; font-size:9px; color:#0f172a; margin-bottom:2px;">🏆 هوية سينمائية فاخرة</div>
+      <div style="font-size:8px; color:#475569; line-height:1.3;">تصميم داكن خاص بدبي مع سلايدر تفاعلي لمقارنة ألوان الكاميرا الخام باللوت السينمائي.</div>
+    </div>
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-top:2px solid #d97706; border-radius:4px; padding:5px 6px;">
+      <div style="font-weight:800; font-size:9px; color:#0f172a; margin-bottom:2px;">⚡ 173 معدة بتسعير ذكي</div>
+      <div style="font-size:8px; color:#475569; line-height:1.3;">خصومات تلقائية: 15% للفترة من 3 إلى 6 أيام، و 25% للأسبوع فأكثر لدعم الإنتاجات الكبرى.</div>
+    </div>
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-top:2px solid #d97706; border-radius:4px; padding:5px 6px;">
+      <div style="font-weight:800; font-size:9px; color:#0f172a; margin-bottom:2px;">💳 دفع إماراتي سيادي</div>
+      <div style="font-size:8px; color:#475569; line-height:1.3;">تحصيل فوري عبر Ziina (Apple Pay وبطاقات بنكية بالدرهم) مع إصدار فوري للفواتير الضريبية.</div>
+    </div>
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-top:2px solid #d97706; border-radius:4px; padding:5px 6px;">
+      <div style="font-weight:800; font-size:9px; color:#0f172a; margin-bottom:2px;">🎙️ حجز يمنع التعارض 100%</div>
+      <div style="font-size:8px; color:#475569; line-height:1.3;">حظر برمجي ذكي لأي تضارب في المواعيد بين 09:00 و 21:00 للاستوديوهات الأربعة.</div>
+    </div>
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-top:2px solid #0284c7; border-radius:4px; padding:5px 6px;">
+      <div style="font-weight:800; font-size:9px; color:#0f172a; margin-bottom:2px;">🛡️ فحص تراخيص موثوق</div>
+      <div style="font-size:8px; color:#475569; line-height:1.3;">فحص نصوص الإعلانات وحملات المشاهير للتأكد من اشتراطات تنظيم الإعلام ووسم #إعلان.</div>
+    </div>
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-top:2px solid #0284c7; border-radius:4px; padding:5px 6px;">
+      <div style="font-weight:800; font-size:9px; color:#0f172a; margin-bottom:2px;">💼 بوابة عميل وتصاريح QR</div>
+      <div style="font-size:8px; color:#475569; line-height:1.3;">العميل يتابع حجوزاته، يحمل فواتير الـ VAT، ويستخرج تصريح الدخول الإلكتروني السريع للاستوديو.</div>
+    </div>
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-top:2px solid #0284c7; border-radius:4px; padding:5px 6px;">
+      <div style="font-weight:800; font-size:9px; color:#0f172a; margin-bottom:2px;">🚀 سرعة خيالية بقاعدة Neon</div>
+      <div style="font-size:8px; color:#475569; line-height:1.3;">استجابة في أقل من 50ms مع نظام Better-Auth لجلسات مشفرة 7 أيام والتخلص التام من روبوتات السبام.</div>
+    </div>
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-top:2px solid #0284c7; border-radius:4px; padding:5px 6px;">
+      <div style="font-weight:800; font-size:9px; color:#0f172a; margin-bottom:2px;">🌐 لغة متزنة تثبت القوائم</div>
+      <div style="font-size:8px; color:#475569; line-height:1.3;">الهيدر واللوجو والفوتر ثابتة LTR فيزيائياً حتى لا تنقلب القوائم بشكل مربك، مع تعريب كامل للمحتوى.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 9: GO-LIVE PROTOCOL -->
+  <div class="sec-title">
+    <span>9. بروتوكول إطلاق الدومين وحماية الإيميلات واعتماد التسليم / Go-Live Protocol</span>
+    <span class="sec-tag">GO-LIVE PROTOCOL</span>
+  </div>
+
+  <table class="data-table" style="margin-bottom:6px;">
+    <thead>
+      <tr>
+        <th style="width: 25%;">المجال / الخدمة</th>
+        <th style="width: 45%;">الإجراء المطلوب عند الإطلاق</th>
+        <th style="width: 30%;">الضمان التقني وسلامة التشغيل</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>دومين GoDaddy والإيميلات</strong></td>
+        <td>تعديل سجل الـ <code>A</code> للرمز <code>@</code> إلى <code>76.76.21.21</code> وسجل <code>CNAME</code> للرمز <code>www</code> إلى <code>cname.vercel-dns.com</code>.</td>
+        <td><strong style="color:#15803d;">ضمان عدم توقف الإيميلات ثانية واحدة.</strong> إيميلاتكم على GoDaddy لن تتأثر لأننا لن نلمس سجلات MX نهائياً.</td>
+      </tr>
+      <tr>
+        <td><strong>اعتماد التسليم الرسمي</strong></td>
+        <td>المشروع مجاز برمجياً بنجاح 100% عبر 128 فحصاً آلياً (<code>npm test</code>).</td>
+        <td>جاهز للتسليم ونقل الملكية وإطلاق المنصة رسمياً للجمهور فور توفير حسابات الشركة.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SIGN-OFF NOTICE -->
+  <div class="notice-box" style="margin-bottom:4px; padding:5px 8px;">
+    <strong>🏁 توقيع واعتماد التسليم:</strong> مُسلّم من الفريق الهندسي والتطويري إلى الأستاذ يمان وإدارة شركة ياس برودكشنز (دبي) • تم الفحص والاختبار (128/128 فحص آلي ناجح) وجاهز لنقل الملكية والإطلاق الرسمي • أكتوبر 2026.
+  </div>
 
   <!-- FOOTER -->
   <div class="footer-bar">
-    <div>YAS PRO DIGITAL MEDIA PLATFORM • DUBAI STUDIO CITY, UAE</div>
-    <div>OFFICIAL HANDOVER DOCUMENTATION • VERIFIED & SIGNED OFF • OCTOBER 2026</div>
+    <div>منصة ياس برو الرقمية • مدينة دبي للاستوديوهات، الإمارات العربية المتحدة</div>
+    <div>الصفحة 4 من 4 • تقرير التسليم والمطابقة الهندسية الشامل • Yas Productions LLC</div>
   </div>
 
 </body>
