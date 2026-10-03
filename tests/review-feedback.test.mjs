@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import path from 'node:path';
 import vm from 'node:vm';
 import { createRequire } from 'node:module';
 import ts from 'typescript';
@@ -16,7 +17,11 @@ function loadSource(file, mocks, globals = {}) {
   const exports = {};
   vm.runInNewContext(outputText, {
     exports, Error, Date, setTimeout: () => 1, clearTimeout() {},
-    require: (name) => Object.hasOwn(mocks, name) ? mocks[name] : require(name),
+    require: (name) => {
+      if (Object.hasOwn(mocks, name)) return mocks[name];
+      if (name.startsWith('.')) return loadSource(path.resolve(path.dirname(file), `${name}.ts`), mocks, globals);
+      return require(name);
+    },
     ...globals,
   });
   return exports;
@@ -31,7 +36,7 @@ function hookHarness() {
   const hooks = {
     useState(initial) {
       const index = cursor++;
-      if (!(index in slots)) slots[index] = initial;
+      if (!(index in slots)) slots[index] = typeof initial === 'function' ? initial() : initial;
       return [slots[index], (next) => {
         slots[index] = typeof next === 'function' ? next(slots[index]) : next;
       }];
@@ -831,4 +836,71 @@ test('reel playback follows events and stale callbacks preserve a newer active r
   assert.equal(isPlaying(players(render())[1]), true);
   videos(render())[1].props.onPause();
   assert.equal(isPlaying(players(render())[1]), false);
+});
+
+test('drawer schedule edits override a supplied range for the editor, quote and checkout', () => {
+  const harness = hookHarness();
+  const supplied = { pickupDate: '2026-10-01', returnDate: '2026-10-08', totalDays: 7, billingMultiplier: 4, discountPercentage: 43 };
+  const cart = {
+    items: [{ id: 'camera', name: 'Camera', dailyRate: 100 }],
+    dateRange: supplied, deliveryMethod: 'pickup_hub', isCartOpen: true,
+    setDateRange(range) { this.dateRange = range; },
+  };
+  const { GearCartDrawer } = loadSource('src/features/gear/components/GearCartDrawer.tsx', {
+    react: { ...harness.hooks, useSyncExternalStore: (_subscribe, snapshot) => snapshot() },
+    'react-dom': { createPortal: (content) => content }, 'next/image': 'Image',
+    'lucide-react': new Proxy({}, { get: (_, key) => key }),
+    '@/lib/utils': { formatCurrency: String }, '@/components/ui/badge': { Badge: 'Badge' },
+    '../lib/gear-rules': { getGearRecommendations: () => [] },
+    '@/hooks/useFocusTrap': { useFocusTrap() {} },
+    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic: false }) },
+    '@/components/providers/CartProvider': { useCart: () => cart },
+    './GearCheckoutModal': { GearCheckoutModal: 'Checkout' },
+  }, { document: { body: {} } });
+  const render = () => harness.render(() => GearCartDrawer({ dateRange: supplied }));
+  nodes(render(), n => n.type === 'button' && String(n.props.onClick).includes('setIsEditingSchedule'))[0].props.onClick();
+  const dates = () => nodes(render(), n => n.type === 'input' && n.props.type === 'date');
+  dates()[1].props.onChange({ target: { value: '2026-10-01' } });
+  assert.equal(dates()[1].props.value, '2026-10-02');
+  const checkout = nodes(render(), n => n.type === 'Checkout')[0];
+  assert.equal(checkout.props.dateRange.totalDays, 1);
+  assert.equal(checkout.props.dateRange.returnDate, '2026-10-02');
+  assert.equal(checkout.props.grandTotal, 100);
+  assert.equal(cart.dateRange.returnDate, '2026-10-02');
+});
+
+test('touch cancellation clears slider gestures without committing a tap and removes its listener', () => {
+  const harness = hookHarness();
+  const listeners = new Map();
+  const frames = new Map();
+  const changes = [];
+  let frameId = 0;
+  const { ImageCompareSlider } = loadSource('src/components/ui/image-compare-slider.tsx', {
+    react: harness.hooks, 'next/image': 'Image',
+    'lucide-react': { SplitSquareVertical: 'Icon' }, '@/lib/utils': { cn: () => '' },
+  }, {
+    window: { addEventListener: (name, fn) => listeners.set(name, fn), removeEventListener: (name) => listeners.delete(name) },
+    requestAnimationFrame: fn => { frames.set(++frameId, fn); return frameId; },
+    cancelAnimationFrame: id => frames.delete(id),
+  });
+  const tree = harness.render(() => ImageCompareSlider({ beforeImage: '/before', afterImage: '/after', onPositionChange: pos => changes.push(pos) }));
+  tree.props.ref.current = { getBoundingClientRect: () => ({ left: 0, width: 100 }) };
+  harness.commit();
+  const touch = (x, y = 0) => ({ touches: [{ clientX: x, clientY: y }] });
+  for (const gesture of ['tap', 'drag', 'scroll']) {
+    tree.props.onTouchStart(touch(20));
+    if (gesture === 'drag') listeners.get('touchmove')(touch(70));
+    if (gesture === 'scroll') listeners.get('touchmove')(touch(20, 30));
+    listeners.get('touchcancel')();
+    listeners.get('touchend')();
+    listeners.get('touchmove')(touch(90));
+    assert.equal(frames.size, 0);
+  }
+  assert.equal(changes.length, 0);
+  tree.props.onTouchStart(touch(60));
+  listeners.get('touchend')();
+  for (const fn of frames.values()) fn();
+  assert.deepEqual(changes, [60]);
+  harness.unmount();
+  assert.equal(listeners.has('touchcancel'), false);
 });

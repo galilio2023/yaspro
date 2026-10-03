@@ -131,16 +131,26 @@ export function ImageCompareSlider({
       isSwipingVerticalRef.current = false;
     };
 
+    const handleTouchCancel = () => {
+      isDraggingRef.current = false;
+      setIsDragging(false);
+      touchStartRef.current = null;
+      isSwipingVerticalRef.current = false;
+      if (rafDragRef.current) cancelAnimationFrame(rafDragRef.current);
+    };
+
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
     window.addEventListener("touchmove", handleTouchMove, { passive: true });
     window.addEventListener("touchend", handleTouchEnd);
+    window.addEventListener("touchcancel", handleTouchCancel);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("touchcancel", handleTouchCancel);
       if (rafDragRef.current) cancelAnimationFrame(rafDragRef.current);
     };
   }, [updateSliderFromClientX]);

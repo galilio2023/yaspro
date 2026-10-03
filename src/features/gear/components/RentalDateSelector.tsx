@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
 import { Calendar, Sparkles, Tag } from "lucide-react";
 import { RentalDateRange } from "../types";
 import { calculateRentalMultiplier } from "../lib/cart-pricing";
+
+import { addCalendarDays, getLocalCalendarDate, normalizeRentalDateRange } from "../lib/rental-schedule";
 
 import { Badge } from "@/components/ui/badge";
 
@@ -13,36 +14,16 @@ interface RentalDateSelectorProps {
 }
 
 export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorProps) {
-  const todayStr = useMemo(() => new Date().toISOString().split("T")[0], []);
+  const todayStr = getLocalCalendarDate();
 
   const handleDateChange = (pickup: string, returnDateStr: string) => {
-    const start = new Date(pickup);
-    const end = new Date(returnDateStr);
-
-    let diffDays = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-    if (diffDays < 1 || isNaN(diffDays)) {
-      diffDays = 1;
-    }
-
-    const { multiplier, discountPct } = calculateRentalMultiplier(diffDays);
-
-    onChange({
-      pickupDate: pickup,
-      returnDate: returnDateStr < pickup ? pickup : returnDateStr,
-      totalDays: diffDays,
-      billingMultiplier: multiplier,
-      discountPercentage: discountPct,
-    });
+    const range = normalizeRentalDateRange(pickup, returnDateStr);
+    if (range) onChange(range);
   };
 
   const setPreset = (days: number) => {
-    const start = new Date();
-    const end = new Date();
-    end.setDate(start.getDate() + days);
-
-    const pickupStr = start.toISOString().split("T")[0];
-    const returnStr = end.toISOString().split("T")[0];
-    handleDateChange(pickupStr, returnStr);
+    const pickup = getLocalCalendarDate();
+    handleDateChange(pickup, addCalendarDays(pickup, days));
   };
 
   const { discountLabel, discountPct } = calculateRentalMultiplier(dateRange.totalDays);
@@ -58,7 +39,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
             <h3 className="text-white text-sm font-bold flex items-center gap-2">
               <span>Rental Schedule &amp; Production Dates</span>
               <span className="text-[10px] text-text-muted font-normal uppercase tracking-wider font-mono">
-                Dubai Local Time (GST)
+                Your local calendar dates
               </span>
             </h3>
             <p className="text-xs text-text-secondary">
@@ -135,7 +116,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
           <input
             id="return-date-input"
             type="date"
-            min={dateRange.pickupDate}
+            min={addCalendarDays(dateRange.pickupDate, 1)}
             value={dateRange.returnDate}
             onChange={(e) => handleDateChange(dateRange.pickupDate, e.target.value)}
             className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] text-base sm:text-sm text-white focus:outline-none focus:border-amber-500 transition-colors"

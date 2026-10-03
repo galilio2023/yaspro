@@ -27,6 +27,8 @@ import { useSession } from "@/lib/auth-client";
 import { BookingPaymentModal } from "@/features/booking/components/BookingPaymentModal";
 import Link from "next/link";
 
+import { addCalendarDays, getLocalCalendarDate, normalizeRentalDateRange } from "../lib/rental-schedule";
+
 const emptySubscribe = () => () => {};
 
 interface GearRentalModalProps {
@@ -46,14 +48,10 @@ export function GearRentalModal({
   const { data: session } = useSession();
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
-  const todayStr = React.useMemo(() => new Date().toISOString().split("T")[0], []);
-  const [pickupDate, setPickupDate] = useState<string>(() => new Date().toISOString().split("T")[0]);
-  const [returnDate, setReturnDate] = useState<string>(() => {
-    const end = new Date();
-    end.setDate(end.getDate() + (initialDurationDays || 1));
-    return end.toISOString().split("T")[0];
-  });
-  const [durationDays, setDurationDays] = useState<number>(initialDurationDays);
+  const todayStr = getLocalCalendarDate();
+  const [pickupDate, setPickupDate] = useState(getLocalCalendarDate);
+  const [returnDate, setReturnDate] = useState(() => addCalendarDays(getLocalCalendarDate(), initialDurationDays || 1));
+  const [durationDays, setDurationDays] = useState(initialDurationDays || 1);
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("studio_delivery");
   const [viewMode, setViewMode] = useState<"overview" | "form" | "confirmed">("overview");
 
@@ -75,11 +73,9 @@ export function GearRentalModal({
 
   useEffect(() => {
     if (isOpen) {
-      const today = new Date().toISOString().split("T")[0];
-      const end = new Date();
-      end.setDate(end.getDate() + (initialDurationDays || 1));
+      const today = getLocalCalendarDate();
       setPickupDate(today);
-      setReturnDate(end.toISOString().split("T")[0]);
+      setReturnDate(addCalendarDays(today, initialDurationDays || 1));
       setDurationDays(initialDurationDays || 1);
       setViewMode("overview");
       setErrorMessage(null);
@@ -95,25 +91,16 @@ export function GearRentalModal({
   }, [isOpen, initialDurationDays, session]);
 
   const handleDateChange = (pickup: string, returnStr: string) => {
-    setPickupDate(pickup);
-    const validReturn = returnStr < pickup ? pickup : returnStr;
-    setReturnDate(validReturn);
-
-    const start = new Date(pickup);
-    const end = new Date(validReturn);
-    let diffDays = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-    if (diffDays < 1 || isNaN(diffDays)) {
-      diffDays = 1;
-    }
-    setDurationDays(diffDays);
+    const range = normalizeRentalDateRange(pickup, returnStr);
+    if (!range) return;
+    setPickupDate(range.pickupDate);
+    setReturnDate(range.returnDate);
+    setDurationDays(range.totalDays);
   };
 
   const handleTierSelect = (days: number) => {
     setDurationDays(days);
-    const start = new Date(pickupDate);
-    const end = new Date(start);
-    end.setDate(start.getDate() + days);
-    setReturnDate(end.toISOString().split("T")[0]);
+    setReturnDate(addCalendarDays(pickupDate, days));
   };
 
   useFocusTrap({ isOpen: mounted && isOpen && hasItem, onClose, containerRef: dialogRef });
@@ -575,7 +562,7 @@ export function GearRentalModal({
                     </label>
                     <input
                       type="date"
-                      min={pickupDate}
+                      min={addCalendarDays(pickupDate, 1)}
                       value={returnDate}
                       onChange={(e) => handleDateChange(pickupDate, e.target.value)}
                       className="w-full bg-black/60 border border-white/15 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"

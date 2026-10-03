@@ -65,7 +65,7 @@ export function YasGroupEcosystem() {
         </div>
 
         {/* 7-Pillar Studio Switchboard Rack */}
-        <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 sm:gap-3.5 overflow-x-auto sm:overflow-visible pb-4 sm:pb-0 scrollbar-none snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-3.5 overflow-x-auto sm:overflow-visible pb-4 sm:pb-0 scrollbar-none snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0">
           {YAS_GROUP_COMPANIES.map((company: YasGroupCompany, index: number) => {
             const callsign = String(index + 1).padStart(2, "0");
             return (
@@ -108,10 +108,10 @@ export function YasGroupEcosystem() {
 
                 {/* Division Title & Direction Arrow */}
                 <div className="pt-3 border-t border-white/5">
-                  <div className="text-[11px] font-bold text-white group-hover:text-amber-300 transition-colors line-clamp-1">
+                  <div className="text-[11px] font-bold text-white group-hover:text-amber-300 transition-colors">
                     {isArabic ? company.divisionAr : company.division}
                   </div>
-                  <div className="text-[10px] text-zinc-500 mt-0.5 line-clamp-1 group-hover:text-zinc-400 transition-colors">
+                  <div className="text-[10px] text-zinc-500 mt-0.5 group-hover:text-zinc-400 transition-colors">
                     {isArabic ? company.nameAr : company.name}
                   </div>
 

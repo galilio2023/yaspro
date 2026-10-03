@@ -187,13 +187,13 @@ export default function Footer() {
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5 overflow-x-auto sm:grid sm:grid-cols-7 scrollbar-none pb-2 sm:pb-0" dir="ltr" style={{ direction: "ltr" }}>
+          <div className="flex items-center gap-2.5 overflow-x-auto lg:grid lg:grid-cols-7 scrollbar-none pb-2 lg:pb-0" dir="ltr" style={{ direction: "ltr" }}>
             {YAS_GROUP_COMPANIES.map((company) => (
               <Link
                 key={company.id}
                 href="/about#conglomerate"
                 title={`${company.name} — ${company.division}`}
-                className="h-13 w-32 sm:w-auto px-2.5 rounded-xl bg-black/40 border border-white/8 hover:border-amber-500/40 flex items-center justify-center transition-all duration-300 group shrink-0 cursor-pointer"
+                className="h-13 w-32 lg:w-auto px-2.5 rounded-xl bg-black/40 border border-white/8 hover:border-amber-500/40 flex items-center justify-center transition-all duration-300 group shrink-0 cursor-pointer"
               >
                 <Image
                   src={company.logo}

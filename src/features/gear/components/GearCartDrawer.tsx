@@ -21,11 +21,13 @@ import { formatCurrency } from "@/lib/utils";
 import { GearItem, RentalDateRange } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { getGearRecommendations } from "../lib/gear-rules";
-import { calculateGearCartTotals, calculateRentalMultiplier } from "../lib/cart-pricing";
+import { calculateGearCartTotals } from "../lib/cart-pricing";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { useCart } from "@/components/providers/CartProvider";
 import { GearCheckoutModal } from "./GearCheckoutModal";
+
+import { addCalendarDays, getLocalCalendarDate, normalizeRentalDateRange } from "../lib/rental-schedule";
 
 const emptySubscribe = () => () => {};
 
@@ -50,10 +52,11 @@ export function GearCartDrawer({
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   const [isEditingSchedule, setIsEditingSchedule] = useState(false);
-  const todayStr = useState(() => new Date().toISOString().split("T")[0])[0];
+  const todayStr = getLocalCalendarDate();
 
   const effectiveItems = items ?? cartContext.items;
-  const effectiveDateRange = dateRange ?? cartContext.dateRange;
+  const [editedDateRange, setEditedDateRange] = useState<RentalDateRange | null>(null);
+  const effectiveDateRange = editedDateRange ?? dateRange ?? cartContext.dateRange;
   const effectiveDeliveryMethod = cartContext.deliveryMethod;
   const setEffectiveDeliveryMethod = cartContext.setDeliveryMethod;
   const handleRemove = onRemoveItem ?? cartContext.removeItem;
@@ -61,33 +64,15 @@ export function GearCartDrawer({
   const handleClear = onClearCart ?? cartContext.clearCart;
 
   const handleScheduleChange = (pickup: string, returnDateStr: string) => {
-    const start = new Date(pickup);
-    const end = new Date(returnDateStr);
-
-    let diffDays = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-    if (diffDays < 1 || isNaN(diffDays)) {
-      diffDays = 1;
-    }
-
-    const { multiplier, discountPct } = calculateRentalMultiplier(diffDays);
-
-    cartContext.setDateRange({
-      pickupDate: pickup,
-      returnDate: returnDateStr < pickup ? pickup : returnDateStr,
-      totalDays: diffDays,
-      billingMultiplier: multiplier,
-      discountPercentage: discountPct,
-    });
+    const range = normalizeRentalDateRange(pickup, returnDateStr);
+    if (!range) return;
+    if (dateRange) setEditedDateRange(range);
+    cartContext.setDateRange(range);
   };
 
   const handleSchedulePreset = (days: number) => {
-    const start = new Date();
-    const end = new Date();
-    end.setDate(start.getDate() + days);
-
-    const pickupStr = start.toISOString().split("T")[0];
-    const returnStr = end.toISOString().split("T")[0];
-    handleScheduleChange(pickupStr, returnStr);
+    const pickup = getLocalCalendarDate();
+    handleScheduleChange(pickup, addCalendarDays(pickup, days));
   };
 
   const [localOpen, setLocalOpen] = useState(false);
@@ -552,7 +537,7 @@ export function GearCartDrawer({
                         </label>
                         <input
                           type="date"
-                          min={effectiveDateRange.pickupDate}
+                          min={addCalendarDays(effectiveDateRange.pickupDate, 1)}
                           value={effectiveDateRange.returnDate}
                           onChange={(e) => handleScheduleChange(effectiveDateRange.pickupDate, e.target.value)}
                           className="w-full bg-black/80 border border-white/15 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"

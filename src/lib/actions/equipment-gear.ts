@@ -1,6 +1,7 @@
 "use server";
 
 import { calculateGearCartTotals } from "../../features/gear/lib/cart-pricing";
+import { addCalendarDays, isRentalScheduleConsistent } from "../../features/gear/lib/rental-schedule";
 import { checkRateLimit, getClientIdentifier } from "../rate-limit";
 import { z } from "zod";
 import { db } from "@/db";
@@ -218,6 +219,9 @@ const gearReservationSchema = z.object({
   notes: z.string().trim().max(2000, "Notes must be 2000 characters or fewer.").optional(),
   startDate: z.iso.date().optional(),
   returnDate: z.iso.date().optional(),
+}).refine(isRentalScheduleConsistent, {
+  path: ["returnDate"],
+  message: "Return date must follow the start date by exactly durationDays calendar days.",
 });
 
 export type GearReservationInput = z.input<typeof gearReservationSchema>;
@@ -258,7 +262,7 @@ export async function submitGearReservation(
       `[GEAR RENTAL RESERVATION - ${referenceCode}]`,
       `Item: ${gear.name} (ID: ${gear.id})`,
       `Duration: ${input.durationDays} Day(s)`,
-      input.startDate ? `Shoot Dates: ${input.startDate} to ${input.returnDate || input.startDate}` : "",
+      input.startDate ? `Shoot Dates: ${input.startDate} to ${input.returnDate || addCalendarDays(input.startDate, input.durationDays)}` : "",
       `Delivery Method: ${input.deliveryMethod}`,
       `Estimated Amount: AED ${total.toLocaleString()}`,
       input.notes ? `Client Notes: ${input.notes}` : "",
@@ -303,6 +307,9 @@ const gearOrderSchema = z.object({
   notes: z.string().optional(),
   startDate: z.iso.date().optional(),
   returnDate: z.iso.date().optional(),
+}).refine(isRentalScheduleConsistent, {
+  path: ["returnDate"],
+  message: "Return date must follow the start date by exactly durationDays calendar days.",
 });
 
 export type GearOrderInput = z.input<typeof gearOrderSchema>;
@@ -359,7 +366,7 @@ export async function createGearBookingOrder(
       // 3. Insert into bookings
       const referenceCode = generateBookingReference();
       const scheduledAtDate = input.startDate ? new Date(input.startDate) : new Date();
-      const returnDateStr = input.returnDate || (input.startDate ? new Date(scheduledAtDate.getTime() + input.durationDays * 86400000).toISOString().split("T")[0] : null);
+      const returnDateStr = input.returnDate || (input.startDate ? addCalendarDays(input.startDate, input.durationDays) : null);
       const scheduleSummary = input.startDate
         ? ` | Shoot Schedule: ${input.startDate} to ${returnDateStr} (${input.durationDays}d)`
         : ` | Duration: ${input.durationDays}d`;

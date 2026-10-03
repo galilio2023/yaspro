@@ -224,7 +224,7 @@ test('gear reservation uses database name and rate for both UUID and slug lookup
 test('gear reservation rejects invalid fields and unknown or unavailable gear without inserting', async () => {
   for (const [field, value] of [
     ['customerName', ' '], ['email', 'invalid'], ['phone', '-------'],
-    ['durationDays', 0], ['durationDays', -3], ['durationDays', 1.5], ['durationDays', 2],
+    ['durationDays', 0], ['durationDays', -3], ['durationDays', 1.5],
     ['durationDays', '7'], ['durationDays', Infinity], ['deliveryMethod', 'free_courier'],
     ['gearId', 'missing'], ['notes', 'x'.repeat(2001)],
   ]) {
@@ -263,5 +263,25 @@ test('studio metrics distinguish an empty table from zero active rows', async ()
       './shared': { isDbAvailable: () => true, requireAdmin: async () => {} },
     });
     assert.equal((await getCmsOverviewStats()).activeStudios, expected);
+  }
+});
+
+
+test('reservations reject inconsistent schedules before database work and derive omitted returns', async () => {
+  for (const dates of [
+    { startDate: '2026-10-01', returnDate: '2026-09-30' },
+    { startDate: '2026-10-01', returnDate: '2026-10-01' },
+    { startDate: '2026-10-01', returnDate: '2026-10-03' },
+    { returnDate: '2026-10-02' },
+  ]) {
+    const fixture = gearReservationFixture();
+    assert.equal((await fixture.submit(dates)).success, false);
+    assert.equal(fixture.queries.length, 0);
+    assert.equal(fixture.inserts.length, 0);
+  }
+  for (const returnDate of [undefined, '2027-01-02']) {
+    const fixture = gearReservationFixture();
+    assert.equal((await fixture.submit({ startDate: '2026-12-30', returnDate, durationDays: 3 })).success, true);
+    assert.match(fixture.inserts[0].message, /Shoot Dates: 2026-12-30 to 2027-01-02/);
   }
 });
