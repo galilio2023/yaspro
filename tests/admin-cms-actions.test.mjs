@@ -419,3 +419,15 @@ test('deleteCmsInfluencer removes creator profile and revalidates caches', async
   assert.ok(revalidatedPaths.includes('/admin/influencers'));
   assert.ok(updatedTags.includes('influencers'));
 });
+
+test('an empty CMS studio table does not resurrect the static catalog', async () => {
+  const { getCmsStudios } = loadSource('src/lib/actions/studios-soundstages-operations.ts', {
+    '@/db': { db: { select: () => ({ from: () => ({ orderBy: async () => [] }) }) } },
+    '@/db/schema': schemaMock,
+    'drizzle-orm': { desc: () => {} },
+    'next/cache': {},
+    './shared': { isDbAvailable: () => true },
+    '@/features/booking/constants': { STUDIOS: [{ id: 'deleted', rate: 800 }] },
+  });
+  assert.equal((await getCmsStudios()).length, 0);
+});

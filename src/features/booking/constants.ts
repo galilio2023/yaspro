@@ -265,9 +265,9 @@ export interface BookingPricingBreakdown {
  * Enforces canonical pricing rules across both client wizard and server mutations.
  * Incorporates turnkey packages from WordPress, add-on accessories, promo codes, and 5% UAE VAT.
  */
-export function calculateBookingPrice(input: BookingPricingInput): BookingPricingBreakdown {
+export function calculateBookingPrice(input: BookingPricingInput, selectedStudio?: StudioItem): BookingPricingBreakdown {
   const durationHours = Math.max(1, Math.min(input.durationHours ?? 1, 24));
-  const studio = (STUDIOS || []).find((s) => s.id === input.studioId) || (STUDIOS || [])[0];
+  const studio = selectedStudio || (STUDIOS || []).find((s) => s.id === input.studioId) || (STUDIOS || [])[0];
   const studioRate = studio ? studio.rate : 800;
   
   // Turnkey package resolution
@@ -275,7 +275,7 @@ export function calculateBookingPrice(input: BookingPricingInput): BookingPricin
   const isPackageEligible = Boolean(
     turnkeyPkg &&
     turnkeyPkg.id !== "none" &&
-    turnkeyPkg.eligibleStudios?.includes(studio?.id || "")
+    turnkeyPkg.eligibleStudios?.includes(studio?.slug || studio?.id || "")
   );
 
   const turnkeyCost = isPackageEligible && turnkeyPkg ? turnkeyPkg.rate : 0;

@@ -2,13 +2,14 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { generateBookingReference } from "@/lib/utils";
 import { createBooking } from "@/lib/actions";
-import { BookingState } from "../types";
-import { INITIAL_BOOKING_STATE, SESSION_TYPES, STUDIOS, STUDIO_GEAR_PACKAGES } from "../constants";
+import { BookingState, StudioItem } from "../types";
+import { INITIAL_BOOKING_STATE, SESSION_TYPES, STUDIO_GEAR_PACKAGES } from "../constants";
 import { calculateBookingPrice } from "../lib/pricing";
 
-function getInitialBookingState(searchParams: ReturnType<typeof useSearchParams>) {
+function getInitialBookingState(searchParams: ReturnType<typeof useSearchParams>, studios: StudioItem[]) {
+  const initialState = { ...INITIAL_BOOKING_STATE, studioId: studios[0]?.id || "" };
   if (!searchParams) {
-    return { state: INITIAL_BOOKING_STATE, isAiConfigured: false };
+    return { state: initialState, isAiConfigured: false };
   }
 
   const studioParam = searchParams.get("studio");
@@ -20,8 +21,9 @@ function getInitialBookingState(searchParams: ReturnType<typeof useSearchParams>
 
   const updates: Partial<BookingState> = {};
 
-  if (studioParam && STUDIOS.some((s) => s.id === studioParam)) {
-    updates.studioId = studioParam;
+  const selectedStudio = studios.find((s) => s.id === studioParam || s.slug === studioParam);
+  if (selectedStudio) {
+    updates.studioId = selectedStudio.id;
   }
   if (gearParam && STUDIO_GEAR_PACKAGES.some((g) => g.id === gearParam)) {
     updates.selectedGearPackage = gearParam;
@@ -42,16 +44,17 @@ function getInitialBookingState(searchParams: ReturnType<typeof useSearchParams>
   }
 
   return {
-    state: { ...INITIAL_BOOKING_STATE, ...updates },
+    state: { ...initialState, ...updates },
     isAiConfigured: aiFlag === "true" || aiFlag === "1",
   };
 }
 
-export function useBookingWizard() {
+export function useBookingWizard(cmsStudios: StudioItem[]) {
+  const studios = cmsStudios.filter((studio) => studio.isActive !== false);
   const searchParams = useSearchParams();
   const [step, setStep] = useState(1);
-  const [state, setState] = useState<BookingState>(() => getInitialBookingState(searchParams).state);
-  const [isAiConfigured, setIsAiConfigured] = useState(() => getInitialBookingState(searchParams).isAiConfigured);
+  const [state, setState] = useState<BookingState>(() => getInitialBookingState(searchParams, studios).state);
+  const [isAiConfigured, setIsAiConfigured] = useState(() => getInitialBookingState(searchParams, studios).isAiConfigured);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [referenceCode, setReferenceCode] = useState("");
@@ -63,7 +66,7 @@ export function useBookingWizard() {
   const currentSearch = searchParams?.toString() ?? "";
   if (currentSearch !== prevSearch) {
     setPrevSearch(currentSearch);
-    const parsed = getInitialBookingState(searchParams);
+    const parsed = getInitialBookingState(searchParams, studios);
     setState((prev) => ({ ...prev, ...parsed.state }));
     if (parsed.isAiConfigured) {
       setIsAiConfigured(true);
@@ -74,7 +77,7 @@ export function useBookingWizard() {
     setState((prev) => ({ ...prev, ...values }));
   };
 
-  const studio = STUDIOS.find((s) => s.id === state.studioId) || STUDIOS[0];
+  const studio = studios.find((s) => s.id === state.studioId);
   const sessionTypeObj = SESSION_TYPES.find((s) => s.id === state.sessionType);
   const gearPkg = STUDIO_GEAR_PACKAGES.find((g) => g.id === state.selectedGearPackage);
 
@@ -92,7 +95,7 @@ export function useBookingWizard() {
     needsColorGrading: state.needsColorGrading,
     needsSoundMastering: state.needsSoundMastering,
     needsAiAutoCut: state.needsAiAutoCut,
-  });
+  }, studio || { id: "", name: "", desc: "", rate: 0 });
 
   const { studioCost, crewCost, gearCost, postCost, total } = breakdown;
 
@@ -100,6 +103,10 @@ export function useBookingWizard() {
     setErrorMessage(null);
     if (step === 1 && !state.date) {
       setErrorMessage("Please select a session reservation date before continuing.");
+      return;
+    }
+    if (step === 3 && !studio) {
+      setErrorMessage("Please select an available studio before continuing.");
       return;
     }
     setStep((s) => s + 1);
@@ -112,6 +119,11 @@ export function useBookingWizard() {
 
   const handleSubmit = async () => {
     setErrorMessage(null);
+
+    if (!studio) {
+      setErrorMessage("Please select an available studio before submitting.");
+      return;
+    }
 
     // Validate required contact credentials
     if (!state.firstName.trim()) {
@@ -140,7 +152,7 @@ export function useBookingWizard() {
         email: state.email.trim(),
         phone: state.phone.trim(),
         company: state.company?.trim(),
-        studioId: state.studioId || "studio-a",
+        studioId: studio.id,
         sessionType: state.sessionType || "video_production",
         scheduledAt: `${state.date}T${state.time || "10:00"}`,
         durationHours: state.durationHours,

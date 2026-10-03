@@ -20,7 +20,7 @@ import { isUuid, isDbAvailable, requireAdmin, type CmsResponse } from "./shared"
 export async function getCmsStudios(): Promise<Studio[]> {
   if (isDbAvailable()) {
     const records = await db.select().from(studios).orderBy(desc(studios.createdAt));
-    if (records && records.length > 0) return records;
+    return records;
   }
 
   // Fallback to STUDIOS catalog converted to Studio schema format

@@ -58,7 +58,10 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
       (c.role && c.role.toLowerCase().includes(q)) ||
       (c.instagramHandle && c.instagramHandle.toLowerCase().includes(q)) ||
       (c.youtubeHandle && c.youtubeHandle.toLowerCase().includes(q));
-    const matchesCountry = selectedCountry === "all" || c.nationality === selectedCountry;
+    const matchesCountry = selectedCountry === "all" ||
+      (selectedCountry === "MENA"
+        ? !["UAE", "KSA", "Egypt"].includes(c.nationality || "")
+        : c.nationality === selectedCountry);
     return matchesSearch && matchesCountry;
   });
 

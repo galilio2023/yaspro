@@ -14,10 +14,14 @@ export function SmoothScrollProvider({
 }) {
   const pathname = usePathname();
   const lastPathnameRef = useRef(pathname);
+  const initialPathnameRef = useRef(pathname);
+  const hasNavigatedRef = useRef(false);
 
   // 1. Scroll Restoration: Hash Navigation Prioritized, Followed by Reload Restoration
   useIsomorphicLayoutEffect(() => {
     if (typeof window === "undefined") return;
+
+    if (pathname !== initialPathnameRef.current) hasNavigatedRef.current = true;
 
     // Check URL hash first: explicit anchor intent takes priority over stored reload positions
     if (window.location.hash) {
@@ -59,7 +63,7 @@ export function SmoothScrollProvider({
       isReload = false;
     }
 
-    if (isReload) {
+    if (isReload && !hasNavigatedRef.current) {
       try {
         const savedScroll = sessionStorage.getItem(`yaspro_scroll_${pathname}`);
         if (savedScroll) {

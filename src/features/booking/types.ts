@@ -44,6 +44,7 @@ export interface SessionTypeItem {
 
 export interface StudioItem {
   id: string;
+  slug?: string;
   name: string;
   desc: string;
   rate: number;

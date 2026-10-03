@@ -111,7 +111,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
               </a>
 
               <a
-                href="https://wa.me/971501234567?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20schedule%20a%20walkthrough%20of%20your%20soundstages%20at%20Iris%20Bay"
+                href="https://wa.me/971554010465?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20schedule%20a%20walkthrough%20of%20your%20soundstages%20at%20Iris%20Bay"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-medium text-sm transition-all"
@@ -319,7 +319,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                           </Link>
                         ) : (
                           <a
-                            href={`https://wa.me/971501234567?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20inquire%20about%20availability%20for%20${encodeURIComponent(studio.name)}`}
+                            href={`https://wa.me/971554010465?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20inquire%20about%20availability%20for%20${encodeURIComponent(studio.name)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-zinc-800 hover:bg-zinc-700 text-amber-300 font-semibold text-xs transition-all border border-amber-500/30"
@@ -330,7 +330,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                         )}
 
                         <a
-                          href={`https://wa.me/971501234567?text=Hello%20Yas%20Pro%2C%20I%20am%20interested%20in%20booking%20or%20viewing%20${encodeURIComponent(studio.name)}`}
+                          href={`https://wa.me/971554010465?text=Hello%20Yas%20Pro%2C%20I%20am%20interested%20in%20booking%20or%20viewing%20${encodeURIComponent(studio.name)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center justify-center p-3 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white transition-all"
@@ -497,7 +497,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
             </Link>
 
             <a
-              href="https://wa.me/971501234567?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20book%20a%20studio%20tour%20at%20Iris%20Bay"
+              href="https://wa.me/971554010465?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20book%20a%20studio%20tour%20at%20Iris%20Bay"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-full border border-white/20 bg-white/5 hover:bg-white/10 text-white font-medium text-sm transition-all"

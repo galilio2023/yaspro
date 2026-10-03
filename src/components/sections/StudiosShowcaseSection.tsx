@@ -215,7 +215,7 @@ export function StudiosShowcaseSection({ initialStudios }: StudiosShowcaseSectio
                         </Link>
                       ) : (
                         <a
-                          href={`https://wa.me/971501234567?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20inquire%20about%20availability%20for%20${encodeURIComponent(studio.name)}`}
+                          href={`https://wa.me/971554010465?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20inquire%20about%20availability%20for%20${encodeURIComponent(studio.name)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-amber-300 text-xs font-semibold transition-all border border-amber-500/30"
@@ -263,7 +263,7 @@ export function StudiosShowcaseSection({ initialStudios }: StudiosShowcaseSectio
             </Link>
 
             <a
-              href="https://wa.me/971501234567?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20inquire%20about%20booking%20a%20soundstage%20at%20Iris%20Bay"
+              href="https://wa.me/971554010465?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20inquire%20about%20booking%20a%20soundstage%20at%20Iris%20Bay"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-4 py-3 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-zinc-200 text-xs font-medium transition-all"

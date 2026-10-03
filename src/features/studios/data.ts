@@ -389,7 +389,7 @@ import type { Studio } from "@/db/schema";
  * is immediately reflected across the public showcase and sales page.
  */
 export function getDynamicSoundstages(cmsStudios?: Studio[]): SoundstageDetail[] {
-  if (!cmsStudios || cmsStudios.length === 0) {
+  if (!cmsStudios) {
     return SOUNDSTAGES_CATALOG.map((s) => ({ ...s, isActive: true }));
   }
 
@@ -401,10 +401,10 @@ export function getDynamicSoundstages(cmsStudios?: Studio[]): SoundstageDetail[]
   }
 
   // Map known catalog soundstages with live DB overrides
-  const result: SoundstageDetail[] = SOUNDSTAGES_CATALOG.map((stage) => {
+  const result: SoundstageDetail[] = SOUNDSTAGES_CATALOG.flatMap((stage) => {
     const override = cmsMap.get(stage.id) || cmsMap.get(stage.slug);
     if (!override) {
-      return { ...stage, isActive: true };
+      return [];
     }
 
     const rateNum = parseFloat(override.hourlyRate);

@@ -917,3 +917,108 @@ test('touch cancellation clears slider gestures without committing a tap and rem
   harness.unmount();
   assert.equal(listeners.has('touchcancel'), false);
 });
+
+test('studio catalog preserves CMS deletions, including an empty catalog', () => {
+  const { getDynamicSoundstages, SOUNDSTAGES_CATALOG } = loadSource('src/features/studios/data.ts', {});
+  const kept = SOUNDSTAGES_CATALOG[0];
+  const studios = getDynamicSoundstages([
+    { id: 'cms-id', slug: kept.slug, name: 'CMS name', hourlyRate: '321', isActive: false },
+    { id: 'custom-id', slug: 'custom-room', name: 'Custom Room', hourlyRate: '765', isActive: true },
+  ]);
+  assert.equal(studios.length, 2);
+  assert.equal(studios[0].name, 'CMS name');
+  assert.equal(studios[0].isActive, false);
+  assert.equal(studios[0].rate, 321);
+  assert.equal(studios[1].name, 'Custom Room');
+  assert.equal(getDynamicSoundstages([]).length, 0);
+  assert.equal(getDynamicSoundstages().length, SOUNDSTAGES_CATALOG.length);
+});
+
+test('studio choices and wizard preserve CMS IDs, rates, and active status', async () => {
+  const studios = [
+    { id: 'inactive-id', slug: 'closed', name: 'Closed Room', rate: 100, isActive: false },
+    { id: 'cms-id', slug: 'custom-room', name: 'Custom Room', desc: 'New room', rate: 777, isActive: true },
+  ];
+  const { StepStudio } = loadSource('src/features/booking/components/steps/StepStudio.tsx', {
+    'next/image': 'Image', '@/lib/utils': { cn: () => '', formatCurrency: String },
+    '../VirtualStageConfigurator': { VirtualStageConfigurator: 'Configurator' },
+  });
+  let selected;
+  const tree = StepStudio({ studios, state: { studioId: 'inactive-id' }, update: (value) => { selected = value.studioId; } });
+  const buttons = nodes(tree, (node) => node.type === 'button');
+  assert.equal(buttons.length, 1);
+  buttons[0].props.onClick();
+  assert.equal(selected, 'cms-id');
+  assert.ok(nodes(tree, (node) => node.props.children === '777').length);
+
+  const harness = hookHarness();
+  let params = new URLSearchParams('studio=custom-room');
+  const { useBookingWizard } = loadSource('src/features/booking/hooks/useBookingWizard.ts', {
+    react: harness.hooks, 'next/navigation': { useSearchParams: () => params },
+    '@/lib/utils': {}, '@/lib/actions': { createBooking: () => assert.fail('unavailable studio submitted') },
+  });
+  const render = (records = studios) => harness.render(() => useBookingWizard(records));
+  let wizard = render();
+  assert.equal(wizard.state.studioId, 'cms-id');
+  assert.equal(wizard.studio.rate, 777);
+  assert.equal(wizard.breakdown.studioCost, 1554);
+  params = new URLSearchParams('studio=closed');
+  render();
+  wizard = render();
+  assert.equal(wizard.state.studioId, 'cms-id');
+  wizard = render([]);
+  assert.equal(wizard.studio, undefined);
+  await wizard.handleSubmit();
+  assert.match(render([]).errorMessage, /available studio/);
+});
+
+test('reload restoration stops after navigation, including return to the initial route', () => {
+  const harness = hookHarness();
+  let pathname = '/studios';
+  const scrolls = [];
+  const anchors = [];
+  const window = {
+    location: { hash: '' }, scrollY: 0,
+    scrollTo: ({ top }) => { scrolls.push(top); window.scrollY = top; },
+    addEventListener() {}, removeEventListener() {},
+  };
+  const hooks = { ...harness.hooks, useLayoutEffect: harness.hooks.useEffect };
+  const { SmoothScrollProvider } = loadSource('src/components/providers/SmoothScrollProvider.tsx', {
+    react: hooks, 'next/navigation': { usePathname: () => pathname },
+    '@/components/ui/CustomCinemaCursor': { CustomCinemaCursor: 'Cursor' },
+  }, {
+    window, performance: { getEntriesByType: () => [{ type: 'reload' }] },
+    sessionStorage: { getItem: () => '450', removeItem() {} },
+    document: { querySelector: () => ({ scrollIntoView: () => anchors.push(pathname) }) },
+  });
+  const render = () => { harness.render(() => SmoothScrollProvider({ children: null })); harness.commit(); };
+  render();
+  assert.deepEqual(scrolls, [450]);
+  harness.unmount();
+  render(); // Strict Mode effect replay still restores the document route.
+  assert.deepEqual(scrolls, [450, 450]);
+  pathname = '/studio-booking';
+  render();
+  pathname = '/studios';
+  render();
+  assert.deepEqual(scrolls, [450, 450]);
+  window.location.hash = '#tour';
+  pathname = '/studio-booking';
+  render();
+  assert.deepEqual(anchors, ['/studio-booking']);
+  harness.unmount();
+});
+
+for (const nationality of ['UAE', 'KSA', 'Egypt', 'Jordan', 'MENA', null]) {
+  test(`regional influencer filter agrees with its count for ${nationality}`, () => {
+    const fixture = managerFixture(managers[1], async () => ({ success: true }), { nationality });
+    const choose = (key) => nodes(fixture.render(), (n) => n.type === 'button' && n.key === key)[0].props.onClick();
+    const rowCount = () => nodes(fixture.render(), (n) => n.type === 'button' && n.props.title === 'Edit Creator').length;
+    choose('MENA');
+    assert.equal(rowCount(), ['UAE', 'KSA', 'Egypt'].includes(nationality) ? 0 : 1);
+    choose('UAE');
+    assert.equal(rowCount(), nationality === 'UAE' ? 1 : 0);
+    choose('all');
+    assert.equal(rowCount(), 1);
+  });
+}

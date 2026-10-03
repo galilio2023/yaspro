@@ -21,16 +21,17 @@ import {
   type EnterpriseRfpInput,
 } from "./validations";
 
+import type { StudioItem } from "@/features/booking/types";
 import { STUDIOS, calculateBookingPrice } from "@/features/booking/constants";
 
 /**
  * Recalculate price server-side based on canonical pricing rules
  */
-function calculateServerPrice(data: BookingSubmissionInput): number {
+function calculateServerPrice(data: BookingSubmissionInput, selectedStudio?: StudioItem): number {
   if (typeof calculateBookingPrice === "function") {
-    return calculateBookingPrice(data).total;
+    return calculateBookingPrice(data, selectedStudio).total;
   }
-  const studio = (STUDIOS || []).find((s) => s.id === data.studioId) || (STUDIOS || [])[0];
+  const studio = selectedStudio || (STUDIOS || []).find((s) => s.id === data.studioId) || (STUDIOS || [])[0];
   const studioRate = studio ? studio.rate : 800;
   return studioRate * (data.durationHours || 1);
 }
@@ -78,31 +79,26 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
   }
 
   const referenceCode = generateBookingReference();
-  const calculatedTotal = calculateServerPrice(data);
 
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-      // 3. Resolve studio by slug (letting Postgres manage all UUIDs)
+      // Resolve CMS IDs from the wizard and slugs from existing booking links.
       const selectedSlug = data.studioId || "studio-a";
-      let studioRecord = await db.query.studios.findFirst({
-        where: eq(studios.slug, selectedSlug),
+      const isStudioUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(selectedSlug);
+      const studioRecord = await db.query.studios.findFirst({
+        where: isStudioUuid ? eq(studios.id, selectedSlug) : eq(studios.slug, selectedSlug),
       });
 
-      // If the studio record does not exist yet, provision it without passing an id (Postgres auto-generates uuid)
-      if (!studioRecord) {
-        const fallbackStudioMeta = STUDIOS.find((s) => s.id === selectedSlug) || STUDIOS[0];
-        const [inserted] = await db
-          .insert(studios)
-          .values({
-            slug: selectedSlug,
-            name: fallbackStudioMeta.name,
-            hourlyRate: fallbackStudioMeta.rate.toFixed(2),
-            capacity: 20,
-            isActive: true,
-          })
-          .returning();
-        studioRecord = inserted;
+      if (!studioRecord || studioRecord.isActive === false) {
+        return { success: false, message: "This studio is no longer available. Please select another studio." };
       }
+      const calculatedTotal = calculateServerPrice(data, {
+        id: studioRecord.id,
+        slug: studioRecord.slug,
+        name: studioRecord.name,
+        desc: studioRecord.description || "",
+        rate: Number(studioRecord.hourlyRate),
+      });
 
       // 4. Overlap & Conflict Check: Prevent double-booking for the same studio stage
       if (studioRecord?.id) {
