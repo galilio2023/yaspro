@@ -227,7 +227,7 @@ export function VirtualStageConfigurator() {
 
         {/* Drag Hint */}
         <div className="absolute bottom-4 right-4 pointer-events-none bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[10px] font-mono text-slate-400">
-          Click &amp; Drag to rotate 3D volume • Scroll to zoom
+          Click &amp; Drag to rotate 3D volume
         </div>
       </div>
 

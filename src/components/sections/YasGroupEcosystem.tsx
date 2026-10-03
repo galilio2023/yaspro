@@ -16,8 +16,13 @@ export function YasGroupEcosystem() {
       aria-label="Yas Pro Media Group Conglomerate Ecosystem"
       className="relative w-full py-16 sm:py-24 bg-[#08080c] border-t border-white/[0.08] overflow-hidden film-grain select-none"
     >
-      {/* Volumetric ambient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[350px] bg-amber-500/5 rounded-full blur-[140px] pointer-events-none" />
+      {/* Volumetric ambient glow (GPU hardware-accelerated radial gradient) */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[350px] pointer-events-none rounded-full"
+        style={{
+          background: "radial-gradient(ellipse at center, rgba(245,158,11,0.06) 0%, transparent 70%)",
+        }}
+      />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}

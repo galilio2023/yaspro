@@ -4,6 +4,9 @@ import React, { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { CustomCinemaCursor } from "@/components/ui/CustomCinemaCursor";
 
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
 export function SmoothScrollProvider({
   children,
 }: {
@@ -12,9 +15,36 @@ export function SmoothScrollProvider({
   const pathname = usePathname();
   const lastPathnameRef = useRef(pathname);
 
-  // 1. Scroll Restoration on Refresh & Hash Navigation
-  useEffect(() => {
+  // 1. Scroll Restoration: Hash Navigation Prioritized, Followed by Reload Restoration
+  useIsomorphicLayoutEffect(() => {
     if (typeof window === "undefined") return;
+
+    // Check URL hash first: explicit anchor intent takes priority over stored reload positions
+    if (window.location.hash) {
+      const hash = window.location.hash;
+      const scrollToAnchor = () => {
+        try {
+          const targetEl = document.querySelector(hash);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: "instant", block: "start" });
+            return true;
+          }
+        } catch {}
+        return false;
+      };
+
+      if (!scrollToAnchor()) {
+        let attempts = 0;
+        const intervalId = setInterval(() => {
+          attempts++;
+          if (scrollToAnchor() || attempts > 20) {
+            clearInterval(intervalId);
+          }
+        }, 50);
+        return () => clearInterval(intervalId);
+      }
+      return;
+    }
 
     // Detect if the current load is a browser reload/refresh
     let isReload = false;
@@ -23,7 +53,6 @@ export function SmoothScrollProvider({
       if (navEntry) {
         isReload = navEntry.type === "reload";
       } else {
-        // Fallback for older browsers
         isReload = (performance as unknown as { navigation?: { type?: number } }).navigation?.type === 1;
       }
     } catch {
@@ -36,40 +65,63 @@ export function SmoothScrollProvider({
         if (savedScroll) {
           const targetY = parseInt(savedScroll, 10);
           if (!isNaN(targetY) && targetY > 0) {
-            // Restore immediately and after hydration to counter Next.js layout expansion
+            // Restore immediately before browser paint
             window.scrollTo({ top: targetY, behavior: "instant" });
-            const rafId = requestAnimationFrame(() => {
+
+            let cancelled = false;
+            let observer: ResizeObserver | null = null;
+
+            const attemptScroll = () => {
+              if (cancelled) return;
               window.scrollTo({ top: targetY, behavior: "instant" });
-            });
-            const timerId = setTimeout(() => {
-              window.scrollTo({ top: targetY, behavior: "instant" });
-            }, 80);
+              if (Math.abs(window.scrollY - targetY) <= 2) {
+                cleanup();
+              }
+            };
+
+            const cleanup = () => {
+              cancelled = true;
+              if (observer) {
+                observer.disconnect();
+                observer = null;
+              }
+              window.removeEventListener("wheel", handleUserInteract);
+              window.removeEventListener("touchstart", handleUserInteract);
+              window.removeEventListener("keydown", handleUserInteract);
+            };
+
+            const handleUserInteract = () => {
+              // Yield control if user initiates manual scroll/touch
+              cleanup();
+            };
+
+            window.addEventListener("wheel", handleUserInteract, { passive: true });
+            window.addEventListener("touchstart", handleUserInteract, { passive: true });
+            window.addEventListener("keydown", handleUserInteract, { passive: true });
+
+            // Ensure target is reached as async components/images expand document height
+            if (typeof ResizeObserver !== "undefined" && document.body) {
+              observer = new ResizeObserver(() => {
+                attemptScroll();
+              });
+              observer.observe(document.body);
+            }
+
+            const timeoutId = setTimeout(cleanup, 2000);
 
             return () => {
-              cancelAnimationFrame(rafId);
-              clearTimeout(timerId);
+              clearTimeout(timeoutId);
+              cleanup();
             };
           }
         }
       } catch {
         // Ignore storage access errors
       }
-    } else if (window.location.hash) {
-      // Direct anchor link on initial load
-      const hash = window.location.hash;
-      const timerId = setTimeout(() => {
-        try {
-          const targetEl = document.querySelector(hash);
-          if (targetEl) {
-            targetEl.scrollIntoView({ behavior: "instant", block: "start" });
-          }
-        } catch {}
-      }, 50);
-      return () => clearTimeout(timerId);
     }
   }, [pathname]);
 
-  // 2. Track & Persist Scroll Position on Active Page
+  // 2. Track & Persist Scroll Position on Active Page (overwrite or clear on scrollY === 0)
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -79,8 +131,11 @@ export function SmoothScrollProvider({
       if (timeoutId) clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
         try {
+          const key = `yaspro_scroll_${pathname}`;
           if (window.scrollY > 0) {
-            sessionStorage.setItem(`yaspro_scroll_${pathname}`, window.scrollY.toString());
+            sessionStorage.setItem(key, Math.round(window.scrollY).toString());
+          } else {
+            sessionStorage.removeItem(key);
           }
         } catch {}
       }, 100);

@@ -56,6 +56,8 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
     return `${camera} • ${lensOrAudio}`.toUpperCase();
   }, [spotlightProject]);
 
+  const hasSpotlightVideo = Boolean(spotlightProject?.vimeoId || spotlightProject?.videoUrl);
+
   return (
     <Section
       id="portfolio"
@@ -156,26 +158,28 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
                   </span>
                 </div>
 
-                {/* Central Magnetic Cinema Play Button */}
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedVideoProject(spotlightProject)}
-                    className="group/playbtn relative flex flex-col items-center gap-2 cursor-pointer focus-visible:outline-none"
-                    aria-label={`Watch ${spotlightProject.title}`}
-                  >
-                    <div className="relative flex items-center justify-center">
-                      {/* Pulse Ring Wave */}
-                      <div className="absolute inset-0 rounded-full bg-amber-500/30 scale-100 group-hover/playbtn:scale-140 group-hover/playbtn:opacity-0 transition-all duration-700 ease-out pointer-events-none" />
-                      <div className="size-16 sm:size-20 rounded-full bg-zinc-950/90 border border-amber-500/60 flex items-center justify-center text-amber-400 shadow-2xl group-hover/playbtn:scale-110 group-hover/playbtn:bg-amber-500 group-hover/playbtn:text-zinc-950 group-hover/playbtn:border-amber-400 group-hover/playbtn:shadow-[0_0_36px_rgba(245,158,11,0.6)] transition-all duration-200">
-                        <Play size={26} className="fill-current translate-x-0.5 rtl:-translate-x-0.5" />
+                {/* Central Magnetic Cinema Play Button (Only when video is available) */}
+                {hasSpotlightVideo && (
+                  <div className="absolute inset-0 flex items-center justify-center z-10">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedVideoProject(spotlightProject)}
+                      className="group/playbtn relative flex flex-col items-center gap-2 cursor-pointer focus-visible:outline-none"
+                      aria-label={`Watch ${spotlightProject.title}`}
+                    >
+                      <div className="relative flex items-center justify-center">
+                        {/* Pulse Ring Wave */}
+                        <div className="absolute inset-0 rounded-full bg-amber-500/30 scale-100 group-hover/playbtn:scale-140 group-hover/playbtn:opacity-0 transition-all duration-700 ease-out pointer-events-none" />
+                        <div className="size-16 sm:size-20 rounded-full bg-zinc-950/90 border border-amber-500/60 flex items-center justify-center text-amber-400 shadow-2xl group-hover/playbtn:scale-110 group-hover/playbtn:bg-amber-500 group-hover/playbtn:text-zinc-950 group-hover/playbtn:border-amber-400 group-hover/playbtn:shadow-[0_0_36px_rgba(245,158,11,0.6)] transition-all duration-200">
+                          <Play size={26} className="fill-current translate-x-0.5 rtl:-translate-x-0.5" />
+                        </div>
                       </div>
-                    </div>
-                    <span className="px-3 py-1 rounded-full bg-black/90 border border-white/10 text-[10px] sm:text-xs font-mono font-semibold tracking-wider text-zinc-200 group-hover/playbtn:text-amber-300 transition-colors">
-                      {isArabic ? "مشاهدة الفيلم • 4K UHD" : "WATCH FILM • 4K UHD"}
-                    </span>
-                  </button>
-                </div>
+                      <span className="px-3 py-1 rounded-full bg-black/90 border border-white/10 text-[10px] sm:text-xs font-mono font-semibold tracking-wider text-zinc-200 group-hover/playbtn:text-amber-300 transition-colors">
+                        {isArabic ? "مشاهدة الفيلم • 4K UHD" : "WATCH FILM • 4K UHD"}
+                      </span>
+                    </button>
+                  </div>
+                )}
 
                 {/* Bottom Telemetry Bar */}
                 <div className="absolute bottom-3 inset-x-3 sm:bottom-4 sm:inset-x-4 flex items-center justify-between text-[10px] font-mono text-white/80 z-10 pointer-events-none">
@@ -240,22 +244,34 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
 
                 {/* Action Buttons Row */}
                 <div className="pt-4 border-t border-white/10 flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedVideoProject(spotlightProject)}
-                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-amber-500 text-zinc-950 font-bold text-xs hover:bg-amber-400 shadow-lg shadow-amber-500/20 active:scale-[0.98] transition-all cursor-pointer"
-                  >
-                    <Play size={13} className="fill-current" />
-                    <span>{isArabic ? "مشاهدة الماستر السينمائي" : "Watch Master Reel"}</span>
-                  </button>
+                  {hasSpotlightVideo ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedVideoProject(spotlightProject)}
+                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-amber-500 text-zinc-950 font-bold text-xs hover:bg-amber-400 shadow-lg shadow-amber-500/20 active:scale-[0.98] transition-all cursor-pointer"
+                      >
+                        <Play size={13} className="fill-current" />
+                        <span>{isArabic ? "مشاهدة الماستر السينمائي" : "Watch Master Reel"}</span>
+                      </button>
 
-                  <Link
-                    href={`/projects/${spotlightProject.slug}`}
-                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 text-zinc-300 font-semibold text-xs hover:bg-white/10 hover:text-white transition-all"
-                  >
-                    <span>{isArabic ? "تفاصيل المشروع" : "Project Dossier"}</span>
-                    <ArrowUpRight size={13} className="rtl:rotate-90 rtl:scale-x-[-1]" />
-                  </Link>
+                      <Link
+                        href={`/projects/${spotlightProject.slug}`}
+                        className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 text-zinc-300 font-semibold text-xs hover:bg-white/10 hover:text-white transition-all"
+                      >
+                        <span>{isArabic ? "تفاصيل المشروع" : "Project Dossier"}</span>
+                        <ArrowUpRight size={13} className="rtl:rotate-90 rtl:scale-x-[-1]" />
+                      </Link>
+                    </>
+                  ) : (
+                    <Link
+                      href={`/projects/${spotlightProject.slug}`}
+                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-amber-500 text-zinc-950 font-bold text-xs hover:bg-amber-400 shadow-lg shadow-amber-500/20 active:scale-[0.98] transition-all"
+                    >
+                      <span>{isArabic ? "استعراض تفاصيل المشروع" : "Explore Project Dossier"}</span>
+                      <ArrowUpRight size={13} className="rtl:rotate-90 rtl:scale-x-[-1]" />
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

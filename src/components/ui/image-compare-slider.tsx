@@ -64,10 +64,13 @@ export function ImageCompareSlider({
     });
   }, [setPosition]);
 
+  const isDraggingRef = useRef(false);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const isSwipingVerticalRef = useRef(false);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
+    isDraggingRef.current = true;
     setIsDragging(true);
     updateSliderFromClientX(e.clientX);
   };
@@ -75,56 +78,72 @@ export function ImageCompareSlider({
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches[0]) {
       touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      isSwipingVerticalRef.current = false;
     }
   };
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging) return;
+      if (!isDraggingRef.current) return;
       updateSliderFromClientX(e.clientX);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!e.touches[0] || !touchStartRef.current) return;
+      if (!e.touches[0] || !touchStartRef.current || isSwipingVerticalRef.current) return;
       const touch = e.touches[0];
       const dx = Math.abs(touch.clientX - touchStartRef.current.x);
       const dy = Math.abs(touch.clientY - touchStartRef.current.y);
 
       // If user is predominantly scrolling vertically, do NOT drag the slider
-      if (!isDragging) {
+      if (!isDraggingRef.current) {
         if (dy > dx && dy > 6) {
-          // Vertical swipe: let page scroll natively
-          touchStartRef.current = null;
+          // Vertical swipe: let page scroll natively and do not commit as tap
+          isSwipingVerticalRef.current = true;
           return;
         }
         if (dx > 8 && dx > dy) {
+          isDraggingRef.current = true;
           setIsDragging(true);
+          updateSliderFromClientX(touch.clientX);
         }
-      }
-
-      if (isDragging) {
+      } else {
         updateSliderFromClientX(touch.clientX);
       }
     };
 
     const handleMouseUp = () => {
-      if (isDragging) setIsDragging(false);
+      if (isDraggingRef.current) {
+        isDraggingRef.current = false;
+        setIsDragging(false);
+      }
+    };
+
+    const handleTouchEnd = () => {
+      // If user tapped without dragging or vertical swipe, commit tap position
+      if (touchStartRef.current && !isSwipingVerticalRef.current && !isDraggingRef.current) {
+        updateSliderFromClientX(touchStartRef.current.x);
+      }
+      if (isDraggingRef.current) {
+        isDraggingRef.current = false;
+        setIsDragging(false);
+      }
       touchStartRef.current = null;
+      isSwipingVerticalRef.current = false;
     };
 
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
     window.addEventListener("touchmove", handleTouchMove, { passive: true });
-    window.addEventListener("touchend", handleMouseUp);
+    window.addEventListener("touchend", handleTouchEnd);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("touchend", handleMouseUp);
+      window.removeEventListener("touchend", handleTouchEnd);
       if (rafDragRef.current) cancelAnimationFrame(rafDragRef.current);
     };
-  }, [isDragging, updateSliderFromClientX]);
+  }, [updateSliderFromClientX]);
 
   return (
     <div

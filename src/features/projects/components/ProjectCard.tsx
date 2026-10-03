@@ -41,6 +41,15 @@ export function ProjectCard({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!onSelectSpotlight) return;
+    if (e.target !== e.currentTarget) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onSelectSpotlight(project);
+    }
+  };
+
   // Extract a clean cinema sensor/optics tag from techStack if available
   const opticsTag = React.useMemo(() => {
     if (!project.techStack || project.techStack.length === 0) return "4K MASTER";
@@ -57,8 +66,20 @@ export function ProjectCard({
   return (
     <article
       onClick={handleCardClick}
+      onKeyDown={handleKeyDown}
+      role={onSelectSpotlight ? "button" : undefined}
+      tabIndex={onSelectSpotlight ? 0 : undefined}
+      aria-pressed={onSelectSpotlight ? isSpotlighted : undefined}
+      aria-label={
+        onSelectSpotlight
+          ? isArabic
+            ? `عرض مشروع ${project.title} في المسرح الرئيسي`
+            : `Select ${project.title} as spotlight project`
+          : undefined
+      }
       className={cn(
-        "relative group/card flex flex-col justify-between h-full rounded-2xl sm:rounded-3xl border bg-zinc-950/95 transition-all duration-300 hover:-translate-y-1.5 overflow-hidden shadow-xl shadow-black/50 cursor-pointer will-change-transform",
+        "relative group/card flex flex-col justify-between h-full rounded-2xl sm:rounded-3xl border bg-zinc-950/95 transition-all duration-300 hover:-translate-y-1.5 overflow-hidden shadow-xl shadow-black/50 will-change-transform",
+        onSelectSpotlight && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
         isSpotlighted
           ? "border-amber-500/70 ring-1 ring-amber-500/40 shadow-[0_0_24px_rgba(245,158,11,0.18)]"
           : "border-white/10 hover:border-amber-500/40 hover:shadow-[0_16px_40px_-10px_rgba(0,0,0,0.8),0_0_24px_-4px_rgba(245,158,11,0.15)]"

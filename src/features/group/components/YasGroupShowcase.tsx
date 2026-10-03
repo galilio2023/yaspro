@@ -13,11 +13,17 @@ export function YasGroupShowcase() {
 
   return (
     <section
+      id="conglomerate"
       aria-label={isArabic ? "شركات مجموعة ياس برو الإعلامية" : "Yas Pro Media Group Companies"}
       className="relative py-16 sm:py-24 lg:py-32 bg-zinc-950 border-t border-white/10 overflow-hidden"
     >
-      {/* Background ambient lighting */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[400px] bg-amber-500/5 rounded-full blur-[140px] pointer-events-none" />
+      {/* Background ambient lighting (GPU hardware-accelerated radial gradient) */}
+      <div
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[400px] pointer-events-none rounded-full"
+        style={{
+          background: "radial-gradient(ellipse at center, rgba(245,158,11,0.06) 0%, transparent 70%)",
+        }}
+      />
 
       <Container className="relative z-10">
         {/* Section Header */}
