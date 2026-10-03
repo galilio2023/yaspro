@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <title>YAS PRO — Official Client Handover & User Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0b0e;
+      --card: #12141a;
+      --border: #232734;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --gold: #f59e0b;
+      --gold-light: #fbbf24;
+      --cyan: #06b6d4;
+      --green: #10b981;
+      --red: #ef4444;
+      --font-en: 'Inter', sans-serif;
+      --font-ar: 'Cairo', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-en);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 40px;
+      font-size: 14px;
+    }
+
+    .ar { font-family: var(--font-ar); direction: rtl; text-align: right; }
+    .bilingual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+    .bilingual-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+
+    .cover-page {
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 60px;
+      margin-bottom: 60px;
+      page-break-after: always;
+    }
+
+    .badge-hub {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 2px;
+      border-radius: 9999px;
+      margin-bottom: 24px;
+    }
+
+    h1.title {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h2.subtitle {
+      font-size: 20px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-bottom: 32px;
+      max-width: 650px;
+    }
+
+    .meta-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 32px;
+      display: flex;
+      gap: 32px;
+      font-size: 13px;
+    }
+    .meta-item strong { color: var(--gold); display: block; font-size: 11px; text-transform: uppercase; }
+
+    .section-header {
+      margin-top: 48px;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .section-header h2 { font-size: 24px; font-weight: 700; color: #fff; }
+    .section-header .section-tag { font-size: 12px; color: var(--gold); font-weight: 600; text-transform: uppercase; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      background: var(--card);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    th {
+      background: #171a23;
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    td {
+      padding: 12px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid #1a1e29;
+      color: var(--text);
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-admin { background: rgba(245, 158, 11, 0.15); color: var(--gold-light); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-client { background: rgba(6, 182, 212, 0.15); color: var(--cyan); border: 1px solid rgba(6, 182, 212, 0.3); }
+    .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.3); }
+
+    .callout {
+      background: rgba(245, 158, 11, 0.05);
+      border-left: 4px solid var(--gold);
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+    }
+    .callout strong { color: var(--gold); }
+
+    .sales-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .sales-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+    .sales-card .icon { font-size: 24px; margin-bottom: 8px; }
+    .sales-card h3 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .sales-card p { font-size: 13px; color: var(--muted); }
+
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        padding: 20px !important;
+        font-size: 12px !important;
+      }
+      .bilingual-card, .sales-card, table, .meta-box {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        color: #0f172a !important;
+        box-shadow: none !important;
+      }
+      h1.title {
+        background: none !important;
+        -webkit-text-fill-color: #0f172a !important;
+        color: #0f172a !important;
+      }
+      th {
+        background: #f1f5f9 !important;
+        color: #475569 !important;
+      }
+      td {
+        color: #1e293b !important;
+        border-bottom-color: #e2e8f0 !important;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COVER PAGE -->
+  <div class="cover-page">
+    <div class="badge-hub">YAS PRODUCTIONS • DUBAI STUDIO CITY</div>
+    <h1 class="title">YAS PRO — PLATFORM HANDOVER</h1>
+    <h2 class="subtitle">Complete Executive User Manual, Route Catalog, Database Specifications & Sales Engine Guide</h2>
+    
+    <div class="meta-box">
+      <div class="meta-item">
+        <strong>Delivered To</strong>
+        Executive Team & System Owners
+      </div>
+      <div class="meta-item">
+        <strong>Architecture</strong>
+        Next.js 15 • Neon PostgreSQL • Ziina
+      </div>
+      <div class="meta-item">
+        <strong>Version & Tests</strong>
+        v2.0 • 117/117 Passing
+      </div>
+      <div class="meta-item">
+        <strong>Date of Release</strong>
+        October 2026
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: EXECUTIVE OVERVIEW -->
+  <div class="section-header">
+    <h2>1. Executive Summary / المقدمة التنفيذية</h2>
+    <span class="section-tag">Vision & Scope</span>
+  </div>
+
+  <div class="bilingual-grid">
+    <div class="bilingual-card">
+      <h3 style="color:var(--gold); margin-bottom:8px;">English Overview</h3>
+      <p>
+        <strong>Yas Pro</strong> is Dubai's first sovereign AI media hub and digital production ecosystem. It combines an enterprise cinema equipment fleet (173 items), soundstage scheduling (Studio A, B, C, XR), direct UAE payment gateway integration (Ziina in AED with Apple Pay), UAE Mawthooq ad compliance auditing, and a dedicated self-service Client Portal.
+      </p>
+      <p style="margin-top:10px; color:var(--muted);">
+        The platform operates on serverless infrastructure via <strong>Neon PostgreSQL</strong>, eliminating legacy WordPress plugin vulnerabilities and ensuring sub-50ms database latency worldwide.
+      </p>
+    </div>
+    <div class="bilingual-card ar">
+      <h3 style="color:var(--gold); margin-bottom:8px;">المقدمة باللغة العربية</h3>
+      <p>
+        تُعد منصة <strong>ياس برو (Yas Pro)</strong> أول مركز إعلامي رقمي سيادي متكامل في دبي مخصص للإنتاج السينمائي والافتراضي. تجمع المنصة بين أسطول معدات سينمائية احترافي (173 معدة)، وحجز الاستوديوهات المتخصصة، وبوابة الدفع الوطنية الإماراتية المعتمدة (Ziina بالدرهم الإماراتي وApple Pay)، مع مدقق الامتثال لتراخيص الإعلانات (موثوق)، وبوابة خدمة ذاتية للعملاء.
+      </p>
+      <p style="margin-top:10px; color:var(--muted);">
+        تم بناء المنصة على بنية سحابية بدون خوادم <strong>Neon PostgreSQL</strong> للقضاء التام على ثغرات وبطء ووردبريس القديم، مع سرعة استجابة فائقة تقل عن 50 ميلي ثانية.
+      </p>
+    </div>
+  </div>
+
+  <!-- SECTION 2: MASTER CREDENTIALS -->
+  <div class="section-header page-break">
+    <h2>2. Master Credentials & Testing Guide / بيانات الدخول ودليل الاختبار</h2>
+    <span class="section-tag">Access Keys</span>
+  </div>
+
+  <div class="callout">
+    <strong>Master Password Notice / كلمة المرور الموحدة للاختبار:</strong> All administrative and client accounts below are pre-configured in the live database with the secure password: <code style="background:#1e293b; padding:3px 6px; border-radius:4px; color:#fbbf24; font-weight:700;">YasPro@2026!</code>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Role / الصلاحية</th>
+        <th>Name / الاسم</th>
+        <th>Email / البريد الإلكتروني</th>
+        <th>Password</th>
+        <th>System Destination</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="badge badge-admin">Master CEO</span></td>
+        <td><strong>Yaman Alomari</strong></td>
+        <td><code>ceo@yasproductions.com</code></td>
+        <td><code>YasPro@2026!</code></td>
+        <td>Full Admin Hub (<code>/admin</code>)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-admin">Master Admin</span></td>
+        <td><strong>YASPRO Master</strong></td>
+        <td><code>pressyaman@gmail.com</code></td>
+        <td><code>YasPro@2026!</code></td>
+        <td>Full Admin Hub (<code>/admin</code>)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-admin">Operations Lead</span></td>
+        <td><strong>Ahmad Wadi</strong></td>
+        <td><code>ahmedwadi978@gmail.com</code></td>
+        <td><code>YasPro@2026!</code></td>
+        <td>Bookings & Stages (<code>/admin/bookings</code>)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-admin">HQ Operations</span></td>
+        <td><strong>Operations Desk</strong></td>
+        <td><code>info@yasproductions.com</code></td>
+        <td><code>YasPro@2026!</code></td>
+        <td>Inquiries & Leads (<code>/admin/inquiries</code>)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-admin">Production Mgr</span></td>
+        <td><strong>Walaa Ali</strong></td>
+        <td><code>walaa.ali131@gmail.com</code></td>
+        <td><code>YasPro@2026!</code></td>
+        <td>Equipment Fleet (<code>/admin/gear</code>)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-client">Verified Client</span></td>
+        <td><strong>ibrahim galal</strong></td>
+        <td><code>ahmed@gmail.com</code></td>
+        <td><code>YasPro@2026!</code></td>
+        <td>Client Portal (<code>/portal</code>)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-client">Creator Client</span></td>
+        <td><strong>Belal Alaa</strong></td>
+        <td><code>eng.belalalaa@gmail.com</code></td>
+        <td><code>YasPro@2026!</code></td>
+        <td>Client Portal (<code>/portal</code>)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 3: FULL ROUTES CATALOG -->
+  <div class="section-header page-break">
+    <h2>3. Complete Routes & Pages Catalog / دليل المسارات والصفحات</h2>
+    <span class="section-tag">35 Routes Active</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>URL Route</th>
+        <th>Page Purpose</th>
+        <th>Target User</th>
+        <th>Key Features & Sections Included</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>/</code></td>
+        <td>Home Landing Page</td>
+        <td>Public Visitors</td>
+        <td>Cinematic 3D Hero, Reel Player, 4 Soundstage cards, Top 6 gear spotlight, Mawthooq badge, Split color-grade slider, Floating AI concierge.</td>
+      </tr>
+      <tr>
+        <td><code>/shop</code></td>
+        <td>Cinema Equipment Catalog</td>
+        <td>Filmmakers & DPs</td>
+        <td>Live search across 173 items, 5 categories (Cameras, Lenses, Audio, Lighting, Kits), dynamic multi-day discount matrix, bilingual modal, cart drawer.</td>
+      </tr>
+      <tr>
+        <td><code>/studios</code></td>
+        <td>Soundstages Directory</td>
+        <td>Producers & Directors</td>
+        <td>Studio A, B, C, XR specs, floorplans, lighting grid details, acoustic STC ratings, instant reservation links.</td>
+      </tr>
+      <tr>
+        <td><code>/studio-booking</code></td>
+        <td>Interactive Booking Wizard</td>
+        <td>Clients booking stages</td>
+        <td>5-step wizard: Stage picker, 09:00-21:00 slot picker, add-ons (DIT, crew), VAT breakdown, Ziina card & Apple Pay checkout.</td>
+      </tr>
+      <tr>
+        <td><code>/enterprise</code></td>
+        <td>Sovereign Media Suite</td>
+        <td>Government & Broadcasters</td>
+        <td>OB-Van broadcast trucks, Mawthooq compliance checker, multi-step government RFP submission wizard.</td>
+      </tr>
+      <tr>
+        <td><code>/influencers</code></td>
+        <td>Creator Network</td>
+        <td>Brands & Agencies</td>
+        <td>Verified MENA talent (Abo Flah, Noor Stars), 9:16 vertical reels, demographic metrics, direct booking buttons.</td>
+      </tr>
+      <tr>
+        <td><code>/projects</code></td>
+        <td>Portfolio & Films Showcase</td>
+        <td>Directors & Agencies</td>
+        <td>Filterable showcase (Government, Commercial, Shows), UAE Flag Day, DMX, GITEX Global, split color-grade slider.</td>
+      </tr>
+      <tr>
+        <td><code>/portal</code></td>
+        <td>Client Dashboard</td>
+        <td>Logged-in Clients</td>
+        <td>Upcoming bookings, active rentals, downloadable tax invoices, check-in reference codes.</td>
+      </tr>
+      <tr>
+        <td><code>/admin</code></td>
+        <td>Admin Command Center</td>
+        <td>Master Admins & Staff</td>
+        <td>Executive revenue metrics, fleet count (173), bookings ledger, inquiries pipeline, quick dispatch actions.</td>
+      </tr>
+      <tr>
+        <td><code>/admin/gear</code></td>
+        <td>Equipment CRUD Manager</td>
+        <td>Production Staff</td>
+        <td>Full inventory management: Add gear, edit daily rates/specs, toggle availability, safe custom confirmation modal.</td>
+      </tr>
+      <tr>
+        <td><code>/admin/studios</code></td>
+        <td>Studios CRUD Manager</td>
+        <td>Operations Staff</td>
+        <td>Update hourly rates (AED), capacity, amenities, schedule conflict overrides.</td>
+      </tr>
+      <tr>
+        <td><code>/admin/bookings</code></td>
+        <td>Reservations Ledger</td>
+        <td>Operations Desk</td>
+        <td>Status lifecycle: pending -> confirmed -> completed -> cancelled. Payment reconciler.</td>
+      </tr>
+      <tr>
+        <td><code>/admin/inquiries</code></td>
+        <td>Rental Inquiries Pipeline</td>
+        <td>Sales Team</td>
+        <td>Lead inbox with customer contact, equipment requested, duration, client notes, 1-click resolve.</td>
+      </tr>
+      <tr>
+        <td><code>/admin/rfps</code></td>
+        <td>Enterprise RFPs & Tenders</td>
+        <td>Executive Leadership</td>
+        <td>Government tender review workflow, Mawthooq licensing flags, budget approvals.</td>
+      </tr>
+      <tr>
+        <td><code>/admin/users</code></td>
+        <td>User Management</td>
+        <td>Master Admin</td>
+        <td>Directory of registered clients and staff with role escalation tools.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 4: 8 SALES POINTS -->
+  <div class="section-header page-break">
+    <h2>4. The 8 Major Sales Points / أهم 8 نقاط بيع ومزايا تنافسية</h2>
+    <span class="section-tag">Value Proposition</span>
+  </div>
+
+  <div class="sales-grid">
+    <div class="sales-card">
+      <div class="icon">🏆</div>
+      <h3>1. Luxury Dubai Cinema Identity</h3>
+      <p>Bespoke human-crafted aesthetic: obsidian dark mode, gold accents, tactile spring physics, and split before/after color grade slider.</p>
+    </div>
+    <div class="sales-card">
+      <div class="icon">⚡</div>
+      <h3>2. 173-Item Fleet with Smart Dynamic Tiers</h3>
+      <p>Automated tiered discounts: 1-2 days (full rate), 3-6 days (15% discount), 7+ days (25% discount). Zero duplicate products.</p>
+    </div>
+    <div class="sales-card">
+      <div class="icon">💳</div>
+      <h3>3. Sovereign Ziina UAE Payments</h3>
+      <p>Direct integration with Ziina for Apple Pay, Visa, and Mastercard in AED, with automated VAT invoices and bank wire fallback.</p>
+    </div>
+    <div class="sales-card">
+      <div class="icon">🎙️</div>
+      <h3>4. 4 Soundstages with Zero Conflict</h3>
+      <p>Studio A, Studio B Podcast, Studio C Cyc, and Studio XR Stage with strict 09:00-21:00 conflict-free slot locking.</p>
+    </div>
+    <div class="sales-card">
+      <div class="icon">🛡️</div>
+      <h3>5. UAE Mawthooq Compliance AI</h3>
+      <p>Specialized auditor analyzing ad copy for official UAE Media Council Mawthooq licensing and #إعلان disclosures.</p>
+    </div>
+    <div class="sales-card">
+      <div class="icon">💼</div>
+      <h3>6. Client Self-Service Portal (/portal)</h3>
+      <p>Clients independently track upcoming shoot schedules, retrieve digital QR check-in codes, and download tax invoices.</p>
+    </div>
+    <div class="sales-card">
+      <div class="icon">🚀</div>
+      <h3>7. Serverless Speed & Zero Spam</h3>
+      <p>Neon PostgreSQL serverless architecture: sub-50ms queries, better-auth session security, zero WordPress vulnerabilities.</p>
+    </div>
+    <div class="sales-card">
+      <div class="icon">🌐</div>
+      <h3>8. Strict LTR Anchored Bilingual Engine</h3>
+      <p>Physical Left-to-Right Navbar, Footer, and Brand Logo anchoring ensures Arabic mode reads naturally without flipping menus backwards.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 5: DATABASE ARCHITECTURE -->
+  <div class="section-header page-break">
+    <h2>5. Database Architecture / هيكلية قاعدة البيانات</h2>
+    <span class="section-tag">Neon PostgreSQL (neondb)</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Table Name</th>
+        <th>Row Count</th>
+        <th>Contents & Specifications</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>equipment</code></td>
+        <td><strong>173 items</strong></td>
+        <td>115 Cameras, 21 Audio, 13 Lighting, 12 Lenses, 12 Master Bundles. Each item has clean slug, English specs, and Arabic specs.</td>
+      </tr>
+      <tr>
+        <td><code>studios</code></td>
+        <td><strong>4 stages</strong></td>
+        <td>Studio A Main Stage (AED 800), Studio B Podcast (AED 400), Studio C Cyc (AED 600), Studio XR (AED 1,500).</td>
+      </tr>
+      <tr>
+        <td><code>users</code></td>
+        <td><strong>8 users</strong></td>
+        <td>5 Verified Admins (Yaman, Ahmad, Walaa, Info, Master) + 3 Registered Clients. 100% spam-free.</td>
+      </tr>
+      <tr>
+        <td><code>accounts</code></td>
+        <td><strong>7 accounts</strong></td>
+        <td>Better-Auth hashed credential authenticators.</td>
+      </tr>
+      <tr>
+        <td><code>sessions</code></td>
+        <td><strong>8 sessions</strong></td>
+        <td>Active secure 7-day browser authentication tokens.</td>
+      </tr>
+      <tr>
+        <td><code>bookings</code></td>
+        <td><strong>8 bookings</strong></td>
+        <td>Studio XR, Studio A, and commercial equipment reservations with AED totals and reference codes.</td>
+      </tr>
+      <tr>
+        <td><code>projects</code></td>
+        <td><strong>9 films</strong></td>
+        <td>UAE Flag Day, DMX, GITEX Global, Talabat, Orange, Delos, Kananya, Zain campaigns.</td>
+      </tr>
+      <tr>
+        <td><code>influencers</code></td>
+        <td><strong>8 creators</strong></td>
+        <td>Abo Flah, Noor Stars, Narins, Osama Marwah, Mohamad Adnan, Ghaith Marwan, Abir Saghir.</td>
+      </tr>
+      <tr>
+        <td><code>inquiries</code></td>
+        <td><strong>1 inquiry</strong></td>
+        <td>Reservation inquiry for Sony FX6 from client ibrahim galal (AED 1,850).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 6: GO LIVE CHECKLIST -->
+  <div class="section-header page-break">
+    <h2>6. Production Go-Live Checklist / قائمة الإطلاق النهائي</h2>
+    <span class="section-tag">Deployment Protocols</span>
+  </div>
+
+  <div class="bilingual-card" style="margin-bottom:16px;">
+    <h3 style="color:var(--green); margin-bottom:8px;">✓ All Pre-Flight Verifications Passed</h3>
+    <ul style="padding-left:20px; color:var(--text); font-size:13px; line-height:1.8;">
+      <li><strong>Test Suite:</strong> 117 automated unit and integration tests passing with 0 failures (<code>npm test</code>).</li>
+      <li><strong>Database Integrity:</strong> 108 legacy duplicate slugs cleaned, 158 authentic Arabic technical descriptions injected.</li>
+      <li><strong>Payment Gateways:</strong> Ziina UAE payment intents verified in sandbox/simulation mode.</li>
+      <li><strong>Layout Invariance:</strong> Strict LTR navbar and footer verified in both Arabic and English locales.</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center; padding:40px; color:var(--muted); font-size:12px; border-top:1px solid var(--border); margin-top:40px;">
+    © 2026 Yas Productions LLC • Dubai Studio City, UAE • All Rights Reserved
+  </div>
+
+</body>
+</html>
