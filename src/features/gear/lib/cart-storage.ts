@@ -29,12 +29,13 @@ const dateRangeSchema = z.object({
   billingMultiplier: z.number().positive().max(365),
   discountPercentage: z.number().min(0).max(100),
 }).refine((range) => range.returnDate >= range.pickupDate &&
-  range.totalDays === Math.max(1, (Date.parse(range.returnDate) - Date.parse(range.pickupDate)) / 86400000));
+  range.totalDays === Math.max(1, Math.round((Date.parse(range.returnDate) - Date.parse(range.pickupDate)) / 86400000)));
 const deliverySchema = z.enum(["studio_delivery", "courier_dubai", "pickup_hub"]);
 
 export function getInitialDateRange(): RentalDateRange {
   const today = new Date().toISOString().split("T")[0];
-  return { pickupDate: today, returnDate: today, totalDays: 1, billingMultiplier: 1, discountPercentage: 0 };
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().split("T")[0];
+  return { pickupDate: today, returnDate: tomorrow, totalDays: 1, billingMultiplier: 1, discountPercentage: 0 };
 }
 
 /** Treat storage from this or another tab as untrusted and restore fields independently. */

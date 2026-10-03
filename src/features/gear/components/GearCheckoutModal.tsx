@@ -113,6 +113,7 @@ export function GearCheckoutModal({
         deliveryMethod,
         notes: notes || undefined,
         startDate: dateRange.pickupDate,
+        returnDate: dateRange.returnDate,
       });
 
       if (res.success && res.data) {

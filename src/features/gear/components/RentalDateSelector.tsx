@@ -19,7 +19,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
     const start = new Date(pickup);
     const end = new Date(returnDateStr);
 
-    let diffDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    let diffDays = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
     if (diffDays < 1 || isNaN(diffDays)) {
       diffDays = 1;
     }
@@ -38,7 +38,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
   const setPreset = (days: number) => {
     const start = new Date();
     const end = new Date();
-    end.setDate(start.getDate() + (days - 1));
+    end.setDate(start.getDate() + days);
 
     const pickupStr = start.toISOString().split("T")[0];
     const returnStr = end.toISOString().split("T")[0];
