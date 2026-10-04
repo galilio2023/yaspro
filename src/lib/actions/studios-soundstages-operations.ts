@@ -19,8 +19,12 @@ import { isUuid, isDbAvailable, requireAdmin, type CmsResponse } from "./shared"
  */
 export async function getCmsStudios(): Promise<Studio[]> {
   if (isDbAvailable()) {
-    const records = await db.select().from(studios).orderBy(desc(studios.createdAt));
-    return records;
+    try {
+      const records = await db.select().from(studios).orderBy(desc(studios.createdAt));
+      return records;
+    } catch (err) {
+      console.error("getCmsStudios: database unavailable, using static fallback.", err);
+    }
   }
 
   // Fallback to STUDIOS catalog converted to Studio schema format
