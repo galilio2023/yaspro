@@ -18,6 +18,7 @@ function loadSource(file, mocks = {}, globals = {}) {
   vm.runInNewContext(outputText, {
     exports,
     require: (name) => {
+      if (name === '@/lib/booking-payment-capability') return { issueBookingPaymentCapability: async () => {} };
       if (Object.hasOwn(mocks, name)) return mocks[name];
       if (name.startsWith('.')) {
         const resolvedTarget = path.resolve(dir, name);
@@ -436,7 +437,8 @@ test('an empty CMS studio table does not resurrect the static catalog', async ()
 
 test('deleteCmsUser protects self and primary CEO accounts and safely unlinks references in transaction', async () => {
   const operations = [];
-  const mockDb = {
+  let transactions = 0;
+  const mockTx = {
     update: (tbl) => ({
       set: (val) => ({
         where: (clause) => {
@@ -452,6 +454,8 @@ test('deleteCmsUser protects self and primary CEO accounts and safely unlinks re
       },
     }),
   };
+
+  const mockDb = { transaction: async (callback) => { transactions++; return callback(mockTx); } };
 
   let currentAdminSession = { user: { id: 'usr_admin_1', role: 'admin' } };
 
@@ -479,6 +483,7 @@ test('deleteCmsUser protects self and primary CEO accounts and safely unlinks re
   // 3. Should safely delete user (unlinking bookings/rfps, deleting sessions/accounts, deleting user)
   const successRes = await deleteCmsUser('usr_walaa_admin');
   assert.equal(successRes.success, true);
+  assert.equal(transactions, 1);
   assert.equal(operations.length, 5);
   assert.equal(operations[0].op, 'update');
   assert.equal(operations[0].val.userId, null);

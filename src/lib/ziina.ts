@@ -1,5 +1,7 @@
 "use server";
 
+import { getCurrentSession } from "@/lib/actions/shared";
+import { hasBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { db } from "@/db";
 import { bookings } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
@@ -53,6 +55,12 @@ export async function createZiinaPaymentIntent(
     });
     if (!booking) {
       return { success: false, error: "Booking not found." };
+    }
+    const authorized = booking.userId
+      ? (await getCurrentSession())?.user?.id === booking.userId
+      : await hasBookingPaymentCapability(booking.id);
+    if (!authorized) {
+      return { success: false, error: "Unauthorized to pay for this booking." };
     }
     if (booking.status === "cancelled") {
       return { success: false, error: "This booking was cancelled." };
@@ -124,10 +132,14 @@ export async function createZiinaPaymentIntent(
 
       if (data.redirect_url && data.id) {
         // Persist the intent id so the webhook can match the payment back to this booking.
-        await db
+        const updated = await db
           .update(bookings)
           .set({ paymentReference: String(data.id), updatedAt: new Date() })
-          .where(and(eq(bookings.id, booking.id), eq(bookings.paymentStatus, booking.paymentStatus)));
+          .where(and(eq(bookings.id, booking.id), eq(bookings.paymentStatus, booking.paymentStatus)))
+          .returning({ id: bookings.id });
+        if (updated.length === 0) {
+          return { success: false, error: "Booking payment changed. Please retry." };
+        }
 
         return {
           success: true,

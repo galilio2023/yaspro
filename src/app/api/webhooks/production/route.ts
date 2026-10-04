@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { bookings } from "@/db/schema";
-import { eq, or } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { sendBookingConfirmationNotification } from "@/lib/notifications";
 import { revalidatePath, updateTag } from "next/cache";
 import crypto from "crypto";
@@ -108,12 +108,8 @@ export async function POST(request: Request) {
       }
 
       // The intent id is stored on the booking when the intent is created.
-      const meta = data.metadata;
       const bookingRecord = await db.query.bookings.findFirst({
-        where: or(
-          eq(bookings.paymentReference, intentId),
-          meta?.bookingId ? eq(bookings.id, meta.bookingId) : undefined
-        ),
+        where: eq(bookings.paymentReference, intentId),
         with: { user: true },
       });
 

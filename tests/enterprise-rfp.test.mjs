@@ -53,6 +53,7 @@ function actionHarness(results, env = { DATABASE_URL: 'postgresql://test:local@l
   };
   let random = 0;
   const { submitEnterpriseRfp } = loadSource('src/lib/actions.ts', {
+    '@/lib/booking-payment-capability': { issueBookingPaymentCapability: async () => {} },
     '@/db': { db }, '@/db/schema': { enterpriseRfps: table }, '@/lib/utils': {},
     'next/cache': { revalidatePath: (value) => revalidated.push(value) },
     './validations': { enterpriseRfpSchema }, '@/features/booking/constants': {},
@@ -144,6 +145,7 @@ test('success waits for the insert to finish', async () => {
 test('database configuration is lazy and initialization errors stay catchable', () => {
   let attempts = 0;
   const { db } = loadSource('src/db/index.ts', {
+    '@/lib/deployment-environment': {},
     'server-only': {}, './schema': {}, 'drizzle-orm/neon-http': {},
     '@neondatabase/serverless': { neon() { attempts++; throw new Error('invalid database URL'); } },
   }, { process: { env: {} } });

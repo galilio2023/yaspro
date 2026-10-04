@@ -18,6 +18,7 @@ import { getCmsOverviewStats } from "@/lib/cms-actions";
 
 export default async function AdminDashboardPage() {
   const stats = await getCmsOverviewStats();
+  const metricsUnavailable = stats.status === "unavailable";
 
   const METRIC_CARDS = [
     {
@@ -134,6 +135,12 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
+      {metricsUnavailable && (
+        <div role="status" className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200">
+          Current metrics are unavailable. Refresh this page to retry.
+        </div>
+      )}
+
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {METRIC_CARDS.map((card) => {
@@ -148,7 +155,7 @@ export default async function AdminDashboardPage() {
                 <div className="size-11 rounded-xl bg-white/10 flex items-center justify-center">
                   <Icon size={22} />
                 </div>
-                {card.badge && (
+                {card.badge && !metricsUnavailable && (
                   <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
                     {card.badge}
                   </span>
@@ -157,7 +164,7 @@ export default async function AdminDashboardPage() {
 
               <div className="mt-6">
                 <span className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white block">
-                  {card.value}
+                  {metricsUnavailable ? "Unavailable" : card.value}
                 </span>
                 <span className="font-semibold text-slate-200 text-base mt-1 block group-hover:text-white">
                   {card.title}

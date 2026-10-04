@@ -182,3 +182,20 @@ test('POST /api/webhooks/production ignores non-completed payment statuses', asy
   });
   assert.equal(res.body.status, 'ignored_non_completed');
 });
+
+test('webhook metadata cannot reconcile an intent absent from stored paymentReference', async () => {
+  let query;
+  const { POST } = loadSource('src/app/api/webhooks/production/route.ts', {
+    '@/db': { db: { query: { bookings: { findFirst: async ({ where }) => { query = where; return null; } } }, update: () => assert.fail('Unexpected write') } },
+    '@/db/schema': { bookings: { id: 'id', paymentReference: 'paymentReference' } },
+    'drizzle-orm': { eq: (column, value) => ({ column, value }), or: (...conditions) => ({ conditions }) },
+    'next/cache': {},
+    'next/server': { NextResponse: { json: (body, init) => ({ body, status: init?.status || 200 }) } },
+    '@/lib/notifications': { sendBookingConfirmationNotification: () => assert.fail('Unexpected notification') },
+  });
+  const response = await POST({ headers: { get: () => null }, text: async () => JSON.stringify({
+    event: 'payment_intent.status.updated', data: { id: 'unrelated-intent', status: 'completed', metadata: { bookingId: 'victim-booking' }, amount: 240000 },
+  }) });
+  assert.equal(response.status, 404);
+  assert.deepEqual(query, { column: 'paymentReference', value: 'unrelated-intent' });
+});

@@ -103,6 +103,7 @@ test('createBooking rejects studio double-booking when schedule overlaps', async
   const validations = loadSource('src/lib/validations.ts');
 
   const { createBooking } = loadSource('src/lib/actions.ts', {
+    '@/lib/booking-payment-capability': { issueBookingPaymentCapability: async () => {} },
     '@/db': { db: mockDb },
     '@/db/schema': {
       bookings: { id: Symbol('id'), studioId: Symbol('studioId'), status: Symbol('status'), scheduledAt: Symbol('scheduledAt') },
@@ -152,9 +153,12 @@ test('booking uses CMS IDs and rates and rejects deleted or inactive studios', a
   let studioRecord = { id: studioId, slug: 'custom-room', name: 'Custom Room', hourlyRate: '777.00', isActive: true };
   const schemas = { studios: { id: 'studio-id', slug: 'studio-slug' }, bookings: {}, users: {} };
   const writes = [];
+  const capabilities = [];
+  let session = null;
   let lookup;
   const constants = loadSource('src/features/booking/constants.ts');
   const { createBooking } = loadSource('src/lib/actions.ts', {
+    '@/lib/booking-payment-capability': { issueBookingPaymentCapability: async (id) => capabilities.push(id) },
     '@/db': { db: {
       query: { studios: { findFirst: async ({ where }) => { lookup = where; return studioRecord; } } },
       select: () => ({ from: () => ({ where: async () => [] }) }),
@@ -166,7 +170,7 @@ test('booking uses CMS IDs and rates and rejects deleted or inactive studios', a
     '@/db/schema': schemas,
     'drizzle-orm': { eq: (col, val) => ({ col, val }), and() {}, inArray() {} },
     'next/cache': { revalidatePath() {} },
-    'next/headers': {}, '@/lib/auth': {},
+    'next/headers': { headers: async () => new Headers() }, '@/lib/auth': { auth: { api: { getSession: async () => session } } },
     '@/lib/utils': { generateBookingReference: () => 'REF' },
     '@/features/booking/constants': constants,
     './validations': { bookingSubmissionSchema: { safeParse: (data) => ({ success: true, data }) } },
@@ -179,9 +183,15 @@ test('booking uses CMS IDs and rates and rejects deleted or inactive studios', a
   const booking = writes.find((write) => write.table === schemas.bookings).values;
   assert.equal(booking.studioId, studioId);
   assert.equal(booking.totalAmount, '1631.70');
+  assert.equal(booking.userId, null);
+  assert.match(booking.specialRequests, /local@example.com/);
+  assert.deepEqual(capabilities, ['booking']);
+  session = { user: { id: 'authenticated-owner' } };
   writes.length = 0;
   assert.equal((await createBooking({ ...input, studioId: 'custom-room' })).success, true);
   assert.deepEqual(lookup, { col: 'studio-slug', val: 'custom-room' });
+  assert.equal(writes[0].values.userId, 'authenticated-owner');
+  assert.deepEqual(capabilities, ['booking']);
   writes.length = 0;
   studioRecord = { ...studioRecord, isActive: false };
   assert.equal((await createBooking(input)).success, false);

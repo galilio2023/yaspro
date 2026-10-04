@@ -40,6 +40,7 @@ export async function getCmsOverviewStats() {
         ]);
 
       return {
+        status: "available" as const,
         totalProjects: allProjects.length || PROJECTS_DATA.length,
         totalInfluencers: allInfluencers.length || INFLUENCERS_DATA.length,
         totalGear: allGear.length || GEAR_DATA.length,
@@ -63,6 +64,7 @@ export async function getCmsOverviewStats() {
   // In production, never return fabricated statistics
   if (process.env.NODE_ENV === "production") {
     return {
+      status: "unavailable" as const,
       totalProjects: PROJECTS_DATA.length,
       totalInfluencers: INFLUENCERS_DATA.length,
       totalGear: GEAR_DATA.length,
@@ -82,6 +84,7 @@ export async function getCmsOverviewStats() {
 
   // Local development / mock preview fallback
   return {
+    status: "demo" as const,
     totalProjects: PROJECTS_DATA.length,
     totalInfluencers: INFLUENCERS_DATA.length,
     totalGear: GEAR_DATA.length,

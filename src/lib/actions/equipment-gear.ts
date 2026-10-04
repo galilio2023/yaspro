@@ -1,9 +1,10 @@
 "use server";
 
-import { calculateGearCartTotals, calculateRentalMultiplier } from "../../features/gear/lib/cart-pricing";
+import { calculateGearCartTotals } from "../../features/gear/lib/cart-pricing";
 import { addCalendarDays, isRentalScheduleConsistent } from "../../features/gear/lib/rental-schedule";
 import { checkRateLimit, getClientIdentifier } from "../rate-limit";
 import { z } from "zod";
+import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { db } from "@/db";
 import {
   equipment,
@@ -409,6 +410,9 @@ export async function createGearBookingOrder(
         })
         .returning();
 
+      if (!finalUserId && newBooking?.id) {
+        await issueBookingPaymentCapability(newBooking.id);
+      }
       revalidatePath("/portal");
       revalidatePath("/portal/bookings");
       revalidatePath("/admin/bookings");

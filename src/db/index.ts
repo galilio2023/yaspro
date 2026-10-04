@@ -1,6 +1,8 @@
 import "server-only";
-import { neon } from "@neondatabase/serverless";
+import "@/lib/deployment-environment";
+import { neon, Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle as transactionalDrizzle, type NeonDatabase } from "drizzle-orm/neon-serverless";
 import * as schema from "./schema";
 
 function createDb() {
@@ -8,10 +10,23 @@ function createDb() {
   return drizzle(sql, { schema });
 }
 
+// HTTP queries remain lightweight; callback transactions need a WebSocket session.
+const transaction: NeonDatabase<typeof schema>["transaction"] = async (callback, config) => {
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  try {
+    return await transactionalDrizzle(pool, { schema }).transaction(callback, config);
+  } finally {
+    await pool.end();
+  }
+};
+
+type Database = Omit<ReturnType<typeof createDb>, "transaction"> & { transaction: typeof transaction };
+
 // Defer configuration errors until a query is attempted so actions can handle them.
 let client: ReturnType<typeof createDb> | undefined;
-export const db = new Proxy({} as ReturnType<typeof createDb>, {
+export const db = new Proxy({} as Database, {
   get(_target, property) {
+    if (property === "transaction") return transaction;
     client ??= createDb();
     const value = Reflect.get(client, property);
     return typeof value === "function" ? value.bind(client) : value;

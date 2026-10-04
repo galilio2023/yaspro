@@ -35,6 +35,7 @@ const rfp = {
 async function lookupAs(user) {
   const { lookupEnterpriseRfp } = loadSource('src/lib/portal-actions.ts', {
     ...authMocks(user),
+    '@/lib/booking-payment-capability': { issueBookingPaymentCapability: async () => {} },
     '@/db': { db: { query: { enterpriseRfps: { findFirst: async () => rfp } } } },
     '@/db/schema': { enterpriseRfps: { referenceCode: 'referenceCode' } },
     'drizzle-orm': { eq() {} },
@@ -73,6 +74,7 @@ function profileHarness() {
   const revalidated = [];
   const { syncUserProfile } = loadSource('src/lib/actions.ts', {
     ...authMocks({ id: 'owner' }),
+    '@/lib/booking-payment-capability': { issueBookingPaymentCapability: async () => {} },
     '@/db': { db: { update: () => ({ set: (payload) => ({ where: async () => { updates.push(payload); } }) }) } },
     '@/db/schema': { users: { id: 'id' } },
     'drizzle-orm': { eq() {} },
@@ -144,6 +146,7 @@ function claimHarness({ sessionUser = null, user, account = null } = {}) {
   const queries = [];
   const { claimGuestAccount, syncUserProfile } = loadSource('src/lib/actions.ts', {
     ...authMocks(sessionUser),
+    '@/lib/booking-payment-capability': { issueBookingPaymentCapability: async () => {} },
     '@/db': { db: {
       query: {
         users: { findFirst: async () => { queries.push('user'); return user; } },

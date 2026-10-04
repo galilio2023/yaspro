@@ -14,11 +14,12 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 # ---------------------------------------------------------
-# FONT REGISTRATION (Windows System Fonts for Arabic & EN)
+# FONT REGISTRATION (Windows Arial or Linux DejaVu Sans)
 # ---------------------------------------------------------
-pdfmetrics.registerFont(TTFont("Arial", "C:/Windows/Fonts/arial.ttf"))
-pdfmetrics.registerFont(TTFont("Arial-Bold", "C:/Windows/Fonts/arialbd.ttf"))
-pdfmetrics.registerFont(TTFont("Arial-Italic", "C:/Windows/Fonts/ariali.ttf"))
+font_dir = os.environ.get("HANDOVER_FONT_DIR", "C:/Windows/Fonts" if os.name == "nt" else "/usr/share/fonts/dejavu-sans-fonts")
+font_files = ("arial.ttf", "arialbd.ttf", "ariali.ttf") if os.name == "nt" else ("DejaVuSans.ttf", "DejaVuSans-Bold.ttf", "DejaVuSans-Oblique.ttf")
+for name, filename in zip(("Arial", "Arial-Bold", "Arial-Italic"), font_files):
+    pdfmetrics.registerFont(TTFont(name, os.path.join(font_dir, filename)))
 
 def ar(text: str) -> str:
     """Reshape and reorder Arabic text for bidirectional rendering."""
@@ -78,7 +79,7 @@ class NumberedCanvas(canvas.Canvas):
 
 
 def generate_pdf():
-    pdf_path = os.path.abspath("CLIENT_HANDOVER_AND_USER_GUIDE.pdf")
+    pdf_path = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else "CLIENT_HANDOVER_AND_USER_GUIDE.pdf")
     # A4: 595.27 x 841.89 pt. Printable width: 595.27 - 56 = 539.27 pt.
     doc = SimpleDocTemplate(
         pdf_path,
@@ -270,42 +271,42 @@ def generate_pdf():
             Paragraph("<font color='#b45309'><b>Master CEO</b></font>", table_cell),
             Paragraph("Yaman Alomari", table_cell_bold),
             Paragraph("<code>ceo@yasproductions.com</code>", table_cell),
-            Paragraph("<code>YasPro@2026!</code>", table_cell_bold),
+            Paragraph("[مشفّر / Secure Channel]", table_cell_bold),
             Paragraph("Full Master Admin Control Center (<code>/admin</code>)", table_cell),
         ],
         [
             Paragraph("<font color='#b45309'><b>Master Admin</b></font>", table_cell),
             Paragraph("YASPRO Master", table_cell_bold),
             Paragraph("<code>pressyaman@gmail.com</code>", table_cell),
-            Paragraph("<code>YasPro@2026!</code>", table_cell_bold),
+            Paragraph("[مشفّر / Secure Channel]", table_cell_bold),
             Paragraph("Full Admin (Content, Fleet, Studios) (<code>/admin</code>)", table_cell),
         ],
         [
             Paragraph("<font color='#b45309'><b>Operations Lead</b></font>", table_cell),
             Paragraph("Ahmad Wadi", table_cell_bold),
             Paragraph("<code>ahmedwadi978@gmail.com</code>", table_cell),
-            Paragraph("<code>YasPro@2026!</code>", table_cell_bold),
+            Paragraph("[مشفّر / Secure Channel]", table_cell_bold),
             Paragraph("Soundstages & Production Bookings (<code>/admin/bookings</code>)", table_cell),
         ],
         [
             Paragraph("<font color='#b45309'><b>HQ Operations</b></font>", table_cell),
             Paragraph("Operations Desk", table_cell_bold),
             Paragraph("<code>info@yasproductions.com</code>", table_cell),
-            Paragraph("<code>YasPro@2026!</code>", table_cell_bold),
+            Paragraph("[مشفّر / Secure Channel]", table_cell_bold),
             Paragraph("Client Rental Inquiries & Leads Inbox (<code>/admin/inquiries</code>)", table_cell),
         ],
         [
             Paragraph("<font color='#b45309'><b>Production Mgr</b></font>", table_cell),
             Paragraph("Walaa Ali", table_cell_bold),
             Paragraph("<code>walaa.ali131@gmail.com</code>", table_cell),
-            Paragraph("<code>YasPro@2026!</code>", table_cell_bold),
+            Paragraph("[مشفّر / Secure Channel]", table_cell_bold),
             Paragraph("Cinema Equipment Fleet CRUD Management (<code>/admin/gear</code>)", table_cell),
         ],
         [
             Paragraph("<font color='#0369a1'><b>Verified Client</b></font>", table_cell),
             Paragraph("ibrahim galal", table_cell_bold),
             Paragraph("<code>ahmed@gmail.com</code>", table_cell),
-            Paragraph("<code>YasPro@2026!</code>", table_cell_bold),
+            Paragraph("[مشفّر / Secure Channel]", table_cell_bold),
             Paragraph("Client Portal, Active Bookings & Tax Invoices (<code>/portal</code>)", table_cell),
         ],
     ]

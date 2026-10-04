@@ -1,5 +1,6 @@
 "use server";
 
+import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { db } from "@/db";
 import { bookings, inquiries, users, studios, enterpriseRfps, accounts, type SessionType, type InquiryType } from "@/db/schema";
 import { generateBookingReference } from "@/lib/utils";
@@ -153,36 +154,9 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
         }
       }
 
-      // 5. Ensure user exists. An anonymous form must NEVER overwrite an existing
-      //    account's profile (name/phone/company), so existing rows are left untouched.
-      const userId = `usr_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-      const normalizedEmail = data.email.toLowerCase().trim();
-      const insertUserQuery = db
-        .insert(users)
-        .values({
-          id: userId,
-          name: `${data.firstName} ${data.lastName}`,
-          email: normalizedEmail,
-          phone: data.phone,
-          company: data.company,
-          role: "client",
-        });
-
-      let resolvedUserId: string = userId;
-      if (typeof insertUserQuery.onConflictDoNothing === "function") {
-        await insertUserQuery.onConflictDoNothing({ target: users.email });
-        const existing = db.query?.users
-          ? await db.query.users.findFirst({ where: eq(users.email, normalizedEmail) })
-          : null;
-        if (existing?.id) resolvedUserId = existing.id;
-      } else if (typeof insertUserQuery.onConflictDoUpdate === "function") {
-        const updateBuilder = insertUserQuery.onConflictDoUpdate({
-          target: users.email,
-          set: { updatedAt: new Date() },
-        });
-        const res = typeof updateBuilder?.returning === "function" ? await updateBuilder.returning() : null;
-        if (res && res[0]?.id) resolvedUserId = res[0].id;
-      }
+      // Only a verified session can attach a booking to an account.
+      const session = await auth.api.getSession({ headers: await headers() });
+      const resolvedUserId = session?.user?.id || null;
 
       // 6. Create booking with the resolved studio UUID
       const [newBooking] = await db
@@ -199,12 +173,16 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
           needsColorGrading: data.needsColorGrading,
           needsSoundMastering: data.needsSoundMastering,
           propsNotes: data.propsNotes,
-          specialRequests: data.specialRequests,
+          specialRequests: resolvedUserId ? data.specialRequests :
+            `[Contact: ${data.firstName} ${data.lastName} | ${data.email} | ${data.phone} | ${data.company || ""}] ${data.specialRequests || ""}`,
           totalAmount: calculatedTotal.toFixed(2),
           status: "pending",
         })
         .returning();
 
+      if (!resolvedUserId && newBooking?.id) {
+        await issueBookingPaymentCapability(newBooking.id);
+      }
       revalidatePath("/studio-booking");
 
       // Dispatch automated Call Sheet notification

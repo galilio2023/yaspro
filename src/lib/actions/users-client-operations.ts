@@ -155,20 +155,22 @@ export async function deleteCmsUser(userId: string): Promise<CmsResponse> {
     }
 
     if (isDbAvailable()) {
-      // 1. Unlink historical bookings (preserve booking records with audit trail)
-      await db.update(bookings).set({ userId: null }).where(eq(bookings.userId, userId));
+      await db.transaction(async (tx) => {
+        // 1. Unlink historical bookings (preserve booking records with audit trail)
+        await tx.update(bookings).set({ userId: null }).where(eq(bookings.userId, userId));
 
-      // 2. Unlink any enterprise RFPs (preserve proposal records)
-      await db.update(enterpriseRfps).set({ userId: null }).where(eq(enterpriseRfps.userId, userId));
+        // 2. Unlink any enterprise RFPs (preserve proposal records)
+        await tx.update(enterpriseRfps).set({ userId: null }).where(eq(enterpriseRfps.userId, userId));
 
-      // 3. Delete active sessions
-      await db.delete(sessions).where(eq(sessions.userId, userId));
+        // 3. Delete active sessions
+        await tx.delete(sessions).where(eq(sessions.userId, userId));
 
-      // 4. Delete authentication accounts / credentials
-      await db.delete(accounts).where(eq(accounts.userId, userId));
+        // 4. Delete authentication accounts / credentials
+        await tx.delete(accounts).where(eq(accounts.userId, userId));
 
-      // 5. Delete user profile record
-      await db.delete(users).where(eq(users.id, userId));
+        // 5. Delete user profile record
+        await tx.delete(users).where(eq(users.id, userId));
+      });
     }
 
     revalidatePath("/admin/users");

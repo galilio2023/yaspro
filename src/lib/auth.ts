@@ -1,3 +1,4 @@
+import "@/lib/deployment-environment";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
@@ -10,7 +11,8 @@ if (process.env.NODE_ENV === "production" && !process.env.BETTER_AUTH_SECRET && 
 }
 const secret =
   process.env.BETTER_AUTH_SECRET ||
-  (process.env.NODE_ENV === "production" ? "build-phase-only-placeholder-secret-32chars" : "dev-secret-key-at-least-32-chars-long");
+  (isBuildPhase ? "build-phase-only-placeholder-secret-32chars" :
+    process.env.NODE_ENV !== "production" ? "dev-secret-key-at-least-32-chars-long" : undefined);
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 const trustedOrigins = [

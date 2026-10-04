@@ -65,10 +65,12 @@ function orderFixture(session = null) {
   const equipment = {};
   const bookings = {};
   const writes = [];
+  const capabilities = [];
   let reads = 0;
   const limits = loadSource('src/lib/rate-limit.ts', { 'next/headers': { headers: async () => new Map() } });
   const { createGearBookingOrder } = loadSource('src/lib/actions/equipment-gear.ts', {
     '../rate-limit': limits,
+    '@/lib/booking-payment-capability': { issueBookingPaymentCapability: async (id) => capabilities.push(id) },
     '@/db': { db: {
       select: () => ({ from: (table) => {
         assert.equal(table, equipment);
@@ -89,7 +91,7 @@ function orderFixture(session = null) {
     './shared': { isDbAvailable: () => true, isUuid: () => false, getCurrentSession: async () => session },
   });
   const input = { gearIds: ['camera'], customerName: 'Guest User', email: 'existing@example.com', phone: '12345678' };
-  return { submit: (overrides = {}) => createGearBookingOrder({ ...input, ...overrides }), writes, reads: () => reads };
+  return { submit: (overrides = {}) => createGearBookingOrder({ ...input, ...overrides }), writes, capabilities, reads: () => reads };
 }
 
 test('server charges the shared cart price for all duration tiers and delivery methods', async () => {
@@ -102,6 +104,7 @@ test('server charges the shared cart price for all duration tiers and delivery m
       assert.equal(result.data.totalAmount, expected);
       assert.equal(h.writes[0].totalAmount, expected.toFixed(2));
       assert.equal(h.writes[0].userId, null);
+      assert.deepEqual(h.capabilities, ['booking-id']);
     }
   }
 });
@@ -110,6 +113,7 @@ test('gear orders link only the authenticated session, preserve defaults, and th
   const h = orderFixture({ user: { id: 'session-owner' } });
   for (let attempt = 0; attempt < 5; attempt++) assert.equal((await h.submit()).success, true);
   assert.equal(h.writes[0].userId, 'session-owner');
+  assert.deepEqual(h.capabilities, []);
   assert.equal(h.writes[0].durationHours, 24);
   assert.equal(h.writes[0].propsNotes, 'Gear Delivery: studio_delivery | Duration: 1d');
   assert.equal((await h.submit()).success, false);
