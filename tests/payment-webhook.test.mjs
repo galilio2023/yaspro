@@ -34,6 +34,9 @@ test('POST /api/webhooks/production handles payment.completed and reconciles boo
           id: 'booking-uuid-123',
           referenceCode: 'YAS-BK-999',
           totalAmount: '2400.00',
+          paymentStatus: 'unpaid',
+          status: 'pending',
+          paymentReference: 'intent-777',
           currency: 'AED',
           scheduledAt: new Date('2026-10-01T10:00:00Z'),
           durationHours: 3,
@@ -87,10 +90,8 @@ test('POST /api/webhooks/production handles payment.completed and reconciles boo
 
   const request = {
     text: async () => JSON.stringify({
-      event: 'payment.completed',
-      referenceCode: 'YAS-BK-999',
-      paymentReference: 'PAY-STRIPE-777',
-      customerEmail: 'producer@dubaimedia.ae',
+      event: 'payment_intent.status.updated',
+      data: { id: 'intent-777', amount: 240000, currency_code: 'AED', status: 'completed' },
     }),
     headers: {
       get: () => null,
@@ -105,7 +106,7 @@ test('POST /api/webhooks/production handles payment.completed and reconciles boo
 
   assert.equal(updatedBooking.paymentStatus, 'paid');
   assert.equal(updatedBooking.status, 'confirmed');
-  assert.equal(updatedBooking.paymentReference, 'PAY-STRIPE-777');
+  assert.equal(updatedBooking.paymentReference, 'intent-777');
 
   assert.ok(notificationDispatched);
   assert.equal(notificationDispatched.email, 'producer@dubaimedia.ae');
@@ -139,4 +140,62 @@ test('POST /api/webhooks/production rejects missing event identifier', async () 
   assert.equal(response.status, 400);
   assert.equal(response.body.success, false);
   assert.match(response.body.error, /missing event identifier/i);
+});
+
+test('POST /api/webhooks/production does NOT confirm when the paid amount mismatches', async () => {
+  let updated = false;
+  const mockDb = {
+    query: { bookings: { findFirst: async () => ({
+      id: 'b1', referenceCode: 'YAS-X', totalAmount: '2400.00', paymentStatus: 'unpaid', status: 'pending',
+      paymentReference: 'intent-1', user: { email: 'a@b.c' },
+    }) } },
+    update: () => { updated = true; return { set: () => ({ where: () => Promise.resolve() }) }; },
+  };
+  const { POST } = loadSource('src/app/api/webhooks/production/route.ts', {
+    '@/db': { db: mockDb },
+    '@/db/schema': { bookings: { id: Symbol('id'), paymentReference: Symbol('pr') }, users: {} },
+    'drizzle-orm': { eq: () => {}, or: () => {} },
+    'next/cache': { revalidatePath: () => {}, updateTag: () => {} },
+    'next/server': { NextResponse: { json: (body, init) => ({ body, status: init?.status || 200 }) } },
+    '@/lib/notifications': { sendBookingConfirmationNotification: async () => {} },
+  });
+  const res = await POST({
+    text: async () => JSON.stringify({ event: 'payment_intent.status.updated', data: { id: 'intent-1', amount: 100, currency_code: 'AED', status: 'completed' } }),
+    headers: { get: () => null },
+  });
+  assert.equal(res.status, 422);
+  assert.equal(updated, false);
+});
+
+test('POST /api/webhooks/production ignores non-completed payment statuses', async () => {
+  const { POST } = loadSource('src/app/api/webhooks/production/route.ts', {
+    '@/db': { db: {} },
+    '@/db/schema': { bookings: {}, users: {} },
+    'drizzle-orm': { eq: () => {}, or: () => {} },
+    'next/cache': { revalidatePath: () => {}, updateTag: () => {} },
+    'next/server': { NextResponse: { json: (body, init) => ({ body, status: init?.status || 200 }) } },
+    '@/lib/notifications': { sendBookingConfirmationNotification: async () => {} },
+  });
+  const res = await POST({
+    text: async () => JSON.stringify({ event: 'payment_intent.status.updated', data: { id: 'i', status: 'pending' } }),
+    headers: { get: () => null },
+  });
+  assert.equal(res.body.status, 'ignored_non_completed');
+});
+
+test('webhook metadata cannot reconcile an intent absent from stored paymentReference', async () => {
+  let query;
+  const { POST } = loadSource('src/app/api/webhooks/production/route.ts', {
+    '@/db': { db: { query: { bookings: { findFirst: async ({ where }) => { query = where; return null; } } }, update: () => assert.fail('Unexpected write') } },
+    '@/db/schema': { bookings: { id: 'id', paymentReference: 'paymentReference' } },
+    'drizzle-orm': { eq: (column, value) => ({ column, value }), or: (...conditions) => ({ conditions }) },
+    'next/cache': {},
+    'next/server': { NextResponse: { json: (body, init) => ({ body, status: init?.status || 200 }) } },
+    '@/lib/notifications': { sendBookingConfirmationNotification: () => assert.fail('Unexpected notification') },
+  });
+  const response = await POST({ headers: { get: () => null }, text: async () => JSON.stringify({
+    event: 'payment_intent.status.updated', data: { id: 'unrelated-intent', status: 'completed', metadata: { bookingId: 'victim-booking' }, amount: 240000 },
+  }) });
+  assert.equal(response.status, 404);
+  assert.deepEqual(query, { column: 'paymentReference', value: 'unrelated-intent' });
 });

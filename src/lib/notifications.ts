@@ -1,3 +1,9 @@
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  })[character]!);
+}
+
 export interface NotificationResult {
   sent: boolean;
   channel: "email" | "log";
@@ -110,11 +116,57 @@ export async function sendInquiryNotification(inquiry: {
   message: string;
 }): Promise<NotificationResult> {
   const subject = `[New Inbound Lead] ${inquiry.name} - ${inquiry.inquiryType.toUpperCase()}`;
+  const targetEmail = process.env.INQUIRY_NOTIFICATION_EMAIL || "production@yaspro.ae";
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #020617; color: #f8fafc; padding: 24px;">
+        <div style="max-width: 600px; margin: 0 auto; background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 32px;">
+          <h2 style="color: #f59e0b; margin-top: 0;">Yas Productions &bull; New Lead Notification</h2>
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px; color: #cbd5e1; margin-bottom: 20px;">
+            <tr><td style="padding: 6px 0; border-bottom: 1px solid #334155;">Name:</td><td style="padding: 6px 0; border-bottom: 1px solid #334155; text-align: right; color: #fff;">${escapeHtml(inquiry.name)}</td></tr>
+            <tr><td style="padding: 6px 0; border-bottom: 1px solid #334155;">Email:</td><td style="padding: 6px 0; border-bottom: 1px solid #334155; text-align: right; color: #fff;">${escapeHtml(inquiry.email)}</td></tr>
+            <tr><td style="padding: 6px 0; border-bottom: 1px solid #334155;">Phone:</td><td style="padding: 6px 0; border-bottom: 1px solid #334155; text-align: right; color: #fff;">${escapeHtml(inquiry.phone || "N/A")}</td></tr>
+            <tr><td style="padding: 6px 0; border-bottom: 1px solid #334155;">Company:</td><td style="padding: 6px 0; border-bottom: 1px solid #334155; text-align: right; color: #fff;">${escapeHtml(inquiry.company || "N/A")}</td></tr>
+            <tr><td style="padding: 6px 0; border-bottom: 1px solid #334155;">Type:</td><td style="padding: 6px 0; border-bottom: 1px solid #334155; text-align: right; color: #fff;">${escapeHtml(inquiry.inquiryType)}</td></tr>
+          </table>
+          <div style="background: #1e293b; border-radius: 8px; padding: 16px; font-size: 13px; white-space: pre-wrap; color: #e2e8f0;">${escapeHtml(inquiry.message)}</div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  if (process.env.RESEND_API_KEY && !process.env.RESEND_API_KEY.includes("re_xxx")) {
+    try {
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: "Yas Productions Lead Bot <leads@yaspro.ae>",
+          to: [targetEmail],
+          subject,
+          html: htmlContent,
+        }),
+      });
+
+      if (response.ok) {
+        return { sent: true, channel: "email", recipient: targetEmail, subject };
+      }
+      console.error("Inquiry lead Resend notification failed:", response.status, await response.text());
+    } catch (e) {
+      console.error("Inquiry lead Resend notification error:", e);
+    }
+    return { sent: false, channel: "email", recipient: targetEmail, subject };
+  }
 
   return {
     sent: true,
     channel: "log",
-    recipient: "production@yaspro.ae",
+    recipient: targetEmail,
     subject,
   };
 }

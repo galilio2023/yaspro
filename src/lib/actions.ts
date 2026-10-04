@@ -1,5 +1,6 @@
 "use server";
 
+import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { db } from "@/db";
 import { bookings, inquiries, users, studios, enterpriseRfps, accounts, type SessionType, type InquiryType } from "@/db/schema";
 import { generateBookingReference } from "@/lib/utils";
@@ -105,6 +106,10 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
         const requestedStart = new Date(data.scheduledAt || Date.now());
         const requestedEnd = new Date(requestedStart.getTime() + data.durationHours * 60 * 60 * 1000);
 
+        if (requestedStart.getTime() < Date.now() - 60 * 60 * 1000) {
+          return { success: false, message: "Please choose a session time in the future." };
+        }
+
         // Fetch active bookings for this studio
         const existingBookings = await db
           .select({
@@ -112,6 +117,9 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
             scheduledAt: bookings.scheduledAt,
             durationHours: bookings.durationHours,
             status: bookings.status,
+            paymentStatus: bookings.paymentStatus,
+            paymentReference: bookings.paymentReference,
+            createdAt: bookings.createdAt,
           })
           .from(bookings)
           .where(
@@ -121,8 +129,18 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
             )
           );
 
+        // Unpaid, untouched "pending" holds expire after 2 hours so spam cannot lock the calendar.
+        const HOLD_TTL_MS = 2 * 60 * 60 * 1000;
+        const isStaleHold = (b: (typeof existingBookings)[number]) =>
+          b.status === "pending" &&
+          b.paymentStatus === "unpaid" &&
+          !b.paymentReference &&
+          b.createdAt instanceof Date &&
+          Date.now() - b.createdAt.getTime() > HOLD_TTL_MS;
+
         // Check if any existing active booking overlaps with [requestedStart, requestedEnd]
         const hasConflict = existingBookings.some((b) => {
+          if (isStaleHold(b)) return false;
           const bookedStart = new Date(b.scheduledAt);
           const bookedEnd = new Date(bookedStart.getTime() + b.durationHours * 60 * 60 * 1000);
           return requestedStart < bookedEnd && requestedEnd > bookedStart;
@@ -136,35 +154,16 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
         }
       }
 
-      // 5. Ensure user exists
-      const userId = `usr_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-      const [user] = await db
-        .insert(users)
-        .values({
-          id: userId,
-          name: `${data.firstName} ${data.lastName}`,
-          email: data.email,
-          phone: data.phone,
-          company: data.company,
-          role: "client",
-        })
-        .onConflictDoUpdate({
-          target: users.email,
-          set: {
-            name: `${data.firstName} ${data.lastName}`,
-            phone: data.phone,
-            company: data.company,
-            updatedAt: new Date(),
-          },
-        })
-        .returning();
+      // Only a verified session can attach a booking to an account.
+      const session = await auth.api.getSession({ headers: await headers() });
+      const resolvedUserId = session?.user?.id || null;
 
       // 6. Create booking with the resolved studio UUID
       const [newBooking] = await db
         .insert(bookings)
         .values({
           referenceCode,
-          userId: user?.id || (await db.query.users.findFirst({ where: eq(users.email, data.email) }))?.id,
+          userId: resolvedUserId,
           studioId: studioRecord?.id,
           sessionType: data.sessionType as SessionType,
           scheduledAt: new Date(data.scheduledAt || Date.now()),
@@ -174,12 +173,16 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
           needsColorGrading: data.needsColorGrading,
           needsSoundMastering: data.needsSoundMastering,
           propsNotes: data.propsNotes,
-          specialRequests: data.specialRequests,
+          specialRequests: resolvedUserId ? data.specialRequests :
+            `[Contact: ${data.firstName} ${data.lastName} | ${data.email} | ${data.phone} | ${data.company || ""}] ${data.specialRequests || ""}`,
           totalAmount: calculatedTotal.toFixed(2),
           status: "pending",
         })
         .returning();
 
+      if (!resolvedUserId && newBooking?.id) {
+        await issueBookingPaymentCapability(newBooking.id);
+      }
       revalidatePath("/studio-booking");
 
       // Dispatch automated Call Sheet notification
@@ -203,12 +206,18 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
       return {
         success: true,
         referenceCode,
-        message: "Your studio session has been confirmed and scheduled.",
+        message: "Your studio session request has been received. Complete the payment to confirm your slot.",
         data: { bookingId: newBooking?.id },
       };
     }
 
-    // Preview mode fallback when DATABASE_URL is not configured
+    // Without a database nothing can be saved: never report a fake success in production.
+    if (process.env.NODE_ENV === "production") {
+      return {
+        success: false,
+        message: "Booking is temporarily unavailable. Please contact our concierge directly.",
+      };
+    }
     return {
       success: true,
       referenceCode,
@@ -291,8 +300,8 @@ export async function submitInquiry(rawInput: unknown): Promise<ActionResponse> 
   } catch (error) {
     console.error("Inquiry error:", error);
     return {
-      success: true,
-      message: "Inquiry received.",
+      success: false,
+      message: "We could not send your message. Please try again or contact our concierge directly.",
     };
   }
 }
@@ -349,8 +358,8 @@ export async function submitInfluencerCampaignRequest(rawInput: unknown): Promis
   } catch (error) {
     console.error("Campaign RFP submission error:", error);
     return {
-      success: true,
-      message: `Your collaboration request for ${data.creatorName} has been received.`,
+      success: false,
+      message: "We could not submit your collaboration request. Please try again or contact our team directly.",
     };
   }
 }
@@ -467,14 +476,32 @@ export async function syncUserProfile(input: {
     }
 
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+      const currentUser = db.query?.users
+        ? await db.query.users.findFirst({ where: eq(users.id, targetUserId) })
+        : null;
+
       const updateData: Record<string, unknown> = {
         updatedAt: new Date(),
       };
       if (name !== undefined) updateData.name = name;
       if (input.phone !== undefined) updateData.phone = input.phone.trim() || null;
       if (input.company !== undefined) updateData.company = input.company.trim() || null;
-      if (input.role !== undefined && (input.role === "client" || input.role === "enterprise")) {
-        updateData.role = input.role;
+
+      // Role change safeguards:
+      // 1. Administrators can NEVER have their role altered via client profile sync
+      if (currentUser?.role !== "admin") {
+        if (input.role === "enterprise") {
+          const companyName = input.company?.trim() || currentUser?.company?.trim();
+          if (!companyName || companyName.length < 2) {
+            return { success: false, message: "Company name (at least 2 characters) is required for Enterprise accounts." };
+          }
+          updateData.role = "enterprise";
+        } else if (input.role === "client") {
+          // Prevent accidental downgrades from enterprise without admin action
+          if (currentUser?.role !== "enterprise") {
+            updateData.role = "client";
+          }
+        }
       }
 
       await db
