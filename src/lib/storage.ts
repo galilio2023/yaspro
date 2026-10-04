@@ -56,9 +56,15 @@ export class S3CompatibleStorageProvider implements StorageProvider {
     }
 
     try {
-      // Dynamic import to support optional AWS SDK without bundling penalty for local storage
-      // @ts-expect-error - optional runtime dependency
-      const { S3Client, PutObjectCommand } = await import("@aws-sdk/client-s3");
+      // Dynamic import to support optional AWS SDK without bundling penalty for local storage.
+      // The specifier is a variable and ignored by bundlers so the build doesn't require the package.
+      const s3ModuleName = "@aws-sdk/client-s3";
+      const { S3Client, PutObjectCommand } = (await import(
+        /* webpackIgnore: true */ /* turbopackIgnore: true */ s3ModuleName
+      )) as {
+        S3Client: new (config: Record<string, unknown>) => { send: (command: unknown) => Promise<unknown> };
+        PutObjectCommand: new (input: Record<string, unknown>) => unknown;
+      };
       const client = new S3Client({
         region: process.env.AWS_REGION || "us-east-1",
         credentials: {
