@@ -338,7 +338,7 @@ const CELESTIAL_TILT_DEG = -14;       // Saturn-style diagonal tilt around the h
 export function HeroMediaOrbit() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isHoveredRef = useRef(false);
-  const dimsRef = useRef<{ w: number; h: number }>({ w: 380, h: 506 });
+  const dimsRef = useRef({ w: 380, h: 506, viewportClearance: 190 });
   const staticRenderRef = useRef<() => void>(() => {});
 
   // Responsive dimension tracker
@@ -349,7 +349,12 @@ export function HeroMediaOrbit() {
     const measure = () => {
       const rect = parent.getBoundingClientRect();
       if (rect.width > 0 && rect.height > 0) {
-        dimsRef.current = { w: rect.width, h: rect.height };
+        const centerX = rect.left + rect.width / 2;
+        dimsRef.current = {
+          w: rect.width,
+          h: rect.height,
+          viewportClearance: Math.min(centerX, document.documentElement.clientWidth - centerX),
+        };
         staticRenderRef.current();
       }
     };
@@ -357,7 +362,11 @@ export function HeroMediaOrbit() {
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(parent);
-    return () => observer.disconnect();
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
   }, []);
 
   // 60/120fps direct GPU animation loop (Zero React re-renders)
@@ -372,10 +381,12 @@ export function HeroMediaOrbit() {
     const sinTilt = Math.sin(tiltRad);
 
     const render = () => {
-      const { w, h } = dimsRef.current;
+      const { w, h, viewportClearance } = dimsRef.current;
       const cx = w / 2;
       const cy = h * 0.29; // Anchored directly at the filmmaker's head / VR headset
-      const rx = Math.min(w * 0.58, 225);
+      // Reserve the 44px node's peak depth/hover scale and 24px of ambient glow.
+      const nodeClearance = (44 / 2 * 1.35 + 24) * 1.17;
+      const rx = Math.min(w * 0.58, 225, Math.max(0, viewportClearance - nodeClearance));
       const ry = rx * 0.34; // 3D foreshortened vertical radius
 
       const nodes = containerRef.current?.querySelectorAll<HTMLElement>("[data-orbit-node]");
