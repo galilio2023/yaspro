@@ -109,8 +109,8 @@ export function ShowsSection() {
 
                   {/* Center Play Button Overlay */}
                   <div className="absolute inset-0 flex items-center justify-center z-10">
-                    <div className="size-12 sm:size-14 rounded-full bg-black/60 border border-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-xl group-hover:scale-110 group-hover:btn-brand group-hover:text-zinc-950 transition-all duration-300">
-                      <Play size={18} className="fill-current translate-x-0.5 rtl:-translate-x-0.5 text-white group-hover:text-zinc-950 transition-colors" />
+                    <div className="size-12 sm:size-14 rounded-full bg-black/60 border border-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-xl group-hover:scale-110 group-hover:btn-brand transition-all duration-300">
+                      <Play size={18} className="fill-current translate-x-0.5 rtl:-translate-x-0.5 text-white transition-colors" />
                     </div>
                   </div>
 

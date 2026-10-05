@@ -234,7 +234,7 @@ export function VirtualStudioSection() {
               title={isMuted ? "Unmute Audio" : "Mute Audio"}
             >
               {isMuted ? <VolumeX size={13} className="text-zinc-400" /> : <Volume2 size={13} className="text-brand-lavender" />}
-              <span>{isMuted ? (isArabic ? "كتم الصوت" : "Muted") : (isArabic ? "صوت مفعّل" : "Audio On")}</span>
+              <span>{isMuted ? (isArabic ? "الصوت مكتوم" : "Muted") : (isArabic ? "صوت مفعّل" : "Audio On")}</span>
             </button>
 
             {/* Quick Preset Buttons on Mobile (horizontal scrolling pills) */}
