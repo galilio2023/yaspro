@@ -44,7 +44,7 @@ export const SERVICES_DATA: readonly ServiceItem[] = [
     arabicStatLabel: "مساحة الاستوديو",
     href: "/studio-booking",
     highlight: true,
-    accentGlow: "from-amber-500/20 via-amber-500/5 to-transparent",
+    accentGlow: "from-brand-violet/25 via-brand-mauve/10 to-transparent",
   },
   {
     id: "ob-van-broadcast",
@@ -90,7 +90,7 @@ export const SERVICES_DATA: readonly ServiceItem[] = [
     arabicStatLabel: "معيار RAW DCI سينمائي",
     href: "/contact",
     highlight: false,
-    accentGlow: "from-amber-500/20 via-amber-500/5 to-transparent",
+    accentGlow: "from-brand-violet/25 via-brand-mauve/10 to-transparent",
   },
   {
     id: "podcast-suite",
@@ -113,6 +113,6 @@ export const SERVICES_DATA: readonly ServiceItem[] = [
     arabicStatLabel: "تسليم في نفس اليوم",
     href: "/studio-booking",
     highlight: false,
-    accentGlow: "from-amber-500/20 via-amber-500/5 to-transparent",
+    accentGlow: "from-brand-violet/25 via-brand-mauve/10 to-transparent",
   },
 ];

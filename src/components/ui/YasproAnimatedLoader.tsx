@@ -49,9 +49,9 @@ export function YasproAnimatedLoader({
       aria-live="polite"
       aria-label="Loading Yas Pro AI Media Hub"
     >
-      {/* Background ambient optical flare (cinematic 3200K tungsten glow) */}
+      {/* Background ambient optical flare (cinematic deep violet & mauve glow) */}
       <div className="absolute pointer-events-none">
-        <div className="w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-amber-500/10 blur-[90px] animate-pulse motion-reduce:animate-none" />
+        <div className="w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-brand-violet/20 blur-[90px] animate-pulse motion-reduce:animate-none" />
       </div>
 
       {/* Main Animated Cinema Sensor SVG */}
@@ -65,7 +65,7 @@ export function YasproAnimatedLoader({
               : { duration: 18, repeat: Infinity, ease: "linear" }
           }
           className={cn(
-            "absolute rounded-full border border-dashed border-amber-400/25 pointer-events-none",
+            "absolute rounded-full border border-dashed border-brand-mauve/30 pointer-events-none",
             isCompact ? "w-20 h-20" : "w-36 h-36 sm:w-44 sm:h-44"
           )}
         />
@@ -92,7 +92,7 @@ export function YasproAnimatedLoader({
         <svg
           viewBox="0 0 120 120"
           className={cn(
-            "relative z-10 overflow-visible drop-shadow-[0_0_35px_rgba(245,158,11,0.35)]",
+            "relative z-10 overflow-visible drop-shadow-[0_0_35px_rgba(118,80,134,0.45)]",
             isCompact ? "w-16 h-16" : "w-28 h-28 sm:w-36 sm:h-36"
           )}
           fill="none"
@@ -117,9 +117,9 @@ export function YasproAnimatedLoader({
 
             {/* Optical Sensor Core Radial Gradient */}
             <radialGradient id="yas-loader-sensor" cx="50%" cy="48%" r="48%">
-              <stop offset="0%" stopColor="#fef3c7" stopOpacity="0.95" />
-              <stop offset="30%" stopColor="#f59e0b" stopOpacity="0.7" />
-              <stop offset="70%" stopColor="#b45309" stopOpacity="0.35" />
+              <stop offset="0%" stopColor="#ddd3e1" stopOpacity="0.95" />
+              <stop offset="30%" stopColor="#987ba5" stopOpacity="0.7" />
+              <stop offset="70%" stopColor="#542568" stopOpacity="0.45" />
               <stop offset="100%" stopColor="#07070a" />
             </radialGradient>
 
@@ -130,12 +130,12 @@ export function YasproAnimatedLoader({
               <stop offset="100%" stopColor="#64748b" />
             </linearGradient>
 
-            {/* Polished 24K Gold Gradient */}
+            {/* Luxury Mauve & Violet Gradient */}
             <linearGradient id="yas-loader-gold" x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#fffbeb" />
-              <stop offset="35%" stopColor="#fde047" />
-              <stop offset="75%" stopColor="#f59e0b" />
-              <stop offset="100%" stopColor="#92400e" />
+              <stop offset="0%" stopColor="#eee9f0" />
+              <stop offset="35%" stopColor="#bba7c3" />
+              <stop offset="75%" stopColor="#987ba5" />
+              <stop offset="100%" stopColor="#542568" />
             </linearGradient>
           </defs>
 
@@ -155,7 +155,7 @@ export function YasproAnimatedLoader({
             cy="60"
             r="44"
             fill="url(#yas-loader-sensor)"
-            stroke="rgba(245, 158, 11, 0.4)"
+            stroke="rgba(152, 123, 165, 0.4)"
             strokeWidth="1.2"
           />
 
@@ -224,11 +224,11 @@ export function YasproAnimatedLoader({
               strokeWidth="1"
             />
 
-            {/* Right 24K Cinema Gold Arm */}
+            {/* Right Luxury Mauve Arm */}
             <polygon
               points="86,32 70,32 60,56 67,64 86,32"
               fill="url(#yas-loader-gold)"
-              stroke="#fef08a"
+              stroke="#bba7c3"
               strokeWidth="1"
             />
 
@@ -275,7 +275,7 @@ export function YasproAnimatedLoader({
           <span className="text-2xl sm:text-3xl font-black tracking-tight text-white font-display drop-shadow">
             YAS
           </span>
-          <span className="text-2xl sm:text-3xl font-black tracking-tight text-amber-400 font-display drop-shadow">
+          <span className="text-2xl sm:text-3xl font-black tracking-tight text-brand-mauve font-display drop-shadow">
             PRO
           </span>
         </div>
@@ -300,7 +300,7 @@ export function YasproAnimatedLoader({
               animate={{ opacity: 1, y: 0 }}
               exit={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -3 }}
               transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.25 }}
-              className="text-[10.5px] font-mono tracking-wider text-amber-300/90 whitespace-nowrap"
+              className="text-[10.5px] font-mono tracking-wider text-brand-lavender whitespace-nowrap"
             >
               {statusText ? statusText : TELEMETRY_STAGES[telemetryIndex]}
             </motion.span>

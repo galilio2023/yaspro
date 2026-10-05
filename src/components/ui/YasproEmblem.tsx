@@ -62,24 +62,24 @@ export function YasproEmblem({
         {/* Outer High-Luminance Bezel Stroke */}
         <linearGradient id={ringStrokeId} x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
-          <stop offset="30%" stopColor="#f59e0b" />
-          <stop offset="70%" stopColor="#fbbf24" />
+          <stop offset="30%" stopColor="#765086" />
+          <stop offset="70%" stopColor="#facc15" />
           <stop offset="100%" stopColor="#ffffff" stopOpacity="0.8" />
         </linearGradient>
 
         {/* Radiant Optical Core Glow (Sensor Illumination) */}
         <radialGradient id={irisGradId} cx="50%" cy="45%" r="50%">
-          <stop offset="0%" stopColor="#fef3c7" stopOpacity="0.85" />
-          <stop offset="25%" stopColor="#f59e0b" stopOpacity="0.55" />
-          <stop offset="60%" stopColor="#b45309" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="#0b0b12" />
+          <stop offset="0%" stopColor="#fef08a" stopOpacity="0.85" />
+          <stop offset="25%" stopColor="#987ba5" stopOpacity="0.55" />
+          <stop offset="60%" stopColor="#542568" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#0c0912" />
         </radialGradient>
 
-        {/* Luminous Warm Tungsten Amber Arc */}
+        {/* Luminous Warm Violet & Mauve Arc */}
         <linearGradient id={amberRimId} x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="#d97706" />
-          <stop offset="50%" stopColor="#f59e0b" />
-          <stop offset="100%" stopColor="#fef08a" />
+          <stop offset="0%" stopColor="#542568" />
+          <stop offset="50%" stopColor="#765086" />
+          <stop offset="100%" stopColor="#bba7c3" />
         </linearGradient>
 
         {/* Brilliant Platinum Specular Arc */}
@@ -97,12 +97,12 @@ export function YasproEmblem({
           <stop offset="100%" stopColor="#94a3b8" />
         </linearGradient>
 
-        {/* 3D "Y" Right Arm Facet (Polished 24K Cinema Gold) */}
+        {/* 3D "Y" Right Arm Facet (Electric Brand Yellow) */}
         <linearGradient id={yFacetRightId} x1="85%" y1="15%" x2="45%" y2="60%">
           <stop offset="0%" stopColor="#fffbeb" />
-          <stop offset="30%" stopColor="#fde047" />
-          <stop offset="70%" stopColor="#f59e0b" />
-          <stop offset="100%" stopColor="#b45309" />
+          <stop offset="30%" stopColor="#fef08a" />
+          <stop offset="70%" stopColor="#facc15" />
+          <stop offset="100%" stopColor="#ca8a04" />
         </linearGradient>
 
         {/* 3D "Y" Center Stem Facet (High-Contrast Platinum Alloy) */}

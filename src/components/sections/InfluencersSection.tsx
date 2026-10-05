@@ -18,7 +18,7 @@ export default function InfluencersSection() {
     <Section
       id="influencers"
       aria-labelledby="influencers-title"
-      className="bg-background py-12 sm:py-16 lg:py-28"
+      className="bg-transparent py-12 sm:py-16 lg:py-28"
     >
       <Container>
         <SectionHeader
@@ -48,7 +48,7 @@ export default function InfluencersSection() {
         <FadeUp delay={0.15} className="flex justify-center mt-8 sm:mt-10 px-4">
           <Link
             href="/influencers"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full border border-white/15 bg-zinc-900/80 text-zinc-200 hover:bg-amber-500 hover:text-zinc-950 hover:border-amber-400 transition-all text-xs font-semibold shadow-lg shadow-black/50 min-h-[44px] sm:min-h-0"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full border border-white/15 bg-zinc-900/80 text-zinc-200 hover:bg-brand-violet hover:text-white hover:border-brand-mauve/50 transition-all text-xs font-semibold shadow-lg shadow-black/50 min-h-[44px] sm:min-h-0"
           >
             <span>
               {t("creators.viewAllCreators")} ({isArabic ? "شبكة 400M+ متابع" : "400M+ Audience"})

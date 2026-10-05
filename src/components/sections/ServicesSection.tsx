@@ -25,8 +25,8 @@ export function ServicesSection() {
         <SectionHeader
           headingId="services-title"
           badge={t("services.badge")}
-          badgeVariant="gold"
-          badgeIcon={<Clapperboard size={13} className="text-amber-400" />}
+          badgeVariant="purple"
+          badgeIcon={<Clapperboard size={13} className="text-brand-lavender" />}
           title={isArabic ? t("services.title") : "Shape Your Content"}
           gradientText={isArabic ? t("services.titleGradient") : "With Us"}
           description={t("services.description")}
@@ -35,7 +35,7 @@ export function ServicesSection() {
           type="button"
           aria-controls={marqueeId}
           onClick={() => setIsPaused((paused) => !paused)}
-          className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/12 bg-zinc-900/60 px-4 py-1.5 text-xs text-zinc-300 hover:text-white hover:border-white/25 transition-all focus-visible:outline-2 focus-visible:outline-amber-400"
+          className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/12 bg-zinc-900/60 px-4 py-1.5 text-xs text-zinc-300 hover:text-white hover:border-brand-mauve/40 transition-all focus-visible:outline-2 focus-visible:outline-brand-mauve"
         >
           {isPaused ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
           {isArabic

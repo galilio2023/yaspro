@@ -15,27 +15,27 @@ export function FooterCtaBanner() {
         size={280}
         duration={12}
         delay={1}
-        colorFrom="#f59e0b"
-        colorTo="#d97706"
+        colorFrom="#542568"
+        colorTo="#987ba5"
       />
 
       {/* Atmospheric ambient lighting */}
-      <div className="absolute top-0 right-1/4 -translate-y-1/2 w-96 h-64 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-0 right-1/4 -translate-y-1/2 w-96 h-64 bg-brand-violet/25 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
         {/* Left Column: Copy & Live Status */}
         <div className="max-w-2xl text-start">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-[11px] sm:text-xs font-mono uppercase tracking-wider rtl:font-arabic rtl:tracking-normal text-amber-400 font-semibold mb-4 backdrop-blur-md whitespace-nowrap shrink-0 max-w-full">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-violet/25 border border-brand-mauve/40 text-[11px] sm:text-xs font-mono uppercase tracking-wider rtl:font-arabic rtl:tracking-normal text-brand-lavender font-semibold mb-4 backdrop-blur-md whitespace-nowrap shrink-0 max-w-full">
             <span className="relative flex size-2 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-              <span className="relative inline-flex rounded-full size-2 bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-mauve opacity-75" />
+              <span className="relative inline-flex rounded-full size-2 bg-brand-mauve shadow-[0_0_8px_rgba(152,123,165,0.6)]" />
             </span>
             <span className="whitespace-nowrap font-latin rtl:font-arabic">{t("footerCta.badge")}</span>
           </div>
 
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight rtl:tracking-normal font-display rtl:font-arabic leading-[1.15] rtl:leading-[1.35] mb-3">
             {t("footerCta.title")}{" "}
-            <span className="gradient-text-gold">
+            <span className="gradient-text-mauve">
               {t("footerCta.titleGradient")}
             </span>
           </h2>
@@ -60,7 +60,7 @@ export function FooterCtaBanner() {
             href="/contact"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full font-medium text-sm text-white border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/25 transition-all text-center backdrop-blur-sm"
           >
-            <Video size={15} className="text-amber-400" />
+            <Video size={15} className="text-brand-lavender" />
             <span>{t("footerCta.talkProducers")}</span>
           </Link>
         </div>

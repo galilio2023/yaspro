@@ -20,7 +20,7 @@ export function AiBentoGrid() {
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/65 to-transparent" />
         
         <div className="relative z-10 max-w-xl">
-          <div className="size-11 rounded-xl bg-zinc-800/90 border border-white/15 backdrop-blur-md flex items-center justify-center text-amber-400 mb-5 shadow-lg">
+          <div className="size-11 rounded-xl bg-zinc-800/90 border border-brand-mauve/25 backdrop-blur-md flex items-center justify-center text-brand-mauve-soft mb-5 shadow-lg">
             <Layers size={22} />
           </div>
           <h3 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 tracking-tight">
@@ -70,7 +70,7 @@ export function AiBentoGrid() {
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent" />
         
         <div className="relative z-10">
-          <div className="size-10 rounded-xl bg-zinc-800/90 border border-white/15 backdrop-blur-md flex items-center justify-center text-amber-400 mb-3 shadow-md">
+          <div className="size-10 rounded-xl bg-zinc-800/90 border border-brand-mauve/30 backdrop-blur-md flex items-center justify-center text-brand-mauve mb-3 shadow-md">
             <AudioWaveform size={20} />
           </div>
           <h3 className="text-lg sm:text-xl font-bold text-white mb-2">

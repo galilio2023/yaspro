@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
   Play,
   Pause,
+  Volume2,
+  VolumeX,
   CheckCircle2,
   Crosshair,
   SplitSquareVertical,
@@ -29,11 +30,13 @@ import {
 } from "@/features/enterprise/virtual-studio.data";
 
 export function VirtualStudioSection() {
-  const { t } = useLanguage();
+  const { t, isArabic } = useLanguage();
   const [activeScene, setActiveScene] = useState<VirtualStudioScene>(VIRTUAL_SCENES[0]);
   const [sliderPosition, setSliderPosition] = useState<number>(50); // 0 to 100 percentage
   const [isAutoWiping, setIsAutoWiping] = useState<boolean>(false);
   const [isSectionVisible, setIsSectionVisible] = useState<boolean>(true);
+  const [isMuted, setIsMuted] = useState<boolean>(true);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   // Pause auto-sweep animation when section is off-screen
@@ -76,38 +79,22 @@ export function VirtualStudioSection() {
       ref={sectionRef}
       id="virtual-studio"
       aria-labelledby="virtual-studio-title"
-      className="bg-secondary border-t border-white/10 relative overflow-hidden !py-12 md:!py-16"
-      background={
-        <>
-          <div
-            className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none transition-all duration-700 opacity-20 will-change-transform"
-            style={{
-              background: `radial-gradient(circle, ${activeScene.badgeColor} 0%, transparent 70%)`,
-            }}
-          />
-          <div
-            className="absolute bottom-10 right-10 w-[400px] h-[400px] rounded-full pointer-events-none opacity-20"
-            style={{
-              background: "radial-gradient(circle, rgba(217,119,6,0.18) 0%, transparent 70%)",
-            }}
-          />
-        </>
-      }
+      className="bg-transparent border-t border-white/10 relative overflow-hidden !py-12 md:!py-16"
     >
       <Container>
         {/* Section Header */}
         <SectionHeader
           headingId="virtual-studio-title"
           badge={t("virtualStudio.badge")}
-          badgeVariant="gold"
-          badgeIcon={<Video size={13} className="text-amber-400" />}
+          badgeVariant="purple"
+          badgeIcon={<Video size={13} className="text-brand-lavender" />}
           title={t("virtualStudio.title")}
           gradientText={t("virtualStudio.titleGradient")}
           description={t("virtualStudio.subtitle")}
           className="mb-8"
         />
 
-        {/* ─── 1. SCENE SELECTOR TABS ─── */}
+        {/* ─── 1. SCENE SELECTOR TABS (Live Video Mini-Reels - Zero Images) ─── */}
         <div
           role="tablist"
           aria-label="Virtual production environment presets"
@@ -123,7 +110,7 @@ export function VirtualStudioSection() {
                 onClick={() => setActiveScene(scene)}
                 className={`relative px-3.5 py-2.5 sm:py-2 rounded-xl border text-xs font-semibold transition-colors flex items-center gap-2.5 cursor-pointer shrink-0 whitespace-nowrap min-h-[44px] sm:min-h-0 z-10 ${
                   isSelected
-                    ? "border-amber-500/60 text-white shadow-lg shadow-black/60"
+                    ? "border-brand-mauve/60 text-white shadow-lg shadow-black/60"
                     : "border-white/10 bg-zinc-950/60 text-zinc-400 hover:text-white hover:border-white/20 hover:bg-zinc-900/60"
                 }`}
               >
@@ -134,101 +121,120 @@ export function VirtualStudioSection() {
                     transition={studioSprings.snappy}
                   />
                 )}
-                <div className="relative size-6 rounded-md overflow-hidden shrink-0 border border-white/15">
-                  <Image
-                    src={scene.compositeImage}
-                    alt={scene.name}
-                    fill
-                    className="object-cover"
-                    sizes="24px"
+                {/* Live Looping Mini-Video Preview (Zero Static Images) */}
+                <div className="relative size-6 rounded-md overflow-hidden shrink-0 border border-white/20 bg-black flex items-center justify-center">
+                  <video
+                    src={scene.videoSrc}
+                    muted
+                    loop
+                    playsInline
+                    autoPlay
+                    className="size-full object-cover pointer-events-none opacity-85"
                   />
                 </div>
                 <span>{scene.name}</span>
-                <span
-                  className="size-1.5 rounded-full shrink-0"
-                  style={{ backgroundColor: scene.badgeColor }}
-                />
+                <span className={`size-1.5 rounded-full shrink-0 ${isSelected ? "bg-brand-mauve" : "bg-zinc-600"}`} />
               </button>
             );
           })}
         </div>
 
-        {/* ─── 2. MAIN CINEMA STAGE VIEWPORT (ImageCompareSlider) ─── */}
+        {/* ─── 2. MAIN CINEMA STAGE VIEWPORT (Interactive Live Video Split Slider) ─── */}
         <FadeUp delay={0.08} className="mb-3">
           <div dir="ltr">
             <ImageCompareSlider
-              beforeImage={activeScene.rawImage}
-            afterImage={activeScene.compositeImage}
-            beforeAlt={`${activeScene.name} Raw Green Screen Soundstage`}
-            afterAlt={`${activeScene.name} 3D Virtual Production Composite`}
-            position={sliderPosition}
-            onPositionChange={(pos) => {
-              setIsAutoWiping(false);
-              setSliderPosition(pos);
-            }}
-            aspectRatio="aspect-[16/9] sm:aspect-[21/10] md:aspect-[16/9]"
-          >
-            {/* TOP BROADCAST HUD OVERLAYS */}
-            <div className="absolute top-2.5 left-2.5 sm:top-3.5 sm:left-3.5 pointer-events-none flex items-center gap-2 z-30">
-              <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-emerald-500/30 text-[10px] sm:text-xs font-mono text-emerald-400 font-latin">
-                <span className="size-1.5 sm:size-2 rounded-full bg-emerald-500" />
-                <span className="font-bold">PHYSICAL STAGE</span>
-                <span className="text-white/40 hidden sm:inline">|</span>
-                <span className="text-white/80 hidden sm:inline">Green Cyclorama</span>
-              </div>
-            </div>
-
-            <div className="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 pointer-events-none flex items-center gap-2 z-30">
-              <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-amber-500/30 text-[10px] sm:text-xs font-mono text-amber-300 font-latin">
-                <Cpu size={12} className="text-amber-400" />
-                <span className="font-bold">UNREAL 5.4</span>
-                <span className="text-white/40 hidden sm:inline">|</span>
-                <span className="text-white/80 hidden sm:inline">{activeScene.badge}</span>
-              </div>
-            </div>
-
-            {/* BOTTOM TELEMETRY HUD */}
-            <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-3 sm:left-3 sm:right-3 flex items-center justify-between pointer-events-none text-[9px] sm:text-[11px] font-mono text-white/80 bg-black/80 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-white/10 font-latin z-30">
-              <div className="flex items-center gap-3 sm:gap-5">
-                <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                  <CheckCircle2 size={12} />
-                  GENLOCK 120 FPS
-                </span>
-                <span className="hidden sm:inline text-white/60">LATENCY 2.1ms</span>
-                <span className="hidden md:inline text-amber-400">10-BIT HDR BROADCAST PIPELINE</span>
+              videoSrc={activeScene.videoSrc}
+              isMuted={isMuted}
+              isPlaying={isPlaying}
+              position={sliderPosition}
+              onPositionChange={(pos) => {
+                setIsAutoWiping(false);
+                setSliderPosition(pos);
+              }}
+              aspectRatio="aspect-[16/9] sm:aspect-[21/10] md:aspect-[16/9]"
+            >
+              {/* TOP BROADCAST HUD OVERLAYS */}
+              <div className="absolute top-2.5 left-2.5 sm:top-3.5 sm:left-3.5 pointer-events-none flex items-center gap-2 z-30">
+                <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-emerald-500/30 text-[10px] sm:text-xs font-mono text-emerald-400 font-latin">
+                  <span className="size-1.5 sm:size-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="font-bold">PHYSICAL STAGE</span>
+                  <span className="text-white/40 hidden sm:inline">|</span>
+                  <span className="text-white/80 hidden sm:inline">Camera RAW Sensor</span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-1.5 text-amber-400 font-bold">
-                <Crosshair size={12} />
-                <span className="hidden sm:inline">TRACKING:</span>
-                <span>{activeScene.trackingEngine}</span>
+              <div className="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 pointer-events-none flex items-center gap-2 z-30">
+                <div className="flex items-center gap-1.5 sm:gap-2 bg-black/75 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-brand-mauve/30 text-[10px] sm:text-xs font-mono text-brand-lavender font-latin">
+                  <Cpu size={12} className="text-brand-lavender" />
+                  <span className="font-bold">UNREAL 5.4</span>
+                  <span className="text-white/40 hidden sm:inline">|</span>
+                  <span className="text-white/80 hidden sm:inline">{activeScene.badge}</span>
+                </div>
               </div>
-            </div>
 
-            {/* Hover Drag Cue */}
-            <div className="absolute inset-x-0 bottom-11 flex justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-30">
-              <div className="bg-black/85 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 text-[11px] text-white font-medium flex items-center gap-1.5 shadow-2xl">
-                <SplitSquareVertical size={12} className="text-amber-400" />
-                <span>{t("virtualStudio.dragPrompt")}</span>
+              {/* BOTTOM TELEMETRY HUD */}
+              <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-3 sm:left-3 sm:right-3 flex items-center justify-between pointer-events-none text-[9px] sm:text-[11px] font-mono text-white/80 bg-black/80 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-white/10 font-latin z-30">
+                <div className="flex items-center gap-3 sm:gap-5">
+                  <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                    <CheckCircle2 size={12} />
+                    GENLOCK 120 FPS
+                  </span>
+                  <span className="hidden sm:inline text-white/60">LATENCY 2.1ms</span>
+                  <span className="hidden md:inline text-brand-lavender">10-BIT HDR REALTIME PIPELINE</span>
+                </div>
+
+                <div className="flex items-center gap-1.5 text-brand-lavender font-bold">
+                  <Crosshair size={12} />
+                  <span className="hidden sm:inline">TRACKING:</span>
+                  <span>{activeScene.trackingEngine}</span>
+                </div>
               </div>
-            </div>
-          </ImageCompareSlider>
-        </div>
-      </FadeUp>
+
+              {/* Hover Drag Cue */}
+              <div className="absolute inset-x-0 bottom-11 flex justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-30">
+                <div className="bg-black/85 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 text-[11px] text-white font-medium flex items-center gap-1.5 shadow-2xl">
+                  <SplitSquareVertical size={12} className="text-brand-lavender" />
+                  <span>{t("virtualStudio.dragPrompt")}</span>
+                </div>
+              </div>
+            </ImageCompareSlider>
+          </div>
+        </FadeUp>
 
         {/* ─── 3. INTEGRATED BOTTOM CONTROLS & PRODUCTION ACTIONS ─── */}
         <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-between gap-3 p-3 sm:p-4 bg-card/90 rounded-xl sm:rounded-2xl border border-white/10 mb-5 sm:mb-6">
-          <div className="flex items-center justify-between sm:justify-start gap-2">
+          <div className="flex items-center justify-between sm:justify-start gap-2 flex-wrap">
+            {/* Auto-Sweep Toggle */}
             <button
               onClick={() => setIsAutoWiping(!isAutoWiping)}
-              className={`px-3.5 py-2 sm:py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer min-h-[40px] sm:min-h-0 ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer min-h-[40px] sm:min-h-0 ${
                 isAutoWiping
-                  ? "bg-amber-500 text-zinc-950 font-bold shadow-lg shadow-amber-500/20"
+                  ? "btn-brand shadow-lg"
                   : "bg-white/10 text-white hover:bg-white/15"
               }`}
             >
               {isAutoWiping ? <Pause size={12} /> : <Play size={12} />}
               <span>{isAutoWiping ? t("virtualStudio.pauseSweep") : t("virtualStudio.autoSweep")}</span>
+            </button>
+
+            {/* Video Play/Pause Toggle */}
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/10 text-white hover:bg-white/15 transition-all flex items-center gap-1.5 cursor-pointer min-h-[40px] sm:min-h-0"
+              title={isPlaying ? "Pause Video Reel" : "Play Video Reel"}
+            >
+              {isPlaying ? <Pause size={12} className="text-brand-lavender" /> : <Play size={12} className="text-brand-lavender" />}
+              <span>{isPlaying ? (isArabic ? "إيقاف الفيديو" : "Pause") : (isArabic ? "تشغيل" : "Play")}</span>
+            </button>
+
+            {/* Audio Mute/Unmute Toggle */}
+            <button
+              onClick={() => setIsMuted(!isMuted)}
+              className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/10 text-white hover:bg-white/15 transition-all flex items-center gap-1.5 cursor-pointer min-h-[40px] sm:min-h-0"
+              title={isMuted ? "Unmute Audio" : "Mute Audio"}
+            >
+              {isMuted ? <VolumeX size={13} className="text-zinc-400" /> : <Volume2 size={13} className="text-brand-lavender" />}
+              <span>{isMuted ? (isArabic ? "كتم الصوت" : "Muted") : (isArabic ? "صوت مفعّل" : "Audio On")}</span>
             </button>
 
             {/* Quick Preset Buttons on Mobile (horizontal scrolling pills) */}
@@ -253,7 +259,7 @@ export function VirtualStudioSection() {
                 }}
                 className={`px-2.5 py-2 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap cursor-pointer min-h-[40px] ${
                   sliderPosition > 40 && sliderPosition < 60
-                    ? "bg-amber-500 text-zinc-950 font-bold shadow"
+                    ? "btn-brand shadow"
                     : "text-text-secondary hover:text-white bg-white/5"
                 }`}
               >
@@ -297,7 +303,7 @@ export function VirtualStudioSection() {
               }}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 sliderPosition > 40 && sliderPosition < 60
-                  ? "bg-amber-500 text-zinc-950 font-bold shadow"
+                  ? "btn-brand shadow"
                   : "text-text-secondary hover:text-white bg-white/5"
               }`}
             >
@@ -322,7 +328,7 @@ export function VirtualStudioSection() {
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <Link
               href="/studio-booking"
-              className="btn-brand w-full sm:w-auto py-2.5 sm:py-1.5 px-4 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold shadow-md hover:shadow-amber-500/20 transition-all min-h-[40px] sm:min-h-0"
+              className="btn-brand w-full sm:w-auto py-2.5 sm:py-1.5 px-4 rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold shadow-md hover:shadow-yellow-500/20 transition-all min-h-[40px] sm:min-h-0"
             >
               <span>{t("virtualStudio.bookVirtual")}</span>
               <ArrowRight size={13} className="rtl:rotate-180 shrink-0 transition-transform" />
@@ -334,7 +340,7 @@ export function VirtualStudioSection() {
         <StaggerContainer className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <StaggerItem>
             <div className="bg-card/60 rounded-xl border border-white/5 px-4 py-3 flex items-center gap-3 h-full">
-              <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
+              <div className="p-2 rounded-lg bg-brand-violet/25 text-brand-mauve-soft shrink-0">
                 <Cpu size={16} />
               </div>
               <div>
@@ -346,7 +352,7 @@ export function VirtualStudioSection() {
 
           <StaggerItem>
             <div className="bg-card/60 rounded-xl border border-white/5 px-4 py-3 flex items-center gap-3 h-full">
-              <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
+              <div className="p-2 rounded-lg bg-brand-violet/25 text-brand-mauve-soft shrink-0">
                 <Layers size={16} />
               </div>
               <div>
@@ -358,7 +364,7 @@ export function VirtualStudioSection() {
 
           <StaggerItem>
             <div className="bg-card/60 rounded-xl border border-white/5 px-4 py-3 flex items-center gap-3 h-full">
-              <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
+              <div className="p-2 rounded-lg bg-brand-violet/25 text-brand-lavender shrink-0">
                 <Zap size={16} />
               </div>
               <div>

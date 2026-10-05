@@ -42,7 +42,7 @@ export function AdminConfirmModal({
             isDanger
               ? "bg-rose-500/10 border-rose-500/30 text-rose-400"
               : variant === "warning"
-              ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
+              ? "bg-brand-violet/25 border-brand-mauve/40 text-brand-lavender"
               : "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
           }`}
         >
@@ -80,7 +80,7 @@ export function AdminConfirmModal({
               isDanger
                 ? "bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/20"
                 : variant === "warning"
-                ? "bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold shadow-lg shadow-amber-500/20"
+                ? "btn-brand shadow-lg shadow-purple-950/40"
                 : "btn-brand"
             }`}
           >

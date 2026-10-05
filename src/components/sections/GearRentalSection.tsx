@@ -69,19 +69,19 @@ export function GearRentalSection() {
     <Section
       id="gear-rental"
       aria-labelledby="gear-rental-title"
-      className="bg-secondary border-t border-white/10 relative overflow-hidden py-14 sm:py-20 lg:py-24"
+      className="bg-transparent border-t border-white/10 relative overflow-hidden py-14 sm:py-20 lg:py-24"
       background={
         <>
           <div
             className="absolute top-1/4 right-0 size-[500px] rounded-full pointer-events-none opacity-20"
             style={{
-              background: "radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%)",
+              background: "radial-gradient(circle, rgba(84,37,104,0.3) 0%, transparent 70%)",
             }}
           />
           <div
             className="absolute bottom-10 left-1/4 size-[400px] rounded-full pointer-events-none opacity-15"
             style={{
-              background: "radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)",
+              background: "radial-gradient(circle, rgba(118,80,134,0.2) 0%, transparent 70%)",
             }}
           />
         </>
@@ -92,8 +92,8 @@ export function GearRentalSection() {
         <SectionHeader
           headingId="gear-rental-title"
           badge={isArabic ? "المعدات السينمائية المعتمدة" : "Master Production Gear"}
-          badgeVariant="gold"
-          badgeIcon={<Camera size={13} className="text-amber-400" />}
+          badgeVariant="purple"
+          badgeIcon={<Camera size={13} className="text-brand-lavender" />}
           title={isArabic ? "تأجير أحدث المعدات و" : "Rent Turnkey"}
           gradientText={isArabic ? "الباقات السينمائية" : "Cinema Kits"}
           description={
@@ -106,7 +106,7 @@ export function GearRentalSection() {
         {/* Pricing Duration Toggle Bar (Immediate Psychological Incentive) */}
         <FadeUp delay={0.06} className="mt-8 mb-10 flex flex-col sm:flex-row items-center justify-between gap-4 p-3 sm:p-4 rounded-3xl bg-zinc-950/60 border border-white/10 backdrop-blur-xl">
           <div className="flex items-center gap-2.5 px-2">
-            <span className="size-2 rounded-full bg-amber-400 shrink-0" />
+            <span className="size-2 rounded-full bg-brand-mauve shrink-0" />
             <span className="text-xs font-semibold text-white font-mono uppercase tracking-wider">
               {isArabic ? "اختر مدة التأجير للاستفادة من الخصم:" : "Duration Pricing Tier:"}
             </span>
@@ -129,15 +129,15 @@ export function GearRentalSection() {
                   {isActive && (
                     <motion.div
                       layoutId="activeDurationPill"
-                      className="absolute inset-0 rounded-full bg-amber-500/20 border border-amber-500/50 shadow-[0_0_16px_rgba(245,158,11,0.25)] -z-10"
+                      className="absolute inset-0 rounded-full bg-brand-violet/40 border border-brand-mauve/50 shadow-[0_0_16px_rgba(84,37,104,0.4)] -z-10"
                       transition={studioSprings.snappy}
                     />
                   )}
-                  <span className={isActive ? "text-amber-300" : "text-zinc-400 hover:text-white"}>
+                  <span className={isActive ? "text-brand-lavender font-bold" : "text-zinc-400 hover:text-white"}>
                     {tier.label}
                   </span>
                   {tier.discount && (
-                    <span className="px-1.5 py-0.5 rounded-full bg-amber-500 text-zinc-950 text-[9px] font-black uppercase">
+                    <span className="px-1.5 py-0.5 rounded-full bg-brand-violet text-brand-lavender border border-brand-mauve/40 text-[9px] font-bold uppercase">
                       {tier.discount}
                     </span>
                   )}
@@ -169,8 +169,8 @@ export function GearRentalSection() {
 
                   {/* Badges */}
                   <div className="absolute top-3.5 inset-x-3.5 flex items-center justify-between z-10 pointer-events-none">
-                    <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[11px] font-mono font-bold text-amber-300 border border-amber-400/30 flex items-center gap-1.5 shadow-md">
-                      <Camera size={12} className="text-amber-400" />
+                    <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-[11px] font-mono font-bold text-brand-lavender border border-brand-mauve/40 flex items-center gap-1.5 shadow-md">
+                      <Camera size={12} className="text-brand-lavender" />
                       {isArabic ? "الباقة الإعلانية الرائدة" : "Featured Production Rig"}
                     </span>
 
@@ -194,7 +194,7 @@ export function GearRentalSection() {
                 <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold">
+                      <span className="text-xs font-mono uppercase tracking-wider text-brand-mauve-soft font-bold">
                         {isArabic ? "باقة سينمائية متكاملة (Turnkey A-Cam)" : "Turnkey Cinema Package"}
                       </span>
                     </div>
@@ -210,7 +210,7 @@ export function GearRentalSection() {
                     {/* Included Gear Inclusions Pills */}
                     {spotlightKit.includedInKit && (
                       <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-2">
-                        <span className="text-[11px] uppercase font-mono font-bold text-amber-400 flex items-center gap-1.5">
+                        <span className="text-[11px] uppercase font-mono font-bold text-brand-mauve-soft flex items-center gap-1.5">
                           <Box size={13} />
                           {isArabic ? "تجهيزات ومحتويات الباقة الكاملة:" : "Production Kit Inclusions:"}
                         </span>
@@ -242,7 +242,7 @@ export function GearRentalSection() {
                           </span>
                         )}
                       </div>
-                      <span className="text-[11px] text-amber-400 font-mono block mt-0.5">
+                      <span className="text-[11px] text-brand-mauve-soft font-mono block mt-0.5">
                         {durationTier === 1
                           ? isArabic ? "تسليم مع كابلات وبطاريات كاملة" : "Includes full power & wireless feed"
                           : isArabic ? `تم احتساب خصم باقة ${durationTier} أيام` : `${durationTier}-Day production rate applied`}
@@ -279,7 +279,7 @@ export function GearRentalSection() {
               className={cn(
                 "px-4 py-2 min-h-[44px] rounded-full text-xs font-medium transition-all duration-200 cursor-pointer border whitespace-nowrap flex items-center justify-center",
                 activeCategory === cat.id
-                  ? "bg-amber-500 text-zinc-950 font-bold border-amber-500 shadow-lg shadow-amber-500/20 scale-105"
+                  ? "btn-brand scale-105"
                   : "bg-white/5 text-text-secondary border-white/10 hover:border-white/20 hover:text-white"
               )}
             >
@@ -327,7 +327,7 @@ export function GearRentalSection() {
                           {item.categoryLabel}
                         </span>
                         {item.isPopular && (
-                          <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9.5px] font-bold">
+                          <span className="px-2 py-0.5 rounded-md bg-brand-violet/30 text-brand-lavender border border-brand-mauve/30 text-[9.5px] font-bold">
                             ★ {isArabic ? "طلب شائع" : "Popular"}
                           </span>
                         )}
@@ -335,7 +335,7 @@ export function GearRentalSection() {
 
                       {item.isKit && (
                         <div className="absolute bottom-2.5 start-2.5 z-10 pointer-events-none">
-                          <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9.5px] font-bold flex items-center gap-1">
+                          <span className="px-2 py-0.5 rounded-md bg-brand-violet/30 text-brand-lavender border border-brand-mauve/30 text-[9.5px] font-bold flex items-center gap-1">
                             <Box size={10} />
                             <span>{isArabic ? "باقة كاملة" : "Turnkey Kit"}</span>
                           </span>
@@ -343,7 +343,7 @@ export function GearRentalSection() {
                       )}
                     </div>
 
-                    <h4 className="text-base font-bold text-white mb-1.5 font-display group-hover:text-amber-400 transition-colors line-clamp-1">
+                    <h4 className="text-base font-bold text-white mb-1.5 font-display group-hover:text-brand-lavender transition-colors line-clamp-1">
                       {itemName}
                     </h4>
 
@@ -384,7 +384,7 @@ export function GearRentalSection() {
                         e.stopPropagation();
                         setSelectedGearItem(item);
                       }}
-                      whileHover={{ scale: 1.06, backgroundColor: "rgb(245 158 11)", color: "rgb(9 9 11)" }}
+                      whileHover={{ scale: 1.06, backgroundColor: "#765086", color: "#ffffff" }}
                       whileTap={{ scale: 0.94 }}
                       transition={studioSprings.snappy}
                       className="px-3.5 py-1.5 rounded-xl bg-white/10 text-white text-xs font-semibold backdrop-blur-md cursor-pointer shadow-md"
@@ -401,7 +401,7 @@ export function GearRentalSection() {
         {/* ── Risk-Reversal & Trust Strip (Production Houses & DPs) ── */}
         <FadeUp delay={0.15} className="mt-14 pt-10 border-t border-white/10 grid grid-cols-1 md:grid-cols-3 gap-5">
           <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-zinc-900/50 border border-white/8">
-            <div className="size-10 rounded-xl bg-zinc-800 border border-white/12 text-amber-400 flex items-center justify-center shrink-0">
+            <div className="size-10 rounded-xl bg-zinc-800 border border-white/12 text-brand-lavender flex items-center justify-center shrink-0">
               <ShieldCheck size={20} />
             </div>
             <div>
@@ -417,7 +417,7 @@ export function GearRentalSection() {
           </div>
 
           <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-            <div className="size-10 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0">
+            <div className="size-10 rounded-xl bg-brand-violet/25 border border-brand-mauve/30 text-brand-lavender flex items-center justify-center shrink-0">
               <Clock size={20} />
             </div>
             <div>
@@ -433,7 +433,7 @@ export function GearRentalSection() {
           </div>
 
           <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-            <div className="size-10 rounded-xl bg-amber-400/20 border border-amber-400/30 text-amber-300 flex items-center justify-center shrink-0">
+            <div className="size-10 rounded-xl bg-brand-violet/25 border border-brand-mauve/30 text-brand-lavender flex items-center justify-center shrink-0">
               <Truck size={20} />
             </div>
             <div>

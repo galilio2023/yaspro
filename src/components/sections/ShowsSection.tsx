@@ -42,8 +42,8 @@ export function ShowsSection() {
         <SectionHeader
           headingId="shows-title"
           badge={isArabic ? "برامج إعلامية رائدة" : "Flagship Media Formats"}
-          badgeVariant="gold"
-          badgeIcon={<Tv size={13} className="text-amber-400" />}
+          badgeVariant="purple"
+          badgeIcon={<Tv size={13} className="text-brand-lavender" />}
           title={isArabic ? "إنتاجاتنا الحصرية و" : "Signature Productions &"}
           gradientText={isArabic ? "البرامج الأصلية" : "Original Shows"}
           description={
@@ -63,7 +63,7 @@ export function ShowsSection() {
               className={cn(
                 "px-4 py-2 min-h-[44px] rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer border whitespace-nowrap flex items-center justify-center",
                 activeCategory === cat.id
-                  ? "bg-amber-500 text-zinc-950 font-bold border-amber-500 shadow-lg shadow-amber-500/25 scale-105"
+                  ? "btn-brand font-bold shadow-lg shadow-yellow-500/20 scale-105"
                   : "bg-zinc-900/70 text-zinc-400 border-white/10 hover:border-white/20 hover:text-white"
               )}
             >
@@ -101,7 +101,7 @@ export function ShowsSection() {
                       {show.category}
                     </span>
                     {show.badge && (
-                      <span className="px-2.5 py-1 rounded-full bg-amber-500/20 backdrop-blur-md text-amber-300 border border-amber-500/30 text-[10px] font-semibold flex items-center gap-1 shadow-sm">
+                      <span className="px-2.5 py-1 rounded-full bg-brand-violet/30 backdrop-blur-md text-brand-lavender border border-brand-mauve/30 text-[10px] font-semibold flex items-center gap-1 shadow-sm">
                         <Film size={10} /> {show.badge}
                       </span>
                     )}
@@ -109,7 +109,7 @@ export function ShowsSection() {
 
                   {/* Center Play Button Overlay */}
                   <div className="absolute inset-0 flex items-center justify-center z-10">
-                    <div className="size-12 sm:size-14 rounded-full bg-black/60 border border-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-xl group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-zinc-950 group-hover:border-amber-400 transition-all duration-300">
+                    <div className="size-12 sm:size-14 rounded-full bg-black/60 border border-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-xl group-hover:scale-110 group-hover:btn-brand group-hover:text-zinc-950 transition-all duration-300">
                       <Play size={18} className="fill-current translate-x-0.5 rtl:-translate-x-0.5 text-white group-hover:text-zinc-950 transition-colors" />
                     </div>
                   </div>
@@ -117,7 +117,7 @@ export function ShowsSection() {
                   {/* Bottom Video HUD Duration / Quality */}
                   <div className="absolute bottom-2.5 end-3 z-10">
                     <span className="px-2 py-0.5 rounded-md bg-black/80 backdrop-blur-md text-[10px] font-mono text-white/80 border border-white/10 flex items-center gap-1">
-                      <Film size={10} className="text-amber-400" />
+                      <Film size={10} className="text-brand-lavender" />
                       4K Trailer
                     </span>
                   </div>
@@ -128,10 +128,10 @@ export function ShowsSection() {
                   <div>
                     {/* Title & Arabic Title */}
                     <div className="mb-2.5">
-                      <h3 className="text-xl font-black text-white font-display tracking-tight group-hover:text-amber-400 transition-colors">
+                      <h3 className="text-xl font-black text-white font-display tracking-tight group-hover:text-brand-lavender transition-colors">
                         {show.title}
                       </h3>
-                      <p className="text-xs font-semibold text-amber-400/90 font-display mt-0.5">
+                      <p className="text-xs font-semibold text-brand-mauve-soft font-display mt-0.5">
                         {show.arabicTitle}
                       </p>
                     </div>
@@ -156,7 +156,7 @@ export function ShowsSection() {
                   {/* Bottom Stats & Watch Trigger */}
                   <div className="pt-4 border-t border-white/10 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Eye size={13} className="text-amber-400" />
+                      <Eye size={13} className="text-brand-lavender" />
                       <span className="text-xs font-extrabold text-white font-mono" dir="ltr">
                         {show.views}
                       </span>
@@ -167,9 +167,9 @@ export function ShowsSection() {
                     <button
                       type="button"
                       onClick={() => setSelectedShow(show)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-amber-500 hover:text-zinc-950 text-white text-xs font-semibold backdrop-blur-md transition-all duration-200 group-hover:scale-105 active:scale-95 cursor-pointer shadow-md"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:btn-brand text-white text-xs font-semibold backdrop-blur-md transition-all duration-200 group-hover:scale-105 active:scale-95 cursor-pointer shadow-md"
                     >
-                      <Play size={11} className="fill-current text-amber-400 group-hover:text-zinc-950" />
+                      <Play size={11} className="fill-current text-brand-lavender group-hover:text-white" />
                       <span>{isArabic ? "تشغيل" : "Play"}</span>
                     </button>
                   </div>

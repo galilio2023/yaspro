@@ -39,7 +39,7 @@ export function ScrollProgressBar() {
       className="absolute bottom-0 left-0 right-0 h-[2px] pointer-events-none overflow-hidden z-20"
     >
       <div
-        className="h-full w-full origin-left bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 transition-transform duration-75 ease-out"
+        className="h-full w-full origin-left bg-gradient-to-r from-brand-violet via-brand-mauve to-brand-lavender transition-transform duration-75 ease-out"
         style={{
           transform: `scaleX(${progress})`,
           willChange: "transform",

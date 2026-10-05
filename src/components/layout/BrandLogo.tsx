@@ -29,12 +29,12 @@ export function BrandLogo({
       {/* Luminous Studio Lens Mount */}
       <div className="relative shrink-0 flex items-center justify-center">
         {/* Ambient backlight glow */}
-        <span className="absolute -inset-1 rounded-2xl bg-amber-500/25 blur-md pointer-events-none opacity-60 group-hover:opacity-100 group-hover:scale-115 transition-all duration-300" />
+        <span className="absolute -inset-1 rounded-2xl bg-brand-violet/30 blur-md pointer-events-none opacity-60 group-hover:opacity-100 group-hover:scale-115 transition-all duration-300" />
         
         {/* Frosted luminous mount capsule */}
         <div
           className={cn(
-            "relative z-10 flex items-center justify-center rounded-2xl border border-white/25 bg-white/[0.08] group-hover:bg-white/[0.14] group-hover:border-amber-400/60 backdrop-blur-xl shadow-lg shadow-black/40 group-hover:shadow-[0_0_22px_rgba(245,158,11,0.35)] transition-all duration-300",
+            "relative z-10 flex items-center justify-center rounded-2xl border border-white/25 bg-white/[0.08] group-hover:bg-white/[0.14] group-hover:border-brand-mauve/60 backdrop-blur-xl shadow-lg shadow-black/40 group-hover:shadow-[0_0_22px_rgba(84,37,104,0.4)] transition-all duration-300",
             isLarge ? "size-11 p-1.5" : "size-9 p-1"
           )}
         >
@@ -52,7 +52,7 @@ export function BrandLogo({
           <span className={cn("text-white font-black tracking-tight font-display font-latin leading-none drop-shadow-sm", isLarge ? "text-2xl" : "text-xl")}>
             YAS
           </span>
-          <span className={cn("font-black tracking-tight font-display font-latin text-amber-400 ml-0.5 leading-none drop-shadow-sm", isLarge ? "text-2xl" : "text-xl")}>
+          <span className={cn("font-black tracking-tight font-display font-latin text-brand-mauve ml-0.5 leading-none drop-shadow-sm", isLarge ? "text-2xl" : "text-xl")}>
             PRO
           </span>
         </div>
@@ -71,7 +71,7 @@ export function BrandLogo({
         href={href}
         dir="ltr"
         style={{ direction: "ltr" }}
-        className="inline-flex flex-row items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/40 rounded-xl"
+        className="inline-flex flex-row items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve/40 rounded-xl"
       >
         {content}
       </Link>

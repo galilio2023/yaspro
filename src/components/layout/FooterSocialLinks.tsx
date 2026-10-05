@@ -19,7 +19,7 @@ export function FooterSocialLinks() {
           rel="noopener noreferrer"
           title={s.label}
           aria-label={s.label}
-          className="size-11 sm:size-9 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 rounded-xl bg-white/[0.04] hover:bg-amber-500/10 border border-white/[0.08] hover:border-amber-500/30 flex items-center justify-center text-text-muted hover:text-amber-400 hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm"
+          className="size-11 sm:size-9 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 rounded-xl bg-white/[0.04] hover:bg-brand-violet/30 border border-white/[0.08] hover:border-brand-mauve/40 flex items-center justify-center text-text-muted hover:text-brand-lavender hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm"
         >
           <s.icon size={16} />
         </a>

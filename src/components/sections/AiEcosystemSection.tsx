@@ -33,7 +33,7 @@ export function AiEcosystemSection() {
                 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 font-display tracking-tight leading-[1.1] text-balance"
               >
                 {isArabic ? t("ai.title") : "The Yas Pro"} <br />
-                <span className="text-amber-400 font-serif italic font-normal">
+                <span className="gradient-text-mauve font-serif italic font-normal">
                   {isArabic ? t("ai.titleGradient") : "AI Ecosystem"}
                 </span>
               </h2>
@@ -47,7 +47,7 @@ export function AiEcosystemSection() {
                 <button
                   type="button"
                   onClick={() => setIsCopilotOpen(true)}
-                  className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full text-sm font-bold text-zinc-950 bg-amber-500 hover:bg-amber-400 shadow-xl shadow-amber-500/25 transition-all duration-200 active:scale-[0.97] cursor-pointer group"
+                  className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full text-sm font-bold btn-brand transition-all duration-200 active:scale-[0.97] cursor-pointer group"
                 >
                   <Cpu size={16} className="text-zinc-950 group-hover:rotate-12 transition-transform duration-300" />
                   <span>{t("ai.launchCopilot")}</span>

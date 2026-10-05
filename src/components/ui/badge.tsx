@@ -18,9 +18,11 @@ const badgeVariants = cva(
         cyan:
           "border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-sm shadow-black/20 font-mono tracking-wider rtl:font-arabic rtl:tracking-normal rtl:normal-case",
         gold:
-          "border border-amber-500/35 bg-amber-500/10 text-amber-300 shadow-sm shadow-black/20 font-mono tracking-wider rtl:font-arabic rtl:tracking-normal rtl:normal-case",
+          "border border-brand-mauve/40 bg-brand-violet/25 text-brand-lavender shadow-sm shadow-black/20 font-mono tracking-wider rtl:font-arabic rtl:tracking-normal rtl:normal-case",
         purple:
-          "border border-zinc-700/60 bg-zinc-900/80 text-zinc-300 font-mono tracking-wider rtl:font-arabic rtl:tracking-normal rtl:normal-case",
+          "border border-brand-purple/40 bg-brand-violet/20 text-brand-mauve-soft font-mono tracking-wider rtl:font-arabic rtl:tracking-normal rtl:normal-case",
+        yellow:
+          "border border-brand-mauve/40 bg-brand-violet/25 text-brand-lavender shadow-sm shadow-black/20 font-mono tracking-wider rtl:font-arabic rtl:tracking-normal rtl:normal-case",
         live:
           "border border-emerald-500/40 bg-emerald-500/15 text-emerald-300 font-mono tracking-wider rtl:font-arabic rtl:tracking-normal rtl:normal-case",
       },

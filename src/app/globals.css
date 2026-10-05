@@ -1,45 +1,63 @@
 @import "tailwindcss";
 
 :root {
-  /* ── Brand Palette: AI Media Hub (Tungsten Amber & Obsidian) ────── */
-  /* Primary & Accents: Mapped to Cinema Tungsten Amber to kill legacy neon gradients */
-  --brand-purple: #f59e0b;
-  --brand-purple-rgb: 245, 158, 11;
-  --brand-purple-light: #fbbf24;
-  --brand-purple-lighter: #fef3c7;
-  --brand-purple-dark: #b45309;
-  --brand-purple-mid: #d97706;
+  /* ── Official Brand Palette: YAS PRO MEDIA (2025 Guidelines Section 3.0) ── */
+  /* Primary Brand Colors: Deep Violet & Mauve (Official Section 3.2) */
+  --brand-yellow: #987ba5;
+  --brand-yellow-rgb: 152, 123, 165;
+  --brand-yellow-electric: #bba7c3;
+  --brand-yellow-light: #ddd3e1;
+  --brand-yellow-dark: #765086;
 
-  /* Accent: Tungsten Amber */
-  --brand-gold: #f59e0b;
-  --brand-gold-rgb: 245, 158, 11;
-  --brand-gold-light: #fcd34d;
-  --brand-gold-dark: #b45309;
+  /* Secondary Color System: Deep Violet & Mauve */
+  --brand-violet: #542568;
+  --brand-violet-rgb: 84, 37, 104;
+  --brand-violet-rich: #765086;
+  --brand-violet-dark: #3e1b4c;
+  --brand-mauve: #987ba5;
+  --brand-mauve-rgb: 152, 123, 165;
+  --brand-mauve-soft: #bba7c3;
+  --brand-lavender: #ddd3e1;
+  --brand-lavender-pale: #eee9f0;
 
-  /* Legacy Teal & Cyan aliases mapped to Cinema Amber/Bronze */
-  --brand-teal: #d97706;
-  --brand-teal-rgb: 217, 119, 6;
-  --brand-teal-light: #fbbf24;
+  /* Brand Purple mapped directly to Official Guidelines #765086 & #542568 */
+  --brand-purple: #765086;
+  --brand-purple-rgb: 118, 80, 134;
+  --brand-purple-light: #987ba5;
+  --brand-purple-lighter: #bba7c3;
+  --brand-purple-dark: #542568;
+  --brand-purple-mid: #683777;
 
-  --brand-cyan: #f59e0b;
-  --brand-cyan-rgb: 245, 158, 11;
+  /* Accent: Luxury Mauve & Lavender */
+  --brand-gold: #987ba5;
+  --brand-gold-rgb: 152, 123, 165;
+  --brand-gold-light: #ddd3e1;
+  --brand-gold-dark: #765086;
 
-  /* ── Surfaces: Cinematic Obsidian & Studio Slate ────────────────── */
-  --background: #070709;
-  --background-alt: #0c0b10;
+  /* Legacy Teal & Cyan aliases mapped to Mauve & Violet */
+  --brand-teal: #987ba5;
+  --brand-teal-rgb: 152, 123, 165;
+  --brand-teal-light: #bba7c3;
+
+  --brand-cyan: #765086;
+  --brand-cyan-rgb: 118, 80, 134;
+
+  /* ── Surfaces: Cinematic Obsidian Black (#231F20) & Deep Violet Depth ──── */
+  --background: #0c0912;
+  --background-alt: #130f1d;
   --foreground: #f4f4f6;
-  --card: #111016;
-  --card-alt: #16151e;
+  --card: #181324;
+  --card-alt: #201a30;
   --card-foreground: #f4f4f6;
-  --secondary: #0c0b10;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-subtle: rgba(255, 255, 255, 0.04);
+  --secondary: #130f1d;
+  --border: rgba(152, 123, 165, 0.16);
+  --border-subtle: rgba(255, 255, 255, 0.05);
 
   /* ── Text: High-Contrast Studio Typography ───────────────────────── */
   --text-primary: #f4f4f6;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --text-ghost: #52525b;
+  --text-secondary: #a9a1b4;
+  --text-muted: #7b7286;
+  --text-ghost: #564e62;
 }
 
 @theme inline {
@@ -51,6 +69,29 @@
   --color-secondary: var(--secondary);
   --color-border: var(--border);
   --color-border-subtle: var(--border-subtle);
+
+  /* Official Brand Colors */
+  --color-brand-yellow: var(--brand-yellow);
+  --color-brand-yellow-light: var(--brand-yellow-light);
+  --color-brand-yellow-dark: var(--brand-yellow-dark);
+  --color-brand-violet: var(--brand-violet);
+  --color-brand-violet-rich: var(--brand-violet-rich);
+  --color-brand-mauve: var(--brand-mauve);
+  --color-brand-mauve-soft: var(--brand-mauve-soft);
+  --color-brand-lavender: var(--brand-lavender);
+
+  /* Palette override for legacy amber-* to match Purple & Mauve */
+  --color-amber-50: #fbf8fd;
+  --color-amber-100: #f6eef9;
+  --color-amber-200: #eedff3;
+  --color-amber-300: #bba7c3;
+  --color-amber-400: #987ba5;
+  --color-amber-500: #765086;
+  --color-amber-600: #542568;
+  --color-amber-700: #441d54;
+  --color-amber-800: #351642;
+  --color-amber-900: #260e30;
+  --color-amber-950: #17081e;
 
   --color-brand-purple: var(--brand-purple);
   --color-brand-purple-light: var(--brand-purple-light);
@@ -71,7 +112,7 @@
 
   --font-sans: var(--font-sans), "Inter", system-ui, sans-serif;
   --font-display: var(--font-display), "Poppins", system-ui, sans-serif;
-  --font-arabic: var(--font-arabic), "Noto Sans Arabic", "Arabic UI Text", system-ui, sans-serif;
+  --font-arabic: "Jana", "GE SS Jana", "Jana LT", var(--font-arabic), "Noto Sans Arabic", "Arabic UI Text", system-ui, sans-serif;
 
   --animate-mesh-float: mesh-float 10s ease-in-out infinite alternate;
   --animate-fade-up: fade-up 0.55s cubic-bezier(0.16,1,0.3,1) forwards;
@@ -117,10 +158,10 @@ body {
 
 /* ── Arabic RTL mode ─────────────────────────────────────────────────────── */
 
-/* Switch to Noto Sans Arabic when the page direction is RTL.
-   We keep the LTR Latin font as a fallback for brand names & numerals. */
+/* Prioritize Jana / GE SS Jana / Jana LT when the page direction is RTL.
+   Noto Sans Arabic serves as the high-fidelity web fallback. */
 html[dir="rtl"] body {
-  font-family: var(--font-arabic), "Noto Sans Arabic", "Arabic UI Text",
+  font-family: "Jana", "GE SS Jana", "Jana LT", var(--font-arabic), "Noto Sans Arabic", "Arabic UI Text",
                "Segoe UI", system-ui, sans-serif;
   line-height: 1.6;
 }
@@ -151,7 +192,7 @@ html[dir="rtl"] h3,
 html[dir="rtl"] h4,
 html[dir="rtl"] .font-display {
   line-height: 1.4 !important;
-  font-family: var(--font-arabic), "Noto Sans Arabic", "Arabic UI Text", system-ui, sans-serif;
+  font-family: "Jana", "GE SS Jana", "Jana LT", var(--font-arabic), "Noto Sans Arabic", "Arabic UI Text", system-ui, sans-serif;
 }
 
 /* Brand names, tech specs, Latin acronyms — always render LTR inside RTL pages */
@@ -163,7 +204,7 @@ html[dir="rtl"] .font-display {
 
 /* Explicit Arabic font utility — use on elements that need Arabic rendering inside LTR pages */
 .font-arabic {
-  font-family: var(--font-arabic), "Noto Sans Arabic", "Arabic UI Text", system-ui, sans-serif;
+  font-family: "Jana", "GE SS Jana", "Jana LT", var(--font-arabic), "Noto Sans Arabic", "Arabic UI Text", system-ui, sans-serif;
   letter-spacing: 0 !important;
 }
 
@@ -277,14 +318,52 @@ section {
   50%       { transform: translateY(-10px); }
 }
 
+@keyframes float-slow {
+  0%, 100% { transform: translate3d(0, 0px, 0) rotate(0deg); }
+  50%       { transform: translate3d(-3px, -12px, 0) rotate(2deg); }
+}
+
+@keyframes float-reverse {
+  0%, 100% { transform: translate3d(0, 0px, 0) rotate(0deg) scale(1); }
+  33%       { transform: translate3d(4px, 8px, 0) rotate(-1.5deg) scale(1.02); }
+  66%       { transform: translate3d(-3px, 14px, 0) rotate(1deg) scale(1.01); }
+}
+
+@keyframes cinema-sway {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    filter: drop-shadow(0 20px 35px rgba(0,0,0,0.85));
+  }
+  38% {
+    transform: translate3d(-6px, -14px, 0) rotate(-2deg);
+    filter: drop-shadow(-8px 28px 45px rgba(84,37,104,0.3));
+  }
+  72% {
+    transform: translate3d(5px, -6px, 0) rotate(1.8deg);
+    filter: drop-shadow(6px 24px 40px rgba(0,0,0,0.9));
+  }
+}
+
+.animate-cinema-sway {
+  animation: cinema-sway 9s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 7.5s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: float-reverse 8.5s ease-in-out infinite;
+}
+
 @keyframes pulse-glow {
   0%, 100% { opacity: 0.6; transform: scale(1); }
   50%       { opacity: 1;   transform: scale(1.08); }
 }
 
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 16px rgba(245,158,11,0.25); }
-  50%       { box-shadow: 0 0 36px rgba(245,158,11,0.5), 0 0 60px rgba(245,158,11,0.18); }
+  0%, 100% { box-shadow: 0 0 16px rgba(84, 37, 104, 0.35); }
+  50%       { box-shadow: 0 0 36px rgba(118, 80, 134, 0.55), 0 0 60px rgba(84, 37, 104, 0.25); }
 }
 
 @keyframes gradient-shift {
@@ -373,21 +452,45 @@ html[dir="rtl"] .animate-marquee {
 }
 
 @utility bg-gradient-gold {
-  background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%);
+  /* Official Deep Violet → Rich Violet → Mauve */
+  background: linear-gradient(135deg, #542568 0%, #765086 50%, #987ba5 100%);
 }
 
 @utility btn-brand {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  color: #09090b !important;
+  /* Official Yas Luxury Violet & Mauve */
+  background: linear-gradient(135deg, #765086 0%, #542568 100%);
+  color: #ffffff !important;
   font-weight: 700;
+  border: 1px solid rgba(187, 167, 195, 0.4);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 24px rgba(84, 37, 104, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
 
   &:hover {
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    background: linear-gradient(135deg, #987ba5 0%, #683777 100%);
+    border-color: rgba(221, 211, 225, 0.65);
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.45);
-    color: #000000 !important;
+    box-shadow: 0 8px 30px rgba(118, 80, 134, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    color: #ffffff !important;
+  }
+
+  &:active {
+    transform: translateY(0px) scale(0.98);
+  }
+}
+
+@utility btn-violet {
+  background: linear-gradient(135deg, #542568 0%, #3e1b4c 100%);
+  color: #ffffff !important;
+  font-weight: 700;
+  border: 1px solid rgba(152, 123, 165, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(84, 37, 104, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+
+  &:hover {
+    background: linear-gradient(135deg, #765086 0%, #542568 100%);
+    border-color: rgba(187, 167, 195, 0.55);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(84, 37, 104, 0.5);
   }
 
   &:active {
@@ -403,19 +506,43 @@ html[dir="rtl"] .animate-marquee {
 }
 
 @utility gradient-text-gold {
-  /* Tungsten 3200K warm key light: deep amber → bright gold → warm champagne highlight */
-  background: linear-gradient(135deg, #d97706 0%, #f59e0b 35%, #fde68a 60%, #f59e0b 100%);
+  /* Official Brand Signature: Pale Lavender → Soft Mauve → Rich Mauve (No orange/amber) */
+  background: linear-gradient(135deg, #ffffff 0%, #ddd3e1 35%, #bba7c3 70%, #987ba5 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@utility gradient-text-mauve {
+  /* Soft Mauve → Rich Violet */
+  background: linear-gradient(135deg, #ffffff 0%, #ddd3e1 30%, #bba7c3 65%, #765086 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@utility gradient-text-violet {
+  /* Deep Violet → Rich Violet → Soft Mauve */
+  background: linear-gradient(135deg, #987ba5 0%, #bba7c3 50%, #ffffff 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@utility gradient-text-yellow {
+  /* Mapped to Mauve / Violet */
+  background: linear-gradient(135deg, #ffffff 0%, #ddd3e1 35%, #bba7c3 70%, #987ba5 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 @utility glass-card {
-  background: rgba(14, 13, 19, 0.8);
+  background: rgba(23, 19, 34, 0.85);
   backdrop-filter: blur(24px) saturate(1.25);
   -webkit-backdrop-filter: blur(24px) saturate(1.25);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 32px -8px rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(152, 123, 165, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 32px -8px rgba(0, 0, 0, 0.7);
   border-radius: 1.25rem;
 }
 
@@ -423,12 +550,12 @@ html[dir="rtl"] .animate-marquee {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover {
-    background: rgba(20, 19, 27, 0.92);
-    border-color: rgba(245, 158, 11, 0.35);
+    background: rgba(31, 26, 46, 0.95);
+    border-color: rgba(152, 123, 165, 0.38);
     box-shadow:
       0 24px 56px -12px rgba(0, 0, 0, 0.85),
-      0 0 24px -4px rgba(245, 158, 11, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      0 0 24px -4px rgba(84, 37, 104, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
     transform: translateY(-3px);
   }
 }
@@ -458,10 +585,10 @@ html[dir="rtl"] .animate-marquee {
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse at 15% 50%,  rgba(245,158,11,0.08) 0%, transparent 60%),
-      radial-gradient(ellipse at 85% 15%,  rgba(217,119,6,0.06)  0%, transparent 55%),
-      radial-gradient(ellipse at 50% 90%,  rgba(251,191,36,0.05) 0%, transparent 50%),
-      radial-gradient(ellipse at 70% 60%,  rgba(245,158,11,0.04)  0%, transparent 45%);
+      radial-gradient(ellipse at 15% 50%,  rgba(84, 37, 104, 0.24) 0%, transparent 60%),
+      radial-gradient(ellipse at 85% 15%,  rgba(152, 123, 165, 0.18)  0%, transparent 55%),
+      radial-gradient(ellipse at 50% 90%,  rgba(118, 80, 134, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 60%,  rgba(84, 37, 104, 0.15)  0%, transparent 45%);
     pointer-events: none;
     animation: var(--animate-mesh-float);
   }
@@ -504,7 +631,7 @@ html[dir="rtl"] .page-hero-title {
 @utility glow-orb-purple {
   position: absolute;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(245,158,11,0.14) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(84, 37, 104, 0.35) 0%, rgba(152, 123, 165, 0.15) 50%, transparent 70%);
   filter: blur(60px);
   pointer-events: none;
 }
@@ -512,7 +639,7 @@ html[dir="rtl"] .page-hero-title {
 @utility glow-orb-gold {
   position: absolute;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(152, 123, 165, 0.22) 0%, transparent 70%);
   filter: blur(60px);
   pointer-events: none;
 }
@@ -520,7 +647,7 @@ html[dir="rtl"] .page-hero-title {
 @utility glow-orb-teal {
   position: absolute;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(217,119,6,0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(152, 123, 165, 0.22) 0%, transparent 70%);
   filter: blur(60px);
   pointer-events: none;
 }
@@ -528,10 +655,10 @@ html[dir="rtl"] .page-hero-title {
 /* Scrollbar */
 ::-webkit-scrollbar { width: 5px; }
 
-::-webkit-scrollbar-track { background: #06050f; }
+::-webkit-scrollbar-track { background: #0c0912; }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #d97706, #f59e0b);
+  background: linear-gradient(180deg, #765086, #542568);
   border-radius: 4px;
 }
 
@@ -540,7 +667,7 @@ html[dir="rtl"] .page-hero-title {
   background: linear-gradient(
     90deg,
     rgba(255,255,255,0.04) 25%,
-    rgba(245,158,11,0.08) 50%,
+    rgba(152, 123, 165, 0.12) 50%,
     rgba(255,255,255,0.04) 75%
   );
   background-size: 200% 100%;

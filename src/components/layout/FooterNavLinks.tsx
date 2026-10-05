@@ -32,7 +32,7 @@ export function FooterNavLinks({ links }: FooterNavLinksProps) {
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 {Icon && (
-                  <span className="flex items-center justify-center size-5 rounded-md bg-white/[0.04] group-hover/item:bg-amber-500/15 text-amber-400/80 group-hover/item:text-amber-400 border border-white/[0.06] group-hover/item:border-amber-500/30 transition-all shrink-0">
+                  <span className="flex items-center justify-center size-5 rounded-md bg-white/[0.04] group-hover/item:bg-brand-violet/30 text-brand-mauve-soft group-hover/item:text-brand-lavender border border-white/[0.06] group-hover/item:border-brand-mauve/40 transition-all shrink-0">
                     <Icon size={11} />
                   </span>
                 )}
@@ -44,12 +44,12 @@ export function FooterNavLinks({ links }: FooterNavLinksProps) {
               {link.isExternal ? (
                 <ArrowUpRight
                   size={13}
-                  className="text-text-muted group-hover/item:text-amber-400 group-hover/item:translate-x-0.5 group-hover/item:-translate-y-0.5 transition-all shrink-0 ms-1.5 opacity-60 group-hover/item:opacity-100"
+                  className="text-text-muted group-hover/item:text-brand-lavender group-hover/item:translate-x-0.5 group-hover/item:-translate-y-0.5 transition-all shrink-0 ms-1.5 opacity-60 group-hover/item:opacity-100"
                 />
               ) : (
                 <ChevronRight
                   size={13}
-                  className="text-text-muted group-hover/item:text-amber-400 group-hover/item:translate-x-1 transition-all shrink-0 ms-1.5 opacity-40 group-hover/item:opacity-100"
+                  className="text-text-muted group-hover/item:text-brand-lavender group-hover/item:translate-x-1 transition-all shrink-0 ms-1.5 opacity-40 group-hover/item:opacity-100"
                 />
               )}
             </Link>

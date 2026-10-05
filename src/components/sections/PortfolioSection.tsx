@@ -62,13 +62,13 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
     <Section
       id="portfolio"
       aria-labelledby="portfolio-title"
-      className="bg-background border-t border-white/10 relative overflow-hidden py-16 sm:py-24"
+      className="bg-transparent border-t border-white/10 relative overflow-hidden py-16 sm:py-24"
     >
       {/* Hardware-friendly pre-rendered radial glow (Zero GPU blur convolution cost) */}
       <div
         className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] pointer-events-none rounded-full"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(245,158,11,0.06) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse at center, rgba(84,37,104,0.2) 0%, transparent 70%)",
         }}
       />
 
@@ -77,7 +77,7 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
         <SectionHeader
           headingId="portfolio-title"
           badge={t("portfolio.badge")}
-          badgeVariant="gold"
+          badgeVariant="purple"
           badgeIcon={<Award size={13} />}
           title={isArabic ? t("portfolio.title") : "Our Latest"}
           gradientText={isArabic ? t("portfolio.titleGradient") : "Masterpieces"}
@@ -101,7 +101,7 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
                 {isActive && (
                   <motion.div
                     layoutId="activePortfolioPill"
-                    className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 shadow-md shadow-amber-500/30 -z-10"
+                    className="absolute inset-0 rounded-full btn-brand shadow-md -z-10"
                     transition={studioSprings.snappy}
                   />
                 )}
@@ -113,9 +113,9 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
 
         {/* 🎬 Flagship Cinema Spotlight Stage (Premiere Feature) */}
         <FadeUp delay={0.05} className="mb-12 sm:mb-16">
-          <div className="relative rounded-2xl sm:rounded-3xl border border-amber-500/30 bg-zinc-950/95 shadow-2xl shadow-black/80 overflow-hidden">
-            {/* Top Amber Accent Rail */}
-            <div className="h-1 w-full bg-gradient-to-r from-amber-500 via-amber-300 to-amber-500" />
+          <div className="relative rounded-2xl sm:rounded-3xl border border-brand-mauve/30 bg-zinc-950/95 shadow-2xl shadow-black/80 overflow-hidden">
+            {/* Top Brand Accent Rail */}
+            <div className="h-1 w-full bg-gradient-to-r from-brand-violet via-brand-mauve to-brand-violet" />
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch">
               {/* Large Cinema Screen (7 cols) */}
@@ -142,8 +142,8 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
                 {/* Top Telemetry HUD */}
                 <div className="absolute top-3 inset-x-3 sm:top-4 sm:inset-x-4 flex items-center justify-between z-10 pointer-events-none">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/90 border border-amber-500/40 text-[10px] font-mono font-bold tracking-wider text-amber-300 uppercase">
-                      <Sparkles size={11} className="text-amber-400" />
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/90 border border-brand-mauve/40 text-[10px] font-mono font-bold tracking-wider text-brand-lavender uppercase">
+                      <Sparkles size={11} className="text-brand-lavender" />
                       <span>{isArabic ? "العرض الرئيسي المميز" : "Spotlight Premiere"}</span>
                     </span>
 
@@ -169,12 +169,12 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
                     >
                       <div className="relative flex items-center justify-center">
                         {/* Pulse Ring Wave */}
-                        <div className="absolute inset-0 rounded-full bg-amber-500/30 scale-100 group-hover/playbtn:scale-140 group-hover/playbtn:opacity-0 transition-all duration-700 ease-out pointer-events-none" />
-                        <div className="size-16 sm:size-20 rounded-full bg-zinc-950/90 border border-amber-500/60 flex items-center justify-center text-amber-400 shadow-2xl group-hover/playbtn:scale-110 group-hover/playbtn:bg-amber-500 group-hover/playbtn:text-zinc-950 group-hover/playbtn:border-amber-400 group-hover/playbtn:shadow-[0_0_36px_rgba(245,158,11,0.6)] transition-all duration-200">
+                        <div className="absolute inset-0 rounded-full bg-brand-violet/40 scale-100 group-hover/playbtn:scale-140 group-hover/playbtn:opacity-0 transition-all duration-700 ease-out pointer-events-none" />
+                        <div className="size-16 sm:size-20 rounded-full bg-zinc-950/90 border border-brand-mauve/60 flex items-center justify-center text-brand-lavender shadow-2xl group-hover/playbtn:scale-110 group-hover/playbtn:btn-brand group-hover/playbtn:shadow-[0_0_36px_rgba(118,80,134,0.6)] transition-all duration-200">
                           <Play size={26} className="fill-current translate-x-0.5 rtl:-translate-x-0.5" />
                         </div>
                       </div>
-                      <span className="px-3 py-1 rounded-full bg-black/90 border border-white/10 text-[10px] sm:text-xs font-mono font-semibold tracking-wider text-zinc-200 group-hover/playbtn:text-amber-300 transition-colors">
+                      <span className="px-3 py-1 rounded-full bg-black/90 border border-white/10 text-[10px] sm:text-xs font-mono font-semibold tracking-wider text-zinc-200 group-hover/playbtn:text-brand-lavender transition-colors">
                         {isArabic ? "مشاهدة الفيلم • 4K UHD" : "WATCH FILM • 4K UHD"}
                       </span>
                     </button>
@@ -187,7 +187,7 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
                     {spotlightOptics}
                   </span>
                   {spotlightProject.views && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-black/90 border border-white/10 text-amber-400 font-semibold">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-black/90 border border-white/10 text-brand-lavender font-semibold">
                       <Eye size={11} />
                       <span>{spotlightProject.views}</span>
                     </span>
@@ -200,7 +200,7 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
                 <div>
                   {/* Client & Category Badge */}
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="inline-flex items-center gap-1.5 text-xs text-amber-400 font-semibold">
+                    <span className="inline-flex items-center gap-1.5 text-xs text-brand-mauve-soft font-semibold">
                       <Tv size={13} className="shrink-0" />
                       <span>{spotlightProject.client}</span>
                     </span>
@@ -249,7 +249,7 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
                       <button
                         type="button"
                         onClick={() => setSelectedVideoProject(spotlightProject)}
-                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-amber-500 text-zinc-950 font-bold text-xs hover:bg-amber-400 shadow-lg shadow-amber-500/20 active:scale-[0.98] transition-all cursor-pointer"
+                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full btn-brand text-xs font-bold active:scale-[0.98] transition-all cursor-pointer"
                       >
                         <Play size={13} className="fill-current" />
                         <span>{isArabic ? "مشاهدة الماستر السينمائي" : "Watch Master Reel"}</span>
@@ -266,7 +266,7 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
                   ) : (
                     <Link
                       href={`/projects/${spotlightProject.slug}`}
-                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-amber-500 text-zinc-950 font-bold text-xs hover:bg-amber-400 shadow-lg shadow-amber-500/20 active:scale-[0.98] transition-all"
+                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full btn-brand text-xs font-bold active:scale-[0.98] transition-all"
                     >
                       <span>{isArabic ? "استعراض تفاصيل المشروع" : "Explore Project Dossier"}</span>
                       <ArrowUpRight size={13} className="rtl:rotate-90 rtl:scale-x-[-1]" />
@@ -282,7 +282,7 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6 px-1">
             <div className="flex items-center gap-2">
-              <Clapperboard size={16} className="text-amber-400" />
+              <Clapperboard size={16} className="text-brand-lavender" />
               <h3 className="text-sm font-mono uppercase tracking-wider text-zinc-300 font-semibold">
                 {isArabic ? "استكشف أعمالنا في هذا التصنيف" : "Selected Repertoire Grid"}
               </h3>
@@ -312,7 +312,7 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
         <FadeUp delay={0.15} className="flex justify-center mt-12 sm:mt-16">
           <Link
             href="/projects"
-            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full border border-white/15 bg-zinc-900/90 text-zinc-200 hover:bg-amber-500 hover:text-zinc-950 hover:border-amber-400 transition-all text-xs font-bold shadow-xl shadow-black/60 active:scale-[0.98]"
+            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full border border-white/15 bg-zinc-900/90 text-zinc-200 hover:btn-brand hover:border-transparent transition-all text-xs font-bold shadow-xl shadow-black/60 active:scale-[0.98]"
           >
             <span>
               {t("portfolio.viewAll")} ({PROJECTS_DATA.length}+ {isArabic ? "عمل سينمائي" : "Cinema Works"})

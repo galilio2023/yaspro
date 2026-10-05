@@ -18,20 +18,20 @@ export function FloatingCopilotButton() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="relative size-13 sm:size-14 rounded-2xl flex items-center justify-center text-amber-400 cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40 transition-all duration-200 hover:scale-105 active:scale-95 shadow-xl shadow-amber-500/10"
+          className="relative size-13 sm:size-14 rounded-2xl flex items-center justify-center text-brand-mauve-soft cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40 transition-all duration-200 hover:scale-105 active:scale-95 shadow-xl shadow-purple-950/20"
           aria-label="Open Yas Pro Production Dispatch"
           title="Production Dispatch & Copilot"
         >
-          {/* Subtle amber ambient aura */}
-          <div className="absolute -inset-0.5 rounded-2xl bg-amber-500/20 blur-sm group-hover:bg-amber-500/35 transition-all" />
+          {/* Subtle violet ambient aura */}
+          <div className="absolute -inset-0.5 rounded-2xl bg-brand-violet/25 blur-sm group-hover:bg-brand-violet/40 transition-all" />
 
           {/* Button Surface: Studio Hardware */}
-          <div className="relative size-full rounded-2xl bg-[#121118] border border-amber-500/30 p-[1px] shadow-2xl flex items-center justify-center overflow-hidden group-hover:border-amber-500/60 transition-colors">
-            <div className="absolute inset-0 bg-gradient-to-b from-amber-500/10 via-transparent to-black/40 pointer-events-none" />
+          <div className="relative size-full rounded-2xl bg-[#121118] border border-brand-mauve/30 p-[1px] shadow-2xl flex items-center justify-center overflow-hidden group-hover:border-brand-mauve/60 transition-colors">
+            <div className="absolute inset-0 bg-gradient-to-b from-brand-violet/15 via-transparent to-black/40 pointer-events-none" />
 
             <div className="relative z-10 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-              <Bot size={22} className="text-amber-400" />
-              <span className="absolute -top-1 -right-1 size-2 rounded-full bg-amber-500 ring-2 ring-[#121118]" />
+              <Bot size={22} className="text-brand-mauve-soft group-hover:text-brand-lavender transition-colors" />
+              <span className="absolute -top-1 -right-1 size-2 rounded-full bg-brand-mauve ring-2 ring-[#121118]" />
             </div>
           </div>
         </button>
