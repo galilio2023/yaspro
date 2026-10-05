@@ -47,7 +47,7 @@ export function CopilotGearTab() {
                 aria-pressed={isSelected}
                 className={`p-3 rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-between min-h-[44px] text-left w-full ${
                   isSelected
-                    ? "bg-amber-500/15 border-amber-500/50 text-white"
+                    ? "bg-brand-violet/25 border-brand-mauve/50 text-white"
                     : "bg-white/[0.02] border-white/5 text-text-secondary hover:border-white/20"
                 }`}
               >
@@ -60,7 +60,7 @@ export function CopilotGearTab() {
                 <div
                   className={`size-5 rounded-md border flex items-center justify-center shrink-0 ${
                     isSelected
-                      ? "bg-amber-500 border-amber-500 text-zinc-950 font-bold"
+                      ? "btn-brand text-white font-bold"
                       : "border-white/20"
                   }`}
                 >
@@ -77,7 +77,7 @@ export function CopilotGearTab() {
         <div className="space-y-4">
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <h5 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <Cpu size={14} className="text-amber-400" />
+              <Cpu size={14} className="text-brand-lavender" />
               <span>Optical & Power Compatibility Analysis</span>
             </h5>
             {compatibilityReport.isCompatible ? (
@@ -85,7 +85,7 @@ export function CopilotGearTab() {
                 Rig Ready
               </span>
             ) : (
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 border border-amber-500/30 text-amber-400">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand-violet/25 border border-brand-mauve/30 text-brand-lavender">
                 Accessories Required
               </span>
             )}
@@ -93,13 +93,13 @@ export function CopilotGearTab() {
 
           {compatibilityReport.warnings.length > 0 && (
             <div className="space-y-2">
-              <div className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
+              <div className="text-[11px] font-bold text-brand-lavender uppercase tracking-wider">
                 Identified Gaps:
               </div>
               {compatibilityReport.warnings.map((w, idx) => (
                 <div
                   key={idx}
-                  className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200 flex items-start gap-2"
+                  className="p-2.5 rounded-xl bg-brand-violet/25 border border-brand-mauve/30 text-xs text-brand-lavender flex items-start gap-2"
                 >
                   <AlertTriangle size={14} className="shrink-0 mt-0.5" />
                   <span>{w}</span>
@@ -110,7 +110,7 @@ export function CopilotGearTab() {
 
           {compatibilityReport.suggestions.length > 0 && (
             <div className="space-y-2">
-              <div className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
+              <div className="text-[11px] font-bold text-brand-lavender uppercase tracking-wider">
                 Recommended Companion Items:
               </div>
               {compatibilityReport.suggestions.map((s, idx) => (
@@ -125,7 +125,7 @@ export function CopilotGearTab() {
                   <button
                     type="button"
                     onClick={() => toggleGearItem(s.item.id)}
-                    className="px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-[11px] font-semibold transition-all shrink-0 min-h-[36px] cursor-pointer"
+                    className="px-2.5 py-1 rounded-lg bg-brand-violet/30 hover:bg-brand-violet/50 text-brand-lavender border border-brand-mauve/40 text-[11px] font-semibold transition-all shrink-0 min-h-[36px] cursor-pointer"
                   >
                     + Add to Rig
                   </button>

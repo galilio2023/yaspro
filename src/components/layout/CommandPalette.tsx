@@ -377,12 +377,12 @@ export function CommandPalette() {
       <div
         ref={panelRef}
         tabIndex={-1}
-        className="w-full max-w-xl bg-slate-900 border border-amber-500/30 rounded-2xl sm:rounded-3xl shadow-2xl shadow-amber-900/20 overflow-hidden flex flex-col max-h-[75vh] overscroll-contain"
+        className="w-full max-w-xl bg-slate-900 border border-brand-mauve/40 rounded-2xl sm:rounded-3xl shadow-2xl shadow-purple-950/40 overflow-hidden flex flex-col max-h-[75vh] overscroll-contain"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
         <div className="flex items-center px-4 py-3.5 border-b border-white/10 gap-3 bg-white/[0.02]">
-          <Search size={18} className="text-amber-400 shrink-0" />
+          <Search size={18} className="text-brand-mauve-soft shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -435,7 +435,7 @@ export function CommandPalette() {
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center justify-between gap-3 text-xs transition-colors cursor-pointer ${
                     isSelected
-                      ? "bg-amber-500/20 text-white border border-amber-500/40"
+                      ? "bg-brand-violet/40 text-white border border-brand-mauve/50"
                       : "text-slate-300 hover:bg-white/5 border border-transparent"
                   }`}
                 >
@@ -443,8 +443,8 @@ export function CommandPalette() {
                     <div
                       className={`size-7 rounded-lg flex items-center justify-center shrink-0 ${
                         isSelected
-                          ? "bg-amber-500 text-slate-950 font-bold"
-                          : "bg-white/5 text-amber-400"
+                          ? "bg-brand-violet text-brand-lavender font-bold border border-brand-mauve/40"
+                          : "bg-white/5 text-brand-lavender"
                       }`}
                     >
                       <Icon size={14} />
@@ -459,12 +459,12 @@ export function CommandPalette() {
 
                   <div className="flex items-center gap-2 shrink-0">
                     {cmd.badge && (
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-brand-violet/25 text-brand-lavender border border-brand-mauve/40">
                         {cmd.badge}
                       </span>
                     )}
                     {isSelected && (
-                      <ArrowRight size={13} className="text-amber-400 rtl:rotate-180" />
+                      <ArrowRight size={13} className="text-brand-lavender rtl:rotate-180" />
                     )}
                   </div>
                 </button>
@@ -479,7 +479,7 @@ export function CommandPalette() {
             <span>&uarr;&darr; Navigate</span>
             <span>&crarr; Select</span>
           </div>
-          <div className="flex items-center gap-1.5 text-amber-400">
+          <div className="flex items-center gap-1.5 text-brand-mauve-soft">
             <Command size={12} />
             <span>YasPro Studio Control</span>
           </div>

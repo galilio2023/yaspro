@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import Image from "next/image";
 import { studioSprings } from "@/lib/studio-motion";
 import { motion } from "framer-motion";
 
@@ -28,19 +27,7 @@ export function SoundstageAtmosphere({ className = "", isArabic: _isArabic = fal
       onMouseMove={handleMouseMove}
       className={`absolute inset-0 overflow-hidden select-none pointer-events-none ${className}`}
     >
-      {/* 1. High-Resolution Soundstage Background Plate */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/images/branding/yaspro-hero-bg.jpg"
-          alt="Yas Pro Virtual Soundstage"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center opacity-40 brightness-75 contrast-125 saturate-90 scale-105"
-        />
-      </div>
-
-      {/* 2. Interactive Directional Tungsten Keylight (3200K) tracking mouse gently */}
+      {/* 2. Interactive Directional Keylight tracking mouse gently */}
       <motion.div
         className="absolute w-[600px] sm:w-[900px] h-[500px] sm:h-[700px] rounded-full blur-[140px] pointer-events-none opacity-25"
         animate={{

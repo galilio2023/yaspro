@@ -231,7 +231,7 @@ export function GlobalPageLoaderProvider({
         aria-hidden="true"
       >
         <div
-          className="h-full bg-gradient-to-r from-amber-500 via-amber-400 to-white transition-all duration-200 ease-out shadow-[0_0_14px_rgba(245,158,11,0.9)] relative"
+          className="h-full bg-gradient-to-r from-brand-violet via-brand-mauve to-brand-lavender transition-all duration-200 ease-out shadow-[0_0_14px_rgba(118,80,134,0.9)] relative"
           style={{
             width: `${progress}%`,
             opacity: isLoading || progress > 0 ? 1 : 0,
@@ -239,7 +239,7 @@ export function GlobalPageLoaderProvider({
         >
           {/* Optical flare head on leading edge */}
           <div className="absolute top-1/2 -right-1.5 -translate-y-1/2 w-4 h-4 rounded-full bg-white blur-[2px] opacity-90" />
-          <div className="absolute top-1/2 -right-3 -translate-y-1/2 w-8 h-8 rounded-full bg-amber-400 blur-md opacity-70" />
+          <div className="absolute top-1/2 -right-3 -translate-y-1/2 w-8 h-8 rounded-full bg-brand-mauve blur-md opacity-70" />
         </div>
       </div>
 

@@ -100,20 +100,20 @@ export function PortalMobileNav({
 
   const gradientClass = isEmerald
     ? "from-emerald-600 via-emerald-700 to-emerald-800"
-    : "from-amber-500 via-amber-600 to-amber-700";
+    : "from-brand-violet-rich via-brand-violet to-brand-violet-dark";
 
   const shadowClass = isEmerald
     ? "shadow-emerald-500/25 border-emerald-400/30"
-    : "shadow-amber-500/20 border-amber-500/30";
+    : "shadow-purple-950/40 border-brand-mauve/40";
 
-  const subtitleClass = isEmerald ? "text-emerald-400" : "text-amber-400";
-  const iconClass = isEmerald ? "text-emerald-400/80" : "text-amber-400/80";
+  const subtitleClass = isEmerald ? "text-emerald-400" : "text-brand-mauve";
+  const iconClass = isEmerald ? "text-emerald-400/80" : "text-brand-mauve/80";
   const logoHoverClass = isEmerald
     ? "group-hover:text-emerald-300"
-    : "group-hover:text-amber-300";
+    : "group-hover:text-brand-lavender";
   const linkAccentClass = isEmerald
     ? "text-emerald-400 hover:text-emerald-300"
-    : "text-amber-400 hover:text-amber-300";
+    : "text-brand-mauve hover:text-brand-lavender";
 
   const subtitle = userRole === "client" ? "CLIENT PORTAL" : "ENTERPRISE VAULT";
 
@@ -237,7 +237,7 @@ export function PortalMobileNav({
             {/* Footer */}
             <div className="px-4 pb-6 pt-4 border-t border-white/10">
               <div className="flex items-center gap-2 mb-4 min-w-0">
-                <div className={`p-1.5 rounded-lg bg-white/5 shrink-0 ${isEmerald ? "text-emerald-400" : "text-amber-400"}`}>
+                <div className={`p-1.5 rounded-lg bg-white/5 shrink-0 ${isEmerald ? "text-emerald-400" : "text-brand-mauve"}`}>
                   <User size={14} />
                 </div>
                 <div className="min-w-0">

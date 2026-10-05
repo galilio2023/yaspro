@@ -24,7 +24,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     initials: "YA",
     department: "Executive Board",
     arDepartment: "مجلس الإدارة التنفيذي",
-    gradient: "from-amber-600 via-amber-500 to-yellow-400",
+    gradient: "from-brand-violet-rich via-brand-violet to-brand-mauve",
   },
   {
     role: "Chief Technology Officer",
@@ -36,7 +36,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     initials: "CTO",
     department: "Media Engineering",
     arDepartment: "الهندسة الإعلامية والتقنية",
-    gradient: "from-amber-500 via-stone-600 to-emerald-400",
+    gradient: "from-brand-violet via-brand-purple to-brand-mauve-soft",
   },
   {
     role: "Head of Studio Operations",
@@ -48,7 +48,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     initials: "OPS",
     department: "Physical Studios",
     arDepartment: "الاستوديوهات الميدانية",
-    gradient: "from-amber-500 via-amber-600 to-yellow-500",
+    gradient: "from-brand-purple-mid via-brand-violet to-brand-mauve",
   },
   {
     role: "OB-VAN & Live Broadcast Director",
@@ -60,7 +60,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     initials: "OB",
     department: "Tactical Fleet",
     arDepartment: "أسطول البث التكتيكي",
-    gradient: "from-amber-600 via-stone-700 to-amber-500",
+    gradient: "from-brand-violet-dark via-brand-violet to-brand-purple",
   },
   {
     role: "Director of Sound & Spatial Audio",
@@ -72,7 +72,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     initials: "ATM",
     department: "Audio Engineering",
     arDepartment: "الهندسة الصوتية",
-    gradient: "from-amber-600 via-amber-500 to-amber-400",
+    gradient: "from-brand-violet-rich via-brand-mauve to-brand-lavender",
   },
   {
     role: "Lead Virtual Production Cinematographer",
@@ -84,7 +84,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     initials: "CIN",
     department: "Virtual Cinematography",
     arDepartment: "التصوير السينمائي الافتراضي",
-    gradient: "from-zinc-700 via-stone-600 to-amber-600",
+    gradient: "from-brand-violet via-brand-mauve to-brand-purple",
   },
 ];
 
@@ -98,7 +98,7 @@ export const PILLARS = [
     description: "Harnessing real-time generative AI for automated shot logging, dialect adaptation, neural color transforms, and instantaneous multi-camera clipping.",
     arDescription: "تسخير الذكاء الاصطناعي التوليدي الفوري لأرشفة اللقطات الذكية، تكييف اللهجات، المعالجة اللونية، والنشر اللحظي متعدد الزوايا.",
     tags: ["Unreal Engine 5.4", "Dialect AI", "Instant Replay", "Neural Upscaling"],
-    gradient: "from-amber-500 to-amber-700",
+    gradient: "from-brand-violet to-brand-purple-dark",
   },
   {
     icon: Camera,
@@ -109,7 +109,7 @@ export const PILLARS = [
     description: "Purpose-built acoustic environments with automated digital lighting grids, 8K dual-ISO camera chains, podcast suites, and flexible luxury set dressing.",
     arDescription: "بيئات صوتية معزولة بأحدث شبكات الإضاءة الرقمية، سلاسل كاميرات 8K، أجنحة البودكاست الاحترافية، وتجهيزات ديكور مرنة تلبي أعلى المعايير.",
     tags: ["8K RAW", "Acoustic NC-20", "DMX Lighting", "Podcast Suites"],
-    gradient: "from-amber-600 to-yellow-600",
+    gradient: "from-brand-violet-rich to-brand-violet",
   },
   {
     icon: Radio,
@@ -120,7 +120,7 @@ export const PILLARS = [
     description: "Heavy-duty OB-VAN mobile control command units equipped with dark-fiber, satellite uplinks, and redundant generators for arenas and national summits.",
     arDescription: "عربات نقل خارجي (OB-VAN) متطورة مجهزة بالألياف الضوئية المظلمة، اتصالات الأقمار الصناعية، ومولدات طوارئ للفعاليات والملاعب الرياضية.",
     tags: ["OB-VAN Fleet", "SMPTE 2110", "Fiber Runs", "Dual Satellite"],
-    gradient: "from-amber-500 to-amber-600",
+    gradient: "from-brand-violet to-brand-mauve",
   },
   {
     icon: Users,
@@ -131,7 +131,7 @@ export const PILLARS = [
     description: "End-to-end format incubation, commercial sponsorships, and episodic television production designed for top-tier creators commanding 400M+ impressions.",
     arDescription: "حضانة وتطوير برامج وبودكاست ورعايات تجارية كبرى مخصصة لنخبة صناع المحتوى المؤثرين الذين يتجاوز وصولهم 400 مليون مشاهدة.",
     tags: ["400M+ Audience", "Episodic Series", "Brand Deals", "Syndication"],
-    gradient: "from-amber-500 to-amber-600",
+    gradient: "from-brand-purple-mid to-brand-violet",
   },
 ];
 

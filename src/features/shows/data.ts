@@ -27,7 +27,7 @@ export const SHOWS_DATA: readonly ShowItem[] = [
     tags: ["Social Experiment", "Multi-Cam", "Trending"],
     vimeoId: "892926258",
     thumbnail: "/images/shows/room-11.jpg",
-    posterBg: "from-amber-600/30 via-stone-900/30 to-black",
+    posterBg: "from-brand-violet/30 via-zinc-900/30 to-black",
   },
   {
     id: "the-signature",
@@ -41,7 +41,7 @@ export const SHOWS_DATA: readonly ShowItem[] = [
     tags: ["Rotana Digital", "Studio Contest", "High-Energy"],
     vimeoId: "892926106",
     thumbnail: "/images/shows/the-signature.jpg",
-    posterBg: "from-amber-700/30 via-stone-900/30 to-black",
+    posterBg: "from-brand-violet-rich/30 via-zinc-900/30 to-black",
   },
   {
     id: "tneen-fe-khalat",
@@ -69,7 +69,7 @@ export const SHOWS_DATA: readonly ShowItem[] = [
     badge: "Fashion Week",
     vimeoId: "892926157",
     thumbnail: "/images/shows/fashion-lounge.jpg",
-    posterBg: "from-amber-600/25 via-stone-900/20 to-black",
+    posterBg: "from-brand-mauve/25 via-zinc-900/20 to-black",
   },
   {
     id: "ehzar-el-mashhour",
@@ -96,6 +96,6 @@ export const SHOWS_DATA: readonly ShowItem[] = [
     tags: ["Celebrity", "Culture", "In-Depth"],
     vimeoId: "892926038",
     thumbnail: "/images/shows/aghla-mn-al-dahab.jpg",
-    posterBg: "from-amber-500/30 via-amber-950/20 to-black",
+    posterBg: "from-brand-violet/30 via-brand-violet-dark/20 to-black",
   },
 ];

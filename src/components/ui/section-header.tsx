@@ -7,10 +7,11 @@ export interface SectionHeaderProps {
   headingId?: string;
   as?: "h1" | "h2" | "h3";
   badge?: React.ReactNode;
-  badgeVariant?: "default" | "secondary" | "destructive" | "outline" | "cyan" | "gold" | "purple" | "live";
+  badgeVariant?: "default" | "secondary" | "destructive" | "outline" | "cyan" | "gold" | "purple" | "yellow" | "live";
   badgeIcon?: React.ReactNode;
   title: string;
   gradientText?: string;
+  gradientVariant?: "gold" | "mauve" | "violet" | "yellow";
   titleAfter?: string;
   description?: string;
   align?: "center" | "left";
@@ -26,6 +27,7 @@ export function SectionHeader({
   badgeIcon,
   title,
   gradientText,
+  gradientVariant = "mauve",
   titleAfter,
   description,
   align = "center",
@@ -33,6 +35,13 @@ export function SectionHeader({
   className,
 }: SectionHeaderProps) {
   const isCenter = align === "center";
+
+  const gradientClass =
+    gradientVariant === "yellow"
+      ? "gradient-text-mauve"
+      : gradientVariant === "violet"
+      ? "gradient-text-violet"
+      : "gradient-text-mauve";
 
   return (
     <FadeUp>
@@ -74,7 +83,7 @@ export function SectionHeader({
         >
           {title}{" "}
           {gradientText && (
-            <span className="gradient-text-gold">
+            <span className={gradientClass}>
               {gradientText}
             </span>
           )}{" "}

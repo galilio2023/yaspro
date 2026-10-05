@@ -17,11 +17,11 @@ export function PortalSidebarClient({ userName, userEmail, accentColor }: Portal
 
   const accentClass = accentColor === "emerald"
     ? "text-emerald-400"
-    : "text-amber-400";
+    : "text-brand-mauve";
 
   const linkAccent = accentColor === "emerald"
     ? "text-emerald-400 hover:text-emerald-300"
-    : "text-amber-400 hover:text-amber-300";
+    : "text-brand-mauve hover:text-brand-lavender";
 
   return (
     <div className="pt-6 border-t border-white/10 mt-6">

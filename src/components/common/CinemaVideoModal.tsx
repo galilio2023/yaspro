@@ -136,7 +136,7 @@ export function CinemaVideoModal({
         {/* Header Bar */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-white/10 bg-black/80 backdrop-blur-md">
           <div className="flex items-center gap-3 min-w-0 pr-3">
-            <div className="size-8 sm:size-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+            <div className="size-8 sm:size-9 rounded-xl bg-brand-violet/25 border border-brand-mauve/40 flex items-center justify-center text-brand-lavender shrink-0">
               <Film size={16} />
             </div>
             <div className="min-w-0">
@@ -214,7 +214,7 @@ export function CinemaVideoModal({
               {/* Top Tags */}
               <div className="flex items-center justify-between gap-3 z-10">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white/90 text-xs font-mono">
-                  <Sparkles size={12} className="text-amber-400" />
+                  <Sparkles size={12} className="text-brand-lavender" />
                   <span>4K Ultra-HD Master</span>
                 </span>
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
@@ -228,11 +228,11 @@ export function CinemaVideoModal({
                 <button
                   type="button"
                   onClick={handleLaunchVideo}
-                  className="group relative cursor-pointer flex items-center justify-center size-20 sm:size-24 rounded-full bg-amber-500 text-black shadow-[0_0_50px_rgba(245,158,11,0.35)] hover:bg-amber-400 hover:shadow-[0_0_70px_rgba(245,158,11,0.5)] hover:scale-110 active:scale-95 transition-all duration-300"
+                  className="group relative cursor-pointer flex items-center justify-center size-20 sm:size-24 rounded-full bg-gradient-to-tr from-brand-violet to-brand-violet-rich text-white border border-brand-mauve/40 shadow-[0_0_50px_rgba(84,37,104,0.6)] hover:shadow-[0_0_70px_rgba(118,80,134,0.7)] hover:scale-110 active:scale-95 transition-all duration-300"
                   aria-label="Play video master"
                 >
 
-                  <Play size={32} className="fill-current translate-x-0.5 text-black transition-transform group-hover:scale-110" />
+                  <Play size={32} className="fill-current translate-x-0.5 text-white transition-transform group-hover:scale-110" />
                 </button>
 
                 <h3 className="text-xl sm:text-2xl font-bold text-white font-display mt-6 tracking-tight">
@@ -264,7 +264,7 @@ export function CinemaVideoModal({
               {/* Bottom Feature Badges */}
               <div className="flex items-center justify-center sm:justify-between gap-4 text-[11px] font-mono text-white/50 border-t border-white/10 pt-3 z-10">
                 <span className="hidden sm:inline-flex items-center gap-1.5">
-                  <CheckCircle2 size={12} className="text-amber-400" />
+                  <CheckCircle2 size={12} className="text-brand-lavender" />
                   Zero Stalling & Guaranteed Delivery
                 </span>
                 <span>YAS PRO MEDIA PRODUCTIONS</span>

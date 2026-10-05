@@ -152,7 +152,7 @@ export function MobileNavDrawer({
                     <YasproEmblem size={18} idPrefix="drawer-logo" />
                   </div>
                   <span className="font-extrabold text-sm tracking-tight text-white font-display">
-                    YAS<span className="text-amber-400">PRO</span>
+                    YAS<span className="text-brand-mauve">PRO</span>
                   </span>
                 </div>
                 <button
@@ -160,7 +160,7 @@ export function MobileNavDrawer({
                   type="button"
                   onClick={onClose}
                   aria-label="Close menu"
-                  className="p-1.5 rounded-lg text-text-muted hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40"
+                  className="p-1.5 rounded-lg text-text-muted hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve/40"
                 >
                   <X size={18} />
                 </button>
@@ -184,7 +184,7 @@ export function MobileNavDrawer({
                     className={cn(
                       "flex items-center justify-between px-4 py-3.5 rounded-2xl text-sm font-semibold transition-all duration-200",
                       isActive
-                        ? "text-amber-400 bg-amber-500/10 border border-amber-500/30"
+                        ? "text-brand-lavender bg-brand-violet/30 border border-brand-mauve/40"
                         : "text-text-secondary hover:text-white hover:bg-white/5"
                     )}
                   >
@@ -193,7 +193,7 @@ export function MobileNavDrawer({
                       size={15}
                       className={cn(
                         "transition-transform rtl:rotate-180",
-                        isActive ? "text-amber-400" : "text-text-ghost"
+                        isActive ? "text-brand-lavender" : "text-text-ghost"
                       )}
                     />
                   </Link>
@@ -256,10 +256,10 @@ export function MobileNavDrawer({
 
               <div className="flex items-center justify-between text-[11px] text-text-ghost px-1">
                 <span className="flex items-center gap-1">
-                  <MapPin size={11} className="text-brand-gold" />
+                  <MapPin size={11} className="text-brand-lavender" />
                   {isArabic ? "دبي · القاهرة · عَمّان" : "Dubai · Cairo · Amman"}
                 </span>
-                <span className="text-amber-400 font-latin" dir="ltr">400M+ Network</span>
+                <span className="text-brand-lavender font-latin" dir="ltr">400M+ Network</span>
               </div>
             </div>
           </motion.div>

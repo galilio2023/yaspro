@@ -17,7 +17,7 @@ const TYPE_STYLES = {
     icon: CheckCircle2,
   },
   warning: {
-    container: "bg-amber-500/10 border-amber-500/30 text-amber-400",
+    container: "bg-brand-violet/25 border-brand-mauve/40 text-brand-lavender",
     icon: AlertTriangle,
   },
   error: {

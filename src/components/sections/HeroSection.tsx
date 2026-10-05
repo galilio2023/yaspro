@@ -2,15 +2,16 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Play } from "lucide-react";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
-import { HeroStats } from "./HeroStats";
-import { StudioBadge } from "@/components/common/StudioBadge";
+
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { CinemaVideoModal } from "@/components/common/CinemaVideoModal";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { HeroMediaOrbit } from "./HeroMediaOrbit";
 
 export default function HeroSection() {
   const { t, isArabic } = useLanguage();
@@ -20,24 +21,9 @@ export default function HeroSection() {
     <Section
       id="hero"
       aria-labelledby="hero-title"
-      className="min-h-[calc(100dvh-3.5rem)] sm:min-h-[calc(100dvh-4.5rem)] flex items-center justify-center py-8 sm:py-12 md:py-20 bg-background relative overflow-hidden film-grain"
+      className="min-h-[calc(100dvh-3.5rem)] sm:min-h-[calc(100dvh-4.5rem)] flex items-center justify-center py-8 sm:py-12 md:py-20 bg-transparent relative overflow-hidden film-grain"
     >
-      {/* ── Cinematic 3D Virtual Production Soundstage Background ── */}
-      <div className="absolute inset-0 pointer-events-none select-none z-0 overflow-hidden">
-        {/* The 16:9 3D Cinema Robot & Soundstage Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-90 transition-opacity duration-700"
-          style={{
-            backgroundImage: `url('/images/branding/yaspro-hero-bg.jpg')`,
-          }}
-        />
 
-        {/* Deep Studio Vignettes: Directional key light with obsidian shadows */}
-        <div className="absolute inset-y-0 left-0 w-full lg:w-3/5 bg-gradient-to-r from-background/90 via-background/65 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-background via-background/70 to-transparent" />
-        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-background/80 via-background/20 to-transparent" />
-        <div className="absolute inset-0 bg-black/35 lg:bg-black/20" />
-      </div>
 
       <Container className="relative z-10">
         {/* dir="ltr" locks physical column order — text always left, vista always right.
@@ -49,13 +35,6 @@ export default function HeroSection() {
             dir={isArabic ? "rtl" : "ltr"}
             className="lg:col-span-7 flex flex-col items-center text-center lg:items-start lg:text-start"
           >
-            <div className="mb-6 flex justify-center lg:justify-start">
-              <StudioBadge
-                stage="AI HUB"
-                label={isArabic ? "مركز الذكاء الاصطناعي والإنتاج الافتراضي" : "AI MEDIA HUB & VIRTUAL PRODUCTION"}
-              />
-            </div>
-
             <h1
               id="hero-title"
               className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-6 font-display rtl:font-arabic tracking-tight leading-[1.1] rtl:leading-[1.4] text-balance drop-shadow-lg"
@@ -63,7 +42,7 @@ export default function HeroSection() {
               {isArabic ? (
                 <>
                   {t("hero.title1")}{" "}
-                  <span className="text-amber-400 font-serif font-normal">
+                  <span className="gradient-text-mauve font-serif font-normal">
                     {t("hero.ai")}
                   </span>{" "}
                   {t("hero.title2")}
@@ -71,7 +50,7 @@ export default function HeroSection() {
               ) : (
                 <>
                   Where{" "}
-                  <span className="text-amber-400 font-serif italic font-normal">
+                  <span className="gradient-text-mauve font-serif italic font-normal">
                     AI
                   </span>{" "}
                   Meets <br className="hidden sm:inline" />
@@ -89,7 +68,7 @@ export default function HeroSection() {
               <MagneticButton className="w-full sm:w-auto" strength={0.25} radius={90}>
                 <Link
                   href="/studio-booking"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-bold text-sm bg-amber-500 text-zinc-950 hover:bg-amber-400 transition-all shadow-xl shadow-amber-500/25 whitespace-nowrap"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-bold text-sm btn-brand whitespace-nowrap"
                 >
                   <span>{t("hero.bookStudio")}</span>
                   <ArrowRight
@@ -107,7 +86,7 @@ export default function HeroSection() {
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full font-medium text-sm text-zinc-200 border border-white/12 bg-zinc-900/70 hover:bg-zinc-800 hover:border-white/20 transition-all backdrop-blur-md whitespace-nowrap cursor-pointer shadow-lg shadow-black/50"
                 >
                   <span className="relative flex h-2 w-2">
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-mauve-soft" />
                   </span>
                   <span>{t("hero.watchReel")}</span>
                   <Play
@@ -119,12 +98,60 @@ export default function HeroSection() {
                 </button>
               </MagneticButton>
             </div>
-
-            <HeroStats />
           </FadeUp>
 
-          {/* ── Right Column: Open vista for the 3D Cinema Robot & Soundstage ── */}
-          <div className="lg:col-span-5 hidden lg:block" aria-hidden="true" />
+          {/* ── Right Column: Floating Visionary with 3D Media Production Tools & Orbital Ecosystem ── */}
+          <div className="lg:col-span-5 relative flex items-center justify-center mt-12 lg:mt-0 min-h-[460px] sm:min-h-[520px]">
+            {/* Main Central Persona Container (Layer z-10) */}
+            <div className="relative w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[420px] animate-float select-none pointer-events-none z-10">
+              <div className="relative aspect-[3/4] w-full">
+                <Image
+                  src="/images/hero/vr-filmmaker-v3.jpg"
+                  alt={isArabic ? "مخرج يرتدي نظارة الواقع الافتراضي" : "Filmmaker wearing VR glasses"}
+                  fill
+                  unoptimized
+                  sizes="(max-width: 768px) 80vw, (max-width: 1200px) 38vw, 420px"
+                  priority
+                  className="object-cover object-top"
+                />
+
+                {/* Smooth feathering into the obsidian background */}
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background/50 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* 3D Orbiting Media Ecosystem Nodes (Snapchat, Instagram, TikTok, YouTube, AI, Live Satellite - z-30 foreground) */}
+            <HeroMediaOrbit />
+
+            {/* ── Floating Tool 1: Broadcast Studio Microphone (Middle Left Flank z-20) ── */}
+            <div className="absolute top-1/2 -translate-y-1/2 -left-8 sm:-left-12 lg:-left-16 z-20 animate-float-slow pointer-events-none">
+              <div className="relative w-36 sm:w-44 lg:w-48 aspect-square filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]">
+                <Image
+                  src="/images/hero/floating-mic.jpg"
+                  alt="Broadcast Studio Microphone"
+                  fill
+                  sizes="192px"
+                  className="object-contain mix-blend-screen opacity-90 hover:opacity-100 transition-opacity -scale-x-100"
+                />
+              </div>
+            </div>
+
+            {/* ── Floating Tool 2: Futuristic Next-Gen Cinema Camera (Bottom Right Flank z-20, Fully Visible) ── */}
+            <div className="absolute -bottom-8 -right-8 sm:-bottom-10 sm:-right-12 lg:-right-16 z-20 animate-cinema-sway pointer-events-none">
+              <div className="relative w-44 sm:w-52 lg:w-60 aspect-square filter drop-shadow-[0_20px_35px_rgba(0,0,0,0.95)] -rotate-12 -scale-x-100">
+                <Image
+                  src="/images/hero/cinema-camera-v2.jpg"
+                  alt="Next-Gen 8K Cinema Camera"
+                  fill
+                  unoptimized
+                  sizes="240px"
+                  className="object-contain mix-blend-screen opacity-95 hover:opacity-100 transition-opacity"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </Container>
 

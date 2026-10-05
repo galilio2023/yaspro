@@ -45,7 +45,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
           {displaySubtitle}
         </p>
         
-        <div className="mt-auto flex items-center gap-2 text-sm font-medium text-zinc-300 group-hover/card:text-amber-400 transition-colors">
+        <div className="mt-auto flex items-center gap-2 text-sm font-medium text-zinc-300 group-hover/card:text-brand-lavender transition-colors">
           <span>{isArabic ? "اكتشف المزيد" : "Explore Studio Capability"}</span>
           <ArrowUpRight size={16} className="transition-transform group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5" />
         </div>

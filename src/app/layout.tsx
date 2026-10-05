@@ -3,6 +3,7 @@ import { Inter, Poppins, Noto_Sans_Arabic } from "next/font/google";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { CartProvider } from "@/components/providers/CartProvider";
 import { NextIntlClientProvider } from "next-intl";
+import { GlobalAmbientGlow } from "@/components/common/GlobalAmbientGlow";
 import "./globals.css";
 
 const inter = Inter({
@@ -186,7 +187,8 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen w-full bg-background text-foreground antialiased overflow-x-clip">
+      <body className="min-h-screen w-full bg-background text-foreground antialiased overflow-x-clip relative">
+        <GlobalAmbientGlow />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <LanguageProvider initialLocale={locale}>
             <GlobalPageLoaderProvider>

@@ -6,8 +6,11 @@ import { SplitSquareVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface ImageCompareSliderProps {
-  beforeImage: string;
-  afterImage: string;
+  beforeImage?: string;
+  afterImage?: string;
+  beforeVideo?: string;
+  afterVideo?: string;
+  videoSrc?: string;
   beforeAlt?: string;
   afterAlt?: string;
   beforeLabel?: string;
@@ -18,15 +21,20 @@ export interface ImageCompareSliderProps {
   className?: string;
   aspectRatio?: string;
   children?: React.ReactNode;
+  isMuted?: boolean;
+  isPlaying?: boolean;
 }
 
 /**
- * Reusable high-performance Before/After split image comparison slider.
+ * Reusable high-performance Before/After split image and video comparison slider.
  * Uses requestAnimationFrame throttling and supports mouse, touch, and keyboard interactions.
  */
 export function ImageCompareSlider({
   beforeImage,
   afterImage,
+  beforeVideo,
+  afterVideo,
+  videoSrc,
   beforeAlt = "Before state",
   afterAlt = "After state",
   beforeLabel,
@@ -37,9 +45,54 @@ export function ImageCompareSlider({
   className,
   aspectRatio = "aspect-[16/9]",
   children,
+  isMuted = true,
+  isPlaying,
 }: ImageCompareSliderProps) {
   const [internalPosition, setInternalPosition] = useState<number>(initialPosition);
   const sliderPosition = position !== undefined ? position : internalPosition;
+  const afterVideoRef = useRef<HTMLVideoElement>(null);
+  const beforeVideoRef = useRef<HTMLVideoElement>(null);
+  const hasAfterVideo = Boolean(afterVideo || (!afterImage && videoSrc) || (videoSrc && !afterVideo && !afterImage));
+  const hasBeforeVideo = Boolean(beforeVideo || (!beforeImage && videoSrc) || (videoSrc && !beforeVideo && !beforeImage));
+  const resolvedAfterVideo = afterVideo || (afterImage ? undefined : videoSrc);
+  const resolvedBeforeVideo = beforeVideo || (beforeImage ? undefined : videoSrc);
+
+  // Synchronize both video playback positions
+  useEffect(() => {
+    const v1 = afterVideoRef.current;
+    const v2 = beforeVideoRef.current;
+    if (!v1 || !v2) return;
+
+    const handleSync = () => {
+      if (Math.abs(v1.currentTime - v2.currentTime) > 0.08) {
+        v2.currentTime = v1.currentTime;
+      }
+    };
+
+    v1.addEventListener("timeupdate", handleSync);
+    return () => v1.removeEventListener("timeupdate", handleSync);
+  }, [videoSrc, beforeVideo, afterVideo]);
+
+  // Handle play / pause changes (also re-apply when videoSrc/source changes)
+  useEffect(() => {
+    const v1 = afterVideoRef.current;
+    const v2 = beforeVideoRef.current;
+    if (!v1) return;
+
+    if (isPlaying === true) {
+      if (v1.paused) v1.play().catch(() => {});
+      if (v2?.paused) v2?.play().catch(() => {});
+    } else if (isPlaying === false) {
+      if (!v1.paused) v1.pause();
+      if (v2 && !v2.paused) v2.pause();
+    }
+  }, [isPlaying, videoSrc, beforeVideo, afterVideo]);
+
+  // Handle mute changes: keep beforeVideoRef ALWAYS muted to prevent audio doubling/phase issues
+  useEffect(() => {
+    if (afterVideoRef.current) afterVideoRef.current.muted = isMuted;
+    if (beforeVideoRef.current) beforeVideoRef.current.muted = true;
+  }, [isMuted]);
 
   const setPosition = useCallback((pos: number) => {
     if (position === undefined) {
@@ -176,21 +229,33 @@ export function ImageCompareSlider({
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       className={cn(
-        "relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 select-none cursor-ew-resize group bg-black/60 shadow-2xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 touch-pan-y",
+        "relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 select-none cursor-ew-resize group bg-black/60 shadow-2xl focus:outline-none focus:ring-2 focus:ring-brand-mauve/50 touch-pan-y",
         aspectRatio,
         className
       )}
     >
-      {/* Background (After / Composite image) */}
+      {/* Background (After / Composite state) */}
       <div className="absolute inset-0" suppressHydrationWarning>
-        <Image
-          src={afterImage}
-          alt={afterAlt}
-          fill
-          sizes="(max-width: 1024px) 100vw, 80vw"
-          className="object-cover"
-          priority
-        />
+        {hasAfterVideo ? (
+          <video
+            ref={afterVideoRef}
+            src={resolvedAfterVideo}
+            autoPlay
+            loop
+            muted={isMuted}
+            playsInline
+            className="size-full object-cover"
+          />
+        ) : afterImage ? (
+          <Image
+            src={afterImage}
+            alt={afterAlt}
+            fill
+            sizes="(max-width: 1024px) 100vw, 80vw"
+            className="object-cover"
+            priority
+          />
+        ) : null}
         {afterLabel ? (
           <div className="absolute top-4 right-4 z-10 px-3 py-1.5 rounded-xl bg-black/70 backdrop-blur-md border border-white/10 text-[11px] font-mono text-white/90">
             {afterLabel}
@@ -198,21 +263,36 @@ export function ImageCompareSlider({
         ) : null}
       </div>
 
-      {/* Foreground (Before / Raw image clipped to slider position) */}
+      {/* Foreground (Before / Raw state clipped to slider position) */}
       <div
         className="absolute inset-0"
         style={{ clipPath: `inset(0% ${100 - sliderPosition}% 0% 0%)` }}
         suppressHydrationWarning
       >
         <div className="relative w-full h-full" suppressHydrationWarning>
-          <Image
-            src={beforeImage}
-            alt={beforeAlt}
-            fill
-            sizes="(max-width: 1024px) 100vw, 80vw"
-            className="object-cover"
-            priority
-          />
+          {hasBeforeVideo ? (
+            <video
+              ref={beforeVideoRef}
+              src={resolvedBeforeVideo}
+              autoPlay
+              loop
+              muted={true}
+              playsInline
+              className={cn(
+                "size-full object-cover",
+                !beforeVideo && "filter brightness-110 contrast-75 saturate-40"
+              )}
+            />
+          ) : beforeImage ? (
+            <Image
+              src={beforeImage}
+              alt={beforeAlt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 80vw"
+              className="object-cover"
+              priority
+            />
+          ) : null}
           {beforeLabel ? (
             <div className="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-xl bg-black/70 backdrop-blur-md border border-white/10 text-[11px] font-mono text-white/90">
               {beforeLabel}
@@ -223,11 +303,11 @@ export function ImageCompareSlider({
 
       {/* Divider Line & Handle */}
       <div
-        className="absolute top-0 bottom-0 w-0.5 bg-gradient-to-b from-amber-300 via-white to-amber-500 z-20 pointer-events-none"
+        className="absolute top-0 bottom-0 w-0.5 bg-gradient-to-b from-brand-lavender via-white to-brand-mauve z-20 pointer-events-none"
         style={{ left: `${sliderPosition}%` }}
         suppressHydrationWarning
       >
-        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-9 rounded-full bg-slate-900 border-2 border-amber-500 shadow-xl shadow-amber-500/40 flex items-center justify-center text-amber-300 group-hover:scale-110 transition-transform">
+        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-9 rounded-full bg-slate-900 border-2 border-brand-mauve shadow-xl shadow-purple-950/50 flex items-center justify-center text-brand-lavender group-hover:scale-110 transition-transform">
           <SplitSquareVertical size={16} />
         </div>
       </div>

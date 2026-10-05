@@ -11,9 +11,9 @@ const buttonVariants = cva(
         default:
           "bg-zinc-900 text-zinc-100 hover:bg-zinc-800 border border-white/12 active:scale-[0.97] shadow-sm",
         brand:
-          "bg-amber-500 text-zinc-950 font-bold hover:bg-amber-400 active:scale-[0.97] shadow-lg shadow-amber-500/25",
+          "btn-brand active:scale-[0.97] shadow-lg shadow-purple-950/40",
         "brand-gold":
-          "bg-gradient-gold text-zinc-950 font-bold hover:opacity-95 active:scale-[0.97] shadow-lg shadow-amber-500/25",
+          "bg-gradient-to-r from-brand-violet to-brand-purple text-white font-bold hover:opacity-95 active:scale-[0.97] shadow-lg shadow-purple-950/40 border border-brand-mauve/30",
         destructive:
           "bg-red-500/90 text-white hover:bg-red-500 shadow-md shadow-red-500/20 active:scale-[0.97]",
         outline:
@@ -23,11 +23,13 @@ const buttonVariants = cva(
         ghost:
           "text-zinc-400 hover:text-white hover:bg-white/5 active:scale-[0.97]",
         link:
-          "text-amber-400 underline-offset-4 hover:underline hover:text-amber-300 p-0 h-auto",
+          "text-brand-mauve-soft underline-offset-4 hover:underline hover:text-white p-0 h-auto",
         glow:
           "bg-zinc-900 text-white border border-white/20 hover:bg-zinc-800 hover:border-white/40 shadow-lg shadow-black/60 active:scale-[0.97]",
         "glow-gold":
-          "bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 hover:border-amber-500/60 active:scale-[0.97]",
+          "bg-brand-violet/20 text-brand-lavender border border-brand-mauve/40 hover:bg-brand-violet/30 hover:border-brand-mauve/60 active:scale-[0.97]",
+        violet:
+          "btn-violet active:scale-[0.97] shadow-lg shadow-purple-950/40",
       },
       size: {
         default: "h-11 px-5 py-2.5",

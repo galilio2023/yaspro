@@ -47,7 +47,7 @@ export const ShimmerButton = React.forwardRef<
       shimmerSize = "0.05em",
       shimmerDuration = "3s",
       borderRadius = "100px",
-      background = "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+      background = "linear-gradient(135deg, #765086 0%, #542568 100%)",
       className,
       children,
       asChild = false,
@@ -65,7 +65,7 @@ export const ShimmerButton = React.forwardRef<
     } as React.CSSProperties;
 
     const sharedClassName = cn(
-      "group relative z-0 flex cursor-pointer items-center justify-center overflow-hidden whitespace-nowrap border border-amber-400/40 px-6 py-3 text-zinc-950 font-bold [background:var(--bg)] [border-radius:var(--radius)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] active:scale-[0.98]",
+      "group relative z-0 flex cursor-pointer items-center justify-center overflow-hidden whitespace-nowrap border border-brand-mauve/40 px-6 py-3 text-white font-bold [background:var(--bg)] [border-radius:var(--radius)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(118,80,134,0.5)] active:scale-[0.98]",
       className
     );
 

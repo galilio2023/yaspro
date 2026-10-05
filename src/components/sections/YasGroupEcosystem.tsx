@@ -14,23 +14,23 @@ export function YasGroupEcosystem() {
     <section
       id="conglomerate-ecosystem"
       aria-label="Yas Pro Media Group Conglomerate Ecosystem"
-      className="relative w-full py-16 sm:py-24 bg-[#08080c] border-t border-white/[0.08] overflow-hidden film-grain select-none"
+      className="relative w-full py-16 sm:py-24 bg-transparent border-t border-white/[0.08] overflow-hidden film-grain select-none"
     >
       {/* Volumetric ambient glow (GPU hardware-accelerated radial gradient) */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[350px] pointer-events-none rounded-full"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(245,158,11,0.06) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse at center, rgba(84,37,104,0.22) 0%, transparent 70%)",
         }}
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="max-w-3xl mx-auto mb-12 sm:mb-16 text-center">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-mono uppercase tracking-wider font-semibold border border-amber-500/30 bg-amber-500/10 text-amber-400 mb-4 backdrop-blur-md">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-mono uppercase tracking-wider font-semibold border border-brand-mauve/40 bg-brand-violet/25 text-brand-lavender mb-4 backdrop-blur-md">
             <span className="relative flex size-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-              <span className="relative inline-flex rounded-full size-2 bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-mauve opacity-75" />
+              <span className="relative inline-flex rounded-full size-2 bg-brand-mauve shadow-[0_0_8px_rgba(152,123,165,0.6)]" />
             </span>
             <span>
               {isArabic
@@ -43,14 +43,14 @@ export function YasGroupEcosystem() {
             {isArabic ? (
               <>
                 منظومة إعلامية موحدة تقود الإنتاج في{" "}
-                <span className="gradient-text-gold font-serif italic font-normal">
+                <span className="gradient-text-mauve font-serif italic font-normal">
                   الإمارات والشرق الأوسط
                 </span>
               </>
             ) : (
               <>
                 One Holding Network.{" "}
-                <span className="gradient-text-gold font-serif italic font-normal">
+                <span className="gradient-text-mauve font-serif italic font-normal">
                   Infinite Media Capabilities.
                 </span>
               </>
@@ -72,7 +72,7 @@ export function YasGroupEcosystem() {
               <Link
                 key={company.id}
                 href="/about#conglomerate"
-                className="group relative flex flex-col justify-between p-4 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-white/[0.08] bg-[#0c0d14]/90 hover:bg-[#12131d] hover:border-amber-500/40 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-black/80 cursor-pointer min-w-[210px] sm:min-w-0 snap-center overflow-hidden"
+                className="group relative flex flex-col justify-between p-4 sm:p-4.5 rounded-2xl sm:rounded-3xl border border-white/[0.08] bg-[#0c0d14]/90 hover:bg-[#12131d] hover:border-brand-mauve/50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-black/80 cursor-pointer min-w-[210px] sm:min-w-0 snap-center overflow-hidden"
               >
                 {/* Top Subtle Accent Bar on Hover */}
                 <div
@@ -83,7 +83,7 @@ export function YasGroupEcosystem() {
                 {/* Callsign & Tag */}
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-4">
-                    <span className="text-[10px] font-mono font-bold text-zinc-500 group-hover:text-amber-400 transition-colors">
+                    <span className="text-[10px] font-mono font-bold text-zinc-500 group-hover:text-brand-lavender transition-colors">
                       CH.{callsign}
                     </span>
                     <span
@@ -108,14 +108,14 @@ export function YasGroupEcosystem() {
 
                 {/* Division Title & Direction Arrow */}
                 <div className="pt-3 border-t border-white/5">
-                  <div className="text-[11px] font-bold text-white group-hover:text-amber-300 transition-colors">
+                  <div className="text-[11px] font-bold text-white group-hover:text-brand-lavender transition-colors">
                     {isArabic ? company.divisionAr : company.division}
                   </div>
                   <div className="text-[10px] text-zinc-500 mt-0.5 group-hover:text-zinc-400 transition-colors">
                     {isArabic ? company.nameAr : company.name}
                   </div>
 
-                  <div className="mt-3 flex items-center justify-between text-[9px] font-mono text-zinc-500 group-hover:text-amber-400 transition-colors">
+                  <div className="mt-3 flex items-center justify-between text-[9px] font-mono text-zinc-500 group-hover:text-brand-lavender transition-colors">
                     <span>{isArabic ? "استكشف" : "EXPLORE"}</span>
                     <ArrowRight size={11} className="rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
                   </div>
@@ -128,7 +128,7 @@ export function YasGroupEcosystem() {
         {/* Bottom Editorial Link to Holding Page */}
         <div className="mt-10 sm:mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-white/8 bg-white/[0.02] backdrop-blur-md">
           <div className="flex items-center gap-3 text-start">
-            <div className="size-8 sm:size-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+            <div className="size-8 sm:size-9 rounded-xl bg-brand-violet/30 border border-brand-mauve/30 text-brand-lavender flex items-center justify-center shrink-0">
               <ShieldCheck size={16} />
             </div>
             <div>
@@ -143,7 +143,7 @@ export function YasGroupEcosystem() {
 
           <Link
             href="/about#conglomerate"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-500/30 transition-all cursor-pointer whitespace-nowrap"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-brand-mauve/40 transition-all cursor-pointer whitespace-nowrap"
           >
             <span>{isArabic ? "عرض الهيكل التنظيمي الكامل للمجموعة" : "View Full Holding Structure"}</span>
             <ArrowRight size={13} className="rtl:rotate-180" />

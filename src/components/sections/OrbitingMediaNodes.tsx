@@ -52,22 +52,22 @@ export function OrbitingMediaNodes() {
     >
       {/* Background Volumetric Glow & Atmospheric Lighting */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden max-w-full">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[260px] sm:size-[380px] rounded-full bg-amber-500/10 blur-[80px] sm:blur-[90px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[260px] sm:size-[380px] rounded-full bg-brand-violet/20 blur-[80px] sm:blur-[90px]" />
       </div>
 
       {/* Sweeping Holographic Radar Sweep */}
       <div
-        className="pointer-events-none absolute size-[300px] sm:size-[460px] rounded-full opacity-20 animate-spin-around [animation-duration:14s] max-w-full"
+        className="pointer-events-none absolute size-[300px] sm:size-[460px] rounded-full opacity-25 animate-spin-around [animation-duration:14s] max-w-full"
         style={{
           background:
-            "conic-gradient(from 0deg at 50% 50%, rgba(245,158,11,0) 0deg, rgba(217,119,6,0.12) 320deg, rgba(245,158,11,0.25) 360deg)",
+            "conic-gradient(from 0deg at 50% 50%, rgba(84,37,104,0) 0deg, rgba(118,80,134,0.2) 320deg, rgba(187,167,195,0.3) 360deg)",
         }}
       />
 
       {/* Top HUD Telemetry Banner */}
       <div className="absolute top-3 sm:top-4 inset-x-4 sm:inset-x-6 flex items-center justify-between pointer-events-none z-30 text-[9px] sm:text-[11px] font-mono uppercase tracking-wider text-text-muted border-b border-white/5 pb-2">
         <div className="flex items-center gap-2">
-          <span className="size-2 rounded-full bg-amber-400" />
+          <span className="size-2 rounded-full bg-brand-mauve" />
           <span className="text-white/80 font-bold">YAS BROADCAST TELEMETRY v4.2</span>
         </div>
         <div className="flex items-center gap-2">
@@ -81,12 +81,12 @@ export function OrbitingMediaNodes() {
       {/* Bottom Interactive Telemetry Status Bar */}
       <div className="absolute bottom-4 inset-x-6 flex items-center justify-between pointer-events-none z-30 text-[10px] sm:text-[11px] font-mono border-t border-white/5 pt-2 text-text-muted">
         <div className="flex items-center gap-2">
-          <Activity size={12} className="text-amber-400" />
+          <Activity size={12} className="text-brand-lavender" />
           <span className="text-text-secondary">
             {hoveredNode ? (
               <span className="text-white font-semibold">
                 NODE LOCKED:{" "}
-                <span className="text-amber-400">{hoveredNode.name}</span> —{" "}
+                <span className="text-brand-lavender">{hoveredNode.name}</span> —{" "}
                 <span className="text-text-muted">{hoveredNode.subtitle}</span>
               </span>
             ) : (
@@ -94,7 +94,7 @@ export function OrbitingMediaNodes() {
             )}
           </span>
         </div>
-        <span className="hidden sm:inline-block text-amber-400/80">
+        <span className="hidden sm:inline-block text-brand-mauve-soft">
           GCC BROADCAST MESH
         </span>
       </div>
@@ -139,7 +139,7 @@ export function OrbitingMediaNodes() {
             />
             {/* Subtle glow rim for active orbit */}
             <circle
-              className="stroke-amber-500/20 stroke-1 opacity-40"
+              className="stroke-brand-mauve/25 stroke-1 opacity-40"
               cx="50%"
               cy="50%"
               r={r + 1}
@@ -153,30 +153,30 @@ export function OrbitingMediaNodes() {
       <div className="relative z-20 flex flex-col items-center justify-center">
         {/* Outer Tech Ring 1 (Dashed Clockwise) */}
         <div
-          className="absolute size-36 sm:size-40 rounded-full border border-dashed border-amber-500/30 animate-spin-around pointer-events-none"
+          className="absolute size-36 sm:size-40 rounded-full border border-dashed border-brand-mauve/30 animate-spin-around pointer-events-none"
           style={{ animationDuration: "24s" }}
         />
 
         {/* Outer Tech Ring 2 (Dotted Counter-Clockwise) */}
         <div
-          className="absolute size-32 sm:size-36 rounded-full border border-dotted border-amber-400/20 animate-spin-around pointer-events-none"
+          className="absolute size-32 sm:size-36 rounded-full border border-dotted border-brand-purple/25 animate-spin-around pointer-events-none"
           style={{ animationDuration: "16s", animationDirection: "reverse" }}
         />
 
         {/* Ambient Halo */}
-        <div className="absolute size-24 sm:size-28 rounded-full bg-amber-500/20 blur-md pointer-events-none" />
+        <div className="absolute size-24 sm:size-28 rounded-full bg-brand-violet/25 blur-md pointer-events-none" />
 
         {/* Central Core Orb */}
-        <div className="relative z-10 flex flex-col items-center justify-center size-24 sm:size-28 rounded-full border-2 border-amber-500/40 bg-[#0d0b12] backdrop-blur-2xl shadow-[0_0_30px_rgba(245,158,11,0.25)] transition-all duration-300">
+        <div className="relative z-10 flex flex-col items-center justify-center size-24 sm:size-28 rounded-full border-2 border-brand-mauve/40 bg-[#0d0b12] backdrop-blur-2xl shadow-[0_0_30px_rgba(84,37,104,0.35)] transition-all duration-300">
           <div className="relative flex items-center justify-center mb-1">
-            <Cpu className="size-8 sm:size-9 text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
+            <Cpu className="size-8 sm:size-9 text-brand-lavender drop-shadow-[0_0_8px_rgba(187,167,195,0.6)]" />
           </div>
 
-          <span className="text-xs sm:text-sm font-extrabold font-display text-amber-400 tracking-widest uppercase">
+          <span className="text-xs sm:text-sm font-extrabold font-display text-white tracking-widest uppercase">
             YAS PRO
           </span>
 
-          <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-wider text-amber-300/80 font-semibold">
+          <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-wider text-brand-lavender font-semibold">
             STUDIO CORE
           </span>
         </div>

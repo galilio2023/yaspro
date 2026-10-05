@@ -100,13 +100,13 @@ function SmartAiIcon({ className = "size-6" }: { className?: string }) {
     >
       <defs>
         <linearGradient id="smartAiNeuralGrad" x1="3" y1="3" x2="25" y2="25" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#fef3c7" />
-          <stop offset="0.4" stopColor="#fbbf24" />
-          <stop offset="1" stopColor="#d97706" />
+          <stop stopColor="#eee9f0" />
+          <stop offset="0.4" stopColor="#bba7c3" />
+          <stop offset="1" stopColor="#542568" />
         </linearGradient>
         <linearGradient id="smartAiCoreGrad" x1="10" y1="10" x2="18" y2="18" gradientUnits="userSpaceOnUse">
           <stop stopColor="#ffffff" />
-          <stop offset="1" stopColor="#fbbf24" />
+          <stop offset="1" stopColor="#facc15" />
         </linearGradient>
         <filter id="smartAiGlow" x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur stdDeviation="0.9" result="blur" />
@@ -126,8 +126,8 @@ function SmartAiIcon({ className = "size-6" }: { className?: string }) {
       <circle cx="14" cy="15" r="1.6" fill="url(#smartAiCoreGrad)" />
 
       {/* Intelligent Node Constellation Sparks */}
-      <circle cx="21.5" cy="8.5" r="1.6" fill="#fde68a" />
-      <circle cx="6.5" cy="21.5" r="1.2" fill="#fbbf24" />
+      <circle cx="21.5" cy="8.5" r="1.6" fill="#facc15" />
+      <circle cx="6.5" cy="21.5" r="1.2" fill="#bba7c3" />
     </svg>
   );
 }
@@ -339,11 +339,11 @@ export function UnifiedFloatingActions() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.92 }}
                 transition={studioSprings.tactile}
-                className="relative size-12 sm:size-13 rounded-full bg-gradient-to-b from-[#181410] to-[#0c0a08] border border-amber-500/50 shadow-xl shadow-amber-500/20 hover:border-amber-400 hover:shadow-amber-500/40 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 group"
+                className="relative size-12 sm:size-13 rounded-full bg-gradient-to-b from-[#181324] to-[#0c0912] border border-brand-mauve/50 shadow-xl shadow-purple-950/30 hover:border-brand-mauve hover:shadow-purple-950/50 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/50 group"
                 aria-label={t("concierge.aiCopilot")}
                 title={t("concierge.aiCopilot")}
               >
-                <SmartAiIcon className="size-6 text-amber-400 group-hover:scale-105 transition-transform" />
+                <SmartAiIcon className="size-6 text-brand-mauve-soft group-hover:scale-105 transition-transform" />
               </motion.button>
 
               {/* Option 2: WhatsApp Concierge with Smart WhatsApp SVG */}
@@ -367,7 +367,7 @@ export function UnifiedFloatingActions() {
         <div className="relative group">
           {/* Ambient Glow Aura */}
           <div
-            className={`absolute -inset-1 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 blur-md transition-opacity duration-300 ${
+            className={`absolute -inset-1 rounded-full bg-gradient-to-r from-brand-violet to-brand-purple blur-md transition-opacity duration-300 ${
               isMenuOpen ? "opacity-90 scale-105" : "opacity-50 group-hover:opacity-100"
             }`}
           />
@@ -380,7 +380,7 @@ export function UnifiedFloatingActions() {
             whileHover={{ scale: 1.06 }}
             whileTap={{ scale: 0.94 }}
             transition={studioSprings.snappy}
-            className="relative size-13 sm:size-14 rounded-full bg-[#0b0a0f] border border-amber-500/50 p-[2px] shadow-2xl shadow-black/80 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+            className="relative size-13 sm:size-14 rounded-full bg-[#0b0a0f] border border-brand-mauve/50 p-[2px] shadow-2xl shadow-black/80 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/50"
             aria-label={isMenuOpen ? "Close Assistant Options" : "Open Yas Pro Assistant (AI & WhatsApp)"}
             aria-expanded={isMenuOpen}
           >
@@ -391,7 +391,7 @@ export function UnifiedFloatingActions() {
                 <YasproEmblem
                   size={30}
                   idPrefix="fab-master-emblem"
-                  className="filter drop-shadow-[0_2px_8px_rgba(245,158,11,0.45)] transition-transform duration-300 group-hover:scale-108"
+                  className="filter drop-shadow-[0_2px_8px_rgba(84,37,104,0.6)] transition-transform duration-300 group-hover:scale-108"
                 />
               )}
             </div>
