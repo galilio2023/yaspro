@@ -108,9 +108,10 @@ export default function HeroSection() {
             <div className="relative w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[420px] animate-float select-none pointer-events-none z-10">
               <div className="relative aspect-[3/4] w-full">
                 <Image
-                  src="/images/hero/vr-filmmaker.jpg"
+                  src="/images/hero/vr-filmmaker-v3.jpg"
                   alt={isArabic ? "مخرج يرتدي نظارة الواقع الافتراضي" : "Filmmaker wearing VR glasses"}
                   fill
+                  unoptimized
                   sizes="(max-width: 768px) 80vw, (max-width: 1200px) 38vw, 420px"
                   priority
                   className="object-cover object-top"
