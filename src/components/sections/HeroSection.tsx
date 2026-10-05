@@ -101,9 +101,6 @@ export default function HeroSection() {
 
           {/* ── Right Column: Floating Visionary with 3D Media Production Tools ── */}
           <div className="lg:col-span-5 relative flex items-center justify-center mt-12 lg:mt-0 min-h-[460px] sm:min-h-[520px]">
-            {/* Soft Ambient Radial Light Core */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-purple/20 rounded-full blur-[100px] pointer-events-none" />
-
             {/* Main Central Persona Container (Layer z-10) */}
             <div className="relative w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[420px] animate-float select-none pointer-events-none z-10">
               <div className="relative aspect-[3/4] w-full">

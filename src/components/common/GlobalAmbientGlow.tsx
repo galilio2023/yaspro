@@ -20,19 +20,28 @@ export function GlobalAmbientGlow() {
     >
       {/* ── 1. ZONE: Top Hero / Header Crown (Separated Island) ── */}
       <div
-        className="absolute -top-[10%] left-[12%] sm:left-[22%] w-[520px] sm:w-[720px] h-[440px] sm:h-[580px] rounded-full opacity-60 sm:opacity-70 blur-[60px] sm:blur-[80px] transform-gpu"
+        className="absolute -top-[10%] left-[8%] sm:left-[15%] w-[480px] sm:w-[640px] h-[400px] sm:h-[520px] rounded-full opacity-50 sm:opacity-60 blur-[60px] sm:blur-[80px] transform-gpu"
         style={{
           background:
-            "radial-gradient(circle, rgba(152, 123, 165, 0.55) 0%, rgba(118, 80, 134, 0.35) 45%, rgba(84, 37, 104, 0.15) 65%, transparent 80%)",
+            "radial-gradient(circle, rgba(152, 123, 165, 0.45) 0%, rgba(118, 80, 134, 0.25) 45%, rgba(84, 37, 104, 0.1) 65%, transparent 80%)",
         }}
       />
 
-      {/* ── 2. ZONE: Floating VR Persona Halo (Isolated Top-Right Glow) ── */}
+      {/* ── 2. ZONE: Far Right Rim Glow (Pushed Far Outward so Hero Persona Sits in Pitch-Black Void) ── */}
       <div
-        className="absolute top-[6%] -right-[6%] sm:right-[5%] w-[420px] sm:w-[560px] h-[420px] sm:h-[560px] rounded-full opacity-55 sm:opacity-65 blur-[55px] sm:blur-[75px] transform-gpu"
+        className="absolute top-[4%] -right-[18%] sm:-right-[8%] lg:-right-[5%] w-[380px] sm:w-[500px] h-[450px] sm:h-[600px] rounded-full opacity-40 sm:opacity-50 blur-[70px] sm:blur-[95px] transform-gpu"
         style={{
           background:
-            "radial-gradient(circle, rgba(118, 80, 134, 0.5) 0%, rgba(84, 37, 104, 0.3) 45%, rgba(62, 27, 76, 0.1) 70%, transparent 85%)",
+            "radial-gradient(circle, rgba(118, 80, 134, 0.4) 0%, rgba(84, 37, 104, 0.2) 50%, transparent 80%)",
+        }}
+      />
+
+      {/* ── 2B. HERO VISUAL OBSIDIAN VOID MASK: Guarantees 100% pitch-black behind persona & tools ── */}
+      <div
+        className="absolute top-[2%] right-[2%] sm:right-[6%] lg:right-[8%] w-[420px] sm:w-[560px] lg:w-[620px] h-[480px] sm:h-[580px] rounded-full pointer-events-none transform-gpu"
+        style={{
+          background:
+            "radial-gradient(circle, #050408 0%, rgba(5, 4, 8, 0.95) 55%, transparent 85%)",
         }}
       />
 
