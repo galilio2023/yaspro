@@ -159,7 +159,7 @@ export function VirtualStudioSection() {
                   <span className="size-1.5 sm:size-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="font-bold">PHYSICAL STAGE</span>
                   <span className="text-white/40 hidden sm:inline">|</span>
-                  <span className="text-white/80 hidden sm:inline">Camera RAW Sensor</span>
+                  <span className="text-white/80 hidden sm:inline">Live Camera Feed</span>
                 </div>
               </div>
 

@@ -204,25 +204,32 @@ export function PartnersMarquee() {
 
         {/* 7 Clean Studio Cards with Consistent Sizing & Visual Flow */}
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
-          {YAS_GROUP_COMPANIES.map((company) => (
-            <Link
-              key={company.id}
-              href="/about#conglomerate"
-              title={`${company.name} — ${company.division}`}
-              className="group relative h-20 sm:h-22 p-3 rounded-2xl bg-zinc-950/80 border border-white/10 hover:border-brand-mauve/50 hover:bg-zinc-900/90 flex flex-col items-center justify-center transition-all duration-300 cursor-pointer shadow-lg shadow-black/50 overflow-hidden"
-            >
-              <Image
-                src={company.logo}
-                alt={company.name}
-                width={120}
-                height={40}
-                className="max-h-10 max-w-full h-auto w-auto object-contain opacity-80 group-hover:opacity-100 group-hover:scale-105 filter group-hover:brightness-110 transition-all duration-300"
-              />
-              <span className="mt-1 text-[9px] font-mono text-zinc-500 group-hover:text-zinc-300 truncate max-w-full text-center transition-colors">
-                {company.division.split("&")[0].trim()}
-              </span>
-            </Link>
-          ))}
+            {YAS_GROUP_COMPANIES.map((company) => {
+              const displayName = isArabic ? company.nameAr : company.name;
+              const displayDivision = isArabic
+                ? (company.divisionAr || company.division).split("&")[0].trim()
+                : company.division.split("&")[0].trim();
+
+              return (
+                <Link
+                  key={company.id}
+                  href="/about#conglomerate"
+                  title={`${displayName} — ${isArabic ? company.divisionAr : company.division}`}
+                  className="group relative h-20 sm:h-22 p-3 rounded-2xl bg-zinc-950/80 border border-white/10 hover:border-brand-mauve/50 hover:bg-zinc-900/90 flex flex-col items-center justify-center transition-all duration-300 cursor-pointer shadow-lg shadow-black/50 overflow-hidden"
+                >
+                  <Image
+                    src={company.logo}
+                    alt={displayName}
+                    width={120}
+                    height={40}
+                    className="max-h-10 max-w-full h-auto w-auto object-contain opacity-80 group-hover:opacity-100 group-hover:scale-105 filter group-hover:brightness-110 transition-all duration-300"
+                  />
+                  <span className="mt-1 text-[9px] font-mono text-zinc-500 group-hover:text-zinc-300 truncate max-w-full text-center transition-colors">
+                    {displayDivision}
+                  </span>
+                </Link>
+              );
+            })}
         </div>
       </div>
     </aside>

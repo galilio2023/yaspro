@@ -52,7 +52,10 @@ export function ImageCompareSlider({
   const sliderPosition = position !== undefined ? position : internalPosition;
   const afterVideoRef = useRef<HTMLVideoElement>(null);
   const beforeVideoRef = useRef<HTMLVideoElement>(null);
-  const hasVideo = Boolean(videoSrc || beforeVideo || afterVideo);
+  const hasAfterVideo = Boolean(afterVideo || (!afterImage && videoSrc) || (videoSrc && !afterVideo && !afterImage));
+  const hasBeforeVideo = Boolean(beforeVideo || (!beforeImage && videoSrc) || (videoSrc && !beforeVideo && !beforeImage));
+  const resolvedAfterVideo = afterVideo || (afterImage ? undefined : videoSrc);
+  const resolvedBeforeVideo = beforeVideo || (beforeImage ? undefined : videoSrc);
 
   // Synchronize both video playback positions
   useEffect(() => {
@@ -70,25 +73,25 @@ export function ImageCompareSlider({
     return () => v1.removeEventListener("timeupdate", handleSync);
   }, [videoSrc, beforeVideo, afterVideo]);
 
-  // Handle play / pause changes
+  // Handle play / pause changes (also re-apply when videoSrc/source changes)
   useEffect(() => {
     const v1 = afterVideoRef.current;
     const v2 = beforeVideoRef.current;
     if (!v1) return;
 
-    if (isPlaying === true && v1.paused) {
-      v1.play().catch(() => {});
-      v2?.play().catch(() => {});
-    } else if (isPlaying === false && !v1.paused) {
-      v1.pause();
-      v2?.pause();
+    if (isPlaying === true) {
+      if (v1.paused) v1.play().catch(() => {});
+      if (v2?.paused) v2?.play().catch(() => {});
+    } else if (isPlaying === false) {
+      if (!v1.paused) v1.pause();
+      if (v2 && !v2.paused) v2.pause();
     }
-  }, [isPlaying]);
+  }, [isPlaying, videoSrc, beforeVideo, afterVideo]);
 
-  // Handle mute changes
+  // Handle mute changes: keep beforeVideoRef ALWAYS muted to prevent audio doubling/phase issues
   useEffect(() => {
     if (afterVideoRef.current) afterVideoRef.current.muted = isMuted;
-    if (beforeVideoRef.current) beforeVideoRef.current.muted = isMuted;
+    if (beforeVideoRef.current) beforeVideoRef.current.muted = true;
   }, [isMuted]);
 
   const setPosition = useCallback((pos: number) => {
@@ -233,10 +236,10 @@ export function ImageCompareSlider({
     >
       {/* Background (After / Composite state) */}
       <div className="absolute inset-0" suppressHydrationWarning>
-        {hasVideo ? (
+        {hasAfterVideo ? (
           <video
             ref={afterVideoRef}
-            src={afterVideo || videoSrc}
+            src={resolvedAfterVideo}
             autoPlay
             loop
             muted={isMuted}
@@ -267,13 +270,13 @@ export function ImageCompareSlider({
         suppressHydrationWarning
       >
         <div className="relative w-full h-full" suppressHydrationWarning>
-          {hasVideo ? (
+          {hasBeforeVideo ? (
             <video
               ref={beforeVideoRef}
-              src={beforeVideo || videoSrc}
+              src={resolvedBeforeVideo}
               autoPlay
               loop
-              muted={isMuted}
+              muted={true}
               playsInline
               className={cn(
                 "size-full object-cover",

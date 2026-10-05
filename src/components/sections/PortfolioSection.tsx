@@ -95,7 +95,7 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
                 onClick={() => setActiveCategory(cat.id)}
                 className={cn(
                   "relative px-4 py-2 min-h-[40px] rounded-full text-xs font-bold transition-colors duration-200 cursor-pointer whitespace-nowrap flex items-center justify-center z-10",
-                  isActive ? "text-zinc-950" : "text-zinc-400 hover:text-white"
+                  isActive ? "text-white" : "text-zinc-400 hover:text-white"
                 )}
               >
                 {isActive && (
