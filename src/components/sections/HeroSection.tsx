@@ -100,11 +100,12 @@ export default function HeroSection() {
             </div>
           </FadeUp>
 
-          {/* ── Right Column: Floating Visionary with 3D Media Production Tools & Orbital Ecosystem ── */}
+          {/* ── Right Column: Visionary with 3D Solar System Orbit ── */}
           <div className="lg:col-span-5 relative flex items-center justify-center mt-12 lg:mt-0 min-h-[460px] sm:min-h-[520px]">
-            {/* Main Central Persona Container (Layer z-10) */}
-            <div className="relative w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[420px] animate-float select-none pointer-events-none z-10">
-              <div className="relative aspect-[3/4] w-full">
+            {/* Main Central Persona Container */}
+            <div className="relative w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[420px] select-none">
+              {/* Persona Image (Layer z-10) */}
+              <div className="relative aspect-[3/4] w-full z-10 pointer-events-none">
                 <Image
                   src="/images/hero/vr-filmmaker-v3.jpg"
                   alt={isArabic ? "مخرج يرتدي نظارة الواقع الافتراضي" : "Filmmaker wearing VR glasses"}
@@ -120,36 +121,9 @@ export default function HeroSection() {
                 <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-transparent pointer-events-none" />
                 <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background/50 pointer-events-none" />
               </div>
-            </div>
 
-            {/* 3D Orbiting Media Ecosystem Nodes (Snapchat, Instagram, TikTok, YouTube, AI, Live Satellite - z-30 foreground) */}
-            <HeroMediaOrbit />
-
-            {/* ── Floating Tool 1: Broadcast Studio Microphone (Middle Left Flank z-20) ── */}
-            <div className="absolute top-1/2 -translate-y-1/2 -left-8 sm:-left-12 lg:-left-16 z-20 animate-float-slow pointer-events-none">
-              <div className="relative w-36 sm:w-44 lg:w-48 aspect-square filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]">
-                <Image
-                  src="/images/hero/floating-mic.jpg"
-                  alt="Broadcast Studio Microphone"
-                  fill
-                  sizes="192px"
-                  className="object-contain mix-blend-screen opacity-90 hover:opacity-100 transition-opacity -scale-x-100"
-                />
-              </div>
-            </div>
-
-            {/* ── Floating Tool 2: Futuristic Next-Gen Cinema Camera (Bottom Right Flank z-20, Fully Visible) ── */}
-            <div className="absolute -bottom-8 -right-8 sm:-bottom-10 sm:-right-12 lg:-right-16 z-20 animate-cinema-sway pointer-events-none">
-              <div className="relative w-44 sm:w-52 lg:w-60 aspect-square filter drop-shadow-[0_20px_35px_rgba(0,0,0,0.95)] -rotate-12 -scale-x-100">
-                <Image
-                  src="/images/hero/cinema-camera-v2.jpg"
-                  alt="Next-Gen 8K Cinema Camera"
-                  fill
-                  unoptimized
-                  sizes="240px"
-                  className="object-contain mix-blend-screen opacity-95 hover:opacity-100 transition-opacity"
-                />
-              </div>
+              {/* 3D Solar System Orbit around the head */}
+              <HeroMediaOrbit />
             </div>
           </div>
         </div>
