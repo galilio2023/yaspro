@@ -339,6 +339,7 @@ export function HeroMediaOrbit() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isHoveredRef = useRef(false);
   const dimsRef = useRef<{ w: number; h: number }>({ w: 380, h: 506 });
+  const staticRenderRef = useRef<() => void>(() => {});
 
   // Responsive dimension tracker
   useEffect(() => {
@@ -349,6 +350,7 @@ export function HeroMediaOrbit() {
       const rect = parent.getBoundingClientRect();
       if (rect.width > 0 && rect.height > 0) {
         dimsRef.current = { w: rect.width, h: rect.height };
+        staticRenderRef.current();
       }
     };
 
@@ -360,7 +362,8 @@ export function HeroMediaOrbit() {
 
   // 60/120fps direct GPU animation loop (Zero React re-renders)
   useEffect(() => {
-    let animId: number;
+    const reduceMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let animId: number | undefined;
     let lastTime = performance.now();
     let progress = 0; // 0..1
 
@@ -368,13 +371,7 @@ export function HeroMediaOrbit() {
     const cosTilt = Math.cos(tiltRad);
     const sinTilt = Math.sin(tiltRad);
 
-    const loop = (currentTime: number) => {
-      const delta = currentTime - lastTime;
-      lastTime = currentTime;
-
-      const speed = isHoveredRef.current ? 0.2 : 1.0;
-      progress = (progress + (delta / REVOLUTION_DURATION_MS) * speed) % 1;
-
+    const render = () => {
       const { w, h } = dimsRef.current;
       const cx = w / 2;
       const cy = h * 0.29; // Anchored directly at the filmmaker's head / VR headset
@@ -409,12 +406,37 @@ export function HeroMediaOrbit() {
           el.style.opacity = String(opacity);
         });
       }
-
-      animId = requestAnimationFrame(loop);
     };
 
-    animId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(animId);
+    const loop = (currentTime: number) => {
+      if (!reduceMotion) {
+        const delta = currentTime - lastTime;
+        lastTime = currentTime;
+
+        const speed = isHoveredRef.current ? 0.2 : 1.0;
+        progress = (progress + (delta / REVOLUTION_DURATION_MS) * speed) % 1;
+      }
+
+      render();
+
+      if (!reduceMotion) {
+        animId = requestAnimationFrame(loop);
+      }
+    };
+
+    if (reduceMotion) {
+      staticRenderRef.current = render;
+      render();
+    } else {
+      animId = requestAnimationFrame(loop);
+    }
+
+    return () => {
+      staticRenderRef.current = () => {};
+      if (animId !== undefined) {
+        cancelAnimationFrame(animId);
+      }
+    };
   }, []);
 
   return (
