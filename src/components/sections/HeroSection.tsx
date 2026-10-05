@@ -104,7 +104,7 @@ export default function HeroSection() {
             {/* Soft Ambient Radial Light Core */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-purple/20 rounded-full blur-[100px] pointer-events-none" />
 
-            {/* Main Central Persona Container */}
+            {/* Main Central Persona Container (Layer z-10) */}
             <div className="relative w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[420px] animate-float select-none pointer-events-none z-10">
               <div className="relative aspect-[3/4] w-full">
                 <Image
@@ -124,7 +124,7 @@ export default function HeroSection() {
               </div>
             </div>
 
-            {/* ── Floating Tool 1: Broadcast Studio Microphone (Middle Left) ── */}
+            {/* ── Floating Tool 1: Broadcast Studio Microphone (Middle Left Flank z-20) ── */}
             <div className="absolute top-1/2 -translate-y-1/2 -left-8 sm:-left-12 lg:-left-16 z-20 animate-float-slow pointer-events-none">
               <div className="relative w-36 sm:w-44 lg:w-48 aspect-square filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]">
                 <Image
@@ -137,15 +137,15 @@ export default function HeroSection() {
               </div>
             </div>
 
-            {/* ── Floating Tool 2: Futuristic Next-Gen Cinema Camera (Bottom Right, Aimed at Face/VR Goggles) ── */}
-            <div className="absolute -bottom-6 -right-6 sm:-bottom-8 sm:-right-8 lg:-right-10 z-20 animate-float-reverse pointer-events-none">
-              <div className="relative w-44 sm:w-52 lg:w-56 aspect-square filter drop-shadow-[0_20px_35px_rgba(0,0,0,0.9)] -rotate-12 -scale-x-100">
+            {/* ── Floating Tool 2: Futuristic Next-Gen Cinema Camera (Bottom Right Flank z-20, Fully Visible) ── */}
+            <div className="absolute -bottom-8 -right-8 sm:-bottom-10 sm:-right-12 lg:-right-16 z-20 animate-cinema-sway pointer-events-none">
+              <div className="relative w-44 sm:w-52 lg:w-60 aspect-square filter drop-shadow-[0_20px_35px_rgba(0,0,0,0.95)] -rotate-12 -scale-x-100">
                 <Image
                   src="/images/hero/cinema-camera-v2.jpg"
                   alt="Next-Gen 8K Cinema Camera"
                   fill
                   unoptimized
-                  sizes="224px"
+                  sizes="240px"
                   className="object-contain mix-blend-screen opacity-95 hover:opacity-100 transition-opacity"
                 />
               </div>

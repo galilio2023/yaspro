@@ -344,6 +344,23 @@ section {
   }
 }
 
+@keyframes camera-deep-space {
+  0%, 100% {
+    transform: translate3d(0, 0, -40px) scale(0.92) rotate(-12deg) scaleX(-1);
+    opacity: 0.78;
+    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.95)) blur(0.4px);
+  }
+  50% {
+    transform: translate3d(8px, 16px, -110px) scale(0.84) rotate(-10deg) scaleX(-1);
+    opacity: 0.65;
+    filter: drop-shadow(0 25px 40px rgba(0,0,0,0.98)) blur(1px);
+  }
+}
+
+.animate-camera-deep-space {
+  animation: camera-deep-space 8.5s ease-in-out infinite;
+}
+
 .animate-cinema-sway {
   animation: cinema-sway 9s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
 }
