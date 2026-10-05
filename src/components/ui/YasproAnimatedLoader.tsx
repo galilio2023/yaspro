@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import React from "react";
+import Image from "next/image";
+import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export interface YasproAnimatedLoaderProps {
@@ -10,28 +11,11 @@ export interface YasproAnimatedLoaderProps {
   className?: string;
 }
 
-const TELEMETRY_STAGES = [
-  "INITIALIZING OPTICAL STREAM",
-  "CALIBRATING 8K SOUNDSTAGE",
-  "SYNCING DUBAI MEDIA HUB",
-  "ENGAGING CINEMA SENSORS",
-];
-
 export function YasproAnimatedLoader({
-  statusText,
   size = "fullscreen",
   className,
 }: YasproAnimatedLoaderProps) {
-  const [telemetryIndex, setTelemetryIndex] = useState(0);
   const shouldReduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    if (shouldReduceMotion) return;
-    const interval = setInterval(() => {
-      setTelemetryIndex((prev) => (prev + 1) % TELEMETRY_STAGES.length);
-    }, 1200);
-    return () => clearInterval(interval);
-  }, [shouldReduceMotion]);
 
   const isFullscreen = size === "fullscreen";
   const isCompact = size === "compact";
@@ -54,7 +38,7 @@ export function YasproAnimatedLoader({
         <div className="w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-brand-violet/20 blur-[90px] animate-pulse motion-reduce:animate-none" />
       </div>
 
-      {/* Main Animated Cinema Sensor SVG */}
+      {/* Main Animated Yas Pro "O" Circle Spinner */}
       <div className="relative flex items-center justify-center">
         {/* Outer Rotating Calibration HUD Ring */}
         <motion.div
@@ -88,227 +72,119 @@ export function YasproAnimatedLoader({
           }}
         />
 
-        {/* Cinema Lens Mount SVG Container */}
-        <svg
-          viewBox="0 0 120 120"
+        {/* The Iconic Animated Spinning "O" SVG with Signature Gold Triangle */}
+        <motion.div
+          animate={shouldReduceMotion ? undefined : { rotate: 360 }}
+          transition={
+            shouldReduceMotion
+              ? undefined
+              : { duration: 2.2, repeat: Infinity, ease: "linear" }
+          }
           className={cn(
-            "relative z-10 overflow-visible drop-shadow-[0_0_35px_rgba(118,80,134,0.45)]",
-            isCompact ? "w-16 h-16" : "w-28 h-28 sm:w-36 sm:h-36"
+            "relative z-10 flex items-center justify-center filter drop-shadow-[0_0_28px_rgba(245,158,11,0.35)]",
+            isCompact ? "size-18" : "size-28 sm:size-36"
           )}
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
         >
-          <defs>
-            {/* Luminous Bloom Filter */}
-            <filter id="yas-loader-bloom" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
+          <svg
+            viewBox="0 0 120 120"
+            className="w-full h-full overflow-visible"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              {/* Luminous Bloom Filter */}
+              <filter id="yas-o-glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
 
-            {/* Lens Housing Radial Gradient */}
-            <radialGradient id="yas-loader-housing" cx="50%" cy="50%" r="50%">
-              <stop offset="55%" stopColor="#0b0c10" />
-              <stop offset="85%" stopColor="#171822" />
-              <stop offset="100%" stopColor="#070709" />
-            </radialGradient>
+              {/* Ring Gradient: Premium Studio White to Titanium Silver */}
+              <linearGradient id="yas-o-ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#ffffff" />
+                <stop offset="50%" stopColor="#f1f5f9" />
+                <stop offset="100%" stopColor="#94a3b8" />
+              </linearGradient>
 
-            {/* Optical Sensor Core Radial Gradient */}
-            <radialGradient id="yas-loader-sensor" cx="50%" cy="48%" r="48%">
-              <stop offset="0%" stopColor="#ddd3e1" stopOpacity="0.95" />
-              <stop offset="30%" stopColor="#987ba5" stopOpacity="0.7" />
-              <stop offset="70%" stopColor="#542568" stopOpacity="0.45" />
-              <stop offset="100%" stopColor="#07070a" />
-            </radialGradient>
+              {/* Signature Accent Gold/Amber Gradient for the Triangle */}
+              <linearGradient id="yas-o-gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#fef08a" />
+                <stop offset="45%" stopColor="#facc15" />
+                <stop offset="100%" stopColor="#f59e0b" />
+              </linearGradient>
+            </defs>
 
-            {/* Titanium Specular Bezel Gradient */}
-            <linearGradient id="yas-loader-silver" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="40%" stopColor="#cbd5e1" />
-              <stop offset="100%" stopColor="#64748b" />
-            </linearGradient>
-
-            {/* Luxury Mauve & Violet Gradient */}
-            <linearGradient id="yas-loader-gold" x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#eee9f0" />
-              <stop offset="35%" stopColor="#bba7c3" />
-              <stop offset="75%" stopColor="#987ba5" />
-              <stop offset="100%" stopColor="#542568" />
-            </linearGradient>
-          </defs>
-
-          {/* 1. Outer Knurled Precision Bezel */}
-          <circle
-            cx="60"
-            cy="60"
-            r="54"
-            fill="url(#yas-loader-housing)"
-            stroke="url(#yas-loader-silver)"
-            strokeWidth="1.8"
-          />
-
-          {/* 2. Optical Sensor Core */}
-          <circle
-            cx="60"
-            cy="60"
-            r="44"
-            fill="url(#yas-loader-sensor)"
-            stroke="rgba(152, 123, 165, 0.4)"
-            strokeWidth="1.2"
-          />
-
-          {/* 3. Dynamic Rotating Aperture Blades */}
-          <g transform="translate(60, 60)">
-            <motion.g
-              animate={shouldReduceMotion ? undefined : { rotate: 360 }}
-              transition={
-                shouldReduceMotion
-                  ? undefined
-                  : { duration: 12, repeat: Infinity, ease: "linear" }
-              }
-            >
-              {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-                <line
-                  key={i}
-                  x1="0"
-                  y1="-44"
-                  x2="18"
-                  y2="-12"
-                  stroke="#ffffff"
-                  strokeWidth="1.2"
-                  strokeOpacity="0.5"
-                  transform={`rotate(${angle})`}
-                />
-              ))}
-            </motion.g>
-          </g>
-
-          {/* 4. Pulsing Luminous Optical Ring */}
-          <motion.circle
-            cx="60"
-            cy="60"
-            r="48"
-            stroke="url(#yas-loader-gold)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            filter="url(#yas-loader-bloom)"
-            strokeDasharray="90 180"
-            animate={
-              shouldReduceMotion
-                ? undefined
-                : {
-                    rotate: [0, 360],
-                    strokeDasharray: ["60 180", "140 180", "60 180"],
-                  }
-            }
-            transition={
-              shouldReduceMotion
-                ? undefined
-                : {
-                    rotate: { duration: 4, repeat: Infinity, ease: "linear" },
-                    strokeDasharray: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                  }
-            }
-            style={{ transformOrigin: "60px 60px" }}
-          />
-
-          {/* 5. Chiseled 3D Yas Pro "Y" Emblem */}
-          <g filter="url(#yas-loader-bloom)">
-            {/* Left Titanium Arm */}
-            <polygon
-              points="34,32 50,32 60,56 53,64 34,32"
-              fill="url(#yas-loader-silver)"
-              stroke="#ffffff"
-              strokeWidth="1"
-            />
-
-            {/* Right Luxury Mauve Arm */}
-            <polygon
-              points="86,32 70,32 60,56 67,64 86,32"
-              fill="url(#yas-loader-gold)"
-              stroke="#bba7c3"
-              strokeWidth="1"
-            />
-
-            {/* Center Vertical Spine */}
-            <polygon
-              points="53,61 67,61 67,88 53,88"
-              fill="url(#yas-loader-silver)"
-              stroke="#ffffff"
-              strokeWidth="0.8"
-            />
-
-            {/* Optical Glint Star Center */}
-            <motion.circle
+            {/* Subtle Inner Optical Guide Ring */}
+            <circle
               cx="60"
-              cy="56"
-              r="3"
-              fill="#ffffff"
-              animate={
-                shouldReduceMotion
-                  ? undefined
-                  : {
-                      scale: [1, 1.45, 1],
-                      opacity: [0.8, 1, 0.8],
-                    }
-              }
-              transition={
-                shouldReduceMotion
-                  ? undefined
-                  : {
-                      duration: 1.8,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }
-              }
+              cy="60"
+              r="22"
+              stroke="rgba(255,255,255,0.08)"
+              strokeWidth="1"
+              strokeDasharray="2 3"
             />
-          </g>
-        </svg>
+
+            {/* The Main "O" Body — Thick Luxury Ring with Angled Notch Gap */}
+            <circle
+              cx="60"
+              cy="60"
+              r="36"
+              stroke="url(#yas-o-ring-grad)"
+              strokeWidth="14"
+              strokeLinecap="round"
+              strokeDasharray="182 45"
+              strokeDashoffset="12"
+              filter="url(#yas-o-glow)"
+            />
+
+            {/* Inner Precision Bevel Contour */}
+            <circle
+              cx="60"
+              cy="60"
+              r="29"
+              stroke="rgba(255,255,255,0.4)"
+              strokeWidth="1"
+              strokeDasharray="150 40"
+              strokeDashoffset="10"
+            />
+
+            {/* The Signature Golden Triangle Prism Nestled at the Top-Right Notch */}
+            <g filter="url(#yas-o-glow)">
+              <polygon
+                points="77,20 98,34 76,43"
+                fill="url(#yas-o-gold-grad)"
+                stroke="#fef08a"
+                strokeWidth="1"
+                strokeLinejoin="round"
+              />
+              {/* Specular Inner Triangle Highlight */}
+              <polygon
+                points="78,23 94,34 78,39"
+                fill="#ffffff"
+                opacity="0.45"
+              />
+            </g>
+          </svg>
+        </motion.div>
       </div>
 
-      {/* Brand Identity & Editorial Typography */}
+      {/* Brand Identity: Official Logo Image */}
       <div className="relative z-10 flex flex-col items-center mt-6 text-center">
-        {/* Brand Name */}
-        <div className="flex items-baseline gap-1.5">
-          <span className="text-2xl sm:text-3xl font-black tracking-tight text-white font-display drop-shadow">
-            YAS
-          </span>
-          <span className="text-2xl sm:text-3xl font-black tracking-tight text-brand-mauve font-display drop-shadow">
-            PRO
-          </span>
-        </div>
-
-        {/* Brand Tagline */}
-        <div className="text-[10px] sm:text-xs font-mono tracking-[0.28em] text-zinc-300 uppercase mt-1">
-          AI MEDIA HUB • DUBAI
-        </div>
-
-        {/* Dynamic Studio Telemetry HUD */}
-        <div className="flex items-center gap-2 mt-4 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md">
-          {/* Studio Recording Tally Light */}
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping motion-reduce:animate-none absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
-          </span>
-
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={statusText || telemetryIndex}
-              initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 3 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -3 }}
-              transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.25 }}
-              className="text-[10.5px] font-mono tracking-wider text-brand-lavender whitespace-nowrap"
-            >
-              {statusText ? statusText : TELEMETRY_STAGES[telemetryIndex]}
-            </motion.span>
-          </AnimatePresence>
-
-          <span className="text-[9px] font-mono text-zinc-300">
-            [8K RAW]
-          </span>
+        <div className="relative shrink-0 flex items-center justify-center">
+          <span className="absolute -inset-2 rounded-2xl bg-brand-violet/20 blur-md pointer-events-none opacity-60" />
+          <Image
+            src="/images/group/yas-pro-media-group.png"
+            alt="YAS PRO Media Group"
+            width={isCompact ? 130 : 170}
+            height={isCompact ? 46 : 60}
+            priority
+            className={cn(
+              "relative z-10 w-auto object-contain filter brightness-100 drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]",
+              isCompact ? "h-8" : "h-10 sm:h-12"
+            )}
+          />
         </div>
       </div>
     </div>

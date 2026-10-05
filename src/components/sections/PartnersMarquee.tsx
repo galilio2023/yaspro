@@ -66,7 +66,7 @@ export function PartnersMarquee() {
     <aside
       aria-label="Global Production Partners, Live Metrics and Yas Pro Network"
       dir="ltr"
-      className="relative w-full py-14 sm:py-20 lg:py-24 border-y border-white/8 bg-transparent overflow-hidden flex flex-col items-center select-none max-w-full"
+      className="relative w-full py-10 sm:py-16 lg:py-20 bg-transparent overflow-hidden flex flex-col items-center select-none max-w-full"
     >
       {/* Edge Fade Gradients for the marquee rows */}
       <div className="pointer-events-none absolute inset-y-0 start-0 w-20 sm:w-48 bg-gradient-to-r from-background via-background/80 to-transparent z-20" />
@@ -76,17 +76,6 @@ export function PartnersMarquee() {
           1. TOP: CONTINUOUS CINEMATIC MARQUEES (Global & Government)
       ═══════════════════════════════════════════════════════════════ */}
       <div className="w-full mb-14 sm:mb-20">
-        {/* Editorial Section Label */}
-        <div className="mb-8 flex items-center justify-center gap-2.5 px-4 text-center relative z-10">
-          <span className="size-1.5 rounded-full bg-brand-mauve shrink-0" />
-          <span className="text-[11px] sm:text-xs font-mono uppercase tracking-[0.2em] rtl:tracking-normal rtl:font-arabic rtl:normal-case text-zinc-300 font-semibold">
-            {isArabic
-              ? "شريك الإنتاج المعتمد للمؤسسات الحكومية وكبرى العلامات العالمية"
-              : "Chosen For UAE Government & Global Brand Productions"}
-          </span>
-          <span className="size-1.5 rounded-full bg-brand-mauve shrink-0" />
-        </div>
-
         {/* Row 1: Official UAE Government Entities */}
         <div className="w-full relative z-10 mb-5 sm:mb-6">
           <Marquee pauseOnHover repeat={4} gap="3rem" className="[--duration:34s] py-1 items-center">
@@ -94,7 +83,7 @@ export function PartnersMarquee() {
               <div
                 key={gov.id}
                 title={gov.name}
-                className="h-14 sm:h-16 px-6 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/8 hover:border-brand-mauve/40 flex items-center justify-center transition-all duration-300 group cursor-pointer shrink-0 backdrop-blur-sm"
+                className="h-14 sm:h-16 px-6 rounded-2xl bg-transparent hover:bg-white/[0.04] flex items-center justify-center transition-all duration-300 group cursor-pointer shrink-0"
               >
                 <Image
                   src={gov.logo}
@@ -115,7 +104,7 @@ export function PartnersMarquee() {
               <div
                 key={brand.id}
                 title={brand.name}
-                className="h-14 sm:h-16 px-6 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/8 hover:border-brand-mauve/40 flex items-center justify-center transition-all duration-300 group cursor-pointer shrink-0 backdrop-blur-sm"
+                className="h-14 sm:h-16 px-6 rounded-2xl bg-transparent hover:bg-white/[0.04] flex items-center justify-center transition-all duration-300 group cursor-pointer shrink-0"
               >
                 {brand.svg ? (
                   <div
@@ -138,95 +127,68 @@ export function PartnersMarquee() {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          2. MIDDLE: LIVE INCREMENTAL ANIMATED METRICS
+          2. MIDDLE: LIVE INCREMENTAL ANIMATED METRICS (Compact Studio Flow)
       ═══════════════════════════════════════════════════════════════ */}
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-14 sm:mb-20 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-          {PRODUCTION_METRICS.map((metric) => {
-            const Icon = metric.icon;
-            return (
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 mb-8 sm:mb-12 relative z-10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {PRODUCTION_METRICS.map((metric) => (
+            <div
+              key={metric.labelEn}
+              className="group relative rounded-2xl p-3.5 sm:p-4 bg-transparent hover:bg-white/[0.02] transition-colors duration-300 flex flex-col justify-end overflow-hidden"
+            >
+              {/* Shimmer Scan Light Beam Passing Through */}
               <div
-                key={metric.labelEn}
-                className="group relative rounded-3xl p-6 sm:p-7 bg-zinc-950/70 border border-white/10 hover:border-brand-mauve/40 transition-all duration-300 backdrop-blur-xl shadow-xl flex flex-col justify-between overflow-hidden"
+                aria-hidden="true"
+                className="absolute inset-0 pointer-events-none overflow-hidden"
               >
-                {/* Subtle Hover Backlight */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-brand-purple/15 rounded-full blur-2xl pointer-events-none group-hover:bg-brand-mauve/25 transition-colors" />
-
-                {/* Top Row: Icon + Indicator */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="size-10 rounded-2xl bg-brand-purple/20 border border-brand-purple/40 text-brand-mauve-soft flex items-center justify-center shadow-inner">
-                    <Icon size={18} />
-                  </div>
-                  <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-mauve-soft opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-mauve" />
-                  </span>
-                </div>
-
-                {/* Counter Number */}
-                <div
-                  className="text-4xl sm:text-5xl font-black font-display font-latin text-white tracking-tight mb-2 text-balance"
-                  dir="ltr"
-                >
-                  <CountUp end={metric.end} suffix={metric.suffix} />
-                </div>
-
-                {/* Metric Title & Context */}
-                <div>
-                  <h4 className="text-white text-sm font-bold tracking-tight">
-                    {isArabic ? metric.labelAr : metric.labelEn}
-                  </h4>
-                  <p className="text-zinc-400 text-xs mt-0.5 font-normal">
-                    {isArabic ? metric.subAr : metric.subEn}
-                  </p>
-                </div>
+                <div className="absolute inset-y-0 w-16 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer-scan" />
               </div>
-            );
-          })}
+
+              {/* Counter Number */}
+              <div
+                className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display font-latin text-white tracking-tight mb-1"
+                dir="ltr"
+              >
+                <CountUp end={metric.end} suffix={metric.suffix} />
+              </div>
+
+              {/* Metric Title & Context */}
+              <div>
+                <h4 className="text-white text-xs sm:text-sm font-bold tracking-tight">
+                  {isArabic ? metric.labelAr : metric.labelEn}
+                </h4>
+                <p className="text-zinc-400 text-[11px] sm:text-xs mt-0.5 font-normal leading-snug">
+                  {isArabic ? metric.subAr : metric.subEn}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          3. BOTTOM: STATIC YAS PRO GROUP NETWORK (Refined Architecture)
+          3. BOTTOM: STATIC YAS PRO GROUP NETWORK (Borderless Flow)
       ═══════════════════════════════════════════════════════════════ */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6 pb-4 border-b border-white/8 text-center sm:text-left">
-          <div className="flex items-center gap-2.5">
-            <span className="size-2 rounded-full bg-brand-mauve shadow-[0_0_8px_rgba(152,123,165,0.7)]" />
-            <span className="text-xs font-mono uppercase tracking-[0.16em] text-white font-bold">
-              {isArabic ? "مجموعة شركات ياس برو للإعلام" : "Yas Pro Media Group Companies"}
-            </span>
-          </div>
-          <span className="text-[10px] font-mono text-brand-lavender tracking-wider">
-            DUBAI • CAIRO • AMMAN
-          </span>
-        </div>
-
-        {/* 7 Clean Studio Cards with Consistent Sizing & Visual Flow */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
+        {/* 7 Clean Studio Cards with Completely Transparent Flow (No Text, No Background) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 sm:gap-6 items-center">
             {YAS_GROUP_COMPANIES.map((company) => {
               const displayName = isArabic ? company.nameAr : company.name;
-              const displayDivision = isArabic
-                ? (company.divisionAr || company.division).split("&")[0].trim()
-                : company.division.split("&")[0].trim();
 
               return (
                 <Link
                   key={company.id}
                   href="/about#conglomerate"
-                  title={`${displayName} — ${isArabic ? company.divisionAr : company.division}`}
-                  className="group relative h-20 sm:h-22 p-3 rounded-2xl bg-zinc-950/80 border border-white/10 hover:border-brand-mauve/50 hover:bg-zinc-900/90 flex flex-col items-center justify-center transition-all duration-300 cursor-pointer shadow-lg shadow-black/50 overflow-hidden"
+                  title={displayName}
+                  className="group relative h-16 sm:h-20 p-2 bg-transparent flex items-center justify-center transition-transform duration-300 cursor-pointer"
                 >
                   <Image
                     src={company.logo}
                     alt={displayName}
-                    width={120}
-                    height={40}
-                    className="max-h-10 max-w-full h-auto w-auto object-contain opacity-80 group-hover:opacity-100 group-hover:scale-105 filter group-hover:brightness-110 transition-all duration-300"
+                    width={140}
+                    height={50}
+                    className="max-h-11 max-w-full h-auto w-auto object-contain opacity-75 group-hover:opacity-100 group-hover:scale-110 filter group-hover:brightness-125 transition-all duration-300"
                   />
-                  <span className="mt-1 text-[9px] font-mono text-zinc-500 group-hover:text-zinc-300 truncate max-w-full text-center transition-colors">
-                    {displayDivision}
-                  </span>
                 </Link>
               );
             })}

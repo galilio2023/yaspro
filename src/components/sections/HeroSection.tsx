@@ -11,6 +11,7 @@ import { Container } from "@/components/ui/container";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { CinemaVideoModal } from "@/components/common/CinemaVideoModal";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { HeroMediaOrbit } from "./HeroMediaOrbit";
 
 export default function HeroSection() {
   const { t, isArabic } = useLanguage();
@@ -99,7 +100,7 @@ export default function HeroSection() {
             </div>
           </FadeUp>
 
-          {/* ── Right Column: Floating Visionary with 3D Media Production Tools ── */}
+          {/* ── Right Column: Floating Visionary with 3D Media Production Tools & Orbital Ecosystem ── */}
           <div className="lg:col-span-5 relative flex items-center justify-center mt-12 lg:mt-0 min-h-[460px] sm:min-h-[520px]">
             {/* Main Central Persona Container (Layer z-10) */}
             <div className="relative w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[420px] animate-float select-none pointer-events-none z-10">
@@ -120,6 +121,9 @@ export default function HeroSection() {
                 <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background/50 pointer-events-none" />
               </div>
             </div>
+
+            {/* 3D Orbiting Media Ecosystem Nodes (Snapchat, Instagram, TikTok, YouTube, AI, Live Satellite - z-30 foreground) */}
+            <HeroMediaOrbit />
 
             {/* ── Floating Tool 1: Broadcast Studio Microphone (Middle Left Flank z-20) ── */}
             <div className="absolute top-1/2 -translate-y-1/2 -left-8 sm:-left-12 lg:-left-16 z-20 animate-float-slow pointer-events-none">
