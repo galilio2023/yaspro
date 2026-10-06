@@ -31,10 +31,10 @@ export default async function HomePage() {
       <VirtualStudioSection />
       <PartnersMarquee />
       <PortfolioSection />
-      <GearRentalSection />
+      {/*<GearRentalSection />*/}
       <InfluencersSection />
-      <YasGroupEcosystem />
-      <CtaSection />
+      {/*<YasGroupEcosystem />*/}
+      {/*<CtaSection />*/}
     </>
   );
 }
