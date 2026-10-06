@@ -113,8 +113,8 @@ export default function HeroSection() {
                 <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-brand-violet/25 rounded-full blur-3xl pointer-events-none" />
 
                 <Image
-                  src="/images/hero/vr-filmmaker-transparent.png"
-                  alt={isArabic ? "مخرج يرتدي نظارة الواقع الافتراضي" : "Filmmaker wearing VR glasses"}
+                  src="/images/hero/emirati-vr-creator-transparent.png"
+                  alt={isArabic ? "صانع محتوى ومخرج إماراتي بنظارة الواقع المكاني والذكاء الاصطناعي" : "Emirati visionary filmmaker & AI spatial director"}
                   fill
                   unoptimized
                   sizes="(max-width: 768px) 80vw, (max-width: 1200px) 38vw, 420px"
