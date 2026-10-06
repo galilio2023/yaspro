@@ -25,34 +25,33 @@ export function ServiceQuickViewModal({
 }: ServiceQuickViewModalProps) {
   const { isArabic } = useLanguage();
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
+  const [inquiryType, setInquiryType] = useState<"ob_van" | "outdoor_filming">("ob_van");
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const headingId = useId();
 
   useFocusTrap({ isOpen: isOpen && service !== null, onClose, containerRef: dialogRef });
 
-  if (!isOpen || !service) return null;
+  const isDirectInquiryService = service?.id === "ob-van-broadcast" || service?.id === "outdoor-filming";
 
-  const isDirectInquiryService = service.id === "ob-van-broadcast" || service.id === "outdoor-filming";
-  const inquiryType = service.id === "outdoor-filming" ? "outdoor_filming" : "ob_van";
-
-  const title = isArabic ? service.arabicTitle : service.title;
-  const subtitle = isArabic ? service.arabicSubtitle : service.subtitle;
-  const description = isArabic ? service.arabicDescription : service.description;
-  const badge = isArabic ? service.arabicBadge : service.badge;
-  const specs = isArabic ? service.arabicSpecs : service.specs;
-  const features = isArabic ? service.arabicIncludedFeatures : service.includedFeatures;
+  const title = isArabic ? service?.arabicTitle : service?.title;
+  const subtitle = isArabic ? service?.arabicSubtitle : service?.subtitle;
+  const description = isArabic ? service?.arabicDescription : service?.description;
+  const badge = isArabic ? service?.arabicBadge : service?.badge;
+  const specs = isArabic ? service?.arabicSpecs : service?.specs;
+  const features = isArabic ? service?.arabicIncludedFeatures : service?.includedFeatures;
 
   const whatsappMessage = encodeURIComponent(
     isArabic
-      ? `مرحباً Yas Pro، أود الاستفسار وحجز خدمة: ${service.arabicTitle}`
-      : `Hello Yas Pro, I would like to inquire about and book: ${service.title}`
+      ? `مرحباً Yas Pro، أود الاستفسار وحجز خدمة: ${service?.arabicTitle}`
+      : `Hello Yas Pro, I would like to inquire about and book: ${service?.title}`
   );
   const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${whatsappMessage}`;
 
   return (
     <>
       <AnimatePresence>
+        {isOpen && service && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
         {/* Backdrop */}
         <motion.div
@@ -92,7 +91,7 @@ export function ServiceQuickViewModal({
           <div className="relative h-56 sm:h-72 w-full overflow-hidden bg-black">
             <Image
               src={service.image}
-              alt={title}
+              alt={title ?? ""}
               fill
               className="object-cover object-center"
               priority
@@ -131,7 +130,7 @@ export function ServiceQuickViewModal({
                 {isArabic ? "المواصفات التقنية" : "Key Specifications"}
               </h4>
               <div className="flex flex-wrap gap-2">
-                {specs.map((spec, i) => (
+                {specs?.map((spec, i) => (
                   <span
                     key={i}
                     className="inline-flex items-center rounded-lg border border-white/8 bg-zinc-900 px-3 py-1 text-xs font-medium text-zinc-200"
@@ -148,7 +147,7 @@ export function ServiceQuickViewModal({
                 {isArabic ? "ما تشمله الخدمة" : "What's Included"}
               </h4>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {features.map((feat, idx) => (
+                {features?.map((feat, idx) => (
                   <li
                     key={idx}
                     className="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-300 bg-white/[0.02] p-2.5 rounded-xl border border-white/5"
@@ -183,8 +182,9 @@ export function ServiceQuickViewModal({
                     <button
                       type="button"
                       onClick={() => {
-                        onClose();
+                        setInquiryType(service.id === "outdoor-filming" ? "outdoor_filming" : "ob_van");
                         setIsInquiryOpen(true);
+                        onClose();
                       }}
                       className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl bg-white text-black px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-bold shadow-lg hover:bg-zinc-200 transition-all cursor-pointer"
                     >
@@ -216,13 +216,16 @@ export function ServiceQuickViewModal({
             </div>
           </motion.div>
         </div>
+        )}
       </AnimatePresence>
 
-      <SendMessageModal
-        isOpen={isInquiryOpen}
-        onClose={() => setIsInquiryOpen(false)}
-        initialService={inquiryType}
-      />
+      {isInquiryOpen && (
+        <SendMessageModal
+          isOpen={true}
+          onClose={() => setIsInquiryOpen(false)}
+          initialService={inquiryType}
+        />
+      )}
     </>
   );
 }

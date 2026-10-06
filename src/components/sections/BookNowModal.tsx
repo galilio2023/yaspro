@@ -95,6 +95,8 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
     titleAr: string;
   } | null>(null);
 
+  const [wasOpen, setWasOpen] = useState(isOpen);
+
   // Form states
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -108,8 +110,6 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const headingId = useId();
-
-  useFocusTrap({ isOpen, onClose, containerRef: dialogRef });
 
   const handleOpenInquiry = (card: VisualBookingCard) => {
     if (!card.inquiryService) return;
@@ -137,17 +137,25 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
 
   const handleModalClose = () => {
     onClose();
-    setTimeout(() => {
+  };
+
+  useFocusTrap({ isOpen, onClose: handleModalClose, containerRef: dialogRef });
+
+  if (wasOpen !== isOpen) {
+    setWasOpen(isOpen);
+    if (!isOpen) {
       setSelectedInquiry(null);
       setName("");
       setEmail("");
       setPhone("");
+      setInquiryType("ob_van");
+      setIsSubmitting(false);
       setSubject("");
       setMessage("");
       setSubmitError(null);
       setIsSubmitted(false);
-    }, 250);
-  };
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

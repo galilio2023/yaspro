@@ -117,26 +117,18 @@ export function HeroMediaOrbit() {
   const isHoveredRef = useRef(false);
 
   useEffect(() => {
-    let animId: number;
+    let animId: number | null = null;
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
     let lastTime = performance.now();
     let orbitProgress = 0;
+    let floatTime = 0;
 
     const tiltRad = (CELESTIAL_TILT_DEG * Math.PI) / 180;
     const cosTilt = Math.cos(tiltRad);
     const sinTilt = Math.sin(tiltRad);
 
-    const updatePositions = (timestamp: number) => {
-      const delta = timestamp - lastTime;
-      lastTime = timestamp;
-
-      // Slow down on hover for calm inspection
-      const speedMultiplier = isHoveredRef.current ? 0.2 : 1.0;
-      orbitProgress = (orbitProgress + (delta / ORBIT_DURATION_MS) * speedMultiplier) % 1;
-
-      if (!containerRef.current) {
-        animId = requestAnimationFrame(updatePositions);
-        return;
-      }
+    const updatePositions = () => {
+      if (!containerRef.current) return;
 
       const rect = containerRef.current.getBoundingClientRect();
       const w = rect.width || 380;
@@ -147,10 +139,15 @@ export function HeroMediaOrbit() {
       const cy = h * 0.32;
 
       // Expanded 3D Orbit radii: significantly larger circle envelope
-      const rx = Math.min(w * 0.82, 310);
+      const nodes = containerRef.current.querySelectorAll<HTMLElement>("[data-neon-node]");
+      const centerX = rect.left + cx;
+      const viewportClearance = Math.min(centerX, document.documentElement.clientWidth - centerX);
+      // Include maximum depth/hover scale and the horizontal component of the float bob.
+      const nodeHalfWidth = Math.max(0, ...Array.from(nodes, (node) => node.offsetWidth)) * 1.17 * 1.3 / 2;
+      const availableRadius = Math.max(0, viewportClearance - nodeHalfWidth - 8 * Math.abs(sinTilt));
+      const rx = Math.min(w * 0.82, 310, availableRadius);
       const ry = rx * 0.48; // Generous vertical depth clearance
 
-      const nodes = containerRef.current.querySelectorAll<HTMLElement>("[data-neon-node]");
       nodes.forEach((el, index) => {
         const item = NEON_MEDIA_NODES[index];
         if (!item) return;
@@ -158,11 +155,11 @@ export function HeroMediaOrbit() {
         const baseRad = (item.angle * Math.PI) / 180;
         const currentAngle = baseRad + orbitProgress * Math.PI * 2;
 
-        let px = rx * Math.cos(currentAngle);
+        const px = rx * Math.cos(currentAngle);
         let py = ry * Math.sin(currentAngle);
 
         // Sinusoidal zero-gravity floating wave (gentle 8px wave)
-        const floatBob = Math.sin(timestamp * item.floatSpeed + item.floatPhase) * 8;
+        const floatBob = Math.sin(floatTime * item.floatSpeed + item.floatPhase) * 8;
         py += floatBob;
 
         // Apply celestial perspective tilt
@@ -189,13 +186,36 @@ export function HeroMediaOrbit() {
         el.style.opacity = String(opacity);
       });
 
-      animId = requestAnimationFrame(updatePositions);
     };
 
-    animId = requestAnimationFrame(updatePositions);
+    const animate = (timestamp: number) => {
+      const delta = timestamp - lastTime;
+      lastTime = timestamp;
+      const speedMultiplier = isHoveredRef.current ? 0.2 : 1;
+      orbitProgress = (orbitProgress + (delta / ORBIT_DURATION_MS) * speedMultiplier) % 1;
+      floatTime += delta;
+      updatePositions();
+      animId = requestAnimationFrame(animate);
+    };
+
+    const syncMotionPreference = () => {
+      if (animId !== null) cancelAnimationFrame(animId);
+      animId = null;
+      updatePositions();
+      if (!motionPreference.matches) {
+        lastTime = performance.now();
+        animId = requestAnimationFrame(animate);
+      }
+    };
+
+    syncMotionPreference();
+    motionPreference.addEventListener("change", syncMotionPreference);
+    window.addEventListener("resize", updatePositions);
 
     return () => {
-      if (animId) cancelAnimationFrame(animId);
+      motionPreference.removeEventListener("change", syncMotionPreference);
+      window.removeEventListener("resize", updatePositions);
+      if (animId !== null) cancelAnimationFrame(animId);
     };
   }, []);
 
@@ -203,9 +223,9 @@ export function HeroMediaOrbit() {
     <div
       ref={containerRef}
       aria-hidden="true"
-      className="absolute inset-0 pointer-events-none select-none z-30 overflow-visible"
+      className="absolute inset-0 pointer-events-none select-none overflow-visible"
     >
-      {NEON_MEDIA_NODES.map((node, index) => {
+      {NEON_MEDIA_NODES.map((node) => {
         // Immediate trigonometric fallback so all 8 are visible prior to RAF
         const fallbackRad = (node.angle * Math.PI) / 180;
         const initX = Math.round(Math.cos(fallbackRad) * 250);

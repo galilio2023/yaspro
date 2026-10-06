@@ -2,7 +2,7 @@
 
 import React, { useState, useId, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowLeft, ArrowRight, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { X, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { studioSprings } from "@/lib/studio-motion";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
@@ -36,6 +36,7 @@ export function SendMessageModal({
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const headingId = useId();
+  const fieldId = useId();
 
   useFocusTrap({ isOpen, onClose, containerRef: dialogRef });
 
@@ -201,10 +202,11 @@ export function SendMessageModal({
               {/* Name & Email */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                  <label htmlFor={`${fieldId}-name`} className="block text-xs font-medium text-zinc-400 mb-1.5">
                     {isArabic ? "الاسم" : "Name"} <span className="text-amber-400">*</span>
                   </label>
                   <input
+                    id={`${fieldId}-name`}
                     type="text"
                     required
                     value={name}
@@ -215,10 +217,11 @@ export function SendMessageModal({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                  <label htmlFor={`${fieldId}-email`} className="block text-xs font-medium text-zinc-400 mb-1.5">
                     {isArabic ? "البريد الإلكتروني" : "Email"} <span className="text-amber-400">*</span>
                   </label>
                   <input
+                    id={`${fieldId}-email`}
                     type="email"
                     required
                     value={email}
@@ -232,10 +235,11 @@ export function SendMessageModal({
               {/* Inquiry Type & Subject */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                  <label htmlFor={`${fieldId}-inquiryType`} className="block text-xs font-medium text-zinc-400 mb-1.5">
                     {isArabic ? "نوع الطلب" : "Inquiry Type"}
                   </label>
                   <select
+                    id={`${fieldId}-inquiryType`}
                     value={inquiryType}
                     onChange={(e) => {
                       const val = e.target.value as "ob_van" | "outdoor_filming";
@@ -258,10 +262,11 @@ export function SendMessageModal({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                  <label htmlFor={`${fieldId}-subject`} className="block text-xs font-medium text-zinc-400 mb-1.5">
                     {isArabic ? "الموضوع" : "Subject"}
                   </label>
                   <input
+                    id={`${fieldId}-subject`}
                     type="text"
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
@@ -273,10 +278,11 @@ export function SendMessageModal({
 
               {/* Phone Number */}
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                <label htmlFor={`${fieldId}-phone`} className="block text-xs font-medium text-zinc-400 mb-1.5">
                   {isArabic ? "رقم الهاتف للاتصال" : "Phone Number (for Callback)"} <span className="text-amber-400">*</span>
                 </label>
                 <input
+                  id={`${fieldId}-phone`}
                   type="tel"
                   required
                   value={phone}
@@ -289,10 +295,11 @@ export function SendMessageModal({
 
               {/* Message */}
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                <label htmlFor={`${fieldId}-message`} className="block text-xs font-medium text-zinc-400 mb-1.5">
                   {isArabic ? "تفاصيل الطلب والاحتياجات" : "Message / What you need"} <span className="text-amber-400">*</span>
                 </label>
                 <textarea
+                  id={`${fieldId}-message`}
                   required
                   rows={4}
                   value={message}
