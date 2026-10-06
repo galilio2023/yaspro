@@ -101,6 +101,7 @@ export function GearRentalSection() {
               ? "كاميرات سينمائية 8K، عدسات أنامورفيك، أنظمة إضاءة احترافية، وباقات متكاملة جاهزة للتصوير الفوري في مواقع الإمارات."
               : "Calibrated 8K cinema cameras, anamorphic primes, wireless video director suites, and ready-to-shoot production packages across the UAE."
           }
+          align="left"
         />
 
         {/* Pricing Duration Toggle Bar (Immediate Psychological Incentive) */}

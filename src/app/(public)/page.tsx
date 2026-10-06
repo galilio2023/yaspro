@@ -25,11 +25,11 @@ export default async function HomePage() {
 
       {/* Second Section: Shape Your Content With Us */}
       <ServicesSection />
-      <PartnersMarquee />
 
       {/* Main Feature Sections */}
-      <StudiosShowcaseSection initialStudios={initialStudios} />
+      {/*<StudiosShowcaseSection initialStudios={initialStudios} />*/}
       <VirtualStudioSection />
+      <PartnersMarquee />
       <PortfolioSection />
       <GearRentalSection />
       <InfluencersSection />

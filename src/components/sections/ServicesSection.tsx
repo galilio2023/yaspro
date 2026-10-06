@@ -5,6 +5,8 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
+import { SectionHeader } from "@/components/ui/section-header";
+import { Sparkles } from "lucide-react";
 import { SERVICES_DATA, ServiceItem } from "./services.data";
 import { ServiceQuickViewModal } from "./ServiceQuickViewModal";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -38,12 +40,23 @@ export function ServicesSection() {
       className="bg-black relative overflow-hidden py-16 sm:py-24"
     >
       <Container className="relative z-10 max-w-7xl">
-        {/* Header */}
-        <div className="mb-12 sm:mb-16 text-left rtl:text-right">
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-brand-lavender">
-            {isArabic ? "شكل محتواك معنا" : "Shape your content with us"}
-          </h2>
-        </div>
+        {/* Section Header with Yas Pro Editorial Hierarchy */}
+        <SectionHeader
+          headingId="services-title"
+          badge={isArabic ? "ركائز الإنتاج المتكامل" : "Turnkey Production Pillars"}
+          badgeVariant="purple"
+          badgeIcon={<Sparkles size={13} className="text-brand-lavender" />}
+          title={isArabic ? "شكل محتواك مع" : "Shape Your Content With"}
+          gradientText={isArabic ? "إمكانياتنا الإنتاجية" : "Cinematic Craft"}
+          gradientVariant="mauve"
+          description={
+            isArabic
+              ? "من البث المباشر الميداني بعربات OB-VAN وأحدث استوديوهات التصوير الافتراضي إلى صناعة المحتوى السريع وفق أعلى المعايير العالمية."
+              : "From mobile OB-VAN live broadcast to flagship soundstages and high-impact social cutdowns, engineered for visionary brands."
+          }
+          align="left"
+          className="mb-10 sm:mb-14"
+        />
 
         {/* 4 Cards Side-by-Side: Expanding Accordion (Clean visual borderless canvas) */}
         <div
@@ -97,9 +110,9 @@ export function ServicesSection() {
                 {/* Subtle vignette gradient */}
                 <span className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
 
-                {/* Keep each service identifiable, with an expanded active title. */}
-                <span className={`absolute z-10 text-left rtl:text-right ${isActive ? "bottom-6 left-6 right-6" : "inset-x-3 bottom-2 md:bottom-6 md:inset-x-4"}`}>
-                  {isActive ? (
+                {/* Title ONLY on active card */}
+                {isActive && (
+                  <span className="absolute z-10 bottom-6 left-6 right-6 text-left rtl:text-right">
                     <motion.span
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -108,12 +121,8 @@ export function ServicesSection() {
                     >
                       {title}
                     </motion.span>
-                  ) : (
-                    <span className="block text-sm sm:text-base font-bold text-white drop-shadow-md">
-                      {title}
-                    </span>
-                  )}
-                </span>
+                  </span>
+                )}
               </motion.button>
             );
           })}

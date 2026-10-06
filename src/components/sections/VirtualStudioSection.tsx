@@ -90,7 +90,8 @@ export function VirtualStudioSection() {
           badgeIcon={<Video size={13} className="text-brand-lavender" />}
           title={t("virtualStudio.title")}
           gradientText={t("virtualStudio.titleGradient")}
-          description={t("virtualStudio.subtitle")}
+          description={t("virtualStudio.description")}
+          align="left"
           className="mb-8"
         />
 

@@ -29,6 +29,7 @@ export default function InfluencersSection() {
           title={isArabic ? t("creators.title") : "Featured"}
           gradientText={isArabic ? t("creators.titleGradient") : "Influencers"}
           description={t("creators.description")}
+          align="left"
         />
 
         <StaggerContainer

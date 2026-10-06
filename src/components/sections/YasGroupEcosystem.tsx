@@ -26,7 +26,7 @@ export function YasGroupEcosystem() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto mb-12 sm:mb-16 text-center">
+        <div className="max-w-3xl mb-12 sm:mb-16 text-left rtl:text-right">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-mono uppercase tracking-wider font-semibold border border-brand-mauve/40 bg-brand-violet/25 text-brand-lavender mb-4 backdrop-blur-md">
             <span className="relative flex size-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-mauve opacity-75" />
@@ -57,7 +57,7 @@ export function YasGroupEcosystem() {
             )}
           </h3>
 
-          <p className="text-xs sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-base text-zinc-400 max-w-2xl leading-relaxed">
             {isArabic
               ? "تعمل شركات مجموعة ياس برو بتناغم رقمي ولوجستي كامل؛ لتقديم حلول سيادية وإنتاج سينمائي متكامل تحت سقف واحد."
               : "Operating in unified cinematic synchronization — from soundstage infrastructure and OB broadcast vans to talent management, music composition, and original IP."}

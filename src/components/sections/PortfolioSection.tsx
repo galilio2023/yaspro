@@ -82,6 +82,7 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
           title={isArabic ? t("portfolio.title") : "Our Latest"}
           gradientText={isArabic ? t("portfolio.titleGradient") : "Masterpieces"}
           description={t("portfolio.description")}
+          align="left"
         />
 
         {/* Category Filter Pills (Tactile Spring Physics) */}
