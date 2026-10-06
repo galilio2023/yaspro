@@ -194,12 +194,14 @@ export function ServiceQuickViewModal({
                     </button>
                   ) : service.id.includes("studio") || service.id.includes("podcast") ? (
                     <Link
-                      href="/studio-booking"
+                      href={service.id === "podcast-booking" ? "/podcast-booking" : "/studio-booking"}
                       onClick={onClose}
                       className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl bg-brand-violet px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-brand-violet/30 hover:bg-brand-mauve transition-all"
                     >
                       <Calendar size={16} />
-                      {isArabic ? "حجز الاستوديو" : "Book Studio"}
+                      {isArabic
+                        ? (service.id === "podcast-booking" ? "حجز البودكاست" : "حجز الاستوديو")
+                        : (service.id === "podcast-booking" ? "Book Podcast" : "Book Studio")}
                       {isArabic ? <ArrowLeft size={15} /> : <ArrowRight size={15} />}
                     </Link>
                   ) : (

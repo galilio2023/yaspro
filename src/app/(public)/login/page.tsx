@@ -50,7 +50,7 @@ function LoginForm() {
         if (callbackUrl) {
           // Prevent non-admins from bouncing on /admin callback
           if (callbackUrl.startsWith("/admin") && role !== "admin") {
-            router.push(role === "enterprise" ? "/enterprise/portal" : "/portal");
+            router.push("/portal");
           } else {
             router.push(callbackUrl);
           }
@@ -58,8 +58,6 @@ function LoginForm() {
           // Role-aware destination
           if (role === "admin") {
             router.push("/admin");
-          } else if (role === "enterprise") {
-            router.push("/enterprise/portal");
           } else {
             router.push("/portal");
           }

@@ -27,7 +27,7 @@ import { studioSprings } from "@/lib/studio-motion";
 import {
   VIRTUAL_SCENES,
   type VirtualStudioScene,
-} from "@/features/enterprise/virtual-studio.data";
+} from "./virtual-studio.data";
 
 export function VirtualStudioSection() {
   const { t, isArabic } = useLanguage();

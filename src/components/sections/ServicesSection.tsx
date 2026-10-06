@@ -2,21 +2,26 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Sparkles } from "lucide-react";
 import { SERVICES_DATA, ServiceItem } from "./services.data";
-import { ServiceQuickViewModal } from "./ServiceQuickViewModal";
+import { SendMessageModal } from "./SendMessageModal";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function ServicesSection() {
+  const router = useRouter();
   const { isArabic } = useLanguage();
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [isFocusWithin, setIsFocusWithin] = useState(false);
-  const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
+  const [inquiryModal, setInquiryModal] = useState<{
+    isOpen: boolean;
+    service: "ob_van" | "outdoor_filming";
+  }>({ isOpen: false, service: "ob_van" });
 
   const totalServices = SERVICES_DATA.length;
 
@@ -26,12 +31,26 @@ export function ServicesSection() {
 
   // Auto-switch which card is expanded every 4 seconds
   useEffect(() => {
-    if (isPaused || isFocusWithin || selectedService !== null) return;
+    if (isPaused || isFocusWithin || inquiryModal.isOpen) return;
     const timer = setInterval(() => {
       nextSlide();
     }, 4000);
     return () => clearInterval(timer);
-  }, [isPaused, isFocusWithin, selectedService, nextSlide]);
+  }, [isPaused, isFocusWithin, inquiryModal.isOpen, nextSlide]);
+
+  const handleCardClick = (service: ServiceItem) => {
+    if (service.id === "studio-booking") {
+      router.push("/studio-booking");
+    } else if (service.id === "podcast-booking") {
+      router.push("/podcast-booking");
+    } else if (service.id === "outdoor-filming") {
+      setInquiryModal({ isOpen: true, service: "outdoor_filming" });
+    } else if (service.id === "ob-van-broadcast") {
+      setInquiryModal({ isOpen: true, service: "ob_van" });
+    } else if (service.href) {
+      router.push(service.href);
+    }
+  };
 
   return (
     <Section
@@ -58,9 +77,9 @@ export function ServicesSection() {
           className="mb-10 sm:mb-14"
         />
 
-        {/* 4 Cards Side-by-Side: Expanding Accordion (Clean visual borderless canvas) */}
+        {/* 4 Cards Side-by-Side: Expanding Accordion with Direct Handlers matching Book Now */}
         <div
-          className="flex flex-col md:flex-row h-[420px] md:h-[500px] w-full gap-4 select-none"
+          className="flex flex-col md:flex-row h-[440px] md:h-[520px] w-full gap-4 select-none"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
           onFocusCapture={() => setIsFocusWithin(true)}
@@ -78,13 +97,11 @@ export function ServicesSection() {
                 aria-label={title}
                 aria-expanded={isActive}
                 key={service.id}
-                onClick={() => {
-                  if (isActive) {
-                    setSelectedService(service);
-                  } else {
-                    setActiveIndex(index);
-                  }
+                onMouseEnter={() => {
+                  setActiveIndex(index);
+                  setIsPaused(true);
                 }}
+                onClick={() => handleCardClick(service)}
                 layout
                 transition={{
                   layout: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
@@ -148,11 +165,11 @@ export function ServicesSection() {
         </div>
       </Container>
 
-      {/* Quick View Interactive Modal */}
-      <ServiceQuickViewModal
-        service={selectedService}
-        isOpen={selectedService !== null}
-        onClose={() => setSelectedService(null)}
+      {/* Direct Inquiry Form Modal matching Book Now callback */}
+      <SendMessageModal
+        isOpen={inquiryModal.isOpen}
+        onClose={() => setInquiryModal((prev) => ({ ...prev, isOpen: false }))}
+        initialService={inquiryModal.service}
       />
     </Section>
   );

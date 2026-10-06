@@ -114,7 +114,7 @@ export const SERVICES_DATA: readonly ServiceItem[] = [
     stat: "4K Turnkey",
     statLabel: "Same-Day Delivery",
     arabicStatLabel: "تسليم في نفس اليوم",
-    href: "/studio-booking",
+    href: "/podcast-booking",
     highlight: false,
     accentGlow: "from-brand-violet/25 via-brand-mauve/10 to-transparent",
     includedFeatures: [

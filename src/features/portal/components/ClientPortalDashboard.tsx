@@ -262,24 +262,24 @@ export function ClientPortalDashboard({ user, bookings }: ClientPortalDashboardP
 
         {/* Portal Shortcuts Grid — all cards are real links */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Card 1: Dailies & Deliverables → Enterprise Portal */}
+          {/* Card 1: Cinema Equipment Rentals → Shop */}
           <Link
-            href="/enterprise/portal"
-            className="p-6 rounded-3xl bg-slate-900/60 border border-white/10 flex flex-col justify-between hover:border-amber-500/40 transition-colors group"
+            href="/shop"
+            className="p-6 rounded-3xl bg-slate-900/60 border border-white/10 flex flex-col justify-between hover:border-purple-500/40 transition-colors group"
           >
             <div>
-              <div className="size-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center mb-4 group-hover:bg-amber-500/30 transition-colors">
+              <div className="size-10 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-4 group-hover:bg-purple-500/30 transition-colors">
                 <Camera size={20} />
               </div>
-              <h2 className="text-base font-bold text-white font-display">{t("cards.dailies.title")}</h2>
+              <h2 className="text-base font-bold text-white font-display">Cinema Equipment Rental</h2>
               <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                {t("cards.dailies.description")}
+                Rent ARRI, RED, anamorphic optics and calibrated lighting packages for your UAE shoots.
               </p>
             </div>
             <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
-              <span className="text-xs text-slate-500">{t("cards.dailies.status")}</span>
-              <span className="text-xs font-bold text-amber-400 flex items-center gap-1 group-hover:gap-2 transition-all">
-                {t("cards.dailies.action")} <ArrowRight size={14} className="rtl:rotate-180" />
+              <span className="text-xs text-slate-500">Fast Dispatch</span>
+              <span className="text-xs font-bold text-purple-400 flex items-center gap-1 group-hover:gap-2 transition-all">
+                Browse Gear <ArrowRight size={14} className="rtl:rotate-180" />
               </span>
             </div>
           </Link>

@@ -31,12 +31,7 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
   const role = user.role || "client";
   const firstName = user.name?.split(" ")[0] || "Account";
 
-  const portalHref =
-    role === "admin"
-      ? "/admin"
-      : role === "enterprise"
-      ? "/enterprise/portal"
-      : "/portal";
+  const portalHref = role === "admin" ? "/admin" : "/portal";
 
   const bookingsHref = role === "admin" ? "/admin/bookings" : "/portal/bookings";
 

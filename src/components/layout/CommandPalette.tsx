@@ -31,7 +31,7 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 interface PaletteCommand {
   id: string;
   title: string;
-  category: "Navigation" | "Client Portal" | "Enterprise Vault" | "Admin CMS" | "Quick Actions";
+  category: "Navigation" | "Client Portal" | "Admin CMS" | "Quick Actions";
   icon: React.ComponentType<{ size?: number; className?: string }>;
   href?: string;
   action?: () => void;
@@ -118,12 +118,12 @@ export function CommandPalette() {
         keywords: "influencer creators talent mawthooq aboflah",
       },
       {
-        id: "nav-enterprise",
-        title: "Enterprise Solutions & Sovereign Media",
+        id: "nav-podcast-booking",
+        title: "Podcast Booking Studio",
         category: "Navigation",
-        icon: Building,
-        href: "/enterprise",
-        keywords: "government rfp tender ministry ob van virtual production",
+        icon: Radio,
+        href: "/podcast-booking",
+        keywords: "podcast 4k shure multi-cam booking dubai audio video",
       },
       {
         id: "nav-projects",
@@ -166,41 +166,6 @@ export function CommandPalette() {
         icon: FileSpreadsheet,
         href: "/portal/invoices",
         keywords: "billing payments receipts deposit tax vat",
-      },
-
-      // Enterprise Vault
-      {
-        id: "ent-vault",
-        title: "Enterprise Vault: Executive Overview",
-        category: "Enterprise Vault",
-        icon: ShieldCheck,
-        href: "/enterprise/portal",
-        keywords: "sovereign enterprise dashboard vault",
-        badge: "Accredited",
-      },
-      {
-        id: "ent-dailies",
-        title: "Enterprise Vault: C2C Dailies Vault",
-        category: "Enterprise Vault",
-        icon: Film,
-        href: "/enterprise/portal/dailies",
-        keywords: "camera to cloud footage prores raw dailies player",
-      },
-      {
-        id: "ent-rfps",
-        title: "Enterprise Vault: Active Tenders Ledger",
-        category: "Enterprise Vault",
-        icon: FileSpreadsheet,
-        href: "/enterprise/portal/rfps",
-        keywords: "tender rfp mawthooq lookup reference",
-      },
-      {
-        id: "ent-telemetry",
-        title: "Enterprise Vault: Live Telemetry Bus",
-        category: "Enterprise Vault",
-        icon: Radio,
-        href: "/enterprise/portal/telemetry",
-        keywords: "smpte 2110 relay ob van gps live stream edge",
       },
 
       // Admin CMS

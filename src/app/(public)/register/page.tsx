@@ -89,11 +89,7 @@ export default function RegisterPage() {
           return;
         }
 
-        if (targetRole === "enterprise") {
-          router.push("/enterprise/portal");
-        } else {
-          router.push("/portal");
-        }
+        router.push("/portal");
         router.refresh();
       }
     } catch (err) {
