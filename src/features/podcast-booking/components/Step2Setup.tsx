@@ -35,8 +35,10 @@ export function Step2Setup({ session, onChange }: Step2SetupProps) {
           return (
             <div
               key={studio.key}
-              onClick={() => onChange({ studioKey: studio.key })}
-              className={`group relative rounded-2xl overflow-hidden border cursor-pointer transition-all duration-300 flex flex-col ${
+              onClick={() => {
+                if (isCapacityMatch) onChange({ studioKey: studio.key });
+              }}
+              className={`group relative rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col ${isCapacityMatch ? "cursor-pointer" : "opacity-50 cursor-not-allowed"} ${
                 isSelected
                   ? "bg-amber-950/20 border-amber-500 shadow-[0_0_30px_rgba(245,158,11,0.25)] ring-1 ring-amber-500"
                   : "bg-white/[0.02] border-white/10 hover:border-white/25 hover:bg-white/[0.04]"
@@ -93,13 +95,15 @@ export function Step2Setup({ session, onChange }: Step2SetupProps) {
                   </span>
                   <button
                     type="button"
+                    disabled={!isCapacityMatch}
+                    aria-pressed={isSelected && isCapacityMatch}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
                       isSelected
                         ? "bg-amber-500 text-black shadow-md shadow-amber-500/30"
                         : "bg-white/10 text-white hover:bg-white/15"
                     }`}
                   >
-                    {isSelected ? "Selected" : "Select Setup"}
+                    {!isCapacityMatch ? `Needs ${session.headcount} seats` : isSelected ? "Selected" : "Select Setup"}
                   </button>
                 </div>
               </div>

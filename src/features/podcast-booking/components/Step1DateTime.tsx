@@ -1,5 +1,7 @@
 "use client";
 
+import { getLocalCalendarDate } from "@/features/gear/lib/rental-schedule";
+
 import { useMemo } from "react";
 import { Clock, Calendar, Check } from "lucide-react";
 import { TIME_SLOTS } from "../data";
@@ -18,7 +20,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
     for (let i = 1; i <= 14; i++) {
       const d = new Date(today);
       d.setDate(today.getDate() + i);
-      const iso = d.toISOString().split("T")[0];
+      const iso = getLocalCalendarDate(d);
       const dayName = d.toLocaleDateString("en-US", { weekday: "short" });
       const monthName = d.toLocaleDateString("en-US", { month: "short" });
       const dayNum = d.getDate();

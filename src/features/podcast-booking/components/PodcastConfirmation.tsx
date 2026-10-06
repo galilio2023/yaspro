@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, MessageCircle, Calendar, ArrowRight, ShieldCheck } from "lucide-react";
+import { CheckCircle2, AlertCircle, MessageCircle, Calendar, ArrowRight, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { PodcastBookingResult } from "../actions";
 
@@ -10,6 +10,7 @@ interface PodcastConfirmationProps {
 }
 
 export function PodcastConfirmation({ result, onBookAnother }: PodcastConfirmationProps) {
+  const paymentFailed = result.paymentFailed === true;
   const reference = result.referenceCode || "POD-CONFIRMED";
   const whatsappUrl = `https://wa.me/971501234567?text=${encodeURIComponent(
     `Hello Yas Pro Concierge, I just booked podcast session ${reference}. Could you confirm the details?`
@@ -17,21 +18,27 @@ export function PodcastConfirmation({ result, onBookAnother }: PodcastConfirmati
 
   return (
     <div className="w-full max-w-2xl mx-auto p-8 sm:p-12 rounded-3xl bg-white/[0.02] border border-white/10 text-center space-y-8 animate-in zoom-in-95 duration-300">
-      <div className="size-20 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 mx-auto flex items-center justify-center shadow-[0_0_40px_rgba(16,185,129,0.3)]">
-        <CheckCircle2 size={42} />
+      <div className={`size-20 rounded-full border mx-auto flex items-center justify-center ${paymentFailed ? "bg-amber-500/15 border-amber-500/30 text-amber-400" : "bg-emerald-500/15 border-emerald-500/30 text-emerald-400 shadow-[0_0_40px_rgba(16,185,129,0.3)]"}`}>
+        {paymentFailed ? <AlertCircle size={42} /> : <CheckCircle2 size={42} />}
       </div>
 
       <div className="space-y-2">
-        <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
-          Booking Confirmed
+        <span className={`text-xs font-bold uppercase tracking-wider ${paymentFailed ? "text-amber-400" : "text-emerald-400"}`}>
+          {paymentFailed ? "Reservation saved · Unpaid" : "Booking Confirmed"}
         </span>
         <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-          Your Podcast Session is Booked!
+          {paymentFailed ? "Your reservation is awaiting payment" : "Your Podcast Session is Booked!"}
         </h2>
         <p className="text-xs sm:text-sm text-text-muted max-w-md mx-auto">
-          We have reserved the studio stage at Iris Bay, Business Bay, Dubai. A confirmation summary has been dispatched.
+          {paymentFailed
+            ? "Your sessions have been reserved, but payment could not be started. Contact the concierge with your booking reference to arrange payment."
+            : "We have reserved the studio stage at Iris Bay, Business Bay, Dubai."}
         </p>
       </div>
+
+      {paymentFailed && (
+        <p role="alert" className="text-sm text-amber-400">{result.message}</p>
+      )}
 
       {/* Booking Reference Pill */}
       <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 max-w-sm mx-auto">

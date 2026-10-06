@@ -9,6 +9,7 @@ import {
   uuid,
   jsonb,
   index,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
@@ -199,6 +200,22 @@ export const bookings = pgTable(
     index("bookings_created_at_idx").on(table.createdAt),
   ]
 );
+
+// One checkout retains its aggregate price/payment; each session reserves a studio.
+// The migration's triggers mirror the primary schedule and booking status here.
+export const bookingSessions = pgTable("booking_sessions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  bookingId: uuid("booking_id").notNull().references(() => bookings.id, { onDelete: "cascade" }),
+  position: integer("position").notNull(),
+  studioId: uuid("studio_id").notNull().references(() => studios.id),
+  scheduledAt: timestamp("scheduled_at").notNull(),
+  durationHours: integer("duration_hours").notNull(),
+  headcount: integer("headcount").notNull(),
+  status: bookingStatusEnum("status").notNull().default("pending"),
+}, (table) => [
+  uniqueIndex("booking_sessions_booking_position_idx").on(table.bookingId, table.position),
+  index("booking_sessions_studio_schedule_idx").on(table.studioId, table.status, table.scheduledAt),
+]);
 
 // ─── Inquiries ────────────────────────────────────────────────────────────────
 

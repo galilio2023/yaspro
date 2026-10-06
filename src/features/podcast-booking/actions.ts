@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/db";
-import { bookings, studios } from "@/db/schema";
-import { eq, or } from "drizzle-orm";
+import { bookings, bookingSessions, studios } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { createZiinaPaymentIntent } from "@/lib/ziina";
 import { PODCAST_SERVICES, PODCAST_ADDONS, PODCAST_PROMO_CODES, PODCAST_STUDIOS } from "./data";
@@ -14,11 +14,21 @@ const podcastSessionSchema = z.object({
   timeSlot: z.string().min(1, "Time slot is required"),
   durationHours: z.number().int().min(1).max(12).default(1),
   headcount: z.number().int().min(1).max(10).default(2),
-  studioKey: z.string().min(1, "Studio is required"),
-  serviceKey: z.string().min(1, "Service package is required"),
-  addons: z.record(z.string(), z.number()).default({}),
+  studioKey: z.string().refine((key) => PODCAST_STUDIOS.some((studio) => studio.key === key), "Invalid studio"),
+  serviceKey: z.string().refine((key) => PODCAST_SERVICES.some((service) => service.key === key), "Invalid service package"),
+  addons: z.record(
+    z.string().refine((key) => PODCAST_ADDONS.some((addon) => addon.key === key), "Invalid add-on"),
+    z.number().int().min(0),
+  ).default({}).refine((addons) => Object.entries(addons).every(([key, quantity]) => {
+    const addon = PODCAST_ADDONS.find((item) => item.key === key);
+    const allowsQuantity = addon && /reel|cover|hour|minute/.test(addon.unit);
+    return allowsQuantity || quantity <= 1;
+  }), "This add-on allows a maximum quantity of one"),
   notes: z.string().optional(),
-});
+}).refine((session) => {
+  const studio = PODCAST_STUDIOS.find((item) => item.key === session.studioKey);
+  return !studio || studio.seats >= session.headcount;
+}, { message: "The selected studio cannot fit all guests.", path: ["studioKey"] });
 
 const podcastBookingInputSchema = z.object({
   sessions: z.array(podcastSessionSchema).min(1, "At least one session is required"),
@@ -40,10 +50,11 @@ export interface PodcastBookingResult {
   bookingId?: string;
   totalAmount?: number;
   paymentUrl?: string;
+  paymentFailed?: boolean;
 }
 
 function calculateSessionPrice(session: z.infer<typeof podcastSessionSchema>): number {
-  const service = PODCAST_SERVICES.find((s) => s.key === session.serviceKey) || PODCAST_SERVICES[0];
+  const service = PODCAST_SERVICES.find((s) => s.key === session.serviceKey)!;
   const serviceRate = service.price;
   const duration = Math.max(1, session.durationHours);
   const serviceCost = serviceRate * duration;
@@ -97,34 +108,44 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
 
   try {
     const primarySession = sessionList[0];
-    const studioKey = primarySession.studioKey;
-    const studioMeta = PODCAST_STUDIOS.find((s) => s.key === studioKey);
-
-    // Parse scheduled date and time
-    let scheduledDate = new Date();
-    try {
-      // Date string format YYYY-MM-DD
-      const datePart = primarySession.date;
-      // Time string format "5:30 PM"
-      const timePart = primarySession.timeSlot;
-      const [rawTime, modifier] = timePart.split(" ");
-      let [hours, minutes] = rawTime.split(":").map(Number);
-      if (modifier === "PM" && hours < 12) hours += 12;
-      if (modifier === "AM" && hours === 12) hours = 0;
-      scheduledDate = new Date(`${datePart}T${String(hours).padStart(2, "0")}:${String(minutes || 0).padStart(2, "0")}:00`);
-    } catch {
-      scheduledDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    }
-
-    let studioDbId: string | null = null;
+    const parseScheduledDate = (session: (typeof sessionList)[number]) => {
+      try {
+        const [rawTime, modifier] = session.timeSlot.split(" ");
+        const [hour, minutes] = rawTime.split(":").map(Number);
+        let hours = hour;
+        if (!/^(?:[1-9]|1[0-2]):[0-5][0-9] (?:AM|PM)$/.test(session.timeSlot)) {
+          throw new Error("Invalid time slot");
+        }
+        if (modifier === "PM" && hours < 12) hours += 12;
+        if (modifier === "AM" && hours === 12) hours = 0;
+        const scheduledDate = new Date(`${session.date}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00+04:00`);
+        if (Number.isNaN(scheduledDate.getTime())) throw new Error("Invalid date");
+        return scheduledDate;
+      } catch {
+        return new Date(Date.now() + 24 * 60 * 60 * 1000);
+      }
+    };
 
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-      // Try to find matching studio record by slug
-      const foundStudio = await db.query.studios.findFirst({
-        where: or(eq(studios.slug, studioKey), eq(studios.slug, "studio-b")),
-      });
-      if (foundStudio) {
-        studioDbId = foundStudio.id;
+      const schedule: Omit<typeof bookingSessions.$inferInsert, "bookingId">[] = [];
+      for (const [index, session] of sessionList.entries()) {
+        const foundStudio = await db.query.studios.findFirst({
+          where: eq(studios.slug, session.studioKey),
+        });
+        const studioDbId = foundStudio?.id;
+        if (!studioDbId || foundStudio.isActive === false) {
+          return { success: false, message: "The selected studio is unavailable. Please select another studio." };
+        }
+        if (foundStudio.capacity < session.headcount) {
+          return { success: false, message: "The selected studio cannot fit all guests." };
+        }
+        schedule.push({
+          studioId: studioDbId,
+          position: index + 1,
+          scheduledAt: parseScheduledDate(session),
+          durationHours: session.durationHours,
+          headcount: session.headcount,
+        });
       }
 
       // Build structured notes for admin & client transparency
@@ -143,24 +164,30 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
       const contactMeta = `[Contact: ${fullName} | ${email} | ${phone}]`;
       const fullNotes = `${contactMeta}\n${sessionsSummary}\n${specialRequests ? `Special Requests: ${specialRequests}` : ""}`;
 
-      const inserted = await db
-        .insert(bookings)
-        .values({
+      const bookingId = await db.transaction(async (tx) => {
+        const [inserted] = await tx.insert(bookings).values({
           referenceCode,
-          studioId: studioDbId,
+          studioId: schedule[0].studioId,
           sessionType: "podcast",
           status: "pending",
-          scheduledAt: scheduledDate,
+          scheduledAt: schedule[0].scheduledAt,
           durationHours: primarySession.durationHours,
           headcount: primarySession.headcount,
           totalAmount: grandTotal.toFixed(2),
           currency: "AED",
           paymentStatus: "unpaid",
           specialRequests: fullNotes,
-        })
-        .returning({ id: bookings.id });
-
-      const bookingId = inserted[0]?.id;
+        }).returning({ id: bookings.id });
+        if (!inserted) throw new Error("Failed to save booking.");
+        // The database trigger stores session 1 for every studio booking.
+        if (schedule.length > 1) {
+          await tx.insert(bookingSessions).values(schedule.slice(1).map((session) => ({
+            ...session,
+            bookingId: inserted.id,
+          })));
+        }
+        return inserted.id;
+      });
 
       if (bookingId) {
         await issueBookingPaymentCapability(bookingId);
@@ -173,7 +200,17 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
             paymentType || "full",
             referenceCode
           );
-          if (ziinaRes.success && ziinaRes.paymentUrl) {
+          if (!ziinaRes.success) {
+            return {
+              success: false,
+              paymentFailed: true,
+              bookingId,
+              referenceCode,
+              totalAmount: grandTotal,
+              message: `Your reservation is saved but unpaid. ${ziinaRes.error || ziinaRes.message || "Payment could not be started. Please contact the concierge."}`,
+            };
+          }
+          if (ziinaRes.paymentUrl) {
             paymentUrl = ziinaRes.paymentUrl;
           }
         }

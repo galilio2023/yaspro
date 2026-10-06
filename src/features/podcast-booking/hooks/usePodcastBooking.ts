@@ -1,5 +1,7 @@
 "use client";
 
+import { getLocalCalendarDate } from "@/features/gear/lib/rental-schedule";
+
 import { useState, useMemo } from "react";
 import { PodcastSessionItem, PodcastBookingContact, PodcastBookingStep } from "../types";
 import { PODCAST_STUDIOS, PODCAST_SERVICES, PODCAST_ADDONS, PODCAST_PROMO_CODES, TIME_SLOTS } from "../data";
@@ -8,7 +10,7 @@ import { createPodcastBooking, PodcastBookingResult } from "../actions";
 function getTomorrowDateString(): string {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  return tomorrow.toISOString().split("T")[0];
+  return getLocalCalendarDate(tomorrow);
 }
 
 function createDefaultSession(index = 1): PodcastSessionItem {
@@ -163,8 +165,13 @@ export function usePodcastBooking() {
       }
       setStep(2);
     } else if (step === 2) {
-      if (!currentSession.studioKey) {
+      const studio = PODCAST_STUDIOS.find((item) => item.key === currentSession.studioKey);
+      if (!studio) {
         setErrorMessage("Please select your preferred podcast studio setup.");
+        return;
+      }
+      if (studio.seats < currentSession.headcount) {
+        setErrorMessage("Please select a studio with enough seats for your guests.");
         return;
       }
       setStep(3);
@@ -239,14 +246,14 @@ export function usePodcastBooking() {
         paymentType: "full",
       });
 
-      if (!res.success) {
+      if (!res.success && !res.paymentFailed) {
         throw new Error(res.message || "Failed to process booking reservation.");
       }
 
       setConfirmedResult(res);
       setIsCheckoutModalOpen(false);
 
-      if (res.paymentUrl) {
+      if (res.success && res.paymentUrl) {
         window.location.href = res.paymentUrl;
       }
     } catch (err) {

@@ -167,7 +167,7 @@ const FLAGSHIP_PACKAGES: GearItem[] = [
     id: "smallhd-cine-7",
     name: "SmallHD Cine 7 Touchscreen Monitor",
     arabicName: "شاشة مراقبة سينمائية SmallHD Cine 7 للمخرج والفوكس",
-    category: "bundles",
+    category: "accessories",
     categoryLabel: "Director & Focus Monitor",
     dailyRate: 450,
     securityDeposit: 800,
@@ -235,5 +235,6 @@ export const GEAR_CATEGORIES: { id: GearCategory; label: string; arabicLabel?: s
   { id: "cameras", label: "Cameras", arabicLabel: "الكاميرات" },
   { id: "lenses", label: "Lenses", arabicLabel: "العدسات" },
   { id: "lighting", label: "Lighting", arabicLabel: "الإضاءة" },
+  { id: "accessories", label: "Accessories", arabicLabel: "الإكسسوارات" },
   { id: "audio", label: "Audio", arabicLabel: "الصوتيات" },
 ];

@@ -40,6 +40,8 @@ export default async function ShopPage() {
         ? "Studio Lighting"
         : g.category === "lenses"
         ? "Cinema Lens"
+        : g.category === "accessories"
+        ? "Camera Accessory"
         : "Production Audio",
     dailyRate: Number(g.dailyRate),
     securityDeposit: Number(g.securityDeposit || 0),

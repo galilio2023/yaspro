@@ -105,7 +105,7 @@ export function GearExplorer({
     return {
       cameras: initialGear.filter((g) => g.category === "cameras").length,
       lenses: initialGear.filter((g) => g.category === "lenses").length,
-      accessories: initialGear.filter((g) => g.category === "bundles" || g.category === "cameras").length,
+      accessories: initialGear.filter((g) => g.category === "accessories").length,
       lighting: initialGear.filter((g) => g.category === "lighting").length,
       audio: initialGear.filter((g) => g.category === "audio").length,
       bundles: initialGear.filter((g) => g.category === "bundles").length,
