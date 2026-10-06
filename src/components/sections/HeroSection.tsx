@@ -12,10 +12,12 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 import { CinemaVideoModal } from "@/components/common/CinemaVideoModal";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { HeroMediaOrbit } from "./HeroMediaOrbit";
+import { BookNowModal } from "./BookNowModal";
 
 export default function HeroSection() {
   const { t, isArabic } = useLanguage();
   const [isPlayingReel, setIsPlayingReel] = useState(false);
+  const [isBookNowOpen, setIsBookNowOpen] = useState(false);
 
   return (
     <Section
@@ -64,18 +66,19 @@ export default function HeroSection() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-10 w-full">
-              {/* Primary Studio Action */}
+              {/* Primary Studio Action - Opens Book Now Modal */}
               <MagneticButton className="w-full sm:w-auto" strength={0.25} radius={90}>
-                <Link
-                  href="/studio-booking"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-bold text-sm btn-brand whitespace-nowrap"
+                <button
+                  type="button"
+                  onClick={() => setIsBookNowOpen(true)}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-bold text-sm btn-brand whitespace-nowrap cursor-pointer shadow-lg shadow-purple-600/20"
                 >
                   <span>{t("hero.bookStudio")}</span>
                   <ArrowRight
                     size={16}
                     className={`shrink-0 transition-transform ${isArabic ? "rotate-180" : ""}`}
                   />
-                </Link>
+                </button>
               </MagneticButton>
 
               {/* Secondary Reel Action with Film Pulse */}
@@ -138,6 +141,12 @@ export default function HeroSection() {
         subtitle={isArabic ? "الفيديو التعريفي الرسمي" : "Flagship Production Reel"}
         posterImage="/images/projects/flag-day.jpg"
         client="Yas Pro Media Network"
+      />
+
+      {/* Book Now Hub Selection Modal */}
+      <BookNowModal
+        isOpen={isBookNowOpen}
+        onClose={() => setIsBookNowOpen(false)}
       />
     </Section>
   );

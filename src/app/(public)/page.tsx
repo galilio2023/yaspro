@@ -1,5 +1,6 @@
 import HeroSection from "@/components/sections/HeroSection";
 import { PartnersMarquee } from "@/components/sections/PartnersMarquee";
+import { ServicesSection } from "@/components/sections/ServicesSection";
 import { StudiosShowcaseSection } from "@/components/sections/StudiosShowcaseSection";
 import { VirtualStudioSection } from "@/components/sections/VirtualStudioSection";
 import { PortfolioSection } from "@/components/sections/PortfolioSection";
@@ -21,6 +22,9 @@ export default async function HomePage() {
     <>
       {/* Above the fold */}
       <HeroSection />
+
+      {/* Second Section: Shape Your Content With Us */}
+      <ServicesSection />
       <PartnersMarquee />
 
       {/* Main Feature Sections */}
