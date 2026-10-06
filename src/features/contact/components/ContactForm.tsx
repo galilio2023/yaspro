@@ -61,7 +61,12 @@ export function ContactForm() {
   }, [isGearRental, itemsRaw, daysRaw, delivery]);
 
   const hasValidGearData = Boolean(initialGearData);
-  const [inquiryType, setInquiryType] = useState(() => (hasValidGearData ? "technical_support" : "general"));
+  const [inquiryType, setInquiryType] = useState(() => {
+    if (hasValidGearData) return "technical_support";
+    if (service === "ob-van" || service === "ob_van") return "ob_van";
+    if (service === "outdoor-filming" || service === "outdoor_filming") return "outdoor_filming";
+    return "general";
+  });
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");

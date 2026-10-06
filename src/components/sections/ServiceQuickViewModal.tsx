@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useId, useRef } from "react";
+import React, { useState, useId, useRef } from "react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, CheckCircle2, MessageSquare, Calendar, Sparkles, ArrowRight, ArrowLeft } from "lucide-react";
+import { X, CheckCircle2, MessageSquare, Calendar, Sparkles, ArrowRight, ArrowLeft, PhoneCall } from "lucide-react";
 import { ServiceItem } from "./services.data";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import Link from "next/link";
+import { SendMessageModal } from "./SendMessageModal";
 
 const WHATSAPP_PHONE = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "971554010465";
 
@@ -23,6 +24,7 @@ export function ServiceQuickViewModal({
   onClose,
 }: ServiceQuickViewModalProps) {
   const { isArabic } = useLanguage();
+  const [isInquiryOpen, setIsInquiryOpen] = useState(false);
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const headingId = useId();
@@ -30,6 +32,9 @@ export function ServiceQuickViewModal({
   useFocusTrap({ isOpen: isOpen && service !== null, onClose, containerRef: dialogRef });
 
   if (!isOpen || !service) return null;
+
+  const isDirectInquiryService = service.id === "ob-van-broadcast" || service.id === "outdoor-filming";
+  const inquiryType = service.id === "outdoor-filming" ? "outdoor_filming" : "ob_van";
 
   const title = isArabic ? service.arabicTitle : service.title;
   const subtitle = isArabic ? service.arabicSubtitle : service.subtitle;
@@ -46,8 +51,9 @@ export function ServiceQuickViewModal({
   const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${whatsappMessage}`;
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <>
+      <AnimatePresence>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -173,30 +179,50 @@ export function ServiceQuickViewModal({
                   {isArabic ? "استفسار واتساب فوري" : "WhatsApp Concierge"}
                 </a>
 
-                {service.id.includes("studio") || service.id.includes("podcast") ? (
-                  <Link
-                    href="/studio-booking"
-                    onClick={onClose}
-                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl bg-brand-violet px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-brand-violet/30 hover:bg-brand-mauve transition-all"
-                  >
-                    <Calendar size={16} />
-                    {isArabic ? "حجز الاستوديو" : "Book Studio"}
-                    {isArabic ? <ArrowLeft size={15} /> : <ArrowRight size={15} />}
-                  </Link>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 bg-zinc-900 px-4 py-2.5 text-xs sm:text-sm font-semibold text-zinc-200 hover:text-white hover:bg-zinc-800 transition-all"
-                  >
-                    {isArabic ? "إغلاق" : "Close"}
-                  </button>
-                )}
+                  {isDirectInquiryService ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        setIsInquiryOpen(true);
+                      }}
+                      className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl bg-white text-black px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-bold shadow-lg hover:bg-zinc-200 transition-all cursor-pointer"
+                    >
+                      <PhoneCall size={15} />
+                      {isArabic ? "طلب استشارة وعرض سعر" : "Request Callback & Quote"}
+                      <span className="text-base leading-none">↗</span>
+                    </button>
+                  ) : service.id.includes("studio") || service.id.includes("podcast") ? (
+                    <Link
+                      href="/studio-booking"
+                      onClick={onClose}
+                      className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl bg-brand-violet px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-brand-violet/30 hover:bg-brand-mauve transition-all"
+                    >
+                      <Calendar size={16} />
+                      {isArabic ? "حجز الاستوديو" : "Book Studio"}
+                      {isArabic ? <ArrowLeft size={15} /> : <ArrowRight size={15} />}
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={onClose}
+                      className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 bg-zinc-900 px-4 py-2.5 text-xs sm:text-sm font-semibold text-zinc-200 hover:text-white hover:bg-zinc-800 transition-all"
+                    >
+                      {isArabic ? "إغلاق" : "Close"}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+          </motion.div>
+        </div>
+      </AnimatePresence>
+
+      <SendMessageModal
+        isOpen={isInquiryOpen}
+        onClose={() => setIsInquiryOpen(false)}
+        initialService={inquiryType}
+      />
+    </>
   );
 }

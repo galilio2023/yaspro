@@ -109,20 +109,21 @@ export default function HeroSection() {
             <div className="relative w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[420px] select-none">
               {/* Persona Image (Layer z-10) */}
               <div className="relative aspect-[3/4] w-full z-10 pointer-events-none">
+                {/* Subtle Cinematic Rim Backlight behind the character */}
+                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-brand-violet/25 rounded-full blur-3xl pointer-events-none" />
+
                 <Image
-                  src="/images/hero/vr-filmmaker-v3.jpg"
+                  src="/images/hero/vr-filmmaker-transparent.png"
                   alt={isArabic ? "مخرج يرتدي نظارة الواقع الافتراضي" : "Filmmaker wearing VR glasses"}
                   fill
                   unoptimized
                   sizes="(max-width: 768px) 80vw, (max-width: 1200px) 38vw, 420px"
                   priority
-                  className="object-cover object-top"
+                  className="object-contain object-bottom drop-shadow-[0_15px_35px_rgba(0,0,0,0.8)]"
                 />
 
-                {/* Smooth feathering into the obsidian background */}
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-transparent pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background/50 pointer-events-none" />
+                {/* Gentle fade only at the very bottom edge of the torso */}
+                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent pointer-events-none" />
               </div>
 
               {/* 3D Solar System Orbit around the head */}

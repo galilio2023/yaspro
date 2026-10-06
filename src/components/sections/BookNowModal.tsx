@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useId, useRef } from "react";
+import React, { useState, useId, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { X, ArrowLeft, ArrowRight, CheckCircle2, AlertCircle, PhoneCall, Loader2 } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { studioSprings, tactilePress } from "@/lib/studio-motion";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { submitInquiry } from "@/lib/actions";
 
 interface BookNowModalProps {
   isOpen: boolean;
@@ -21,7 +22,9 @@ interface VisualBookingCard {
   categoryEn: string;
   categoryAr: string;
   image: string;
-  href: string;
+  href?: string;
+  actionType?: "inquiry";
+  inquiryService?: "ob_van" | "outdoor_filming";
 }
 
 const VISUAL_CARDS: VisualBookingCard[] = [
@@ -41,7 +44,8 @@ const VISUAL_CARDS: VisualBookingCard[] = [
     categoryEn: "On-Location",
     categoryAr: "تصوير خارجي",
     image: "/images/services/outdoor-filming.webp",
-    href: "/contact?service=outdoor-filming",
+    actionType: "inquiry",
+    inquiryService: "outdoor_filming",
   },
   {
     id: "studio-booking",
@@ -77,17 +81,117 @@ const VISUAL_CARDS: VisualBookingCard[] = [
     categoryEn: "Live 4K",
     categoryAr: "بث تلفزيوني",
     image: "/images/services/ob-van-broadcast.webp",
-    href: "/contact?service=ob-van",
+    actionType: "inquiry",
+    inquiryService: "ob_van",
   },
 ];
 
 export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
   const { isArabic } = useLanguage();
+  const [selectedInquiry, setSelectedInquiry] = useState<{
+    id: string;
+    type: "ob_van" | "outdoor_filming";
+    titleEn: string;
+    titleAr: string;
+  } | null>(null);
+
+  // Form states
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [inquiryType, setInquiryType] = useState<"ob_van" | "outdoor_filming">("ob_van");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const headingId = useId();
 
   useFocusTrap({ isOpen, onClose, containerRef: dialogRef });
+
+  const handleOpenInquiry = (card: VisualBookingCard) => {
+    if (!card.inquiryService) return;
+    setSelectedInquiry({
+      id: card.id,
+      type: card.inquiryService,
+      titleEn: card.labelEn,
+      titleAr: card.labelAr,
+    });
+    setInquiryType(card.inquiryService);
+    setSubject(
+      card.inquiryService === "ob_van"
+        ? (isArabic ? "طلب استشارة وحجز عربة بث مباشر (OB VAN)" : "OB VAN Live Broadcast Consultation & Quote")
+        : (isArabic ? "طلب استشارة وتصوير ميداني (Outdoor Filming)" : "Outdoor Filming Consultation & Quote")
+    );
+    setSubmitError(null);
+    setIsSubmitted(false);
+  };
+
+  const handleBackToGrid = () => {
+    setSelectedInquiry(null);
+    setSubmitError(null);
+    setIsSubmitted(false);
+  };
+
+  const handleModalClose = () => {
+    onClose();
+    setTimeout(() => {
+      setSelectedInquiry(null);
+      setName("");
+      setEmail("");
+      setPhone("");
+      setSubject("");
+      setMessage("");
+      setSubmitError(null);
+      setIsSubmitted(false);
+    }, 250);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    const fullMessage = subject.trim()
+      ? `[Subject: ${subject.trim()}]\n\n${message.trim()}`
+      : message.trim();
+
+    if (fullMessage.length < 10) {
+      setSubmitError(
+        isArabic
+          ? "يرجى كتابة تفاصيل متطلباتك بحد أدنى 10 أحرف."
+          : "Please describe your project requirements in at least 10 characters."
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const res = await submitInquiry({
+        name,
+        email,
+        phone,
+        inquiryType,
+        message: fullMessage,
+      });
+
+      if (res && !res.success) {
+        setSubmitError(res.message || (isArabic ? "تعذر إرسال الطلب، يرجى المحاولة ثانية." : "Failed to send inquiry. Please try again."));
+      } else {
+        setIsSubmitted(true);
+      }
+    } catch {
+      setSubmitError(
+        isArabic
+          ? "حدث خطأ أثناء الإرسال. يرجى المحاولة ثانية أو الاتصال بنا مباشرة."
+          : "An unexpected error occurred. Please try again or reach out to our concierge directly."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -100,7 +204,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          onClick={onClose}
+          onClick={handleModalClose}
           className="fixed inset-0 bg-black/90 backdrop-blur-2xl"
         />
 
@@ -116,18 +220,41 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
           exit={{ opacity: 0, scale: 0.96, y: 15 }}
           transition={studioSprings.cinematic}
           dir={isArabic ? "rtl" : "ltr"}
-          className="relative my-auto w-full max-w-5xl rounded-3xl bg-[#09090c] p-6 sm:p-8 md:p-10 z-10 shadow-2xl"
+          className={`relative my-auto w-full transition-all duration-300 rounded-3xl bg-[#09090c] border border-white/10 p-6 sm:p-8 md:p-10 z-10 shadow-2xl ${
+            selectedInquiry ? "max-w-xl" : "max-w-5xl"
+          }`}
         >
           {/* Header Row */}
-          <div className="flex items-center justify-between mb-6 sm:mb-8">
-            <h2 id={headingId} className="text-xl sm:text-2xl font-bold text-white font-display rtl:font-arabic tracking-tight">
-              {isArabic ? "اختر نوع الحجز" : "Select Booking Category"}
-            </h2>
+          <div className="flex items-center justify-between mb-6 sm:mb-8 border-b border-white/5 pb-4">
+            <div className="flex items-center gap-3">
+              {selectedInquiry && (
+                <button
+                  type="button"
+                  onClick={handleBackToGrid}
+                  aria-label={isArabic ? "رجوع" : "Back"}
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                >
+                  {isArabic ? <ArrowRight size={18} /> : <ArrowLeft size={18} />}
+                </button>
+              )}
+              <h2
+                id={headingId}
+                className={`font-bold text-white tracking-tight ${
+                  selectedInquiry
+                    ? "text-xl sm:text-2xl uppercase tracking-wider font-display"
+                    : "text-xl sm:text-2xl font-display rtl:font-arabic"
+                }`}
+              >
+                {selectedInquiry
+                  ? (isArabic ? "أرسل لنا رسالة" : "SEND US A MESSAGE")
+                  : (isArabic ? "اختر نوع الحجز" : "Select Booking Category")}
+              </h2>
+            </div>
 
             {/* Seamless Close Button */}
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleModalClose}
               aria-label={isArabic ? "إغلاق" : "Close"}
               className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
             >
@@ -135,41 +262,260 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
             </button>
           </div>
 
-          {/* 6 Visual Production Image Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {VISUAL_CARDS.map((card) => (
+          <AnimatePresence mode="wait">
+            {!selectedInquiry ? (
+              /* ── Grid View ── */
               <motion.div
-                key={card.id}
-                whileTap={tactilePress}
+                key="grid-view"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+              >
+                {VISUAL_CARDS.map((card) => {
+                  const isDirectInquiry = card.actionType === "inquiry";
+
+                  const CardInner = (
+                    <div className="group relative flex flex-col justify-end h-52 sm:h-56 w-full rounded-2xl overflow-hidden bg-zinc-900 cursor-pointer shadow-lg border border-white/5 hover:border-amber-500/40 transition-colors">
+                      {/* Real Production Imagery */}
+                      <Image
+                        src={card.image}
+                        alt={isArabic ? card.labelAr : card.labelEn}
+                        fill
+                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+
+                      {/* Film Vignette Gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent transition-opacity group-hover:via-black/20" />
+
+                      {/* Pill Badge for direct contact card */}
+                      {isDirectInquiry && (
+                        <div className="absolute top-3.5 end-3.5 z-10">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium tracking-wide bg-amber-500/20 text-amber-300 border border-amber-500/30 backdrop-blur-md">
+                            <PhoneCall size={11} />
+                            {isArabic ? "طلب اتصال مباشر" : "Direct Callback"}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Bottom Title */}
+                      <div className="relative z-10 p-5">
+                        <span className="text-base sm:text-lg font-bold text-white tracking-tight drop-shadow-md group-hover:text-amber-300 transition-colors">
+                          {isArabic ? card.labelAr : card.labelEn}
+                        </span>
+                      </div>
+                    </div>
+                  );
+
+                  return (
+                    <motion.div
+                      key={card.id}
+                      whileTap={tactilePress}
+                      className="w-full"
+                    >
+                      {isDirectInquiry ? (
+                        <button
+                          type="button"
+                          onClick={() => handleOpenInquiry(card)}
+                          className="w-full text-start focus:outline-none"
+                        >
+                          {CardInner}
+                        </button>
+                      ) : (
+                        <Link
+                          href={card.href || "#"}
+                          onClick={handleModalClose}
+                          className="block w-full focus:outline-none"
+                        >
+                          {CardInner}
+                        </Link>
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            ) : (
+              /* ── SEND US A MESSAGE View (Matching 2.png) ── */
+              <motion.div
+                key="inquiry-form-view"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.25 }}
                 className="w-full"
               >
-                <Link
-                  href={card.href}
-                  onClick={onClose}
-                  className="group relative flex flex-col justify-end h-52 sm:h-56 w-full rounded-2xl overflow-hidden bg-zinc-900 cursor-pointer shadow-lg"
-                >
-                  {/* Real Production Imagery with Smooth Zoom on Hover */}
-                  <Image
-                    src={card.image}
-                    alt={isArabic ? card.labelAr : card.labelEn}
-                    fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-
-                  {/* Clean Film Vignette Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent transition-opacity group-hover:via-black/20" />
-
-                  {/* Bottom Title */}
-                  <div className="relative z-10 p-5">
-                    <span className="text-base sm:text-lg font-bold text-white tracking-tight drop-shadow-md group-hover:text-amber-300 transition-colors">
-                      {isArabic ? card.labelAr : card.labelEn}
-                    </span>
+                {isSubmitted ? (
+                  <div className="py-10 text-center flex flex-col items-center justify-center">
+                    <div className="h-16 w-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-5 text-emerald-400">
+                      <CheckCircle2 size={36} />
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-2 font-display">
+                      {isArabic ? "تم استلام طلبك بنجاح" : "Message Received Successfully"}
+                    </h3>
+                    <p className="text-zinc-400 text-sm max-w-md mx-auto mb-6 leading-relaxed">
+                      {isArabic
+                        ? "سيتواصل معك فريق الإنتاج التنفيذي في ياس برو هاتفياً في أقرب وقت لمناقشة التفاصيل وتقديم العرض المناسب."
+                        : "Our executive production team at Yas Pro will review your requirements and call you shortly to discuss full details and pricing."}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleModalClose}
+                      className="px-6 py-2.5 rounded-full bg-white text-black font-semibold text-sm hover:bg-zinc-200 transition-colors"
+                    >
+                      {isArabic ? "إغلاق" : "Close"}
+                    </button>
                   </div>
-                </Link>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Subtitle / Service tag */}
+                    <p className="text-xs text-zinc-400">
+                      {isArabic
+                        ? "سجل بياناتك وسيطلبك فريق المبيعات والإنتاج لتحديد التجهيزات والمواعيد المناسبة."
+                        : "Submit your requirements below and our sales & production team will call you to arrange complete specifications and dates."}
+                    </p>
+
+                    {submitError && (
+                      <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center gap-2.5 text-red-400 text-xs">
+                        <AlertCircle size={16} className="shrink-0" />
+                        <span>{submitError}</span>
+                      </div>
+                    )}
+
+                    {/* Name & Email */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                          {isArabic ? "الاسم" : "Name"} <span className="text-amber-400">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder={isArabic ? "اسمك الكريم" : "Your full name"}
+                          className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                          {isArabic ? "البريد الإلكتروني" : "Email"} <span className="text-amber-400">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="name@company.com"
+                          className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Inquiry Type & Subject */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                          {isArabic ? "نوع الطلب" : "Inquiry Type"}
+                        </label>
+                        <select
+                          value={inquiryType}
+                          onChange={(e) => {
+                            const val = e.target.value as "ob_van" | "outdoor_filming";
+                            setInquiryType(val);
+                            setSubject(
+                              val === "ob_van"
+                                ? (isArabic ? "طلب استشارة وحجز عربة بث مباشر (OB VAN)" : "OB VAN Live Broadcast Consultation & Quote")
+                                : (isArabic ? "طلب استشارة وتصوير ميداني (Outdoor Filming)" : "Outdoor Filming Consultation & Quote")
+                            );
+                          }}
+                          className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white focus:outline-none focus:border-white transition-colors cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
+                        >
+                          <option value="ob_van">
+                            {isArabic ? "عربات البث المباشر (OB VAN)" : "OB VAN Live Broadcast"}
+                          </option>
+                          <option value="outdoor_filming">
+                            {isArabic ? "التصوير الميداني (Outdoor Filming)" : "Outdoor Filming"}
+                          </option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                          {isArabic ? "الموضوع" : "Subject"}
+                        </label>
+                        <input
+                          type="text"
+                          value={subject}
+                          onChange={(e) => setSubject(e.target.value)}
+                          placeholder={isArabic ? "موضوع الطلب" : "Subject of inquiry"}
+                          className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Phone Number (Crucial for sales team to call) */}
+                    <div>
+                      <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                        {isArabic ? "رقم الهاتف للاتصال" : "Phone Number (for Callback)"} <span className="text-amber-400">*</span>
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="+971 50 000 0000"
+                        dir="ltr"
+                        className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors text-start"
+                      />
+                    </div>
+
+                    {/* Message / Details */}
+                    <div>
+                      <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                        {isArabic ? "تفاصيل الطلب والاحتياجات" : "Message / What you need"} <span className="text-amber-400">*</span>
+                      </label>
+                      <textarea
+                        required
+                        rows={4}
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        placeholder={
+                          isArabic
+                            ? "اكتب تفاصيل التغطية أو التصوير، التاريخ المقترح، موقع العمل، وأي متطلبات فنية خاصة..."
+                            : "Provide details on production dates, location, multi-camera needs, or any specific broadcast requirements..."
+                        }
+                        className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors resize-none"
+                      />
+                    </div>
+
+                    {/* Bottom CTA Button (Let's Talk ↗ styled like 2.png) */}
+                    <div className="pt-2">
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-white text-black font-semibold text-sm hover:bg-zinc-200 transition-all duration-200 shadow-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 size={16} className="animate-spin" />
+                            <span>{isArabic ? "جارٍ الإرسال..." : "Sending..."}</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>{isArabic ? "تواصل معنا" : "Let's Talk"}</span>
+                            <span className="text-base leading-none">↗</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                )}
               </motion.div>
-            ))}
-          </div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
     </AnimatePresence>
