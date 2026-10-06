@@ -63,7 +63,7 @@ const VISUAL_CARDS: VisualBookingCard[] = [
     categoryEn: "4K Multi-Cam",
     categoryAr: "استوديو بودكاست",
     image: "/images/studios/podcast-suite.jpg",
-    href: "/studio-booking?service=podcast",
+    href: "/podcast-booking",
   },
   {
     id: "social-media-packages",
