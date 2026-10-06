@@ -13,6 +13,7 @@ export function ServicesSection() {
   const { isArabic } = useLanguage();
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [isFocusWithin, setIsFocusWithin] = useState(false);
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
 
   const totalServices = SERVICES_DATA.length;
@@ -23,12 +24,12 @@ export function ServicesSection() {
 
   // Auto-switch which card is expanded every 4 seconds
   useEffect(() => {
-    if (isPaused || selectedService !== null) return;
+    if (isPaused || isFocusWithin || selectedService !== null) return;
     const timer = setInterval(() => {
       nextSlide();
     }, 4000);
     return () => clearInterval(timer);
-  }, [isPaused, selectedService, nextSlide]);
+  }, [isPaused, isFocusWithin, selectedService, nextSlide]);
 
   return (
     <Section
@@ -49,14 +50,20 @@ export function ServicesSection() {
           className="flex flex-col md:flex-row h-[420px] md:h-[500px] w-full gap-4 select-none"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
+          onFocusCapture={() => setIsFocusWithin(true)}
+          onBlurCapture={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) setIsFocusWithin(false);
+          }}
         >
           {SERVICES_DATA.map((service, index) => {
             const isActive = activeIndex === index;
             const title = isArabic ? service.arabicTitle : service.title;
-            const description = isArabic ? service.arabicDescription : service.description;
 
             return (
-              <motion.div
+              <motion.button
+                type="button"
+                aria-label={title}
+                aria-expanded={isActive}
                 key={service.id}
                 onClick={() => {
                   if (isActive) {
@@ -69,7 +76,7 @@ export function ServicesSection() {
                 transition={{
                   layout: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
                 }}
-                className={`group relative h-full rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ${
+                className={`group relative h-full min-h-0 min-w-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-lavender overflow-hidden cursor-pointer transition-all duration-300 ${
                   isActive
                     ? "flex-[3.5] shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
                     : "flex-[1] opacity-75 hover:opacity-95"
@@ -88,22 +95,26 @@ export function ServicesSection() {
                 />
 
                 {/* Subtle vignette gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
+                <span className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
 
-                {/* Content Overlay: Title ONLY on active card */}
-                <div className="absolute bottom-6 left-6 right-6 z-10 text-left rtl:text-right">
-                  {isActive && (
-                    <motion.h3
+                {/* Keep each service identifiable, with an expanded active title. */}
+                <span className={`absolute z-10 text-left rtl:text-right ${isActive ? "bottom-6 left-6 right-6" : "inset-x-3 bottom-2 md:bottom-6 md:inset-x-4"}`}>
+                  {isActive ? (
+                    <motion.span
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3 }}
                       className="font-bold tracking-tight text-2xl sm:text-3xl text-brand-lavender drop-shadow-md"
                     >
                       {title}
-                    </motion.h3>
+                    </motion.span>
+                  ) : (
+                    <span className="block text-sm sm:text-base font-bold text-white drop-shadow-md">
+                      {title}
+                    </span>
                   )}
-                </div>
-              </motion.div>
+                </span>
+              </motion.button>
             );
           })}
         </div>

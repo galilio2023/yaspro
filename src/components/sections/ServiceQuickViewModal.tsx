@@ -1,12 +1,15 @@
 "use client";
 
-import React from "react";
+import React, { useId, useRef } from "react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle2, MessageSquare, Calendar, Sparkles, ArrowRight, ArrowLeft } from "lucide-react";
 import { ServiceItem } from "./services.data";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import Link from "next/link";
+
+const WHATSAPP_PHONE = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "971554010465";
 
 interface ServiceQuickViewModalProps {
   service: ServiceItem | null;
@@ -20,6 +23,11 @@ export function ServiceQuickViewModal({
   onClose,
 }: ServiceQuickViewModalProps) {
   const { isArabic } = useLanguage();
+
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const headingId = useId();
+
+  useFocusTrap({ isOpen: isOpen && service !== null, onClose, containerRef: dialogRef });
 
   if (!isOpen || !service) return null;
 
@@ -35,7 +43,7 @@ export function ServiceQuickViewModal({
       ? `مرحباً Yas Pro، أود الاستفسار وحجز خدمة: ${service.arabicTitle}`
       : `Hello Yas Pro, I would like to inquire about and book: ${service.title}`
   );
-  const whatsappUrl = `https://wa.me/971501234567?text=${whatsappMessage}`;
+  const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${whatsappMessage}`;
 
   return (
     <AnimatePresence>
@@ -46,11 +54,17 @@ export function ServiceQuickViewModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
+          role="presentation"
           className="fixed inset-0 bg-black/85 backdrop-blur-md"
         />
 
         {/* Modal Window */}
         <motion.div
+          ref={dialogRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={headingId}
+          tabIndex={-1}
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -89,7 +103,7 @@ export function ServiceQuickViewModal({
 
             {/* Title inside banner bottom */}
             <div className="absolute bottom-4 left-6 right-6 z-10">
-              <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white drop-shadow-md">
+              <h3 id={headingId} className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white drop-shadow-md">
                 {title}
               </h3>
               <p className="text-sm font-medium text-brand-lavender/90">

@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useId, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { studioSprings, tactilePress } from "@/lib/studio-motion";
-import { lockScroll, unlockScroll } from "@/hooks/useScrollLock";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 interface BookNowModalProps {
   isOpen: boolean;
@@ -84,28 +84,16 @@ const VISUAL_CARDS: VisualBookingCard[] = [
 export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
   const { isArabic } = useLanguage();
 
-  useEffect(() => {
-    if (isOpen) {
-      lockScroll();
-      return () => unlockScroll();
-    }
-  }, [isOpen]);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const headingId = useId();
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    if (isOpen) {
-      window.addEventListener("keydown", handleKeyDown);
-      return () => window.removeEventListener("keydown", handleKeyDown);
-    }
-  }, [isOpen, onClose]);
+  useFocusTrap({ isOpen, onClose, containerRef: dialogRef });
 
   if (!isOpen) return null;
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-6 overflow-y-auto">
         {/* Soft Cinematic Dimmer */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -118,16 +106,21 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
 
         {/* Modal Sheet */}
         <motion.div
+          ref={dialogRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={headingId}
+          tabIndex={-1}
           initial={{ opacity: 0, scale: 0.96, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: 15 }}
           transition={studioSprings.cinematic}
           dir={isArabic ? "rtl" : "ltr"}
-          className="relative w-full max-w-5xl rounded-3xl bg-[#09090c] p-6 sm:p-8 md:p-10 z-10 shadow-2xl"
+          className="relative my-auto w-full max-w-5xl rounded-3xl bg-[#09090c] p-6 sm:p-8 md:p-10 z-10 shadow-2xl"
         >
           {/* Header Row */}
           <div className="flex items-center justify-between mb-6 sm:mb-8">
-            <h2 className="text-xl sm:text-2xl font-bold text-white font-display rtl:font-arabic tracking-tight">
+            <h2 id={headingId} className="text-xl sm:text-2xl font-bold text-white font-display rtl:font-arabic tracking-tight">
               {isArabic ? "اختر نوع الحجز" : "Select Booking Category"}
             </h2>
 
