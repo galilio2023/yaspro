@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { CategoryFilterBar, CategoryOption } from "@/components/ui/category-filter";
 import { GearCard } from "./GearCard";
 import { RentalDateSelector } from "./RentalDateSelector";
+import { ProductsCategoriesGrid } from "./ProductsCategoriesGrid";
 import { GEAR_DATA, GEAR_CATEGORIES } from "../data";
 import { GearCategory, GearItem } from "../types";
 import type { MatchedGearPackage } from "@/lib/ai/ai-kit-matcher";
@@ -295,7 +296,15 @@ export function GearExplorer({
         </div>
       </FadeUp>
 
-      {/* 2. Category Pills Filter Bar */}
+      {/* 2. Visual Products Categories Grid (Matching WordPress renteqpmenet page) */}
+      <FadeUp delay={0.09}>
+        <ProductsCategoriesGrid
+          selectedCategory={selectedCategory}
+          onSelectCategory={(cat) => handleCategoryChange(cat as GearCategory)}
+        />
+      </FadeUp>
+
+      {/* 3. Category Pills Filter Bar */}
       <FadeUp delay={0.1}>
         <CategoryFilterBar
           categories={categoriesWithOptions}
