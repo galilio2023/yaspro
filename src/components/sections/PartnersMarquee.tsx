@@ -183,16 +183,16 @@ export function PartnersMarquee() {
       ═══════════════════════════════════════════════════════════════ */}
       <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 my-10 sm:my-14 relative z-10">
         <div className="rounded-2xl border border-white/[0.08] bg-zinc-950/60 backdrop-blur-md p-2 sm:p-4 shadow-xl">
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-white/[0.06] rtl:sm:divide-x-reverse">
+          <div className="grid grid-cols-2 lg:grid-cols-4 lg:divide-x divide-white/[0.06]">
             {PRODUCTION_METRICS.map((metric, idx) => {
               const Icon = metric.icon;
 
               return (
                 <div
                   key={metric.code}
-                  className={`p-3.5 sm:p-5 flex flex-col justify-between group transition-colors duration-200 ${
-                    idx === 1 ? "border-t-0 sm:border-t-0" : ""
-                  }`}
+                  className={`p-3.5 sm:p-5 flex flex-col justify-between group transition-colors duration-200 border-white/[0.06] ${
+                    idx >= 2 ? "border-t lg:border-t-0" : ""
+                  } ${idx % 2 === 1 ? "border-s lg:border-s-0" : ""}`}
                 >
                   {/* Top: Monospace Code & Icon */}
                   <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
