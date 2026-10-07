@@ -279,13 +279,13 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4"
               >
                 {VISUAL_CARDS.map((card) => {
                   const isDirectInquiry = card.actionType === "inquiry";
 
                   const CardInner = (
-                    <div className="group relative flex flex-col justify-end h-52 sm:h-56 w-full rounded-2xl overflow-hidden bg-zinc-900 cursor-pointer shadow-lg border border-white/5 hover:border-amber-500/40 transition-colors">
+                    <div className="group relative flex flex-col justify-end h-36 sm:h-56 w-full rounded-2xl overflow-hidden bg-zinc-900 cursor-pointer shadow-lg border border-white/5 hover:border-amber-500/40 transition-colors">
                       {/* Real Production Imagery */}
                       <Image
                         src={card.image}
@@ -293,7 +293,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                         fill
                         unoptimized
                         className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
                       />
 
                       {/* Film Vignette Gradient */}
@@ -301,17 +301,18 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
 
                       {/* Pill Badge for direct contact card */}
                       {isDirectInquiry && (
-                        <div className="absolute top-3.5 end-3.5 z-10">
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium tracking-wide bg-amber-500/20 text-amber-300 border border-amber-500/30 backdrop-blur-md">
-                            <PhoneCall size={11} />
-                            {isArabic ? "طلب اتصال مباشر" : "Direct Callback"}
+                        <div className="absolute top-2 end-2 sm:top-3.5 sm:end-3.5 z-10">
+                          <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-medium tracking-wide bg-amber-500/20 text-amber-300 border border-amber-500/30 backdrop-blur-md">
+                            <PhoneCall size={10} className="sm:size-[11px]" />
+                            <span className="hidden xs:inline">{isArabic ? "طلب اتصال" : "Callback"}</span>
+                            <span className="inline xs:hidden">{isArabic ? "اتصال" : "Call"}</span>
                           </span>
                         </div>
                       )}
 
                       {/* Bottom Title */}
-                      <div className="relative z-10 p-5">
-                        <span className="text-base sm:text-lg font-bold text-white tracking-tight drop-shadow-md group-hover:text-amber-300 transition-colors">
+                      <div className="relative z-10 p-3 sm:p-5">
+                        <span className="text-xs sm:text-base md:text-lg font-bold text-white tracking-tight drop-shadow-md group-hover:text-amber-300 transition-colors line-clamp-2">
                           {isArabic ? card.labelAr : card.labelEn}
                         </span>
                       </div>
@@ -404,7 +405,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           placeholder={isArabic ? "اسمك الكريم" : "Your full name"}
-                          className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
+                          className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
                         />
                       </div>
 
@@ -418,7 +419,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder="name@company.com"
-                          className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
+                          className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
                         />
                       </div>
                     </div>
@@ -440,7 +441,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                                 : (isArabic ? "طلب استشارة وتصوير ميداني (Outdoor Filming)" : "Outdoor Filming Consultation & Quote")
                             );
                           }}
-                          className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white focus:outline-none focus:border-white transition-colors cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
+                          className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white focus:outline-none focus:border-white transition-colors cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
                         >
                           <option value="ob_van">
                             {isArabic ? "عربات البث المباشر (OB VAN)" : "OB VAN Live Broadcast"}
@@ -460,7 +461,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                           value={subject}
                           onChange={(e) => setSubject(e.target.value)}
                           placeholder={isArabic ? "موضوع الطلب" : "Subject of inquiry"}
-                          className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
+                          className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
                         />
                       </div>
                     </div>
@@ -477,7 +478,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="+971 50 000 0000"
                         dir="ltr"
-                        className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors text-start"
+                        className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors text-start"
                       />
                     </div>
 
@@ -496,7 +497,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                             ? "اكتب تفاصيل التغطية أو التصوير، التاريخ المقترح، موقع العمل، وأي متطلبات فنية خاصة..."
                             : "Provide details on production dates, location, multi-camera needs, or any specific broadcast requirements..."
                         }
-                        className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors resize-none"
+                        className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors resize-none"
                       />
                     </div>
 
@@ -505,7 +506,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-white text-black font-semibold text-sm hover:bg-zinc-200 transition-all duration-200 shadow-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-white text-black font-semibold text-base sm:text-sm min-h-[44px] hover:bg-zinc-200 transition-all duration-200 shadow-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         {isSubmitting ? (
                           <>

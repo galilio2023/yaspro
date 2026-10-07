@@ -124,18 +124,20 @@ export function StepDatetime({ state, update }: WizardStepProps) {
               type="button"
               onClick={() => handleDurationChange(-1)}
               disabled={duration <= 1}
-              className="size-8 rounded-lg bg-[#1a2030] hover:bg-[#252e42] disabled:opacity-40 text-white font-bold flex items-center justify-center transition-colors cursor-pointer"
+              className="size-10 rounded-xl bg-[#1a2030] hover:bg-[#252e42] disabled:opacity-40 text-white font-bold flex items-center justify-center transition-colors cursor-pointer text-base"
+              aria-label="Decrease duration"
             >
               -
             </button>
-            <span className="px-3 py-1.5 rounded-lg bg-[#141926] border border-white/10 text-white font-semibold text-xs min-w-[50px] text-center">
+            <span className="px-3.5 py-2 rounded-xl bg-[#141926] border border-white/10 text-white font-semibold text-sm min-w-[54px] text-center">
               {duration}h
             </span>
             <button
               type="button"
               onClick={() => handleDurationChange(1)}
               disabled={duration >= 12}
-              className="size-8 rounded-lg bg-[#1a2030] hover:bg-[#252e42] disabled:opacity-40 text-white font-bold flex items-center justify-center transition-colors cursor-pointer"
+              className="size-10 rounded-xl bg-[#1a2030] hover:bg-[#252e42] disabled:opacity-40 text-white font-bold flex items-center justify-center transition-colors cursor-pointer text-base"
+              aria-label="Increase duration"
             >
               +
             </button>
@@ -145,7 +147,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
         {/* How many people */}
         <div className="space-y-1.5 sm:text-right">
           <div className="text-xs text-zinc-400 sm:text-right">How many people will be recording?</div>
-          <div className="inline-flex items-center rounded-lg bg-[#141926] p-1 border border-white/10 gap-1">
+          <div className="inline-flex items-center rounded-lg bg-[#141926] p-1 border border-white/10 gap-1 flex-wrap">
             {PEOPLE_OPTIONS.map((val) => {
               const numVal = typeof val === "number" ? val : 5;
               const isSelected = currentPeople === numVal;
@@ -154,7 +156,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
                   key={val}
                   type="button"
                   onClick={() => update({ headcount: numVal })}
-                  className={`px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 min-h-[36px] rounded-md text-xs font-semibold transition-all cursor-pointer ${
                     isSelected
                       ? "bg-[#7c3aed] text-white shadow-sm"
                       : "text-zinc-400 hover:text-white hover:bg-white/5"
@@ -174,7 +176,8 @@ export function StepDatetime({ state, update }: WizardStepProps) {
           <button
             type="button"
             onClick={prevMonth}
-            className="p-1.5 rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            className="p-2 min-h-[40px] min-w-[40px] rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white transition-colors cursor-pointer flex items-center justify-center"
+            aria-label="Previous month"
           >
             <ChevronLeft size={18} />
           </button>
@@ -184,7 +187,8 @@ export function StepDatetime({ state, update }: WizardStepProps) {
           <button
             type="button"
             onClick={nextMonth}
-            className="p-1.5 rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            className="p-2 min-h-[40px] min-w-[40px] rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white transition-colors cursor-pointer flex items-center justify-center"
+            aria-label="Next month"
           >
             <ChevronRight size={18} />
           </button>
@@ -205,7 +209,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
           {prevMonthDays.map((d, i) => (
             <div
               key={`prev-${i}`}
-              className="py-2.5 text-xs text-zinc-600 cursor-not-allowed select-none"
+              className="min-h-[40px] flex items-center justify-center text-xs text-zinc-600 cursor-not-allowed select-none"
             >
               {d}
             </div>
@@ -221,10 +225,10 @@ export function StepDatetime({ state, update }: WizardStepProps) {
                 key={`cur-${d}`}
                 type="button"
                 onClick={() => handleSelectDay(d)}
-                className={`py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center ${
+                className={`min-h-[40px] rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center ${
                   isSelected
                     ? "bg-[#7c3aed] text-white shadow-md shadow-purple-600/30 font-bold scale-105"
-                    : "text-zinc-200 hover:bg-[#1a2233] hover:text-white"
+                    : "text-zinc-200 hover:bg-[#1a2233] hover:text-white active:scale-95"
                 }`}
               >
                 {d}

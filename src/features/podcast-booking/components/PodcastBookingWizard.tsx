@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { usePodcastBooking } from "../hooks/usePodcastBooking";
 import { Step1DateTime } from "./Step1DateTime";
 import { Step2Setup } from "./Step2Setup";
@@ -46,6 +47,14 @@ export function PodcastBookingWizard() {
     submitBooking,
   } = usePodcastBooking();
 
+  // Elevate floating actions so they do not overlap this wizard's sticky bottom pricing bar
+  useEffect(() => {
+    document.body.setAttribute("data-has-bottom-pricing-bar", "true");
+    return () => {
+      document.body.removeAttribute("data-has-bottom-pricing-bar");
+    };
+  }, []);
+
   if (confirmedResult) {
     return (
       <PodcastConfirmation
@@ -56,27 +65,27 @@ export function PodcastBookingWizard() {
   }
 
   const stepsList = [
-    { num: 1, label: "Date & Time", icon: Calendar },
-    { num: 2, label: "Setup", icon: Layers },
-    { num: 3, label: "Service", icon: Sparkles },
-    { num: 4, label: "Additional Services", icon: Plus },
+    { num: 1, label: "Date & Time", shortLabel: "Date", icon: Calendar },
+    { num: 2, label: "Setup", shortLabel: "Setup", icon: Layers },
+    { num: 3, label: "Service", shortLabel: "Service", icon: Sparkles },
+    { num: 4, label: "Add-ons", shortLabel: "Add-ons", icon: Plus },
   ] as const;
 
   const nextStepLabel = stepsList.find((s) => s.num === step + 1)?.label ?? "Next Step";
 
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-8">
+    <div className="w-full max-w-6xl mx-auto space-y-6 sm:space-y-8">
       {/* 1. Multi-Session Tabs Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-white/[0.02] border border-white/10">
-        <div className="flex items-center gap-2 overflow-x-auto">
+        <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
           {sessions.map((sess, idx) => {
             const isActive = idx === activeSessionIndex;
             return (
-              <div key={sess.id} className="flex items-center">
+              <div key={sess.id} className="flex items-center shrink-0">
                 <button
                   type="button"
                   onClick={() => setActiveSessionIndex(idx)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+                  className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 min-h-[36px] ${
                     isActive
                       ? "bg-amber-500 text-black shadow-md shadow-amber-500/20"
                       : "bg-white/[0.04] text-white/70 hover:text-white hover:bg-white/[0.08]"
@@ -90,8 +99,9 @@ export function PodcastBookingWizard() {
                         e.stopPropagation();
                         removeSession(idx);
                       }}
-                      className="p-0.5 rounded hover:bg-black/20 text-inherit transition"
+                      className="p-1 rounded hover:bg-black/20 text-inherit transition"
                       title="Remove Session"
+                      aria-label={`Remove session ${idx + 1}`}
                     >
                       <Trash2 size={12} />
                     </button>
@@ -104,7 +114,7 @@ export function PodcastBookingWizard() {
           <button
             type="button"
             onClick={addNewSession}
-            className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-white/70 hover:text-white transition flex items-center gap-1.5 border border-dashed border-white/20"
+            className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-white/70 hover:text-white transition flex items-center gap-1.5 border border-dashed border-white/20 shrink-0 min-h-[36px]"
           >
             <Plus size={14} /> Add Session
           </button>
@@ -118,7 +128,7 @@ export function PodcastBookingWizard() {
       </div>
 
       {/* 2. Step Navigation Bar */}
-      <div className="grid grid-cols-4 gap-2 sm:gap-4 p-2 sm:p-3 rounded-2xl bg-white/[0.02] border border-white/10">
+      <div className="grid grid-cols-4 gap-1.5 sm:gap-4 p-1.5 sm:p-3 rounded-2xl bg-white/[0.02] border border-white/10">
         {stepsList.map((st) => {
           const isActive = step === st.num;
           const isCompleted = step > st.num;
@@ -129,7 +139,7 @@ export function PodcastBookingWizard() {
               key={st.num}
               type="button"
               onClick={() => setStep(st.num)}
-              className={`p-2.5 sm:p-3.5 rounded-xl transition flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left ${
+              className={`p-2 sm:p-3.5 rounded-xl transition flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2 text-center sm:text-left min-h-[44px] justify-center sm:justify-start ${
                 isActive
                   ? "bg-white/[0.08] border border-amber-500/40 text-white"
                   : isCompleted
@@ -138,7 +148,7 @@ export function PodcastBookingWizard() {
               }`}
             >
               <div
-                className={`size-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
+                className={`size-6 sm:size-7 rounded-lg flex items-center justify-center text-[11px] sm:text-xs font-bold shrink-0 ${
                   isActive
                     ? "bg-amber-500 text-black shadow-sm"
                     : isCompleted
@@ -146,14 +156,15 @@ export function PodcastBookingWizard() {
                     : "bg-white/5 text-white/40"
                 }`}
               >
-                {isCompleted ? <Check size={14} /> : st.num}
+                {isCompleted ? <Check size={13} /> : st.num}
               </div>
               <div className="min-w-0">
                 <span className="text-[10px] uppercase tracking-wider text-text-muted block leading-none hidden sm:block">
                   Step {st.num}
                 </span>
-                <span className="text-xs sm:text-sm font-bold truncate block">
-                  {st.label}
+                <span className="text-[11px] sm:text-sm font-bold truncate block">
+                  <span className="inline sm:hidden">{st.shortLabel}</span>
+                  <span className="hidden sm:inline">{st.label}</span>
                 </span>
               </div>
             </button>

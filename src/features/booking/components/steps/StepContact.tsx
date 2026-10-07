@@ -65,7 +65,7 @@ export function StepContact({
               value={state.firstName}
               onChange={(e) => update({ firstName: e.target.value })}
               placeholder="John"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#0d111a] border border-white/10 text-white text-xs placeholder:text-zinc-600 focus:outline-none focus:border-[#7c3aed] transition-colors"
+              className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-[#0d111a] border border-white/10 text-white text-base sm:text-xs placeholder:text-zinc-600 focus:outline-none focus:border-[#7c3aed] transition-colors"
             />
           </div>
 
@@ -79,7 +79,7 @@ export function StepContact({
               value={state.lastName}
               onChange={(e) => update({ lastName: e.target.value })}
               placeholder="Doe"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#0d111a] border border-white/10 text-white text-xs placeholder:text-zinc-600 focus:outline-none focus:border-[#7c3aed] transition-colors"
+              className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-[#0d111a] border border-white/10 text-white text-base sm:text-xs placeholder:text-zinc-600 focus:outline-none focus:border-[#7c3aed] transition-colors"
             />
           </div>
         </div>
@@ -95,7 +95,7 @@ export function StepContact({
               value={state.email}
               onChange={(e) => update({ email: e.target.value })}
               placeholder="john@example.com"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#0d111a] border border-white/10 text-white text-xs placeholder:text-zinc-600 focus:outline-none focus:border-[#7c3aed] transition-colors"
+              className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-[#0d111a] border border-white/10 text-white text-base sm:text-xs placeholder:text-zinc-600 focus:outline-none focus:border-[#7c3aed] transition-colors"
             />
           </div>
 
@@ -109,7 +109,7 @@ export function StepContact({
               value={state.phone}
               onChange={(e) => update({ phone: e.target.value })}
               placeholder="+971 50 000 0000"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#0d111a] border border-white/10 text-white text-xs placeholder:text-zinc-600 focus:outline-none focus:border-[#7c3aed] transition-colors"
+              className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-[#0d111a] border border-white/10 text-white text-base sm:text-xs placeholder:text-zinc-600 focus:outline-none focus:border-[#7c3aed] transition-colors"
             />
           </div>
         </div>
@@ -121,7 +121,7 @@ export function StepContact({
             value={state.company}
             onChange={(e) => update({ company: e.target.value })}
             placeholder="Your company (optional)"
-            className="w-full px-3.5 py-2.5 rounded-xl bg-[#0d111a] border border-white/10 text-white text-xs placeholder:text-zinc-600 focus:outline-none focus:border-[#7c3aed] transition-colors"
+            className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-[#0d111a] border border-white/10 text-white text-base sm:text-xs placeholder:text-zinc-600 focus:outline-none focus:border-[#7c3aed] transition-colors"
           />
         </div>
 
@@ -132,7 +132,7 @@ export function StepContact({
             value={state.specialRequests}
             onChange={(e) => update({ specialRequests: e.target.value })}
             placeholder="Any special requirements..."
-            className="w-full px-3.5 py-2.5 rounded-xl bg-[#0d111a] border border-white/10 text-white text-xs placeholder:text-zinc-600 focus:outline-none focus:border-[#7c3aed] transition-colors resize-none"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-[#0d111a] border border-white/10 text-white text-base sm:text-xs placeholder:text-zinc-600 focus:outline-none focus:border-[#7c3aed] transition-colors resize-none"
           />
         </div>
       </div>

@@ -213,7 +213,7 @@ export function SendMessageModal({
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder={isArabic ? "اسمك الكريم" : "Your full name"}
-                    className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
+                    className="w-full min-h-[44px] bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
                   />
                 </div>
 
@@ -228,7 +228,7 @@ export function SendMessageModal({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@company.com"
-                    className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
+                    className="w-full min-h-[44px] bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
                   />
                 </div>
               </div>
@@ -251,7 +251,7 @@ export function SendMessageModal({
                           : (isArabic ? "طلب استشارة وتصوير ميداني (Outdoor Filming)" : "Outdoor Filming Consultation & Quote")
                       );
                     }}
-                    className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white focus:outline-none focus:border-white transition-colors cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
+                    className="w-full min-h-[44px] bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm text-white focus:outline-none focus:border-white transition-colors cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
                   >
                     <option value="ob_van">
                       {isArabic ? "عربات البث المباشر (OB VAN)" : "OB VAN Live Broadcast"}
@@ -272,7 +272,7 @@ export function SendMessageModal({
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
                     placeholder={isArabic ? "موضوع الطلب" : "Subject of inquiry"}
-                    className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
+                    className="w-full min-h-[44px] bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
                   />
                 </div>
               </div>
@@ -290,7 +290,7 @@ export function SendMessageModal({
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+971 50 000 0000"
                   dir="ltr"
-                  className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors text-start"
+                  className="w-full min-h-[44px] bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors text-start"
                 />
               </div>
 
@@ -310,7 +310,7 @@ export function SendMessageModal({
                       ? "اكتب تفاصيل التغطية أو التصوير، التاريخ المقترح، موقع العمل، وأي متطلبات فنية خاصة..."
                       : "Provide details on production dates, location, multi-camera needs, or any specific broadcast requirements..."
                   }
-                  className="w-full bg-transparent border-b border-zinc-700 pb-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors resize-none"
+                  className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors resize-none"
                 />
               </div>
 
@@ -319,7 +319,7 @@ export function SendMessageModal({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-white text-black font-semibold text-sm hover:bg-zinc-200 transition-all duration-200 shadow-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-white text-black font-semibold text-sm hover:bg-zinc-200 transition-all duration-200 shadow-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <>

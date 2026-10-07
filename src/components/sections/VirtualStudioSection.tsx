@@ -243,7 +243,7 @@ export function VirtualStudioSection() {
                 </div>
                 <div
                   role="tablist"
-                  className="flex items-center gap-1.5 p-1.5 rounded-xl bg-zinc-900/90 border border-white/10 w-fit backdrop-blur-md flex-wrap"
+                  className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-zinc-900/90 border border-white/10 w-full sm:w-fit backdrop-blur-md"
                 >
                   {/* Mode 1: Authentic 50/50 Yas Reel (Both actors fully visible) */}
                   <button
@@ -253,14 +253,14 @@ export function VirtualStudioSection() {
                       setViewMode("split-native");
                       setIsAutoWiping(false);
                     }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center justify-center sm:justify-start gap-1.5 text-center sm:text-start ${
                       viewMode === "split-native"
                         ? "bg-purple-600 text-white shadow-md shadow-purple-900/50"
                         : "text-zinc-400 hover:text-white"
                     }`}
                   >
-                    <span className="size-2 rounded-full bg-purple-300" />
-                    <span>{isArabic ? "بث الاستوديو 50/50" : "50/50 Split Reel"}</span>
+                    <span className="size-2 rounded-full bg-purple-300 shrink-0" />
+                    <span className="truncate">{isArabic ? "بث الاستوديو 50/50" : "50/50 Split Reel"}</span>
                   </button>
 
                   {/* Mode 2: Interactive Wipe Slider */}
@@ -271,14 +271,14 @@ export function VirtualStudioSection() {
                       setViewMode("wipe");
                       setSliderPosition(50);
                     }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center justify-center sm:justify-start gap-1.5 text-center sm:text-start ${
                       viewMode === "wipe"
                         ? "bg-purple-600 text-white shadow-md shadow-purple-900/50"
                         : "text-zinc-400 hover:text-white"
                     }`}
                   >
-                    <SplitSquareVertical size={13} />
-                    <span>{isArabic ? "سلايدر المقارنة" : "Compare Wipe"}</span>
+                    <SplitSquareVertical size={13} className="shrink-0" />
+                    <span className="truncate">{isArabic ? "سلايدر المقارنة" : "Compare Wipe"}</span>
                   </button>
 
                   {/* Mode 3: 100% Green Cyclorama */}
@@ -289,14 +289,14 @@ export function VirtualStudioSection() {
                       setViewMode("green");
                       setIsAutoWiping(false);
                     }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center justify-center sm:justify-start gap-1.5 text-center sm:text-start ${
                       viewMode === "green"
                         ? "bg-emerald-600 text-white shadow-md shadow-emerald-950/50"
                         : "text-zinc-400 hover:text-white"
                     }`}
                   >
-                    <span className="size-2 rounded-full bg-emerald-400" />
-                    <span>{t("virtualStudio.greenStage100")}</span>
+                    <span className="size-2 rounded-full bg-emerald-400 shrink-0" />
+                    <span className="truncate">{t("virtualStudio.greenStage100")}</span>
                   </button>
 
                   {/* Mode 4: 100% 3D Virtual World */}
@@ -307,14 +307,14 @@ export function VirtualStudioSection() {
                       setViewMode("virtual");
                       setIsAutoWiping(false);
                     }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center justify-center sm:justify-start gap-1.5 text-center sm:text-start ${
                       viewMode === "virtual"
                         ? "bg-indigo-600 text-white shadow-md shadow-indigo-950/50"
                         : "text-zinc-400 hover:text-white"
                     }`}
                   >
-                    <span className="size-2 rounded-full bg-indigo-400" />
-                    <span>{t("virtualStudio.scene100")}</span>
+                    <span className="size-2 rounded-full bg-indigo-400 shrink-0" />
+                    <span className="truncate">{t("virtualStudio.scene100")}</span>
                   </button>
                 </div>
               </div>
@@ -322,7 +322,7 @@ export function VirtualStudioSection() {
 
             {/* Stage Specifications / Credibility Badges */}
             <FadeUp delay={0.15}>
-              <div className="grid grid-cols-2 gap-3 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                 <div className="p-3 rounded-xl bg-zinc-950/70 border border-white/10 flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-purple-500/10 text-brand-lavender shrink-0">
                     <Layers size={16} />

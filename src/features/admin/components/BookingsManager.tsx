@@ -236,98 +236,76 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         </div>
       </div>
 
-      {/* Bookings Table */}
-      <DataTable>
-        <DataTableHeader>
-          <tr>
-            <th className="py-3 px-4">Reference</th>
-            <th className="py-3 px-4">Client &amp; Contact</th>
-            <th className="py-3 px-4">Session &amp; Stage</th>
-            <th className="py-3 px-4">Scheduled Date</th>
-            <th className="py-3 px-4">Duration</th>
-            <th className="py-3 px-4">Amount</th>
-            <th className="py-3 px-4">Payment</th>
-            <th className="py-3 px-4">Booking Status</th>
-            <th className="py-3 px-4 text-right">Actions</th>
-          </tr>
-        </DataTableHeader>
-        <DataTableBody>
-          {filteredBookings.length === 0 ? (
-            <DataTableEmpty colSpan={9} message="No bookings matching your search or filters." />
-          ) : (
-            pagination.paginatedItems.map((b) => (
-              <DataTableRow key={b.id}>
-                {/* Reference */}
-                <td className="py-3.5 px-4 font-mono font-semibold text-amber-300">
+      {/* Mobile Bookings Cards (< md) */}
+      <div className="md:hidden space-y-3">
+        {filteredBookings.length === 0 ? (
+          <div className="p-8 text-center text-xs text-slate-500 rounded-2xl bg-white/[0.02] border border-white/5">
+            No bookings matching your search or filters.
+          </div>
+        ) : (
+          pagination.paginatedItems.map((b) => (
+            <div
+              key={b.id}
+              className="p-4 rounded-2xl bg-[#0b0f19] border border-white/10 space-y-3 shadow-lg"
+            >
+              {/* Card Header: Reference & Booking Status */}
+              <div className="flex items-center justify-between border-b border-white/5 pb-2.5">
+                <span className="font-mono font-bold text-amber-300 text-xs">
                   {b.referenceCode}
-                </td>
+                </span>
+                <StatusBadge status={b.status} />
+              </div>
 
-                {/* Client & Contact */}
-                <td className="py-3.5 px-4">
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-white text-xs">
+              {/* Client & Session Info */}
+              <div className="space-y-1 text-xs">
+                <div className="flex justify-between items-start">
+                  <span className="text-slate-400">Client:</span>
+                  <div className="text-right">
+                    <span className="font-semibold text-white block">
                       {b.userName || "Direct Client"}
                     </span>
                     {b.userEmail && (
-                      <span className="text-[11px] text-slate-400 font-mono">
+                      <span className="text-[10px] text-slate-400 font-mono block">
                         {b.userEmail}
                       </span>
                     )}
-                    {(b.userPhone || b.userCompany) && (
-                      <span className="text-[10px] text-amber-400 font-mono flex items-center gap-1 mt-0.5">
-                        {b.userPhone && <span>{b.userPhone}</span>}
-                        {b.userCompany && <span className="text-slate-500">({b.userCompany})</span>}
+                    {b.userPhone && (
+                      <span className="text-[10px] text-amber-400 font-mono block">
+                        {b.userPhone}
                       </span>
                     )}
                   </div>
-                </td>
+                </div>
 
-                {/* Session Type & Studio */}
-                <td className="py-3.5 px-4 capitalize text-slate-300">
-                  <span className="font-semibold text-white block">
-                    {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
-                      ? "Cinema Gear Rental"
-                      : b.sessionType.replace("_", " ")}
+                <div className="flex justify-between items-center pt-1">
+                  <span className="text-slate-400">Session / Gear:</span>
+                  <span className="font-semibold text-white">
+                    {b.studioName || (b.equipmentIds && b.equipmentIds.length > 0 ? `${b.equipmentIds.length} Equipment items` : b.sessionType.replace("_", " "))}
                   </span>
-                  <span className="text-[11px] text-amber-300 font-medium block">
-                    {b.studioName || (!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
-                      ? `${b.equipmentIds.length} Equipment Item${b.equipmentIds.length > 1 ? "s" : ""}`
-                      : "Soundstage")}
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Scheduled Date:</span>
+                  <span className="text-slate-300 font-mono text-[11px]">
+                    {new Date(b.scheduledAt).toLocaleDateString("en-US", {
+                      timeZone: "Asia/Dubai",
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
                   </span>
-                  <span className="text-[10px] text-slate-400">
-                    {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
-                      ? b.propsNotes || "Dispatch & Delivery"
-                      : `Headcount: ${b.headcount} pax`}
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Total Amount:</span>
+                  <span className="font-bold text-white font-mono text-sm">
+                    {formatCurrency(Number(b.totalAmount), b.currency || "AED")}
                   </span>
-                </td>
+                </div>
 
-                {/* Scheduled Date */}
-                <td className="py-3.5 px-4 text-slate-300 font-mono text-[11px]">
-                  {b.schedule && b.schedule.length > 1 ? b.schedule.map((session) => (
-                    <div key={session.id} className="mb-2">
-                      {session.studioName} · {new Date(session.scheduledAt).toLocaleString("en-US", {
-                        timeZone: "Asia/Dubai", month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
-                      })} · {session.durationHours}h · {session.headcount} seats
-                    </div>
-                  )) : new Date(b.scheduledAt).toLocaleDateString("en-US", {
-                    timeZone: "Asia/Dubai", month: "short", day: "numeric", year: "numeric",
-                  })}
-                </td>
-
-                {/* Duration */}
-                <td className="py-3.5 px-4 text-slate-300 font-mono">
-                  {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
-                    ? `${Math.max(1, Math.round(b.durationHours / 24))} Days`
-                    : `${b.schedule?.length ? b.schedule.reduce((total, session) => total + session.durationHours, 0) : b.durationHours} hrs`}
-                </td>
-
-                {/* Amount */}
-                <td className="py-3.5 px-4 font-semibold text-white font-mono">
-                  {formatCurrency(Number(b.totalAmount), b.currency || "AED")}
-                </td>
-
-                {/* Payment Reconciliation */}
-                <td className="py-3.5 px-4">
+                {/* Payment Selector */}
+                <div className="flex justify-between items-center pt-1.5">
+                  <span className="text-slate-400">Payment:</span>
                   <select
                     value={b.paymentStatus || "unpaid"}
                     disabled={updatingIds.has(b.id)}
@@ -337,7 +315,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                         e.target.value as "unpaid" | "deposit_paid" | "paid" | "refunded"
                       )
                     }
-                    className={`text-[10px] font-semibold px-2 py-1 rounded-lg border focus:outline-none cursor-pointer ${
+                    className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border focus:outline-none cursor-pointer ${
                       b.paymentStatus === "paid"
                         ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
                         : b.paymentStatus === "deposit_paid"
@@ -352,65 +330,235 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                     <option value="paid">Paid Full</option>
                     <option value="refunded">Refunded</option>
                   </select>
-                </td>
+                </div>
+              </div>
 
-                {/* Booking Status */}
-                <td className="py-3.5 px-4">
-                  <StatusBadge status={b.status} />
-                </td>
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/5">
+                <button
+                  type="button"
+                  ref={(el) => {
+                    if (el && b.id === callSheetBookingId) triggerRef.current = el;
+                  }}
+                  onClick={(e) => {
+                    triggerRef.current = e.currentTarget;
+                    setCallSheetBookingId(b.id);
+                  }}
+                  className="px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer min-h-[40px]"
+                >
+                  <FileText size={13} />
+                  <span>Call Sheet</span>
+                </button>
 
-                {/* Action Controls */}
-                <td className="py-3.5 px-4 text-right">
-                  <div className="flex items-center justify-end gap-1.5 flex-wrap">
-                    <button
-                      type="button"
-                      ref={(el) => {
-                        if (el && b.id === callSheetBookingId) triggerRef.current = el;
-                      }}
-                      onClick={(e) => {
-                        triggerRef.current = e.currentTarget;
-                        setCallSheetBookingId(b.id);
-                      }}
-                      className="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[11px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
-                      title="Generate Printable Call Sheet"
-                    >
-                      <FileText size={11} />
-                      <span>Call Sheet</span>
-                    </button>
+                <button
+                  type="button"
+                  disabled={updatingIds.has(b.id)}
+                  onClick={() => handleStatusChange(b.id, "confirmed")}
+                  className="px-3 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-xs font-medium transition-colors cursor-pointer disabled:opacity-50 min-h-[40px]"
+                >
+                  Confirm
+                </button>
 
-                    <button
-                      type="button"
+                <button
+                  type="button"
+                  disabled={updatingIds.has(b.id)}
+                  onClick={() => handleStatusChange(b.id, "completed")}
+                  className="px-3 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 text-xs font-medium transition-colors cursor-pointer disabled:opacity-50 min-h-[40px]"
+                >
+                  Complete
+                </button>
+
+                <button
+                  type="button"
+                  disabled={updatingIds.has(b.id)}
+                  onClick={() => handleStatusChange(b.id, "cancelled")}
+                  className="px-3 py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 text-xs font-medium transition-colors cursor-pointer disabled:opacity-50 min-h-[40px]"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Bookings Table (Desktop md+) */}
+      <div className="hidden md:block">
+        <DataTable>
+          <DataTableHeader>
+            <tr>
+              <th className="py-3 px-4">Reference</th>
+              <th className="py-3 px-4">Client &amp; Contact</th>
+              <th className="py-3 px-4">Session &amp; Stage</th>
+              <th className="py-3 px-4">Scheduled Date</th>
+              <th className="py-3 px-4">Duration</th>
+              <th className="py-3 px-4">Amount</th>
+              <th className="py-3 px-4">Payment</th>
+              <th className="py-3 px-4">Booking Status</th>
+              <th className="py-3 px-4 text-right">Actions</th>
+            </tr>
+          </DataTableHeader>
+          <DataTableBody>
+            {filteredBookings.length === 0 ? (
+              <DataTableEmpty colSpan={9} message="No bookings matching your search or filters." />
+            ) : (
+              pagination.paginatedItems.map((b) => (
+                <DataTableRow key={b.id}>
+                  {/* Reference */}
+                  <td className="py-3.5 px-4 font-mono font-semibold text-amber-300">
+                    {b.referenceCode}
+                  </td>
+
+                  {/* Client & Contact */}
+                  <td className="py-3.5 px-4">
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-white text-xs">
+                        {b.userName || "Direct Client"}
+                      </span>
+                      {b.userEmail && (
+                        <span className="text-[11px] text-slate-400 font-mono">
+                          {b.userEmail}
+                        </span>
+                      )}
+                      {(b.userPhone || b.userCompany) && (
+                        <span className="text-[10px] text-amber-400 font-mono flex items-center gap-1 mt-0.5">
+                          {b.userPhone && <span>{b.userPhone}</span>}
+                          {b.userCompany && <span className="text-slate-500">({b.userCompany})</span>}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+
+                  {/* Session Type & Studio */}
+                  <td className="py-3.5 px-4 capitalize text-slate-300">
+                    <span className="font-semibold text-white block">
+                      {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
+                        ? "Cinema Gear Rental"
+                        : b.sessionType.replace("_", " ")}
+                    </span>
+                    <span className="text-[11px] text-amber-300 font-medium block">
+                      {b.studioName || (!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
+                        ? `${b.equipmentIds.length} Equipment Item${b.equipmentIds.length > 1 ? "s" : ""}`
+                        : "Soundstage")}
+                    </span>
+                    <span className="text-[10px] text-slate-400">
+                      {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
+                        ? b.propsNotes || "Dispatch & Delivery"
+                        : `Headcount: ${b.headcount} pax`}
+                    </span>
+                  </td>
+
+                  {/* Scheduled Date */}
+                  <td className="py-3.5 px-4 text-slate-300 font-mono text-[11px]">
+                    {b.schedule && b.schedule.length > 1 ? b.schedule.map((session) => (
+                      <div key={session.id} className="mb-2">
+                        {session.studioName} · {new Date(session.scheduledAt).toLocaleString("en-US", {
+                          timeZone: "Asia/Dubai", month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+                        })} · {session.durationHours}h · {session.headcount} seats
+                      </div>
+                    )) : new Date(b.scheduledAt).toLocaleDateString("en-US", {
+                      timeZone: "Asia/Dubai", month: "short", day: "numeric", year: "numeric",
+                    })}
+                  </td>
+
+                  {/* Duration */}
+                  <td className="py-3.5 px-4 text-slate-300 font-mono">
+                    {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
+                      ? `${Math.max(1, Math.round(b.durationHours / 24))} Days`
+                      : `${b.schedule?.length ? b.schedule.reduce((total, session) => total + session.durationHours, 0) : b.durationHours} hrs`}
+                  </td>
+
+                  {/* Amount */}
+                  <td className="py-3.5 px-4 font-semibold text-white font-mono">
+                    {formatCurrency(Number(b.totalAmount), b.currency || "AED")}
+                  </td>
+
+                  {/* Payment Reconciliation */}
+                  <td className="py-3.5 px-4">
+                    <select
+                      value={b.paymentStatus || "unpaid"}
                       disabled={updatingIds.has(b.id)}
-                      onClick={() => handleStatusChange(b.id, "confirmed")}
-                      className="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
+                      onChange={(e) =>
+                        handlePaymentStatusChange(
+                          b.id,
+                          e.target.value as "unpaid" | "deposit_paid" | "paid" | "refunded"
+                        )
+                      }
+                      className={`text-[10px] font-semibold px-2 py-1 rounded-lg border focus:outline-none cursor-pointer ${
+                        b.paymentStatus === "paid"
+                          ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                          : b.paymentStatus === "deposit_paid"
+                          ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                          : b.paymentStatus === "refunded"
+                          ? "bg-slate-500/10 text-slate-400 border-slate-500/30"
+                          : "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                      }`}
                     >
-                      Confirm
-                    </button>
+                      <option value="unpaid">Unpaid</option>
+                      <option value="deposit_paid">Deposit (50%)</option>
+                      <option value="paid">Paid Full</option>
+                      <option value="refunded">Refunded</option>
+                    </select>
+                  </td>
 
-                    <button
-                      type="button"
-                      disabled={updatingIds.has(b.id)}
-                      onClick={() => handleStatusChange(b.id, "completed")}
-                      className="px-2 py-1 rounded bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
-                    >
-                      Complete
-                    </button>
+                  {/* Booking Status */}
+                  <td className="py-3.5 px-4">
+                    <StatusBadge status={b.status} />
+                  </td>
 
-                    <button
-                      type="button"
-                      disabled={updatingIds.has(b.id)}
-                      onClick={() => handleStatusChange(b.id, "cancelled")}
-                      className="px-2 py-1 rounded bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </td>
-              </DataTableRow>
-            ))
-          )}
-        </DataTableBody>
-      </DataTable>
+                  {/* Action Controls */}
+                  <td className="py-3.5 px-4 text-right">
+                    <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                      <button
+                        type="button"
+                        ref={(el) => {
+                          if (el && b.id === callSheetBookingId) triggerRef.current = el;
+                        }}
+                        onClick={(e) => {
+                          triggerRef.current = e.currentTarget;
+                          setCallSheetBookingId(b.id);
+                        }}
+                        className="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[11px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                        title="Generate Printable Call Sheet"
+                      >
+                        <FileText size={11} />
+                        <span>Call Sheet</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={updatingIds.has(b.id)}
+                        onClick={() => handleStatusChange(b.id, "confirmed")}
+                        className="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        Confirm
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={updatingIds.has(b.id)}
+                        onClick={() => handleStatusChange(b.id, "completed")}
+                        className="px-2 py-1 rounded bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        Complete
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={updatingIds.has(b.id)}
+                        onClick={() => handleStatusChange(b.id, "cancelled")}
+                        className="px-2 py-1 rounded bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </td>
+                </DataTableRow>
+              ))
+            )}
+          </DataTableBody>
+        </DataTable>
+      </div>
 
       <PaginationControls
         currentPage={pagination.currentPage}
