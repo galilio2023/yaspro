@@ -41,9 +41,9 @@
   },
   "virtualStudio": {
     "badge": "Virtual Production & In-Camera VFX",
-    "title": "Virtual 3D Studio",
-    "titleGradient": "Before & After Simulation",
-    "description": "Drag the slider or click a scene preset to see physical green screen soundstages transformed into photorealistic 3D virtual worlds in real time.",
+    "title": "Turning vision into",
+    "titleGradient": "reality",
+    "description": "From green screen to another visual dimension, advanced technology transforms ideas into powerful media experiences.",
     "physicalStage": "PHYSICAL STAGE",
     "greenCyclorama": "Green Cyclorama",
     "unrealBadge": "UNREAL 5.4",
@@ -51,9 +51,13 @@
     "pauseSweep": "Pause Sweep",
     "greenStage100": "100% Green Stage",
     "split5050": "50 / 50 Split",
-    "scene100": "100% 3D Scene",
+    "scene100": "100% 3D Virtual",
     "bookVirtual": "Book Virtual Stage",
-    "dragPrompt": "Drag to reveal transformation"
+    "dragPrompt": "Drag to reveal transformation",
+    "liveGenlock": "GENLOCK 120 FPS",
+    "latency": "LATENCY 2.1ms",
+    "hdrPipeline": "10-BIT HDR REALTIME PIPELINE",
+    "tracking": "TRACKING: MO-SYS OPTICAL"
   },
   "portfolio": {
     "badge": "Government & Enterprise Portfolio",
