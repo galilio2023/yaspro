@@ -158,6 +158,7 @@ export const PROMO_CODES: Record<string, { discountPercent?: number; discountFla
 
 export interface BookingPricingInput {
   sessionTypeId?: string;
+  sessionType?: string;
   durationHours?: number;
   selectedCrewEquipmentIds?: string[];
   selectedPropIds?: string[];
@@ -206,10 +207,11 @@ export function calculateBookingPrice(
 ): BookingPricingBreakdown {
   const duration = Math.max(1, input.durationHours ?? 1);
 
-  // 1. Session type cost
-  const sessionItem = SESSION_TYPES.find(
-    (s) => s.id === input.sessionTypeId || s.id === input.studioId
-  ) || SESSION_TYPES[0];
+  // 1. Session type cost (resolved by sessionTypeId, id, or enum/title)
+  const targetSessionId = input.sessionTypeId || input.sessionType;
+  const sessionItem =
+    SESSION_TYPES.find((s) => s.id === targetSessionId || s.title?.toLowerCase() === targetSessionId?.toLowerCase()) ||
+    SESSION_TYPES[0];
   const sessionCost = sessionItem ? sessionItem.price * duration : 0;
 
   // 2. Crew & Equipment cost

@@ -41,7 +41,8 @@ const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export function StepDatetime({ state, update }: WizardStepProps) {
   const [currentDate, setCurrentDate] = useState(() => {
     if (state.date) {
-      const parsed = new Date(state.date);
+      const [y, m, d] = state.date.split("-").map(Number);
+      const parsed = new Date(y, m - 1, d);
       if (!isNaN(parsed.getTime())) return parsed;
     }
     // Default to October 2026 as shown in screenshot or current year
@@ -55,7 +56,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
   const selectedTime = state.time || "10:00 AM";
 
   // Selected date string YYYY-MM-DD
-  const selectedDateStr = state.date || "2026-10-22";
+  const selectedDateStr = state.date;
 
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();

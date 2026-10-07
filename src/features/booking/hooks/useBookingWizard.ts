@@ -162,6 +162,22 @@ export function useBookingWizard(cmsStudios: StudioItem[]) {
       return;
     }
 
+    // Convert 12-hour time format (e.g., "10:00 AM", "2:00 PM") to 24-hour HH:mm
+    let formattedTime = "10:00";
+    if (state.time) {
+      const match = state.time.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+      if (match) {
+        let hours = parseInt(match[1], 10);
+        const minutes = match[2];
+        const period = match[3]?.toUpperCase();
+        if (period === "PM" && hours < 12) hours += 12;
+        if (period === "AM" && hours === 12) hours = 0;
+        formattedTime = `${String(hours).padStart(2, "0")}:${minutes}`;
+      } else if (/^\d{2}:\d{2}$/.test(state.time)) {
+        formattedTime = state.time;
+      }
+    }
+
     setIsSubmitting(true);
     try {
       const res = await createBooking({
@@ -171,12 +187,15 @@ export function useBookingWizard(cmsStudios: StudioItem[]) {
         phone: state.phone.trim(),
         company: state.company?.trim(),
         studioId: studio?.id || "100",
-        sessionType: sessionTypeObj?.title || state.sessionType,
-        scheduledAt: `${state.date}T${state.time || "10:00"}`,
+        sessionType: (sessionTypeObj?.id === "98" ? "photography" : sessionTypeObj?.id === "100" ? "podcast" : "video_production"),
+        scheduledAt: `${state.date}T${formattedTime}`,
         durationHours: state.durationHours,
         headcount: state.headcount,
         turnkeyPackageId: state.turnkeyPackageId || "none",
         selectedGearPackage: state.selectedGearPackage || "none",
+        selectedCrewEquipmentIds: state.selectedCrewEquipmentIds || [],
+        selectedPropIds: state.selectedPropIds || [],
+        selectedAddonIds: state.selectedAddonIds || [],
         hasTeleprompter: state.hasTeleprompter,
         extraMicsCount: state.extraMicsCount,
         hasRushDelivery: state.hasRushDelivery,
