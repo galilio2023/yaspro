@@ -49,9 +49,9 @@ export function PodcastBookingWizard() {
 
   // Elevate floating actions so they do not overlap this wizard's sticky bottom pricing bar
   useEffect(() => {
-    document.body.setAttribute("data-has-bottom-cart", "true");
+    document.body.setAttribute("data-has-bottom-pricing-bar", "true");
     return () => {
-      document.body.removeAttribute("data-has-bottom-cart");
+      document.body.removeAttribute("data-has-bottom-pricing-bar");
     };
   }, []);
 

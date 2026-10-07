@@ -137,7 +137,7 @@ export function UnifiedFloatingActions() {
       aria-label="Yas Pro Concierge Launcher"
       dir="ltr"
       style={{ direction: "ltr" }}
-      className="fixed bottom-20 right-4 sm:bottom-8 sm:right-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-28 sm:[[data-has-bottom-cart=true]_&]:bottom-8 pb-[env(safe-area-inset-bottom,0px)]"
+      className="fixed bottom-20 right-4 sm:bottom-8 sm:right-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-28 sm:[[data-has-bottom-cart=true]_&]:bottom-8 [[data-has-bottom-pricing-bar=true]_&]:bottom-28 sm:[[data-has-bottom-pricing-bar=true]_&]:bottom-8 pb-[env(safe-area-inset-bottom,0px)]"
     >
       {/* WhatsApp Concierge Flyout */}
       {isOpen && (
