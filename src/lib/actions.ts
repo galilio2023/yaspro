@@ -2,7 +2,7 @@
 
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { db } from "@/db";
-import { bookings, inquiries, users, studios, enterpriseRfps, accounts, type SessionType, type InquiryType } from "@/db/schema";
+import { bookings, bookingSessions, inquiries, users, studios, enterpriseRfps, accounts, type SessionType, type InquiryType } from "@/db/schema";
 import { generateBookingReference } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -114,17 +114,18 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
         const existingBookings = await db
           .select({
             id: bookings.id,
-            scheduledAt: bookings.scheduledAt,
-            durationHours: bookings.durationHours,
+            scheduledAt: bookingSessions.scheduledAt,
+            durationHours: bookingSessions.durationHours,
             status: bookings.status,
             paymentStatus: bookings.paymentStatus,
             paymentReference: bookings.paymentReference,
             createdAt: bookings.createdAt,
           })
           .from(bookings)
+          .innerJoin(bookingSessions, eq(bookingSessions.bookingId, bookings.id))
           .where(
             and(
-              eq(bookings.studioId, studioRecord.id),
+              eq(bookingSessions.studioId, studioRecord.id),
               inArray(bookings.status, ["confirmed", "pending"])
             )
           );

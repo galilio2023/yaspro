@@ -27,7 +27,7 @@ import { studioSprings } from "@/lib/studio-motion";
 import {
   VIRTUAL_SCENES,
   type VirtualStudioScene,
-} from "@/features/enterprise/virtual-studio.data";
+} from "./virtual-studio.data";
 
 export function VirtualStudioSection() {
   const { t, isArabic } = useLanguage();
@@ -90,7 +90,8 @@ export function VirtualStudioSection() {
           badgeIcon={<Video size={13} className="text-brand-lavender" />}
           title={t("virtualStudio.title")}
           gradientText={t("virtualStudio.titleGradient")}
-          description={t("virtualStudio.subtitle")}
+          description={t("virtualStudio.description")}
+          align="left"
           className="mb-8"
         />
 

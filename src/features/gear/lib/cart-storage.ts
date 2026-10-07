@@ -11,7 +11,7 @@ const itemSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   arabicName: optionalString,
-  category: z.enum(["all", "cameras", "lenses", "lighting", "audio", "bundles"]),
+  category: z.enum(["all", "cameras", "lenses", "lighting", "audio", "accessories", "bundles"]),
   categoryLabel: z.string(),
   dailyRate: z.number().nonnegative(),
   specs: z.array(z.string()),

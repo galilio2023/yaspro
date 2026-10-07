@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Bot } from "lucide-react";
-import { ProductionCopilotModal } from "@/features/enterprise/components/ai/ProductionCopilotModal";
+import { ProductionCopilotModal } from "@/components/ai/ProductionCopilotModal";
 
 export function FloatingCopilotButton() {
   const [isOpen, setIsOpen] = useState(false);

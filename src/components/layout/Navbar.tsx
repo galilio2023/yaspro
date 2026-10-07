@@ -23,7 +23,6 @@ const NAV_LINKS: readonly NavItemConfig[] = [
   { key: "nav.soundstages", label: "Soundstages", href: "/studios" },
   { key: "nav.gear", label: "Gear Rental", href: "/shop" },
   { key: "nav.creators", label: "Creators", href: "/influencers" },
-  { key: "nav.enterprise", label: "Enterprise", href: "/enterprise" },
   { key: "nav.about", label: "About", href: "/about" },
   { key: "nav.contact", label: "Contact", href: "/contact" },
 ];

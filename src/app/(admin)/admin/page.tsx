@@ -120,11 +120,11 @@ export default async function AdminDashboardPage() {
 
         <div className="flex items-center gap-3 shrink-0">
           <Link
-            href="/enterprise/portal"
+            href="/portal"
             target="_blank"
             className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-semibold transition-colors flex items-center gap-2 text-slate-200"
           >
-            Enterprise Demo Vault <ArrowRight size={14} className="rtl:rotate-180" />
+            Client Portal <ArrowRight size={14} className="rtl:rotate-180" />
           </Link>
           <Link
             href="/admin/projects"

@@ -196,6 +196,17 @@ export function BookingCallSheetModal({
             ))}
           </div>
 
+          {booking.schedule && booking.schedule.length > 1 && (
+            <div className="space-y-2 text-xs text-slate-300">
+              <h3 className="font-bold text-white">All checkout sessions (Dubai time)</h3>
+              {booking.schedule.map((session) => (
+                <p key={session.id}>
+                  {session.position}. {session.studioName} · {new Date(session.scheduledAt).toLocaleString("en-US", { timeZone: "Asia/Dubai" })} · {session.durationHours} hours · {session.headcount} guests
+                </p>
+              ))}
+            </div>
+          )}
+
           {/* Session Type & Financials */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2">

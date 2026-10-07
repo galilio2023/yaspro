@@ -84,7 +84,7 @@ test('createBooking rejects studio double-booking when schedule overlaps', async
     },
     select: () => ({
       from: () => ({
-        where: () => Promise.resolve([mockExistingBooking]),
+        innerJoin: () => ({ where: () => Promise.resolve([mockExistingBooking]) }),
       }),
     }),
     insert: () => ({
@@ -106,6 +106,7 @@ test('createBooking rejects studio double-booking when schedule overlaps', async
     '@/lib/booking-payment-capability': { issueBookingPaymentCapability: async () => {} },
     '@/db': { db: mockDb },
     '@/db/schema': {
+      bookingSessions: {},
       bookings: { id: Symbol('id'), studioId: Symbol('studioId'), status: Symbol('status'), scheduledAt: Symbol('scheduledAt') },
       studios: { id: Symbol('id'), slug: Symbol('slug') },
       users: { id: Symbol('id'), email: Symbol('email') },
@@ -151,7 +152,7 @@ test('createBooking rejects studio double-booking when schedule overlaps', async
 test('booking uses CMS IDs and rates and rejects deleted or inactive studios', async () => {
   const studioId = '11111111-2222-3333-4444-555555555555';
   let studioRecord = { id: studioId, slug: 'custom-room', name: 'Custom Room', hourlyRate: '777.00', isActive: true };
-  const schemas = { studios: { id: 'studio-id', slug: 'studio-slug' }, bookings: {}, users: {} };
+  const schemas = { bookingSessions: {}, studios: { id: 'studio-id', slug: 'studio-slug' }, bookings: {}, users: {} };
   const writes = [];
   const capabilities = [];
   let session = null;
@@ -161,7 +162,7 @@ test('booking uses CMS IDs and rates and rejects deleted or inactive studios', a
     '@/lib/booking-payment-capability': { issueBookingPaymentCapability: async (id) => capabilities.push(id) },
     '@/db': { db: {
       query: { studios: { findFirst: async ({ where }) => { lookup = where; return studioRecord; } } },
-      select: () => ({ from: () => ({ where: async () => [] }) }),
+      select: () => ({ from: () => ({ innerJoin: () => ({ where: async () => [] }) }) }),
       insert: (table) => ({ values: (values) => {
         writes.push({ table, values });
         return { onConflictDoUpdate: () => ({ returning: async () => [{ id: 'user' }] }), returning: async () => [{ id: 'booking' }] };

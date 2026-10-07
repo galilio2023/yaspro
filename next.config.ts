@@ -25,6 +25,35 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "f.vimeocdn.com" },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/pricing",
+        destination: "/shop",
+        permanent: true,
+      },
+      {
+        source: "/rent-equipment",
+        destination: "/shop",
+        permanent: true,
+      },
+      {
+        source: "/product-category/:slug*",
+        destination: "/shop",
+        permanent: true,
+      },
+      {
+        source: "/enterprise",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/enterprise/:path*",
+        destination: "/portal",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);

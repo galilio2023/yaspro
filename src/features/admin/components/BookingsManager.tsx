@@ -309,10 +309,14 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
 
                 {/* Scheduled Date */}
                 <td className="py-3.5 px-4 text-slate-300 font-mono text-[11px]">
-                  {new Date(b.scheduledAt).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
+                  {b.schedule && b.schedule.length > 1 ? b.schedule.map((session) => (
+                    <div key={session.id} className="mb-2">
+                      {session.studioName} · {new Date(session.scheduledAt).toLocaleString("en-US", {
+                        timeZone: "Asia/Dubai", month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+                      })} · {session.durationHours}h · {session.headcount} seats
+                    </div>
+                  )) : new Date(b.scheduledAt).toLocaleDateString("en-US", {
+                    timeZone: "Asia/Dubai", month: "short", day: "numeric", year: "numeric",
                   })}
                 </td>
 
@@ -320,7 +324,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                 <td className="py-3.5 px-4 text-slate-300 font-mono">
                   {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
                     ? `${Math.max(1, Math.round(b.durationHours / 24))} Days`
-                    : `${b.durationHours} hrs`}
+                    : `${b.schedule?.length ? b.schedule.reduce((total, session) => total + session.durationHours, 0) : b.durationHours} hrs`}
                 </td>
 
                 {/* Amount */}

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { X, ArrowUpRight, Camera, Video, Users, MessageSquare } from "lucide-react";
 import { YasproEmblem } from "@/components/ui/YasproEmblem";
-import { ProductionCopilotModal } from "@/features/enterprise/components/ai/ProductionCopilotModal";
+import { ProductionCopilotModal } from "@/components/ai/ProductionCopilotModal";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { motion, AnimatePresence } from "framer-motion";
 import { studioSprings } from "@/lib/studio-motion";

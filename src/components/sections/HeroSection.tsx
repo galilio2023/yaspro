@@ -12,10 +12,12 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 import { CinemaVideoModal } from "@/components/common/CinemaVideoModal";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { HeroMediaOrbit } from "./HeroMediaOrbit";
+import { BookNowModal } from "./BookNowModal";
 
 export default function HeroSection() {
   const { t, isArabic } = useLanguage();
   const [isPlayingReel, setIsPlayingReel] = useState(false);
+  const [isBookNowOpen, setIsBookNowOpen] = useState(false);
 
   return (
     <Section
@@ -64,18 +66,19 @@ export default function HeroSection() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-10 w-full">
-              {/* Primary Studio Action */}
+              {/* Primary Studio Action - Opens Book Now Modal */}
               <MagneticButton className="w-full sm:w-auto" strength={0.25} radius={90}>
-                <Link
-                  href="/studio-booking"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-bold text-sm btn-brand whitespace-nowrap"
+                <button
+                  type="button"
+                  onClick={() => setIsBookNowOpen(true)}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-bold text-sm btn-brand whitespace-nowrap cursor-pointer shadow-lg shadow-purple-600/20"
                 >
                   <span>{t("hero.bookStudio")}</span>
                   <ArrowRight
                     size={16}
                     className={`shrink-0 transition-transform ${isArabic ? "rotate-180" : ""}`}
                   />
-                </Link>
+                </button>
               </MagneticButton>
 
               {/* Secondary Reel Action with Film Pulse */}
@@ -100,26 +103,38 @@ export default function HeroSection() {
             </div>
           </FadeUp>
 
-          {/* ── Right Column: Visionary with 3D Solar System Orbit ── */}
-          <div className="lg:col-span-5 relative flex items-center justify-center mt-12 lg:mt-0 min-h-[460px] sm:min-h-[520px]">
-            {/* Main Central Persona Container */}
-            <div className="relative w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[420px] select-none">
-              {/* Persona Image (Layer z-10) */}
-              <div className="relative aspect-[3/4] w-full z-10 pointer-events-none">
+          {/* ── Right Column: Visionary Creator with Heroic Presence & 3D Media Orbit ── */}
+          <div className="lg:col-span-5 relative flex items-center justify-center mt-12 lg:mt-0 min-h-[500px] sm:min-h-[560px] lg:min-h-[600px]">
+            {/* Main Central Persona Container with commanded scale */}
+            <div className="relative w-full max-w-[350px] sm:max-w-[420px] lg:max-w-[460px] xl:max-w-[500px] select-none">
+              
+              {/* Studio Key & Rim Light Halo Behind Character (No Badges) */}
+              <div className="absolute -inset-4 pointer-events-none -z-10">
+                {/* 3200K Warm Amber/Tungsten Key Light from upper right */}
+                <div className="absolute top-10 right-4 w-72 h-72 bg-amber-500/15 rounded-full blur-[80px]" />
+                {/* Anamorphic Violet/Magenta Rim Backlight from center-left */}
+                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-80 h-80 bg-brand-violet/25 rounded-full blur-[90px]" />
+                {/* Grounding Stage Floor Pedestal Glow */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-64 h-20 bg-cyan-500/10 rounded-full blur-2xl" />
+              </div>
+
+              {/* Persona Image Wrapper */}
+              <div className="relative aspect-[3/4] w-full z-10 pointer-events-none filter drop-shadow-[0_20px_45px_rgba(0,0,0,0.85)]">
                 <Image
-                  src="/images/hero/vr-filmmaker-v3.jpg"
-                  alt={isArabic ? "مخرج يرتدي نظارة الواقع الافتراضي" : "Filmmaker wearing VR glasses"}
+                  src="/images/hero/emirati-vr-creator-transparent.png"
+                  alt={isArabic ? "صانع محتوى ومخرج إماراتي بنظارة الواقع المكاني والذكاء الاصطناعي" : "Emirati visionary filmmaker & AI spatial director"}
                   fill
                   unoptimized
-                  sizes="(max-width: 768px) 80vw, (max-width: 1200px) 38vw, 420px"
+                  sizes="(max-width: 768px) 85vw, (max-width: 1200px) 42vw, 500px"
                   priority
-                  className="object-cover object-top"
+                  className="object-contain object-bottom scale-[1.03] origin-bottom transition-transform duration-700"
                 />
 
-                {/* Smooth feathering into the obsidian background */}
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-transparent pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background/50 pointer-events-none" />
+                {/* Subtle Cinematic Lens Flare Accent across the chest */}
+                <div className="absolute inset-x-8 top-1/3 h-px bg-gradient-to-r from-transparent via-cyan-400/25 to-transparent pointer-events-none" />
+
+                {/* Gentle fade only at the very bottom edge of the torso */}
+                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background via-background/40 to-transparent pointer-events-none" />
               </div>
 
               {/* 3D Solar System Orbit around the head */}
@@ -138,6 +153,12 @@ export default function HeroSection() {
         subtitle={isArabic ? "الفيديو التعريفي الرسمي" : "Flagship Production Reel"}
         posterImage="/images/projects/flag-day.jpg"
         client="Yas Pro Media Network"
+      />
+
+      {/* Book Now Hub Selection Modal */}
+      <BookNowModal
+        isOpen={isBookNowOpen}
+        onClose={() => setIsBookNowOpen(false)}
       />
     </Section>
   );

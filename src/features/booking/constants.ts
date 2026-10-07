@@ -89,6 +89,20 @@ export const STUDIOS: readonly StudioItem[] = [
     rate: 350,
     image: "/images/studios/classic-oak.jpg",
   },
+  {
+    id: "midnight-marble",
+    name: "Midnight Marble — Broadcast & Multi-Cam Studio",
+    desc: "Luxurious charcoal marble acoustic backdrop with brass hardware and 4K multi-cam broadcast framing",
+    rate: 550,
+    image: "/images/studios/midnight-marble.jpg",
+  },
+  {
+    id: "ash-woods",
+    name: "Ash Woods — Acoustic Wood Slatted Suite",
+    desc: "Minimalist Scandinavian ash wood slatted acoustic walls with subtle diffused backlit columns",
+    rate: 450,
+    image: "/images/studios/ash-woods.jpg",
+  },
   // Backward-compatibility aliases for legacy reservations & automated tests
   {
     id: "studio-a",

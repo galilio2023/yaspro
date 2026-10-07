@@ -5,13 +5,14 @@ import { headers } from "next/headers";
 import { db } from "@/db";
 import {
   bookings,
+  bookingSessions,
   enterpriseRfps,
   users,
   studios,
   type Booking,
   type EnterpriseRfp,
 } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, asc, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { isDbAvailable, requireAdmin, type CmsResponse } from "./shared";
 
@@ -21,6 +22,7 @@ export interface EnrichedBooking extends Booking {
   userPhone?: string | null;
   userCompany?: string | null;
   studioName?: string | null;
+  schedule?: (typeof bookingSessions.$inferSelect & { studioName: string | null })[];
 }
 
 /**
@@ -46,6 +48,13 @@ export async function getCmsBookings(): Promise<EnrichedBooking[]> {
         .leftJoin(studios, eq(bookings.studioId, studios.id))
         .orderBy(desc(bookings.createdAt));
 
+      const schedule = records.length ? await db
+        .select({ session: bookingSessions, studioName: studios.name })
+        .from(bookingSessions)
+        .leftJoin(studios, eq(bookingSessions.studioId, studios.id))
+        .where(inArray(bookingSessions.bookingId, records.map((record) => record.booking.id)))
+        .orderBy(asc(bookingSessions.position)) : [];
+
       return records.map((r) => {
         let guestName = r.userName;
         let guestEmail = r.userEmail;
@@ -62,6 +71,8 @@ export async function getCmsBookings(): Promise<EnrichedBooking[]> {
         }
         return {
           ...r.booking,
+          schedule: schedule.filter((item) => item.session.bookingId === r.booking.id)
+            .map((item) => ({ ...item.session, studioName: item.studioName })),
           userName: guestName,
           userEmail: guestEmail,
           userPhone: guestPhone,

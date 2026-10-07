@@ -11,8 +11,7 @@ import { NextResponse, type NextRequest } from "next/server";
  *     happens in each page/layout via auth.api.getSession().
  */
 
-/** Routes that require a session cookie to be present. */
-const AUTH_REQUIRED_ROUTES = ["/portal", "/enterprise/portal", "/admin"];
+const AUTH_REQUIRED_ROUTES = ["/portal", "/admin"];
 
 /** Cookie names set by Better Auth on sign-in. */
 const SESSION_COOKIE_NAMES = [

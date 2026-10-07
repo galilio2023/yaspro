@@ -1,4 +1,4 @@
-export type GearCategory = "all" | "cameras" | "lenses" | "lighting" | "audio" | "bundles";
+export type GearCategory = "all" | "cameras" | "lenses" | "lighting" | "audio" | "accessories" | "bundles";
 
 export type DeliveryMethod = "studio_delivery" | "courier_dubai" | "pickup_hub";
 

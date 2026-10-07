@@ -2,14 +2,12 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { GearExplorer } from "@/features/gear/components/GearExplorer";
-import { ShopHeroHeader } from "@/features/gear/components/ShopHeroHeader";
 import { GEAR_DATA } from "@/features/gear/data";
 import { getCachedEquipment } from "@/lib/cached-queries";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import type { GearItem, GearCategory } from "@/features/gear/types";
 import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
-import { HowToRentGuide } from "@/features/gear/components/HowToRentGuide";
 
 export const revalidate = 3600;
 
@@ -42,6 +40,8 @@ export default async function ShopPage() {
         ? "Studio Lighting"
         : g.category === "lenses"
         ? "Cinema Lens"
+        : g.category === "accessories"
+        ? "Camera Accessory"
         : "Production Audio",
     dailyRate: Number(g.dailyRate),
     securityDeposit: Number(g.securityDeposit || 0),
@@ -81,16 +81,12 @@ export default async function ShopPage() {
   };
 
   return (
-    <Section id="shop-page" aria-labelledby="shop-title" className="py-12 md:py-20 bg-background">
+    <Section id="shop-page" aria-labelledby="shop-title" className="py-8 md:py-16 bg-background">
       <JsonLd data={GEAR_CATALOG_SCHEMA} />
       <Container>
-        <ShopHeroHeader />
-
         <Suspense fallback={<div className="min-h-[400px]" />}>
           <GearExplorer initialGear={initialGear} />
         </Suspense>
-
-        <HowToRentGuide />
       </Container>
     </Section>
   );

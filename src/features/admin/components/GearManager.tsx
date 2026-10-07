@@ -337,6 +337,7 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
                     <option value="cameras">Cinema Cameras</option>
                     <option value="lenses">Cinema Lenses</option>
                     <option value="lighting">Studio Lighting</option>
+                    <option value="accessories">Camera Accessories</option>
                     <option value="audio">Wireless Audio</option>
                     <option value="bundles">Turnkey Bundles</option>
                   </select>
