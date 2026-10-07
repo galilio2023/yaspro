@@ -32,7 +32,12 @@ export function proxy(request: NextRequest) {
   const normalizedPath = pathname.replace(/^\/(ar|en)(?=\/|$)/, "") || "/";
   if (normalizedPath === "/portal" || normalizedPath.startsWith("/portal/")) {
     const accountUrl = request.nextUrl.clone();
-    accountUrl.pathname = normalizedPath.includes("/bookings") ? "/account?tab=bookings" : "/account";
+    accountUrl.pathname = "/account";
+    if (normalizedPath.includes("/bookings")) {
+      accountUrl.searchParams.set("tab", "bookings");
+    } else if (normalizedPath.includes("/settings")) {
+      accountUrl.searchParams.set("tab", "profile");
+    }
     return NextResponse.redirect(accountUrl);
   }
 
@@ -46,7 +51,8 @@ export function proxy(request: NextRequest) {
   if (isProtected && !hasSessionCookie(request)) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
-    loginUrl.searchParams.set("callbackUrl", pathname);
+    const callbackTarget = `${pathname}${request.nextUrl.search}`;
+    loginUrl.searchParams.set("callbackUrl", callbackTarget);
     return NextResponse.redirect(loginUrl);
   }
 

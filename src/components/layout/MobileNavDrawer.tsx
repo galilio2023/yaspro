@@ -10,6 +10,7 @@ import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { useCart } from "@/components/providers/CartProvider";
 import { useSession } from "@/lib/auth-client";
+import { WHATSAPP_PHONE } from "@/lib/constants";
 
 export interface NavLinkItem {
   label: string;
@@ -247,7 +248,7 @@ export function MobileNavDrawer({
 
               {/* WhatsApp */}
               <a
-                href="https://wa.me/971554010465"
+                href={`https://wa.me/${WHATSAPP_PHONE}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={onClose}

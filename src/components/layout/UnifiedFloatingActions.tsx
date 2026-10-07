@@ -5,8 +5,7 @@ import { X, ArrowUpRight, Camera, Video, Users, MessageSquare } from "lucide-rea
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { motion } from "framer-motion";
 import { studioSprings } from "@/lib/studio-motion";
-
-const WHATSAPP_PHONE = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "971554010465";
+import { WHATSAPP_PHONE } from "@/lib/constants";
 
 const QUICK_INQUIRIES = [
   {

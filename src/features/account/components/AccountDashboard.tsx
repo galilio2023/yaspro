@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signOut } from "@/lib/auth-client";
@@ -55,25 +55,54 @@ export function AccountDashboard({
     tabQuery === "profile" ? "profile" : initialTab
   );
 
+  // Synchronize activeTab when query param changes
+  useEffect(() => {
+    if (tabQuery === "profile") {
+      setActiveTab("profile");
+    } else if (tabQuery === "bookings") {
+      setActiveTab("bookings");
+    } else if (!tabQuery) {
+      setActiveTab(initialTab);
+    }
+  }, [tabQuery, initialTab]);
+
   // Profile Form State
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user.name ?? "");
   const [phone, setPhone] = useState(user.phone ?? "");
   const [company, setCompany] = useState(user.company ?? "");
   const [isSaving, setIsSaving] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; msg: string } | null>(null);
+  const [signOutError, setSignOutError] = useState<string | null>(null);
 
   const role = user.role || "client";
   const firstName = user.name?.split(" ")[0] || "User";
 
   const handleSignOut = async () => {
+    setSignOutError(null);
+    setIsSigningOut(true);
     try {
-      await signOut();
+      const res = await signOut();
+      if (res?.error) {
+        setSignOutError(
+          isArabic
+            ? "فشل تسجيل الخروج. يرجى المحاولة مرة أخرى."
+            : "Sign out failed. Please try again."
+        );
+        setIsSigningOut(false);
+        return;
+      }
+      router.push("/login");
+      router.refresh();
     } catch {
-      // ignore
+      setSignOutError(
+        isArabic
+          ? "حدث خطأ أثناء تسجيل الخروج. يرجى المحاولة مرة أخرى."
+          : "An unexpected error occurred during sign out. Please try again."
+      );
+      setIsSigningOut(false);
     }
-    router.push("/login");
-    router.refresh();
   };
 
   const handleSaveProfile = async (e: React.FormEvent) => {
@@ -153,13 +182,25 @@ export function AccountDashboard({
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-rose-500/10 text-slate-300 hover:text-rose-400 border border-white/10 hover:border-rose-500/30 text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
+                disabled={isSigningOut}
+                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-rose-500/10 text-slate-300 hover:text-rose-400 border border-white/10 hover:border-rose-500/30 text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <LogOut size={14} />
+                {isSigningOut ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <LogOut size={14} />
+                )}
                 <span>{isArabic ? "تسجيل الخروج" : "Sign Out"}</span>
               </button>
             </div>
           </div>
+
+          {signOutError && (
+            <div className="mt-4 p-3 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2 relative z-10">
+              <AlertCircle size={15} className="shrink-0" />
+              <span>{signOutError}</span>
+            </div>
+          )}
         </div>
 
         {/* Tab Navigation */}
