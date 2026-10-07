@@ -160,6 +160,21 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
       const resolvedUserId = session?.user?.id || null;
 
       // 6. Create booking with the resolved studio UUID
+      const allSelectedEquipmentIds = [
+        ...(data.selectedCrewEquipmentIds || []),
+        ...(data.selectedGearPackage && data.selectedGearPackage !== "none" ? [data.selectedGearPackage] : []),
+      ];
+
+      const catalogNotes = [
+        data.selectedCrewEquipmentIds?.length ? `Crew/Equip: [${data.selectedCrewEquipmentIds.join(", ")}]` : "",
+        data.selectedPropIds?.length ? `Props: [${data.selectedPropIds.join(", ")}]` : "",
+        data.selectedAddonIds?.length ? `Addons: [${data.selectedAddonIds.join(", ")}]` : "",
+      ].filter(Boolean).join(" | ");
+
+      const combinedSpecialRequests = resolvedUserId
+        ? (catalogNotes ? `[${catalogNotes}] ${data.specialRequests || ""}`.trim() : data.specialRequests)
+        : `[Contact: ${data.firstName} ${data.lastName} | ${data.email} | ${data.phone} | ${data.company || ""}]${catalogNotes ? ` [${catalogNotes}]` : ""} ${data.specialRequests || ""}`.trim();
+
       const [newBooking] = await db
         .insert(bookings)
         .values({
@@ -170,12 +185,13 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
           scheduledAt: new Date(data.scheduledAt || Date.now()),
           durationHours: data.durationHours,
           headcount: data.headcount,
+          equipmentIds: allSelectedEquipmentIds,
+          crewNotes: catalogNotes || null,
           needsEditing: data.needsEditing,
           needsColorGrading: data.needsColorGrading,
           needsSoundMastering: data.needsSoundMastering,
           propsNotes: data.propsNotes,
-          specialRequests: resolvedUserId ? data.specialRequests :
-            `[Contact: ${data.firstName} ${data.lastName} | ${data.email} | ${data.phone} | ${data.company || ""}] ${data.specialRequests || ""}`,
+          specialRequests: combinedSpecialRequests,
           totalAmount: calculatedTotal.toFixed(2),
           status: "pending",
         })

@@ -5,17 +5,43 @@ import {
   Users,
   Layers,
   CreditCard,
+  Video,
 } from "lucide-react";
-import { BookingState, SessionTypeItem, StudioItem, StudioGearPackage, WizardStepItem } from "./types";
+import {
+  BookingState,
+  SessionTypeItem,
+  StudioItem,
+  CrewEquipmentItem,
+  PropItem,
+  AddonItem,
+  StudioGearPackage,
+  WizardStepItem,
+} from "./types";
+import catalogData from "./catalog-data.json";
 
 export const INITIAL_BOOKING_STATE: BookingState = {
   date: "",
-  time: "10:00",
-  durationHours: 2,
+  time: "10:00 AM",
+  durationHours: 1,
   headcount: 2,
-  sessionType: "video_production",
+
+  // Step 2: Default to Photography
+  sessionType: "98",
   turnkeyPackageId: "none",
-  studioId: "studio-a",
+
+  // Step 3: Default to Green Cyclorama
+  studioId: "100",
+
+  // Step 4: Crew & Equipment
+  selectedCrewEquipmentIds: [],
+
+  // Step 5: Props
+  selectedPropIds: [],
+
+  // Step 6: Post Production
+  selectedAddonIds: [],
+
+  // Backward compatibility fields
   needsCrew: false,
   selectedGearPackage: "none",
   hasTeleprompter: false,
@@ -28,6 +54,8 @@ export const INITIAL_BOOKING_STATE: BookingState = {
   needsColorGrading: false,
   needsSoundMastering: false,
   needsAiAutoCut: false,
+
+  // Step 7: Contact Info
   firstName: "",
   lastName: "",
   email: "",
@@ -36,96 +64,28 @@ export const INITIAL_BOOKING_STATE: BookingState = {
   specialRequests: "",
 };
 
-export const SESSION_TYPES: readonly SessionTypeItem[] = [
-  { id: "virtual_production", label: "Virtual Production (XR)", icon: "🌌", desc: "3D real-time Unreal set" },
-  { id: "podcast", label: "Podcast", icon: "🎙️", desc: "Audio & video recording" },
-  { id: "video_production", label: "Video Production", icon: "🎬", desc: "Full 4K video shoot" },
-  { id: "photography", label: "Photography", icon: "📸", desc: "Studio photo session" },
-  { id: "interview", label: "Interview", icon: "🎤", desc: "Talk show & interviews" },
-  { id: "commercial", label: "Commercial", icon: "📺", desc: "Brand & ad production" },
-  { id: "music_video", label: "Music Video", icon: "🎵", desc: "Music video production" },
+// 7 Steps matching yasproductions.com/studio-booking/ and screenshots
+export const WIZARD_STEPS: readonly WizardStepItem[] = [
+  { id: 1, label: "Date & Time", icon: Calendar },
+  { id: 2, label: "Session Type", icon: Camera },
+  { id: 3, label: "Choose Studio", icon: Video },
+  { id: 4, label: "Crew & Equipment", icon: Users },
+  { id: 5, label: "Props", icon: Layers },
+  { id: 6, label: "Post Production", icon: Sparkles },
+  { id: 7, label: "Payment", icon: CreditCard },
 ];
 
-export const STUDIOS: readonly StudioItem[] = [
-  {
-    id: "studio-xr",
-    name: "Studio XR — 270° Virtual Production Stage",
-    desc: "270° Micro-LED volume, Unreal Engine 5.4 LiveSync, Mo-Sys optical tracking, and genlock synchronization",
-    rate: 1500,
-    image: "/images/projects/dmx.jpg",
-  },
-  {
-    id: "luminous-quartz",
-    name: "Luminous Quartz — Podcast & Vodcast Suite",
-    desc: "4K multi-cam capture, Rodecaster Pro II, 4x Shure SM7B mics, soundproofing & motorized RGB lighting",
-    rate: 450,
-    image: "/images/studios/luminous-quartz.jpg",
-  },
-  {
-    id: "nature-grid",
-    name: "Nature Grid — Flagship Soundstage & Live Tracking",
-    desc: "Flagship recording studio with Neve 8078 console, Pro Tools HDX, live tracking room & pristine studio acoustics",
-    rate: 850,
-    image: "/images/studios/nature-grid.jpg",
-  },
-  {
-    id: "dark-walnut",
-    name: "Dark Walnut — Live Band & Acoustic Studio",
-    desc: "Acoustically isolated live room for bands & ensembles with SSL AWS console, full drum kit, and Logic Pro X",
-    rate: 700,
-    image: "/images/studios/dark-walnut.jpg",
-  },
-  {
-    id: "earthy-sand",
-    name: "Earthy Sand — Cyclorama Photo & Video Stage",
-    desc: "Infinite white cyclorama with motorized seamless backdrops, Profoto B10X lighting array, and hair & makeup bay",
-    rate: 600,
-    image: "/images/studios/earthy-sand.jpg",
-  },
-  {
-    id: "classic-oak",
-    name: "Classic Oak — Voiceover & Sound Isolation Booth",
-    desc: "Ultra-quiet acoustic vocal booth with Neumann U87, Avalon 737 tube preamp, and STC 65 sound isolation",
-    rate: 350,
-    image: "/images/studios/classic-oak.jpg",
-  },
-  {
-    id: "midnight-marble",
-    name: "Midnight Marble — Broadcast & Multi-Cam Studio",
-    desc: "Luxurious charcoal marble acoustic backdrop with brass hardware and 4K multi-cam broadcast framing",
-    rate: 550,
-    image: "/images/studios/midnight-marble.jpg",
-  },
-  {
-    id: "ash-woods",
-    name: "Ash Woods — Acoustic Wood Slatted Suite",
-    desc: "Minimalist Scandinavian ash wood slatted acoustic walls with subtle diffused backlit columns",
-    rate: 450,
-    image: "/images/studios/ash-woods.jpg",
-  },
-  // Backward-compatibility aliases for legacy reservations & automated tests
-  {
-    id: "studio-a",
-    name: "Nature Grid (Studio A) — Main Soundstage",
-    desc: "Flagship recording studio with Neve 8078 console, Pro Tools HDX, and 200 sqm live tracking room",
-    rate: 800,
-    image: "/images/studios/nature-grid.jpg",
-  },
-  {
-    id: "studio-b",
-    name: "Luminous Quartz (Studio B) — Podcast Suite",
-    desc: "Acoustic-treated multi-mic podcast studio with Rodecaster Pro II, 4x Shure SM7B, and 4K multi-cam",
-    rate: 400,
-    image: "/images/studios/luminous-quartz.jpg",
-  },
-  {
-    id: "studio-c",
-    name: "Earthy Sand (Studio C) — Photography Stage",
-    desc: "Cyclorama infinity wall, full Profoto lighting kit, and tethered capture station",
-    rate: 600,
-    image: "/images/studios/earthy-sand.jpg",
-  },
-];
+export const SESSION_TYPES: readonly SessionTypeItem[] = catalogData.sessionTypes as SessionTypeItem[];
+
+export const STUDIOS: readonly StudioItem[] = catalogData.studios as StudioItem[];
+
+export const CREW_EQUIPMENT_ITEMS: readonly CrewEquipmentItem[] = catalogData.crewEquipment as CrewEquipmentItem[];
+
+export const PROPS_ITEMS: readonly PropItem[] = catalogData.props as PropItem[];
+
+export const ADDONS_ITEMS: readonly AddonItem[] = catalogData.addons as AddonItem[];
+
+export const PROP_CATEGORIES: readonly string[] = catalogData.propCategories;
 
 export const STUDIO_GEAR_PACKAGES: readonly StudioGearPackage[] = [
   {
@@ -179,46 +139,7 @@ export const TURNKEY_STUDIO_PACKAGES: readonly TurnkeyStudioPackage[] = [
     description: "Hourly stage rental with customized gear, crew, and post-production.",
     features: ["Acoustically isolated room", "High-speed optical fiber feed", "Base stage access"],
     includedHours: 0,
-    eligibleStudios: [
-      "luminous-quartz",
-      "nature-grid",
-      "dark-walnut",
-      "earthy-sand",
-      "classic-oak",
-      "studio-xr",
-      "studio-a",
-      "studio-b",
-      "studio-c",
-    ],
-  },
-  {
-    id: "basic-recording",
-    name: "Basic Recording Deal",
-    rate: 490,
-    description: "Soundproof studio room, broadcast microphone, sound engineer, and digital master delivery.",
-    features: ["Soundproof room", "Broadcast mic kit", "Recording sound engineer", "Instant file delivery"],
-    includedHours: 2,
-    eligibleStudios: ["luminous-quartz", "nature-grid", "classic-oak", "studio-b", "studio-a"],
-  },
-  {
-    id: "podcast-package",
-    name: "Turnkey Podcast Package",
-    rate: 740,
-    description: "Dual soundproof suites with 4x Shure SM7B microphones, sound engineer, and multi-track stems.",
-    features: ["Two soundproof rooms", "4x Shure SM7B mics", "Recording engineer", "Basic audio mastering"],
-    isPopular: true,
-    includedHours: 2,
-    eligibleStudios: ["luminous-quartz", "nature-grid", "classic-oak", "studio-b", "studio-a"],
-  },
-  {
-    id: "recording-pro-edit",
-    name: "Recording + Professional Edit",
-    rate: 990,
-    description: "Fully equipped 3-Cam 4K podcast set, Shure SM7B mics, studio operator, color grading & full episode cut.",
-    features: ["3x Cinema 4K Cameras", "3x Shure SM7B mics", "Studio operator & switcher", "Full master episode edit & sync"],
-    isPopular: true,
-    includedHours: 2,
-    eligibleStudios: ["luminous-quartz", "nature-grid", "classic-oak", "studio-b", "studio-a"],
+    eligibleStudios: [],
   },
 ];
 
@@ -235,26 +156,23 @@ export const PROMO_CODES: Record<string, { discountPercent?: number; discountFla
   DUBAI2026: { discountPercent: 10 },
 };
 
-export const WIZARD_STEPS: readonly WizardStepItem[] = [
-  { id: 1, label: "Date & Time", icon: Calendar },
-  { id: 2, label: "Session Type", icon: Camera },
-  { id: 3, label: "Choose Studio", icon: Sparkles },
-  { id: 4, label: "Crew & Equipment", icon: Users },
-  { id: 5, label: "Props & Set", icon: Layers },
-  { id: 6, label: "Post Production", icon: Sparkles },
-  { id: 7, label: "Contact & Confirm", icon: CreditCard },
-];
-
 export interface BookingPricingInput {
-  studioId?: string;
+  sessionTypeId?: string;
+  sessionType?: string;
   durationHours?: number;
+  selectedCrewEquipmentIds?: string[];
+  selectedPropIds?: string[];
+  selectedAddonIds?: string[];
+  promoCode?: string;
+
+  // Legacy fields
+  studioId?: string;
   turnkeyPackageId?: string;
   needsCrew?: boolean;
   selectedGearPackage?: string;
   hasTeleprompter?: boolean;
   extraMicsCount?: number;
   hasRushDelivery?: boolean;
-  promoCode?: string;
   needsEditing?: boolean;
   needsColorGrading?: boolean;
   needsSoundMastering?: boolean;
@@ -262,63 +180,91 @@ export interface BookingPricingInput {
 }
 
 export interface BookingPricingBreakdown {
+  sessionCost: number;
   studioCost: number;
-  turnkeyCost: number;
   crewCost: number;
   gearCost: number;
-  addOnsCost: number;
+  propsCost: number;
+  addonsCost: number;
+  turnkeyCost: number;
   postCost: number;
   subtotal: number;
   discount: number;
-  vat: number; // 5% UAE VAT
+  tax: number; // 8% tax matching yasproductions.com calculation
+  vat: number; // alias
   total: number;
 }
 
 /**
- * Pure domain pricing calculation for studio reservations.
- * Enforces canonical pricing rules across both client wizard and server mutations.
- * Incorporates turnkey packages from WordPress, add-on accessories, promo codes, and 5% UAE VAT.
+ * Pricing calculation matching yasproductions.com updatePricing() formula:
+ * subtotal = session.price * duration + addons + crewEquipment + props
+ * tax = subtotal * 0.08 (8%)
+ * total = subtotal + tax
  */
-export function calculateBookingPrice(input: BookingPricingInput, selectedStudio?: StudioItem): BookingPricingBreakdown {
-  const durationHours = Math.max(1, Math.min(input.durationHours ?? 1, 24));
-  const studio = selectedStudio || (STUDIOS || []).find((s) => s.id === input.studioId) || (STUDIOS || [])[0];
-  const studioRate = studio ? studio.rate : 800;
-  
-  // Turnkey package resolution
-  const turnkeyPkg = TURNKEY_STUDIO_PACKAGES.find((p) => p.id === input.turnkeyPackageId);
-  const isPackageEligible = Boolean(
-    turnkeyPkg &&
-    turnkeyPkg.id !== "none" &&
-    turnkeyPkg.eligibleStudios?.includes(studio?.slug || studio?.id || "")
-  );
+export function calculateBookingPrice(
+  input: BookingPricingInput,
+  _selectedStudio?: StudioItem
+): BookingPricingBreakdown {
+  const duration = Math.max(1, input.durationHours ?? 1);
 
-  const turnkeyCost = isPackageEligible && turnkeyPkg ? turnkeyPkg.rate : 0;
-  const includedHours = isPackageEligible && turnkeyPkg ? turnkeyPkg.includedHours : 0;
-  const extraHours = Math.max(0, durationHours - includedHours);
-  const studioCost = isPackageEligible ? extraHours * studioRate : studioRate * durationHours;
+  // 1. Session type cost (resolved by sessionTypeId, id, or enum/title)
+  const targetSessionId = input.sessionTypeId || input.sessionType;
+  const sessionItem =
+    SESSION_TYPES.find((s) => s.id === targetSessionId || s.title?.toLowerCase() === targetSessionId?.toLowerCase()) ||
+    SESSION_TYPES[0];
+  const sessionCost = sessionItem ? sessionItem.price * duration : 0;
 
-  const crewCost = input.needsCrew ? 500 : 0;
+  // 2. Crew & Equipment cost
+  let crewCost = 0;
+  if (input.selectedCrewEquipmentIds && input.selectedCrewEquipmentIds.length > 0) {
+    for (const id of input.selectedCrewEquipmentIds) {
+      const item = CREW_EQUIPMENT_ITEMS.find((c) => c.id === id);
+      if (item) {
+        crewCost += item.priceType === "hourly" ? item.price * duration : item.price;
+      }
+    }
+  } else if (input.needsCrew) {
+    crewCost = 500;
+  }
 
+  // 3. Props cost
+  let propsCost = 0;
+  if (input.selectedPropIds && input.selectedPropIds.length > 0) {
+    for (const id of input.selectedPropIds) {
+      const prop = PROPS_ITEMS.find((p) => p.id === id);
+      if (prop) {
+        propsCost += prop.priceType === "hourly" ? prop.price * duration : prop.price;
+      }
+    }
+  }
+
+  // 4. Post-production Addons cost
+  let addonsCost = 0;
+  if (input.selectedAddonIds && input.selectedAddonIds.length > 0) {
+    for (const id of input.selectedAddonIds) {
+      const addon = ADDONS_ITEMS.find((a) => a.id === id);
+      if (addon) {
+        addonsCost += addon.priceType === "hourly" ? addon.price * duration : addon.price;
+      }
+    }
+  } else {
+    // fallback legacy post options
+    addonsCost =
+      (input.needsEditing ? 400 : 0) +
+      (input.needsColorGrading ? 300 : 0) +
+      (input.needsSoundMastering ? 250 : 0) +
+      (input.needsAiAutoCut ? 450 : 0);
+  }
+
+  // 5. Gear Package cost (legacy)
   const gearPkg = (STUDIO_GEAR_PACKAGES || []).find((g) => g.id === input.selectedGearPackage);
   const gearCost = gearPkg ? gearPkg.rate : 0;
 
-  // Add-ons cost looked up from STUDIO_ADDONS catalog
-  const teleprompterRate = (STUDIO_ADDONS || []).find((a) => a.id === "teleprompter")?.rate ?? 85;
-  const extraMicRate = (STUDIO_ADDONS || []).find((a) => a.id === "extra-mic")?.rate ?? 120;
-  const rushDeliveryRate = (STUDIO_ADDONS || []).find((a) => a.id === "rush-delivery")?.rate ?? 150;
+  const studioCost = 0; // Studio is included in session
+  const turnkeyCost = 0;
+  const postCost = addonsCost;
 
-  const teleprompterCost = input.hasTeleprompter ? teleprompterRate * durationHours : 0;
-  const extraMicsCost = (input.extraMicsCount || 0) * extraMicRate;
-  const rushDeliveryCost = input.hasRushDelivery ? rushDeliveryRate : 0;
-  const addOnsCost = teleprompterCost + extraMicsCost + rushDeliveryCost;
-
-  const postCost =
-    (input.needsEditing ? 400 : 0) +
-    (input.needsColorGrading ? 300 : 0) +
-    (input.needsSoundMastering ? 250 : 0) +
-    (input.needsAiAutoCut ? 450 : 0);
-
-  const subtotal = studioCost + turnkeyCost + crewCost + gearCost + addOnsCost + postCost;
+  const subtotal = sessionCost + crewCost + propsCost + addonsCost + gearCost;
 
   // Discount / Promo code
   let discount = 0;
@@ -335,20 +281,23 @@ export function calculateBookingPrice(input: BookingPricingInput, selectedStudio
   }
 
   const taxableAmount = Math.max(0, subtotal - discount);
-  // 5% UAE VAT FTA compliant
-  const vat = Math.round(taxableAmount * 0.05 * 100) / 100;
-  const total = taxableAmount + vat;
+  // Exactly matches taxRate = 0.08 on yasproductions.com
+  const tax = Math.round(taxableAmount * 0.08 * 100) / 100;
+  const total = Math.round((taxableAmount + tax) * 100) / 100;
 
   return {
+    sessionCost,
     studioCost,
-    turnkeyCost,
     crewCost,
     gearCost,
-    addOnsCost,
+    propsCost,
+    addonsCost,
+    turnkeyCost,
     postCost,
     subtotal,
     discount,
-    vat,
+    tax,
+    vat: tax,
     total,
   };
 }

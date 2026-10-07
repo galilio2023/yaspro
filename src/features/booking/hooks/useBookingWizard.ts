@@ -2,41 +2,48 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { generateBookingReference } from "@/lib/utils";
 import { createBooking } from "@/lib/actions";
-import { BookingState, StudioItem } from "../types";
-import { INITIAL_BOOKING_STATE, SESSION_TYPES, STUDIO_GEAR_PACKAGES } from "../constants";
-import { calculateBookingPrice } from "../lib/pricing";
+import {
+  BookingState,
+  StudioItem,
+  CrewEquipmentItem,
+  PropItem,
+  AddonItem,
+} from "../types";
+import {
+  INITIAL_BOOKING_STATE,
+  SESSION_TYPES,
+  STUDIOS,
+  CREW_EQUIPMENT_ITEMS,
+  PROPS_ITEMS,
+  ADDONS_ITEMS,
+  calculateBookingPrice,
+} from "../constants";
 
 function getInitialBookingState(searchParams: ReturnType<typeof useSearchParams>, studios: StudioItem[]) {
-  const initialState = { ...INITIAL_BOOKING_STATE, studioId: studios[0]?.id || "" };
+  const fallbackStudioId = studios[0]?.id || "100";
+  const initialState = {
+    ...INITIAL_BOOKING_STATE,
+    studioId: fallbackStudioId,
+  };
+
   if (!searchParams) {
     return { state: initialState, isAiConfigured: false };
   }
 
   const studioParam = searchParams.get("studio");
-  const gearParam = searchParams.get("gear");
   const sessionTypeParam = searchParams.get("sessionType");
-  const shootDaysParam = searchParams.get("shootDays");
   const hoursParam = searchParams.get("hours");
-  const aiFlag = searchParams.get("aiConfigured");
 
   const updates: Partial<BookingState> = {};
 
-  const selectedStudio = studios.find((s) => s.id === studioParam || s.slug === studioParam);
-  if (selectedStudio) {
-    updates.studioId = selectedStudio.id;
-  }
-  if (gearParam && STUDIO_GEAR_PACKAGES.some((g) => g.id === gearParam)) {
-    updates.selectedGearPackage = gearParam;
+  const matchedStudio = studios.find((s) => s.id === studioParam || s.slug === studioParam);
+  if (matchedStudio) {
+    updates.studioId = matchedStudio.id;
   }
   if (sessionTypeParam && SESSION_TYPES.some((s) => s.id === sessionTypeParam)) {
     updates.sessionType = sessionTypeParam;
   }
-  if (shootDaysParam) {
-    const days = parseInt(shootDaysParam, 10);
-    if (!isNaN(days) && days > 0) {
-      updates.durationHours = Math.min(days * 8, 24);
-    }
-  } else if (hoursParam) {
+  if (hoursParam) {
     const h = parseInt(hoursParam, 10);
     if (!isNaN(h) && h > 0) {
       updates.durationHours = Math.min(Math.max(1, h), 24);
@@ -45,59 +52,53 @@ function getInitialBookingState(searchParams: ReturnType<typeof useSearchParams>
 
   return {
     state: { ...initialState, ...updates },
-    isAiConfigured: aiFlag === "true" || aiFlag === "1",
+    isAiConfigured: false,
   };
 }
 
 export function useBookingWizard(cmsStudios: StudioItem[]) {
-  const studios = cmsStudios.filter((studio) => studio.isActive !== false);
+  // Merge CMS studios with canonical studios
+  const studios = cmsStudios && cmsStudios.length > 0 ? cmsStudios : (STUDIOS as StudioItem[]);
   const searchParams = useSearchParams();
   const [step, setStep] = useState(1);
   const [state, setState] = useState<BookingState>(() => getInitialBookingState(searchParams, studios).state);
-  const [isAiConfigured, setIsAiConfigured] = useState(() => getInitialBookingState(searchParams, studios).isAiConfigured);
+  const [isAiConfigured, setIsAiConfigured] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [referenceCode, setReferenceCode] = useState("");
   const [bookingId, setBookingId] = useState<string | undefined>(undefined);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Sync state with URL search parameters if query params change after mount
-  const [prevSearch, setPrevSearch] = useState(() => searchParams?.toString() ?? "");
-  const currentSearch = searchParams?.toString() ?? "";
-  if (currentSearch !== prevSearch) {
-    setPrevSearch(currentSearch);
-    const parsed = getInitialBookingState(searchParams, studios);
-    setState((prev) => ({ ...prev, ...parsed.state }));
-    if (parsed.isAiConfigured) {
-      setIsAiConfigured(true);
-    }
-  }
   const update = (values: Partial<BookingState>) => {
     setErrorMessage(null);
     setState((prev) => ({ ...prev, ...values }));
   };
 
-  const studio = studios.find((s) => s.id === state.studioId);
-  const sessionTypeObj = SESSION_TYPES.find((s) => s.id === state.sessionType);
-  const gearPkg = STUDIO_GEAR_PACKAGES.find((g) => g.id === state.selectedGearPackage);
+  const studio = studios.find((s) => s.id === state.studioId) || studios[0];
+  const sessionTypeObj = SESSION_TYPES.find((s) => s.id === state.sessionType) || SESSION_TYPES[0];
+
+  const selectedCrewItems: CrewEquipmentItem[] = (state.selectedCrewEquipmentIds || [])
+    .map((id) => CREW_EQUIPMENT_ITEMS.find((c) => c.id === id))
+    .filter(Boolean) as CrewEquipmentItem[];
+
+  const selectedPropItems: PropItem[] = (state.selectedPropIds || [])
+    .map((id) => PROPS_ITEMS.find((p) => p.id === id))
+    .filter(Boolean) as PropItem[];
+
+  const selectedAddonItems: AddonItem[] = (state.selectedAddonIds || [])
+    .map((id) => ADDONS_ITEMS.find((a) => a.id === id))
+    .filter(Boolean) as AddonItem[];
 
   const breakdown = calculateBookingPrice({
-    studioId: state.studioId,
-    turnkeyPackageId: state.turnkeyPackageId,
+    sessionTypeId: state.sessionType,
     durationHours: state.durationHours,
-    needsCrew: state.needsCrew,
-    selectedGearPackage: state.selectedGearPackage,
-    hasTeleprompter: state.hasTeleprompter,
-    extraMicsCount: state.extraMicsCount,
-    hasRushDelivery: state.hasRushDelivery,
+    selectedCrewEquipmentIds: state.selectedCrewEquipmentIds,
+    selectedPropIds: state.selectedPropIds,
+    selectedAddonIds: state.selectedAddonIds,
     promoCode: state.promoCode,
-    needsEditing: state.needsEditing,
-    needsColorGrading: state.needsColorGrading,
-    needsSoundMastering: state.needsSoundMastering,
-    needsAiAutoCut: state.needsAiAutoCut,
-  }, studio || { id: "", name: "", desc: "", rate: 0 });
+  }, studio);
 
-  const { studioCost, crewCost, gearCost, postCost, total } = breakdown;
+  const { total } = breakdown;
 
   const nextStep = () => {
     setErrorMessage(null);
@@ -105,11 +106,15 @@ export function useBookingWizard(cmsStudios: StudioItem[]) {
       setErrorMessage("Please select a session reservation date before continuing.");
       return;
     }
-    if (step === 3 && !studio) {
-      setErrorMessage("Please select an available studio before continuing.");
+    if (step === 2 && !state.sessionType) {
+      setErrorMessage("Please choose a session type before continuing.");
       return;
     }
-    setStep((s) => s + 1);
+    if (step === 3 && !studio) {
+      setErrorMessage("Please select a studio before continuing.");
+      return;
+    }
+    setStep((s) => Math.min(7, s + 1));
   };
 
   const prevStep = () => {
@@ -117,13 +122,26 @@ export function useBookingWizard(cmsStudios: StudioItem[]) {
     setStep((s) => Math.max(1, s - 1));
   };
 
+  const removeCrewItem = (id: string) => {
+    update({
+      selectedCrewEquipmentIds: (state.selectedCrewEquipmentIds || []).filter((i) => i !== id),
+    });
+  };
+
+  const removePropItem = (id: string) => {
+    update({
+      selectedPropIds: (state.selectedPropIds || []).filter((i) => i !== id),
+    });
+  };
+
+  const removeAddonItem = (id: string) => {
+    update({
+      selectedAddonIds: (state.selectedAddonIds || []).filter((i) => i !== id),
+    });
+  };
+
   const handleSubmit = async () => {
     setErrorMessage(null);
-
-    if (!studio) {
-      setErrorMessage("Please select an available studio before submitting.");
-      return;
-    }
 
     // Validate required contact credentials
     if (!state.firstName.trim()) {
@@ -144,6 +162,22 @@ export function useBookingWizard(cmsStudios: StudioItem[]) {
       return;
     }
 
+    // Convert 12-hour time format (e.g., "10:00 AM", "2:00 PM") to 24-hour HH:mm
+    let formattedTime = "10:00";
+    if (state.time) {
+      const match = state.time.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+      if (match) {
+        let hours = parseInt(match[1], 10);
+        const minutes = match[2];
+        const period = match[3]?.toUpperCase();
+        if (period === "PM" && hours < 12) hours += 12;
+        if (period === "AM" && hours === 12) hours = 0;
+        formattedTime = `${String(hours).padStart(2, "0")}:${minutes}`;
+      } else if (/^\d{2}:\d{2}$/.test(state.time)) {
+        formattedTime = state.time;
+      }
+    }
+
     setIsSubmitting(true);
     try {
       const res = await createBooking({
@@ -152,13 +186,16 @@ export function useBookingWizard(cmsStudios: StudioItem[]) {
         email: state.email.trim(),
         phone: state.phone.trim(),
         company: state.company?.trim(),
-        studioId: studio.id,
-        sessionType: state.sessionType || "video_production",
-        scheduledAt: `${state.date}T${state.time || "10:00"}`,
+        studioId: studio?.id || "100",
+        sessionType: (sessionTypeObj?.id === "98" ? "photography" : sessionTypeObj?.id === "100" ? "podcast" : "video_production"),
+        scheduledAt: `${state.date}T${formattedTime}`,
         durationHours: state.durationHours,
         headcount: state.headcount,
         turnkeyPackageId: state.turnkeyPackageId || "none",
-        selectedGearPackage: state.selectedGearPackage,
+        selectedGearPackage: state.selectedGearPackage || "none",
+        selectedCrewEquipmentIds: state.selectedCrewEquipmentIds || [],
+        selectedPropIds: state.selectedPropIds || [],
+        selectedAddonIds: state.selectedAddonIds || [],
         hasTeleprompter: state.hasTeleprompter,
         extraMicsCount: state.extraMicsCount,
         hasRushDelivery: state.hasRushDelivery,
@@ -202,12 +239,14 @@ export function useBookingWizard(cmsStudios: StudioItem[]) {
     state,
     update,
     studio,
+    studios,
     sessionTypeObj,
-    gearPkg,
-    studioCost,
-    crewCost,
-    gearCost,
-    postCost,
+    selectedCrewItems,
+    selectedPropItems,
+    selectedAddonItems,
+    removeCrewItem,
+    removePropItem,
+    removeAddonItem,
     total,
     breakdown,
     isSubmitting,

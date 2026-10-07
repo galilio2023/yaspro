@@ -3,15 +3,11 @@
 import type { StudioItem } from "../types";
 import { useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import { AlertCircle, Cpu } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { WIZARD_STEPS } from "../constants";
 import { useBookingWizard } from "../hooks/useBookingWizard";
 import { BookingProgress } from "./BookingProgress";
-import { BookingSummary } from "./BookingSummary";
 import { BookingConfirmation } from "./BookingConfirmation";
-import { BookingStepHeader } from "./BookingStepHeader";
-import { BookingStepNavigation } from "./BookingStepNavigation";
-import { AiBriefPitchModal } from "./AiBriefPitchModal";
 
 import { StepDatetime } from "./steps/StepDatetime";
 import { StepSessionType } from "./steps/StepSessionType";
@@ -22,7 +18,6 @@ import { StepPostProduction } from "./steps/StepPostProduction";
 import { StepContact } from "./steps/StepContact";
 
 export function BookingWizard({ studios }: { studios: StudioItem[] }) {
-  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const {
     step,
     setStep,
@@ -31,7 +26,13 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
     state,
     update,
     studio,
-    sessionTypeObj,
+    studios: wizardStudios,
+    selectedCrewItems,
+    selectedPropItems,
+    selectedAddonItems,
+    removeCrewItem,
+    removePropItem,
+    removeAddonItem,
     total,
     breakdown,
     isSubmitting,
@@ -39,8 +40,6 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
     referenceCode,
     bookingId,
     errorMessage,
-    isAiConfigured,
-    setIsAiConfigured,
     handleSubmit,
   } = useBookingWizard(studios);
 
@@ -48,25 +47,16 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
 
   if (confirmed) {
     return (
-      <BookingConfirmation
-        referenceCode={referenceCode}
-        email={state.email}
-        bookingId={bookingId}
-        totalAmount={total}
-      />
+      <div className="w-full max-w-xl mx-auto py-8">
+        <BookingConfirmation
+          referenceCode={referenceCode}
+          email={state.email}
+          bookingId={bookingId}
+          totalAmount={total}
+        />
+      </div>
     );
   }
-
-  const currentStepConfig = WIZARD_STEPS[step - 1];
-
-  const handleApplyAiPreset = (studioId: string, gearPackageId: string, hours: number) => {
-    update({
-      studioId: studios.find((studio) => studio.id === studioId || studio.slug === studioId)?.id || "",
-      selectedGearPackage: gearPackageId,
-      durationHours: hours,
-    });
-    setIsAiConfigured(true);
-  };
 
   const handleNextStep = () => {
     setDirection(1);
@@ -86,137 +76,111 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
   const stepVariants: Variants = {
     enter: (dir: number) => ({
       opacity: 0,
-      x: dir > 0 ? 32 : -32,
-      scale: 0.99,
+      x: dir > 0 ? 24 : -24,
     }),
     center: {
       opacity: 1,
       x: 0,
-      scale: 1,
       transition: {
-        x: { type: "spring" as const, stiffness: 320, damping: 30, mass: 0.8 },
-        opacity: { duration: 0.22, ease: "easeOut" },
-        scale: { duration: 0.22 },
+        duration: 0.22,
+        ease: "easeOut",
       },
     },
     exit: (dir: number) => ({
       opacity: 0,
-      x: dir > 0 ? -32 : 32,
-      scale: 0.99,
+      x: dir > 0 ? -24 : 24,
       transition: {
-        duration: 0.18,
+        duration: 0.16,
         ease: "easeIn",
       },
     }),
   };
 
   return (
-    <div className="w-full">
-      <AiBriefPitchModal
-        isOpen={isAiModalOpen}
-        onClose={() => setIsAiModalOpen(false)}
-        onApplyPreset={handleApplyAiPreset}
+    <div className="w-full max-w-2xl mx-auto py-4 sm:py-8">
+      {/* 7 Circular Steps Navigation */}
+      <BookingProgress
+        steps={WIZARD_STEPS}
+        currentStep={step}
+        onStepClick={handleStepClick}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-        {/* Left Column (8 cols): Step Navigation & Content */}
-        <div className="lg:col-span-8 flex flex-col gap-6">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-3">
-            <BookingProgress
-              steps={WIZARD_STEPS}
-              currentStep={step}
-              onStepClick={handleStepClick}
-            />
+      {/* Main Centered Booking Card */}
+      <div className="rounded-2xl sm:rounded-3xl border border-white/10 bg-[#0e121d] p-4 sm:p-6 lg:p-8 shadow-2xl shadow-black/80">
+        {errorMessage && (
+          <div
+            role="alert"
+            className="mb-5 p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center gap-2.5 text-red-300 text-xs sm:text-sm"
+          >
+            <AlertCircle size={16} className="text-red-400 shrink-0" />
+            <span>{errorMessage}</span>
+          </div>
+        )}
+
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={step}
+            custom={direction}
+            variants={stepVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+          >
+            {step === 1 && <StepDatetime state={state} update={update} />}
+            {step === 2 && <StepSessionType state={state} update={update} />}
+            {step === 3 && (
+              <StepStudio
+                state={state}
+                update={update}
+                studios={wizardStudios}
+              />
+            )}
+            {step === 4 && <StepCrewEquipment state={state} update={update} />}
+            {step === 5 && <StepProps state={state} update={update} />}
+            {step === 6 && <StepPostProduction state={state} update={update} />}
+            {step === 7 && (
+              <StepContact
+                state={state}
+                update={update}
+                studio={studio}
+                breakdown={breakdown}
+                selectedCrewItems={selectedCrewItems}
+                selectedPropItems={selectedPropItems}
+                selectedAddonItems={selectedAddonItems}
+                onRemoveCrewItem={removeCrewItem}
+                onRemovePropItem={removePropItem}
+                onRemoveAddonItem={removeAddonItem}
+                onSubmit={handleSubmit}
+                isSubmitting={isSubmitting}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Step Navigation Buttons (Back & Continue) for Steps 1 through 6 */}
+        {step < 7 && (
+          <div className="mt-8 pt-4 border-t border-white/5 flex items-center justify-between gap-3">
+            {step > 1 ? (
+              <button
+                type="button"
+                onClick={handlePrevStep}
+                className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#181d29] hover:bg-[#202738] text-zinc-300 border border-white/10 transition-colors cursor-pointer"
+              >
+                Back
+              </button>
+            ) : (
+              <div />
+            )}
 
             <button
               type="button"
-              onClick={() => setIsAiModalOpen(true)}
-              className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-zinc-900 border border-white/15 hover:bg-zinc-800 hover:border-white/30 text-zinc-200 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shrink-0 self-end sm:self-auto active:scale-[0.97]"
+              onClick={handleNextStep}
+              className="px-8 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] hover:from-[#8b5cf6] hover:to-[#7c3aed] shadow-md shadow-purple-900/30 transition-all cursor-pointer active:scale-[0.98]"
             >
-              <Cpu size={13} className="text-amber-400" />
-              <span>Production Brief Assistant</span>
+              Continue
             </button>
           </div>
-
-          <div className="rounded-2xl sm:rounded-3xl border border-white/10 bg-zinc-950/80 backdrop-blur-xl p-4 sm:p-6 lg:p-10 shadow-2xl shadow-black/60 overflow-hidden">
-            {isAiConfigured && (
-              <div className="mb-6 p-4 rounded-2xl bg-zinc-900 border border-white/12 flex items-center justify-between gap-3 text-xs">
-                <div className="flex items-center gap-2.5">
-                  <div className="size-7 rounded-lg bg-zinc-800 border border-white/10 flex items-center justify-center text-amber-400 shrink-0">
-                    <Cpu size={14} />
-                  </div>
-                  <div>
-                    <div className="text-white font-bold">Configured by Production Advisor</div>
-                    <div className="text-zinc-400 text-[11px]">
-                      Soundstage ({studio?.name}), gear package, and session hours have been automatically synchronized with your blueprint.
-                    </div>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsAiConfigured(false)}
-                  className="text-zinc-400 hover:text-white text-[11px] underline shrink-0 cursor-pointer"
-                >
-                  Dismiss
-                </button>
-              </div>
-            )}
-
-            <BookingStepHeader
-              currentStep={step}
-              totalSteps={WIZARD_STEPS.length}
-              stepLabel={currentStepConfig.label}
-              sessionTypeLabel={sessionTypeObj?.label}
-            />
-
-            {errorMessage && (
-              <div
-                role="alert"
-                className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center gap-3 text-red-300 text-xs sm:text-sm animate-fade-up"
-              >
-                <AlertCircle size={18} className="text-red-400 shrink-0" />
-                <span>{errorMessage}</span>
-              </div>
-            )}
-
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
-                key={step}
-                custom={direction}
-                variants={stepVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-              >
-                {step === 1 && <StepDatetime state={state} update={update} />}
-                {step === 2 && <StepSessionType state={state} update={update} />}
-                {step === 3 && <StepStudio state={state} update={update} studios={studios} />}
-                {step === 4 && <StepCrewEquipment state={state} update={update} />}
-                {step === 5 && <StepProps state={state} update={update} />}
-                {step === 6 && <StepPostProduction state={state} update={update} />}
-                {step === 7 && <StepContact state={state} update={update} />}
-              </motion.div>
-            </AnimatePresence>
-
-            <BookingStepNavigation
-              currentStep={step}
-              totalSteps={WIZARD_STEPS.length}
-              onPrev={handlePrevStep}
-              onNext={handleNextStep}
-              onSubmit={handleSubmit}
-              isSubmitting={isSubmitting}
-            />
-          </div>
-        </div>
-
-        {/* Right Column (4 cols): Sticky Live Summary Quote */}
-        <BookingSummary
-          state={state}
-          studio={studio}
-          sessionTypeObj={sessionTypeObj}
-          total={total}
-          breakdown={breakdown}
-        />
+        )}
       </div>
     </div>
   );
