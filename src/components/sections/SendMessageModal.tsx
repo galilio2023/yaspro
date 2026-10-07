@@ -43,6 +43,7 @@ export function SendMessageModal({
   useEffect(() => {
     if (isOpen) {
       const type = initialService === "outdoor_filming" ? "outdoor_filming" : "ob_van";
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setInquiryType(type);
       if (!defaultSubject) {
         setSubject(

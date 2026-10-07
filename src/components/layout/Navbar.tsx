@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Search, ShoppingBag } from "lucide-react";
+import { Menu, X, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BrandLogo } from "./BrandLogo";
 import { MobileNavDrawer, NavLinkItem } from "./MobileNavDrawer";
@@ -97,23 +97,11 @@ export default function Navbar() {
           {/* ── Right: Action Strip ── */}
           <div className="flex items-center gap-2">
 
-            {/* Quick Command Palette Button */}
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent("open-command-palette"))}
-              type="button"
-              className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-zinc-300 hover:text-white px-2.5 py-1.5 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all cursor-pointer"
-              title="Quick Search & Navigation (Ctrl+K / ⌘K)"
-              aria-label="Open command palette"
-            >
-              <Search size={12} className="text-zinc-400" />
-              <kbd className="text-[9px] font-mono text-zinc-400">⌘K</kbd>
-            </button>
-
-            {/* Persistent Gear Cart Trigger */}
+            {/* Persistent Gear Cart Trigger (Desktop only; on mobile it is in the drawer) */}
             <button
               onClick={openCart}
               type="button"
-              className="relative p-2 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white transition-all cursor-pointer"
+              className="hidden lg:flex relative p-2 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white transition-all cursor-pointer items-center justify-center"
               title={language === "ar" ? "سلة استئجار المعدات" : "Cinema Gear Cart"}
               aria-label="View Cinema Gear Cart"
             >
@@ -125,28 +113,30 @@ export default function Navbar() {
               )}
             </button>
 
-            {/* Language Toggle */}
+            {/* Language Toggle (Desktop only) */}
             <button
               onClick={toggleLanguage}
               type="button"
-              className="text-[11px] font-semibold text-zinc-300 hover:text-white px-2.5 py-1.5 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all cursor-pointer font-latin"
+              className="hidden lg:inline-flex text-[11px] font-semibold text-zinc-300 hover:text-white px-2.5 py-1.5 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all cursor-pointer font-latin"
               aria-label="Switch language"
             >
               {language === "en" ? "العربية" : "EN"}
             </button>
 
-            {/* Portal Link / User Status Dropdown */}
-            {session?.user ? (
-              <NavbarUserMenu user={session.user} />
-            ) : (
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-300 hover:text-white px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-all"
-              >
-                <span className="size-1.5 rounded-full bg-emerald-400" />
-                <span className="max-w-[110px] truncate">{t("nav.portal")}</span>
-              </Link>
-            )}
+            {/* Portal Link / User Status Dropdown (Desktop only) */}
+            <div className="hidden lg:flex items-center">
+              {session?.user ? (
+                <NavbarUserMenu user={session.user} />
+              ) : (
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-300 hover:text-white px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] transition-all"
+                >
+                  <span className="size-1.5 rounded-full bg-emerald-400" />
+                  <span className="max-w-[110px] truncate">{t("nav.portal")}</span>
+                </Link>
+              )}
+            </div>
 
 
             {/* Mobile Hamburger */}

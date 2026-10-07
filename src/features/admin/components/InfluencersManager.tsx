@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Users, Plus, Edit3, Trash2, Save, X, CheckCircle, ExternalLink, ShieldCheck, Search, Globe } from "lucide-react";
+import { Users, Plus, Edit3, Trash2, Save, X, CheckCircle, ExternalLink, ShieldCheck, Search } from "lucide-react";
 import { upsertCmsInfluencer, deleteCmsInfluencer } from "@/lib/actions/influencers";
 import type { Influencer } from "@/db/schema";
 import { AdminImageUploader } from "@/components/admin/AdminImageUploader";

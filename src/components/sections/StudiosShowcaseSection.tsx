@@ -10,8 +10,6 @@ import {
   Maximize2,
   Users,
   Radio,
-  Sliders,
-  CheckCircle2,
   Calendar,
   MessageCircle,
 } from "lucide-react";

@@ -9,8 +9,7 @@ import { ServiceItem } from "./services.data";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import Link from "next/link";
 import { SendMessageModal } from "./SendMessageModal";
-
-const WHATSAPP_PHONE = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "971554010465";
+import { WHATSAPP_PHONE } from "@/lib/constants";
 
 interface ServiceQuickViewModalProps {
   service: ServiceItem | null;

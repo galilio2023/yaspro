@@ -1,14 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { FooterHubCard, RegionalHub } from "./FooterHubCard";
 import { FooterSocialLinks } from "./FooterSocialLinks";
 import { BrandLogo } from "./BrandLogo";
 import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { FooterNavLinks } from "./FooterNavLinks";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import { YAS_GROUP_COMPANIES } from "@/features/group/data";
 
 import {
   Calendar,

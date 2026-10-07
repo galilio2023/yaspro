@@ -92,7 +92,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
-  // Listen to open-cart custom event (useful from anywhere, e.g. CommandPalette)
+  // Listen to open-cart custom event (useful from anywhere across the app)
   useEffect(() => {
     const handleOpenTrigger = () => setIsCartOpen(true);
     window.addEventListener("open-gear-cart", handleOpenTrigger);

@@ -526,9 +526,7 @@ export async function syncUserProfile(input: {
         .set(updateData)
         .where(eq(users.id, targetUserId));
     }
-    revalidatePath("/portal/settings");
-    revalidatePath("/portal");
-    revalidatePath("/enterprise/portal");
+    revalidatePath("/account");
     return { success: true, message: "Profile information synchronized in database." };
   } catch (err) {
     console.error("syncUserProfile error:", err);

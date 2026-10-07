@@ -11,7 +11,7 @@ import { NextResponse, type NextRequest } from "next/server";
  *     happens in each page/layout via auth.api.getSession().
  */
 
-const AUTH_REQUIRED_ROUTES = ["/portal", "/admin"];
+const AUTH_REQUIRED_ROUTES = ["/account", "/admin"];
 
 /** Cookie names set by Better Auth on sign-in. */
 const SESSION_COOKIE_NAMES = [
@@ -28,10 +28,22 @@ function hasSessionCookie(request: NextRequest): boolean {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ── 1. Optimistic auth redirect ──────────────────────────────────────────
-  // Strip locale prefix (/ar or /en) so localized paths like /ar/admin or /en/portal
-  // are properly matched against protected routes.
+  // ── 0. Redirect legacy /portal routes to /account ─────────────────────────
   const normalizedPath = pathname.replace(/^\/(ar|en)(?=\/|$)/, "") || "/";
+  if (normalizedPath === "/portal" || normalizedPath.startsWith("/portal/")) {
+    const accountUrl = request.nextUrl.clone();
+    accountUrl.pathname = "/account";
+    if (normalizedPath.includes("/bookings")) {
+      accountUrl.searchParams.set("tab", "bookings");
+    } else if (normalizedPath.includes("/settings")) {
+      accountUrl.searchParams.set("tab", "profile");
+    }
+    return NextResponse.redirect(accountUrl);
+  }
+
+  // ── 1. Optimistic auth redirect ──────────────────────────────────────────
+  // Strip locale prefix (/ar or /en) so localized paths like /ar/admin or /en/account
+  // are properly matched against protected routes.
   const isProtected = AUTH_REQUIRED_ROUTES.some(
     (route) => normalizedPath === route || normalizedPath.startsWith(route + "/")
   );
@@ -39,7 +51,8 @@ export function proxy(request: NextRequest) {
   if (isProtected && !hasSessionCookie(request)) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
-    loginUrl.searchParams.set("callbackUrl", pathname);
+    const callbackTarget = `${pathname}${request.nextUrl.search}`;
+    loginUrl.searchParams.set("callbackUrl", callbackTarget);
     return NextResponse.redirect(loginUrl);
   }
 

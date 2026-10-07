@@ -7,7 +7,6 @@ import { signOut } from "@/lib/auth-client";
 import {
   LayoutDashboard,
   CalendarCheck,
-  FileSpreadsheet,
   Settings,
   LogOut,
   ChevronDown,
@@ -31,9 +30,9 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
   const role = user.role || "client";
   const firstName = user.name?.split(" ")[0] || "Account";
 
-  const portalHref = role === "admin" ? "/admin" : "/portal";
+  const portalHref = role === "admin" ? "/admin" : "/account";
 
-  const bookingsHref = role === "admin" ? "/admin/bookings" : "/portal/bookings";
+  const bookingsHref = role === "admin" ? "/admin/bookings" : "/account?tab=bookings";
 
   // Close when clicking outside
   useEffect(() => {
@@ -109,13 +108,24 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
 
           {/* Links */}
           <div className="space-y-0.5">
+            {role === "admin" && (
+              <Link
+                href="/admin"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                <LayoutDashboard size={14} className="text-brand-mauve-soft" />
+                <span>Admin CMS</span>
+              </Link>
+            )}
+
             <Link
-              href={portalHref}
+              href="/account"
               onClick={() => setIsOpen(false)}
               className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
             >
               <LayoutDashboard size={14} className="text-brand-mauve-soft" />
-              <span>{role === "admin" ? "Admin CMS" : role === "enterprise" ? "Enterprise Vault" : "Client Portal"}</span>
+              <span>My Account</span>
             </Link>
 
             <Link
@@ -127,24 +137,13 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
               <span>My Bookings</span>
             </Link>
 
-            {role !== "admin" && (
-              <Link
-                href="/portal/invoices"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
-              >
-                <FileSpreadsheet size={14} className="text-brand-mauve-soft" />
-                <span>Billing & Invoices</span>
-              </Link>
-            )}
-
             <Link
-              href="/portal/settings"
+              href="/account?tab=profile"
               onClick={() => setIsOpen(false)}
               className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
             >
               <Settings size={14} className="text-slate-400" />
-              <span>Settings</span>
+              <span>Account Details</span>
             </Link>
           </div>
 

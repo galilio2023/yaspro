@@ -174,7 +174,7 @@ export async function createZiinaPaymentIntent(
         console.warn("Cache tag update notice:", e);
       }
       revalidatePath("/admin/bookings");
-      revalidatePath("/portal");
+      revalidatePath("/account");
       revalidatePath("/studio-booking");
 
       return {

@@ -247,7 +247,7 @@ The platform replaced a legacy 598MB WordPress MySQL installation with normalize
 
 As mandated in project rules:
 1. **Global Navigation & Footer Anchoring (Strict LTR):**
-   * The Navbar (`Navbar.tsx`), Footer (`Footer.tsx`), and `BrandLogo` (`AI MEDIA HUB • DUBAI`) are rigidly locked with `dir="ltr"` and `direction: ltr`.
+   * The Navbar (`Navbar.tsx`), Footer (`Footer.tsx`), and `BrandLogo` are rigidly locked with `dir="ltr"` and `direction: ltr`.
    * Switching languages to Arabic (RTL) translates text without flipping or reversing the top navigation bar or footer layout.
 2. **Floating Action Elements (Always Anchored Right):**
    * The Floating Concierge & Copilot actions (`UnifiedFloatingActions.tsx`, `FloatingCopilotButton.tsx`) are rigidly pinned to the bottom-right corner (`right-4 sm:right-6`).

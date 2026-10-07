@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, ShieldCheck, CreditCard, Sparkles, AlertCircle, Check, Tag } from "lucide-react";
+import { X, ShieldCheck, CreditCard, AlertCircle, Tag } from "lucide-react";
 import { PodcastSessionItem, PodcastBookingContact } from "../types";
 import { PODCAST_STUDIOS, PODCAST_SERVICES, PODCAST_ADDONS } from "../data";
 

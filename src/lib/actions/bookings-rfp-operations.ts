@@ -165,7 +165,7 @@ export async function updateBookingPaymentStatus(
       await db.update(bookings).set(updatePayload).where(eq(bookings.id, id));
     }
     revalidatePath("/admin/bookings");
-    revalidatePath("/portal");
+    revalidatePath("/account");
     return { success: true, message: `Payment status updated to ${paymentStatus}.` };
   } catch (error) {
     return { success: false, error: (error as Error).message };

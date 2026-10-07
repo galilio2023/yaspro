@@ -89,7 +89,7 @@ export default function RegisterPage() {
           return;
         }
 
-        router.push("/portal");
+        router.push("/account");
         router.refresh();
       }
     } catch (err) {

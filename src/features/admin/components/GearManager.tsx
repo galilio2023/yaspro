@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Camera, Plus, Edit3, Trash2, Save, X, CheckCircle, Tag, Search, SlidersHorizontal, Package, Check, AlertCircle } from "lucide-react";
+import { Camera, Plus, Edit3, Trash2, Save, X, CheckCircle, Tag, Search } from "lucide-react";
 import { upsertCmsEquipment, deleteCmsEquipment } from "@/lib/actions/equipment-gear";
 import type { Equipment } from "@/db/schema";
 import { AdminImageUploader } from "@/components/admin/AdminImageUploader";
