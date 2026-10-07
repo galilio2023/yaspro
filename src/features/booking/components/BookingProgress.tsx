@@ -1,7 +1,5 @@
 "use client";
 
-import { Check } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { WizardStepItem } from "../types";
 
@@ -10,16 +8,6 @@ interface BookingProgressProps {
   currentStep: number;
   onStepClick: (stepId: number) => void;
 }
-
-const STEP_PROGRESS_LABELS_AR: Record<number, string> = {
-  1: "الموعد",
-  2: "نوع الجلسة",
-  3: "الاستوديو",
-  4: "المعدات",
-  5: "الديكور",
-  6: "المونتاج",
-  7: "التأكيد",
-};
 
 export function BookingProgress({
   steps,
@@ -31,62 +19,51 @@ export function BookingProgress({
   return (
     <div
       role="navigation"
-      aria-label={isArabic ? "مراحل الحجز" : "Booking steps"}
-      className="flex items-center gap-1 p-2 rounded-2xl border border-white/10 bg-card/60 backdrop-blur-xl overflow-x-auto scrollbar-none"
+      aria-label={isArabic ? "خطوات الحجز" : "Booking steps"}
+      dir="ltr"
+      className="w-full max-w-2xl mx-auto mb-8 px-2"
     >
-      {steps.map((s, idx) => {
-        const isCurrent = currentStep === s.id;
-        const isCompleted = currentStep > s.id;
-        const Icon = s.icon;
-        const label = isArabic && STEP_PROGRESS_LABELS_AR[s.id] ? STEP_PROGRESS_LABELS_AR[s.id] : s.label;
+      <div className="flex items-center justify-between relative">
+        {/* Step circles */}
+        {steps.map((s) => {
+          const isCurrent = currentStep === s.id;
+          const isCompleted = currentStep > s.id;
 
-        return (
-          <div key={s.id} className="flex items-center gap-1 shrink-0">
-            <button
-              type="button"
-              onClick={() => isCompleted && onStepClick(s.id)}
-              disabled={!isCompleted && !isCurrent}
-              title={label}
-              className={cn(
-                "flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200",
-                isCurrent
-                  ? "bg-amber-500/15 border border-amber-500/40 text-amber-400 font-bold"
-                  : isCompleted
-                  ? "text-amber-400 hover:bg-amber-500/10 font-semibold cursor-pointer"
-                  : "text-text-ghost opacity-40 cursor-default"
-              )}
+          return (
+            <div
+              key={s.id}
+              className="flex flex-col items-center relative z-10 group"
             >
-              <span
-                className={cn(
-                  "size-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0",
+              <button
+                type="button"
+                onClick={() => onStepClick(s.id)}
+                disabled={!isCompleted && !isCurrent}
+                aria-current={isCurrent ? "step" : undefined}
+                className={`size-8 sm:size-9 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-200 cursor-pointer ${
                   isCurrent
-                    ? "bg-amber-500 text-black"
+                    ? "bg-[#7c3aed] text-white shadow-lg shadow-purple-500/30 ring-2 ring-purple-400/40 scale-105"
                     : isCompleted
-                    ? "bg-amber-500/20 text-amber-400"
-                    : "bg-white/5"
-                )}
+                    ? "bg-[#8b5cf6] text-white hover:bg-purple-600"
+                    : "bg-[#181d29] text-zinc-400 border border-white/10 hover:border-white/20"
+                }`}
               >
-                {isCompleted ? (
-                  <Check size={12} strokeWidth={3} />
-                ) : (
-                  <Icon size={12} />
-                )}
+                {s.id}
+              </button>
+              <span
+                className={`mt-2 text-[10px] sm:text-[11px] font-medium tracking-tight text-center whitespace-nowrap transition-colors ${
+                  isCurrent
+                    ? "text-white font-semibold"
+                    : isCompleted
+                    ? "text-purple-300"
+                    : "text-zinc-400"
+                }`}
+              >
+                {s.label}
               </span>
-              <span className="text-[11px] hidden sm:inline font-semibold tracking-wide">
-                {label}
-              </span>
-            </button>
-            {idx < steps.length - 1 && (
-              <div
-                className={cn(
-                  "h-px w-3 rounded-full transition-colors",
-                  isCompleted ? "bg-amber-500/40" : "bg-white/8"
-                )}
-              />
-            )}
-          </div>
-        );
-      })}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

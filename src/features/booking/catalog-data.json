@@ -1,0 +1,526 @@
+{
+  "sessionTypes": [
+    {
+      "id": "98",
+      "title": "Photography",
+      "label": "Photography",
+      "description": "High resolution photography for professional headshots, products, and striking brand imagery.",
+      "desc": "High resolution photography for professional headshots, products, and striking brand imagery.",
+      "price": 200.0,
+      "imageUrl": "/images/booking/session-98.jpg"
+    },
+    {
+      "id": "95",
+      "title": "Videography",
+      "label": "Videography",
+      "description": "Cinematic video production tailored for commercials, interviews, and high-end digital content.",
+      "desc": "Cinematic video production tailored for commercials, interviews, and high-end digital content.",
+      "price": 120.0,
+      "imageUrl": "/images/booking/session-95.jpg"
+    },
+    {
+      "id": "84",
+      "title": "Editing Sessions",
+      "label": "Editing Sessions",
+      "description": "Expert post production services to transform your raw footage into a polished masterpiece.",
+      "desc": "Expert post production services to transform your raw footage into a polished masterpiece.",
+      "price": 500.0,
+      "imageUrl": "/images/booking/session-84.jpg"
+    },
+    {
+      "id": "100",
+      "title": "Voice Over Recording",
+      "label": "Voice Over Recording",
+      "description": "Crystal clear audio recording in fully soundproofed booths for dubbing, podcasts, and narrations.",
+      "desc": "Crystal clear audio recording in fully soundproofed booths for dubbing, podcasts, and narrations.",
+      "price": 250.0,
+      "imageUrl": "/images/booking/session-100.jpg"
+    }
+  ],
+  "studios": [
+    {
+      "id": "100",
+      "name": "Green Cyclorama",
+      "desc": "Green Cyclorama",
+      "description": "Green Cyclorama",
+      "rate": 0,
+      "capacity": 10,
+      "location": "Iris Bay - Dubai",
+      "image": "/images/booking/studio-100.jpg",
+      "imageUrl": "/images/booking/studio-100.jpg",
+      "features": [],
+      "isActive": true
+    },
+    {
+      "id": "101",
+      "name": "White Cyclorama",
+      "desc": "White Cyclorama",
+      "description": "White Cyclorama",
+      "rate": 0,
+      "capacity": 10,
+      "location": "Iris Bay - Dubai",
+      "image": "/images/booking/studio-101.jpg",
+      "imageUrl": "/images/booking/studio-101.jpg",
+      "features": [],
+      "isActive": true
+    },
+    {
+      "id": "84",
+      "name": "Luminous Quartz",
+      "desc": "Professional podcast recording studio with video capabilities",
+      "description": "Professional podcast recording studio with video capabilities",
+      "rate": 0,
+      "capacity": 4,
+      "location": "Iris Bay - Dubai",
+      "image": "/images/booking/studio-84.jpg",
+      "imageUrl": "/images/booking/studio-84.jpg",
+      "features": [
+        "4K Video Setup",
+        "Rodecaster Pro",
+        "Shure SM7B Mics"
+      ],
+      "isActive": true
+    },
+    {
+      "id": "97",
+      "name": "Classic Oak",
+      "desc": "Classic Oak",
+      "description": "Classic Oak",
+      "rate": 0,
+      "capacity": 10,
+      "location": "Iris Bay - Dubai",
+      "image": "/images/booking/studio-97.jpg",
+      "imageUrl": "/images/booking/studio-97.jpg",
+      "features": [],
+      "isActive": true
+    },
+    {
+      "id": "98",
+      "name": "Midnight Marble",
+      "desc": "Midnight Marble",
+      "description": "Midnight Marble",
+      "rate": 0,
+      "capacity": 10,
+      "location": "Iris Bay - Dubai",
+      "image": "/images/booking/studio-98.jpg",
+      "imageUrl": "/images/booking/studio-98.jpg",
+      "features": [],
+      "isActive": true
+    },
+    {
+      "id": "99",
+      "name": "Ash Woods",
+      "desc": "Ash Woods",
+      "description": "Ash Woods",
+      "rate": 0,
+      "capacity": 10,
+      "location": "Iris Bay - Dubai",
+      "image": "/images/booking/studio-99.jpg",
+      "imageUrl": "/images/booking/studio-99.jpg",
+      "features": [],
+      "isActive": true
+    },
+    {
+      "id": "96",
+      "name": "Earthy Sand",
+      "desc": "Photography and video production studio",
+      "description": "Photography and video production studio",
+      "rate": 0,
+      "capacity": 6,
+      "location": "Iris Bay - Dubai",
+      "image": "/images/booking/studio-96.jpg",
+      "imageUrl": "/images/booking/studio-96.jpg",
+      "features": [],
+      "isActive": true
+    },
+    {
+      "id": "95",
+      "name": "Dark Walnut",
+      "desc": "Versatile live room for band recordings",
+      "description": "Versatile live room for band recordings",
+      "rate": 0,
+      "capacity": 12,
+      "location": "Iris Bay - Dubai",
+      "image": "/images/booking/studio-95.jpg",
+      "imageUrl": "/images/booking/studio-95.jpg",
+      "features": [],
+      "isActive": true
+    },
+    {
+      "id": "94",
+      "name": "Nature Grid",
+      "desc": "Flagship recording studio with top-of-the-line equipment",
+      "description": "Flagship recording studio with top-of-the-line equipment",
+      "rate": 0,
+      "capacity": 8,
+      "location": "Iris Bay - Dubai",
+      "image": "/images/booking/studio-94.jpg",
+      "imageUrl": "/images/booking/studio-94.jpg",
+      "features": [],
+      "isActive": true
+    }
+  ],
+  "crewEquipment": [
+    {
+      "id": "40",
+      "title": "Sound Engineer",
+      "description": "Expert audio specialist ensuring flawless recording, real-time mixing, and perfect sound quality.",
+      "price": 200.0,
+      "priceType": "flat",
+      "category": "crew",
+      "imageUrl": "/images/booking/crew-40.jpg"
+    },
+    {
+      "id": "41",
+      "title": "Photographer",
+      "description": "Professional visual artist to capture stunning behind-the-scenes shots and high-resolution stills.",
+      "price": 180.0,
+      "priceType": "flat",
+      "category": "crew",
+      "imageUrl": "/images/booking/crew-41.jpg"
+    },
+    {
+      "id": "27",
+      "title": "Camera Operator",
+      "description": "Skilled videographer handling precise framing, focus, and dynamic movements for a cinematic result.",
+      "price": 100.0,
+      "priceType": "hourly",
+      "category": "crew",
+      "imageUrl": "/images/booking/crew-27.jpg"
+    },
+    {
+      "id": "30",
+      "title": "Mixing Console",
+      "description": "State-of-the-art audio board for precise, real-time sound control and live episode mixing.",
+      "price": 200.0,
+      "priceType": "hourly",
+      "category": "equipment",
+      "imageUrl": "/images/booking/crew-30.jpg"
+    }
+  ],
+  "props": [
+    {
+      "id": "43",
+      "title": "Vase 1",
+      "price": 1.0,
+      "priceType": "flat",
+      "category": "Vases",
+      "imageUrl": "/images/booking/prop-43.png"
+    },
+    {
+      "id": "44",
+      "title": "Vase 2",
+      "price": 2.0,
+      "priceType": "flat",
+      "category": "Vases",
+      "imageUrl": "/images/booking/prop-44.png"
+    },
+    {
+      "id": "45",
+      "title": "Vase 3",
+      "price": 3.0,
+      "priceType": "flat",
+      "category": "Vases",
+      "imageUrl": "/images/booking/prop-45.png"
+    },
+    {
+      "id": "46",
+      "title": "Vase 4",
+      "price": 4.0,
+      "priceType": "flat",
+      "category": "Vases",
+      "imageUrl": "/images/booking/prop-46.png"
+    },
+    {
+      "id": "47",
+      "title": "Vase 5",
+      "price": 5.0,
+      "priceType": "flat",
+      "category": "Vases",
+      "imageUrl": "/images/booking/prop-47.png"
+    },
+    {
+      "id": "48",
+      "title": "Vase 6",
+      "price": 6.0,
+      "priceType": "flat",
+      "category": "Vases",
+      "imageUrl": "/images/booking/prop-48.png"
+    },
+    {
+      "id": "49",
+      "title": "Vase 7",
+      "price": 7.0,
+      "priceType": "flat",
+      "category": "Vases",
+      "imageUrl": "/images/booking/prop-49.png"
+    },
+    {
+      "id": "50",
+      "title": "Vase 8",
+      "price": 8.0,
+      "priceType": "flat",
+      "category": "Vases",
+      "imageUrl": "/images/booking/prop-50.png"
+    },
+    {
+      "id": "51",
+      "title": "Vase 9",
+      "price": 9.0,
+      "priceType": "flat",
+      "category": "Vases",
+      "imageUrl": "/images/booking/prop-51.png"
+    },
+    {
+      "id": "53",
+      "title": "Chair 1",
+      "price": 1.0,
+      "priceType": "flat",
+      "category": "Chairs",
+      "imageUrl": "/images/booking/prop-53.png"
+    },
+    {
+      "id": "54",
+      "title": "Chair 2",
+      "price": 2.0,
+      "priceType": "flat",
+      "category": "Chairs",
+      "imageUrl": "/images/booking/prop-54.png"
+    },
+    {
+      "id": "55",
+      "title": "Chair 3",
+      "price": 3.0,
+      "priceType": "flat",
+      "category": "Chairs",
+      "imageUrl": "/images/booking/prop-55.png"
+    },
+    {
+      "id": "56",
+      "title": "Chair 4",
+      "price": 4.0,
+      "priceType": "flat",
+      "category": "Chairs",
+      "imageUrl": "/images/booking/prop-56.png"
+    },
+    {
+      "id": "57",
+      "title": "Chair 5",
+      "price": 5.0,
+      "priceType": "flat",
+      "category": "Chairs",
+      "imageUrl": "/images/booking/prop-57.png"
+    },
+    {
+      "id": "58",
+      "title": "Chair 6",
+      "price": 6.0,
+      "priceType": "flat",
+      "category": "Chairs",
+      "imageUrl": "/images/booking/prop-58.png"
+    },
+    {
+      "id": "59",
+      "title": "Chair 7",
+      "price": 7.0,
+      "priceType": "flat",
+      "category": "Chairs",
+      "imageUrl": "/images/booking/prop-59.png"
+    },
+    {
+      "id": "60",
+      "title": "Chair 8",
+      "price": 8.0,
+      "priceType": "flat",
+      "category": "Chairs",
+      "imageUrl": "/images/booking/prop-60.png"
+    },
+    {
+      "id": "61",
+      "title": "Chair 9",
+      "price": 9.0,
+      "priceType": "flat",
+      "category": "Chairs",
+      "imageUrl": "/images/booking/prop-61.png"
+    },
+    {
+      "id": "62",
+      "title": "Chair 10",
+      "price": 9.0,
+      "priceType": "flat",
+      "category": "Chairs",
+      "imageUrl": "/images/booking/prop-62.png"
+    },
+    {
+      "id": "63",
+      "title": "Chair 11",
+      "price": 11.0,
+      "priceType": "flat",
+      "category": "Chairs",
+      "imageUrl": "/images/booking/prop-63.png"
+    },
+    {
+      "id": "64",
+      "title": "Light 1",
+      "price": 1.0,
+      "priceType": "flat",
+      "category": "Lights",
+      "imageUrl": "/images/booking/prop-64.png"
+    },
+    {
+      "id": "65",
+      "title": "Light 2",
+      "price": 2.0,
+      "priceType": "flat",
+      "category": "Lights",
+      "imageUrl": "/images/booking/prop-65.png"
+    },
+    {
+      "id": "67",
+      "title": "Decorative Glass",
+      "price": 1.0,
+      "priceType": "flat",
+      "category": "Other",
+      "imageUrl": "/images/booking/prop-67.png"
+    },
+    {
+      "id": "68",
+      "title": "Statue",
+      "price": 2.0,
+      "priceType": "flat",
+      "category": "Other",
+      "imageUrl": "/images/booking/prop-68.png"
+    },
+    {
+      "id": "69",
+      "title": "Pot",
+      "price": 3.0,
+      "priceType": "flat",
+      "category": "Other",
+      "imageUrl": "/images/booking/prop-69.png"
+    },
+    {
+      "id": "70",
+      "title": "Shelf 1",
+      "price": 1.0,
+      "priceType": "flat",
+      "category": "Shelves",
+      "imageUrl": "/images/booking/prop-70.png"
+    },
+    {
+      "id": "71",
+      "title": "Shelf 2",
+      "price": 2.0,
+      "priceType": "flat",
+      "category": "Shelves",
+      "imageUrl": "/images/booking/prop-71.png"
+    },
+    {
+      "id": "72",
+      "title": "Shelf 3",
+      "price": 3.0,
+      "priceType": "flat",
+      "category": "Shelves",
+      "imageUrl": "/images/booking/prop-72.png"
+    },
+    {
+      "id": "73",
+      "title": "Shelf 4",
+      "price": 4.0,
+      "priceType": "flat",
+      "category": "Shelves",
+      "imageUrl": "/images/booking/prop-73.png"
+    },
+    {
+      "id": "78",
+      "title": "Table 1",
+      "price": 1.0,
+      "priceType": "flat",
+      "category": "Tables",
+      "imageUrl": "/images/booking/prop-78.png"
+    },
+    {
+      "id": "79",
+      "title": "Table 2",
+      "price": 2.0,
+      "priceType": "flat",
+      "category": "Tables",
+      "imageUrl": "/images/booking/prop-79.png"
+    },
+    {
+      "id": "80",
+      "title": "Table 3",
+      "price": 3.0,
+      "priceType": "flat",
+      "category": "Tables",
+      "imageUrl": "/images/booking/prop-80.png"
+    },
+    {
+      "id": "81",
+      "title": "Table 4",
+      "price": 4.0,
+      "priceType": "flat",
+      "category": "Tables",
+      "imageUrl": "/images/booking/prop-81.png"
+    },
+    {
+      "id": "82",
+      "title": "Table 5",
+      "price": 5.0,
+      "priceType": "flat",
+      "category": "Tables",
+      "imageUrl": "/images/booking/prop-82.png"
+    },
+    {
+      "id": "83",
+      "title": "Table 6",
+      "price": 6.0,
+      "priceType": "flat",
+      "category": "Tables",
+      "imageUrl": "/images/booking/prop-83.png"
+    },
+    {
+      "id": "84",
+      "title": "Table 7",
+      "price": 7.0,
+      "priceType": "flat",
+      "category": "Tables",
+      "imageUrl": "/images/booking/prop-84.png"
+    },
+    {
+      "id": "85",
+      "title": "Table 8",
+      "price": 8.0,
+      "priceType": "flat",
+      "category": "Tables",
+      "imageUrl": "/images/booking/prop-85.png"
+    }
+  ],
+  "addons": [
+    {
+      "id": "103",
+      "title": "Professional Engineer",
+      "description": "Dedicated technical expert to manage your post production and ensure a flawless final delivery.",
+      "price": 75.0,
+      "priceType": "hourly",
+      "imageUrl": "/images/booking/addon-103.jpg"
+    },
+    {
+      "id": "127",
+      "title": "Vocal Mixing",
+      "description": "Precision tuning and audio balancing for a broadcast ready and crystal clear voice.",
+      "price": 100.0,
+      "priceType": "flat",
+      "imageUrl": "/images/booking/addon-127.jpg"
+    }
+  ],
+  "propCategories": [
+    "All",
+    "Vases",
+    "Chairs",
+    "Lights",
+    "Shelves",
+    "Tables",
+    "Other"
+  ]
+}

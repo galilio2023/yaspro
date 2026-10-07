@@ -34,7 +34,7 @@ const VISUAL_CARDS: VisualBookingCard[] = [
     labelAr: "العروض والباقات",
     categoryEn: "Packages",
     categoryAr: "باقات متكاملة",
-    image: "/images/modal/offers-bundles.jpg",
+    image: "/images/modal/offers-bundles-card.jpg",
     href: "/studios#packages",
   },
   {
@@ -43,7 +43,7 @@ const VISUAL_CARDS: VisualBookingCard[] = [
     labelAr: "التصوير الميداني",
     categoryEn: "On-Location",
     categoryAr: "تصوير خارجي",
-    image: "/images/services/outdoor-filming.webp",
+    image: "/images/modal/outdoor-filming-card.jpg",
     actionType: "inquiry",
     inquiryService: "outdoor_filming",
   },
@@ -53,7 +53,7 @@ const VISUAL_CARDS: VisualBookingCard[] = [
     labelAr: "حجز الاستوديوهات",
     categoryEn: "Soundstages",
     categoryAr: "استوديوهات رئيسية",
-    image: "/images/modal/studio-booking.jpg",
+    image: "/images/modal/studio-booking-card.jpg",
     href: "/studio-booking",
   },
   {
@@ -62,7 +62,7 @@ const VISUAL_CARDS: VisualBookingCard[] = [
     labelAr: "حجز البودكاست",
     categoryEn: "4K Multi-Cam",
     categoryAr: "استوديو بودكاست",
-    image: "/images/studios/podcast-suite.jpg",
+    image: "/images/modal/podcast-booking-card.jpg",
     href: "/podcast-booking",
   },
   {
@@ -71,7 +71,7 @@ const VISUAL_CARDS: VisualBookingCard[] = [
     labelAr: "باقات السوشيال ميديا",
     categoryEn: "Viral Reels",
     categoryAr: "صناعة المحتوى",
-    image: "/images/modal/social-media-packages.jpg",
+    image: "/images/modal/social-media-card.jpg",
     href: "/contact?service=social-media",
   },
   {
@@ -80,7 +80,7 @@ const VISUAL_CARDS: VisualBookingCard[] = [
     labelAr: "عربات البث المباشر",
     categoryEn: "Live 4K",
     categoryAr: "بث تلفزيوني",
-    image: "/images/services/ob-van-broadcast.webp",
+    image: "/images/modal/ob-van-broadcast-card.jpg",
     actionType: "inquiry",
     inquiryService: "ob_van",
   },
@@ -291,6 +291,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                         src={card.image}
                         alt={isArabic ? card.labelAr : card.labelEn}
                         fill
+                        unoptimized
                         className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
