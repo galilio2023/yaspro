@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Film, Plus, Trash2, Edit3, CheckCircle, ExternalLink, Save, X, Search, Sparkles } from "lucide-react";
+import { Film, Plus, Trash2, Edit3, CheckCircle, ExternalLink, Save, X, Search } from "lucide-react";
 import { upsertCmsProject, deleteCmsProject } from "@/lib/actions/projects";
 import { AdminImageUploader } from "@/components/admin/AdminImageUploader";
 import type { Project } from "@/db/schema";

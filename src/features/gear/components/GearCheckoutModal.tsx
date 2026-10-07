@@ -145,7 +145,7 @@ export function GearCheckoutModal({
 
   const handlePaymentSuccess = () => {
     setIsPaymentModalOpen(false);
-    router.push("/portal/bookings");
+    router.push("/account?tab=bookings");
   };
 
   return (
@@ -237,13 +237,13 @@ export function GearCheckoutModal({
                       type="button"
                       onClick={() => {
                         handleClose();
-                        router.push("/portal/bookings");
+                        router.push("/account?tab=bookings");
                       }}
                       className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-medium transition-colors cursor-pointer"
                     >
                       {isArabic
-                        ? "عرض الحجز في لوحة التحكم"
-                        : "View in Client Portal"}
+                        ? "عرض الحجز في حسابي"
+                        : "View in My Account"}
                     </button>
                   </div>
                 </div>

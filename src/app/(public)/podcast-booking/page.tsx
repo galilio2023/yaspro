@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PodcastBookingWizard } from "@/features/podcast-booking/components/PodcastBookingWizard";
-import { Mic, Video, ShieldCheck, Sparkles, MapPin, Headphones, HelpCircle } from "lucide-react";
+import { Mic, Video, ShieldCheck, MapPin, Headphones, HelpCircle } from "lucide-react";
 import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";

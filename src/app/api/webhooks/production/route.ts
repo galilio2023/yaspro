@@ -172,7 +172,7 @@ export async function POST(request: Request) {
       try {
         updateTag("studios");
         revalidatePath("/admin/bookings");
-        revalidatePath("/portal");
+        revalidatePath("/account");
       } catch (cacheErr) {
         console.warn("Webhook cache revalidation notice:", cacheErr);
       }

@@ -1,6 +1,7 @@
-import { InstagramIcon, FacebookIcon, XTwitterIcon, TiktokIcon, YoutubeIcon } from "@/components/icons/SocialIcons";
+import { InstagramIcon, FacebookIcon, XTwitterIcon, TiktokIcon, YoutubeIcon, WhatsAppIcon } from "@/components/icons/SocialIcons";
 
 const SOCIAL_LINKS = [
+  { label: "WhatsApp", href: "https://wa.me/971554010465", icon: WhatsAppIcon },
   { label: "Instagram", href: "https://www.instagram.com/yaspromedia", icon: InstagramIcon },
   { label: "TikTok", href: "https://www.tiktok.com/@yaspromedia", icon: TiktokIcon },
   { label: "YouTube", href: "https://www.youtube.com/@yaspromedia", icon: YoutubeIcon },

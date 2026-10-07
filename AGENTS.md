@@ -13,7 +13,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## 1. Global Navigation & Footer Anchoring (Strict LTR - No Inversion)
 - **Navbar** (`src/components/layout/Navbar.tsx`) and **Footer** (`src/components/layout/Footer.tsx`), including `MobileNavDrawer`, MUST ALWAYS be rendered with `dir="ltr"` and `direction: ltr`.
 - Under NO circumstance should toggling between English and Arabic reverse or flip the Navbar or Footer layout.
-- The **Brand Logo** (`BrandLogo.tsx`) and its subtitle `AI MEDIA HUB • DUBAI` must ALWAYS remain in physical Left-to-Right orientation on both EN and AR.
+- The **Brand Logo** (`BrandLogo.tsx`) must ALWAYS remain in physical Left-to-Right orientation on both EN and AR.
 - Navigation actions and menus must never jump sides when changing languages.
 
 ## 2. Floating Action Button (Always Anchored to the Right)

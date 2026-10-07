@@ -65,7 +65,7 @@ export async function processBookingOnlinePayment(
     }
 
     revalidatePath("/admin/bookings");
-    revalidatePath("/portal");
+    revalidatePath("/account");
     revalidatePath("/studio-booking");
 
     return {
@@ -132,7 +132,7 @@ export async function markBookingBankTransferPending(
     }
 
     revalidatePath("/admin/bookings");
-    revalidatePath("/portal");
+    revalidatePath("/account");
     revalidatePath("/studio-booking");
 
     return {

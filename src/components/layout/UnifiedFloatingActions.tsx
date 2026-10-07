@@ -2,10 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { X, ArrowUpRight, Camera, Video, Users, MessageSquare } from "lucide-react";
-import { YasproEmblem } from "@/components/ui/YasproEmblem";
-import { ProductionCopilotModal } from "@/components/ai/ProductionCopilotModal";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { studioSprings } from "@/lib/studio-motion";
 
 const WHATSAPP_PHONE = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "971554010465";
@@ -41,7 +39,7 @@ const QUICK_INQUIRIES = [
 ];
 
 /**
- * Smart Enhanced WhatsApp SVG Icon
+ * Enhanced WhatsApp SVG Icon
  * Featuring emerald depth gradients, optical white handset, and smart live signal beacon
  */
 function SmartWhatsAppIcon({ className = "size-6" }: { className?: string }) {
@@ -85,58 +83,9 @@ function SmartWhatsAppIcon({ className = "size-6" }: { className?: string }) {
   );
 }
 
-/**
- * Smart Enhanced AI Production Copilot SVG Icon
- * Featuring neural radiant aperture, concentric optical core, and satellite nodes in tungsten amber
- */
-function SmartAiIcon({ className = "size-6" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 28 28"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id="smartAiNeuralGrad" x1="3" y1="3" x2="25" y2="25" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#eee9f0" />
-          <stop offset="0.4" stopColor="#bba7c3" />
-          <stop offset="1" stopColor="#542568" />
-        </linearGradient>
-        <linearGradient id="smartAiCoreGrad" x1="10" y1="10" x2="18" y2="18" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#ffffff" />
-          <stop offset="1" stopColor="#facc15" />
-        </linearGradient>
-        <filter id="smartAiGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="0.9" result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
-      </defs>
-
-      {/* Outer 4-Pointed Neural Cinema Star */}
-      <path
-        d="M14 2L16.8 9.8C17.2 10.9 18.1 11.8 19.2 12.2L27 15L19.2 17.8C18.1 18.2 17.2 19.1 16.8 20.2L14 28L11.2 20.2C10.8 19.1 9.9 18.2 8.8 17.8L1 15L8.8 12.2C9.9 11.8 10.8 10.9 11.2 9.8L14 2Z"
-        fill="url(#smartAiNeuralGrad)"
-        filter="url(#smartAiGlow)"
-      />
-
-      {/* Optical Lens Iris Pupil */}
-      <circle cx="14" cy="15" r="3.2" fill="#0d0b12" stroke="url(#smartAiCoreGrad)" strokeWidth="1.2" />
-      <circle cx="14" cy="15" r="1.6" fill="url(#smartAiCoreGrad)" />
-
-      {/* Intelligent Node Constellation Sparks */}
-      <circle cx="21.5" cy="8.5" r="1.6" fill="#facc15" />
-      <circle cx="6.5" cy="21.5" r="1.2" fill="#bba7c3" />
-    </svg>
-  );
-}
-
 export function UnifiedFloatingActions() {
   const { t, isArabic } = useLanguage();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCopilotOpen, setIsCopilotOpen] = useState(false);
-  const [isWhatsAppOpen, setIsWhatsAppOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const containerRef = useRef<HTMLElement>(null);
   const flyoutRef = useRef<HTMLDivElement>(null);
@@ -147,18 +96,13 @@ export function UnifiedFloatingActions() {
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setIsMenuOpen(false);
-        setIsWhatsAppOpen(false);
+        setIsOpen(false);
       }
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        if (isWhatsAppOpen) {
-          setIsWhatsAppOpen(false);
-        } else if (isMenuOpen) {
-          setIsMenuOpen(false);
-        }
+      if (e.key === "Escape" && isOpen) {
+        setIsOpen(false);
       }
     };
 
@@ -169,241 +113,162 @@ export function UnifiedFloatingActions() {
       document.removeEventListener("mousedown", handleClickOutside);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isMenuOpen, isWhatsAppOpen]);
+  }, [isOpen]);
 
   // Handle focus when WhatsApp flyout opens
   useEffect(() => {
-    if (isWhatsAppOpen) {
+    if (isOpen) {
       const timer = setTimeout(() => {
         closeButtonRef.current?.focus();
       }, 50);
       return () => clearTimeout(timer);
     }
-  }, [isWhatsAppOpen]);
+  }, [isOpen]);
 
   const openWhatsApp = (prefilledText: string) => {
     const encoded = encodeURIComponent(prefilledText);
     const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encoded}`;
     window.open(url, "_blank", "noopener,noreferrer");
-    setIsWhatsAppOpen(false);
-    setIsMenuOpen(false);
-  };
-
-  const handleToggleMenu = () => {
-    if (isWhatsAppOpen) {
-      setIsWhatsAppOpen(false);
-    }
-    setIsMenuOpen((prev) => !prev);
-  };
-
-  const handleSelectAi = () => {
-    setIsMenuOpen(false);
-    setIsWhatsAppOpen(false);
-    setIsCopilotOpen(true);
-  };
-
-  const handleSelectWhatsApp = () => {
-    setIsMenuOpen(false);
-    setIsWhatsAppOpen(true);
+    setIsOpen(false);
   };
 
   return (
-    <>
-      <aside
-        ref={containerRef}
-        aria-label="Yas Pro Assistant Launcher"
-        dir="ltr"
-        style={{ direction: "ltr" }}
-        className="fixed bottom-20 right-4 sm:bottom-8 sm:right-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-28 sm:[[data-has-bottom-cart=true]_&]:bottom-8 pb-[env(safe-area-inset-bottom,0px)]"
-      >
-        {/* WhatsApp Concierge Flyout */}
-        {isWhatsAppOpen && (
-          <div
-            ref={flyoutRef}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="unified-concierge-heading"
-            tabIndex={-1}
-            dir={isArabic ? "rtl" : "ltr"}
-            className="absolute bottom-16 right-0 w-[calc(100vw-2rem)] max-w-[360px] sm:w-[380px] bg-[#0c0a18]/95 border border-emerald-500/20 rounded-3xl p-4 sm:p-5 shadow-2xl shadow-black/90 backdrop-blur-2xl animate-fade-up outline-none"
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
-              <div className="flex items-center gap-2.5">
-                <div className="relative">
-                  <div className="size-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
-                    <SmartWhatsAppIcon className="size-5" />
-                  </div>
-                  <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-emerald-400 ring-2 ring-[#0c0a18]" />
+    <aside
+      ref={containerRef}
+      aria-label="Yas Pro Concierge Launcher"
+      dir="ltr"
+      style={{ direction: "ltr" }}
+      className="fixed bottom-20 right-4 sm:bottom-8 sm:right-6 z-40 transition-all duration-300 [[data-has-bottom-cart=true]_&]:bottom-28 sm:[[data-has-bottom-cart=true]_&]:bottom-8 pb-[env(safe-area-inset-bottom,0px)]"
+    >
+      {/* WhatsApp Concierge Flyout */}
+      {isOpen && (
+        <div
+          ref={flyoutRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="unified-concierge-heading"
+          tabIndex={-1}
+          dir={isArabic ? "rtl" : "ltr"}
+          className="absolute bottom-16 right-0 w-[calc(100vw-2rem)] max-w-[360px] sm:w-[380px] bg-[#0c0a18]/95 border border-emerald-500/20 rounded-3xl p-4 sm:p-5 shadow-2xl shadow-black/90 backdrop-blur-2xl animate-fade-up outline-none"
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
+            <div className="flex items-center gap-2.5">
+              <div className="relative">
+                <div className="size-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                  <SmartWhatsAppIcon className="size-5" />
                 </div>
-                <div className="text-start">
-                  <h3 id="unified-concierge-heading" className="text-sm font-bold text-white font-display">
-                    {t("concierge.title")}
-                  </h3>
-                  <p className="text-[11px] text-emerald-400 font-medium">
-                    {t("concierge.status")}
-                  </p>
-                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-emerald-400 ring-2 ring-[#0c0a18]" />
               </div>
-
-              <button
-                ref={closeButtonRef}
-                type="button"
-                onClick={() => setIsWhatsAppOpen(false)}
-                className="size-8 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 min-h-[36px] min-w-[36px]"
-                aria-label="Close concierge flyout"
-              >
-                <X size={16} />
-              </button>
+              <div className="text-start">
+                <h3 id="unified-concierge-heading" className="text-sm font-bold text-white font-display">
+                  {t("concierge.title")}
+                </h3>
+                <p className="text-[11px] text-emerald-400 font-medium">
+                  {t("concierge.status")}
+                </p>
+              </div>
             </div>
 
-            {/* Quick Routing Options */}
-            <div className="mt-3.5 space-y-2">
-              <p className="text-[11px] font-mono text-text-muted uppercase tracking-wider text-start">
-                {t("concierge.selectTopic")}
-              </p>
-              {QUICK_INQUIRIES.map((q, idx) => {
-                const Icon = q.icon;
-                const title = isArabic ? q.titleAr : q.titleEn;
-                const subtitle = isArabic ? q.subtitleAr : q.subtitleEn;
-                const text = isArabic ? q.textAr : q.textEn;
+            <button
+              ref={closeButtonRef}
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="size-8 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 min-h-[36px] min-w-[36px]"
+              aria-label="Close concierge flyout"
+            >
+              <X size={16} />
+            </button>
+          </div>
 
-                return (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => openWhatsApp(text)}
-                    className="w-full text-start p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-emerald-500/20 transition-all group cursor-pointer flex items-center justify-between gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="size-8 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Icon size={16} />
+          {/* Quick Routing Options */}
+          <div className="mt-3.5 space-y-2">
+            <p className="text-[11px] font-mono text-text-muted uppercase tracking-wider text-start">
+              {t("concierge.selectTopic")}
+            </p>
+            {QUICK_INQUIRIES.map((q, idx) => {
+              const Icon = q.icon;
+              const title = isArabic ? q.titleAr : q.titleEn;
+              const subtitle = isArabic ? q.subtitleAr : q.subtitleEn;
+              const text = isArabic ? q.textAr : q.textEn;
+
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => openWhatsApp(text)}
+                  className="w-full text-start p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-emerald-500/20 transition-all group cursor-pointer flex items-center justify-between gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="size-8 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                      <Icon size={16} />
+                    </div>
+                    <div className="text-start">
+                      <div className="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors">
+                        {title}
                       </div>
-                      <div className="text-start">
-                        <div className="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors">
-                          {title}
-                        </div>
-                        <div className="text-[10.5px] text-text-muted line-clamp-1">
-                          {subtitle}
-                        </div>
+                      <div className="text-[10.5px] text-text-muted line-clamp-1">
+                        {subtitle}
                       </div>
                     </div>
-                    <ArrowUpRight
-                      size={14}
-                      className="text-text-muted group-hover:text-emerald-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0 rtl:group-hover:-translate-x-0.5 rtl:rotate-90"
-                    />
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Custom WhatsApp CTA */}
-            <div className="pt-3.5 mt-3 border-t border-white/10">
-              <button
-                type="button"
-                onClick={() =>
-                  openWhatsApp(
-                    isArabic
-                      ? "مرحباً فريق Yas Pro دبي، لدي استفسار بخصوص خدمات الإنتاج."
-                      : "Hello Yas Pro Dubai team, I have a general production inquiry."
-                  )
-                }
-                className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 hover:opacity-95 flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/30 hover:shadow-emerald-900/50 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-              >
-                <MessageSquare size={14} />
-                <span>{t("concierge.customChat")}</span>
-              </button>
-            </div>
+                  </div>
+                  <ArrowUpRight
+                    size={14}
+                    className="text-text-muted group-hover:text-emerald-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0 rtl:group-hover:-translate-x-0.5 rtl:rotate-90"
+                  />
+                </button>
+              );
+            })}
           </div>
-        )}
 
-        {/* Floating Stack Options Menu (Revealed when clicked) */}
-        {/* Tooltip-free clean circular buttons with smart SVGs */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: 15, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              transition={studioSprings.snappy}
-              role="menu"
-              aria-label="Yas Pro Assistant Options"
-              dir="ltr"
-              style={{ direction: "ltr" }}
-              className="absolute bottom-16 right-0 mb-2 flex flex-col items-center gap-3 w-13 sm:w-14"
+          {/* Custom WhatsApp CTA */}
+          <div className="pt-3.5 mt-3 border-t border-white/10">
+            <button
+              type="button"
+              onClick={() =>
+                openWhatsApp(
+                  isArabic
+                    ? "مرحباً فريق Yas Pro، لدي استفسار بخصوص خدمات الإنتاج والاستوديوهات."
+                    : "Hello Yas Pro team, I have an inquiry regarding production & studio bookings."
+                )
+              }
+              className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 hover:opacity-95 flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/30 hover:shadow-emerald-900/50 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
             >
-              {/* Option 1: AI Production Copilot with Smart AI SVG */}
-              <motion.button
-                type="button"
-                onClick={handleSelectAi}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.92 }}
-                transition={studioSprings.tactile}
-                className="relative size-12 sm:size-13 rounded-full bg-gradient-to-b from-[#181324] to-[#0c0912] border border-brand-mauve/50 shadow-xl shadow-purple-950/30 hover:border-brand-mauve hover:shadow-purple-950/50 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/50 group"
-                aria-label={t("concierge.aiCopilot")}
-                title={t("concierge.aiCopilot")}
-              >
-                <SmartAiIcon className="size-6 text-brand-mauve-soft group-hover:scale-105 transition-transform" />
-              </motion.button>
-
-              {/* Option 2: WhatsApp Concierge with Smart WhatsApp SVG */}
-              <motion.button
-                type="button"
-                onClick={handleSelectWhatsApp}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.92 }}
-                transition={studioSprings.tactile}
-                className="relative size-12 sm:size-13 rounded-full bg-gradient-to-b from-[#0e1d16] to-[#06110c] border border-emerald-500/50 shadow-xl shadow-emerald-600/30 hover:border-emerald-400 hover:shadow-emerald-600/50 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 group"
-                aria-label={t("concierge.whatsApp")}
-                title={t("concierge.whatsApp")}
-              >
-                <SmartWhatsAppIcon className="size-6 group-hover:scale-105 transition-transform" />
-              </motion.button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Master Floating Trigger Button: Housing the Official Brand Logo SVG */}
-        <div className="relative group">
-          {/* Ambient Glow Aura */}
-          <div
-            className={`absolute -inset-1 rounded-full bg-gradient-to-r from-brand-violet to-brand-purple blur-md transition-opacity duration-300 ${
-              isMenuOpen ? "opacity-90 scale-105" : "opacity-50 group-hover:opacity-100"
-            }`}
-          />
-
-          {/* Trigger Button with Tactile Physics */}
-          <motion.button
-            ref={triggerRef}
-            type="button"
-            onClick={handleToggleMenu}
-            whileHover={{ scale: 1.06 }}
-            whileTap={{ scale: 0.94 }}
-            transition={studioSprings.snappy}
-            className="relative size-13 sm:size-14 rounded-full bg-[#0b0a0f] border border-brand-mauve/50 p-[2px] shadow-2xl shadow-black/80 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/50"
-            aria-label={isMenuOpen ? "Close Assistant Options" : "Open Yas Pro Assistant (AI & WhatsApp)"}
-            aria-expanded={isMenuOpen}
-          >
-            <div className="size-full bg-[#0b0a0f] rounded-full flex items-center justify-center transition-colors group-hover:bg-[#121118]">
-              {isMenuOpen ? (
-                <X className="size-6 text-white transition-transform duration-300 rotate-90" />
-              ) : (
-                <YasproEmblem
-                  size={30}
-                  idPrefix="fab-master-emblem"
-                  className="filter drop-shadow-[0_2px_8px_rgba(84,37,104,0.6)] transition-transform duration-300 group-hover:scale-108"
-                />
-              )}
-            </div>
-          </motion.button>
+              <MessageSquare size={14} />
+              <span>{t("concierge.customChat")}</span>
+            </button>
+          </div>
         </div>
-      </aside>
+      )}
 
-      {/* Production Copilot Modal */}
-      <ProductionCopilotModal
-        isOpen={isCopilotOpen}
-        onClose={() => setIsCopilotOpen(false)}
-      />
-    </>
+      {/* Floating Trigger Button */}
+      <div className="relative group">
+        <div
+          className={`absolute -inset-1 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400 blur-md transition-opacity duration-300 ${
+            isOpen ? "opacity-90 scale-105" : "opacity-50 group-hover:opacity-100"
+          }`}
+        />
+
+        <motion.button
+          ref={triggerRef}
+          type="button"
+          onClick={() => setIsOpen((prev) => !prev)}
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.94 }}
+          transition={studioSprings.snappy}
+          className="relative size-13 sm:size-14 rounded-full bg-[#06110c] border border-emerald-500/50 p-[2px] shadow-2xl shadow-black/80 cursor-pointer flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+          aria-label={isOpen ? "Close WhatsApp Concierge" : "Open WhatsApp Concierge"}
+          aria-expanded={isOpen}
+        >
+          <div className="size-full bg-[#06110c] rounded-full flex items-center justify-center transition-colors group-hover:bg-[#0b1c14]">
+            {isOpen ? (
+              <X className="size-6 text-white transition-transform duration-300 rotate-90" />
+            ) : (
+              <SmartWhatsAppIcon className="size-7" />
+            )}
+          </div>
+        </motion.button>
+      </div>
+    </aside>
   );
 }

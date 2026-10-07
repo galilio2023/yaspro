@@ -5,12 +5,6 @@ import {
   CalendarCheck,
   FileText,
   Search,
-  Clock,
-  CheckCircle2,
-  DollarSign,
-  Filter,
-  Layers,
-  AlertCircle,
 } from "lucide-react";
 import { updateBookingStatus, updateBookingPaymentStatus, type EnrichedBooking } from "@/lib/actions/bookings-rfp-operations";
 import { formatCurrency } from "@/lib/utils";
@@ -221,7 +215,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                 key={tab.id}
                 type="button"
                 onClick={() => {
-                  setStatusFilter(tab.id as any);
+                  setStatusFilter(tab.id as typeof statusFilter);
                   pagination.resetPage();
                 }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition-all cursor-pointer ${

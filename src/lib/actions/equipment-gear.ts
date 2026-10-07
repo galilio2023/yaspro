@@ -413,8 +413,7 @@ export async function createGearBookingOrder(
       if (!finalUserId && newBooking?.id) {
         await issueBookingPaymentCapability(newBooking.id);
       }
-      revalidatePath("/portal");
-      revalidatePath("/portal/bookings");
+      revalidatePath("/account");
       revalidatePath("/admin/bookings");
 
       return {

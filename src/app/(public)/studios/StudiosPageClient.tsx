@@ -3,27 +3,17 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  Radio,
   Sparkles,
   MapPin,
   Maximize2,
   Users,
-  Volume2,
-  Mic,
-  Film,
   ArrowRight,
   CheckCircle2,
-  ShieldCheck,
-  Zap,
-  Clock,
   Calendar,
   MessageCircle,
   ChevronDown,
-  Sliders,
-  Music,
-  Camera,
   Layers,
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";

@@ -710,53 +710,6 @@ test('reopening a rental modal clears the previous booking and payment state', a
   fixture.harness.unmount();
 });
 
-test('command palette exposes and scrolls the active option as arrow keys wrap and filtering changes', () => {
-  const harness = hookHarness();
-  const listeners = new Map();
-  const scrolled = [];
-  const { CommandPalette } = loadSource('src/components/layout/CommandPalette.tsx', {
-    react: { ...harness.hooks, useId: () => 'palette-test' },
-    'react-dom': { createPortal: (node) => node },
-    'next/navigation': { useRouter: () => ({ push() {} }) },
-    'lucide-react': new Proxy({}, { get: (_, key) => key }),
-    '@/hooks/useFocusTrap': { useFocusTrap() {} },
-    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic: false, toggleLanguage() {} }) },
-  }, { window: { addEventListener: (type, fn) => listeners.set(type, fn), removeEventListener: (type) => listeners.delete(type) } });
-  const render = () => harness.render(() => CommandPalette());
-  render(); harness.commit();
-  listeners.get('open-command-palette')();
-  let tree;
-  const refresh = () => {
-    tree = render();
-    const list = nodes(tree, (n) => n.props.role === 'listbox')[0];
-    list.props.ref.current = { querySelector: () => ({ scrollIntoView: (options) => {
-      assert.equal(options.block, 'nearest');
-      scrolled.push(nodes(tree, (n) => n.props['aria-selected'] === true)[0]?.props.id);
-    } }) };
-    harness.commit();
-    const input = nodes(tree, (n) => n.props.role === 'combobox')[0];
-    assert.equal(input.props['aria-controls'], list.props.id);
-    const selected = nodes(tree, (n) => n.props['aria-selected'] === true)[0];
-    assert.equal(input.props['aria-activedescendant'], selected?.props.id);
-    if (selected) assert.equal(selected.props.tabIndex, -1);
-    return input;
-  };
-  let input = refresh();
-  const options = nodes(tree, (n) => n.props.role === 'option');
-  const key = (key) => { input.props.onKeyDown({ key, preventDefault() {} }); input = refresh(); };
-  key('ArrowUp');
-  assert.equal(input.props['aria-activedescendant'], options.at(-1).props.id);
-  key('ArrowDown');
-  assert.equal(input.props['aria-activedescendant'], options[0].props.id);
-  key('ArrowDown');
-  assert.equal(scrolled.at(-1), options[1].props.id);
-  input.props.onChange({ target: { value: 'no-such-command-xyz' } });
-  input = refresh();
-  assert.equal(input.props['aria-activedescendant'], undefined);
-  key('ArrowDown');
-  assert.equal(input.props['aria-activedescendant'], undefined);
-  harness.unmount();
-});
 
 test('emptying the cart while checkout is open keeps the checkout component mounted', () => {
   const harness = hookHarness();

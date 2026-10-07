@@ -4,10 +4,11 @@ import { useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, MapPin, X } from "lucide-react";
+import { ArrowRight, Globe, MapPin, ShoppingBag, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useCart } from "@/components/providers/CartProvider";
 import { useSession } from "@/lib/auth-client";
 
 export interface NavLinkItem {
@@ -32,7 +33,8 @@ export function MobileNavDrawer({
   navLinks,
 }: MobileNavDrawerProps) {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
-  const { t, isArabic } = useLanguage();
+  const { language, toggleLanguage, t, isArabic } = useLanguage();
+  const { totalCount, openCart } = useCart();
   const { data: session } = useSession();
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -201,7 +203,38 @@ export function MobileNavDrawer({
               })}
             </div>
 
-            <div className="pt-6 border-t border-white/10 flex flex-col gap-3">
+            <div className="pt-5 border-t border-white/10 flex flex-col gap-2.5">
+              {/* Quick Actions Bar (Cart + Language) inside drawer */}
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    openCart();
+                  }}
+                  className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-200 transition-colors cursor-pointer"
+                >
+                  <div className="relative">
+                    <ShoppingBag size={14} className="text-zinc-300" />
+                    {totalCount > 0 && (
+                      <span className="absolute -top-1 -right-1.5 size-3.5 bg-brand-mauve text-white text-[8px] font-bold rounded-full flex items-center justify-center">
+                        {totalCount}
+                      </span>
+                    )}
+                  </div>
+                  <span>{isArabic ? "سلة المعدات" : "Gear Cart"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={toggleLanguage}
+                  className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-200 transition-colors cursor-pointer font-latin"
+                >
+                  <Globe size={14} className="text-zinc-300" />
+                  <span>{language === "en" ? "العربية" : "English"}</span>
+                </button>
+              </div>
+
               {/* Primary CTA */}
               <Link
                 href="/studio-booking"
@@ -218,7 +251,7 @@ export function MobileNavDrawer({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={onClose}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-bold hover:bg-emerald-500/20 transition-all"
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-bold hover:bg-emerald-500/20 transition-all"
               >
                 💬 {t("nav.whatsApp")} Hotline
               </a>
@@ -227,7 +260,7 @@ export function MobileNavDrawer({
               <div className="w-full">
                 {session?.user ? (
                   <Link
-                    href="/portal"
+                    href="/account"
                     onClick={onClose}
                     className="w-full py-2.5 px-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs font-semibold text-center text-emerald-300 flex items-center justify-center gap-2 transition-colors"
                   >
@@ -237,7 +270,7 @@ export function MobileNavDrawer({
                 ) : (
                   <div className="grid grid-cols-2 gap-2">
                     <Link
-                      href="/portal"
+                      href="/account"
                       onClick={onClose}
                       className="py-2.5 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-semibold text-center text-slate-200 transition-colors"
                     >
@@ -254,7 +287,7 @@ export function MobileNavDrawer({
                 )}
               </div>
 
-              <div className="flex items-center justify-between text-[11px] text-text-ghost px-1">
+              <div className="flex items-center justify-between text-[11px] text-text-ghost px-1 pt-1">
                 <span className="flex items-center gap-1">
                   <MapPin size={11} className="text-brand-lavender" />
                   {isArabic ? "دبي · القاهرة · عَمّان" : "Dubai · Cairo · Amman"}

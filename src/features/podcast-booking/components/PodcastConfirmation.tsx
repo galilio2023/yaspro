@@ -1,7 +1,6 @@
 "use client";
 
-import { CheckCircle2, AlertCircle, MessageCircle, Calendar, ArrowRight, ShieldCheck } from "lucide-react";
-import Link from "next/link";
+import { CheckCircle2, AlertCircle, MessageCircle, ArrowRight } from "lucide-react";
 import { PodcastBookingResult } from "../actions";
 
 interface PodcastConfirmationProps {

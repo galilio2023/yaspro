@@ -74,6 +74,7 @@ export function GearRentalModal({
   useEffect(() => {
     if (isOpen) {
       const today = getLocalCalendarDate();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPickupDate(today);
       setReturnDate(addCalendarDays(today, initialDurationDays || 1));
       setDurationDays(initialDurationDays || 1);
@@ -252,11 +253,11 @@ export function GearRentalModal({
                 </button>
 
                 <Link
-                  href="/portal/bookings"
+                  href="/account?tab=bookings"
                   onClick={onClose}
                   className="px-6 py-2.5 rounded-full border border-white/20 text-white hover:bg-white/10 text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer"
                 >
-                  <span>{isArabic ? "عرض في لوحة التحكم" : "View in Client Portal"}</span>
+                  <span>{isArabic ? "عرض في حسابي" : "View in My Account"}</span>
                   <ArrowRight size={13} className="rtl:rotate-180" />
                 </Link>
 
