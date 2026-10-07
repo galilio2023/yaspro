@@ -278,7 +278,7 @@ export function GearCheckoutModal({
                           value={customerName}
                           onChange={(e) => setCustomerName(e.target.value)}
                           placeholder="e.g. John Doe / طارق الشمري"
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-xs"
+                          className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-base sm:text-xs"
                         />
                       </div>
 
@@ -292,7 +292,7 @@ export function GearCheckoutModal({
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder="client@production.com"
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-xs"
+                          className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-base sm:text-xs"
                         />
                       </div>
                     </div>
@@ -308,7 +308,7 @@ export function GearCheckoutModal({
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           placeholder="+971 50 123 4567"
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-xs"
+                          className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-base sm:text-xs"
                         />
                       </div>
 
@@ -321,7 +321,7 @@ export function GearCheckoutModal({
                           value={company}
                           onChange={(e) => setCompany(e.target.value)}
                           placeholder="e.g. Red Sea Films / مستقل"
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-xs"
+                          className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-base sm:text-xs"
                         />
                       </div>
                     </div>
@@ -339,7 +339,7 @@ export function GearCheckoutModal({
                             ? "مثال: يرجى توفير محول بطاريات إضافي وعدسة 50mm معايرة..."
                             : "e.g. Lens mount preference (PL/LPL), wireless transmitter pairing..."
                         }
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-xs resize-none"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-base sm:text-xs resize-none"
                       />
                     </div>
 

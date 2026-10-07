@@ -99,6 +99,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("open-gear-cart", handleOpenTrigger);
   }, []);
 
+  // Sync data-has-bottom-cart attribute on document.body so floating actions elevate above the cart bar
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (items.length > 0) {
+      document.body.setAttribute("data-has-bottom-cart", "true");
+    } else {
+      document.body.removeAttribute("data-has-bottom-cart");
+    }
+    return () => {
+      document.body.removeAttribute("data-has-bottom-cart");
+    };
+  }, [items.length]);
+
   const addItem = useCallback((item: GearItem) => {
     setItems((prev) => {
       if (prev.some((i) => i.id === item.id)) return prev;

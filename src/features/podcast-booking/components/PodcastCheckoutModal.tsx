@@ -143,7 +143,7 @@ export function PodcastCheckoutModal({
               value={contact.specialRequests || ""}
               onChange={(e) => onUpdateContact({ specialRequests: e.target.value })}
               placeholder="Please share anything you'd like our studio engineer to prepare..."
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-amber-500/50 resize-none"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 focus:outline-none focus:border-amber-500/50 resize-none"
             />
           </div>
 
@@ -177,12 +177,12 @@ export function PodcastCheckoutModal({
                   value={promoInput}
                   onChange={(e) => setPromoInput(e.target.value)}
                   placeholder="Try YAS10 or PODCAST20"
-                  className="flex-1 px-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/10 text-white text-xs placeholder:text-white/30 uppercase focus:outline-none focus:border-amber-500/50"
+                  className="flex-1 px-3.5 py-2 min-h-[44px] rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 uppercase focus:outline-none focus:border-amber-500/50"
                 />
                 <button
                   type="button"
                   onClick={() => onApplyPromo(promoInput)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-amber-500 hover:text-black text-white transition"
+                  className="px-4 py-2 min-h-[44px] rounded-xl text-xs font-bold bg-white/10 hover:bg-amber-500 hover:text-black text-white transition cursor-pointer"
                 >
                   Use code
                 </button>
@@ -207,7 +207,7 @@ export function PodcastCheckoutModal({
                   value={contact.fullName}
                   onChange={(e) => onUpdateContact({ fullName: e.target.value })}
                   placeholder="e.g. Sarah Jenkins"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-amber-500/50"
+                  className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 focus:outline-none focus:border-amber-500/50"
                 />
               </div>
 
@@ -220,7 +220,7 @@ export function PodcastCheckoutModal({
                     value={contact.email}
                     onChange={(e) => onUpdateContact({ email: e.target.value })}
                     placeholder="sarah@agency.ae"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-amber-500/50"
+                    className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 focus:outline-none focus:border-amber-500/50"
                   />
                 </div>
                 <div>
@@ -231,7 +231,7 @@ export function PodcastCheckoutModal({
                     value={contact.phone}
                     onChange={(e) => onUpdateContact({ phone: e.target.value })}
                     placeholder="+971 50 123 4567"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-amber-500/50"
+                    className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 focus:outline-none focus:border-amber-500/50"
                   />
                 </div>
               </div>

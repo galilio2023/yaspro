@@ -77,9 +77,9 @@ export function ServicesSection() {
           className="mb-10 sm:mb-14"
         />
 
-        {/* 4 Cards Side-by-Side: Expanding Accordion with Direct Handlers matching Book Now */}
+        {/* Cards: Responsive Grid on Mobile, Expanding Accordion on Desktop */}
         <div
-          className="flex flex-col md:flex-row h-[440px] md:h-[520px] w-full gap-4 select-none"
+          className="grid grid-cols-1 sm:grid-cols-2 md:flex md:flex-row md:h-[520px] w-full gap-4 select-none"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
           onFocusCapture={() => setIsFocusWithin(true)}
@@ -106,10 +106,10 @@ export function ServicesSection() {
                 transition={{
                   layout: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
                 }}
-                className={`group relative h-full min-h-0 min-w-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-lavender overflow-hidden cursor-pointer transition-all duration-300 ${
+                className={`group relative h-48 sm:h-56 md:h-full min-h-0 min-w-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-lavender overflow-hidden cursor-pointer transition-all duration-300 ${
                   isActive
-                    ? "flex-[3.5] shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
-                    : "flex-[1] opacity-75 hover:opacity-95"
+                    ? "md:flex-[3.5] ring-1 ring-brand-mauve/40 shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
+                    : "md:flex-[1] opacity-90 md:opacity-75 hover:opacity-100"
                 }`}
               >
                 {/* 3D Visual Asset */}
@@ -119,34 +119,29 @@ export function ServicesSection() {
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className={`object-cover object-center transition-transform duration-700 ${
-                    isActive ? "scale-100 brightness-100" : "scale-105 brightness-50 group-hover:brightness-70"
+                    isActive ? "scale-100 brightness-100" : "scale-105 brightness-60 md:brightness-50 group-hover:brightness-80"
                   }`}
                   priority={index < 2}
                 />
 
                 {/* Subtle vignette gradient */}
-                <span className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
+                <span className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent pointer-events-none" />
 
-                {/* Title ONLY on active card */}
-                {isActive && (
-                  <span className="absolute z-10 bottom-6 left-6 right-6 text-left rtl:text-right">
-                    <motion.span
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="font-bold tracking-tight text-2xl sm:text-3xl text-brand-lavender drop-shadow-md"
-                    >
-                      {title}
-                    </motion.span>
+                {/* Title: Always visible on mobile, expanded on active desktop */}
+                <span className={`absolute z-10 bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 text-left rtl:text-right transition-opacity duration-300 ${
+                  isActive ? "opacity-100" : "opacity-90 md:hidden"
+                }`}>
+                  <span className="font-bold tracking-tight text-xl sm:text-2xl md:text-3xl text-brand-lavender drop-shadow-md block">
+                    {title}
                   </span>
-                )}
+                </span>
               </motion.button>
             );
           })}
         </div>
 
-        {/* 4 Bottom Dots Indicator */}
-        <div className="mt-10 sm:mt-12 flex items-center justify-center">
+        {/* Bottom Dots Indicator (Desktop accordion indicator) */}
+        <div className="hidden md:flex mt-10 sm:mt-12 items-center justify-center">
           <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/[0.04] backdrop-blur-md shadow-lg">
             {SERVICES_DATA.map((_, idx) => (
               <button

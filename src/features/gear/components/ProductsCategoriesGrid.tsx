@@ -152,7 +152,7 @@ export function ProductsCategoriesGrid({
                 key={cat.id}
                 type="button"
                 onClick={() => onSelectCategory(cat.filterValue)}
-                className="text-left w-full focus:outline-none"
+                className="text-start w-full focus:outline-none"
               >
                 {content}
               </button>
