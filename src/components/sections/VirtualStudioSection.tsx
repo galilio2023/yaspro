@@ -72,19 +72,20 @@ export function VirtualStudioSection() {
 
   // Keep playback time strictly synchronized between green and 3D streams in wipe mode
   useEffect(() => {
+    if (viewMode !== "wipe") return;
     const vGreen = greenVideoRef.current;
     const v3D = virtualVideoRef.current;
     if (!vGreen || !v3D) return;
 
     const handleSync = () => {
-      if (Math.abs(vGreen.currentTime - v3D.currentTime) > 0.08) {
+      if (!v3D.seeking && Math.abs(vGreen.currentTime - v3D.currentTime) > 0.25) {
         v3D.currentTime = vGreen.currentTime;
       }
     };
 
     vGreen.addEventListener("timeupdate", handleSync);
     return () => vGreen.removeEventListener("timeupdate", handleSync);
-  }, []);
+  }, [viewMode]);
 
   // Pause auto-sweep when section is off screen
   useEffect(() => {
@@ -327,8 +328,8 @@ export function VirtualStudioSection() {
                     <Layers size={16} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-white font-mono">200 sqm Cyclorama</div>
-                    <div className="text-[11px] text-zinc-400">Physical Green Soundstage</div>
+                    <div className="text-xs font-bold text-white font-mono">{t("virtualStudio.cycloramaTitle")}</div>
+                    <div className="text-[11px] text-zinc-400">{t("virtualStudio.cycloramaDesc")}</div>
                   </div>
                 </div>
 
@@ -337,8 +338,8 @@ export function VirtualStudioSection() {
                     <Zap size={16} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-white font-mono">Unreal Engine 5.4</div>
-                    <div className="text-[11px] text-zinc-400">Live Real-time Keying</div>
+                    <div className="text-xs font-bold text-white font-mono">{t("virtualStudio.unrealTitle")}</div>
+                    <div className="text-[11px] text-zinc-400">{t("virtualStudio.unrealDesc")}</div>
                   </div>
                 </div>
               </div>
@@ -436,6 +437,7 @@ export function VirtualStudioSection() {
                 {viewMode === "green" && (
                   <div className="absolute inset-0 size-full">
                     <video
+                      ref={greenVideoRef}
                       src={VIRTUAL_HERO_SCENE.greenVideoSrc}
                       autoPlay
                       loop
@@ -450,6 +452,7 @@ export function VirtualStudioSection() {
                 {viewMode === "virtual" && (
                   <div className="absolute inset-0 size-full">
                     <video
+                      ref={virtualVideoRef}
                       src={VIRTUAL_HERO_SCENE.virtualVideoSrc}
                       autoPlay
                       loop
@@ -504,7 +507,7 @@ export function VirtualStudioSection() {
                   <button
                     onClick={() => setIsPlaying(!isPlaying)}
                     className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-white transition-all flex items-center gap-1.5 cursor-pointer font-medium"
-                    title={isPlaying ? "Pause Video" : "Play Video"}
+                    title={isPlaying ? t("virtualStudio.pauseVideo") : t("virtualStudio.playVideo")}
                   >
                     {isPlaying ? <Pause size={12} className="text-purple-300" /> : <Play size={12} className="text-purple-300" />}
                     <span>{isPlaying ? (isArabic ? "إيقاف" : "Pause") : (isArabic ? "تشغيل" : "Play")}</span>
@@ -514,7 +517,7 @@ export function VirtualStudioSection() {
                   <button
                     onClick={() => setIsMuted(!isMuted)}
                     className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-white transition-all flex items-center gap-1.5 cursor-pointer font-medium"
-                    title={isMuted ? "Unmute Audio" : "Mute Audio"}
+                    title={isMuted ? t("virtualStudio.unmuteAudio") : t("virtualStudio.muteAudio")}
                   >
                     {isMuted ? <VolumeX size={13} className="text-zinc-400" /> : <Volume2 size={13} className="text-purple-300" />}
                     <span>{isMuted ? (isArabic ? "مكتوم" : "Muted") : (isArabic ? "صوت مفعّل" : "Audio On")}</span>

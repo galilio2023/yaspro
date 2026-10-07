@@ -57,7 +57,15 @@
     "liveGenlock": "GENLOCK 120 FPS",
     "latency": "LATENCY 2.1ms",
     "hdrPipeline": "10-BIT HDR REALTIME PIPELINE",
-    "tracking": "TRACKING: MO-SYS OPTICAL"
+    "tracking": "TRACKING: MO-SYS OPTICAL",
+    "cycloramaTitle": "200 sqm Cyclorama",
+    "cycloramaDesc": "Physical Green Soundstage",
+    "unrealTitle": "Unreal Engine 5.4",
+    "unrealDesc": "Live Real-time Keying",
+    "playVideo": "Play Video",
+    "pauseVideo": "Pause Video",
+    "muteAudio": "Mute Audio",
+    "unmuteAudio": "Unmute Audio"
   },
   "portfolio": {
     "badge": "Government & Enterprise Portfolio",
