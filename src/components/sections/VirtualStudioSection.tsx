@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -20,51 +20,57 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { VIRTUAL_HERO_SCENE } from "./virtual-studio.data";
 
-type DisplayMode = "split" | "green" | "virtual";
+type ViewMode = "split-native" | "wipe" | "green" | "virtual";
 
 export function VirtualStudioSection() {
   const { t, isArabic } = useLanguage();
+  const [viewMode, setViewMode] = useState<ViewMode>("split-native");
   const [sliderPosition, setSliderPosition] = useState<number>(50); // 0 to 100 percentage
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const [isMuted, setIsMuted] = useState<boolean>(true);
   const [isAutoWiping, setIsAutoWiping] = useState<boolean>(false);
   const [isSectionVisible, setIsSectionVisible] = useState<boolean>(true);
-  const [isMuted, setIsMuted] = useState<boolean>(true);
-  const [isPlaying, setIsPlaying] = useState<boolean>(true);
-  const [displayMode, setDisplayMode] = useState<DisplayMode>("split");
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const nativeSplitVideoRef = useRef<HTMLVideoElement>(null);
   const greenVideoRef = useRef<HTMLVideoElement>(null);
   const virtualVideoRef = useRef<HTMLVideoElement>(null);
 
   const isDraggingRef = useRef<boolean>(false);
   const rafDragRef = useRef<number | null>(null);
 
-  // Sync play / pause state across both video streams
+  // Synchronize play / pause across all video elements
   useEffect(() => {
-    const vGreen = greenVideoRef.current;
-    const v3D = virtualVideoRef.current;
-    if (!vGreen || !v3D) return;
+    const videos = [
+      nativeSplitVideoRef.current,
+      greenVideoRef.current,
+      virtualVideoRef.current,
+    ].filter(Boolean) as HTMLVideoElement[];
 
-    if (isPlaying) {
-      if (vGreen.paused) vGreen.play().catch(() => {});
-      if (v3D.paused) v3D.play().catch(() => {});
-    } else {
-      if (!vGreen.paused) vGreen.pause();
-      if (!v3D.paused) v3D.pause();
+    videos.forEach((v) => {
+      if (isPlaying) {
+        if (v.paused) v.play().catch(() => {});
+      } else {
+        if (!v.paused) v.pause();
+      }
+    });
+  }, [isPlaying, viewMode]);
+
+  // Synchronize audio mute (only primary active video produces sound to avoid echo)
+  useEffect(() => {
+    if (nativeSplitVideoRef.current) {
+      nativeSplitVideoRef.current.muted = viewMode === "split-native" ? isMuted : true;
     }
-  }, [isPlaying]);
-
-  // Sync mute state (vGreen has master sound, v3D stays muted to prevent phase echo)
-  useEffect(() => {
     if (greenVideoRef.current) {
-      greenVideoRef.current.muted = isMuted;
+      greenVideoRef.current.muted = (viewMode === "wipe" || viewMode === "green") ? isMuted : true;
     }
     if (virtualVideoRef.current) {
-      virtualVideoRef.current.muted = true;
+      virtualVideoRef.current.muted = viewMode === "virtual" ? isMuted : true;
     }
-  }, [isMuted]);
+  }, [isMuted, viewMode]);
 
-  // Keep playback time strictly synchronized between green and 3D streams
+  // Keep playback time strictly synchronized between green and 3D streams in wipe mode
   useEffect(() => {
     const vGreen = greenVideoRef.current;
     const v3D = virtualVideoRef.current;
@@ -80,7 +86,7 @@ export function VirtualStudioSection() {
     return () => vGreen.removeEventListener("timeupdate", handleSync);
   }, []);
 
-  // Pause animations when section is out of viewport
+  // Pause auto-sweep when section is off screen
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
@@ -95,9 +101,9 @@ export function VirtualStudioSection() {
     return () => observer.disconnect();
   }, []);
 
-  // Smooth automatic back-and-forth wipe simulation
+  // Smooth automatic back-and-forth wipe animation
   useEffect(() => {
-    if (!isAutoWiping || !isSectionVisible || displayMode !== "split") return;
+    if (!isAutoWiping || !isSectionVisible || viewMode !== "wipe") return;
     let animId: number;
     let angle = 0;
     let lastTime = performance.now();
@@ -113,10 +119,10 @@ export function VirtualStudioSection() {
 
     animId = requestAnimationFrame(sweep);
     return () => cancelAnimationFrame(animId);
-  }, [isAutoWiping, isSectionVisible, displayMode]);
+  }, [isAutoWiping, isSectionVisible, viewMode]);
 
-  // Drag interaction calculation
-  const updateSliderFromClientX = (clientX: number) => {
+  // Drag interaction handler for wipe mode
+  const updateSliderFromClientX = useCallback((clientX: number) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const offsetX = clientX - rect.left;
@@ -126,10 +132,10 @@ export function VirtualStudioSection() {
     rafDragRef.current = requestAnimationFrame(() => {
       setSliderPosition(Math.round(percentage * 10) / 10);
     });
-  };
+  }, []);
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (displayMode !== "split") return;
+    if (viewMode !== "wipe") return;
     e.preventDefault();
     isDraggingRef.current = true;
     setIsAutoWiping(false);
@@ -137,7 +143,7 @@ export function VirtualStudioSection() {
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (displayMode !== "split") return;
+    if (viewMode !== "wipe") return;
     if (e.touches[0]) {
       isDraggingRef.current = true;
       setIsAutoWiping(false);
@@ -179,10 +185,7 @@ export function VirtualStudioSection() {
       window.removeEventListener("touchend", handleTouchEnd);
       if (rafDragRef.current) cancelAnimationFrame(rafDragRef.current);
     };
-  }, []);
-
-  // Effective visual split position depending on display mode
-  const effectiveSplit = displayMode === "green" ? 100 : displayMode === "virtual" ? 0 : sliderPosition;
+  }, [updateSliderFromClientX]);
 
   return (
     <section
@@ -230,43 +233,63 @@ export function VirtualStudioSection() {
               </p>
             </FadeUp>
 
-            {/* Mode Selector Tabs (For credibility: Compare Split / 100% Green / 100% 3D) */}
+            {/* View Mode Selector Tabs (Native 50/50 Reel | Interactive Wipe | Full Green | Full 3D) */}
             <FadeUp delay={0.1}>
               <div className="pt-2">
                 <div className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 mb-2 flex items-center gap-1.5">
                   <span className="size-1.5 rounded-full bg-brand-mauve" />
-                  <span>{isArabic ? "أوضاع الاستعراض والتحقق المباشر:" : "Verification & Preview Modes:"}</span>
+                  <span>{isArabic ? "أوضاع الاستعراض والتحقق المباشر:" : "Verification & Stage Modes:"}</span>
                 </div>
                 <div
                   role="tablist"
-                  className="flex items-center gap-2 p-1.5 rounded-xl bg-zinc-900/90 border border-white/10 w-fit backdrop-blur-md"
+                  className="flex items-center gap-1.5 p-1.5 rounded-xl bg-zinc-900/90 border border-white/10 w-fit backdrop-blur-md flex-wrap"
                 >
+                  {/* Mode 1: Authentic 50/50 Yas Reel (Both actors fully visible) */}
                   <button
                     role="tab"
-                    aria-selected={displayMode === "split"}
+                    aria-selected={viewMode === "split-native"}
                     onClick={() => {
-                      setDisplayMode("split");
+                      setViewMode("split-native");
+                      setIsAutoWiping(false);
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      viewMode === "split-native"
+                        ? "bg-purple-600 text-white shadow-md shadow-purple-900/50"
+                        : "text-zinc-400 hover:text-white"
+                    }`}
+                  >
+                    <span className="size-2 rounded-full bg-purple-300" />
+                    <span>{isArabic ? "بث الاستوديو 50/50" : "50/50 Split Reel"}</span>
+                  </button>
+
+                  {/* Mode 2: Interactive Wipe Slider */}
+                  <button
+                    role="tab"
+                    aria-selected={viewMode === "wipe"}
+                    onClick={() => {
+                      setViewMode("wipe");
                       setSliderPosition(50);
                     }}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                      displayMode === "split"
-                        ? "bg-purple-600/90 text-white shadow-md shadow-purple-900/40"
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      viewMode === "wipe"
+                        ? "bg-purple-600 text-white shadow-md shadow-purple-900/50"
                         : "text-zinc-400 hover:text-white"
                     }`}
                   >
                     <SplitSquareVertical size={13} />
-                    <span>{t("virtualStudio.split5050")}</span>
+                    <span>{isArabic ? "سلايدر المقارنة" : "Compare Wipe"}</span>
                   </button>
 
+                  {/* Mode 3: 100% Green Cyclorama */}
                   <button
                     role="tab"
-                    aria-selected={displayMode === "green"}
+                    aria-selected={viewMode === "green"}
                     onClick={() => {
-                      setDisplayMode("green");
+                      setViewMode("green");
                       setIsAutoWiping(false);
                     }}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                      displayMode === "green"
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      viewMode === "green"
                         ? "bg-emerald-600 text-white shadow-md shadow-emerald-950/50"
                         : "text-zinc-400 hover:text-white"
                     }`}
@@ -275,15 +298,16 @@ export function VirtualStudioSection() {
                     <span>{t("virtualStudio.greenStage100")}</span>
                   </button>
 
+                  {/* Mode 4: 100% 3D Virtual World */}
                   <button
                     role="tab"
-                    aria-selected={displayMode === "virtual"}
+                    aria-selected={viewMode === "virtual"}
                     onClick={() => {
-                      setDisplayMode("virtual");
+                      setViewMode("virtual");
                       setIsAutoWiping(false);
                     }}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                      displayMode === "virtual"
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      viewMode === "virtual"
                         ? "bg-indigo-600 text-white shadow-md shadow-indigo-950/50"
                         : "text-zinc-400 hover:text-white"
                     }`}
@@ -304,7 +328,7 @@ export function VirtualStudioSection() {
                   </div>
                   <div>
                     <div className="text-xs font-bold text-white font-mono">200 sqm Cyclorama</div>
-                    <div className="text-[11px] text-zinc-400">Chroma Green Soundstage</div>
+                    <div className="text-[11px] text-zinc-400">Physical Green Soundstage</div>
                   </div>
                 </div>
 
@@ -332,7 +356,7 @@ export function VirtualStudioSection() {
             </FadeUp>
           </div>
 
-          {/* ─── RIGHT COLUMN: THE TRUE BEFORE/AFTER VIDEO COMPARISON SLIDER ─── */}
+          {/* ─── RIGHT COLUMN: THE HERO VIEWPORT ─── */}
           <div className="lg:col-span-7 flex flex-col space-y-3">
             <FadeUp delay={0.1}>
               <div
@@ -340,50 +364,103 @@ export function VirtualStudioSection() {
                 ref={containerRef}
                 onMouseDown={handleMouseDown}
                 onTouchStart={handleTouchStart}
-                className="relative w-full aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden border border-white/15 bg-zinc-950 shadow-2xl shadow-purple-950/40 select-none group cursor-ew-resize"
+                className={`relative w-full aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden border border-white/15 bg-zinc-950 shadow-2xl shadow-purple-950/40 select-none group ${
+                  viewMode === "wipe" ? "cursor-ew-resize" : "cursor-default"
+                }`}
               >
-                {/* 1. BACKGROUND LAYER: 100% UNREAL 5.4 3D VIRTUAL STAGE */}
-                <div className="absolute inset-0 size-full pointer-events-none">
-                  <video
-                    ref={virtualVideoRef}
-                    src={VIRTUAL_HERO_SCENE.virtualVideoSrc}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="size-full object-cover"
-                  />
-                </div>
+                {/* ── CASE 1: NATIVE AUTHENTIC 50/50 REEL (Both Actors Clearly Visible) ── */}
+                {viewMode === "split-native" && (
+                  <div className="absolute inset-0 size-full">
+                    <video
+                      ref={nativeSplitVideoRef}
+                      src={VIRTUAL_HERO_SCENE.splitVideoSrc}
+                      autoPlay
+                      loop
+                      muted={isMuted}
+                      playsInline
+                      className="size-full object-cover"
+                    />
+                    {/* Glowing split seam line */}
+                    <div
+                      className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[2px] bg-gradient-to-b from-purple-300 via-white to-purple-400 pointer-events-none z-20 shadow-[0_0_12px_rgba(192,132,252,0.9)]"
+                      aria-hidden="true"
+                    />
+                  </div>
+                )}
 
-                {/* 2. FOREGROUND LAYER: PHYSICAL GREEN SCREEN STAGE CLIPPED BY SLIDER */}
-                <div
-                  className="absolute inset-0 size-full pointer-events-none transition-[clip-path] duration-75"
-                  style={{ clipPath: `inset(0% ${100 - effectiveSplit}% 0% 0%)` }}
-                >
-                  <video
-                    ref={greenVideoRef}
-                    src={VIRTUAL_HERO_SCENE.greenVideoSrc}
-                    autoPlay
-                    loop
-                    muted={isMuted}
-                    playsInline
-                    className="size-full object-cover"
-                  />
-                </div>
+                {/* ── CASE 2: INTERACTIVE WIPE SLIDER (Dual Synchronized Streams) ── */}
+                {viewMode === "wipe" && (
+                  <div className="absolute inset-0 size-full">
+                    {/* 3D Virtual Stage in background */}
+                    <div className="absolute inset-0 size-full pointer-events-none">
+                      <video
+                        ref={virtualVideoRef}
+                        src={VIRTUAL_HERO_SCENE.virtualVideoSrc}
+                        autoPlay
+                        loop
+                        muted={true}
+                        playsInline
+                        className="size-full object-cover"
+                      />
+                    </div>
 
-                {/* 3. INTERACTIVE SLIDER DIVIDER (Active in Split Mode) */}
-                {displayMode === "split" && (
-                  <div
-                    className="absolute top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-300 via-white to-purple-400 z-20 pointer-events-none"
-                    style={{ left: `${sliderPosition}%` }}
-                  >
-                    <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-9 rounded-full bg-zinc-900 border-2 border-purple-400 shadow-xl shadow-purple-950/80 flex items-center justify-center text-purple-200 group-hover:scale-110 transition-transform">
-                      <SplitSquareVertical size={16} />
+                    {/* Green Stage in foreground clipped by slider */}
+                    <div
+                      className="absolute inset-0 size-full pointer-events-none transition-[clip-path] duration-75"
+                      style={{ clipPath: `inset(0% ${100 - sliderPosition}% 0% 0%)` }}
+                    >
+                      <video
+                        ref={greenVideoRef}
+                        src={VIRTUAL_HERO_SCENE.greenVideoSrc}
+                        autoPlay
+                        loop
+                        muted={isMuted}
+                        playsInline
+                        className="size-full object-cover"
+                      />
+                    </div>
+
+                    {/* Draggable Divider Handle */}
+                    <div
+                      className="absolute top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-300 via-white to-purple-400 z-20 pointer-events-none"
+                      style={{ left: `${sliderPosition}%` }}
+                    >
+                      <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-9 rounded-full bg-zinc-900 border-2 border-purple-400 shadow-xl shadow-purple-950/80 flex items-center justify-center text-purple-200 group-hover:scale-110 transition-transform">
+                        <SplitSquareVertical size={16} />
+                      </div>
                     </div>
                   </div>
                 )}
 
-                {/* 4. TOP BROADCAST HUD BADGES */}
+                {/* ── CASE 3: 100% GREEN SOUNDSTAGE ── */}
+                {viewMode === "green" && (
+                  <div className="absolute inset-0 size-full">
+                    <video
+                      src={VIRTUAL_HERO_SCENE.greenVideoSrc}
+                      autoPlay
+                      loop
+                      muted={isMuted}
+                      playsInline
+                      className="size-full object-cover"
+                    />
+                  </div>
+                )}
+
+                {/* ── CASE 4: 100% 3D VIRTUAL WORLD ── */}
+                {viewMode === "virtual" && (
+                  <div className="absolute inset-0 size-full">
+                    <video
+                      src={VIRTUAL_HERO_SCENE.virtualVideoSrc}
+                      autoPlay
+                      loop
+                      muted={isMuted}
+                      playsInline
+                      className="size-full object-cover"
+                    />
+                  </div>
+                )}
+
+                {/* TOP BROADCAST HUD BADGES */}
                 <div className="absolute top-3 left-3 pointer-events-none flex items-center gap-2 z-30">
                   <div className="flex items-center gap-2 bg-black/80 backdrop-blur-md px-3 py-1 rounded-full border border-emerald-500/30 text-[10px] sm:text-xs font-mono text-emerald-400 font-latin">
                     <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -402,7 +479,7 @@ export function VirtualStudioSection() {
                   </div>
                 </div>
 
-                {/* 5. BOTTOM TELEMETRY BAR */}
+                {/* BOTTOM TELEMETRY BAR */}
                 <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none text-[9px] sm:text-[11px] font-mono text-white/80 bg-black/85 backdrop-blur-md px-3.5 py-1.5 sm:py-2 rounded-xl border border-white/10 font-latin z-30">
                   <div className="flex items-center gap-3 sm:gap-4">
                     <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
@@ -443,8 +520,8 @@ export function VirtualStudioSection() {
                     <span>{isMuted ? (isArabic ? "مكتوم" : "Muted") : (isArabic ? "صوت مفعّل" : "Audio On")}</span>
                   </button>
 
-                  {/* Auto-Sweep (Split mode only) */}
-                  {displayMode === "split" && (
+                  {/* Auto-Sweep (Wipe mode only) */}
+                  {viewMode === "wipe" && (
                     <button
                       onClick={() => setIsAutoWiping(!isAutoWiping)}
                       className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer font-medium ${
@@ -459,13 +536,20 @@ export function VirtualStudioSection() {
                   )}
                 </div>
 
-                {/* Slider Drag Hint */}
-                {displayMode === "split" && (
-                  <div className="hidden sm:flex items-center gap-1.5 text-zinc-400 text-[11px] font-mono">
-                    <SplitSquareVertical size={12} className="text-purple-300" />
-                    <span>{t("virtualStudio.dragPrompt")}</span>
-                  </div>
-                )}
+                {/* Prompt or info note */}
+                <div className="flex items-center gap-2 text-zinc-400 text-[11px] font-mono">
+                  {viewMode === "wipe" ? (
+                    <>
+                      <SplitSquareVertical size={12} className="text-purple-300" />
+                      <span>{t("virtualStudio.dragPrompt")}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="size-1.5 rounded-full bg-emerald-400" />
+                      <span>{isArabic ? "بث استوديو مباشر: كروما + بيئة ثلاثية الأبعاد" : "Authentic Studio: Live Chroma + 3D Composite"}</span>
+                    </>
+                  )}
+                </div>
               </div>
             </FadeUp>
           </div>

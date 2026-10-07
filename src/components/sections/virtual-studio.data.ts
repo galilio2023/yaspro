@@ -5,9 +5,9 @@ export interface VirtualStudioScene {
   description: string;
   badge: string;
   badgeColor: string;
-  videoSrc: string;
-  greenVideoSrc: string;
-  virtualVideoSrc: string;
+  splitVideoSrc: string;   // The authentic 50/50 split reel from yasproductions.com
+  greenVideoSrc: string;   // Full green screen stage video (ready to swap with full reel)
+  virtualVideoSrc: string; // Full 3D virtual environment video (ready to swap with full reel)
   lightingType: string;
   trackingEngine: string;
 }
@@ -19,7 +19,7 @@ export const VIRTUAL_HERO_SCENE: VirtualStudioScene = {
   description: "Authentic Yas Pro studio production demonstrating live camera green-screen capture against the real-time Unreal Engine 3D virtual environment with show presenters.",
   badge: "Unreal 5.4 Live Composite",
   badgeColor: "#10b981",
-  videoSrc: "/videos/grading/virtual-studio-split-reel.mp4",
+  splitVideoSrc: "/videos/grading/virtual-studio-split-reel.mp4",
   greenVideoSrc: "/videos/grading/virtual-green-stage.mp4",
   virtualVideoSrc: "/videos/grading/virtual-3d-stage.mp4",
   lightingType: "Studio Key Light + Virtual City Skyline Rim",
