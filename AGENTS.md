@@ -21,3 +21,13 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - DO NOT use Tailwind logical properties like `end-4` or `end-6` on floating button parent containers, as they flip to the left in RTL mode.
 - Floating menus, flyouts, and WhatsApp concierge dialogs must remain anchored at `right-0`, opening smoothly from the right side across all toggles and languages.
 
+## 3. Brand Identity & Vector Geometry Integrity (YASPRO & [O] Aperture)
+- **Wordmark Typography**: The letter `A` in `YASPRO` MUST ALWAYS use the authentic brand geometric delta triangle (`▲`) with rounded apex corners and horizontal base cut defined in `src/components/ui/yasprVectorPath.ts`. DO NOT replace it with standard sans-serif text or standard font letters.
+- **Favicon & App Icons**: All favicon and app icon assets (`favicon.ico`, `favicon.svg`, `apple-touch-icon.png`, `icon-*.png`) represent the brand's circular camera aperture `[O]` with obsidian blades and `#FFE900` accent blade. Outside the circular aperture perimeter, the background MUST ALWAYS be 100% transparent (`RGBA(0, 0, 0, 0)`). Never generate square or white backgrounds.
+
+## 4. Global App Loader Architecture
+- `GlobalPageLoader.tsx` and `YasproAnimatedLoader.tsx` rely on pure CSS GPU keyframes (`animation-fill-mode: both`) to prevent SSR hydration flashes.
+- Do NOT revert the initial entrance animation to unstyled inline Framer Motion variants that can flash unmasked letters prior to React hydration.
+- The entrance timer must remain at 2.2s for first load / full refresh with organic breathing before exiting.
+
+

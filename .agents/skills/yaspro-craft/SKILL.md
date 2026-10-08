@@ -92,4 +92,13 @@ export const studioSprings = {
   - **Navbar & Footer Invariance**: Under NO circumstance should toggling languages flip or reverse `Navbar`, `Footer`, `MobileNavDrawer`, or `BrandLogo`. They must ALWAYS stay strictly anchored in physical `dir="ltr"` so branding, logos, and actions never mirror.
   - **Floating Action Buttons**: The floating action buttons (`UnifiedFloatingActions`, `FloatingCopilotButton`, WhatsApp concierge) MUST ALWAYS remain anchored at physical `right-4 sm:right-6` (`right-0` for flyouts) with `dir="ltr"`. Never use `end-4` or `end-6` on floating button shells, which would flip them to the left side in Arabic.
   - Strict WCAG 2.1 AA text contrast on all dark surfaces.
+-
+-## 7. Brand Geometry & Loader / Favicon Standards
+-- **Wordmark `A` Delta Glyph**: The letter `A` in `YASPRO` is an authentic geometric delta triangle (`▲`) with rounded apex corners and horizontal base line (refer to Section 2.2 of brand guidelines and vector path in `src/components/ui/yasprVectorPath.ts`). Never replace it with generic font glyphs.
+-- **Global App Loader (`GlobalPageLoader.tsx`, `YasproAnimatedLoader.tsx`)**:
+-  - Uses pure CSS GPU keyframes (`animation-fill-mode: both`) for letter unmasking to eliminate SSR hydration lag and flash of unmasked text.
+-  - Entrance duration is calibrated to 2.2s on initial app initialize/refresh with subtle organic breathing before smooth exit easing (`0.38s`).
+-- **Favicon & Brand Icon Suite (`[O]` Aperture)**:
+-  - Replicates the circular camera aperture `[O]` with dark obsidian blades, crisp seams, and glowing golden yellow blade (`#FFE900`).
+-  - Outside the aperture circle, the canvas MUST ALWAYS have true alpha transparency `RGBA(0, 0, 0, 0)` across all icon formats (`.ico`, `.svg`, `.png`). Never permit white corners or opaque bounding boxes.
 
