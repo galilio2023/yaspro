@@ -938,7 +938,6 @@ test('reload restoration stops after navigation, including return to the initial
   const hooks = { ...harness.hooks, useLayoutEffect: harness.hooks.useEffect };
   const { SmoothScrollProvider } = loadSource('src/components/providers/SmoothScrollProvider.tsx', {
     react: hooks, 'next/navigation': { usePathname: () => pathname },
-    '@/components/ui/CustomCinemaCursor': { CustomCinemaCursor: 'Cursor' },
   }, {
     window, performance: { getEntriesByType: () => [{ type: 'reload' }] },
     sessionStorage: { getItem: () => '450', removeItem() {} },
