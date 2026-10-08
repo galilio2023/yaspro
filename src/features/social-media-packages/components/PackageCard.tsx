@@ -129,7 +129,7 @@ export function PackageCard({ pkg, billingInterval, onSelect }: PackageCardProps
             isGrowth
               ? "bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-lg shadow-amber-400/20 font-black"
               : isPremium
-              ? "bg-white hover:bg-zinc-200 text-slate-950 font-black shadow-lg shadow-white/10"
+              ? "bg-amber-400/15 hover:bg-amber-400/25 text-amber-400 border border-amber-400/40 font-bold shadow-lg shadow-amber-400/10"
               : "bg-white/[0.08] hover:bg-white/[0.14] text-white border border-white/15"
           }`}
         >

@@ -58,7 +58,7 @@ export function BillingToggle({ billingInterval, onChange }: BillingToggleProps)
           onClick={() => onChange("monthly")}
           className={`relative z-10 px-5 sm:px-7 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-colors duration-200 cursor-pointer ${
             billingInterval === "monthly"
-              ? "text-slate-950"
+              ? "text-white"
               : "text-zinc-400 hover:text-white"
           }`}
           aria-pressed={billingInterval === "monthly"}
@@ -67,7 +67,7 @@ export function BillingToggle({ billingInterval, onChange }: BillingToggleProps)
             <motion.div
               layoutId="billing-pill-active"
               transition={{ type: "spring", stiffness: 450, damping: 30 }}
-              className="absolute inset-0 bg-white rounded-full shadow-lg shadow-white/20"
+              className="absolute inset-0 bg-white/[0.12] border border-white/20 rounded-full shadow-lg backdrop-blur-md"
             />
           )}
           <span className="relative z-10 font-black tracking-tight">
