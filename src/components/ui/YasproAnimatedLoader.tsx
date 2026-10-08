@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import React, { useId } from "react";
+import { motion, useReducedMotion, type Transition } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export interface YasproAnimatedLoaderProps {
@@ -18,12 +17,79 @@ const YAS_O_RING_PATH =
 const YAS_YELLOW_BLADE_PATH =
   "M 274,141 L 511,239 L 509,218 L 505,197 L 497,170 L 489,150 L 477,127 L 464,107 L 449,88 L 438,76 L 435,74 Z";
 
+/**
+ * Stage 1: The O swiftly rolls across X-axis and reveals Y-A-S-P-R.
+ */
+const ROLL_IN: Transition = { duration: 0.72, ease: [0.16, 1, 0.3, 1] };
+
+const LETTERS = "YASPR";
+
+const LETTER_CLASS =
+  "font-sans font-black leading-none tracking-tight bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent";
+
+function WordmarkLetters() {
+  return (
+    <span className="flex items-center">
+      <span className={LETTER_CLASS}>{LETTERS}</span>
+      {/* Spacer reserving the O slot */}
+      <span className="ml-[0.06em] size-[0.78em] shrink-0" />
+    </span>
+  );
+}
+
+/** The aperture "O" emblem */
+function ApertureO({ uid, spin }: { uid: string; spin: boolean }) {
+  return (
+    <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-full">
+      <defs>
+        <radialGradient id={`${uid}-halo`} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#1e1038" />
+          <stop offset="70%" stopColor="#090514" />
+          <stop offset="100%" stopColor="#030107" />
+        </radialGradient>
+        <linearGradient id={`${uid}-dark`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#1a1228" />
+          <stop offset="50%" stopColor="#0d0817" />
+          <stop offset="100%" stopColor="#140d20" />
+        </linearGradient>
+        <linearGradient id={`${uid}-yellow`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="25%" stopColor="#fff04d" />
+          <stop offset="60%" stopColor="#ffe900" />
+          <stop offset="100%" stopColor="#eab308" />
+        </linearGradient>
+      </defs>
+
+      <circle cx="256" cy="256" r="252" fill={`url(#${uid}-halo)`} stroke="rgba(168,85,247,0.45)" strokeWidth="6" />
+
+      {/* Rotating aperture iris */}
+      <motion.g
+        animate={spin ? { rotate: 360 } : undefined}
+        transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
+        style={{ transformOrigin: "256px 256px" }}
+      >
+        {/* White seams between the blades */}
+        <path d={YAS_O_RING_PATH} fill="#ffffff" stroke="#ffffff" strokeWidth="5" strokeLinejoin="round" fillRule="evenodd" />
+        {/* Dark blades */}
+        <path d={YAS_O_RING_PATH} fill={`url(#${uid}-dark)`} fillRule="evenodd" />
+        {/* Signature yellow blade */}
+        <path d={YAS_YELLOW_BLADE_PATH} stroke="#ffffff" strokeWidth="5" strokeLinejoin="round" />
+        <path d={YAS_YELLOW_BLADE_PATH} fill={`url(#${uid}-yellow)`} />
+      </motion.g>
+
+      <circle cx="256" cy="256" r="68" fill="#06020e" stroke="rgba(255,233,0,0.6)" strokeWidth="3" />
+      <circle cx="256" cy="256" r="38" fill="rgba(255,233,0,0.3)" />
+    </svg>
+  );
+}
+
 export function YasproAnimatedLoader({
   statusText,
   size = "fullscreen",
   className,
 }: YasproAnimatedLoaderProps) {
-  const shouldReduceMotion = useReducedMotion();
+  const reduce = !!useReducedMotion();
+  const uid = `yas-o-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
 
   const isFullscreen = size === "fullscreen";
   const isCompact = size === "compact";
@@ -33,7 +99,7 @@ export function YasproAnimatedLoader({
       dir="ltr"
       style={{ direction: "ltr" }}
       className={cn(
-        "flex flex-col items-center justify-center select-none font-sans",
+        "flex flex-col items-center justify-center select-none font-sans overflow-hidden",
         isFullscreen && "fixed inset-0 z-[9999] bg-[#070709]/95 backdrop-blur-2xl",
         className
       )}
@@ -41,215 +107,152 @@ export function YasproAnimatedLoader({
       aria-live="polite"
       aria-label={statusText || "Loading Yas Pro AI Media Hub"}
     >
-      {/* Background ambient stage glow */}
-      <div className="absolute pointer-events-none">
-        <div className="w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-brand-violet/20 blur-[120px] animate-pulse motion-reduce:animate-none" />
-        <div className="w-56 h-56 rounded-full bg-amber-400/15 blur-[90px]" />
+      {/* Background ambient stage glow with subtle organic breathing */}
+      <div className="absolute pointer-events-none" aria-hidden="true">
+        <motion.div
+          animate={
+            reduce
+              ? undefined
+              : {
+                  scale: [1, 1.15, 1],
+                  opacity: [0.2, 0.35, 0.2],
+                }
+          }
+          transition={{
+            duration: 2.2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="w-80 h-80 sm:w-[500px] sm:h-[500px] rounded-full bg-brand-violet/25 blur-[130px]"
+        />
+        <motion.div
+          animate={
+            reduce
+              ? undefined
+              : {
+                  scale: [1, 1.1, 1],
+                  opacity: [0.15, 0.28, 0.15],
+                }
+          }
+          transition={{
+            duration: 2.2,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.2,
+          }}
+          className="w-64 h-64 rounded-full bg-amber-400/20 blur-[100px]"
+        />
       </div>
 
-      {/* Main Container with subtle breathing motion */}
+      {/* ─── CINEMATIC ENTRANCE & ORGANIC BREATHING CONTAINER ───
+          1. The O glides across X-axis, rolling from left to right.
+          2. It forms YASPRO, docks as the O.
+          3. Once docked, the whole brand lockup breathes with a luxurious pulse! */}
       <motion.div
         animate={
-          shouldReduceMotion
+          reduce
             ? undefined
             : {
-                scale: [1, 1.04, 0.98, 1],
+                scale: [1, 1.035, 0.99, 1],
               }
         }
         transition={{
-          duration: 3.4,
+          duration: 2.2,
           repeat: Infinity,
           ease: "easeInOut",
+          delay: 0.75, // begins breathing right after docking
         }}
-        className="relative flex items-center justify-center"
+        className="relative flex flex-col items-center justify-center"
       >
-        {/* Animated Authentic Yas Pro "O" Favicon Emblem */}
+        {/* ─── WORDMARK: the O rolls left → right and "writes" Y-A-S-P-R, then docks as the final O ─── */}
         <div
+          aria-hidden="true"
           className={cn(
-            "relative z-10 flex items-center justify-center filter drop-shadow-[0_0_35px_rgba(255,233,0,0.3)]",
-            isCompact ? "size-16 sm:size-20" : "size-28 sm:size-36"
+            "relative inline-flex items-center",
+            isCompact ? "text-3xl sm:text-4xl" : "text-5xl sm:text-6xl md:text-7xl"
           )}
         >
-          <svg
-            viewBox="0 0 512 512"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="size-full overflow-visible"
+          {/* Invisible sizer: defines the exact width of the final "YASPRO" */}
+          <span className="invisible">
+            <WordmarkLetters />
+          </span>
+
+          {/* Reveal window: slides from -100% to 0% with overflow hidden; its right edge matches the O */}
+          <motion.div
+            className="absolute inset-0 overflow-hidden will-change-transform"
+            initial={reduce ? false : { x: "-100%" }}
+            animate={{ x: "0%" }}
+            transition={ROLL_IN}
           >
-            <defs>
-              {/* Backlight Halo behind the emblem */}
-              <radialGradient id="yas-emblem-halo" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#1e1038" stopOpacity="0.9" />
-                <stop offset="70%" stopColor="#090514" stopOpacity="0.98" />
-                <stop offset="100%" stopColor="#030107" stopOpacity="1" />
-              </radialGradient>
-
-              {/* Deep Cinema Dark Obsidian Shading for the O-ring blades */}
-              <linearGradient id="yas-ring-dark" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#1a1228" />
-                <stop offset="50%" stopColor="#0d0817" />
-                <stop offset="100%" stopColor="#140d20" />
-              </linearGradient>
-
-              {/* Radiant Yellow Shutter Blade Gradient */}
-              <linearGradient id="yas-yellow-blade-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#ffffff" />
-                <stop offset="25%" stopColor="#fff04d" />
-                <stop offset="60%" stopColor="#ffe900" />
-                <stop offset="100%" stopColor="#eab308" />
-              </linearGradient>
-
-              {/* Intense Neon Yellow Glow Filter */}
-              <filter id="yas-yellow-glow" x="-30%" y="-30%" width="160%" height="160%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur1" />
-                <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur2" />
-                <feMerge>
-                  <feMergeNode in="blur1" />
-                  <feMergeNode in="blur2" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-
-            {/* Backing Cinema Base Disc */}
-            <circle
-              cx="256"
-              cy="256"
-              r="252"
-              fill="url(#yas-emblem-halo)"
-              stroke="rgba(168, 85, 247, 0.4)"
-              strokeWidth="2"
-            />
-
-            {/* Precision Laser Outer Rim */}
-            <circle
-              cx="256"
-              cy="256"
-              r="244"
-              stroke="rgba(255, 255, 255, 0.15)"
-              strokeWidth="1.2"
-              strokeDasharray="4 6"
-            />
-
-            {/* ROTATING APERTURE GROUP */}
-            <motion.g
-              animate={shouldReduceMotion ? undefined : { rotate: 360 }}
-              transition={{ duration: 11, repeat: Infinity, ease: "linear" }}
-              style={{ transformOrigin: "256px 256px" }}
+            {/* Counter-translate keeps the letters steady on screen */}
+            <motion.div
+              className="absolute inset-0 flex items-center will-change-transform"
+              initial={reduce ? false : { x: "100%" }}
+              animate={{ x: "0%" }}
+              transition={ROLL_IN}
             >
-              {/* LAYER 1: Pure White Inner Base & Seams
-                  By stroking the O-ring path in crisp white with stroke-width,
-                  the dividing lines between every camera shutter blade shine in brilliant white! */}
-              <path
-                d={YAS_O_RING_PATH}
-                fill="#ffffff"
-                stroke="#ffffff"
-                strokeWidth="4"
-                strokeLinejoin="round"
-                fillRule="evenodd"
-              />
+              <WordmarkLetters />
+            </motion.div>
+          </motion.div>
 
-              {/* LAYER 2: Deep Dark Body of the O-ring Segments
-                  Layered cleanly on top, leaving the sharp, crisp white seams between the blades */}
-              <path
-                d={YAS_O_RING_PATH}
-                fill="url(#yas-ring-dark)"
-                fillRule="evenodd"
-              />
-
-              {/* LAYER 3: Signature Yellow Shutter Blade (Vibrant, Neon, Shining with White Seam Boundary) */}
-              <motion.g
+          {/* O track: moves across X-axis, O pinned to its right end */}
+          <motion.div
+            className="absolute inset-0 flex items-center justify-end pointer-events-none will-change-transform"
+            initial={reduce ? false : { x: "-100%" }}
+            animate={{ x: "0%" }}
+            transition={ROLL_IN}
+          >
+            <motion.span
+              className="relative block size-[0.78em] shrink-0 will-change-transform"
+              initial={reduce ? false : { rotate: -540, scale: 0.7, opacity: 0 }}
+              animate={{ rotate: 0, scale: 1, opacity: 1 }}
+              transition={{
+                ...ROLL_IN,
+                opacity: { duration: 0.12, ease: "linear" },
+              }}
+            >
+              {/* Soft yellow glow behind the O that pulses with the yellow blade */}
+              <motion.span
                 animate={
-                  shouldReduceMotion
+                  reduce
                     ? undefined
                     : {
-                        opacity: [0.94, 1, 0.9, 1],
-                        scale: [1, 1.025, 1],
+                        opacity: [0.6, 1, 0.6],
+                        scale: [1, 1.12, 1],
                       }
                 }
                 transition={{
-                  duration: 2,
+                  duration: 1.8,
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
-                style={{ transformOrigin: "256px 256px" }}
-              >
-                {/* Yellow Blade White Border Seam */}
-                <path
-                  d={YAS_YELLOW_BLADE_PATH}
-                  fill="none"
-                  stroke="#ffffff"
-                  strokeWidth="3.5"
-                  strokeLinejoin="round"
-                  fillRule="evenodd"
-                />
-
-                {/* Yellow Shutter Blade Body */}
-                <path
-                  d={YAS_YELLOW_BLADE_PATH}
-                  fill="url(#yas-yellow-blade-grad)"
-                  fillRule="evenodd"
-                  filter="url(#yas-yellow-glow)"
-                />
-              </motion.g>
-            </motion.g>
-
-            {/* Center Aperture Lens Hole */}
-            <circle
-              cx="256"
-              cy="256"
-              r="68"
-              fill="#06020e"
-              stroke="rgba(255, 233, 0, 0.6)"
-              strokeWidth="1.5"
-            />
-            {/* Center pulsing beacon */}
-            <motion.circle
-              cx="256"
-              cy="256"
-              r="40"
-              fill="rgba(255, 233, 0, 0.25)"
-              animate={
-                shouldReduceMotion
-                  ? undefined
-                  : {
-                      r: [35, 48, 35],
-                      opacity: [0.3, 0.8, 0.3],
-                    }
-              }
-              transition={{
-                duration: 2.2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-          </svg>
+                className="absolute -inset-[22%] rounded-full bg-yellow-400/30 blur-xl pointer-events-none"
+              />
+              <span className="relative block size-full">
+                <ApertureO uid={uid} spin={!reduce} />
+              </span>
+            </motion.span>
+          </motion.div>
         </div>
+
+        {/* Subtitle lands softly as the O docks */}
+        <motion.div
+          initial={reduce ? false : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: reduce ? 0 : 0.6, ease: "easeOut" }}
+          className="flex items-center gap-2 mt-3 text-[10px] sm:text-xs font-mono tracking-[0.25em] text-zinc-400 uppercase font-latin"
+        >
+          <span>MEDIA GROUP</span>
+          <span className="size-1 rounded-full bg-yellow-400" />
+          <span className="text-purple-300">AI HUB</span>
+        </motion.div>
       </motion.div>
 
-      {/* Brand Identity: Official Logo Image & Optional Status Text */}
-      <div className="relative z-10 flex flex-col items-center mt-6 text-center space-y-2">
-        <div className="relative shrink-0 flex items-center justify-center">
-          <span className="absolute -inset-2 rounded-2xl bg-brand-violet/20 blur-md pointer-events-none opacity-60" />
-          <Image
-            src="/images/group/yas-pro-media-group.png"
-            alt="YAS PRO Media Group"
-            width={isCompact ? 130 : 160}
-            height={isCompact ? 46 : 56}
-            priority
-            className={cn(
-              "relative z-10 w-auto object-contain filter brightness-100 drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]",
-              isCompact ? "h-8" : "h-10 sm:h-11"
-            )}
-          />
-        </div>
-
-        {statusText && (
-          <p className="text-xs font-mono uppercase tracking-widest text-zinc-400 animate-pulse font-latin">
-            {statusText}
-          </p>
-        )}
-      </div>
+      {statusText && (
+        <p className="text-xs font-mono uppercase tracking-widest text-zinc-400 mt-4 font-latin">
+          {statusText}
+        </p>
+      )}
     </div>
   );
 }

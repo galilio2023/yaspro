@@ -1,10 +1,5 @@
-import { GenericStudioSkeleton, LoadingFallbackStatus } from "@/components/ui/skeletons";
+import { YasproAnimatedLoader } from "@/components/ui/YasproAnimatedLoader";
 
 export default function Loading() {
-  return (
-    <>
-      <LoadingFallbackStatus label="Loading studio content..." />
-      <GenericStudioSkeleton />
-    </>
-  );
+  return <YasproAnimatedLoader size="fullscreen" />;
 }

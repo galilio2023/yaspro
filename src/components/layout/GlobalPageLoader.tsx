@@ -76,12 +76,13 @@ export function GlobalPageLoaderProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [isLoading, setIsLoading] = useState(false);
+  // Start with true on initial mount so first-time visitors see the cinematic Yaspro intro
+  const [isLoading, setIsLoading] = useState(true);
   const [customStatus, setCustomStatus] = useState<string | undefined>(undefined);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(25);
   const [, startTransition] = useTransition();
 
-  const loadStartTimeRef = useRef<number | null>(null);
+  const loadStartTimeRef = useRef<number | null>(Date.now());
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const dismissalTimerRef = useRef<NodeJS.Timeout | null>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -148,6 +149,15 @@ export function GlobalPageLoaderProvider({
     timerRef.current = setTimeout(() => {
       stopLoading();
     }, FAILSAFE_TIMEOUT_MS);
+  }, [stopLoading]);
+
+  // On first visit, give the user 1.5s to experience the cinematic brand formation & breathing pulse
+  useEffect(() => {
+    const initialDismiss = setTimeout(() => {
+      stopLoading();
+    }, 1500);
+
+    return () => clearTimeout(initialDismiss);
   }, [stopLoading]);
 
   // Cleanup timers on unmount
