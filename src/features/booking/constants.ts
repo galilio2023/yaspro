@@ -123,9 +123,12 @@ export const STUDIO_GEAR_PACKAGES: readonly StudioGearPackage[] = [
 export interface TurnkeyStudioPackage {
   id: string;
   name: string;
+  arabicName?: string;
   rate: number;
   description: string;
-  features: string[];
+  arabicDescription?: string;
+  features: readonly string[];
+  arabicFeatures?: readonly string[];
   isPopular?: boolean;
   includedHours: number;
   eligibleStudios: readonly string[];
@@ -135,11 +138,93 @@ export const TURNKEY_STUDIO_PACKAGES: readonly TurnkeyStudioPackage[] = [
   {
     id: "none",
     name: "Standard Soundstage Booking",
+    arabicName: "حجز استوديو قياسي",
     rate: 0,
     description: "Hourly stage rental with customized gear, crew, and post-production.",
+    arabicDescription: "تأجير بالساعة مع تخصيص المعدات وطاقم العمل والمونتاج حسب الحاجة.",
     features: ["Acoustically isolated room", "High-speed optical fiber feed", "Base stage access"],
+    arabicFeatures: ["غرفة معزولة صوتياً بالكامل", "اتصال فايبر عالي السرعة", "دخول قياسي للاستوديو"],
     includedHours: 0,
     eligibleStudios: [],
+  },
+  {
+    id: "creator-half-day",
+    name: "Creator Turnkey Half-Day",
+    arabicName: "باقة صناع المحتوى (نصف يوم)",
+    rate: 1600,
+    description: "4-hour broadcast lounge session with multi-cam 4K setup, Shure mics, and live audio mastering.",
+    arabicDescription: "جلسة 4 ساعات في جناح البودكاست مع تصوير 4K متعدد الكاميرات وميكروفونات شور وهندسة صوتية.",
+    features: [
+      "4 Hours in Podcast Suite or Daylight Room",
+      "Multi-camera 4K Sony FX6 coverage",
+      "Shure SM7B studio microphone array",
+      "Instant 10Gbps raw export at session wrap",
+      "Dedicated sound engineer on-set",
+    ],
+    arabicFeatures: [
+      "4 ساعات في جناح البودكاست أو استوديو الإضاءة الطبيعية",
+      "تصوير 4K بثلاث كاميرات Sony FX6",
+      "منظومة ميكروفونات Shure SM7B الاحترافية",
+      "تسليم المواد الخام فورياً بسرعة 10 جيجابت",
+      "مهندس صوت مخصص طوال الجلسة",
+    ],
+    isPopular: false,
+    includedHours: 4,
+    eligibleStudios: ["luminous-quartz", "nature-grid"],
+  },
+  {
+    id: "commercial-full-day",
+    name: "Commercial Production Day",
+    arabicName: "باقة الإنتاج التجاري (يوم كامل)",
+    rate: 4800,
+    description: "Full 8-hour soundstage lockout for TV commercials, brand campaigns, and fashion shoots.",
+    arabicDescription: "حجز حصري 8 ساعات للاستوديو لتصوير الإعلانات التجارية وحملات الأزياء والبرامج.",
+    features: [
+      "8 Hours Full Soundstage Lockout (Cyc / Stage A)",
+      "Aputure & SkyPanel motorized overhead lighting grid",
+      "Private VIP executive green room & dressing suite",
+      "Elephant door drive-in access for vehicles & cranes",
+      "Studio grip & electric equipment cart included",
+      "Dedicated studio stage manager",
+    ],
+    arabicFeatures: [
+      "حجز كامل 8 ساعات (السايكلو أو الاستوديو الرئيسي)",
+      "شبكة إضاءة علوية بمصابيح SkyPanel وAputure",
+      "غرفة كبار الشخصيات VIP وجناح مكياج وأزياء",
+      "بوابة دخول واسعة للسيارات ورافعات الكاميرا",
+      "عربة معدات الجريب والكهرباء السينمائية",
+      "مدير استوديو مخصص للمتابعة الميدانية",
+    ],
+    isPopular: true,
+    includedHours: 8,
+    eligibleStudios: ["earthy-sand", "classic-oak", "studio-xr"],
+  },
+  {
+    id: "xr-virtual-lockout",
+    name: "Virtual Production XR Tier",
+    arabicName: "باقة الإنتاج الافتراضي XR (270°)",
+    rate: 9800,
+    description: "10-hour full lockout in the 270° Micro-LED volume with Unreal Engine 5.4 LiveLink tracking.",
+    arabicDescription: "حجز كامل 10 ساعات في مسرح شاشات الليد 270 درجة مع محرك Unreal Engine وتتبع الكاميرا المباشر.",
+    features: [
+      "10 Hours in 270° Micro-LED Curved Stage",
+      "Mo-Sys StarTracker optical tracking calibrated",
+      "Dual RTX 6000 Ada nDisplay rendering cluster",
+      "On-site DIT & real-time color grading station",
+      "Tri-level master genlock sync with camera bodies",
+      "Full VIP hospitality suite & private hair/makeup bay",
+    ],
+    arabicFeatures: [
+      "10 ساعات كاملة في مسرح الليد المنحني 270 درجة",
+      "نظام تتبع الكاميرا البصري Mo-Sys StarTracker",
+      "محطات معالجة جرافيك RTX 6000 Ada nDisplay",
+      "محطة DIT لمعالجة وتدريج الألوان في الوقت الفعلي",
+      "مزامنة جينلوك كاملة مع الكاميرات السينمائية",
+      "جناح ضيافة VIP كامل وغرفة مكياج وتصفيف شعر خاصة",
+    ],
+    isPopular: false,
+    includedHours: 10,
+    eligibleStudios: ["studio-xr"],
   },
 ];
 

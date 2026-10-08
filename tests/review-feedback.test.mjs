@@ -938,7 +938,6 @@ test('reload restoration stops after navigation, including return to the initial
   const hooks = { ...harness.hooks, useLayoutEffect: harness.hooks.useEffect };
   const { SmoothScrollProvider } = loadSource('src/components/providers/SmoothScrollProvider.tsx', {
     react: hooks, 'next/navigation': { usePathname: () => pathname },
-    '@/components/ui/CustomCinemaCursor': { CustomCinemaCursor: 'Cursor' },
   }, {
     window, performance: { getEntriesByType: () => [{ type: 'reload' }] },
     sessionStorage: { getItem: () => '450', removeItem() {} },
@@ -975,3 +974,93 @@ for (const nationality of ['UAE', 'KSA', 'Egypt', 'Jordan', 'MENA', null]) {
     assert.equal(rowCount(), 1);
   });
 }
+
+test('booking rejects past dates at navigation and submission while preserving today and future dates', async () => {
+  const harness = hookHarness();
+  let now = new Date(2026, 9, 8, 23, 59);
+  class ClockDate extends Date {
+    constructor(...args) { super(...(args.length ? args : [now])); }
+  }
+  const submitted = [];
+  const { useBookingWizard } = loadSource('src/features/booking/hooks/useBookingWizard.ts', {
+    react: harness.hooks, 'next/navigation': { useSearchParams: () => null },
+    '@/lib/utils': {},
+    './catalog-data.json': require('../src/features/booking/catalog-data.json'),
+    '@/lib/actions': { createBooking: async (booking) => {
+      submitted.push(booking);
+      return { referenceCode: 'TEST' };
+    } },
+  }, { Date: ClockDate });
+  const render = () => harness.render(() => useBookingWizard([]));
+  render().update({ firstName: 'Test', lastName: 'Guest', email: 'test@example.com', phone: '123', date: '2026-10-07' });
+  render().nextStep();
+  assert.equal(render().step, 1);
+  assert.match(render().errorMessage, /today or a future/);
+  await render().handleSubmit();
+  assert.equal(submitted.length, 0);
+  for (const date of ['2026-10-08', '2026-10-09']) {
+    render().update({ date });
+    render().nextStep();
+    assert.equal(render().step, 2);
+    assert.equal(render().state.date, date);
+    await render().handleSubmit();
+    assert.ok(submitted.at(-1).scheduledAt.startsWith(date));
+    render().setStep(1);
+  }
+  render().update({ date: '2026-10-08' });
+  render().nextStep();
+  now = new Date(2026, 9, 9, 0, 1);
+  await render().handleSubmit();
+  assert.equal(submitted.length, 2);
+  assert.equal(render().step, 1);
+  assert.match(render().errorMessage, /today or a future/);
+});
+
+test('virtual studio respects reduced motion, explicit playback choices and visibility', () => {
+  for (const reducedMotion of [false, true]) {
+    const harness = hookHarness();
+    let visibility;
+    const video = { paused: true, play() { this.paused = false; return Promise.resolve(); }, pause() { this.paused = true; } };
+    const { VirtualStudioSection } = loadSource('src/components/sections/VirtualStudioSection.tsx', {
+      react: harness.hooks, 'next/link': 'Link',
+      'lucide-react': new Proxy({}, { get: (_, key) => key }),
+      '@/components/ui/container': { Container: 'Container' },
+      '@/components/providers/LanguageProvider': { useLanguage: () => ({ t: key => key }) },
+      '@/components/animations/MotionWrappers': { FadeUp: 'FadeUp' },
+    }, {
+      window: { matchMedia: () => ({ matches: reducedMotion }) },
+      IntersectionObserver: class {
+        constructor(callback) { visibility = callback; }
+        observe() {} disconnect() {}
+      },
+      performance: { now: () => 0 }, requestAnimationFrame: () => 1, cancelAnimationFrame() {},
+    });
+    const render = () => harness.render(() => VirtualStudioSection());
+    const toggle = tree => nodes(tree, n => n.type === 'button' && nodes(n, child =>
+      child.props?.children === 'virtualStudio.playVideo' || child.props?.children === 'virtualStudio.pauseVideo').length)[0];
+    const initial = render();
+    initial.props.ref.current = {};
+    nodes(initial, n => n.type === 'video')[0].props.ref.current = video;
+    harness.commit();
+    assert.equal(video.paused, true);
+    visibility([{ isIntersecting: true }]);
+    let tree = render(); harness.commit();
+    assert.equal(video.paused, reducedMotion);
+    if (reducedMotion) {
+      assert.equal(nodes(tree, n => n.type === 'video')[0].props.preload, 'auto');
+      toggle(tree).props.onClick();
+      tree = render(); harness.commit();
+      assert.equal(video.paused, false);
+    }
+    visibility([{ isIntersecting: false }]); render(); harness.commit();
+    assert.equal(video.paused, true);
+    visibility([{ isIntersecting: true }]); tree = render(); harness.commit();
+    assert.equal(video.paused, false);
+    toggle(tree).props.onClick(); render(); harness.commit();
+    assert.equal(video.paused, true);
+    visibility([{ isIntersecting: false }]); render(); harness.commit();
+    visibility([{ isIntersecting: true }]); render(); harness.commit();
+    assert.equal(video.paused, true);
+    harness.unmount();
+  }
+});

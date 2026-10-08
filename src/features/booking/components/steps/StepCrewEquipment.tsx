@@ -1,89 +1,72 @@
 "use client";
 
-import Image from "next/image";
+import { useState } from "react";
 import type { WizardStepProps } from "../../types";
 import { CREW_EQUIPMENT_ITEMS } from "../../constants";
+import { CardMedia, ChoiceChip, MetaTag, PriceLine, SelectableCard, StepIntro, TogglePill } from "../ui/BookingKit";
+
+const FILTERS = [
+  { id: "all", label: "All" },
+  { id: "crew", label: "Crew" },
+  { id: "equipment", label: "Equipment" },
+] as const;
 
 export function StepCrewEquipment({ state, update }: WizardStepProps) {
+  const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("all");
   const selectedIds = state.selectedCrewEquipmentIds || [];
 
   const handleToggle = (id: string) => {
-    if (selectedIds.includes(id)) {
-      update({
-        selectedCrewEquipmentIds: selectedIds.filter((item) => item !== id),
-      });
-    } else {
-      update({
-        selectedCrewEquipmentIds: [...selectedIds, id],
-      });
-    }
+    update({
+      selectedCrewEquipmentIds: selectedIds.includes(id)
+        ? selectedIds.filter((item) => item !== id)
+        : [...selectedIds, id],
+    });
   };
 
+  const items = filter === "all" ? CREW_EQUIPMENT_ITEMS : CREW_EQUIPMENT_ITEMS.filter((i) => i.category === filter);
+  const hasCategories = CREW_EQUIPMENT_ITEMS.some((i) => i.category === "crew") && CREW_EQUIPMENT_ITEMS.some((i) => i.category === "equipment");
+
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Crew &amp; Equipment</h2>
-        <p className="text-zinc-400 text-xs sm:text-sm mt-1">
-          Select professional crew members and equipment for your session
-        </p>
-      </div>
+    <div>
+      <StepIntro
+        index={4}
+        total={7}
+        title="Crew & Equipment"
+        description="Optional — add operators and camera, lighting or audio packages."
+        aside={<MetaTag tone={selectedIds.length ? "amber" : "neutral"}>{selectedIds.length} selected</MetaTag>}
+      />
+
+      {hasCategories && (
+        <div className="flex gap-1.5 mb-5">
+          {FILTERS.map((f) => (
+            <ChoiceChip key={f.id} selected={filter === f.id} onClick={() => setFilter(f.id)} className="px-4 rounded-full">
+              {f.label}
+            </ChoiceChip>
+          ))}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {CREW_EQUIPMENT_ITEMS.map((item) => {
+        {items.map((item) => {
           const isSelected = selectedIds.includes(item.id);
-
           return (
-            <div
-              key={item.id}
-              className={`rounded-2xl border overflow-hidden transition-all duration-200 flex flex-col justify-between ${
-                isSelected
-                  ? "bg-[#101422] border-[#7c3aed] ring-2 ring-[#7c3aed]/50 shadow-lg shadow-purple-900/20"
-                  : "bg-[#0d111a]/90 border-white/10 hover:border-white/25 hover:bg-[#131724]"
-              }`}
-            >
-              <div>
-                {/* Photo Banner */}
-                <div className="relative w-full h-32 sm:h-36 bg-zinc-900">
-                  <Image
-                    src={item.imageUrl}
-                    alt={item.title}
-                    fill
-                    unoptimized
-                    sizes="(max-width: 640px) 100vw, 50vw"
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d111a] via-transparent to-transparent" />
+            <SelectableCard key={item.id} selected={isSelected} onSelect={() => handleToggle(item.id)}>
+              <CardMedia src={item.imageUrl} alt={item.title}>
+                <span className="absolute top-3 start-3 px-2 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/10 font-mono text-[10px] tracking-[0.16em] uppercase text-white/85">
+                  {item.category}
+                </span>
+              </CardMedia>
+              <div className="p-4 sm:p-5 flex-1 flex flex-col gap-3">
+                <div className="space-y-1.5">
+                  <h3 className="text-white font-semibold text-base tracking-tight">{item.title}</h3>
+                  <p className="text-zinc-400 text-xs leading-relaxed line-clamp-3">{item.description}</p>
                 </div>
-
-                <div className="p-4 space-y-1.5">
-                  <h3 className="text-white font-bold text-sm sm:text-base">{item.title}</h3>
-                  <p className="text-zinc-400 text-xs leading-relaxed line-clamp-3">
-                    {item.description}
-                  </p>
+                <div className="mt-auto pt-3 border-t border-white/[0.06] flex items-center justify-between gap-3">
+                  <PriceLine amount={item.price} unit={item.priceType === "hourly" ? "hour" : "service"} emphasis={isSelected} />
+                  <TogglePill selected={isSelected} />
                 </div>
               </div>
-
-              <div className="p-4 pt-0 space-y-3">
-                <div className="text-[#8b5cf6] font-extrabold text-xs sm:text-sm">
-                  AED {item.price.toFixed(2)}{" "}
-                  <span className="text-zinc-400 font-normal text-[11px]">
-                    / {item.priceType === "hourly" ? "per hour" : "per service"}
-                  </span>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => handleToggle(item.id)}
-                  className={`w-full py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    isSelected
-                      ? "bg-[#7c3aed] text-white shadow-md shadow-purple-600/30"
-                      : "bg-[#181d29] hover:bg-[#202738] text-zinc-300 border border-white/10"
-                  }`}
-                >
-                  {isSelected ? "Remove" : "Add"}
-                </button>
-              </div>
-            </div>
+            </SelectableCard>
           );
         })}
       </div>

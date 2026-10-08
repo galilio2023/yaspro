@@ -5,16 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Sparkles,
-  MapPin,
-  Maximize2,
-  Users,
-  ArrowRight,
-  CheckCircle2,
   Calendar,
   MessageCircle,
-  ChevronDown,
-  Layers,
+  Sparkles,
+  Maximize2,
+  Users,
+  CheckCircle2,
+  ArrowRight,
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { formatCurrency, cn } from "@/lib/utils";
@@ -32,125 +29,103 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
   const { isArabic } = useLanguage();
   const studiosCatalog = initialStudios && initialStudios.length > 0 ? initialStudios : SOUNDSTAGES_CATALOG;
   const [activeCategory, setActiveCategory] = useState<StudioCategory>("all");
-  const [selectedStudioId, setSelectedStudioId] = useState<string>(studiosCatalog[0]?.id || "studio-xr");
+  const [activeImageMap, setActiveImageMap] = useState<Record<string, string>>({});
 
   const filteredStudios =
     activeCategory === "all"
       ? studiosCatalog
       : studiosCatalog.filter((s) => s.category === activeCategory);
 
-  const selectedStudio =
-    studiosCatalog.find((s) => s.id === selectedStudioId) || studiosCatalog[0];
+  const turnkeyPackages = TURNKEY_STUDIO_PACKAGES.filter((p) => p.id !== "none");
 
   return (
-    <div className="bg-[#070709] text-white min-h-screen selection:bg-amber-500 selection:text-black">
-      {/* ── 1. Hero Section ── */}
-      <section className="relative pt-24 pb-16 sm:pt-32 sm:pb-24 border-b border-white/[0.08] overflow-hidden">
-        {/* Subtle Warm Amber Glows */}
-        <div
-          className="absolute top-1/4 -left-40 w-[600px] h-[400px] pointer-events-none rounded-full blur-[160px] opacity-20"
-          style={{ background: "radial-gradient(circle, #f59e0b 0%, transparent 70%)" }}
-        />
-        <div
-          className="absolute top-1/3 -right-40 w-[600px] h-[400px] pointer-events-none rounded-full blur-[160px] opacity-15"
-          style={{ background: "radial-gradient(circle, #d97706 0%, transparent 70%)" }}
-        />
-
+    <div className="w-full bg-[#060608] text-white min-h-screen selection:bg-amber-500 selection:text-black">
+      {/* ── 1. Compact Hero Header ── */}
+      <section className="relative pt-24 pb-10 sm:pt-28 sm:pb-14 border-b border-white/[0.08] overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-            {/* Location Pill */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 text-xs font-mono font-semibold tracking-wider uppercase mb-6">
-              <MapPin size={13} className="text-amber-400" />
-              <span>{isArabic ? "برج آيريس باي • الخليج التجاري، دبي" : "Iris Bay Tower • Business Bay, Dubai"}</span>
+          <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
+            {/* Telemetry Chip */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 text-[10px] sm:text-xs font-mono font-semibold tracking-wider uppercase mb-4">
+              <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>{isArabic ? "آيريس باي • دبي • 6 استوديوهات معتمدة" : "IRIS BAY DUBAI • 6 SOUNDSTAGES"}</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white font-display tracking-tight leading-[1.1] mb-6">
+            {/* Tight, Confident Headline */}
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white font-display tracking-tight leading-tight mb-3">
               {isArabic ? (
                 <>
-                  استوديوهات الإنتاج <span className="text-amber-400">بمعايير عالمية</span> في قلب دبي
+                  استوديوهات ومسارح تصوير <span className="text-amber-400">بمعايير عالمية</span>
                 </>
               ) : (
                 <>
-                  Certified Soundstages &amp; <span className="text-amber-400">Creative Suites</span> in Dubai
+                  Soundstages &amp; <span className="text-amber-400">Production Suites</span>
                 </>
               )}
             </h1>
 
-            <p className="text-base sm:text-lg text-zinc-400 max-w-2xl leading-relaxed mb-10">
+            {/* 1-Line Punchy Subtitle */}
+            <p className="text-xs sm:text-sm text-zinc-400 max-w-xl leading-relaxed mb-6">
               {isArabic
-                ? "ستة استوديوهات إنتاج متخصصة ومعتمدة بمعايير عزل صوتي فائقة (STC 65+)، ومجهزة بكونسولات Neve وSSL، وميكروفونات شور، ومسرح شاشات ليد 270 درجة للمشاريع التجارية والسينمائية."
-                : "Six purpose-built soundstages and recording halls featuring STC 65+ acoustic isolation, Neve & SSL analog consoles, 4K multi-camera podcast setups, and 270° Micro-LED virtual production."}
+                ? "عزل صوتي كامل STC 65+، ومسرح ليد 270°، وكونسولات Neve & SSL مع حجز فوري بالساعة أو اليوم."
+                : "STC 65+ acoustic isolation, 270° Micro-LED volume, and Neve/SSL suites with instant booking."}
             </p>
 
-            {/* Quick Action CTAs */}
-            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-16">
+            {/* Actions */}
+            <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-8">
               <Link
                 href="/studio-booking"
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-sm transition-all shadow-xl shadow-amber-500/25 active:scale-[0.98]"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm transition-all shadow-md shadow-black/40 active:scale-[0.98]"
               >
-                <Calendar size={16} />
-                <span>{isArabic ? "حجز استوديو فوري" : "Book a Soundstage"}</span>
+                <Calendar size={14} />
+                <span>{isArabic ? "احجز استوديو" : "Book a Studio"}</span>
               </Link>
 
               <a
-                href="#studios-catalog"
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-white font-medium text-sm transition-all"
+                href="#packages"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-zinc-200 text-xs sm:text-sm font-medium transition-all"
               >
-                <span>{isArabic ? "استعراض المرافق والمواصفات" : "Explore Facilities & Specs"}</span>
-                <ChevronDown size={16} />
+                <span>{isArabic ? "الباقات المتكاملة" : "Turnkey Deals"}</span>
               </a>
 
               <a
                 href="https://wa.me/971554010465?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20schedule%20a%20walkthrough%20of%20your%20soundstages%20at%20Iris%20Bay"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-medium text-sm transition-all"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs sm:text-sm font-medium transition-all"
               >
-                <MessageCircle size={16} className="text-emerald-400" />
-                <span>{isArabic ? "معاينة ميدانية عبر واتساب" : "Schedule Studio Tour"}</span>
+                <MessageCircle size={14} className="text-emerald-400" />
+                <span>{isArabic ? "واتساب" : "WhatsApp"}</span>
               </a>
             </div>
 
-            {/* Facility Highlights Bar */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 w-full max-w-4xl p-4 sm:p-6 rounded-2xl bg-[#0f0f13] border border-white/10 shadow-2xl">
-              <div className="flex flex-col items-center text-center p-2">
-                <span className="text-2xl sm:text-3xl font-black text-amber-400 font-display">6</span>
-                <span className="text-xs text-zinc-400 mt-1">{isArabic ? "استوديوهات مستقلة" : "Certified Stages"}</span>
+            {/* Compact Telemetry Strip */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-3xl p-2.5 sm:p-3 rounded-xl bg-[#0d0d12] border border-white/[0.08]">
+              <div className="p-1.5 text-center">
+                <span className="text-base sm:text-lg font-black text-amber-400 font-display">6 Stages</span>
+                <span className="text-[10px] text-zinc-400 block font-mono">XR • Pod • Cyc</span>
               </div>
-              <div className="flex flex-col items-center text-center p-2">
-                <span className="text-2xl sm:text-3xl font-black text-white font-display">STC 65+</span>
-                <span className="text-xs text-zinc-400 mt-1">{isArabic ? "عزل صوتي فندقي كامل" : "Acoustic Isolation"}</span>
+              <div className="p-1.5 text-center">
+                <span className="text-base sm:text-lg font-black text-white font-display">STC 65+</span>
+                <span className="text-[10px] text-zinc-400 block font-mono">Floating Box</span>
               </div>
-              <div className="flex flex-col items-center text-center p-2">
-                <span className="text-2xl sm:text-3xl font-black text-white font-display">10 Gbps</span>
-                <span className="text-xs text-zinc-400 mt-1">{isArabic ? "فايبر متزامن للرفع المباشر" : "Symmetrical Fiber"}</span>
+              <div className="p-1.5 text-center">
+                <span className="text-base sm:text-lg font-black text-white font-display">10 Gbps</span>
+                <span className="text-[10px] text-zinc-400 block font-mono">Fiber Upload</span>
               </div>
-              <div className="flex flex-col items-center text-center p-2">
-                <span className="text-2xl sm:text-3xl font-black text-amber-400 font-display">Neve &amp; SSL</span>
-                <span className="text-xs text-zinc-400 mt-1">{isArabic ? "كونسولات تناظرية رائدة" : "Analog Consoles"}</span>
+              <div className="p-1.5 text-center">
+                <span className="text-base sm:text-lg font-black text-amber-400 font-display">300+ Items</span>
+                <span className="text-[10px] text-zinc-400 block font-mono">On-Site Gear</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── 2. Interactive Soundstages Showcase Catalog ── */}
-      <section id="studios-catalog" className="py-20 sm:py-28 relative">
+      {/* ── 2. Studios Showcase (Direct Visual Catalog) ── */}
+      <section id="studios-catalog" className="py-10 sm:py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section Header */}
-          <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-3xl sm:text-5xl font-black text-white font-display tracking-tight mb-4">
-              {isArabic ? "اختر الاستوديو المناسب لمشروعك" : "Select Your Soundstage"}
-            </h2>
-            <p className="text-sm text-zinc-400 leading-relaxed">
-              {isArabic
-                ? "مقارنة شاملة بين المساحات، والأنظمة التقنية، ومواصفات العزل والأسعار بالساعة واليوم."
-                : "Compare acoustic profiles, console riders, dimensions, and turnkey hourly or daily lockout rates."}
-            </p>
-          </div>
-
-          {/* Category Filter Pills */}
-          <div className="flex items-center justify-start sm:justify-center gap-1.5 sm:gap-2 mb-12 overflow-x-auto p-1.5 bg-zinc-950/80 rounded-full border border-white/10 scrollbar-none -mx-4 px-4 sm:mx-auto sm:px-1.5 max-w-fit shadow-xl">
+          {/* Category Filter Pills (Directly on top, no redundant title) */}
+          <div className="flex items-center justify-start sm:justify-center gap-1.5 mb-8 overflow-x-auto p-1 bg-[#0b0b0f] rounded-full border border-white/[0.08] scrollbar-none -mx-4 px-4 sm:mx-auto sm:px-1 max-w-fit shadow-lg">
             {SOUNDSTAGE_CATEGORIES.map((cat) => {
               const isActive = activeCategory === cat.id;
               return (
@@ -159,14 +134,14 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                   type="button"
                   onClick={() => setActiveCategory(cat.id)}
                   className={cn(
-                    "relative px-4 py-2 min-h-[38px] rounded-full text-xs font-bold transition-colors duration-200 cursor-pointer whitespace-nowrap flex items-center justify-center z-10",
-                    isActive ? "text-zinc-950" : "text-zinc-400 hover:text-white"
+                    "relative px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors duration-150 cursor-pointer whitespace-nowrap z-10",
+                    isActive ? "text-zinc-950 font-bold" : "text-zinc-400 hover:text-white"
                   )}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="activeCatalogCategoryPill"
-                      className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 shadow-md shadow-amber-500/20 -z-10"
+                      className="absolute inset-0 rounded-full bg-amber-500 shadow-sm -z-10"
                       transition={studioSprings.snappy}
                     />
                   )}
@@ -176,244 +151,265 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
             })}
           </div>
 
-          {/* Soundstage Cards Full Details */}
-          <div className="space-y-12 sm:space-y-16">
-            {filteredStudios.map((studio, idx) => (
-              <div
-                key={studio.id}
-                id={studio.id}
-                className="scroll-mt-24 rounded-3xl border border-white/10 bg-[#0f0f13] overflow-hidden shadow-2xl transition-all duration-300 hover:border-amber-500/40"
-              >
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch">
-                  {/* Studio Image & Visual Gallery (5 cols) */}
-                  <div className="lg:col-span-5 relative aspect-[16/10] lg:aspect-auto min-h-[320px] lg:min-h-[460px] bg-black overflow-hidden group">
-                    <Image
-                      src={studio.image}
-                      alt={isArabic ? studio.arabicName : studio.name}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 40vw"
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+          {/* Studios Cards */}
+          <div className="space-y-8 sm:space-y-10">
+            {filteredStudios.map((studio) => {
+              const currentImage = activeImageMap[studio.id] || studio.image;
+              const hasGallery = studio.gallery && studio.gallery.length > 1;
 
-                    {/* Top Telemetry Badge */}
-                    <div className="absolute top-4 inset-x-4 flex items-center justify-between pointer-events-none z-10">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/85 backdrop-blur-md border border-amber-500/40 text-[10px] font-mono font-bold tracking-wider text-amber-300 uppercase">
-                        <Sparkles size={11} className="text-amber-400" />
-                        <span>{isArabic ? studio.arabicBadge : studio.badge}</span>
-                      </span>
+              return (
+                <div
+                  key={studio.id}
+                  id={studio.id}
+                  className="scroll-mt-24 rounded-2xl border border-white/[0.08] bg-[#0c0c10] overflow-hidden shadow-xl transition-all duration-200 hover:border-white/20"
+                >
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch">
+                    {/* Left: Media & Gallery (5 cols) */}
+                    <div className="lg:col-span-5 relative flex flex-col justify-between bg-black p-4 min-h-[280px] lg:min-h-[380px]">
+                      <div className="absolute inset-0 overflow-hidden">
+                        <Image
+                          src={currentImage}
+                          alt={isArabic ? studio.arabicName : studio.name}
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 42vw"
+                          className="object-cover transition-transform duration-500 hover:scale-103"
+                          priority={studio.id === "studio-xr"}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c10] via-black/25 to-black/50 pointer-events-none" />
+                      </div>
 
-                      <span className="px-2.5 py-1 rounded-md bg-black/85 backdrop-blur-md border border-white/15 text-[10px] font-mono text-zinc-300" dir="ltr">
-                        {studio.soundIsolation}
-                      </span>
-                    </div>
+                      {/* Top Badges */}
+                      <div className="relative z-10 flex items-center justify-between gap-2 pointer-events-none">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/85 backdrop-blur-md border border-amber-500/40 text-[10px] font-mono font-bold tracking-wider text-amber-300 uppercase">
+                          <Sparkles size={10} className="text-amber-400" />
+                          <span>{isArabic ? studio.arabicBadge : studio.badge}</span>
+                        </span>
 
-                    {/* Dimensions & Capacity Overlay */}
-                    <div className="absolute bottom-4 inset-x-4 flex items-center justify-between text-xs font-mono text-zinc-200 z-10 pointer-events-none" dir="ltr">
-                      <span className="flex items-center gap-1 bg-black/80 px-2.5 py-1 rounded-md border border-white/10">
-                        <Maximize2 size={12} className="text-amber-400" />
-                        <span>{studio.areaSqm} m² ({studio.dimensions})</span>
-                      </span>
-                      <span className="flex items-center gap-1 bg-black/80 px-2.5 py-1 rounded-md border border-white/10">
-                        <Users size={12} className="text-amber-400" />
-                        <span>Max {studio.capacity} Crew</span>
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Studio Specifications & Commercial Data (7 cols) */}
-                  <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
-                    <div>
-                      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-mono text-amber-400 uppercase tracking-wider font-semibold">
-                            {isArabic ? studio.arabicCategoryLabel : studio.categoryLabel}
-                          </span>
-                          {studio.isActive === false && (
-                            <span className="px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-mono font-bold uppercase">
-                              {isArabic ? "تحت الصيانة / حجز خاص" : "Maintenance Mode"}
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-xs font-mono text-zinc-500">
-                          {isArabic ? "برج آيريس باي • دبي" : "Iris Bay, Business Bay"}
+                        <span className="px-2 py-0.5 rounded-md bg-black/85 backdrop-blur-md border border-white/15 text-[10px] font-mono text-zinc-300" dir="ltr">
+                          {studio.soundIsolation}
                         </span>
                       </div>
 
-                      <h3 className="text-2xl sm:text-3xl font-black text-white font-display mb-2">
-                        {isArabic ? studio.arabicName : studio.name}
-                      </h3>
-
-                      <p className="text-sm font-medium text-amber-200/90 mb-4">
-                        {isArabic ? studio.arabicHeadline : studio.headline}
-                      </p>
-
-                      <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-6">
-                        {isArabic ? studio.arabicOverview : studio.overview}
-                      </p>
-
-                      {/* Technical Rider Grid */}
-                      <div className="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-black/40 border border-white/5 mb-6">
-                        {studio.keyHardware.map((hw, hIdx) => (
-                          <div key={hIdx} className="space-y-0.5">
-                            <span className="text-[10px] uppercase font-mono text-zinc-500">
-                              {isArabic ? (hw.arabicLabel || hw.label) : hw.label}
-                            </span>
-                            <div className="text-xs font-semibold text-zinc-200 truncate">
-                              {isArabic ? (hw.arabicValue || hw.value) : hw.value}
-                            </div>
+                      {/* Bottom Media Controls & Specs */}
+                      <div className="relative z-10 space-y-2">
+                        {hasGallery && (
+                          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none p-1 rounded-lg bg-black/80 backdrop-blur-md border border-white/10 max-w-fit">
+                            {studio.gallery.map((img, imgIdx) => {
+                              const isSelected = currentImage === img;
+                              return (
+                                <button
+                                  key={imgIdx}
+                                  type="button"
+                                  onClick={() =>
+                                    setActiveImageMap((prev) => ({ ...prev, [studio.id]: img }))
+                                  }
+                                  className={cn(
+                                    "relative size-8 rounded-md overflow-hidden border transition-all cursor-pointer shrink-0",
+                                    isSelected ? "border-amber-400 ring-1 ring-amber-400" : "border-white/20 opacity-60 hover:opacity-100"
+                                  )}
+                                  title={`Photo ${imgIdx + 1}`}
+                                >
+                                  <Image src={img} alt="" fill className="object-cover" />
+                                </button>
+                              );
+                            })}
                           </div>
-                        ))}
-                      </div>
+                        )}
 
-                      {/* Amenities Checkmarks */}
-                      <div className="space-y-2 mb-8">
-                        <div className="text-xs font-mono uppercase text-zinc-400 font-bold mb-2">
-                          {isArabic ? "المرافق والخدمات المشمولة في الحجز:" : "Included Amenities & Perks:"}
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {(isArabic ? studio.arabicAmenities : studio.amenities).map((amenity, aIdx) => (
-                            <div key={aIdx} className="flex items-start gap-2 text-xs text-zinc-300">
-                              <CheckCircle2 size={13} className="text-amber-400 shrink-0 mt-0.5" />
-                              <span>{amenity}</span>
-                            </div>
-                          ))}
+                        <div className="flex items-center justify-between text-[11px] font-mono text-zinc-200" dir="ltr">
+                          <span className="flex items-center gap-1 bg-black/85 px-2.5 py-1 rounded-md border border-white/10">
+                            <Maximize2 size={11} className="text-amber-400" />
+                            <span>{studio.areaSqm} m² ({studio.dimensions})</span>
+                          </span>
+
+                          <span className="flex items-center gap-1 bg-black/85 px-2.5 py-1 rounded-md border border-white/10">
+                            <Users size={11} className="text-amber-400" />
+                            <span>Max {studio.capacity}</span>
+                          </span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Rate Bar & Actions */}
-                    <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    {/* Right: Technical Specs & Pricing (7 cols) */}
+                    <div className="lg:col-span-7 p-5 sm:p-7 flex flex-col justify-between bg-[#0c0c10]">
                       <div>
-                        <div className="flex items-baseline gap-1.5">
-                          <span className="text-3xl font-black text-amber-400 font-display">
-                            {formatCurrency(studio.rate)}
+                        {/* Eyebrow */}
+                        <div className="flex items-center justify-between gap-2 mb-1.5">
+                          <span className="text-[11px] font-mono text-amber-400 uppercase tracking-wider font-semibold">
+                            {isArabic ? studio.arabicCategoryLabel : studio.categoryLabel}
                           </span>
-                          <span className="text-xs text-zinc-400">/ {isArabic ? "ساعة" : "hour"}</span>
+                          <span className="text-[11px] font-mono text-zinc-500">
+                            Iris Bay • Business Bay
+                          </span>
                         </div>
-                        <div className="flex items-center gap-3 text-[11px] font-mono text-zinc-400 mt-1">
-                          <span>Half-Day (4h): {formatCurrency(studio.halfDayRate)}</span>
-                          <span>•</span>
-                          <span>Full-Day (8h): {formatCurrency(studio.fullDayRate)}</span>
+
+                        {/* Title */}
+                        <h2 className="text-xl sm:text-2xl font-bold text-white font-display mb-1">
+                          {isArabic ? studio.arabicName : studio.name}
+                        </h2>
+
+                        {/* 1-Line Headline */}
+                        <p className="text-xs text-amber-200/80 mb-4 font-medium">
+                          {isArabic ? studio.arabicHeadline : studio.headline}
+                        </p>
+
+                        {/* 4 Technical Badges (Compact 2x2 Grid) */}
+                        <div className="grid grid-cols-2 gap-2 p-3 rounded-xl bg-[#121217] border border-white/[0.06] mb-4">
+                          {studio.keyHardware.map((hw, hIdx) => (
+                            <div key={hIdx} className="space-y-0.5">
+                              <span className="text-[9px] uppercase font-mono text-zinc-500 block">
+                                {isArabic ? (hw.arabicLabel || hw.label) : hw.label}
+                              </span>
+                              <div className="text-xs font-semibold text-zinc-200 truncate">
+                                {isArabic ? (hw.arabicValue || hw.value) : hw.value}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Key Amenities (Compact Pills) */}
+                        <div className="flex flex-wrap gap-1.5 mb-5">
+                          {(isArabic ? studio.arabicAmenities : studio.amenities).slice(0, 4).map((amenity, aIdx) => (
+                            <span
+                              key={aIdx}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white/[0.03] border border-white/[0.06] text-[11px] text-zinc-300"
+                            >
+                              <CheckCircle2 size={11} className="text-amber-400 shrink-0" />
+                              <span className="truncate max-w-[240px]">{amenity}</span>
+                            </span>
+                          ))}
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3 shrink-0">
-                        {studio.isActive !== false ? (
+                      {/* Rates & Direct CTAs */}
+                      <div className="pt-4 border-t border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-2xl sm:text-3xl font-black text-amber-400 font-display">
+                              {formatCurrency(studio.rate)}
+                            </span>
+                            <span className="text-xs text-zinc-400">/ {isArabic ? "ساعة" : "hour"}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-400 mt-0.5">
+                            <span>4h: {formatCurrency(studio.halfDayRate)}</span>
+                            <span>•</span>
+                            <span>8h: {formatCurrency(studio.fullDayRate)}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
                           <Link
                             href={`/studio-booking?studio=${studio.id}`}
-                            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs transition-all shadow-lg shadow-amber-500/25 active:scale-98"
+                            className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs transition-all shadow-md active:scale-98"
                           >
-                            <Calendar size={14} />
-                            <span>{isArabic ? "احجز هذا الاستوديو" : "Book This Soundstage"}</span>
+                            <Calendar size={13} />
+                            <span>{isArabic ? "احجز الآن" : "Book Stage"}</span>
                           </Link>
-                        ) : (
+
                           <a
-                            href={`https://wa.me/971554010465?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20inquire%20about%20availability%20for%20${encodeURIComponent(studio.name)}`}
+                            href={`https://wa.me/971554010465?text=Hello%20Yas%20Pro%2C%20I%20am%20interested%20in%20${encodeURIComponent(studio.name)}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-zinc-800 hover:bg-zinc-700 text-amber-300 font-semibold text-xs transition-all border border-amber-500/30"
+                            className="inline-flex items-center justify-center p-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white transition-all"
+                            title="Chat with Ops"
                           >
                             <MessageCircle size={14} className="text-emerald-400" />
-                            <span>{isArabic ? "استفسر عن الصيانة والتوفر" : "Inquire (Maintenance)"}</span>
                           </a>
-                        )}
-
-                        <a
-                          href={`https://wa.me/971554010465?text=Hello%20Yas%20Pro%2C%20I%20am%20interested%20in%20booking%20or%20viewing%20${encodeURIComponent(studio.name)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center p-3 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white transition-all"
-                          title="Chat with Studio Operations"
-                        >
-                          <MessageCircle size={15} className="text-emerald-400" />
-                        </a>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* ── 3. Interactive 3D Virtual Stage Simulation ── */}
-      <section className="py-20 bg-zinc-950 border-t border-b border-white/[0.08] relative">
+      {/* ── 3. Interactive 3D Simulator (Compact Module) ── */}
+      <section className="py-12 bg-[#08080a] border-t border-b border-white/[0.08]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 text-xs font-mono uppercase mb-3">
-              <Layers size={12} className="text-amber-400" />
-              <span>{isArabic ? "المحاكاة ثلاثية الأبعاد التفاعلية" : "Interactive 3D Stage Simulator"}</span>
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <div>
+              <span className="text-[10px] font-mono text-amber-400 uppercase tracking-wider font-semibold block">
+                {isArabic ? "المحاكاة ثلاثية الأبعاد" : "3D VIRTUAL SIMULATION"}
+              </span>
+              <h3 className="text-lg sm:text-xl font-bold text-white font-display">
+                {isArabic ? "محاكاة مسرح الإنتاج الافتراضي 270°" : "270° LED Volume & Rig Preview"}
+              </h3>
+            </div>
+            <span className="text-[10px] font-mono text-zinc-500 hidden sm:inline">
+              WebGL • Unreal 5.4 LiveLink
             </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-white font-display">
-              {isArabic ? "محاكاة المسرح وتوزيع الإضاءة الافتراضية" : "Test Lighting & Camera Track Configurations"}
-            </h2>
-            <p className="text-xs sm:text-sm text-zinc-400 mt-2">
-              {isArabic
-                ? "جرب إعدادات انحناء شاشة الليد وتوزيع شبكة إضاءة DMX قبل بدء الإنتاج الفعلي."
-                : "Explore LED volume curvature, lighting truss density, and optical camera tracks in real-time."}
-            </p>
           </div>
 
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto rounded-2xl border border-white/[0.08] overflow-hidden bg-black shadow-xl">
             <VirtualStageConfigurator />
           </div>
         </div>
       </section>
 
-      {/* ── 4. Turnkey Production Packages (Up-Sell Deals) ── */}
-      <section className="py-20 sm:py-28 relative">
+      {/* ── 4. Turnkey Deals (Clean 3-Card Grid) ── */}
+      <section id="packages" className="py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-mono text-amber-400 uppercase tracking-wider font-semibold">
-              {isArabic ? "باقات إنتاج متكاملة وشاملة" : "Turnkey Production Solutions"}
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-black text-white font-display mt-2 mb-4">
-              {isArabic ? "باقات التسجيل والمونتاج الشاملة" : "Turnkey Packages & Studio Deals"}
-            </h2>
-            <p className="text-sm text-zinc-400 max-w-xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8">
+            <div>
+              <span className="text-[10px] font-mono text-amber-400 uppercase tracking-wider font-semibold block">
+                {isArabic ? "باقات متكاملة" : "ALL-INCLUSIVE PACKAGES"}
+              </span>
+              <h2 className="text-xl sm:text-3xl font-black text-white font-display">
+                {isArabic ? "باقات الاستوديو والإنتاج" : "Turnkey Production Deals"}
+              </h2>
+            </div>
+            <p className="text-xs text-zinc-400 max-w-sm">
               {isArabic
-                ? "احصل على الاستوديو مع طاقم العمل، مهندس الصوت، والمونتاج الكامل لتسليم حلقة متكاملة وجاهزة للنشر."
-                : "Book bundled sessions that combine soundstage hours, broadcast equipment, live operators, and post-production cuts."}
+                ? "تشمل الاستوديو، والمعدات، وطاقم التشغيل الفني بأسعار تفضيلية."
+                : "Stage, gear locker, and dedicated crew bundled at preferential lockout rates."}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
-            {TURNKEY_STUDIO_PACKAGES.filter((p) => p.id !== "none").map((pkg) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+            {turnkeyPackages.map((pkg) => (
               <div
                 key={pkg.id}
                 className={cn(
-                  "relative flex flex-col justify-between p-6 sm:p-8 rounded-3xl border transition-all duration-300 shadow-xl",
+                  "relative flex flex-col justify-between p-5 sm:p-6 rounded-2xl border transition-all duration-200 shadow-lg",
                   pkg.isPopular
-                    ? "bg-[#121217] border-amber-500/60 shadow-amber-500/10 scale-[1.02]"
-                    : "bg-[#0f0f13] border-white/10 hover:border-white/20"
+                    ? "bg-[#111116] border-amber-500/60 shadow-amber-500/5"
+                    : "bg-[#0c0c10] border-white/[0.08] hover:border-white/20"
                 )}
               >
                 {pkg.isPopular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-amber-500 text-zinc-950 font-bold text-[10px] tracking-wider uppercase font-mono shadow-md">
-                    {isArabic ? "الباقة الأكثر طلباً" : "Most Popular Deal"}
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-amber-500 text-zinc-950 font-bold text-[9px] tracking-wider uppercase font-mono shadow-sm">
+                    {isArabic ? "الأكثر طلباً" : "Popular"}
                   </div>
                 )}
 
                 <div>
-                  <h3 className="text-xl font-bold text-white font-display mb-2">{pkg.name}</h3>
-                  <p className="text-xs text-zinc-400 leading-relaxed mb-6">{pkg.description}</p>
+                  <h3 className="text-base sm:text-lg font-bold text-white font-display mb-1">
+                    {isArabic ? (pkg.arabicName || pkg.name) : pkg.name}
+                  </h3>
 
-                  <div className="mb-6 pb-6 border-b border-white/10">
+                  <p className="text-xs text-zinc-400 leading-relaxed mb-4">
+                    {isArabic ? (pkg.arabicDescription || pkg.description) : pkg.description}
+                  </p>
+
+                  <div className="mb-4 pb-4 border-b border-white/[0.08]">
                     <div className="flex items-baseline gap-1">
-                      <span className="text-3xl sm:text-4xl font-black text-amber-400 font-display">
+                      <span className="text-2xl sm:text-3xl font-black text-amber-400 font-display">
                         {formatCurrency(pkg.rate)}
                       </span>
-                      <span className="text-xs text-zinc-400">/ {pkg.includedHours} {isArabic ? "ساعات" : "hours included"}</span>
+                      <span className="text-xs text-zinc-400">
+                        / {pkg.includedHours} {isArabic ? "ساعات" : "hours"}
+                      </span>
                     </div>
                   </div>
 
-                  <ul className="space-y-2.5 mb-8">
-                    {pkg.features.map((feat, fIdx) => (
-                      <li key={fIdx} className="flex items-center gap-2 text-xs text-zinc-300">
-                        <CheckCircle2 size={13} className="text-amber-400 shrink-0" />
-                        <span>{feat}</span>
+                  <ul className="space-y-2 mb-6">
+                    {((isArabic && pkg.arabicFeatures ? pkg.arabicFeatures : pkg.features) || []).map((feat: string, fIdx: number) => (
+                      <li key={fIdx} className="flex items-start gap-2 text-xs text-zinc-300">
+                        <CheckCircle2 size={12} className="text-amber-400 shrink-0 mt-0.5" />
+                        <span className="leading-snug">{feat}</span>
                       </li>
                     ))}
                   </ul>
@@ -422,13 +418,13 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                 <Link
                   href={`/studio-booking?package=${pkg.id}`}
                   className={cn(
-                    "w-full py-3 px-4 rounded-xl text-center text-xs font-bold transition-all shadow-md active:scale-98",
+                    "w-full py-2.5 px-3 rounded-xl text-center text-xs font-bold transition-all shadow-sm active:scale-98",
                     pkg.isPopular
                       ? "bg-amber-500 hover:bg-amber-400 text-zinc-950"
                       : "bg-white/10 hover:bg-white/20 text-white"
                   )}
                 >
-                  {isArabic ? "احجز هذه الباقة" : "Select Turnkey Deal"}
+                  {isArabic ? "اختر هذه الباقة" : "Select Deal"}
                 </Link>
               </div>
             ))}
@@ -436,64 +432,59 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
         </div>
       </section>
 
-      {/* ── 5. Cross-Selling Gear Rentals ── */}
-      <section className="py-16 sm:py-20 bg-[#0d0d12] border-t border-white/10">
+      {/* ── 5. Compact Gear Locker Strip ── */}
+      <section className="py-8 bg-[#09090c] border-t border-b border-white/[0.08]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8 p-8 sm:p-12 rounded-3xl bg-zinc-950 border border-white/10 shadow-2xl">
-            <div className="space-y-2 max-w-xl text-center md:text-left rtl:md:text-right">
-              <span className="text-xs font-mono text-amber-400 uppercase tracking-wider font-semibold">
-                {isArabic ? "تكامل فوري مع أسطول المعدات" : "On-Site Gear Hub Integration"}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 sm:p-6 rounded-2xl bg-[#0c0c10] border border-white/[0.08]">
+            <div className="text-center sm:text-left rtl:sm:text-right">
+              <span className="text-[10px] font-mono text-amber-400 uppercase tracking-wider font-semibold block">
+                {isArabic ? "خزانة المعدات الميدانية" : "ON-SITE CINEMA GEAR LOCKER"}
               </span>
-              <h3 className="text-2xl sm:text-3xl font-black text-white font-display">
-                {isArabic ? "هل تحتاج إلى كاميرات أو عدسات إضافية في الاستوديو؟" : "Need Extra Cinema Cameras, Cooke Optics, or SkyPanels?"}
-              </h3>
-              <p className="text-xs sm:text-sm text-zinc-400">
+              <p className="text-xs sm:text-sm text-zinc-300 font-medium">
                 {isArabic
-                  ? "يتوفر في الاستوديو أسطول تأجير معدات سينمائية كامل (ARRI Alexa, RED, Cooke, Aputure) جاهز للتوصيل الفوري داخل موقع التصوير."
-                  : "Yas Pro maintains a comprehensive 300+ item cinema rental locker right on-site. Any camera body, prime set, or lighting fixture can be patched into your soundstage instantly."}
+                  ? "كاميرات ARRI وRED وعدسات Cooke وإضاءات Aputure متوفرة للتوصيل الفوري داخل الاستوديو."
+                  : "ARRI Alexa, RED, Cooke optics, and Aputure fixtures ready for on-stage patch in Iris Bay."}
               </p>
             </div>
 
             <Link
               href="/shop"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 text-xs font-bold transition-all shrink-0 shadow-lg shadow-amber-500/20 active:scale-98"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-all shrink-0"
             >
-              <span>{isArabic ? "استعرض متجر تأجير المعدات" : "Browse Cinema Gear Catalog"}</span>
-              <ArrowRight size={14} className="rtl:rotate-180" />
+              <span>{isArabic ? "تصفح المعدات" : "Browse Gear"}</span>
+              <ArrowRight size={13} className="rtl:rotate-180" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── 6. Bottom VIP Concierge Tour CTA ── */}
-      <section className="py-20 sm:py-24 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-6">
-          <h2 className="text-3xl sm:text-5xl font-black text-white font-display tracking-tight">
-            {isArabic ? "ابدأ إنتاجك القادم في آيريس باي، دبي" : "Lock in Your Soundstage at Iris Bay, Dubai"}
+      {/* ── 6. Bottom Sticky Quick Action Bar ── */}
+      <section className="py-12 relative overflow-hidden">
+        <div className="max-w-3xl mx-auto px-4 text-center space-y-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-white font-display">
+            {isArabic ? "جاهز لحجز موعد تصويرك القادم؟" : "Ready to Lock in Your Production?"}
           </h2>
-          <p className="text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-zinc-400 max-w-lg mx-auto">
             {isArabic
-              ? "فريقنا متواجد 24/7 لدعم المنتجين والمخرجين وصناع المحتوى في تجهيز الاستوديو وتنسيق متطلبات التصوير."
-              : "Our engineering leads and studio coordinators are on standby to accommodate custom technical riders, camera tests, and production lockouts."}
+              ? "فريق العمليات متواجد للمعاينة الميدانية أو تنسيق المتطلبات الخاصة."
+              : "Our operations lead is available for walk-in inspections or technical riders."}
           </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+          <div className="flex items-center justify-center gap-3 pt-2">
             <Link
               href="/studio-booking"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-sm transition-all shadow-xl shadow-amber-500/25 active:scale-98"
+              className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm transition-all"
             >
-              <Calendar size={16} />
-              <span>{isArabic ? "احجز جلستك الآن" : "Reserve Studio Online"}</span>
+              <Calendar size={14} />
+              <span>{isArabic ? "حجز فوري أونلاين" : "Book Online"}</span>
             </Link>
-
             <a
-              href="https://wa.me/971554010465?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20book%20a%20studio%20tour%20at%20Iris%20Bay"
+              href="https://wa.me/971554010465?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20inquire%20about%20a%20soundstage"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full border border-white/20 bg-white/5 hover:bg-white/10 text-white font-medium text-sm transition-all"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-white/20 bg-white/5 hover:bg-white/10 text-white text-xs sm:text-sm font-medium transition-all"
             >
-              <MessageCircle size={16} className="text-emerald-400" />
-              <span>{isArabic ? "محادثة مباشرة عبر واتساب" : "Direct WhatsApp Concierge"}</span>
+              <MessageCircle size={14} className="text-emerald-400" />
+              <span>{isArabic ? "واتساب مباشر" : "WhatsApp Concierge"}</span>
             </a>
           </div>
         </div>

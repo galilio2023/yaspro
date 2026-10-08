@@ -28,7 +28,8 @@ const PageLoaderContext = createContext<PageLoaderContextType>({
 
 export const usePageLoader = () => useContext(PageLoaderContext);
 
-const MIN_LOADER_TIME_MS = 380;
+// 750ms matches the 0.72s kinetic YASPRO entrance so users always see the complete assembly
+const MIN_LOADER_TIME_MS = 750;
 const FAILSAFE_TIMEOUT_MS = 6000;
 
 function RouteWatcher({
@@ -76,9 +77,10 @@ export function GlobalPageLoaderProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [isLoading, setIsLoading] = useState(false);
+  // Start as true so refreshing or first opening the app displays the YASPRO entrance impression
+  const [isLoading, setIsLoading] = useState(true);
   const [customStatus, setCustomStatus] = useState<string | undefined>(undefined);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(25);
   const [, startTransition] = useTransition();
 
   const loadStartTimeRef = useRef<number | null>(null);
@@ -148,6 +150,18 @@ export function GlobalPageLoaderProvider({
     timerRef.current = setTimeout(() => {
       stopLoading();
     }, FAILSAFE_TIMEOUT_MS);
+  }, [stopLoading]);
+
+  // Initial entrance experience on page mount/refresh: assemble & breathe cleanly, then smoothly dismiss
+  useEffect(() => {
+    loadStartTimeRef.current = Date.now();
+    const initTimer = setTimeout(() => {
+      stopLoading();
+    }, 2200);
+
+    return () => {
+      clearTimeout(initTimer);
+    };
   }, [stopLoading]);
 
   // Cleanup timers on unmount
@@ -248,10 +262,10 @@ export function GlobalPageLoaderProvider({
         {isLoading && (
           <motion.div
             key="yaspro-global-route-loader"
-            initial={{ opacity: 0 }}
+            initial={false}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.28, ease: "easeInOut" }}
+            transition={{ duration: 0.38, ease: "easeInOut" }}
             className="fixed inset-0 z-[9999]"
             dir="ltr"
             style={{ direction: "ltr" }}

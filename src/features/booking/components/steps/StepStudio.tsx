@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import type { WizardStepProps, StudioItem } from "../../types";
 import { STUDIOS } from "../../constants";
 import { Users, MapPin } from "lucide-react";
+import { CardMedia, MetaTag, SelectableCard, StepIntro } from "../ui/BookingKit";
 
 export function StepStudio({
   state,
@@ -13,95 +13,60 @@ export function StepStudio({
   const displayStudios = studios && studios.length > 0 ? studios : (STUDIOS as StudioItem[]);
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Select Studio</h2>
-        <p className="text-zinc-400 text-xs sm:text-sm mt-1">Choose your preferred recording space</p>
-      </div>
+    <div>
+      <StepIntro
+        index={3}
+        total={7}
+        title="Choose Your Stage"
+        description="Every stage is acoustically treated and ready for camera on arrival."
+        aside={<MetaTag>{displayStudios.length} stages</MetaTag>}
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {displayStudios.map((s) => {
+        {displayStudios.map((s, i) => {
           const isSelected = state.studioId === s.id;
           const imageSrc = s.imageUrl || s.image || `/images/booking/studio-${s.id}.jpg`;
 
           return (
-            <div
-              key={s.id}
-              onClick={() => update({ studioId: s.id })}
-              className={`rounded-2xl border overflow-hidden transition-all duration-200 cursor-pointer flex flex-col justify-between ${
-                isSelected
-                  ? "bg-[#101422] border-[#7c3aed] ring-2 ring-[#7c3aed]/50 shadow-lg shadow-purple-900/20"
-                  : "bg-[#0d111a]/90 border-white/10 hover:border-white/25 hover:bg-[#131724]"
-              }`}
-            >
-              <div>
-                {/* Studio Photo */}
-                <div className="relative w-full h-36 sm:h-40 bg-zinc-900">
-                  <Image
-                    src={imageSrc}
-                    alt={s.name}
-                    fill
-                    unoptimized
-                    sizes="(max-width: 640px) 100vw, 50vw"
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d111a] via-transparent to-transparent" />
-                </div>
+            <SelectableCard key={s.id} selected={isSelected} onSelect={() => update({ studioId: s.id })}>
+              <CardMedia src={imageSrc} alt={s.name} priority={i < 2}>
+                <span className="absolute top-3 start-3 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/10 font-mono text-[10px] tracking-[0.16em] uppercase text-white/85">
+                  Stage {String(i + 1).padStart(2, "0")}
+                </span>
+              </CardMedia>
 
-                <div className="p-4 space-y-2">
-                  <h3 className="text-white font-bold text-sm sm:text-base">{s.name}</h3>
-
-                  {/* Metadata: seats & location */}
-                  <div className="flex items-center gap-3 text-[11px] text-zinc-400">
-                    <span className="flex items-center gap-1">
-                      <Users size={12} className="text-zinc-400" />
-                      <span>{s.capacity || 10} seats</span>
+              <div className="p-4 sm:p-5 flex-1 flex flex-col gap-3">
+                <div className="space-y-1.5">
+                  <h3 className="text-white font-semibold text-base tracking-tight">{s.name}</h3>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-zinc-500">
+                    <span className="inline-flex items-center gap-1">
+                      <Users size={12} className="text-amber-400/80" />
+                      {s.capacity || 10} seats
                     </span>
-                    <span className="flex items-center gap-1">
-                      <MapPin size={12} className="text-zinc-400" />
-                      <span>{s.location || "Iris Bay - Dubai"}</span>
+                    <span className="inline-flex items-center gap-1">
+                      <MapPin size={12} className="text-amber-400/80" />
+                      {s.location || "Iris Bay - Dubai"}
                     </span>
                   </div>
-
-                  {s.description && (
-                    <p className="text-zinc-400 text-xs leading-relaxed line-clamp-2">
-                      {s.description}
-                    </p>
-                  )}
-
-                  {/* Features tags if any */}
-                  {s.features && s.features.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {s.features.slice(0, 4).map((f) => (
-                        <span
-                          key={f}
-                          className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] text-zinc-300"
-                        >
-                          {f}
-                        </span>
-                      ))}
-                    </div>
+                  {(s.description || s.desc) && (
+                    <p className="text-zinc-400 text-xs leading-relaxed line-clamp-2 pt-0.5">{s.description || s.desc}</p>
                   )}
                 </div>
-              </div>
 
-              <div className="p-4 pt-0">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    update({ studioId: s.id });
-                  }}
-                  className={`w-full py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    isSelected
-                      ? "bg-[#7c3aed] text-white shadow-md shadow-purple-600/30"
-                      : "bg-[#181d29] hover:bg-[#202738] text-zinc-300 border border-white/10"
-                  }`}
-                >
-                  {isSelected ? "Selected" : "Select"}
-                </button>
+                {s.features && s.features.length > 0 && (
+                  <div className="mt-auto flex flex-wrap gap-1.5 pt-3 border-t border-white/[0.06]">
+                    {s.features.slice(0, 4).map((f) => (
+                      <span
+                        key={f}
+                        className="px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.08] text-[10px] text-zinc-300"
+                      >
+                        {f}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
+            </SelectableCard>
           );
         })}
       </div>

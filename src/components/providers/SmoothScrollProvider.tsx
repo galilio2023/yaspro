@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { CustomCinemaCursor } from "@/components/ui/CustomCinemaCursor";
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
@@ -163,10 +162,5 @@ export function SmoothScrollProvider({
     }
   }, [pathname]);
 
-  return (
-    <>
-      <CustomCinemaCursor />
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }
