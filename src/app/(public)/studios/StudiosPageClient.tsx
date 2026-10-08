@@ -7,15 +7,11 @@ import { motion } from "framer-motion";
 import {
   Calendar,
   MessageCircle,
-  Layers,
   Sparkles,
   Maximize2,
   Users,
   CheckCircle2,
   ArrowRight,
-  ShieldCheck,
-  Wifi,
-  Zap,
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { formatCurrency, cn } from "@/lib/utils";

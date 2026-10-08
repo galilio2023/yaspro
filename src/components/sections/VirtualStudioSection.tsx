@@ -94,7 +94,11 @@ export function VirtualStudioSection() {
     const v = videoRef.current;
     if (!v) return;
     if (isSectionVisible && !isVideoPaused) {
-      if (v.paused) v.play().catch(() => {});
+      if (v.paused) v.play().catch((error) => {
+        if (error?.name === "NotAllowedError") {
+          setUserPaused(true);
+        }
+      });
     } else if (!v.paused) {
       v.pause();
     }
