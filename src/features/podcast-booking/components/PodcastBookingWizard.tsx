@@ -8,7 +8,7 @@ import { Step3Service } from "./Step3Service";
 import { Step4Addons } from "./Step4Addons";
 import { PodcastCheckoutModal } from "./PodcastCheckoutModal";
 import { PodcastConfirmation } from "./PodcastConfirmation";
-import { Calendar, Layers, Sparkles, Plus, ArrowLeft, ArrowRight, Trash2 } from "lucide-react";
+import { Plus, ArrowLeft, ArrowRight, Trash2 } from "lucide-react";
 import { BookingStepper, ErrorBanner, formatAED, studioSprings } from "@/features/booking/components/ui/BookingKit";
 import { motion } from "framer-motion";
 

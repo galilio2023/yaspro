@@ -100,12 +100,23 @@ export function useBookingWizard(cmsStudios: StudioItem[]) {
 
   const { total } = breakdown;
 
+  const validateDate = () => {
+    if (!state.date) {
+      setErrorMessage("Please select a session reservation date before continuing.");
+      return false;
+    }
+    const now = new Date();
+    const todayISO = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    if (state.date < todayISO) {
+      setErrorMessage("Please select today or a future session reservation date.");
+      return false;
+    }
+    return true;
+  };
+
   const nextStep = () => {
     setErrorMessage(null);
-    if (step === 1 && !state.date) {
-      setErrorMessage("Please select a session reservation date before continuing.");
-      return;
-    }
+    if (step === 1 && !validateDate()) return;
     if (step === 2 && !state.sessionType) {
       setErrorMessage("Please choose a session type before continuing.");
       return;
@@ -142,6 +153,11 @@ export function useBookingWizard(cmsStudios: StudioItem[]) {
 
   const handleSubmit = async () => {
     setErrorMessage(null);
+
+    if (!validateDate()) {
+      setStep(1);
+      return;
+    }
 
     // Validate required contact credentials
     if (!state.firstName.trim()) {

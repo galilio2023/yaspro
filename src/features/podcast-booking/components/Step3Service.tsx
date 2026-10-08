@@ -3,8 +3,7 @@
 import { Check, X, Zap } from "lucide-react";
 import { PODCAST_SERVICES } from "../data";
 import { PodcastSessionItem } from "../types";
-import { formatAED, MetaTag, SelectableCard, StepIntro, studioSprings } from "@/features/booking/components/ui/BookingKit";
-import { motion } from "framer-motion";
+import { formatAED, MetaTag, SelectableCard, StepIntro } from "@/features/booking/components/ui/BookingKit";
 import { cn } from "@/lib/utils";
 
 interface Step3ServiceProps {

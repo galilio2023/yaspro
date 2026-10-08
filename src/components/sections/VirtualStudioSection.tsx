@@ -12,6 +12,8 @@ import {
   MoveHorizontal,
   Repeat,
   Hand,
+  Play,
+  Pause,
 } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -48,6 +50,8 @@ export function VirtualStudioSection() {
   );
   const mode: RevealMode = userMode ?? (prefersReducedMotion ? "manual" : "auto");
   const setMode = setUserMode;
+  const [userPaused, setUserPaused] = useState<boolean | null>(null);
+  const isVideoPaused = userPaused ?? prefersReducedMotion;
   const [isSectionVisible, setIsSectionVisible] = useState<boolean>(false);
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -85,16 +89,16 @@ export function VirtualStudioSection() {
     return () => observer.disconnect();
   }, []);
 
-  // Play only while the section is on screen (saves decode/battery off-screen)
+  // Respect the playback control and pause decoding while off-screen.
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    if (isSectionVisible) {
+    if (isSectionVisible && !isVideoPaused) {
       if (v.paused) v.play().catch(() => {});
     } else if (!v.paused) {
       v.pause();
     }
-  }, [isSectionVisible]);
+  }, [isSectionVisible, isVideoPaused]);
 
   // Keep canvas backing store matched to its CSS size (crisp on HiDPI)
   useEffect(() => {
@@ -346,7 +350,7 @@ export function VirtualStudioSection() {
                   loop
                   muted
                   playsInline
-                  preload="metadata"
+                  preload={isVideoPaused ? "auto" : "metadata"}
                   aria-hidden="true"
                   tabIndex={-1}
                   className="absolute top-0 left-0 size-px opacity-0 pointer-events-none"
@@ -405,9 +409,9 @@ export function VirtualStudioSection() {
                 </div>
               </div>
 
-              {/* ─── CONTROLS: Auto / Manual ─── */}
+              {/* ─── CONTROLS: Auto / Manual and video playback ─── */}
               <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-zinc-950/80 rounded-xl border border-white/10 mt-3 text-xs">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <div
                     role="radiogroup"
                     aria-label={t("virtualStudio.modeLabel")}
@@ -440,6 +444,14 @@ export function VirtualStudioSection() {
                       <span>{t("virtualStudio.modeManual")}</span>
                     </button>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => setUserPaused(!isVideoPaused)}
+                    className="min-h-11 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-white hover:bg-white/10 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition flex items-center gap-1.5 cursor-pointer font-medium"
+                  >
+                    {isVideoPaused ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
+                    <span>{t(isVideoPaused ? "virtualStudio.playVideo" : "virtualStudio.pauseVideo")}</span>
+                  </button>
                 </div>
 
                 <div className="flex items-center gap-2 text-zinc-400 text-[11px] font-mono">

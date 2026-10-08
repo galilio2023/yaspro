@@ -84,7 +84,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
                           type="button"
                           onClick={() => onSetQuantity(addon.key, qty - 1)}
                           className="size-7 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
-                          aria-label="Decrease quantity"
+                          aria-label={`Decrease quantity for ${addon.title}`}
                         >
                           <Minus size={12} />
                         </button>
@@ -95,7 +95,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
                           type="button"
                           onClick={() => onSetQuantity(addon.key, qty + 1)}
                           className="size-7 rounded-lg bg-amber-400 text-black font-bold flex items-center justify-center transition cursor-pointer"
-                          aria-label="Increase quantity"
+                          aria-label={`Increase quantity for ${addon.title}`}
                         >
                           <Plus size={12} />
                         </button>
