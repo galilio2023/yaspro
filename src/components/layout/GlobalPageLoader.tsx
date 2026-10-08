@@ -28,7 +28,8 @@ const PageLoaderContext = createContext<PageLoaderContextType>({
 
 export const usePageLoader = () => useContext(PageLoaderContext);
 
-const MIN_LOADER_TIME_MS = 380;
+// 750ms matches the 0.72s kinetic YASPRO entrance so users always see the complete assembly
+const MIN_LOADER_TIME_MS = 750;
 const FAILSAFE_TIMEOUT_MS = 6000;
 
 function RouteWatcher({
@@ -76,7 +77,7 @@ export function GlobalPageLoaderProvider({
 }: {
   children: React.ReactNode;
 }) {
-  // Start with true on initial mount so first-time visitors see the cinematic Yaspro intro
+  // Start as true so refreshing or first opening the app displays the YASPRO entrance impression
   const [isLoading, setIsLoading] = useState(true);
   const [customStatus, setCustomStatus] = useState<string | undefined>(undefined);
   const [progress, setProgress] = useState(25);
@@ -85,7 +86,6 @@ export function GlobalPageLoaderProvider({
   const loadStartTimeRef = useRef<number | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const dismissalTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const initialDismissTimerRef = useRef<NodeJS.Timeout | null>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const stopLoading = useCallback(() => {
@@ -126,10 +126,6 @@ export function GlobalPageLoaderProvider({
   }, []);
 
   const startLoading = useCallback((status?: string) => {
-    if (initialDismissTimerRef.current) {
-      clearTimeout(initialDismissTimerRef.current);
-      initialDismissTimerRef.current = null;
-    }
     if (dismissalTimerRef.current) {
       clearTimeout(dismissalTimerRef.current);
       dismissalTimerRef.current = null;
@@ -156,19 +152,15 @@ export function GlobalPageLoaderProvider({
     }, FAILSAFE_TIMEOUT_MS);
   }, [stopLoading]);
 
-  // On first visit, give the user 1.5s to experience the cinematic brand formation & breathing pulse
+  // Initial entrance experience on page mount/refresh: assemble & breathe cleanly, then smoothly dismiss
   useEffect(() => {
     loadStartTimeRef.current = Date.now();
-    initialDismissTimerRef.current = setTimeout(() => {
-      initialDismissTimerRef.current = null;
+    const initTimer = setTimeout(() => {
       stopLoading();
-    }, 1500);
+    }, 2200);
 
     return () => {
-      if (initialDismissTimerRef.current) {
-        clearTimeout(initialDismissTimerRef.current);
-        initialDismissTimerRef.current = null;
-      }
+      clearTimeout(initTimer);
     };
   }, [stopLoading]);
 
@@ -270,10 +262,10 @@ export function GlobalPageLoaderProvider({
         {isLoading && (
           <motion.div
             key="yaspro-global-route-loader"
-            initial={{ opacity: 0 }}
+            initial={false}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.28, ease: "easeInOut" }}
+            transition={{ duration: 0.38, ease: "easeInOut" }}
             className="fixed inset-0 z-[9999]"
             dir="ltr"
             style={{ direction: "ltr" }}

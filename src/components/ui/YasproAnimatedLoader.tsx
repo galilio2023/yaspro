@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useId } from "react";
-import { motion, useReducedMotion, type Transition } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { YASPR_VECTOR_PATH } from "./yasprVectorPath";
 
 export interface YasproAnimatedLoaderProps {
   statusText?: string;
@@ -17,28 +17,36 @@ const YAS_O_RING_PATH =
 const YAS_YELLOW_BLADE_PATH =
   "M 274,141 L 511,239 L 509,218 L 505,197 L 497,170 L 489,150 L 477,127 L 464,107 L 449,88 L 438,76 L 435,74 Z";
 
-/**
- * Stage 1: The O swiftly rolls across X-axis and reveals Y-A-S-P-R.
- */
-const ROLL_IN: Transition = { duration: 0.72, ease: [0.16, 1, 0.3, 1] };
-
-const LETTERS = "YASPR";
-
-const LETTER_CLASS =
-  "font-sans font-black leading-none tracking-tight bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent";
-
-function WordmarkLetters() {
+// Authentic vector path extracted directly from the official Yas Pro brand identity mark
+// Letter A features the signature geometric delta triangle apex with a horizontal base stroke.
+function WordmarkLetters({ uid = "yas-letters" }: { uid?: string }) {
   return (
-    <span className="flex items-center">
-      <span className={LETTER_CLASS}>{LETTERS}</span>
-      {/* Spacer reserving the O slot */}
-      <span className="ml-[0.06em] size-[0.78em] shrink-0" />
+    <span className="inline-flex items-center select-none" dir="ltr" style={{ direction: "ltr" }}>
+      <svg
+        viewBox="0 0 299.693 63.864"
+        className="h-[0.72em] w-auto overflow-visible shrink-0"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id={`${uid}-grad`} x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="50%" stopColor="#f8fafc" />
+            <stop offset="85%" stopColor="#e2e8f0" />
+            <stop offset="100%" stopColor="#94a3b8" />
+          </linearGradient>
+        </defs>
+        <path d={YASPR_VECTOR_PATH} fill={`url(#${uid}-grad)`} />
+      </svg>
+      {/* Spacer reserving the authentic aperture O slot matching official brand proportions */}
+      <span className="ml-[0.14em] size-[0.80em] shrink-0" />
     </span>
   );
 }
 
 /** The aperture "O" emblem */
-function ApertureO({ uid, spin }: { uid: string; spin: boolean }) {
+function ApertureO({ uid }: { uid: string }) {
   return (
     <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-full">
       <defs>
@@ -63,9 +71,8 @@ function ApertureO({ uid, spin }: { uid: string; spin: boolean }) {
       <circle cx="256" cy="256" r="252" fill={`url(#${uid}-halo)`} stroke="rgba(168,85,247,0.45)" strokeWidth="6" />
 
       {/* Rotating aperture iris */}
-      <motion.g
-        animate={spin ? { rotate: 360 } : undefined}
-        transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
+      <g
+        className="yas-iris-spin"
         style={{ transformOrigin: "256px 256px" }}
       >
         {/* White seams between the blades */}
@@ -75,7 +82,7 @@ function ApertureO({ uid, spin }: { uid: string; spin: boolean }) {
         {/* Signature yellow blade */}
         <path d={YAS_YELLOW_BLADE_PATH} stroke="#ffffff" strokeWidth="5" strokeLinejoin="round" />
         <path d={YAS_YELLOW_BLADE_PATH} fill={`url(#${uid}-yellow)`} />
-      </motion.g>
+      </g>
 
       <circle cx="256" cy="256" r="68" fill="#06020e" stroke="rgba(255,233,0,0.6)" strokeWidth="3" />
       <circle cx="256" cy="256" r="38" fill="rgba(255,233,0,0.3)" />
@@ -83,14 +90,20 @@ function ApertureO({ uid, spin }: { uid: string; spin: boolean }) {
   );
 }
 
+/**
+ * Authentic brand loader featuring:
+ * - GPU-composited roll-in animation across X-axis with zero SSR flash
+ * - Authentic vector wordmark with the signature geometric triangle delta "A"
+ * - Spinning aperture O with dark obsidian blades and glowing yellow blade (#FFE900)
+ * - Cinematic organic breathing once fully docked
+ */
+
 export function YasproAnimatedLoader({
   statusText,
   size = "fullscreen",
   className,
 }: YasproAnimatedLoaderProps) {
-  const reduce = !!useReducedMotion();
-  const uid = `yas-o-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
-
+  const uid = `yas-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const isFullscreen = size === "fullscreen";
   const isCompact = size === "compact";
 
@@ -99,72 +112,108 @@ export function YasproAnimatedLoader({
       dir="ltr"
       style={{ direction: "ltr" }}
       className={cn(
-        "flex flex-col items-center justify-center select-none font-sans overflow-hidden",
-        isFullscreen && "fixed inset-0 z-[9999] bg-[#070709]/95 backdrop-blur-2xl",
+        "flex flex-col items-center justify-center select-none font-sans overflow-hidden bg-[#070709]",
+        isFullscreen && "fixed inset-0 z-[9999] backdrop-blur-2xl",
         className
       )}
       role="status"
       aria-live="polite"
       aria-label={statusText || "Loading Yas Pro AI Media Hub"}
     >
+      <style>{`
+        @keyframes yasRevealWindow {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(0%); }
+        }
+        @keyframes yasRevealContent {
+          0% { transform: translateX(100%); }
+          100% { transform: translateX(0%); }
+        }
+        @keyframes yasRollTrack {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(0%); }
+        }
+        @keyframes yasOSpin {
+          0% { transform: rotate(-540deg) scale(0.7); opacity: 0; }
+          18% { opacity: 1; }
+          100% { transform: rotate(0deg) scale(1); opacity: 1; }
+        }
+        @keyframes yasIrisSpin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        @keyframes yasBrandBreathe {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.035); }
+        }
+        @keyframes yasGlowPulse {
+          0%, 100% { opacity: 0.55; transform: scale(1); }
+          50% { opacity: 0.95; transform: scale(1.16); }
+        }
+        @keyframes yasSubtitleIn {
+          0% { opacity: 0; transform: translateY(8px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes yasAmbientPulse {
+          0%, 100% { transform: scale(1); opacity: 0.2; }
+          50% { transform: scale(1.14); opacity: 0.35; }
+        }
+        .yas-reveal-window {
+          animation: yasRevealWindow 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .yas-reveal-content {
+          animation: yasRevealContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .yas-roll-track {
+          animation: yasRollTrack 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .yas-o-spin {
+          animation: yasOSpin 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .yas-iris-spin {
+          animation: yasIrisSpin 2s linear infinite;
+        }
+        .yas-brand-breathe {
+          animation: yasBrandBreathe 2.4s ease-in-out 0.75s infinite;
+        }
+        .yas-glow-pulse {
+          animation: yasGlowPulse 1.8s ease-in-out infinite;
+        }
+        .yas-subtitle-in {
+          animation: yasSubtitleIn 0.4s ease-out 0.65s both;
+        }
+        .yas-ambient-pulse {
+          animation: yasAmbientPulse 2.4s ease-in-out infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .yas-reveal-window,
+          .yas-reveal-content,
+          .yas-roll-track,
+          .yas-o-spin,
+          .yas-iris-spin,
+          .yas-brand-breathe,
+          .yas-glow-pulse,
+          .yas-subtitle-in,
+          .yas-ambient-pulse {
+            animation: none !important;
+            transform: none !important;
+            opacity: 1 !important;
+          }
+        }
+      `}</style>
+
       {/* Background ambient stage glow with subtle organic breathing */}
       <div className="absolute pointer-events-none" aria-hidden="true">
-        <motion.div
-          animate={
-            reduce
-              ? undefined
-              : {
-                  scale: [1, 1.15, 1],
-                  opacity: [0.2, 0.35, 0.2],
-                }
-          }
-          transition={{
-            duration: 2.2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="w-80 h-80 sm:w-[500px] sm:h-[500px] rounded-full bg-brand-violet/25 blur-[130px]"
-        />
-        <motion.div
-          animate={
-            reduce
-              ? undefined
-              : {
-                  scale: [1, 1.1, 1],
-                  opacity: [0.15, 0.28, 0.15],
-                }
-          }
-          transition={{
-            duration: 2.2,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 0.2,
-          }}
-          className="w-64 h-64 rounded-full bg-amber-400/20 blur-[100px]"
-        />
+        <div className="yas-ambient-pulse w-80 h-80 sm:w-[500px] sm:h-[500px] rounded-full bg-brand-violet/25 blur-[130px]" />
+        <div className="yas-ambient-pulse w-64 h-64 rounded-full bg-amber-400/20 blur-[100px] [animation-delay:0.3s]" />
       </div>
 
       {/* ─── CINEMATIC ENTRANCE & ORGANIC BREATHING CONTAINER ───
           1. The O glides across X-axis, rolling from left to right.
-          2. It forms YASPRO, docks as the O.
-          3. Once docked, the whole brand lockup breathes with a luxurious pulse! */}
-      <motion.div
-        animate={
-          reduce
-            ? undefined
-            : {
-                scale: [1, 1.035, 0.99, 1],
-              }
-        }
-        transition={{
-          duration: 2.2,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 0.75, // begins breathing right after docking
-        }}
-        className="relative flex flex-col items-center justify-center"
-      >
-        {/* ─── WORDMARK: the O rolls left → right and "writes" Y-A-S-P-R, then docks as the final O ─── */}
+          2. It writes Y-A-S-P-R with authentic brand vectors, docks as the final O.
+          3. Once docked, the whole brand lockup breathes with a luxurious studio pulse! */}
+      <div className="yas-brand-breathe relative flex flex-col items-center justify-center will-change-transform">
+        {/* ─── WORDMARK: the O rolls left → right and reveals Y-A-S-P-R ─── */}
         <div
           aria-hidden="true"
           className={cn(
@@ -172,81 +221,38 @@ export function YasproAnimatedLoader({
             isCompact ? "text-3xl sm:text-4xl" : "text-5xl sm:text-6xl md:text-7xl"
           )}
         >
-          {/* Invisible sizer: defines the exact width of the final "YASPRO" */}
-          <span className="invisible">
-            <WordmarkLetters />
+          {/* Invisible sizer: reserves exact width/height of final YASPRO lockup */}
+          <span className="invisible pointer-events-none select-none">
+            <WordmarkLetters uid={`${uid}-sizer`} />
           </span>
 
-          {/* Reveal window: slides from -100% to 0% with overflow hidden; its right edge matches the O */}
-          <motion.div
-            className="absolute inset-0 overflow-hidden will-change-transform"
-            initial={reduce ? false : { x: "-100%" }}
-            animate={{ x: "0%" }}
-            transition={ROLL_IN}
-          >
-            {/* Counter-translate keeps the letters steady on screen */}
-            <motion.div
-              className="absolute inset-0 flex items-center will-change-transform"
-              initial={reduce ? false : { x: "100%" }}
-              animate={{ x: "0%" }}
-              transition={ROLL_IN}
-            >
-              <WordmarkLetters />
-            </motion.div>
-          </motion.div>
+          {/* Reveal window: slides across X-axis, masked overflow */}
+          <div className="yas-reveal-window absolute inset-0 overflow-hidden will-change-transform pointer-events-none">
+            {/* Counter-translate keeps the wordmark static while window unmasks */}
+            <div className="yas-reveal-content absolute inset-0 flex items-center will-change-transform">
+              <WordmarkLetters uid={`${uid}-letters`} />
+            </div>
+          </div>
 
-          {/* O track: moves across X-axis, O pinned to its right end */}
-          <motion.div
-            className="absolute inset-0 flex items-center justify-end pointer-events-none will-change-transform"
-            initial={reduce ? false : { x: "-100%" }}
-            animate={{ x: "0%" }}
-            transition={ROLL_IN}
-          >
-            <motion.span
-              className="relative block size-[0.78em] shrink-0 will-change-transform"
-              initial={reduce ? false : { rotate: -540, scale: 0.7, opacity: 0 }}
-              animate={{ rotate: 0, scale: 1, opacity: 1 }}
-              transition={{
-                ...ROLL_IN,
-                opacity: { duration: 0.12, ease: "linear" },
-              }}
-            >
+          {/* O track: moves across X-axis, O pinned to its right edge */}
+          <div className="yas-roll-track absolute inset-0 flex items-center justify-end pointer-events-none will-change-transform">
+            <span className="yas-o-spin relative block size-[0.78em] shrink-0 will-change-transform">
               {/* Soft yellow glow behind the O that pulses with the yellow blade */}
-              <motion.span
-                animate={
-                  reduce
-                    ? undefined
-                    : {
-                        opacity: [0.6, 1, 0.6],
-                        scale: [1, 1.12, 1],
-                      }
-                }
-                transition={{
-                  duration: 1.8,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="absolute -inset-[22%] rounded-full bg-yellow-400/30 blur-xl pointer-events-none"
-              />
+              <span className="yas-glow-pulse absolute -inset-[22%] rounded-full bg-yellow-400/30 blur-xl pointer-events-none" />
               <span className="relative block size-full">
-                <ApertureO uid={uid} spin={!reduce} />
+                <ApertureO uid={uid} />
               </span>
-            </motion.span>
-          </motion.div>
+            </span>
+          </div>
         </div>
 
         {/* Subtitle lands softly as the O docks */}
-        <motion.div
-          initial={reduce ? false : { opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: reduce ? 0 : 0.6, ease: "easeOut" }}
-          className="flex items-center gap-2 mt-3 text-[10px] sm:text-xs font-mono tracking-[0.25em] text-zinc-400 uppercase font-latin"
-        >
+        <div className="yas-subtitle-in flex items-center gap-2 mt-3 text-[10px] sm:text-xs font-mono tracking-[0.25em] text-zinc-400 uppercase font-latin">
           <span>MEDIA GROUP</span>
           <span className="size-1 rounded-full bg-yellow-400" />
           <span className="text-purple-300">AI HUB</span>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {statusText && (
         <p className="text-xs font-mono uppercase tracking-widest text-zinc-400 mt-4 font-latin">
