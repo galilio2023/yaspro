@@ -82,9 +82,10 @@ export function GlobalPageLoaderProvider({
   const [progress, setProgress] = useState(25);
   const [, startTransition] = useTransition();
 
-  const loadStartTimeRef = useRef<number | null>(Date.now());
+  const loadStartTimeRef = useRef<number | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const dismissalTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const initialDismissTimerRef = useRef<NodeJS.Timeout | null>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const stopLoading = useCallback(() => {
@@ -125,6 +126,10 @@ export function GlobalPageLoaderProvider({
   }, []);
 
   const startLoading = useCallback((status?: string) => {
+    if (initialDismissTimerRef.current) {
+      clearTimeout(initialDismissTimerRef.current);
+      initialDismissTimerRef.current = null;
+    }
     if (dismissalTimerRef.current) {
       clearTimeout(dismissalTimerRef.current);
       dismissalTimerRef.current = null;
@@ -153,11 +158,18 @@ export function GlobalPageLoaderProvider({
 
   // On first visit, give the user 1.5s to experience the cinematic brand formation & breathing pulse
   useEffect(() => {
-    const initialDismiss = setTimeout(() => {
+    loadStartTimeRef.current = Date.now();
+    initialDismissTimerRef.current = setTimeout(() => {
+      initialDismissTimerRef.current = null;
       stopLoading();
     }, 1500);
 
-    return () => clearTimeout(initialDismiss);
+    return () => {
+      if (initialDismissTimerRef.current) {
+        clearTimeout(initialDismissTimerRef.current);
+        initialDismissTimerRef.current = null;
+      }
+    };
   }, [stopLoading]);
 
   // Cleanup timers on unmount

@@ -343,11 +343,10 @@ export function VirtualStudioSection() {
                 <video
                   ref={videoRef}
                   src={VIRTUAL_HERO_SCENE.stackedVideoSrc}
-                  autoPlay
                   loop
                   muted
                   playsInline
-                  preload="auto"
+                  preload="metadata"
                   aria-hidden="true"
                   tabIndex={-1}
                   className="absolute top-0 left-0 size-px opacity-0 pointer-events-none"
