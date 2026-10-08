@@ -1,89 +1,47 @@
 "use client";
 
-import Image from "next/image";
 import type { WizardStepProps } from "../../types";
 import { ADDONS_ITEMS } from "../../constants";
+import { CardMedia, MetaTag, PriceLine, SelectableCard, StepIntro, TogglePill } from "../ui/BookingKit";
 
 export function StepPostProduction({ state, update }: WizardStepProps) {
   const selectedIds = state.selectedAddonIds || [];
 
   const handleToggle = (id: string) => {
-    if (selectedIds.includes(id)) {
-      update({
-        selectedAddonIds: selectedIds.filter((item) => item !== id),
-      });
-    } else {
-      update({
-        selectedAddonIds: [...selectedIds, id],
-      });
-    }
+    update({
+      selectedAddonIds: selectedIds.includes(id)
+        ? selectedIds.filter((item) => item !== id)
+        : [...selectedIds, id],
+    });
   };
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Post Production Services</h2>
-        <p className="text-zinc-400 text-xs sm:text-sm mt-1">
-          Enhance your session with post-production services
-        </p>
-      </div>
+    <div>
+      <StepIntro
+        index={6}
+        total={7}
+        title="Post Production"
+        description="Optional — hand off editing, grading and sound so you leave with finished assets."
+        aside={<MetaTag tone={selectedIds.length ? "amber" : "neutral"}>{selectedIds.length} selected</MetaTag>}
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {ADDONS_ITEMS.map((item) => {
           const isSelected = selectedIds.includes(item.id);
-
           return (
-            <div
-              key={item.id}
-              className={`rounded-2xl border overflow-hidden transition-all duration-200 flex flex-col justify-between ${
-                isSelected
-                  ? "bg-[#101422] border-[#7c3aed] ring-2 ring-[#7c3aed]/50 shadow-lg shadow-purple-900/20"
-                  : "bg-[#0d111a]/90 border-white/10 hover:border-white/25 hover:bg-[#131724]"
-              }`}
-            >
-              <div>
-                {/* Photo Banner */}
-                <div className="relative w-full h-32 sm:h-36 bg-zinc-900">
-                  <Image
-                    src={item.imageUrl}
-                    alt={item.title}
-                    fill
-                    unoptimized
-                    sizes="(max-width: 640px) 100vw, 50vw"
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d111a] via-transparent to-transparent" />
+            <SelectableCard key={item.id} selected={isSelected} onSelect={() => handleToggle(item.id)}>
+              <CardMedia src={item.imageUrl} alt={item.title} className="aspect-[2.39/1]" />
+              <div className="p-4 sm:p-5 flex-1 flex flex-col gap-3">
+                <div className="space-y-1.5">
+                  <h3 className="text-white font-semibold text-base tracking-tight">{item.title}</h3>
+                  <p className="text-zinc-400 text-xs leading-relaxed line-clamp-3">{item.description}</p>
                 </div>
-
-                <div className="p-4 space-y-1.5">
-                  <h3 className="text-white font-bold text-sm sm:text-base">{item.title}</h3>
-                  <p className="text-zinc-400 text-xs leading-relaxed line-clamp-3">
-                    {item.description}
-                  </p>
+                <div className="mt-auto pt-3 border-t border-white/[0.06] flex items-center justify-between gap-3">
+                  <PriceLine amount={item.price} unit={item.priceType === "hourly" ? "hour" : "service"} emphasis={isSelected} />
+                  <TogglePill selected={isSelected} />
                 </div>
               </div>
-
-              <div className="p-4 pt-0 space-y-3">
-                <div className="text-white font-bold text-xs sm:text-sm">
-                  AED {item.price.toFixed(2)}{" "}
-                  <span className="text-zinc-400 font-normal text-[11px]">
-                    / {item.priceType === "hourly" ? "per hour" : "per service"}
-                  </span>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => handleToggle(item.id)}
-                  className={`w-full py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    isSelected
-                      ? "bg-[#7c3aed] text-white shadow-md shadow-purple-600/30"
-                      : "bg-[#181d29] hover:bg-[#202738] text-zinc-300 border border-white/10"
-                  }`}
-                >
-                  {isSelected ? "Remove" : "Add"}
-                </button>
-              </div>
-            </div>
+            </SelectableCard>
           );
         })}
       </div>
