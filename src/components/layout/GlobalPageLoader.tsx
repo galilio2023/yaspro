@@ -80,22 +80,16 @@ export function GlobalPageLoaderProvider({
   // Start as true so refreshing or first opening the app displays the YASPRO entrance impression
   const [isLoading, setIsLoading] = useState(true);
   const [customStatus, setCustomStatus] = useState<string | undefined>(undefined);
-  const [progress, setProgress] = useState(25);
   const [, startTransition] = useTransition();
 
   const loadStartTimeRef = useRef<number | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const dismissalTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const stopLoading = useCallback(() => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
-    }
-    if (progressIntervalRef.current) {
-      clearInterval(progressIntervalRef.current);
-      progressIntervalRef.current = null;
     }
     if (dismissalTimerRef.current) {
       clearTimeout(dismissalTimerRef.current);
@@ -104,15 +98,11 @@ export function GlobalPageLoaderProvider({
 
     if (!loadStartTimeRef.current) {
       setIsLoading(false);
-      setProgress(100);
-      setTimeout(() => setProgress(0), 200);
       return;
     }
 
     const elapsed = Date.now() - loadStartTimeRef.current;
     const remaining = Math.max(0, MIN_LOADER_TIME_MS - elapsed);
-
-    setProgress(100);
 
     dismissalTimerRef.current = setTimeout(() => {
       dismissalTimerRef.current = null;
@@ -120,7 +110,6 @@ export function GlobalPageLoaderProvider({
         setIsLoading(false);
         setCustomStatus(undefined);
         loadStartTimeRef.current = null;
-        setProgress(0);
       });
     }, remaining);
   }, []);
@@ -134,16 +123,6 @@ export function GlobalPageLoaderProvider({
     loadStartTimeRef.current = Date.now();
     setCustomStatus(status);
     setIsLoading(true);
-    setProgress(15);
-
-    if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
-    progressIntervalRef.current = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 85) return prev;
-        const inc = Math.random() * 12 + 6;
-        return Math.min(prev + inc, 85);
-      });
-    }, 120);
 
     // Failsafe auto-dismiss
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -169,7 +148,6 @@ export function GlobalPageLoaderProvider({
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
       if (dismissalTimerRef.current) clearTimeout(dismissalTimerRef.current);
-      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
     };
   }, []);
 
@@ -237,27 +215,7 @@ export function GlobalPageLoaderProvider({
         />
       </Suspense>
 
-      {/* 1. Razor Top Edge Laser Progress Bar (Always physical LTR) */}
-      <div
-        dir="ltr"
-        style={{ direction: "ltr" }}
-        className="fixed top-0 left-0 right-0 z-[10000] pointer-events-none h-[2.5px] overflow-visible"
-        aria-hidden="true"
-      >
-        <div
-          className="h-full bg-gradient-to-r from-brand-violet via-brand-mauve to-brand-lavender transition-all duration-200 ease-out shadow-[0_0_14px_rgba(118,80,134,0.9)] relative"
-          style={{
-            width: `${progress}%`,
-            opacity: isLoading || progress > 0 ? 1 : 0,
-          }}
-        >
-          {/* Optical flare head on leading edge */}
-          <div className="absolute top-1/2 -right-1.5 -translate-y-1/2 w-4 h-4 rounded-full bg-white blur-[2px] opacity-90" />
-          <div className="absolute top-1/2 -right-3 -translate-y-1/2 w-8 h-8 rounded-full bg-brand-mauve blur-md opacity-70" />
-        </div>
-      </div>
-
-      {/* 2. Fullscreen Animated Studio Sensor Hub Overlay */}
+      {/* Fullscreen Animated Studio Sensor Hub Overlay */}
       <AnimatePresence>
         {isLoading && (
           <motion.div
