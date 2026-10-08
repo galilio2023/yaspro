@@ -65,7 +65,11 @@
     "playVideo": "Play Video",
     "pauseVideo": "Pause Video",
     "muteAudio": "Mute Audio",
-    "unmuteAudio": "Unmute Audio"
+    "unmuteAudio": "Unmute Audio",
+    "modeAuto": "Auto",
+    "modeManual": "Manual",
+    "modeLabel": "Reveal mode",
+    "sliderLabel": "Green stage versus 3D virtual set comparison"
   },
   "portfolio": {
     "badge": "Government & Enterprise Portfolio",
