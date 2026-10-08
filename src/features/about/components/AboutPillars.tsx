@@ -30,20 +30,20 @@ export function AboutPillars({ headingId }: AboutPillarsProps) {
           const Icon = pillar.icon;
           return (
             <StaggerItem key={pillar.title} className="h-full">
-              <div className="rounded-3xl border border-white/10 bg-[#070709]/80 backdrop-blur-xl p-6 sm:p-7 h-full flex flex-col justify-between hover:border-amber-500/50 hover:bg-white/[0.04] transition-all duration-300 group shadow-xl shadow-black/30">
+              <div className="rounded-3xl border border-border/40 bg-card/80 backdrop-blur-xl p-6 sm:p-7 h-full flex flex-col justify-between hover:border-brand-mauve/50 hover:bg-card transition-all duration-300 group shadow-xl shadow-black/30">
                 <div>
                   {/* Top Bar with Icon & Micro-Badge */}
                   <div className="flex items-center justify-between gap-2 mb-5">
-                    <div className="size-12 rounded-2xl bg-white/[0.04] border border-white/10 group-hover:border-amber-500/40 flex items-center justify-center text-amber-400 group-hover:scale-105 transition-all shadow-md">
+                    <div className="size-12 rounded-2xl bg-brand-violet/20 border border-brand-mauve/30 group-hover:border-brand-mauve/60 flex items-center justify-center text-brand-mauve group-hover:scale-105 transition-all shadow-md">
                       <Icon size={22} />
                     </div>
 
-                    <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-text-muted">
+                    <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-full bg-card border border-border/40 text-brand-mauve whitespace-nowrap shrink-0">
                       {isArabic ? pillar.arBadge : pillar.badge}
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-white mb-2.5 font-display group-hover:text-amber-400 transition-colors">
+                  <h3 className="text-lg font-bold text-white mb-2.5 font-display group-hover:text-brand-mauve transition-colors">
                     {isArabic && pillar.arTitle ? pillar.arTitle : pillar.title}
                   </h3>
 

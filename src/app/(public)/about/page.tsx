@@ -41,7 +41,7 @@ export default function AboutPage() {
       <Section
         id="about-heritage"
         aria-labelledby="about-heritage-title"
-        className="py-16 sm:py-24 bg-[#05040e] border-t border-white/[0.08] relative overflow-hidden"
+        className="py-16 sm:py-24 bg-background-alt border-t border-border/40 relative overflow-hidden"
       >
         <Container>
           <AboutMilestones />
@@ -52,7 +52,7 @@ export default function AboutPage() {
       <Section
         id="about-pillars"
         aria-labelledby="pillars-title"
-        className="py-16 sm:py-24 bg-background border-t border-white/[0.08]"
+        className="py-16 sm:py-24 bg-background border-t border-border/40"
       >
         <Container>
           <AboutPillars headingId="pillars-title" />
@@ -66,10 +66,20 @@ export default function AboutPage() {
       <Section
         id="about-team"
         aria-labelledby="team-title"
-        className="py-16 sm:py-24 bg-[#05040e] border-t border-white/[0.08]"
+        className="py-16 sm:py-24 bg-background-alt border-t border-border/40"
       >
         <Container>
           <TeamGrid headingId="team-title" />
+        </Container>
+      </Section>
+
+      {/* ── Grand Finale Studio Launch CTA ── */}
+      <Section
+        id="about-cta"
+        aria-label="Studio Booking & Consultation"
+        className="pt-16 sm:pt-24 pb-20 sm:pb-32 bg-background border-t border-border/40 relative overflow-hidden"
+      >
+        <Container>
           <AboutCtaBanner />
         </Container>
       </Section>
