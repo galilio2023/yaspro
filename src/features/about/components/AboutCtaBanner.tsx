@@ -65,10 +65,10 @@ export function AboutCtaBanner() {
         {/* 3D Animated Rocket Column (5 cols) */}
         <div className="lg:col-span-5 flex justify-center items-center">
           <div className="w-full flex justify-center">
-            <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-[440px] lg:h-[440px] flex items-center justify-center">
+            <div className="relative w-48 h-48 sm:w-60 sm:h-60 lg:w-[300px] lg:h-[300px] flex items-center justify-center">
               {/* Brand atmospheric radial glow matching the hero orb */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-brand-violet/35 via-brand-purple/25 to-brand-mauve/20 blur-3xl pointer-events-none scale-90" />
-              <div className="absolute w-2/3 h-2/3 rounded-full bg-brand-mauve/15 blur-2xl pointer-events-none" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-brand-violet/30 via-brand-purple/20 to-brand-mauve/15 blur-2xl pointer-events-none scale-90" />
+              <div className="absolute w-2/3 h-2/3 rounded-full bg-brand-mauve/15 blur-xl pointer-events-none" />
 
               <video
                 ref={videoRef}

@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { BrandLogo } from "./BrandLogo";
-import { YasproWatermarkLogo } from "@/components/ui/YasproWatermarkLogo";
 import { FooterSocialLinks } from "./FooterSocialLinks";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import {
@@ -368,17 +367,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* ─── 3. THE GRAND YASPRO VECTOR FINALE WATERMARK ─── */}
-        <div className="mt-14 sm:mt-20 pt-10 border-t border-white/[0.06] relative flex flex-col items-center justify-center">
-          <div className="w-full flex items-center justify-center overflow-hidden py-4 sm:py-6 select-none opacity-40 hover:opacity-60 transition-opacity duration-500">
-            <YasproWatermarkLogo
-              className="text-[14vw] sm:text-[13vw] lg:text-[11.5vw] max-w-full drop-shadow-[0_4px_35px_rgba(255,233,0,0.12)]"
-              idPrefix="footer-grand-yaspro"
-            />
-          </div>
-        </div>
-
-        {/* ─── 4. BOTTOM COPYRIGHT & SYSTEM TELEMETRY STRIP ─── */}
+        {/* ─── BOTTOM COPYRIGHT & SYSTEM TELEMETRY STRIP ─── */}
         <div className="pt-8 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
           <p className="font-mono text-[11px]">
             © {currentYear} YAS PRO MEDIA LLC · {t("footer.allRights")}

@@ -19,7 +19,7 @@ const YAS_YELLOW_BLADE_PATH =
 
 // Authentic vector path extracted directly from the official Yas Pro brand identity mark
 // Letter A features the signature geometric delta triangle apex with a horizontal base stroke.
-function WordmarkLetters({ uid = "yas-letters" }: { uid?: string }) {
+export function WordmarkLetters({ uid = "yas-letters" }: { uid?: string }) {
   return (
     <span className="inline-flex items-center select-none" dir="ltr" style={{ direction: "ltr" }}>
       <svg
@@ -46,7 +46,7 @@ function WordmarkLetters({ uid = "yas-letters" }: { uid?: string }) {
 }
 
 /** The aperture "O" emblem */
-function ApertureO({ uid }: { uid: string }) {
+export function ApertureO({ uid }: { uid: string }) {
   return (
     <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-full">
       <defs>
