@@ -77,11 +77,12 @@ export function ServicesSection() {
           className="mb-10 sm:mb-14"
         />
 
-        {/* Cards: Responsive Grid on Mobile, Expanding Accordion on Desktop */}
+        {/* Cards: Responsive Accordion on Mobile (vertical flex) & Desktop (horizontal flex) */}
         <div
-          className="grid grid-cols-1 sm:grid-cols-2 md:flex md:flex-row md:h-[520px] w-full gap-4 select-none"
+          className="flex flex-col md:flex-row h-[560px] sm:h-[620px] md:h-[520px] w-full gap-3 sm:gap-4 select-none"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
           onFocusCapture={() => setIsFocusWithin(true)}
           onBlurCapture={(event) => {
             if (!event.currentTarget.contains(event.relatedTarget)) setIsFocusWithin(false);
@@ -90,6 +91,7 @@ export function ServicesSection() {
           {SERVICES_DATA.map((service, index) => {
             const isActive = activeIndex === index;
             const title = isArabic ? service.arabicTitle : service.title;
+            const subtitle = isArabic ? service.arabicSubtitle : service.subtitle;
 
             return (
               <motion.button
@@ -101,58 +103,104 @@ export function ServicesSection() {
                   setActiveIndex(index);
                   setIsPaused(true);
                 }}
-                onClick={() => handleCardClick(service)}
+                onClick={() => {
+                  if (isActive) {
+                    handleCardClick(service);
+                  } else {
+                    setActiveIndex(index);
+                    setIsPaused(true);
+                  }
+                }}
                 layout
                 transition={{
                   layout: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
                 }}
-                className={`group relative h-48 sm:h-56 md:h-full min-h-0 min-w-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-lavender overflow-hidden cursor-pointer transition-all duration-300 ${
+                className={`group relative min-h-0 min-w-0 rounded-2xl sm:rounded-3xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-400 overflow-hidden cursor-pointer transition-all duration-500 border ${
                   isActive
-                    ? "md:flex-[3.5] ring-1 ring-brand-mauve/40 shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
-                    : "md:flex-[1] opacity-90 md:opacity-75 hover:opacity-100"
+                    ? "flex-[3.2] sm:flex-[3] md:flex-[3.5] border-amber-400/50 shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_30px_rgba(245,158,11,0.15)] ring-1 ring-amber-400/20"
+                    : "flex-[1] border-white/[0.08] hover:border-white/20 opacity-80 md:opacity-70 hover:opacity-100"
                 }`}
               >
-                {/* 3D Visual Asset */}
+                {/* 3D Visual Asset with Cinematic Vignette */}
                 <Image
                   src={service.image}
                   alt={title}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className={`object-cover object-center transition-transform duration-700 ${
-                    isActive ? "scale-100 brightness-100" : "scale-105 brightness-60 md:brightness-50 group-hover:brightness-80"
+                  className={`object-cover object-center transition-transform duration-700 ease-out ${
+                    isActive ? "scale-100 brightness-100" : "scale-105 brightness-50 md:brightness-45 group-hover:brightness-75"
                   }`}
                   priority={index < 2}
                 />
 
-                {/* Subtle vignette gradient */}
-                <span className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent pointer-events-none" />
+                {/* Ambient Film Vignette Gradient */}
+                <span className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent pointer-events-none" />
 
-                {/* Title: Always visible on mobile, expanded on active desktop */}
-                <span className={`absolute z-10 bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 text-left rtl:text-right transition-opacity duration-300 ${
-                  isActive ? "opacity-100" : "opacity-90 md:hidden"
-                }`}>
-                  <span className="font-bold tracking-tight text-xl sm:text-2xl md:text-3xl text-brand-lavender drop-shadow-md block">
+                {/* Subtle Amber Glow behind active card text */}
+                {isActive && (
+                  <span className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-amber-500/10 to-transparent pointer-events-none" />
+                )}
+
+                {/* Active & Inactive Content Overlay */}
+                <div className="absolute inset-0 p-4 sm:p-6 flex flex-col justify-end text-left rtl:text-right z-10 pointer-events-none">
+                  {/* Category Micro-Tag */}
+                  <div className={`transition-all duration-300 mb-1.5 flex items-center gap-2 ${
+                    isActive ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 md:opacity-0"
+                  }`}>
+                    <span className="text-[10px] sm:text-[11px] font-mono tracking-widest uppercase text-amber-400/90 font-medium">
+                      0{index + 1} // {isArabic ? service.arabicBadge : service.badge}
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className={`font-bold tracking-tight text-white transition-all duration-300 drop-shadow-md ${
+                    isActive 
+                      ? "text-xl sm:text-2xl md:text-3xl lg:text-4xl text-amber-50" 
+                      : "text-base sm:text-lg md:text-xl text-zinc-300 truncate"
+                  }`}>
                     {title}
-                  </span>
-                </span>
+                  </h3>
+
+                  {/* Subtitle & CTA — revealed when active */}
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35, delay: 0.1 }}
+                      className="mt-1 sm:mt-2 space-y-2 sm:space-y-3"
+                    >
+                      <p className="text-xs sm:text-sm text-zinc-300/90 font-normal line-clamp-1 sm:line-clamp-2 max-w-lg leading-relaxed">
+                        {subtitle}
+                      </p>
+
+                      <div className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-amber-400 group-hover:text-amber-300 transition-colors">
+                        <span>{isArabic ? "استكشف الخدمة والحجز" : "Explore & Reserve"}</span>
+                        <span className="text-xs rtl:rotate-180">→</span>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
               </motion.button>
             );
           })}
         </div>
 
-        {/* Bottom Dots Indicator (Desktop accordion indicator) */}
-        <div className="hidden md:flex mt-10 sm:mt-12 items-center justify-center">
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/[0.04] backdrop-blur-md shadow-lg">
+        {/* Bottom Navigation Dots Indicator (Responsive for both Mobile & Desktop) */}
+        <div className="mt-8 sm:mt-12 flex items-center justify-center">
+          <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-zinc-950/80 border border-white/10 backdrop-blur-md shadow-lg">
             {SERVICES_DATA.map((_, idx) => (
               <button
                 key={idx}
                 type="button"
-                onClick={() => setActiveIndex(idx)}
+                onClick={() => {
+                  setActiveIndex(idx);
+                  setIsPaused(true);
+                }}
                 aria-label={`Go to service ${idx + 1}`}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   activeIndex === idx
-                    ? "w-6 bg-brand-violet"
-                    : "w-2 bg-zinc-600 hover:bg-zinc-400"
+                    ? "w-7 bg-amber-400"
+                    : "w-2 bg-zinc-700 hover:bg-zinc-500"
                 }`}
               />
             ))}
