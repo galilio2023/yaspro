@@ -102,7 +102,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-[85vh] flex items-center justify-center p-4 py-12 sm:py-16">
       {/* Ambient Glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[450px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[450px] bg-brand-violet/20 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-lg mx-auto p-6 sm:p-10 rounded-3xl bg-[#0c0b10] border border-white/10 backdrop-blur-2xl shadow-2xl">
         <div className="text-center mb-8">
@@ -118,7 +118,7 @@ export default function RegisterPage() {
         </div>
 
         {claimNotice && (
-          <div role="status" className="mb-6 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
+          <div role="status" className="mb-6 p-3.5 rounded-xl bg-brand-violet/20 border border-brand-mauve/30 text-brand-mauve-soft text-xs">
             {t("claimBookingsNotice")}
           </div>
         )}
@@ -142,7 +142,7 @@ export default function RegisterPage() {
                 onClick={() => setAccountType("creator")}
                 className={`py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                   accountType === "creator"
-                    ? "bg-amber-500 text-black font-extrabold shadow-md shadow-amber-500/20"
+                    ? "bg-brand-mauve text-slate-950 font-extrabold shadow-md shadow-brand-violet/30"
                     : "text-slate-400 hover:text-white hover:bg-white/5"
                 }`}
               >
@@ -155,7 +155,7 @@ export default function RegisterPage() {
                 onClick={() => setAccountType("enterprise")}
                 className={`py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                   accountType === "enterprise"
-                    ? "bg-amber-500 text-black font-extrabold shadow-md shadow-amber-500/20"
+                    ? "bg-brand-mauve text-slate-950 font-extrabold shadow-md shadow-brand-violet/30"
                     : "text-slate-400 hover:text-white hover:bg-white/5"
                 }`}
               >
@@ -175,7 +175,7 @@ export default function RegisterPage() {
                   placeholder={t("fullNamePlaceholder")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/60 transition-colors text-base sm:text-sm"
+                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve transition-colors text-base sm:text-sm"
                 />
                 <User size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
@@ -185,7 +185,7 @@ export default function RegisterPage() {
               <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">
                 {t("companyLabel")}{" "}
                 {accountType === "enterprise" ? (
-                  <span className="text-amber-400">*</span>
+                  <span className="text-brand-mauve">*</span>
                 ) : (
                   <span className="text-slate-500 text-[10px] font-normal">({t("companyLabel") ? "Optional" : ""})</span>
                 )}
@@ -197,10 +197,10 @@ export default function RegisterPage() {
                   placeholder={t("companyPlaceholder")}
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
-                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/60 transition-colors text-base sm:text-sm"
+                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve transition-colors text-base sm:text-sm"
                 />
                 <Building size={16} className={`absolute start-3.5 top-1/2 -translate-y-1/2 pointer-events-none ${
-                  accountType === "enterprise" ? "text-amber-400" : "text-slate-400"
+                  accountType === "enterprise" ? "text-brand-mauve" : "text-slate-400"
                 }`} />
               </div>
             </div>
@@ -216,7 +216,7 @@ export default function RegisterPage() {
                   placeholder={t("emailPlaceholder")}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/60 transition-colors text-base sm:text-sm"
+                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve transition-colors text-base sm:text-sm"
                 />
                 <Mail size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
@@ -230,7 +230,7 @@ export default function RegisterPage() {
                   placeholder={t("phonePlaceholder")}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/60 transition-colors text-base sm:text-sm"
+                  className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve transition-colors text-base sm:text-sm"
                 />
                 <Phone size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
@@ -247,7 +247,7 @@ export default function RegisterPage() {
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/60 transition-colors text-base sm:text-sm"
+                className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve transition-colors text-base sm:text-sm"
               />
               <Lock size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             </div>
@@ -265,12 +265,12 @@ export default function RegisterPage() {
 
         <div className="mt-8 pt-6 border-t border-white/10 text-center text-xs text-slate-400">
           <span>{t("hasAccount")}{" "}</span>
-          <Link href="/login" className="text-amber-400 hover:text-amber-300 font-semibold inline-block py-1">
+          <Link href="/login" className="text-brand-mauve hover:text-brand-mauve-soft font-semibold inline-block py-1">
             {t("loginLink")}
           </Link>
         </div>
 
-        <div className="mt-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300 flex items-center gap-2">
+        <div className="mt-4 p-3 rounded-xl bg-brand-violet/20 border border-brand-mauve/30 text-[11px] text-brand-mauve-soft flex items-center gap-2">
           <ShieldCheck size={14} className="text-emerald-400 shrink-0" />
           <span>{t("securityBadge")}</span>
         </div>

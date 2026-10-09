@@ -53,7 +53,7 @@ export function SocialMediaDeliverablesShowcase() {
   return (
     <div className="w-full mt-20 pt-16 border-t border-white/10">
       <div className="text-center max-w-2xl mx-auto mb-12">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono uppercase tracking-wider mb-3">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-mauve/10 border border-brand-mauve/25 text-brand-mauve text-xs font-mono uppercase tracking-wider mb-3 shadow-sm shadow-brand-violet/20">
           <Sparkles size={13} />
           <span>{isArabic ? "المعايير الاستوديوهات الاحترافية" : "THE STUDIO ADVANTAGE"}</span>
         </div>
@@ -73,18 +73,18 @@ export function SocialMediaDeliverablesShowcase() {
           return (
             <div
               key={idx}
-              className="p-6 rounded-3xl bg-[#0c0f17]/90 border border-white/[0.08] hover:border-amber-400/40 transition-all duration-300 flex flex-col justify-between backdrop-blur-xl group"
+              className="p-6 rounded-3xl bg-[#0c0f17]/90 border border-white/[0.08] hover:border-brand-mauve/40 hover:shadow-lg hover:shadow-brand-violet/25 transition-all duration-300 flex flex-col justify-between backdrop-blur-xl group"
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="size-10 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <div className="size-10 rounded-2xl bg-brand-mauve/10 border border-brand-mauve/20 text-brand-mauve flex items-center justify-center group-hover:scale-105 transition-transform">
                     <Icon size={18} />
                   </div>
                   <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest">
                     [{pillar.specCode}]
                   </span>
                 </div>
-                <span className="block text-[10px] font-mono uppercase tracking-wider text-amber-400 mb-1">
+                <span className="block text-[10px] font-mono uppercase tracking-wider text-brand-mauve mb-1">
                   {isArabic ? pillar.badgeAr : pillar.badgeEn}
                 </span>
                 <h3 className="text-base font-bold text-white mb-2 font-display">

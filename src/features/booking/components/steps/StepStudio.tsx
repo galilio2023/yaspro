@@ -40,11 +40,11 @@ export function StepStudio({
                   <h3 className="text-white font-semibold text-base tracking-tight">{s.name}</h3>
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-zinc-500">
                     <span className="inline-flex items-center gap-1">
-                      <Users size={12} className="text-amber-400/80" />
+                      <Users size={12} className="text-brand-mauve/80" />
                       {s.capacity || 10} seats
                     </span>
                     <span className="inline-flex items-center gap-1">
-                      <MapPin size={12} className="text-amber-400/80" />
+                      <MapPin size={12} className="text-brand-mauve/80" />
                       {s.location || "Iris Bay - Dubai"}
                     </span>
                   </div>

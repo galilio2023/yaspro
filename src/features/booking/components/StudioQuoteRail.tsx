@@ -121,7 +121,7 @@ export function QuoteBreakdown({
           initial={{ scale: 0.94, opacity: 0.6 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={studioSprings.snappy}
-          className="text-2xl font-bold tracking-tight text-amber-400 tabular-nums"
+          className="text-2xl font-bold tracking-tight text-brand-mauve tabular-nums"
         >
           {formatAED(breakdown.total, 2)}
         </motion.span>
@@ -156,7 +156,7 @@ export function StudioQuoteRail({
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c10] via-[#0c0c10]/40 to-transparent" />
         <div className="absolute bottom-3 left-4 right-4">
-          <span className="block font-mono text-[10px] tracking-[0.2em] uppercase text-amber-400/90">Reserved stage</span>
+          <span className="block font-mono text-[10px] tracking-[0.2em] uppercase text-brand-mauve/90">Reserved stage</span>
           <span className="block text-white font-semibold truncate">{studio?.name || "Select a studio"}</span>
         </div>
       </div>

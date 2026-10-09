@@ -419,7 +419,7 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-2 rounded-lg btn-brand text-zinc-950 font-bold flex items-center gap-2 disabled:opacity-50 shadow-md shadow-amber-500/20 transition-all cursor-pointer"
+                  className="px-4 py-2 rounded-lg btn-brand text-zinc-950 font-bold flex items-center gap-2 disabled:opacity-50 shadow-md shadow-brand-violet/25 transition-all cursor-pointer"
                 >
                   <Save size={14} /> Save Equipment
                 </button>

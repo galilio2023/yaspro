@@ -37,7 +37,7 @@ export function SoundstageAtmosphere({ className = "", isArabic: _isArabic = fal
         }}
         transition={studioSprings.cinematic}
         style={{
-          background: "radial-gradient(circle, rgba(245,158,11,0.5) 0%, rgba(217,119,6,0.2) 40%, transparent 75%)",
+          background: "radial-gradient(circle, rgba(118,80,134,0.45) 0%, rgba(84,37,104,0.25) 45%, transparent 75%)",
         }}
       />
 

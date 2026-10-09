@@ -24,7 +24,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
         total={4}
         title="Add-ons & Viral Edits"
         description="Accelerate your social reach with viral reels, clickable YouTube thumbnails, 4K multi-cam switches, and express delivery."
-        aside={<MetaTag tone={totalAddonsCount > 0 ? "amber" : "neutral"}>{totalAddonsCount} added</MetaTag>}
+        aside={<MetaTag tone={totalAddonsCount > 0 ? "mauve" : "neutral"}>{totalAddonsCount} added</MetaTag>}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
@@ -37,7 +37,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
               key={addon.key}
               className={`rounded-2xl p-5 border flex flex-col justify-between transition-all duration-200 ${
                 isAdded
-                  ? "bg-amber-500/[0.045] border-amber-400/70 shadow-[0_0_0_1px_rgba(245,158,11,0.35),0_18px_36px_-18px_rgba(245,158,11,0.3)]"
+                  ? "bg-brand-mauve/[0.05] border-brand-mauve/70 shadow-[0_0_0_1px_rgba(152,123,165,0.35),0_18px_36px_-18px_rgba(84,37,104,0.4)]"
                   : "bg-white/[0.02] border-white/[0.08] hover:border-white/20 hover:bg-white/[0.04]"
               }`}
             >
@@ -51,7 +51,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
                     <button
                       type="button"
                       onClick={() => setActiveVideoModal(addon)}
-                      className="size-7 rounded-lg bg-white/10 hover:bg-amber-400 hover:text-black text-white/80 flex items-center justify-center transition shrink-0 cursor-pointer"
+                      className="size-7 rounded-lg bg-white/10 hover:bg-brand-mauve hover:text-zinc-950 text-white/80 flex items-center justify-center transition shrink-0 cursor-pointer"
                       title="Watch Sample Video"
                     >
                       <Play size={13} className="ml-0.5" />
@@ -94,7 +94,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
                         <button
                           type="button"
                           onClick={() => onSetQuantity(addon.key, qty + 1)}
-                          className="size-7 rounded-lg bg-amber-400 text-black font-bold flex items-center justify-center transition cursor-pointer"
+                          className="size-7 rounded-lg bg-brand-mauve text-zinc-950 font-bold flex items-center justify-center transition cursor-pointer"
                           aria-label={`Increase quantity for ${addon.title}`}
                         >
                           <Plus size={12} />
@@ -104,7 +104,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
                       <button
                         type="button"
                         onClick={() => onSetQuantity(addon.key, 1)}
-                        className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-amber-400 hover:text-black text-white transition flex items-center gap-1 cursor-pointer"
+                        className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-brand-mauve hover:text-zinc-950 text-white transition flex items-center gap-1 cursor-pointer"
                       >
                         <Plus size={12} /> Add
                       </button>
@@ -117,8 +117,8 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
                     onClick={() => onToggle(addon.key)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer ${
                       isAdded
-                        ? "bg-amber-400 text-black shadow-md shadow-amber-500/30"
-                        : "bg-white/10 text-white hover:bg-amber-400 hover:text-black"
+                        ? "bg-brand-mauve text-zinc-950 shadow-md shadow-brand-violet/40"
+                        : "bg-white/10 text-white hover:bg-brand-mauve hover:text-zinc-950"
                     }`}
                   >
                     {isAdded ? (
@@ -150,7 +150,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
           >
             <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
               <div className="flex items-center gap-2">
-                <Film size={16} className="text-amber-400" />
+                <Film size={16} className="text-brand-mauve" />
                 <h4 className="text-sm font-bold text-white">
                   Sample: {activeVideoModal.title}
                 </h4>

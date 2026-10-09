@@ -153,7 +153,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
                     className={cn(
                       "relative aspect-square min-h-[38px] rounded-lg text-xs sm:text-sm font-semibold tabular-nums transition-all duration-150 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed",
                       isSelected
-                        ? "bg-amber-400 text-black shadow-[0_8px_20px_-8px_rgba(245,158,11,0.7)]"
+                        ? "bg-brand-mauve text-zinc-950 shadow-[0_8px_20px_-8px_rgba(152,123,165,0.7)]"
                         : isPast
                         ? "text-zinc-700"
                         : "text-zinc-200 hover:bg-white/[0.07] hover:text-white active:scale-95"
@@ -161,7 +161,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
                   >
                     {d}
                     {isToday && !isSelected && (
-                      <span aria-hidden className="absolute bottom-1.5 size-1 rounded-full bg-amber-400" />
+                      <span aria-hidden className="absolute bottom-1.5 size-1 rounded-full bg-brand-mauve" />
                     )}
                   </button>
                 );

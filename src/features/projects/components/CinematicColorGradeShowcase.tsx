@@ -117,13 +117,13 @@ export function CinematicColorGradeShowcase() {
   return (
     <div className="my-16 sm:my-20 rounded-3xl border border-white/10 bg-gradient-to-b from-[#0a0a0f] to-black p-6 sm:p-10 relative overflow-hidden shadow-2xl">
       {/* Background glow effects */}
-      <div className="absolute top-0 right-1/3 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-1/3 w-80 h-80 bg-brand-mauve/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-brand-violet/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 relative z-10">
         <div>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400 text-xs font-mono uppercase tracking-wider mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-brand-mauve/30 bg-brand-mauve/10 text-brand-mauve text-xs font-mono uppercase tracking-wider mb-3 shadow-sm shadow-brand-violet/20">
             <Sliders size={13} />
             <span>{isArabic ? "مقارنة حية لتصحيح الألوان والماسترينغ" : "Live Color Grading Comparison"}</span>
           </div>
@@ -145,7 +145,7 @@ export function CinematicColorGradeShowcase() {
             className={cn(
               "px-3.5 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center gap-2",
               showMotionVideo
-                ? "bg-amber-400 text-black border-amber-400 shadow-lg shadow-amber-500/25 ring-2 ring-amber-400/30"
+                ? "bg-brand-mauve text-zinc-950 border-brand-mauve shadow-lg shadow-brand-violet/40 ring-2 ring-brand-mauve/40"
                 : "bg-white/10 border-white/20 text-white hover:bg-white/15"
             )}
           >
@@ -164,7 +164,7 @@ export function CinematicColorGradeShowcase() {
               className={cn(
                 "px-3.5 py-2 rounded-xl text-xs font-medium border transition-all cursor-pointer flex items-center gap-2",
                 activePresetIndex === idx
-                  ? "bg-amber-500 border-amber-500 text-black font-bold shadow-md shadow-amber-500/20"
+                  ? "bg-brand-mauve border-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/30"
                   : "bg-white/5 border-white/10 text-text-secondary hover:text-white hover:border-white/20"
               )}
             >
@@ -188,7 +188,7 @@ export function CinematicColorGradeShowcase() {
             className="size-full object-cover"
           />
           <div className="absolute top-4 left-4 pointer-events-none">
-            <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-amber-400 text-xs font-mono font-bold border border-amber-500/30">
+            <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md text-brand-lavender text-xs font-mono font-bold border border-brand-mauve/40">
               {isArabic ? "فيديو تقسيم ألوان الإنتاج الفعلي" : "Authentic Studio Grade Motion Reel"}
             </span>
           </div>
@@ -258,11 +258,11 @@ export function CinematicColorGradeShowcase() {
 
         {/* Vertical Divider Line with Cinema Handle */}
         <div
-          className="absolute top-0 bottom-0 w-0.5 bg-amber-400 pointer-events-none shadow-[0_0_12px_rgba(251,191,36,0.8)]"
+          className="absolute top-0 bottom-0 w-0.5 bg-brand-mauve pointer-events-none shadow-[0_0_14px_rgba(187,167,195,0.9)]"
           style={{ left: `${sliderPos}%` }}
         >
           {/* Draggable Badge / Handle */}
-          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-10 sm:size-12 rounded-full bg-black/90 border-2 border-amber-400 text-amber-400 flex items-center justify-center shadow-xl shadow-black/80 backdrop-blur-md">
+          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-10 sm:size-12 rounded-full bg-black/90 border-2 border-brand-mauve text-brand-lavender flex items-center justify-center shadow-[0_0_20px_rgba(152,123,165,0.5)] backdrop-blur-md">
             <div className="flex items-center gap-0.5">
               <ChevronLeft size={16} />
               <ChevronRight size={16} />
@@ -281,8 +281,8 @@ export function CinematicColorGradeShowcase() {
 
         {/* Right Badge: MASTER GRADE */}
         <div className="absolute top-4 right-4 pointer-events-none">
-          <div className="px-3 py-1.5 rounded-lg bg-amber-500/90 backdrop-blur-md border border-amber-300 text-black text-[11px] font-mono flex items-center gap-1.5 shadow-lg shadow-amber-500/20">
-            <Sparkles size={12} className="fill-black" />
+          <div className="px-3 py-1.5 rounded-lg bg-brand-violet backdrop-blur-md border border-brand-mauve text-white text-[11px] font-mono flex items-center gap-1.5 shadow-lg shadow-brand-violet/50">
+            <Sparkles size={12} className="fill-white" />
             <span className="font-bold">{isArabic ? preset.afterLabelAr : preset.afterLabelEn}</span>
           </div>
         </div>
@@ -316,7 +316,7 @@ export function CinematicColorGradeShowcase() {
             className={cn(
               "px-2.5 py-1 rounded-lg border text-[11px] font-mono transition-colors cursor-pointer",
               sliderPos === 0
-                ? "bg-amber-400 text-black border-amber-400 font-bold"
+                ? "bg-brand-mauve text-zinc-950 border-brand-mauve font-bold shadow-md shadow-brand-violet/30"
                 : "bg-white/5 border-white/10 text-white hover:bg-white/10"
             )}
           >
@@ -328,7 +328,7 @@ export function CinematicColorGradeShowcase() {
             className={cn(
               "px-2.5 py-1 rounded-lg border text-[11px] font-mono transition-colors cursor-pointer",
               sliderPos === 50
-                ? "bg-amber-400 text-black border-amber-400 font-bold"
+                ? "bg-brand-mauve text-zinc-950 border-brand-mauve font-bold shadow-md shadow-brand-violet/30"
                 : "bg-white/5 border-white/10 text-white hover:bg-white/10"
             )}
           >
@@ -340,7 +340,7 @@ export function CinematicColorGradeShowcase() {
             className={cn(
               "px-2.5 py-1 rounded-lg border text-[11px] font-mono transition-colors cursor-pointer",
               sliderPos === 100
-                ? "bg-amber-400 text-black border-amber-400 font-bold"
+                ? "bg-brand-mauve text-zinc-950 border-brand-mauve font-bold shadow-md shadow-brand-violet/30"
                 : "bg-white/5 border-white/10 text-white hover:bg-white/10"
             )}
           >

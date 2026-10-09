@@ -89,7 +89,7 @@ export function PodcastBookingWizard() {
                   onClick={() => setActiveSessionIndex(idx)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 min-h-[38px] cursor-pointer ${
                     isActive
-                      ? "bg-amber-400 text-black shadow-md shadow-amber-500/25"
+                      ? "bg-brand-mauve text-zinc-950 shadow-md shadow-brand-violet/40"
                       : "bg-white/[0.04] text-zinc-400 hover:text-white hover:bg-white/[0.08]"
                   }`}
                 >
@@ -196,7 +196,7 @@ export function PodcastBookingWizard() {
               <span className="font-bold text-white font-mono uppercase tracking-wider">
                 Session {activeSessionIndex + 1}:
               </span>
-              <span className="text-amber-400 font-black text-sm sm:text-base tabular-nums">
+              <span className="text-brand-mauve font-black text-sm sm:text-base tabular-nums">
                 {formatAED(currentSessionBreakdown.total)}
               </span>
             </div>
@@ -215,7 +215,7 @@ export function PodcastBookingWizard() {
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.97 }}
               transition={studioSprings.snappy}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-extrabold text-xs uppercase tracking-wider transition-all duration-200 shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 font-extrabold text-xs uppercase tracking-wider transition-all duration-200 shadow-lg shadow-brand-violet/40 flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Continue to {nextStepLabel}</span>
               <ArrowRight size={15} />
@@ -227,10 +227,10 @@ export function PodcastBookingWizard() {
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.97 }}
               transition={studioSprings.snappy}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-extrabold text-xs uppercase tracking-wider transition-all duration-200 shadow-xl shadow-amber-500/30 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 font-extrabold text-xs uppercase tracking-wider transition-all duration-200 shadow-xl shadow-brand-violet/50 flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Proceed to Checkout</span>
-              <span className="px-2 py-0.5 rounded-md bg-black/15 text-black font-mono">
+              <span className="px-2 py-0.5 rounded-md bg-black/15 text-zinc-950 font-mono">
                 {formatAED(grandTotal)}
               </span>
             </motion.button>

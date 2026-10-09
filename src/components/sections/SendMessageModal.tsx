@@ -204,7 +204,7 @@ export function SendMessageModal({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                   <label htmlFor={`${fieldId}-name`} className="block text-xs font-medium text-zinc-400 mb-1.5">
-                    {isArabic ? "الاسم" : "Name"} <span className="text-amber-400">*</span>
+                    {isArabic ? "الاسم" : "Name"} <span className="text-brand-mauve">*</span>
                   </label>
                   <input
                     id={`${fieldId}-name`}
@@ -219,7 +219,7 @@ export function SendMessageModal({
 
                 <div>
                   <label htmlFor={`${fieldId}-email`} className="block text-xs font-medium text-zinc-400 mb-1.5">
-                    {isArabic ? "البريد الإلكتروني" : "Email"} <span className="text-amber-400">*</span>
+                    {isArabic ? "البريد الإلكتروني" : "Email"} <span className="text-brand-mauve">*</span>
                   </label>
                   <input
                     id={`${fieldId}-email`}
@@ -280,7 +280,7 @@ export function SendMessageModal({
               {/* Phone Number */}
               <div>
                 <label htmlFor={`${fieldId}-phone`} className="block text-xs font-medium text-zinc-400 mb-1.5">
-                  {isArabic ? "رقم الهاتف للاتصال" : "Phone Number (for Callback)"} <span className="text-amber-400">*</span>
+                  {isArabic ? "رقم الهاتف للاتصال" : "Phone Number (for Callback)"} <span className="text-brand-mauve">*</span>
                 </label>
                 <input
                   id={`${fieldId}-phone`}
@@ -297,7 +297,7 @@ export function SendMessageModal({
               {/* Message */}
               <div>
                 <label htmlFor={`${fieldId}-message`} className="block text-xs font-medium text-zinc-400 mb-1.5">
-                  {isArabic ? "تفاصيل الطلب والاحتياجات" : "Message / What you need"} <span className="text-amber-400">*</span>
+                  {isArabic ? "تفاصيل الطلب والاحتياجات" : "Message / What you need"} <span className="text-brand-mauve">*</span>
                 </label>
                 <textarea
                   id={`${fieldId}-message`}

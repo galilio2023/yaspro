@@ -243,7 +243,7 @@ export function PackageComparisonTable() {
               <th className="p-4 sm:p-5 text-xs font-bold uppercase tracking-wider text-center text-white">
                 {isArabic ? "البداية (Starter)" : "Starter"}
               </th>
-              <th className="p-4 sm:p-5 text-xs font-bold uppercase tracking-wider text-center text-amber-400 bg-amber-400/[0.05] border-x border-amber-400/20">
+              <th className="p-4 sm:p-5 text-xs font-bold uppercase tracking-wider text-center text-brand-mauve bg-brand-violet/[0.15] border-x border-brand-mauve/30">
                 {isArabic ? "النمو (Growth) ★" : "Growth ★"}
               </th>
               <th className="p-4 sm:p-5 text-xs font-bold uppercase tracking-wider text-center text-white">
@@ -261,7 +261,7 @@ export function PackageComparisonTable() {
                 <tr className="border-t border-b border-white/[0.08] bg-white/[0.03]">
                   <td
                     colSpan={5}
-                    className="py-3 px-4 sm:px-5 text-xs font-mono font-bold tracking-wider uppercase text-amber-400"
+                    className="py-3 px-4 sm:px-5 text-xs font-mono font-bold tracking-wider uppercase text-brand-mauve"
                   >
                     {isArabic ? section.categoryAr : section.categoryEn}
                   </td>
@@ -279,7 +279,7 @@ export function PackageComparisonTable() {
                     <td className="p-4 sm:p-5 text-center">
                       {renderCellContent(feature.starter)}
                     </td>
-                    <td className="p-4 sm:p-5 text-center bg-amber-400/[0.02] border-x border-amber-400/10">
+                    <td className="p-4 sm:p-5 text-center bg-brand-violet/[0.08] border-x border-brand-mauve/15">
                       {renderCellContent(feature.growth)}
                     </td>
                     <td className="p-4 sm:p-5 text-center">

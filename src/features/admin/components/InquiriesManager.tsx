@@ -166,7 +166,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
             placeholder="Search leads by name, email, company, keyword..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
+            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve transition-colors"
           />
           <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
         </div>
@@ -179,7 +179,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
               onClick={() => setFilterStatus(tab)}
               className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize transition-all cursor-pointer ${
                 filterStatus === tab
-                  ? "bg-amber-500 text-slate-950 font-bold shadow-lg shadow-amber-500/20"
+                  ? "bg-brand-mauve text-slate-950 font-bold shadow-lg shadow-brand-violet/25"
                   : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
               }`}
             >
@@ -190,7 +190,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 text-xs text-slate-300 focus:outline-none focus:border-amber-500"
+            className="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 text-xs text-slate-300 focus:outline-none focus:border-brand-mauve"
           >
             <option value="all">All Inquiry Types</option>
             <option value="ob_van">OB Van Broadcast</option>

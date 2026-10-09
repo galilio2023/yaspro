@@ -33,11 +33,11 @@ export function SocialMediaPackagesHero() {
         >
           {isArabic ? (
             <>
-              باقات إنتاج <span className="text-amber-400">السوشيال ميديا</span> السينمائية
+              باقات إنتاج <span className="text-brand-mauve">السوشيال ميديا</span> السينمائية
             </>
           ) : (
             <>
-              Turnkey <span className="text-amber-400">Social Media</span> Production
+              Turnkey <span className="text-brand-mauve">Social Media</span> Production
             </>
           )}
         </h1>
@@ -55,7 +55,7 @@ export function SocialMediaPackagesHero() {
             className="group inline-flex items-center gap-2 text-xs text-zinc-400 hover:text-white transition-colors"
           >
             <span>{isArabic ? "تريد حجز جلسة بودكاست مستقلة؟" : "Looking for single podcast sessions?"}</span>
-            <span className="inline-flex items-center gap-1 font-semibold text-amber-400 group-hover:text-amber-300">
+            <span className="inline-flex items-center gap-1 font-semibold text-brand-mauve group-hover:text-brand-mauve-soft">
               {isArabic ? "استوديو البودكاست" : "Podcast Booking"}
               <ArrowUpRight size={13} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </span>
@@ -80,7 +80,7 @@ export function SocialMediaPackagesHero() {
           <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-zinc-500">
             {isArabic ? "بطاقة المواصفات الفنية" : "PRODUCTION BRIEF"}
           </span>
-          <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-amber-400/90">
+          <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-brand-mauve/90">
             IRIS BAY · TOWER 18
           </span>
         </div>

@@ -28,7 +28,7 @@ export default async function AdminDashboardPage() {
       description: "Verified media clients & accounts",
       href: "/admin/users",
       icon: UserCheck,
-      color: "from-amber-500/20 to-amber-600/10 border-amber-500/30 text-amber-400",
+      color: "from-brand-violet/25 to-brand-violet/10 border-brand-mauve/30 text-brand-mauve",
     },
     {
       title: "Client Leads & Inquiries",
@@ -46,7 +46,7 @@ export default async function AdminDashboardPage() {
       description: "Hourly rates, capacity & amenities",
       href: "/admin/studios",
       icon: Layers,
-      color: "from-amber-600/20 to-yellow-600/10 border-amber-600/30 text-amber-300",
+      color: "from-brand-violet/25 to-brand-violet/10 border-brand-mauve/30 text-brand-mauve",
     },
     {
       title: "Studio Bookings",
@@ -55,7 +55,7 @@ export default async function AdminDashboardPage() {
       description: "Calendar sessions & call sheets",
       href: "/admin/bookings",
       icon: CalendarCheck,
-      color: "from-amber-500/20 to-yellow-500/10 border-amber-500/30 text-amber-400",
+      color: "from-brand-violet/25 to-brand-violet/10 border-brand-mauve/30 text-brand-mauve",
     },
     {
       title: "Enterprise RFPs & Tenders",
@@ -64,7 +64,7 @@ export default async function AdminDashboardPage() {
       description: "Government & VIP broadcast tenders",
       href: "/admin/rfps",
       icon: FileSpreadsheet,
-      color: "from-amber-600/20 to-amber-500/10 border-amber-500/30 text-amber-300",
+      color: "from-brand-violet/25 to-brand-violet/10 border-brand-mauve/30 text-brand-mauve",
     },
     {
       title: "Broadcast & OB Van",
@@ -89,7 +89,7 @@ export default async function AdminDashboardPage() {
       description: "Live commercial & government films",
       href: "/admin/projects",
       icon: Film,
-      color: "from-amber-500/20 to-amber-600/10 border-amber-500/30 text-amber-400",
+      color: "from-brand-violet/25 to-brand-violet/10 border-brand-mauve/30 text-brand-mauve",
     },
     {
       title: "Creator Roster",
@@ -97,16 +97,16 @@ export default async function AdminDashboardPage() {
       description: "Mawthooq licensed Arab influencers",
       href: "/admin/influencers",
       icon: Users,
-      color: "from-amber-400/20 to-amber-500/10 border-amber-400/30 text-amber-300",
+      color: "from-brand-violet/25 to-brand-violet/10 border-brand-mauve/30 text-brand-mauve",
     },
   ];
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl bg-[#0c0b10] border border-amber-500/20 backdrop-blur-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl bg-[#0c0b10] border border-brand-mauve/20 backdrop-blur-xl">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-mauve/10 border border-brand-mauve/30 text-brand-mauve text-xs font-mono uppercase tracking-wider mb-2">
             <Server size={12} /> Neon Serverless + Drizzle ORM
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
@@ -136,7 +136,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {metricsUnavailable && (
-        <div role="status" className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200">
+        <div role="status" className="p-4 rounded-xl border border-brand-mauve/30 bg-brand-mauve/10 text-brand-mauve">
           Current metrics are unavailable. Refresh this page to retry.
         </div>
       )}
@@ -156,7 +156,7 @@ export default async function AdminDashboardPage() {
                   <Icon size={22} />
                 </div>
                 {card.badge && !metricsUnavailable && (
-                  <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-brand-mauve/20 text-brand-mauve border border-brand-mauve/30">
                     {card.badge}
                   </span>
                 )}
@@ -185,7 +185,7 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="p-6 rounded-2xl bg-slate-900/60 border border-white/10 backdrop-blur-xl space-y-4">
           <div className="flex items-center gap-2 text-sm font-semibold text-white">
-            <TrendingUp size={16} className="text-amber-400" />
+            <TrendingUp size={16} className="text-brand-mauve" />
             <span>Fast Management Tasks</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -193,14 +193,14 @@ export default async function AdminDashboardPage() {
               href="/admin/projects"
               className="p-3.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-colors block"
             >
-              <span className="font-semibold text-amber-300 block mb-1">Add Portfolio Film</span>
+              <span className="font-semibold text-brand-mauve block mb-1">Add Portfolio Film</span>
               <span className="text-slate-400">Add high-resolution project with 4K Vimeo embedding</span>
             </Link>
             <Link
               href="/admin/influencers"
               className="p-3.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-colors block"
             >
-              <span className="font-semibold text-amber-300 block mb-1">Sync Creator Media Kit</span>
+              <span className="font-semibold text-brand-mauve block mb-1">Sync Creator Media Kit</span>
               <span className="text-slate-400">Update follower stats & Mawthooq compliance records</span>
             </Link>
             <Link
@@ -228,7 +228,7 @@ export default async function AdminDashboardPage() {
           <ul className="space-y-3 text-xs text-slate-300">
             <li className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
               <span>Database Provider</span>
-              <span className="font-mono text-amber-300">Neon Serverless (PostgreSQL 16)</span>
+              <span className="font-mono text-brand-mauve">Neon Serverless (PostgreSQL 16)</span>
             </li>
             <li className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
               <span>Type-Safe ORM</span>
@@ -236,11 +236,11 @@ export default async function AdminDashboardPage() {
             </li>
             <li className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
               <span>Seed & Catalog Sync</span>
-              <span className="font-mono text-amber-300">npm run db:push / npm run seed</span>
+              <span className="font-mono text-brand-mauve">npm run db:push / npm run seed</span>
             </li>
             <li className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
               <span>Availability Strategy</span>
-              <span className="font-mono text-amber-300">Dual-layer (DB First + Instant Fallback)</span>
+              <span className="font-mono text-brand-mauve">Dual-layer (DB First + Instant Fallback)</span>
             </li>
           </ul>
         </div>

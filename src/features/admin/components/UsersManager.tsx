@@ -113,7 +113,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white font-display flex items-center gap-2.5">
-            <Users size={24} className="text-amber-400" />
+            <Users size={24} className="text-brand-mauve" />
             Registered Users &amp; Client Accounts
           </h1>
           <p className="text-xs text-slate-400 mt-1">
@@ -133,9 +133,9 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: "Total Accounts", icon: <Users size={14} className="text-amber-400" />, value: usersList.length },
+          { label: "Total Accounts", icon: <Users size={14} className="text-brand-mauve" />, value: usersList.length },
           { label: "Production Clients", icon: <Building size={14} className="text-stone-300" />, value: totalClients },
-          { label: "Enterprise Vaults", icon: <Shield size={14} className="text-amber-400" />, value: totalEnterprise },
+          { label: "Enterprise Vaults", icon: <Shield size={14} className="text-brand-mauve" />, value: totalEnterprise },
           { label: "System Admins", icon: <ShieldCheck size={14} className="text-emerald-400" />, value: totalAdmins },
         ].map(({ label, icon, value }) => (
           <div key={label} className="p-4 rounded-2xl bg-white/[0.02] border border-white/10">
@@ -153,7 +153,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
             placeholder="Search by name, email, company, phone..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
+            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve transition-colors"
           />
           <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
         </div>
@@ -165,7 +165,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
               onClick={() => setRoleFilter(tab)}
               className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize transition-all cursor-pointer ${
                 roleFilter === tab
-                  ? "bg-amber-500 text-slate-950 font-bold shadow-lg shadow-amber-500/20"
+                  ? "bg-brand-mauve text-slate-950 font-bold shadow-lg shadow-brand-violet/25"
                   : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
               }`}
             >
@@ -196,13 +196,13 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                 {/* User & Organization */}
                 <td className="py-3.5 px-4">
                   <div className="flex items-center gap-3">
-                    <div className="size-8 rounded-xl bg-gradient-to-tr from-amber-600/30 to-amber-500/20 border border-amber-500/30 flex items-center justify-center font-bold text-amber-300 text-xs shrink-0">
+                    <div className="size-8 rounded-xl bg-gradient-to-tr from-brand-violet/40 to-brand-mauve/20 border border-brand-mauve/30 flex items-center justify-center font-bold text-brand-mauve-soft text-xs shrink-0">
                       {user.name.charAt(0).toUpperCase()}
                     </div>
                     <div>
                       <span className="font-semibold text-white block">{user.name}</span>
                       <span className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
-                        <Building size={11} className="text-amber-400" />
+                        <Building size={11} className="text-brand-mauve" />
                         {user.company || "Independent Client"}
                       </span>
                     </div>
@@ -212,7 +212,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                 <td className="py-3.5 px-4 font-mono text-slate-300">
                   <div className="flex items-center gap-1.5">
                     <Mail size={12} className="text-slate-400 shrink-0" />
-                    <a href={`mailto:${user.email}`} className="hover:text-amber-400 transition-colors">
+                    <a href={`mailto:${user.email}`} className="hover:text-brand-mauve transition-colors">
                       {user.email}
                     </a>
                   </div>
@@ -252,7 +252,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                     }
                     className={`text-[10px] font-semibold px-2 py-1 rounded-lg border focus:outline-none cursor-pointer transition-colors ${
                       user.role === "admin"
-                        ? "bg-amber-500/20 text-amber-300 border-amber-500/30"
+                        ? "bg-brand-violet/20 text-brand-mauve border-brand-mauve/30"
                         : user.role === "enterprise"
                         ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
                         : "bg-slate-700/40 text-slate-300 border-slate-600/30"

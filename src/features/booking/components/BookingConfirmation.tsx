@@ -41,8 +41,8 @@ export function BookingConfirmation({
         <p className="text-text-secondary text-sm mb-6">
           Your studio session has been secured in our production calendar.
         </p>
-        <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-6 py-4 mb-4 inline-block">
-          <p className="text-amber-400 font-mono font-extrabold text-xl tracking-wider">
+        <div className="rounded-2xl border border-brand-mauve/40 bg-brand-violet/20 px-6 py-4 mb-4 inline-block shadow-lg shadow-brand-violet/20">
+          <p className="text-brand-mauve font-mono font-extrabold text-xl tracking-wider">
             {referenceCode}
           </p>
           <p className="text-text-muted text-xs mt-1">

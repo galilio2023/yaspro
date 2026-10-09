@@ -16,7 +16,7 @@ export function PackageFaqSection() {
   return (
     <div className="w-full mt-20 pt-16 border-t border-white/10 max-w-4xl mx-auto">
       <div className="text-center space-y-3 mb-10">
-        <div className="size-11 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto shadow-sm">
+        <div className="size-11 rounded-2xl bg-brand-mauve/10 border border-brand-mauve/20 text-brand-mauve flex items-center justify-center mx-auto shadow-sm shadow-brand-violet/20">
           <HelpCircle size={22} />
         </div>
         <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight font-display">
@@ -49,7 +49,7 @@ export function PackageFaqSection() {
                 <ChevronDown
                   size={18}
                   className={`shrink-0 text-zinc-400 transition-transform duration-200 ${
-                    isOpen ? "rotate-180 text-amber-400" : ""
+                    isOpen ? "rotate-180 text-brand-mauve" : ""
                   }`}
                 />
               </button>

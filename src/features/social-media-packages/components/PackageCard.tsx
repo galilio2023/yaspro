@@ -31,19 +31,19 @@ export function PackageCard({ pkg, billingInterval, onSelect }: PackageCardProps
       whileHover={{ y: -6 }}
       className={`relative flex flex-col justify-between rounded-3xl p-6 sm:p-7 transition-all duration-300 backdrop-blur-xl ${
         isGrowth
-          ? "bg-gradient-to-b from-[#131b2c] via-[#0d1320] to-[#090d16] border-2 border-amber-400/60 shadow-[0_0_50px_rgba(245,158,11,0.12)] lg:-translate-y-2 z-10"
+          ? "bg-gradient-to-b from-[#181324] via-[#120e1c] to-[#0a0810] border-2 border-brand-mauve/70 shadow-[0_0_50px_rgba(84,37,104,0.35)] lg:-translate-y-2 z-10"
           : isPremium
           ? "bg-[#0b0e16]/95 border border-white/15 hover:border-white/30 shadow-2xl shadow-black/60"
           : isEnterprise
-          ? "bg-[#0a0d14]/90 border border-white/10 hover:border-amber-400/30 shadow-xl shadow-black/40"
+          ? "bg-[#0c0912]/90 border border-white/10 hover:border-brand-mauve/40 shadow-xl shadow-black/40"
           : "bg-[#0c0f17]/90 border border-white/10 hover:border-white/20 shadow-xl shadow-black/40"
       }`}
     >
       {/* Top Badge for Growth Tier */}
       {isGrowth && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black uppercase tracking-wider shadow-lg shadow-amber-400/25">
-            <Sparkles size={11} className="fill-slate-950" />
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-brand-mauve text-zinc-950 text-[10px] font-black uppercase tracking-wider shadow-lg shadow-brand-violet/40">
+            <Sparkles size={11} className="fill-zinc-950" />
             {isArabic ? "الباقة الأكثر طلباً · RECOMMENDED" : "MOST POPULAR · PRODUCTION ENGINE"}
           </span>
         </div>
@@ -88,7 +88,7 @@ export function PackageCard({ pkg, billingInterval, onSelect }: PackageCardProps
           ) : (
             <div className="min-h-[64px] flex flex-col justify-center">
               <div className="flex items-baseline gap-1.5">
-                <span className="text-xs font-mono font-bold text-amber-400/90 tracking-wider">
+                <span className="text-xs font-mono font-bold text-brand-mauve tracking-wider">
                   {isArabic ? "د.إ" : "AED"}
                 </span>
                 <motion.span
@@ -127,9 +127,9 @@ export function PackageCard({ pkg, billingInterval, onSelect }: PackageCardProps
           onClick={() => onSelect(pkg)}
           className={`w-full py-3.5 px-5 rounded-2xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-2 ${
             isGrowth
-              ? "bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-lg shadow-amber-400/20 font-black"
+              ? "bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 shadow-lg shadow-brand-violet/40 font-black"
               : isPremium
-              ? "bg-amber-400/15 hover:bg-amber-400/25 text-amber-400 border border-amber-400/40 font-bold shadow-lg shadow-amber-400/10"
+              ? "bg-brand-mauve/15 hover:bg-brand-mauve/25 text-brand-lavender border border-brand-mauve/40 font-bold shadow-lg shadow-brand-violet/20"
               : "bg-white/[0.08] hover:bg-white/[0.14] text-white border border-white/15"
           }`}
         >
@@ -160,7 +160,7 @@ export function PackageCard({ pkg, billingInterval, onSelect }: PackageCardProps
               <span
                 className={`shrink-0 mt-0.5 size-4 rounded-full flex items-center justify-center ${
                   isGrowth
-                    ? "bg-amber-400/15 text-amber-400 border border-amber-400/30"
+                    ? "bg-brand-mauve/20 text-brand-lavender border border-brand-mauve/40"
                     : "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
                 }`}
               >

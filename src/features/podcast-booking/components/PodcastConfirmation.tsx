@@ -40,11 +40,11 @@ export function PodcastConfirmation({ result, onBookAnother }: PodcastConfirmati
       )}
 
       {/* Booking Reference Pill */}
-      <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 max-w-sm mx-auto">
+      <div className="p-4 rounded-2xl bg-brand-violet/10 border border-brand-mauve/30 max-w-sm mx-auto shadow-sm shadow-brand-violet/20">
         <span className="text-[11px] uppercase tracking-wider text-text-muted block font-semibold mb-1">
           Booking Reference
         </span>
-        <span className="text-xl font-mono font-extrabold text-amber-400 tracking-wider">
+        <span className="text-xl font-mono font-extrabold text-brand-mauve tracking-wider">
           {reference}
         </span>
       </div>

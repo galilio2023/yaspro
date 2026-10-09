@@ -42,11 +42,11 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
 
       {/* 1. Centerpiece Headcount Selector */}
       <div className="py-8 px-5 sm:px-8 rounded-3xl bg-[#0e0e13] border border-white/[0.08] flex flex-col items-center justify-center text-center space-y-6 shadow-2xl relative overflow-hidden">
-        {/* Subtle tungsten glow behind mic badge */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-amber-500/10 blur-3xl pointer-events-none rounded-full" />
+        {/* Subtle violet/mauve glow behind mic badge */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-brand-violet/20 blur-3xl pointer-events-none rounded-full" />
 
         {/* Cinematic Microphone Badge */}
-        <div className="relative size-20 sm:size-24 rounded-3xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-[0_0_40px_rgba(245,158,11,0.2)]">
+        <div className="relative size-20 sm:size-24 rounded-3xl bg-brand-mauve/10 border border-brand-mauve/30 flex items-center justify-center text-brand-lavender shadow-[0_0_40px_rgba(84,37,104,0.4)]">
           <Mic2 size={40} className="stroke-[1.75]" />
           <span className="absolute -top-1.5 -right-1.5 size-4 rounded-full bg-red-500 animate-pulse border-2 border-[#0e0e13]" title="Live on Air" />
         </div>
@@ -76,7 +76,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
                 className={cn(
                   "size-13 sm:size-14 rounded-2xl font-black text-base sm:text-lg transition-all duration-200 flex flex-col items-center justify-center cursor-pointer",
                   isSelected
-                    ? "bg-amber-400 text-black shadow-[0_10px_25px_-6px_rgba(245,158,11,0.7)] scale-105 ring-2 ring-amber-300"
+                    ? "bg-brand-mauve text-zinc-950 shadow-[0_10px_25px_-6px_rgba(152,123,165,0.7)] scale-105 ring-2 ring-brand-mauve-soft"
                     : "bg-white/[0.03] text-zinc-300 border border-white/10 hover:border-white/25 hover:text-white hover:bg-white/[0.06]"
                 )}
               >
@@ -127,17 +127,17 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
                 className={cn(
                   "p-3 rounded-2xl border text-center transition-all duration-200 flex flex-col items-center justify-center gap-1 cursor-pointer",
                   isSelected
-                    ? "bg-amber-400 text-black border-amber-300 font-bold shadow-[0_10px_25px_-8px_rgba(245,158,11,0.7)] scale-[1.02]"
+                    ? "bg-brand-mauve text-zinc-950 border-brand-mauve-soft font-bold shadow-[0_10px_25px_-8px_rgba(152,123,165,0.7)] scale-[1.02]"
                     : "bg-white/[0.02] text-zinc-300 border-white/[0.08] hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
                 )}
               >
-                <span className={cn("text-[10px] font-mono uppercase tracking-wider", isSelected ? "text-black/80 font-bold" : "text-zinc-500")}>
+                <span className={cn("text-[10px] font-mono uppercase tracking-wider", isSelected ? "text-zinc-950 font-bold" : "text-zinc-500")}>
                   {item.dayName}
                 </span>
                 <span className="text-lg font-black leading-none">
                   {item.dayNum}
                 </span>
-                <span className={cn("text-[10px] font-mono", isSelected ? "text-black/70 font-semibold" : "text-zinc-500")}>
+                <span className={cn("text-[10px] font-mono", isSelected ? "text-zinc-900 font-semibold" : "text-zinc-500")}>
                   {item.monthName}
                 </span>
               </motion.button>
@@ -172,7 +172,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
                 className={cn(
                   "py-2.5 px-2 rounded-xl border text-xs font-semibold transition-all duration-200 text-center cursor-pointer",
                   isSelected
-                    ? "bg-amber-400 text-black border-amber-300 font-bold shadow-[0_8px_20px_-6px_rgba(245,158,11,0.6)] scale-[1.02]"
+                    ? "bg-brand-mauve text-zinc-950 border-brand-mauve-soft font-bold shadow-[0_8px_20px_-6px_rgba(152,123,165,0.6)] scale-[1.02]"
                     : "bg-white/[0.02] text-zinc-300 border-white/[0.08] hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
                 )}
               >

@@ -123,14 +123,14 @@ export function VerticalReelsShowcase() {
   return (
     <div className="my-16 sm:my-20 rounded-3xl border border-white/10 bg-gradient-to-b from-[#090a10] to-black p-6 sm:p-10 relative overflow-hidden shadow-2xl">
       {/* Decorative background glows */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-brand-mauve/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-brand-violet/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10 relative z-10">
         <div>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400 text-xs font-mono uppercase tracking-wider mb-3">
-            <Flame size={13} className="text-amber-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-brand-mauve/30 bg-brand-mauve/10 text-brand-mauve text-xs font-mono uppercase tracking-wider mb-3 shadow-sm shadow-brand-violet/20">
+            <Flame size={13} className="text-brand-mauve" />
             <span>{isArabic ? "ريلز وإنتاجات الفيديو القصيرة" : "Viral Reels & Commercial Shorts"}</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-bold text-white font-display tracking-tight">
@@ -149,7 +149,7 @@ export function VerticalReelsShowcase() {
           onClick={toggleMute}
           className="self-start sm:self-auto inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white text-xs font-medium transition-colors cursor-pointer"
         >
-          {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} className="text-amber-400" />}
+          {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} className="text-brand-mauve" />}
           <span>{isMuted ? (isArabic ? "تشغيل الصوت" : "Unmute Audio") : (isArabic ? "كتم الصوت" : "Mute Audio")}</span>
         </button>
       </div>
@@ -162,7 +162,7 @@ export function VerticalReelsShowcase() {
           return (
             <div
               key={reel.id}
-              className="group relative rounded-2xl overflow-hidden border border-white/10 bg-black/60 shadow-xl transition-all duration-300 hover:border-amber-500/40 hover:shadow-amber-500/10 flex flex-col"
+              className="group relative rounded-2xl overflow-hidden border border-white/10 bg-black/60 shadow-xl transition-all duration-300 hover:border-brand-mauve/40 hover:shadow-[0_0_24px_rgba(152,123,165,0.2)] flex flex-col"
             >
               {/* Video Player Container */}
               <div
@@ -197,11 +197,11 @@ export function VerticalReelsShowcase() {
                 {/* Top Floating Badge (Views & Category) */}
                 <div className="absolute top-3 inset-x-3 flex items-center justify-between pointer-events-none text-[11px] font-mono">
                   <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-white flex items-center gap-1.5 font-bold">
-                    <Eye size={12} className="text-amber-400" />
+                    <Eye size={12} className="text-brand-mauve" />
                     <span>{reel.views}</span>
                   </span>
 
-                  <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-semibold">
+                  <span className="px-2 py-0.5 rounded-full bg-brand-mauve/15 text-brand-lavender border border-brand-mauve/30 text-[10px] font-semibold">
                     {isArabic ? reel.categoryAr : reel.categoryEn}
                   </span>
                 </div>
@@ -214,9 +214,9 @@ export function VerticalReelsShowcase() {
                   )}
                 >
                   {isPlaying ? (
-                    <Pause size={18} className="text-amber-400" />
+                    <Pause size={18} className="text-brand-mauve" />
                   ) : (
-                    <Play size={18} className="text-amber-400 fill-amber-400 ml-0.5" />
+                    <Play size={18} className="text-brand-mauve fill-brand-mauve ml-0.5" />
                   )}
                 </div>
 
@@ -229,7 +229,7 @@ export function VerticalReelsShowcase() {
 
                 {/* Bottom Video Meta Info */}
                 <div className="absolute bottom-3 inset-x-3 pointer-events-none space-y-1">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 block font-semibold">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-brand-mauve block font-semibold">
                     {isArabic ? reel.brandAr : reel.brandEn}
                   </span>
                   <h3 className="text-xs sm:text-sm font-bold text-white line-clamp-2 leading-snug">
@@ -255,7 +255,7 @@ export function VerticalReelsShowcase() {
                   type="button"
                   onClick={() => togglePlay(reel.id)}
                   aria-label={`${isPlaying ? (isArabic ? "إيقاف" : "Pause") : (isArabic ? "تشغيل" : "Watch")} — ${isArabic ? reel.titleAr : reel.titleEn}`}
-                  className="text-[11px] font-mono font-semibold text-amber-400 hover:text-amber-300 transition-colors cursor-pointer"
+                  className="text-[11px] font-mono font-semibold text-brand-mauve hover:text-brand-mauve-soft transition-colors cursor-pointer"
                 >
                   {isPlaying ? (isArabic ? "إيقاف" : "Pause") : (isArabic ? "تشغيل" : "Watch")}
                 </button>
@@ -268,7 +268,7 @@ export function VerticalReelsShowcase() {
       {/* Production Quality Callout Bar */}
       <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs text-text-muted font-mono">
         <div className="flex items-center gap-2">
-          <Smartphone size={14} className="text-amber-400 shrink-0" />
+          <Smartphone size={14} className="text-brand-mauve shrink-0" />
           <span>{isArabic ? "مُصورة بكاميرات سينمائية رأسية (Vertical Rigged Cinema)" : "Filmed on Vertical-Rigged RED & ARRI Cinema Systems"}</span>
         </div>
         <div className="flex items-center gap-2">

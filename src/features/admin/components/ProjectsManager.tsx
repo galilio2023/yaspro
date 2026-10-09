@@ -76,7 +76,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5 font-display">
-            <Film className="text-amber-400" /> Projects CMS Management
+            <Film className="text-brand-mauve" /> Projects CMS Management
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Manage commercial, national, and event films stored in Neon PostgreSQL.
@@ -85,7 +85,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
 
         <button
           onClick={handleOpenNew}
-          className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition-colors shrink-0 cursor-pointer"
+          className="px-4 py-2.5 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs shadow-lg shadow-brand-violet/25 flex items-center justify-center gap-2 transition-colors shrink-0 cursor-pointer"
         >
           <Plus size={16} /> Add New Project
         </button>
@@ -123,7 +123,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                 setSearchQuery(e.target.value);
                 pagination.resetPage();
               }}
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
+              className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve transition-colors"
             />
             <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
           </div>
@@ -156,7 +156,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
               >
                 <span>{cat.label}</span>
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                  isActive ? "bg-amber-500 text-slate-950 font-bold" : "bg-white/10 text-slate-400"
+                  isActive ? "bg-brand-mauve text-slate-950 font-bold" : "bg-white/10 text-slate-400"
                 }`}>
                   {cat.count}
                 </span>
@@ -324,7 +324,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting || isUploadingCover}
-                  className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold flex items-center gap-2 disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold flex items-center gap-2 disabled:opacity-50"
                 >
                   <Save size={14} /> {isUploadingCover ? "Uploading Asset..." : "Save to Neon DB"}
                 </button>
@@ -400,7 +400,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                             clearFeedback();
                             setEditingProject(proj);
                           }}
-                          className="p-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-lg bg-brand-violet/20 hover:bg-brand-violet/35 text-brand-mauve transition-colors cursor-pointer"
                           title="Edit Project"
                         >
                           <Edit3 size={14} />

@@ -165,7 +165,7 @@ export function BookingPaymentModal({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-5">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center">
+            <div className="size-10 rounded-2xl bg-brand-violet/30 border border-brand-mauve/40 text-brand-mauve flex items-center justify-center">
               <CreditCard size={20} />
             </div>
             <div>
@@ -173,7 +173,7 @@ export function BookingPaymentModal({
                 {isArabic ? "بوابة الدفع الآمنة في الإمارات" : "Secure UAE Checkout"}
               </h3>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-[10px] font-mono text-amber-400 font-semibold" dir="ltr">
+                <span className="text-[10px] font-mono text-brand-mauve font-semibold" dir="ltr">
                   REF: {referenceCode}
                 </span>
                 {orderTitle && (
@@ -206,7 +206,7 @@ export function BookingPaymentModal({
           <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2.5">
             <div className="flex items-center justify-between text-xs font-semibold text-white pb-2 border-b border-white/5">
               <span className="flex items-center gap-1.5">
-                <Receipt size={14} className="text-amber-400" />
+                <Receipt size={14} className="text-brand-mauve" />
                 {isArabic ? "ملخص الفاتورة الضريبية" : "Tax Invoice Summary"}
               </span>
               <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
@@ -226,7 +226,7 @@ export function BookingPaymentModal({
 
             {securityDeposit > 0 && (
               <div className="flex flex-col gap-0.5 pt-1 border-t border-white/5 text-[11px]">
-                <div className="flex justify-between text-amber-300">
+                <div className="flex justify-between text-brand-mauve-soft">
                   <span>{isArabic ? "تأمين المعدات المسترد (يُحصّل منفصلاً عند الاستلام):" : "Refundable Security Deposit (Billed Separately):"}</span>
                   <span className="font-mono font-bold">{formatCurrency(securityDeposit)}</span>
                 </div>
@@ -240,7 +240,7 @@ export function BookingPaymentModal({
 
             <div className="flex justify-between items-baseline pt-2 border-t border-white/10 text-white font-bold text-sm">
               <span>{isArabic ? "الإجمالي المستحق الآن:" : "Total Payable Now:"}</span>
-              <span className="text-amber-400 font-mono text-base font-extrabold">
+              <span className="text-brand-mauve font-mono text-base font-extrabold">
                 {formatCurrency(chargeAmount)}
               </span>
             </div>
@@ -259,16 +259,16 @@ export function BookingPaymentModal({
                 className={cn(
                   "p-3 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between relative",
                   paymentMethod === "ziina"
-                    ? "bg-amber-500/15 border-amber-400/60 text-white shadow-lg shadow-amber-500/10 ring-1 ring-amber-400/30"
+                    ? "bg-brand-violet/30 border-brand-mauve/60 text-white shadow-lg shadow-brand-violet/20 ring-1 ring-brand-mauve/30"
                     : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]"
                 )}
               >
                 <div className="flex items-center justify-between w-full">
-                  <span className="text-xs font-bold text-amber-300 flex items-center gap-1 font-display">
-                    <Zap size={13} className="text-amber-400 fill-amber-400 shrink-0" />
+                  <span className="text-xs font-bold text-brand-mauve-soft flex items-center gap-1 font-display">
+                    <Zap size={13} className="text-brand-mauve fill-brand-mauve shrink-0" />
                     <span>Ziina</span>
                   </span>
-                  <span className="text-[8px] uppercase px-1 py-0.5 rounded bg-amber-400/20 text-amber-300 font-semibold">
+                  <span className="text-[8px] uppercase px-1 py-0.5 rounded bg-brand-violet/40 text-brand-mauve-soft font-semibold">
                     Fast
                   </span>
                 </div>
@@ -284,13 +284,13 @@ export function BookingPaymentModal({
                 className={cn(
                   "p-3 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between",
                   paymentMethod === "card"
-                    ? "bg-amber-500/20 border-amber-500/50 text-white ring-1 ring-amber-400/30"
+                    ? "bg-brand-violet/30 border-brand-mauve/50 text-white ring-1 ring-brand-mauve/30"
                     : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]"
                 )}
               >
                 <div className="flex items-center justify-between w-full">
                   <span className="text-xs font-bold text-white flex items-center gap-1">
-                    <CreditCard size={13} className="text-amber-400 shrink-0" />
+                    <CreditCard size={13} className="text-brand-mauve shrink-0" />
                     <span>Card</span>
                   </span>
                 </div>
@@ -306,13 +306,13 @@ export function BookingPaymentModal({
                 className={cn(
                   "p-3 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between",
                   paymentMethod === "bank"
-                    ? "bg-amber-500/20 border-amber-500/50 text-white ring-1 ring-amber-400/30"
+                    ? "bg-brand-violet/30 border-brand-mauve/50 text-white ring-1 ring-brand-mauve/30"
                     : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]"
                 )}
               >
                 <div className="flex items-center justify-between w-full">
                   <span className="text-xs font-bold text-white flex items-center gap-1">
-                    <Building2 size={13} className="text-amber-400 shrink-0" />
+                    <Building2 size={13} className="text-brand-mauve shrink-0" />
                     <span>Bank</span>
                   </span>
                   <span className="text-[8px] uppercase px-1 py-0.5 rounded bg-white/10 text-text-muted">
@@ -338,11 +338,11 @@ export function BookingPaymentModal({
                 className={cn(
                   "p-3 rounded-2xl border text-start transition-all cursor-pointer",
                   paymentType === "deposit"
-                    ? "bg-amber-500/20 border-amber-500/50 text-white shadow-md shadow-amber-500/10"
+                    ? "bg-brand-violet/30 border-brand-mauve/50 text-white shadow-md shadow-brand-violet/20"
                     : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white"
                 )}
               >
-                <div className="text-[10px] font-mono uppercase text-amber-400">
+                <div className="text-[10px] font-mono uppercase text-brand-mauve">
                   {isArabic ? "عربون حجز 50%" : "50% Booking Deposit"}
                 </div>
                 <div className="text-sm font-bold text-white mt-0.5">
@@ -359,11 +359,11 @@ export function BookingPaymentModal({
                 className={cn(
                   "p-3 rounded-2xl border text-start transition-all cursor-pointer",
                   paymentType === "full"
-                    ? "bg-amber-500/20 border-amber-500/50 text-white shadow-md shadow-amber-500/10"
+                    ? "bg-brand-violet/30 border-brand-mauve/50 text-white shadow-md shadow-brand-violet/20"
                     : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white"
                 )}
               >
-                <div className="text-[10px] font-mono uppercase text-amber-400">
+                <div className="text-[10px] font-mono uppercase text-brand-mauve">
                   {isArabic ? "المبلغ كاملاً 100%" : "Full Payment (100%)"}
                 </div>
                 <div className="text-sm font-bold text-white mt-0.5">
@@ -378,9 +378,9 @@ export function BookingPaymentModal({
 
           {/* Payment Method Details */}
           {paymentMethod === "ziina" ? (
-            <div className="p-4 rounded-2xl bg-amber-500/[0.06] border border-amber-500/20 space-y-3">
+            <div className="p-4 rounded-2xl bg-brand-violet/[0.15] border border-brand-mauve/30 space-y-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-amber-300 font-semibold text-xs">
+                <div className="flex items-center gap-2 text-brand-mauve-soft font-semibold text-xs">
                   <Smartphone size={15} />
                   <span>{isArabic ? "مرخص من مصرف الإمارات المركزي (Ziina)" : "Central Bank of the UAE Regulated"}</span>
                 </div>
@@ -417,7 +417,7 @@ export function BookingPaymentModal({
                   onChange={(e) => setCardNumber(e.target.value)}
                   required
                   dir="ltr"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-amber-500"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-brand-mauve"
                 />
               </div>
 
@@ -431,7 +431,7 @@ export function BookingPaymentModal({
                     value={cardExpiry}
                     onChange={(e) => setCardExpiry(e.target.value)}
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-brand-mauve"
                   />
                 </div>
                 <div>
@@ -441,7 +441,7 @@ export function BookingPaymentModal({
                     value={cardCvc}
                     onChange={(e) => setCardCvc(e.target.value)}
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-brand-mauve"
                   />
                 </div>
               </div>
@@ -449,7 +449,7 @@ export function BookingPaymentModal({
           ) : (
             /* Corporate Bank Transfer (UAE Direct Wire) */
             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">
-              <div className="flex items-center justify-between text-xs text-amber-400 font-bold">
+              <div className="flex items-center justify-between text-xs text-brand-mauve font-bold">
                 <span className="flex items-center gap-1.5">
                   <Building2 size={14} />
                   {isArabic ? "تفاصيل الحساب البنكي الرسمي" : "Official UAE Corporate Account"}
@@ -467,11 +467,11 @@ export function BookingPaymentModal({
                   <span className="text-white">Emirates NBD — Business Bay, Dubai</span>
                 </div>
                 <div className="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
-                  <span className="text-amber-300 font-bold truncate">AE24 0260 0010 2345 6789 001</span>
+                  <span className="text-brand-mauve-soft font-bold truncate">AE24 0260 0010 2345 6789 001</span>
                   <button
                     type="button"
                     onClick={handleCopyIban}
-                    className="flex items-center gap-1 px-2 py-1 rounded bg-amber-500/20 text-amber-300 text-[10px] font-sans hover:bg-amber-500/30 transition-colors cursor-pointer shrink-0 ml-2"
+                    className="flex items-center gap-1 px-2 py-1 rounded bg-brand-violet/30 text-brand-mauve-soft text-[10px] font-sans hover:bg-brand-violet/50 transition-colors cursor-pointer shrink-0 ml-2"
                   >
                     {copiedIban ? <Check size={11} /> : <Copy size={11} />}
                     <span>{copiedIban ? "Copied" : "Copy IBAN"}</span>
@@ -532,7 +532,7 @@ export function BookingPaymentModal({
               className={cn(
                 "w-full py-3.5 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer disabled:opacity-50",
                 paymentMethod === "ziina"
-                  ? "bg-amber-500 hover:bg-amber-400 text-black font-extrabold shadow-amber-500/25"
+                  ? "bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-extrabold shadow-brand-violet/30"
                   : paymentMethod === "card"
                   ? "btn-brand text-black"
                   : "bg-white/10 hover:bg-white/20 text-white border border-white/20"

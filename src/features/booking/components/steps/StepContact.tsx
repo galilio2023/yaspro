@@ -154,7 +154,7 @@ export function StepContact({
           whileHover={isSubmitting ? undefined : { y: -2 }}
           whileTap={isSubmitting ? undefined : { scale: 0.98 }}
           transition={studioSprings.snappy}
-          className="w-full min-h-[54px] px-6 rounded-2xl bg-amber-400 hover:bg-amber-300 text-black font-bold text-sm flex items-center justify-between gap-3 shadow-[0_18px_40px_-16px_rgba(245,158,11,0.7)] disabled:opacity-60 disabled:cursor-wait cursor-pointer transition-colors"
+          className="w-full min-h-[54px] px-6 rounded-2xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 font-bold text-sm flex items-center justify-between gap-3 shadow-[0_18px_40px_-16px_rgba(152,123,165,0.7)] disabled:opacity-60 disabled:cursor-wait cursor-pointer transition-colors"
         >
           <span className="flex items-center gap-2">
             {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Lock size={15} />}

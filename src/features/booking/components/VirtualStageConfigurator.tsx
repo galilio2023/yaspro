@@ -148,7 +148,7 @@ export function VirtualStageConfigurator() {
       {/* Top Banner */}
       <div className="p-4 sm:p-5 border-b border-white/10 flex flex-wrap items-center justify-between gap-3 bg-white/[0.02]">
         <div className="flex items-center gap-2.5">
-          <div className="size-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+          <div className="size-8 rounded-xl bg-brand-violet/30 text-brand-mauve flex items-center justify-center">
             <Layers size={16} />
           </div>
           <div>
@@ -178,7 +178,7 @@ export function VirtualStageConfigurator() {
                 onClick={() => setActivePreset(p)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   isSelected
-                    ? "bg-amber-500 text-black font-extrabold shadow-md shadow-amber-500/20 border border-amber-400"
+                    ? "bg-brand-mauve text-slate-950 font-extrabold shadow-md shadow-brand-violet/30 border border-brand-mauve-soft"
                     : "bg-white/5 text-text-muted hover:text-white border border-white/5"
                 }`}
               >
@@ -210,7 +210,7 @@ export function VirtualStageConfigurator() {
 
         {/* Floating HUD Telemetry */}
         <div className="absolute top-4 left-4 pointer-events-none space-y-1.5 bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10 text-xs font-mono">
-          <div className="text-amber-400 font-bold flex items-center gap-1.5">
+          <div className="text-brand-mauve font-bold flex items-center gap-1.5">
             <span className="size-2 rounded-full bg-emerald-400" />
             {activePreset.name}
           </div>
@@ -236,7 +236,7 @@ export function VirtualStageConfigurator() {
         <p className="text-text-secondary leading-relaxed" aria-live="polite">
           {activePreset.description}
         </p>
-        <span className="text-amber-400 font-mono text-[11px] shrink-0 font-bold">
+        <span className="text-brand-mauve font-mono text-[11px] shrink-0 font-bold">
           Calibrated for Unreal 5.4 LiveLink
         </span>
       </div>

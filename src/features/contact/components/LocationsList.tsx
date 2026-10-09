@@ -19,7 +19,7 @@ export function LocationsList() {
       <StaggerContainer className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-4">
         {LOCATIONS_DATA.map((loc) => (
           <StaggerItem key={loc.country} className="h-full">
-            <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-6 flex items-start gap-4 hover:border-amber-500/40 hover:bg-white/[0.06] transition-all duration-300 h-full">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-6 flex items-start gap-4 hover:border-brand-mauve/40 hover:bg-white/[0.06] transition-all duration-300 h-full">
               <div className="text-3xl shrink-0 p-2 rounded-2xl bg-white/5 border border-white/10">
                 {loc.flag}
               </div>
@@ -28,13 +28,13 @@ export function LocationsList() {
                   {isArabic && loc.arCountry ? loc.arCountry : loc.country}
                 </h3>
                 <p className="text-text-secondary text-sm flex items-start gap-2 leading-relaxed">
-                  <MapPin size={15} className="text-amber-400 mt-0.5 shrink-0" />
+                  <MapPin size={15} className="text-brand-mauve mt-0.5 shrink-0" />
                   <span className="break-words">
                     {isArabic && loc.arAddress ? loc.arAddress : loc.address}
                   </span>
                 </p>
                 <p className="text-text-secondary text-sm flex items-center gap-2 mt-1.5 font-mono" dir="ltr">
-                  <Phone size={14} className="text-amber-400 shrink-0" />
+                  <Phone size={14} className="text-brand-mauve shrink-0" />
                   <span className="break-all font-latin">{loc.phone}</span>
                 </p>
               </div>
@@ -46,7 +46,7 @@ export function LocationsList() {
       <FadeUp delay={0.4}>
         <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-8">
           <div className="flex items-center gap-3 mb-2">
-            <div className="size-9 rounded-xl bg-amber-500/15 flex items-center justify-center text-amber-400 shrink-0">
+            <div className="size-9 rounded-xl bg-brand-mauve/15 flex items-center justify-center text-brand-mauve shrink-0">
               <Mail size={18} />
             </div>
             <div>
@@ -55,7 +55,7 @@ export function LocationsList() {
               </span>
               <a
                 href="mailto:info@yasproductions.com"
-                className="text-amber-400 hover:text-white transition-colors text-sm font-medium font-latin"
+                className="text-brand-mauve hover:text-white transition-colors text-sm font-medium font-latin"
                 dir="ltr"
               >
                 info@yasproductions.com
@@ -76,7 +76,7 @@ export function LocationsList() {
               href="https://instagram.com/yaspromedia"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 min-h-[44px] py-3 px-4 rounded-2xl text-center text-sm font-semibold border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 hover:text-white transition-all flex items-center justify-center gap-2"
+              className="flex-1 min-h-[44px] py-3 px-4 rounded-2xl text-center text-sm font-semibold border border-brand-mauve/30 bg-brand-violet/20 hover:bg-brand-violet/30 text-brand-mauve hover:text-white transition-all flex items-center justify-center gap-2 shadow-md shadow-brand-violet/20"
             >
               <span>{t("contact.instagramChannel")}</span>
             </a>

@@ -194,7 +194,7 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
             {/* Mobile running total */}
             <div className="lg:hidden min-w-0 flex-1">
               <span className="block font-mono text-[10px] tracking-[0.16em] uppercase text-zinc-500">Total</span>
-              <span className="block text-base font-bold text-amber-400 tabular-nums truncate">{formatAED(breakdown.total, 2)}</span>
+              <span className="block text-base font-bold text-brand-mauve tabular-nums truncate">{formatAED(breakdown.total, 2)}</span>
             </div>
 
             {!isLastStep && (

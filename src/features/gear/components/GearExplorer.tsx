@@ -120,7 +120,7 @@ export function GearExplorer({
                   setSelectedCategory("all");
                   setShowAllUnfiltered(false);
                 }}
-                className="px-4 py-2 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 font-bold text-xs transition flex items-center gap-2 cursor-pointer shadow-sm group"
+                className="px-4 py-2 rounded-xl bg-brand-violet/20 hover:bg-brand-violet/30 text-brand-mauve border border-brand-mauve/30 font-bold text-xs transition flex items-center gap-2 cursor-pointer shadow-sm shadow-brand-violet/20 group"
               >
                 <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
                 <span>{isArabic ? "الرجوع لكافة الفئات" : "Back to All Categories"}</span>
@@ -133,7 +133,7 @@ export function GearExplorer({
                 <span className="font-bold text-white uppercase text-base sm:text-lg tracking-wide">
                   {categoriesWithOptions.find((c) => c.id === selectedCategory)?.label || (isArabic ? "جميع المعدات" : "All Equipment")}
                 </span>
-                <span className="font-mono text-xs px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 font-semibold">
+                <span className="font-mono text-xs px-2.5 py-0.5 rounded-full bg-brand-mauve/15 text-brand-mauve border border-brand-mauve/30 font-semibold">
                   {filteredGear.length} {isArabic ? "معدة" : "units"}
                 </span>
               </div>
@@ -155,7 +155,7 @@ export function GearExplorer({
                   ? `معاينة ${displayedGear.length} من أصل ${filteredGear.length} قطعة ومعدة سينمائية`
                   : `Showing ${displayedGear.length} of ${filteredGear.length} calibrated cinema units`}
               </span>
-              <span className="hidden sm:inline text-purple-400">
+              <span className="hidden sm:inline text-brand-mauve font-semibold">
                 {Math.round((displayedGear.length / filteredGear.length) * 100)}% Loaded
               </span>
             </div>
@@ -182,7 +182,7 @@ export function GearExplorer({
                   <button
                     type="button"
                     onClick={() => setVisibleCount((prev) => prev + 12)}
-                    className="px-8 py-3.5 rounded-full border border-purple-500/40 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 hover:text-purple-200 text-xs font-bold transition-all shadow-lg shadow-purple-500/10 cursor-pointer flex items-center gap-2"
+                    className="px-8 py-3.5 rounded-full border border-brand-mauve/40 bg-brand-violet/20 hover:bg-brand-violet/35 text-brand-mauve hover:text-brand-lavender text-xs font-bold transition-all shadow-lg shadow-brand-violet/25 cursor-pointer flex items-center gap-2"
                   >
                     <span>
                       {isArabic

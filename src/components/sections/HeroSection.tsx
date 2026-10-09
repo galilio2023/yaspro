@@ -109,8 +109,8 @@ export default function HeroSection() {
               
               {/* Studio Key & Rim Light Halo Behind Character (No Badges) */}
               <div className="absolute -inset-4 pointer-events-none -z-10">
-                {/* 3200K Warm Amber/Tungsten Key Light from upper right */}
-                <div className="absolute top-10 right-4 w-72 h-72 bg-amber-500/15 rounded-full blur-[80px]" />
+                {/* Atmospheric Mauve Key Light from upper right */}
+                <div className="absolute top-10 right-4 w-72 h-72 bg-brand-mauve/20 rounded-full blur-[80px]" />
                 {/* Anamorphic Violet/Magenta Rim Backlight from center-left */}
                 <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-80 h-80 bg-brand-violet/25 rounded-full blur-[90px]" />
                 {/* Grounding Stage Floor Pedestal Glow */}

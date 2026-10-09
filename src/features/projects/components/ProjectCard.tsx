@@ -79,15 +79,15 @@ export function ProjectCard({
       }
       className={cn(
         "relative group/card flex flex-col justify-between h-full rounded-2xl sm:rounded-3xl border bg-zinc-950/95 transition-all duration-300 hover:-translate-y-1.5 overflow-hidden shadow-xl shadow-black/50 will-change-transform",
-        onSelectSpotlight && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+        onSelectSpotlight && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
         isSpotlighted
-          ? "border-amber-500/70 ring-1 ring-amber-500/40 shadow-[0_0_24px_rgba(245,158,11,0.18)]"
-          : "border-white/10 hover:border-amber-500/40 hover:shadow-[0_16px_40px_-10px_rgba(0,0,0,0.8),0_0_24px_-4px_rgba(245,158,11,0.15)]"
+          ? "border-brand-mauve/70 ring-1 ring-brand-mauve/40 shadow-[0_0_30px_rgba(152,123,165,0.28)]"
+          : "border-white/10 hover:border-brand-mauve/50 hover:shadow-[0_16px_40px_-10px_rgba(0,0,0,0.8),0_0_28px_-4px_rgba(152,123,165,0.22)]"
       )}
     >
       {/* Active Spotlight Marker */}
       {isSpotlighted && (
-        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-amber-500 via-amber-300 to-amber-500 z-30 shadow-[0_0_12px_rgba(245,158,11,0.8)]" />
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-brand-violet via-brand-mauve to-brand-violet z-30 shadow-[0_0_14px_rgba(187,167,195,0.8)]" />
       )}
 
       {/* Thumbnail Stage */}
@@ -115,7 +115,7 @@ export function ProjectCard({
           )}
 
           {/* Anamorphic Horizontal Flare (Subtle cinema sweep on hover) */}
-          <div className="absolute inset-y-1/2 -translate-y-1/2 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400/80 to-transparent scale-x-0 group-hover/thumb:scale-x-100 transition-transform duration-500 ease-out pointer-events-none z-20" />
+          <div className="absolute inset-y-1/2 -translate-y-1/2 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-brand-mauve/80 to-transparent scale-x-0 group-hover/thumb:scale-x-100 transition-transform duration-500 ease-out pointer-events-none z-20" />
 
           {/* Multi-tier Studio Vignette */}
           <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-black/60 pointer-events-none" />
@@ -134,7 +134,7 @@ export function ProjectCard({
             </div>
 
             {/* Camera Sensor/Optics Tag */}
-            <span className="px-2 py-0.5 rounded-md bg-black/90 border border-amber-500/30 text-[9px] font-mono tracking-wider text-amber-300/90" dir="ltr">
+            <span className="px-2 py-0.5 rounded-md bg-black/90 border border-brand-mauve/30 text-[9px] font-mono tracking-wider text-brand-lavender" dir="ltr">
               {opticsTag}
             </span>
           </div>
@@ -144,8 +144,8 @@ export function ProjectCard({
             <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
               <div className="relative flex items-center justify-center">
                 {/* Pulse Ring */}
-                <div className="absolute inset-0 rounded-full bg-amber-500/20 scale-100 group-hover/thumb:scale-135 group-hover/thumb:opacity-0 transition-all duration-500 pointer-events-none" />
-                <div className="size-12 sm:size-13 rounded-full bg-zinc-950/90 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-xl group-hover/thumb:scale-110 group-hover/thumb:bg-amber-500 group-hover/thumb:text-zinc-950 group-hover/thumb:border-amber-400 group-hover/thumb:shadow-[0_0_24px_rgba(245,158,11,0.5)] transition-all duration-200">
+                <div className="absolute inset-0 rounded-full bg-brand-mauve/20 scale-100 group-hover/thumb:scale-135 group-hover/thumb:opacity-0 transition-all duration-500 pointer-events-none" />
+                <div className="size-12 sm:size-13 rounded-full bg-zinc-950/90 border border-brand-mauve/40 flex items-center justify-center text-brand-lavender shadow-xl group-hover/thumb:scale-110 group-hover/thumb:bg-brand-mauve group-hover/thumb:text-zinc-950 group-hover/thumb:border-brand-mauve group-hover/thumb:shadow-[0_0_24px_rgba(152,123,165,0.6)] transition-all duration-200">
                   <Play size={18} className="fill-current translate-x-0.5 rtl:-translate-x-0.5" />
                 </div>
               </div>
@@ -159,7 +159,7 @@ export function ProjectCard({
             </span>
             {project.views && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/90 border border-white/10 text-[9px] text-zinc-300">
-                <Eye size={10} className="text-amber-400" />
+                <Eye size={10} className="text-brand-mauve" />
                 <span>{project.views}</span>
               </span>
             )}
@@ -172,11 +172,11 @@ export function ProjectCard({
         {/* Client Row */}
         <div className="w-full flex items-center justify-between mb-2">
           <p className="text-[11px] text-zinc-400 font-medium flex items-center gap-1.5 truncate">
-            <Tv size={12} className="shrink-0 text-amber-400" />
+            <Tv size={12} className="shrink-0 text-brand-mauve" />
             <span className="truncate">{project.client}</span>
           </p>
           {isSpotlighted && (
-            <span className="text-[10px] font-mono text-amber-400 font-semibold uppercase tracking-wider flex items-center gap-1">
+            <span className="text-[10px] font-mono text-brand-mauve font-semibold uppercase tracking-wider flex items-center gap-1">
               <Sparkles size={10} />
               <span>Spotlight</span>
             </span>
@@ -185,11 +185,11 @@ export function ProjectCard({
 
         {/* Title */}
         <div className="w-full mb-2">
-          <h3 className="text-lg sm:text-xl font-bold text-white font-display group-hover/card:text-amber-400 transition-colors line-clamp-1">
+          <h3 className="text-lg sm:text-xl font-bold text-white font-display group-hover/card:text-brand-lavender transition-colors line-clamp-1">
             <Link
               href={`/projects/${project.slug}`}
               onClick={(e) => e.stopPropagation()}
-              className="hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-400 focus-visible:rounded-sm"
+              className="hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-mauve focus-visible:rounded-sm"
             >
               {project.title}
             </Link>
@@ -234,16 +234,16 @@ export function ProjectCard({
             <button
               type="button"
               onClick={handleReelClick}
-              className="inline-flex items-center justify-center min-h-[38px] px-3.5 py-1.5 gap-1.5 text-xs font-semibold text-zinc-200 rounded-full bg-white/10 border border-white/15 hover:bg-amber-500 hover:text-zinc-950 hover:border-amber-400 transition-all cursor-pointer shadow-sm active:scale-[0.97] group/btn"
+              className="inline-flex items-center justify-center min-h-[38px] px-3.5 py-1.5 gap-1.5 text-xs font-semibold text-zinc-200 rounded-full bg-white/10 border border-white/15 hover:bg-brand-mauve hover:text-zinc-950 hover:border-brand-mauve transition-all cursor-pointer shadow-sm active:scale-[0.97] group/btn"
             >
-              <Play size={11} className="fill-current text-amber-400 group-hover/btn:text-zinc-950 rtl:scale-x-[-1] transition-colors shrink-0" />
+              <Play size={11} className="fill-current text-brand-mauve group-hover/btn:text-zinc-950 rtl:scale-x-[-1] transition-colors shrink-0" />
               <span>{isArabic ? "مشاهدة الفيديو" : "Watch Reel"}</span>
             </button>
           ) : (
             <Link
               href={`/projects/${project.slug}`}
               onClick={(e) => e.stopPropagation()}
-              className="inline-flex items-center justify-center min-h-[38px] px-3.5 py-1.5 gap-1.5 text-xs font-semibold text-zinc-200 rounded-full bg-white/10 border border-white/15 hover:bg-amber-500 hover:text-zinc-950 hover:border-amber-400 transition-all active:scale-[0.97]"
+              className="inline-flex items-center justify-center min-h-[38px] px-3.5 py-1.5 gap-1.5 text-xs font-semibold text-zinc-200 rounded-full bg-white/10 border border-white/15 hover:bg-brand-mauve hover:text-zinc-950 hover:border-brand-mauve transition-all active:scale-[0.97]"
             >
               <span>{isArabic ? "تفاصيل العمل" : "View Case"}</span>
               <ArrowUpRight size={11} className="rtl:rotate-90 rtl:scale-x-[-1]" />

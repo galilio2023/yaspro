@@ -19,7 +19,7 @@ export function Step3Service({ session, onChange }: Step3ServiceProps) {
         total={4}
         title="Production Tier"
         description="Select whether you want raw footage capture, live-switched program mix, or full A24-grade post-production."
-        aside={<MetaTag tone="amber">3 tiers</MetaTag>}
+        aside={<MetaTag tone="mauve">3 tiers</MetaTag>}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -32,12 +32,12 @@ export function Step3Service({ session, onChange }: Step3ServiceProps) {
               key={service.key}
               selected={isSelected}
               onSelect={() => onChange({ serviceKey: service.key })}
-              className={cn("p-6 sm:p-7 flex-1 justify-between", isBest && !isSelected && "border-amber-500/40 bg-white/[0.02]")}
+              className={cn("p-6 sm:p-7 flex-1 justify-between", isBest && !isSelected && "border-brand-mauve/40 bg-white/[0.02]")}
             >
               {/* Popular badge */}
               {isBest && (
-                <div className="inline-flex items-center gap-1.5 self-start px-3 py-1 rounded-full bg-amber-400 text-black text-[10px] font-mono tracking-wider uppercase font-bold mb-3 shadow-md shadow-amber-500/30">
-                  <Zap size={11} className="fill-black" />
+                <div className="inline-flex items-center gap-1.5 self-start px-3 py-1 rounded-full bg-brand-mauve text-zinc-950 text-[10px] font-mono tracking-wider uppercase font-bold mb-3 shadow-md shadow-brand-violet/40">
+                  <Zap size={11} className="fill-zinc-950" />
                   Most Popular
                 </div>
               )}
@@ -54,7 +54,7 @@ export function Step3Service({ session, onChange }: Step3ServiceProps) {
 
                 {/* Price Display */}
                 <div className="my-5 pb-5 border-b border-white/[0.08] flex items-baseline gap-2">
-                  <span className="text-3xl sm:text-4xl font-black text-amber-400 tracking-tight tabular-nums">
+                  <span className="text-3xl sm:text-4xl font-black text-brand-mauve tracking-tight tabular-nums">
                     {formatAED(service.price)}
                   </span>
                   <span className="text-xs text-zinc-500 font-medium font-mono">
@@ -125,7 +125,7 @@ export function Step3Service({ session, onChange }: Step3ServiceProps) {
                   className={cn(
                     "w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2",
                     isSelected
-                      ? "bg-amber-400 text-black font-extrabold shadow-md shadow-amber-500/30"
+                      ? "bg-brand-mauve text-zinc-950 font-extrabold shadow-md shadow-brand-violet/40"
                       : "bg-white/[0.06] text-zinc-300 group-hover:bg-white/[0.1] group-hover:text-white"
                   )}
                 >

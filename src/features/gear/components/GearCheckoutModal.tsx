@@ -167,7 +167,7 @@ export function GearCheckoutModal({
             <div className="relative px-6 py-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
               <div>
                 <h2 className="text-lg font-bold text-white font-display flex items-center gap-2">
-                  <Sparkles size={18} className="text-amber-400" />
+                  <Sparkles size={18} className="text-brand-mauve" />
                   <span>
                     {isArabic
                       ? "إتمام حجز وتأجير معدات التصوير"
@@ -214,7 +214,7 @@ export function GearCheckoutModal({
                     <span className="text-xs text-text-muted block">
                       {isArabic ? "كود الحجز المرجعي:" : "Booking Reference Code:"}
                     </span>
-                    <span className="text-xl font-bold text-amber-400 tracking-wider">
+                    <span className="text-xl font-bold text-brand-mauve tracking-wider">
                       {createdBooking.referenceCode}
                     </span>
                   </div>
@@ -253,7 +253,7 @@ export function GearCheckoutModal({
                   {/* Left Column: Contact & Production Details */}
                   <div className="lg:col-span-7 space-y-4">
                     <div className="flex items-center gap-2 text-sm font-bold text-white border-b border-white/10 pb-2">
-                      <Building2 size={16} className="text-amber-400" />
+                      <Building2 size={16} className="text-brand-mauve" />
                       <span>
                         {isArabic
                           ? "بيانات المستأجر والإنتاج"
@@ -278,7 +278,7 @@ export function GearCheckoutModal({
                           value={customerName}
                           onChange={(e) => setCustomerName(e.target.value)}
                           placeholder="e.g. John Doe / طارق الشمري"
-                          className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-base sm:text-xs"
+                          className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 focus:border-brand-mauve focus:outline-none text-white text-base sm:text-xs"
                         />
                       </div>
 
@@ -292,7 +292,7 @@ export function GearCheckoutModal({
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder="client@production.com"
-                          className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-base sm:text-xs"
+                          className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 focus:border-brand-mauve focus:outline-none text-white text-base sm:text-xs"
                         />
                       </div>
                     </div>
@@ -308,7 +308,7 @@ export function GearCheckoutModal({
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           placeholder="+971 50 123 4567"
-                          className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-base sm:text-xs"
+                          className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 focus:border-brand-mauve focus:outline-none text-white text-base sm:text-xs"
                         />
                       </div>
 
@@ -321,7 +321,7 @@ export function GearCheckoutModal({
                           value={company}
                           onChange={(e) => setCompany(e.target.value)}
                           placeholder="e.g. Red Sea Films / مستقل"
-                          className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-base sm:text-xs"
+                          className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 focus:border-brand-mauve focus:outline-none text-white text-base sm:text-xs"
                         />
                       </div>
                     </div>
@@ -339,13 +339,13 @@ export function GearCheckoutModal({
                             ? "مثال: يرجى توفير محول بطاريات إضافي وعدسة 50mm معايرة..."
                             : "e.g. Lens mount preference (PL/LPL), wireless transmitter pairing..."
                         }
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-amber-500 focus:outline-none text-white text-base sm:text-xs resize-none"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-brand-mauve focus:outline-none text-white text-base sm:text-xs resize-none"
                       />
                     </div>
 
                     {session?.user && (
-                      <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-2 text-xs text-amber-200">
-                        <Lock size={14} className="text-amber-400 shrink-0" />
+                      <div className="p-3 rounded-xl bg-brand-violet/20 border border-brand-mauve/30 flex items-center gap-2 text-xs text-brand-mauve-soft">
+                        <Lock size={14} className="text-brand-mauve shrink-0" />
                         <span>
                           {isArabic
                             ? "سيتم ربط هذا الحجز تلقائيًا بحسابك المسجل."
@@ -362,7 +362,7 @@ export function GearCheckoutModal({
                         <span className="text-xs font-bold text-white uppercase tracking-wider font-mono">
                           {isArabic ? "ملخص باقة المعدات" : "Kit Summary"} ({items.length})
                         </span>
-                        <span className="text-xs text-amber-400 font-mono">
+                        <span className="text-xs text-brand-mauve font-mono">
                           {dateRange.totalDays} {isArabic ? "أيام" : "Days"}
                         </span>
                       </div>
@@ -419,7 +419,7 @@ export function GearCheckoutModal({
                         {totalDeposit > 0 && (
                           <div className="flex items-center justify-between text-text-muted">
                             <span>{isArabic ? "مبلغ التأمين المسترد:" : "Security Deposit:"}</span>
-                            <span className="font-mono text-amber-300">
+                            <span className="font-mono text-brand-mauve-soft">
                               {formatCurrency(totalDeposit)}
                             </span>
                           </div>
@@ -427,7 +427,7 @@ export function GearCheckoutModal({
 
                         <div className="flex items-center justify-between pt-2 border-t border-white/10 text-sm font-bold">
                           <span className="text-white">{isArabic ? "إجمالي الحجز:" : "Grand Total:"}</span>
-                          <span className="text-amber-400 font-mono text-base">
+                          <span className="text-brand-mauve font-mono text-base">
                             {formatCurrency(grandTotal)}
                           </span>
                         </div>
@@ -438,7 +438,7 @@ export function GearCheckoutModal({
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full py-3 rounded-xl btn-brand text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer"
+                        className="w-full py-3 rounded-xl btn-brand text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-violet/30 hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer"
                       >
                         {isSubmitting ? (
                           <>

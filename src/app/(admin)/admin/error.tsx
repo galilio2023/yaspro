@@ -17,8 +17,8 @@ export default function AdminError({
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center p-4">
-      <div className="max-w-md w-full p-8 rounded-2xl bg-zinc-900 border border-amber-500/30 text-center shadow-2xl backdrop-blur-xl">
-        <div className="size-12 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto mb-4">
+      <div className="max-w-md w-full p-8 rounded-2xl bg-zinc-900 border border-brand-mauve/30 text-center shadow-2xl backdrop-blur-xl shadow-brand-violet/20">
+        <div className="size-12 rounded-xl bg-brand-mauve/10 border border-brand-mauve/30 text-brand-mauve flex items-center justify-center mx-auto mb-4">
           <AlertTriangle size={24} />
         </div>
         <h2 className="text-xl font-bold text-white mb-2">CMS Operation Error</h2>

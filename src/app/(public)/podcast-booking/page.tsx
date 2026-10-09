@@ -107,7 +107,7 @@ export default function PodcastBookingPage() {
         {/* Studio FAQ Section */}
         <div className="max-w-4xl mx-auto mt-20 pt-16 border-t border-white/10 space-y-8">
           <div className="text-center space-y-2">
-            <div className="size-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto">
+            <div className="size-10 rounded-2xl bg-brand-mauve/10 border border-brand-mauve/20 text-brand-mauve flex items-center justify-center mx-auto shadow-sm shadow-brand-violet/20">
               <HelpCircle size={20} />
             </div>
             <h2 className="text-2xl font-bold text-white tracking-tight">Frequently Asked Questions</h2>

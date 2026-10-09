@@ -119,7 +119,7 @@ export function InfluencerCampaignModal({
         {/* Header */}
         <div className="flex items-center justify-between pb-5 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="size-11 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+            <div className="size-11 rounded-2xl bg-brand-mauve/10 border border-brand-mauve/30 flex items-center justify-center text-brand-mauve shrink-0">
               <Sparkles size={20} />
             </div>
             <div>
@@ -191,7 +191,7 @@ export function InfluencerCampaignModal({
                     placeholder="e.g. Dubai Tourism / Red Bull"
                     value={formData.brandName}
                     onChange={(e) => setFormData({ ...formData, brandName: e.target.value })}
-                    className="w-full bg-black/60 border border-white/15 rounded-xl pl-9 pr-3.5 py-2.5 min-h-[44px] sm:min-h-0 text-base sm:text-xs text-white placeholder:text-text-ghost focus:outline-none focus:border-amber-500"
+                    className="w-full bg-black/60 border border-white/15 rounded-xl pl-9 pr-3.5 py-2.5 min-h-[44px] sm:min-h-0 text-base sm:text-xs text-white placeholder:text-text-ghost focus:outline-none focus:border-brand-mauve"
                   />
                 </div>
               </div>
@@ -207,7 +207,7 @@ export function InfluencerCampaignModal({
                   placeholder="e.g. Sarah Mansour"
                   value={formData.contactName}
                   onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
-                  className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] sm:min-h-0 text-base sm:text-xs text-white placeholder:text-text-ghost focus:outline-none focus:border-amber-500"
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] sm:min-h-0 text-base sm:text-xs text-white placeholder:text-text-ghost focus:outline-none focus:border-brand-mauve"
                 />
               </div>
 
@@ -222,7 +222,7 @@ export function InfluencerCampaignModal({
                   placeholder="sarah@agency.ae"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] sm:min-h-0 text-base sm:text-xs text-white placeholder:text-text-ghost focus:outline-none focus:border-amber-500"
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] sm:min-h-0 text-base sm:text-xs text-white placeholder:text-text-ghost focus:outline-none focus:border-brand-mauve"
                 />
               </div>
 
@@ -237,7 +237,7 @@ export function InfluencerCampaignModal({
                   placeholder="+971 50 000 0000"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] sm:min-h-0 text-base sm:text-xs text-white placeholder:text-text-ghost focus:outline-none focus:border-amber-500"
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] sm:min-h-0 text-base sm:text-xs text-white placeholder:text-text-ghost focus:outline-none focus:border-brand-mauve"
                 />
               </div>
             </div>
@@ -250,7 +250,7 @@ export function InfluencerCampaignModal({
               <select
                 value={formData.campaignObjective}
                 onChange={(e) => setFormData({ ...formData, campaignObjective: e.target.value })}
-                className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] sm:min-h-0 text-base sm:text-xs text-white focus:outline-none focus:border-amber-500"
+                className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] sm:min-h-0 text-base sm:text-xs text-white focus:outline-none focus:border-brand-mauve"
               >
                 {CAMPAIGN_OBJECTIVES.map((obj) => (
                   <option key={obj} value={obj} className="bg-neutral-900 text-white">
@@ -264,13 +264,13 @@ export function InfluencerCampaignModal({
               {/* Budget Tier */}
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-text-muted mb-1.5 flex items-center gap-1">
-                  <DollarSign size={12} className="text-amber-400" />
+                  <DollarSign size={12} className="text-brand-mauve" />
                   <span>Budget Tier (AED)</span>
                 </label>
                 <select
                   value={formData.budgetTier}
                   onChange={(e) => setFormData({ ...formData, budgetTier: e.target.value })}
-                  className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] sm:min-h-0 text-base sm:text-xs text-white focus:outline-none focus:border-amber-500"
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] sm:min-h-0 text-base sm:text-xs text-white focus:outline-none focus:border-brand-mauve"
                 >
                   {BUDGET_TIERS.map((tier) => (
                     <option key={tier} value={tier} className="bg-neutral-900 text-white">
@@ -283,13 +283,13 @@ export function InfluencerCampaignModal({
               {/* Target Studio */}
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-text-muted mb-1.5 flex items-center gap-1">
-                  <Calendar size={12} className="text-amber-400" />
+                  <Calendar size={12} className="text-brand-mauve" />
                   <span>Target Studio / Location</span>
                 </label>
                 <select
                   value={formData.targetStudio}
                   onChange={(e) => setFormData({ ...formData, targetStudio: e.target.value })}
-                  className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] sm:min-h-0 text-base sm:text-xs text-white focus:outline-none focus:border-amber-500"
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] sm:min-h-0 text-base sm:text-xs text-white focus:outline-none focus:border-brand-mauve"
                 >
                   {STUDIO_FACILITIES.map((fac) => (
                     <option key={fac} value={fac} className="bg-neutral-900 text-white">
@@ -310,7 +310,7 @@ export function InfluencerCampaignModal({
                 placeholder="Share your campaign deliverables, target shoot date, or specific creative concept..."
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 text-base sm:text-xs text-white placeholder:text-text-ghost focus:outline-none focus:border-amber-500 resize-none"
+                className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 text-base sm:text-xs text-white placeholder:text-text-ghost focus:outline-none focus:border-brand-mauve resize-none"
               />
             </div>
 

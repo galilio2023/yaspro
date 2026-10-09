@@ -8,12 +8,12 @@ export interface CosmicConstellationSparklesProps {
   className?: string;
 }
 
-// Warm cinema tungsten & amber studio palette
+// Luxury studio violet & mauve palette
 const PALETTE = [
-  "245, 158, 11",   // Cinema Amber
-  "251, 191, 36",   // Warm Gold
-  "217, 119, 6",    // Tungsten Bronze
-  "254, 243, 199",  // Warm Ivory
+  "152, 123, 165",  // Brand Mauve (#987ba5)
+  "187, 167, 195",  // Soft Mauve (#bba7c3)
+  "118, 80, 134",   // Rich Violet (#765086)
+  "221, 211, 225",  // Pale Lavender (#ddd3e1)
   "255, 255, 255",  // Specular White
 ];
 

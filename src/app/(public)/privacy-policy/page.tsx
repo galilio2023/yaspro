@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
         <div className="space-y-8 text-sm text-text-secondary leading-relaxed mt-10">
           <section className="p-6 sm:p-8 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl">
             <div className="flex items-center gap-3 text-white font-bold text-base mb-3 font-display">
-              <Lock size={18} className="text-amber-400" />
+              <Lock size={18} className="text-brand-mauve" />
               <h2>1. Information We Collect</h2>
             </div>
             <p className="mb-3">
@@ -61,7 +61,7 @@ export default function PrivacyPolicyPage() {
 
           <section className="p-6 sm:p-8 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl">
             <div className="flex items-center gap-3 text-white font-bold text-base mb-3 font-display">
-              <Globe size={18} className="text-amber-400" />
+              <Globe size={18} className="text-brand-mauve" />
               <h2>3. Regional Compliance &amp; Contact</h2>
             </div>
             <p className="text-text-secondary mb-3">
@@ -69,7 +69,7 @@ export default function PrivacyPolicyPage() {
             </p>
             <p className="text-xs text-text-muted">
               For privacy inquiries or asset deletion requests, email our data team at:{" "}
-              <a href="mailto:privacy@yaspromedia.com" className="text-amber-400 underline hover:text-white transition-colors">
+              <a href="mailto:privacy@yaspromedia.com" className="text-brand-mauve underline hover:text-white transition-colors">
                 privacy@yaspromedia.com
               </a>{" "}
               or reach our Dubai Head Office at Iris Bay Tower, Business Bay, Dubai, UAE.

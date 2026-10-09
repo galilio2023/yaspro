@@ -174,13 +174,13 @@ export default function Footer() {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href="/studio-booking"
-              className="px-5 py-2.5 rounded-full bg-white/[0.08] hover:bg-white/[0.15] text-white border border-white/20 hover:border-amber-400/50 font-bold text-xs uppercase tracking-wider transition-all backdrop-blur-md"
+              className="px-5 py-2.5 rounded-full bg-white/[0.08] hover:bg-white/[0.15] text-white border border-white/20 hover:border-brand-mauve/50 font-bold text-xs uppercase tracking-wider transition-all backdrop-blur-md"
             >
               {isArabic ? "حجز استوديو تصوير" : "Book Soundstage"}
             </Link>
             <Link
               href="/social-media-packages"
-              className="px-5 py-2.5 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-amber-400/20"
+              className="px-5 py-2.5 rounded-full bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-brand-violet/40"
             >
               {isArabic ? "باقات السوشيال ميديا" : "Social Media Plans"}
             </Link>
@@ -190,7 +190,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="px-4 py-2.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 border border-white/10 text-xs font-semibold transition-all flex items-center gap-1.5"
             >
-              <Phone size={13} className="text-amber-400" />
+              <Phone size={13} className="text-brand-mauve" />
               <span className="font-mono text-[11px]">+971 55 401 0465</span>
             </a>
           </div>
