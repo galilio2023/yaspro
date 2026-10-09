@@ -33,7 +33,7 @@ export function StepCrewEquipment({ state, update }: WizardStepProps) {
         total={7}
         title="Crew & Equipment"
         description="Optional — add operators and camera, lighting or audio packages."
-        aside={<MetaTag tone={selectedIds.length ? "amber" : "neutral"}>{selectedIds.length} selected</MetaTag>}
+        aside={<MetaTag tone={selectedIds.length ? "mauve" : "neutral"}>{selectedIds.length} selected</MetaTag>}
       />
 
       {hasCategories && (

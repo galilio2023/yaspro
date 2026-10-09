@@ -49,7 +49,7 @@ const STUDIO_BOOKING_SCHEMA = {
 function BookingWizardLoading() {
   return (
     <div className="w-full min-h-[400px] flex flex-col items-center justify-center p-12 text-center border border-white/5 rounded-3xl bg-white/[0.01]">
-      <div className="size-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-4 animate-pulse">
+      <div className="size-12 rounded-2xl bg-brand-mauve/15 border border-brand-mauve/30 flex items-center justify-center text-brand-mauve mb-4 animate-pulse shadow-lg shadow-brand-violet/25">
         <Sparkles size={22} />
       </div>
       <p className="text-sm font-semibold text-white">Initializing Soundstage Engine...</p>

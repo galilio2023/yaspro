@@ -70,7 +70,7 @@ export function BookingCallSheetModal({
         {/* — Modal Controls — */}
         <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6 no-print">
           <div className="flex items-center gap-2.5">
-            <div className="size-8 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300 font-bold text-xs shadow-md">
+            <div className="size-8 rounded-xl bg-brand-violet/30 border border-brand-mauve/40 flex items-center justify-center text-brand-mauve font-bold text-xs shadow-md">
               <YasproEmblem size={16} idPrefix="callsheet-emblem" />
             </div>
             <div>
@@ -79,9 +79,9 @@ export function BookingCallSheetModal({
                 className="text-base font-bold text-white flex items-center gap-1.5"
               >
                 <span>YASPRO</span>
-                <span className="text-amber-400 font-normal">Call Sheet</span>
+                <span className="text-brand-mauve font-normal">Call Sheet</span>
               </h2>
-              <span className="text-[10px] font-mono text-amber-400">
+              <span className="text-[10px] font-mono text-brand-mauve">
                 REF: {booking.referenceCode}
               </span>
             </div>
@@ -91,7 +91,7 @@ export function BookingCallSheetModal({
             <button
               type="button"
               onClick={() => window.print()}
-              className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-lg shadow-amber-500/20"
+              className="px-3 py-1.5 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-lg shadow-brand-violet/25"
             >
               <Printer size={13} />
               <span>Print Call Sheet</span>
@@ -156,7 +156,7 @@ export function BookingCallSheetModal({
               <span className="text-[10px] text-slate-500 uppercase font-mono block">
                 Stage Location &amp; Facility
               </span>
-              <span className="font-bold text-amber-300 text-sm block">
+              <span className="font-bold text-brand-mauve-soft text-sm block">
                 {booking.studioName || (booking.equipmentIds && booking.equipmentIds.length > 0 ? "Cinema Gear Dispatch Facility" : "Main Production Stage")}
               </span>
               <p className="text-[11px] text-slate-400 mt-1">
@@ -270,7 +270,7 @@ export function BookingCallSheetModal({
               </span>
               {booking.propsNotes && (
                 <div>
-                  <span className="text-[10px] text-amber-400 font-mono block font-semibold">
+                  <span className="text-[10px] text-brand-mauve font-mono block font-semibold">
                     Props &amp; Staging:
                   </span>
                   <p className="text-xs text-slate-300 mt-0.5">
@@ -280,7 +280,7 @@ export function BookingCallSheetModal({
               )}
               {booking.specialRequests && (
                 <div>
-                  <span className="text-[10px] text-amber-400 font-mono block font-semibold">
+                  <span className="text-[10px] text-brand-mauve font-mono block font-semibold">
                     Special Client Requests:
                   </span>
                   <p className="text-xs text-slate-300 mt-0.5">
@@ -292,7 +292,7 @@ export function BookingCallSheetModal({
           )}
 
           {/* Safety Footer */}
-          <div className="p-4 rounded-2xl bg-amber-950/20 border border-amber-800/20 text-[11px] text-slate-400 flex items-center justify-between">
+          <div className="p-4 rounded-2xl bg-brand-violet/20 border border-brand-mauve/30 text-[11px] text-slate-400 flex items-center justify-between">
             <span>Yas Pro Security Desk: +971 55 401 0465</span>
             <span>Stage Access Badges Required at Entry Gate</span>
           </div>

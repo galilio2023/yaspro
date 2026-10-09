@@ -30,4 +30,14 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Do NOT revert the initial entrance animation to unstyled inline Framer Motion variants that can flash unmasked letters prior to React hydration.
 - The entrance timer must remain at 2.2s for first load / full refresh with organic breathing before exiting.
 
+## 5. Color Palette, Shadows & Glow Standards (Purple / Mauve - No Amber Shadows)
+- **Official Brand Colors**:
+  - **Studio Mauve** (`#987ba5`), **Rich Violet** (`#765086`), **Deep Violet** (`#542568`), and **Lavender** (`#ddd3e1`) are the official brand accent and lighting colors.
+- **Strictly Banned Amber Shadows & Glows**:
+  - All shadows, card glows, border beams (`BorderBeam`), and soundstage atmospheric lights MUST use Purple & Mauve (`bg-brand-mauve`, `bg-brand-violet`, `shadow-brand-violet`, `border-brand-mauve`).
+  - DO NOT use amber or yellow shadows (`shadow-amber-*`, `bg-amber-400/20` ambient lighting) anywhere across the application.
+- **Loader Aperture `[O]` Glow & Shadow**:
+  - In `YasproAnimatedLoader.tsx`, the halo glow and trailing shadow behind the rolling `[O]` MUST ALWAYS be Studio Mauve & Violet (`bg-brand-mauve/35 blur-xl`, `bg-brand-violet/30 blur-2xl`), with inner aperture rings in Studio Mauve (`rgba(152, 123, 165, ...)`).
+  - Never render amber or yellow shadows/glows around the `[O]`. Only the single `#FFE900` accent blade on the aperture iris itself is golden yellow in accordance with brand geometry.
+
 

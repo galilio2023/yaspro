@@ -116,7 +116,7 @@ export function BroadcastManager() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white font-display flex items-center gap-2.5">
-            <Radio size={24} className="text-amber-400" />
+            <Radio size={24} className="text-brand-mauve" />
             Broadcast Telemetry &amp; OB Van Master Control
           </h1>
           <p className="text-xs text-slate-400 mt-1">
@@ -153,17 +153,17 @@ export function BroadcastManager() {
                     summary: preset.summary,
                   })
                 }
-                className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-amber-500/40 hover:bg-slate-900 transition-all text-left group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-brand-mauve/40 hover:bg-slate-900 transition-all text-left group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center justify-between mb-2">
-                  <div className="size-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                  <div className="size-8 rounded-xl bg-brand-violet/20 text-brand-mauve flex items-center justify-center">
                     <Icon size={16} />
                   </div>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-slate-400">
                     Preset
                   </span>
                 </div>
-                <h4 className="font-semibold text-white text-xs group-hover:text-amber-400 transition-colors">
+                <h4 className="font-semibold text-white text-xs group-hover:text-brand-mauve-soft transition-colors">
                   {preset.title}
                 </h4>
                 <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
@@ -180,7 +180,7 @@ export function BroadcastManager() {
         {/* Form Console */}
         <div className="lg:col-span-5 p-6 rounded-3xl bg-slate-900/60 border border-white/10 shadow-xl space-y-4">
           <h3 className="font-bold text-white text-sm flex items-center gap-2">
-            <Send size={15} className="text-amber-400" />
+            <Send size={15} className="text-brand-mauve" />
             Custom Telemetry Dispatcher
           </h3>
           <p className="text-xs text-slate-400">
@@ -199,7 +199,7 @@ export function BroadcastManager() {
               <select
                 value={source}
                 onChange={(e) => setSource(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-amber-500"
+                className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-brand-mauve"
               >
                 <option value="OB-VAN MERCEDES 01">OB-VAN MERCEDES 01 (Riyadh)</option>
                 <option value="OB-VAN MERCEDES 02">OB-VAN MERCEDES 02 (Dubai)</option>
@@ -216,7 +216,7 @@ export function BroadcastManager() {
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value as TelemetryType)}
-                  className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-amber-500 font-mono text-[11px]"
+                  className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-brand-mauve font-mono text-[11px]"
                 >
                   <option value="OB_VAN_GPS">OB_VAN_GPS</option>
                   <option value="GENLOCK_SYNC">GENLOCK_SYNC</option>
@@ -231,7 +231,7 @@ export function BroadcastManager() {
                 <select
                   value={level}
                   onChange={(e) => setLevel(e.target.value as SeverityLevel)}
-                  className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-amber-500 text-[11px]"
+                  className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-brand-mauve text-[11px]"
                 >
                   <option value="info">Info</option>
                   <option value="success">Success</option>
@@ -248,14 +248,14 @@ export function BroadcastManager() {
                 placeholder="e.g. Ka-band satellite lock verified with latency < 45ms..."
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 resize-none"
+                className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve resize-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-2.5 rounded-xl btn-brand text-zinc-950 font-bold flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 cursor-pointer"
+              className="w-full py-2.5 rounded-xl btn-brand text-zinc-950 font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-violet/25 transition-all disabled:opacity-50 cursor-pointer"
             >
               <Send size={13} />
               <span>{isSubmitting ? "Broadcasting..." : "Dispatch to Relay Edge"}</span>

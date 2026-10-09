@@ -32,7 +32,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
     <div className="w-full rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-4 sm:p-5 mb-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/5">
         <div className="flex items-center gap-2.5">
-          <div className="size-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+          <div className="size-9 rounded-xl bg-brand-mauve/10 border border-brand-mauve/30 flex items-center justify-center text-brand-mauve">
             <Calendar size={18} />
           </div>
           <div>
@@ -55,7 +55,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
             onClick={() => setPreset(1)}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               dateRange.totalDays === 1
-                ? "bg-amber-500 text-zinc-950 font-bold shadow-md shadow-amber-500/20"
+                ? "bg-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/40"
                 : "bg-white/5 text-text-secondary hover:text-white hover:bg-white/10"
             }`}
           >
@@ -66,7 +66,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
             onClick={() => setPreset(3)}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               dateRange.totalDays === 3
-                ? "bg-amber-500 text-zinc-950 font-bold shadow-md shadow-amber-500/20"
+                ? "bg-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/40"
                 : "bg-white/5 text-text-secondary hover:text-white hover:bg-white/10"
             }`}
           >
@@ -77,7 +77,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
             onClick={() => setPreset(7)}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               dateRange.totalDays === 7
-                ? "bg-amber-500 text-zinc-950 font-bold shadow-md shadow-amber-500/20"
+                ? "bg-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/40"
                 : "bg-white/5 text-text-secondary hover:text-white hover:bg-white/10"
             }`}
           >
@@ -101,7 +101,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
             min={todayStr}
             value={dateRange.pickupDate}
             onChange={(e) => handleDateChange(e.target.value, dateRange.returnDate)}
-            className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] text-base sm:text-sm text-white focus:outline-none focus:border-amber-500 transition-colors"
+            className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] text-base sm:text-sm text-white focus:outline-none focus:border-brand-mauve transition-colors"
           />
         </div>
 
@@ -119,7 +119,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
             min={addCalendarDays(dateRange.pickupDate, 1)}
             value={dateRange.returnDate}
             onChange={(e) => handleDateChange(dateRange.pickupDate, e.target.value)}
-            className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] text-base sm:text-sm text-white focus:outline-none focus:border-amber-500 transition-colors"
+            className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 min-h-[44px] text-base sm:text-sm text-white focus:outline-none focus:border-brand-mauve transition-colors"
           />
         </div>
 
@@ -132,7 +132,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
             <span className="text-sm font-bold text-white font-mono">
               {dateRange.totalDays} {dateRange.totalDays === 1 ? "Day" : "Days"}
               {dateRange.billingMultiplier !== dateRange.totalDays && (
-                <span className="text-xs text-amber-400 font-normal ml-1">
+                <span className="text-xs text-brand-mauve font-normal ml-1">
                   (Billed as {dateRange.billingMultiplier} days)
                 </span>
               )}

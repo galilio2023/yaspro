@@ -61,8 +61,8 @@ export default async function ProjectsPage() {
 
         <FadeUp delay={0.2}>
           <div className="mt-16 rounded-3xl border border-white/10 bg-[#0c0b10] backdrop-blur-xl p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl">
-            <div className="absolute inset-0 bg-amber-500/5 pointer-events-none" />
-            <Award className="mx-auto text-amber-400 mb-4" size={40} />
+            <div className="absolute inset-0 bg-brand-mauve/10 pointer-events-none" />
+            <Award className="mx-auto text-brand-mauve mb-4" size={40} />
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 font-display">
               Have a Big Production in Mind?
             </h2>

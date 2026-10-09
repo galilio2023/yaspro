@@ -20,8 +20,8 @@ export function BorderBeam({
   duration = 15,
   anchor = 90,
   borderWidth = 1.5,
-  colorFrom = "#f59e0b",
-  colorTo = "#d97706",
+  colorFrom = "#987ba5",
+  colorTo = "#542568",
   delay = 0,
 }: BorderBeamProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);

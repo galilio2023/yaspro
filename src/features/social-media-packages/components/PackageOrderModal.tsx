@@ -141,7 +141,7 @@ export function PackageOrderModal({
 
           {isSuccess ? (
             <div className="py-8 text-center space-y-4">
-              <div className="size-16 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center mx-auto">
+              <div className="size-16 rounded-full bg-brand-mauve/15 border border-brand-mauve/30 text-brand-lavender flex items-center justify-center mx-auto">
                 <CheckCircle2 size={32} />
               </div>
               <h3 id={headingId} className="text-2xl font-bold tracking-tight font-display">
@@ -158,7 +158,7 @@ export function PackageOrderModal({
                   href={`https://wa.me/971554010465?text=${whatsappMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-amber-400/20"
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 font-black text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-brand-violet/40"
                 >
                   <MessageSquare size={16} />
                   <span>{isArabic ? "محادثة فورية عبر واتساب" : "Chat Now via WhatsApp"}</span>
@@ -176,7 +176,7 @@ export function PackageOrderModal({
             <div>
               {/* Header */}
               <div className="mb-6">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 text-xs font-mono uppercase tracking-wider mb-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-mauve/15 border border-brand-mauve/30 text-brand-lavender text-xs font-mono uppercase tracking-wider mb-3">
                   <Sparkles size={12} />
                   <span>
                     {isArabic ? "تفعيل اشتراك إنتاج المحتوى" : "PRODUCTION ONBOARDING"}
@@ -209,7 +209,7 @@ export function PackageOrderModal({
                     <span className="block text-[10px] font-mono text-zinc-400 uppercase tracking-widest">
                       {isArabic ? "التسعير" : "PRICE"}
                     </span>
-                    <span className="text-base font-black text-amber-400 font-display">
+                    <span className="text-base font-black text-brand-mauve font-display">
                       {currentPrice ? `AED ${currentPrice.toLocaleString()}/mo` : "Custom"}
                     </span>
                   </div>
@@ -237,7 +237,7 @@ export function PackageOrderModal({
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder={isArabic ? "سعيد المنصوري" : "Alex Morgan"}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-amber-400 transition-colors"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-brand-mauve transition-colors"
                     />
                   </div>
                   <div>
@@ -251,7 +251,7 @@ export function PackageOrderModal({
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="alex@brand.com"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-amber-400 transition-colors"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-brand-mauve transition-colors"
                     />
                   </div>
                 </div>
@@ -268,7 +268,7 @@ export function PackageOrderModal({
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="+971 50 000 0000"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-amber-400 transition-colors"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-brand-mauve transition-colors"
                     />
                   </div>
                   <div>
@@ -281,7 +281,7 @@ export function PackageOrderModal({
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
                       placeholder="@yourbrand"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-amber-400 transition-colors"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-brand-mauve transition-colors"
                     />
                   </div>
                 </div>
@@ -300,7 +300,7 @@ export function PackageOrderModal({
                         ? "نود التركيز على تصوير بودكاست وريلز لمنتجاتنا الجديدة..."
                         : "We want to focus on high-energy founder reels and product demos..."
                     }
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-amber-400 transition-colors resize-none"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-brand-mauve transition-colors resize-none"
                   />
                 </div>
 
@@ -309,7 +309,7 @@ export function PackageOrderModal({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3.5 px-6 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 shadow-lg shadow-amber-400/20"
+                    className="w-full py-3.5 px-6 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 shadow-lg shadow-brand-violet/40"
                   >
                     {isSubmitting ? (
                       <span>{isArabic ? "جاري الإرسال..." : "Submitting..."}</span>

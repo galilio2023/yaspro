@@ -145,7 +145,7 @@ export function PartnersMarquee() {
                 <div
                   className="pointer-events-none absolute inset-0 -z-10 rounded-full opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-500 scale-125"
                   style={{
-                    background: `radial-gradient(circle at center, ${gov.glowColor || "rgba(245, 158, 11, 0.4)"} 0%, transparent 70%)`,
+                    background: `radial-gradient(circle at center, ${gov.glowColor || "rgba(152, 123, 165, 0.45)"} 0%, transparent 70%)`,
                   }}
                 />
 
@@ -191,7 +191,7 @@ export function PartnersMarquee() {
                 <div
                   className="pointer-events-none absolute inset-0 -z-10 rounded-full opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-500 scale-125"
                   style={{
-                    background: `radial-gradient(circle at center, ${brand.color ? `${brand.color}55` : "rgba(245, 158, 11, 0.35)"} 0%, transparent 70%)`,
+                    background: `radial-gradient(circle at center, ${brand.color ? `${brand.color}55` : "rgba(152, 123, 165, 0.35)"} 0%, transparent 70%)`,
                   }}
                 />
 
@@ -312,20 +312,20 @@ export function PartnersMarquee() {
                 key={company.id}
                 href="/about#conglomerate"
                 title={`${displayName} - ${displayDivision}`}
-                className="group relative flex flex-col items-center justify-between p-3 sm:p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:border-amber-400/40 hover:bg-white/[0.04] active:scale-[0.98] transition-all duration-300 w-[calc(50%-0.35rem)] sm:w-[calc(33.333%-0.6rem)] md:w-[calc(25%-0.75rem)] lg:w-[calc(14.285%-0.875rem)] min-w-[130px] max-w-[200px]"
+                className="group relative flex flex-col items-center justify-between p-3 sm:p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:border-brand-mauve/50 hover:bg-white/[0.04] active:scale-[0.98] transition-all duration-300 w-[calc(50%-0.35rem)] sm:w-[calc(33.333%-0.6rem)] md:w-[calc(25%-0.75rem)] lg:w-[calc(14.285%-0.875rem)] min-w-[130px] max-w-[200px]"
               >
                 {/* Dynamic Subtle Company Accent Bloom */}
                 <div
                   className="pointer-events-none absolute inset-0 -z-10 rounded-xl opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-300"
                   style={{
-                    background: `radial-gradient(circle at center, ${company.accentColor ? `${company.accentColor}30` : "rgba(245, 158, 11, 0.25)"} 0%, transparent 70%)`,
+                    background: `radial-gradient(circle at center, ${company.accentColor ? `${company.accentColor}30` : "rgba(152, 123, 165, 0.25)"} 0%, transparent 70%)`,
                   }}
                 />
 
                 {/* Micro Arrow indicator on hover */}
                 <ArrowUpRight
                   size={12}
-                  className="opacity-0 group-hover:opacity-100 text-amber-400 transition-opacity absolute top-2 sm:top-2.5 end-2 sm:end-2.5"
+                  className="opacity-0 group-hover:opacity-100 text-brand-mauve transition-opacity absolute top-2 sm:top-2.5 end-2 sm:end-2.5"
                 />
 
                 {/* Prominent Logo Container */}

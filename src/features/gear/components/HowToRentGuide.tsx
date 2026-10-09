@@ -139,12 +139,12 @@ export function HowToRentGuide() {
   return (
     <div className="my-16 rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-black/60 p-6 sm:p-10 backdrop-blur-xl relative overflow-hidden">
       {/* Decorative Glow */}
-      <div className="absolute top-0 right-1/4 -translate-y-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-1/4 -translate-y-1/2 w-96 h-96 bg-brand-violet/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 translate-y-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header */}
       <div className="relative text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400 text-xs font-mono uppercase tracking-wider mb-4">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-brand-mauve/30 bg-brand-violet/20 text-brand-mauve-soft text-xs font-mono uppercase tracking-wider mb-4">
           <Sparkles size={13} />
           <span>{isArabic ? "دليل وبروتوكول الاستئجار في دبي" : "Dubai Film Gear Rental Protocol"}</span>
         </div>
@@ -172,7 +172,7 @@ export function HowToRentGuide() {
               className={cn(
                 "relative text-start p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between cursor-pointer group",
                 isSelected
-                  ? "bg-amber-500/[0.08] border-amber-500/40 shadow-xl shadow-amber-500/10 ring-1 ring-amber-500/30"
+                  ? "bg-brand-violet/20 border-brand-mauve/40 shadow-xl shadow-brand-violet/20 ring-1 ring-brand-mauve/30"
                   : "bg-white/[0.02] border-white/10 hover:border-white/20 hover:bg-white/[0.04]"
               )}
             >
@@ -182,7 +182,7 @@ export function HowToRentGuide() {
                     className={cn(
                       "text-[11px] font-mono px-2.5 py-1 rounded-full uppercase tracking-wider",
                       isSelected
-                        ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                        ? "bg-brand-mauve/15 text-brand-lavender border border-brand-mauve/30"
                         : "bg-white/5 text-text-muted border border-white/5"
                     )}
                   >
@@ -192,7 +192,7 @@ export function HowToRentGuide() {
                     className={cn(
                       "size-10 rounded-xl flex items-center justify-center transition-colors",
                       isSelected
-                        ? "bg-amber-400 text-black shadow-md shadow-amber-500/30"
+                        ? "bg-brand-mauve text-zinc-950 shadow-md shadow-brand-violet/40"
                         : "bg-white/5 text-text-secondary group-hover:text-white group-hover:bg-white/10"
                     )}
                   >
@@ -205,7 +205,7 @@ export function HowToRentGuide() {
               </div>
 
               <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs">
-                <span className={cn("font-medium", isSelected ? "text-amber-400" : "text-text-muted")}>
+                <span className={cn("font-medium", isSelected ? "text-brand-mauve" : "text-text-muted")}>
                   {isSelected
                     ? isArabic
                       ? "المعلومات التفصيلية بالأسفل"
@@ -217,7 +217,7 @@ export function HowToRentGuide() {
                 <span
                   className={cn(
                     "size-2 rounded-full transition-transform duration-300",
-                    isSelected ? "bg-amber-400 scale-125" : "bg-white/20"
+                    isSelected ? "bg-brand-mauve scale-125" : "bg-white/20"
                   )}
                 />
               </div>
@@ -227,14 +227,14 @@ export function HowToRentGuide() {
       </div>
 
       {/* Expanded Active Step Information Banner */}
-      <div className="relative z-10 rounded-2xl border border-amber-500/20 bg-black/40 p-6 sm:p-8 mb-12">
+      <div className="relative z-10 rounded-2xl border border-brand-mauve/20 bg-black/40 p-6 sm:p-8 mb-12">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="size-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0">
+            <div className="size-12 rounded-2xl bg-brand-mauve/10 border border-brand-mauve/30 text-brand-lavender flex items-center justify-center shrink-0">
               {React.createElement(steps[activeStep].icon, { size: 24 })}
             </div>
             <div>
-              <span className="text-xs font-mono uppercase tracking-wider text-amber-400">
+              <span className="text-xs font-mono uppercase tracking-wider text-brand-mauve">
                 {steps[activeStep].badge}
               </span>
               <h4 className="text-lg sm:text-xl font-bold text-white font-display">
@@ -257,7 +257,7 @@ export function HowToRentGuide() {
               key={dIdx}
               className="p-4 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-3"
             >
-              <CheckCircle2 size={18} className="text-amber-400 shrink-0 mt-0.5" />
+              <CheckCircle2 size={18} className="text-brand-mauve shrink-0 mt-0.5" />
               <div>
                 <h5 className="text-sm font-semibold text-white mb-1">{detail.title}</h5>
                 <p className="text-xs text-text-muted leading-relaxed">{detail.desc}</p>
@@ -272,10 +272,10 @@ export function HowToRentGuide() {
         {/* Hub Card */}
         <div className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] flex items-start gap-4">
           <div className="size-12 rounded-2xl bg-white/5 border border-white/10 text-white flex items-center justify-center shrink-0">
-            <Building2 size={22} className="text-amber-400" />
+            <Building2 size={22} className="text-brand-mauve" />
           </div>
           <div>
-            <span className="text-[11px] font-mono uppercase tracking-wider text-amber-400">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-brand-mauve">
               {isArabic ? "المقر والمستودع الرئيسي" : "Central Distribution Hub"}
             </span>
             <h4 className="text-base font-bold text-white mt-1">
@@ -296,10 +296,10 @@ export function HowToRentGuide() {
         {/* Set Delivery Card */}
         <div className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] flex items-start gap-4">
           <div className="size-12 rounded-2xl bg-white/5 border border-white/10 text-white flex items-center justify-center shrink-0">
-            <Truck size={22} className="text-amber-400" />
+            <Truck size={22} className="text-brand-mauve" />
           </div>
           <div>
-            <span className="text-[11px] font-mono uppercase tracking-wider text-amber-400">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-brand-mauve">
               {isArabic ? "التوصيل الميداني للوكيشن" : "On-Set Direct Dispatch"}
             </span>
             <h4 className="text-base font-bold text-white mt-1">
@@ -321,7 +321,7 @@ export function HowToRentGuide() {
       {/* Frequently Asked Rental Questions */}
       <div className="relative z-10 pt-6 border-t border-white/10">
         <div className="flex items-center gap-2 mb-6">
-          <HelpCircle size={18} className="text-amber-400" />
+          <HelpCircle size={18} className="text-brand-mauve" />
           <h3 className="text-lg font-bold text-white font-display">
             {isArabic ? "الأسئلة الشائعة حول التأجير والضمان" : "Rental Terms & FAQ"}
           </h3>
@@ -346,7 +346,7 @@ export function HowToRentGuide() {
                     size={16}
                     className={cn(
                       "text-text-muted transition-transform duration-300 shrink-0",
-                      isOpen && "rotate-180 text-amber-400"
+                      isOpen && "rotate-180 text-brand-mauve"
                     )}
                   />
                 </button>

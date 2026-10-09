@@ -160,7 +160,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white font-display flex items-center gap-2.5">
-            <Layers size={24} className="text-amber-400" />
+            <Layers size={24} className="text-brand-mauve" />
             Soundstages &amp; Studio Rates CMS
           </h1>
           <p className="text-xs text-slate-400 mt-1">
@@ -190,7 +190,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                 amenities: ["10Gbps Symmetrical Fiber", "Green Room", "Hair & Makeup Suite"],
               })
             }
-            className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-2 transition-colors shadow-lg shadow-amber-500/20 cursor-pointer"
+            className="px-4 py-2.5 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs flex items-center gap-2 transition-colors shadow-lg shadow-brand-violet/25 cursor-pointer"
           >
             <Plus size={14} />
             <span>Add Soundstage</span>
@@ -204,7 +204,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
           <span className="text-[10px] text-slate-400 uppercase tracking-wider font-mono font-medium">Total Soundstages</span>
           <div className="flex items-baseline gap-2 mt-1">
             <span className="text-xl sm:text-2xl font-bold text-white font-mono">{studiosList.length}</span>
-            <span className="text-[11px] text-amber-400 font-medium">Stages</span>
+            <span className="text-[11px] text-brand-mauve font-medium">Stages</span>
           </div>
         </div>
         <div className="p-4 rounded-2xl border border-emerald-500/20 bg-emerald-950/20 backdrop-blur-xl">
@@ -239,7 +239,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
             placeholder="Search soundstages by name, slug, amenities or specs..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-amber-500/50"
+            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-brand-mauve"
           />
         </div>
         <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
@@ -256,13 +256,13 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                 onClick={() => setStatusFilter(status.id as "all" | "active" | "maintenance")}
                 className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition-all cursor-pointer ${
                   isActive
-                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-md"
+                    ? "bg-brand-violet/30 text-brand-mauve-soft border border-brand-mauve/40 shadow-md"
                     : "bg-white/[0.03] text-slate-400 hover:text-white border border-white/5 hover:bg-white/[0.06]"
                 }`}
               >
                 <span>{status.label}</span>
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                  isActive ? "bg-amber-400 text-slate-950 font-bold" : "bg-white/10 text-slate-400"
+                  isActive ? "bg-brand-mauve text-slate-950 font-bold" : "bg-white/10 text-slate-400"
                 }`}>
                   {status.count}
                 </span>
@@ -290,7 +290,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
               key={studio.slug}
               className={`p-6 rounded-3xl border transition-all flex flex-col justify-between ${
                 studio.isActive
-                  ? "bg-slate-900/60 border-white/10 hover:border-amber-500/40 shadow-xl"
+                  ? "bg-slate-900/60 border-white/10 hover:border-brand-mauve/40 shadow-xl"
                   : "bg-white/[0.01] border-white/5 opacity-60"
               }`}
             >
@@ -301,7 +301,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                     <h3 className="font-bold text-white text-base leading-snug">
                       {studio.name}
                     </h3>
-                    <span className="text-[11px] font-mono text-amber-400">
+                    <span className="text-[11px] font-mono text-brand-mauve">
                       ID: {studio.slug}
                     </span>
                   </div>
@@ -337,7 +337,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
 
                   <div>
                     <span className="text-[10px] text-slate-500 flex items-center gap-1 font-mono uppercase">
-                      <Users size={11} className="text-amber-400" /> Capacity
+                      <Users size={11} className="text-brand-mauve" /> Capacity
                     </span>
                     <span className="font-extrabold text-white text-base font-mono mt-0.5 block">
                       {studio.capacity} People
@@ -354,7 +354,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                     {((studio.amenities as string[]) || []).map((amenity, idx) => (
                       <span
                         key={idx}
-                        className="text-[10px] px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/20"
+                        className="text-[10px] px-2 py-0.5 rounded-md bg-brand-violet/15 text-brand-mauve border border-brand-mauve/25"
                       >
                         {amenity}
                       </span>
@@ -415,7 +415,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                   placeholder="e.g. Studio C — Green Cyc Stage"
                   value={editingStudio.name || ""}
                   onChange={(e) => setEditingStudio({ ...editingStudio, name: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve"
                 />
               </div>
               <div>
@@ -426,7 +426,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                   placeholder="مثال: استوديو ج — استوديو الكروما الخضراء"
                   value={editingStudio.arabicName || ""}
                   onChange={(e) => setEditingStudio({ ...editingStudio, arabicName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 font-arabic"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve font-arabic"
                 />
               </div>
             </div>
@@ -441,7 +441,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                   placeholder="800.00"
                   value={editingStudio.hourlyRate || ""}
                   onChange={(e) => setEditingStudio({ ...editingStudio, hourlyRate: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 font-mono"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve font-mono"
                 />
               </div>
 
@@ -455,7 +455,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                   onChange={(e) =>
                     setEditingStudio({ ...editingStudio, capacity: parseInt(e.target.value) || 10 })
                   }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 font-mono"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve font-mono"
                 />
               </div>
             </div>
@@ -477,7 +477,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                   placeholder="Describe lighting grid, dimensions, and acoustic isolation..."
                   value={editingStudio.description || ""}
                   onChange={(e) => setEditingStudio({ ...editingStudio, description: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 resize-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve resize-none"
                 />
               </div>
               <div>
@@ -488,7 +488,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                   placeholder="وصف شبكة الإضاءة، الأبعاد، والعزل الصوتي..."
                   value={editingStudio.arabicDescription || ""}
                   onChange={(e) => setEditingStudio({ ...editingStudio, arabicDescription: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 resize-none font-arabic"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve resize-none font-arabic"
                 />
               </div>
             </div>
@@ -512,7 +512,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                       .filter(Boolean),
                   })
                 }
-                className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve"
               />
             </div>
 
@@ -522,7 +522,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                 id="isActiveToggle"
                 checked={editingStudio.isActive ?? true}
                 onChange={(e) => setEditingStudio({ ...editingStudio, isActive: e.target.checked })}
-                className="rounded border-white/20 text-amber-500 focus:ring-amber-500"
+                className="rounded border-white/20 text-brand-mauve focus:ring-brand-mauve"
               />
               <label htmlFor="isActiveToggle" className="text-slate-300">
                 Stage is open and available for instant booking in wizard
@@ -540,7 +540,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold flex items-center gap-2 shadow-lg shadow-amber-500/20 disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold flex items-center gap-2 shadow-lg shadow-brand-violet/25 disabled:opacity-50 cursor-pointer"
               >
                 <Save size={14} />
                 <span>{isSubmitting ? "Saving..." : "Save Soundstage"}</span>

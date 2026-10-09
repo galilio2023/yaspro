@@ -175,7 +175,7 @@ export function ServicesSection() {
                 aria-label={`Go to service ${idx + 1}`}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   activeIndex === idx
-                    ? "w-7 bg-amber-400"
+                    ? "w-7 bg-brand-mauve shadow-[0_0_12px_rgba(152,123,165,0.5)]"
                     : "w-2 bg-zinc-700 hover:bg-zinc-500"
                 }`}
               />

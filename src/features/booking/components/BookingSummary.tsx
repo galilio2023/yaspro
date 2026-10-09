@@ -56,7 +56,7 @@ export function BookingSummary({
       aria-label={isArabic ? "ملخص حجز الاستوديو" : "Session summary quote"}
       className="lg:col-span-4 flex flex-col gap-5 lg:sticky lg:top-28 pb-4 sm:pb-0 mb-4 lg:mb-0"
     >
-      <div className="rounded-3xl border border-amber-500/20 bg-[#070709]/90 backdrop-blur-xl p-6 sm:p-8 shadow-2xl shadow-black/80">
+      <div className="rounded-3xl border border-brand-mauve/25 bg-[#070709]/90 backdrop-blur-xl p-6 sm:p-8 shadow-2xl shadow-brand-violet/20">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 mb-5 border-b border-white/10">
           <div className="flex items-center gap-2">
@@ -68,7 +68,7 @@ export function BookingSummary({
                 type="button"
                 onClick={() => setCurrency("AED")}
                 className={`px-1.5 py-0.5 rounded cursor-pointer ${
-                  currency === "AED" ? "bg-amber-500 text-zinc-950 font-bold" : "text-slate-400 hover:text-white"
+                  currency === "AED" ? "bg-brand-mauve text-zinc-950 font-bold shadow-sm shadow-brand-violet/30" : "text-slate-400 hover:text-white"
                 }`}
               >
                 AED
@@ -77,7 +77,7 @@ export function BookingSummary({
                 type="button"
                 onClick={() => setCurrency("USD")}
                 className={`px-1.5 py-0.5 rounded cursor-pointer ${
-                  currency === "USD" ? "bg-amber-500 text-zinc-950 font-bold" : "text-slate-400 hover:text-white"
+                  currency === "USD" ? "bg-brand-mauve text-zinc-950 font-bold shadow-sm shadow-brand-violet/30" : "text-slate-400 hover:text-white"
                 }`}
               >
                 USD
@@ -97,7 +97,7 @@ export function BookingSummary({
           <p className="text-base font-bold text-text-primary font-display">
             {(studio?.name || "Select a studio")}
           </p>
-          <div className="flex items-center justify-between text-xs text-amber-400 font-semibold mt-1.5">
+          <div className="flex items-center justify-between text-xs text-brand-mauve font-semibold mt-1.5">
             <span>{formatCurrency((studio?.rate || 0) * exchangeRate, currency)} {isArabic ? "/ ساعة" : "/ hour"}</span>
             <span className="font-mono text-text-primary">
               {formatCurrency((breakdown ? breakdown.studioCost : (studio?.rate || 0) * state.durationHours) * exchangeRate, currency)}
@@ -112,13 +112,13 @@ export function BookingSummary({
               icon: Calendar,
               label: isArabic ? "التاريخ" : "Date",
               value: state.date || (isArabic ? "لم يحدد بعد" : "Not selected yet"),
-              color: "text-amber-400",
+              color: "text-brand-mauve",
             },
             {
               icon: Clock,
               label: isArabic ? "المدة" : "Duration",
               value: `${state.durationHours} ${isArabic ? "ساعات" : "Hours"}`,
-              color: "text-amber-400",
+              color: "text-brand-mauve",
             },
             {
               icon: Users,
@@ -143,11 +143,11 @@ export function BookingSummary({
 
           {selectedTurnkey && (
             <div className="flex justify-between items-center pt-1 border-t border-white/5">
-              <span className="flex items-center gap-1.5 text-amber-400 font-semibold truncate pr-2">
+              <span className="flex items-center gap-1.5 text-brand-mauve font-semibold truncate pr-2">
                 <Sparkles size={13} className="shrink-0" />
                 <span className="truncate">{selectedTurnkey.name}</span>
               </span>
-              <span className="text-amber-400 font-bold shrink-0">
+              <span className="text-brand-mauve font-bold shrink-0">
                 +{formatCurrency((breakdown ? breakdown.turnkeyCost : selectedTurnkey.rate) * exchangeRate, currency)}
               </span>
             </div>
@@ -177,7 +177,7 @@ export function BookingSummary({
           {state.hasTeleprompter && (
             <div className="flex justify-between items-center">
               <span className="text-text-secondary">{isArabic ? "شاشة تلقين احترافية:" : "Teleprompter:"}</span>
-              <span className="text-amber-400 font-bold">
+              <span className="text-brand-mauve font-bold">
                 +{formatCurrency(teleprompterRate * (state.durationHours || 1) * exchangeRate, currency)}
               </span>
             </div>
@@ -186,7 +186,7 @@ export function BookingSummary({
           {(state.extraMicsCount || 0) > 0 && (
             <div className="flex justify-between items-center">
               <span className="text-text-secondary">{isArabic ? "ميكروفون Shure إضافي:" : "Extra SM7B Mic:"} ({state.extraMicsCount})</span>
-              <span className="text-amber-400 font-bold">
+              <span className="text-brand-mauve font-bold">
                 +{formatCurrency((state.extraMicsCount || 0) * extraMicRate * exchangeRate, currency)}
               </span>
             </div>
@@ -195,7 +195,7 @@ export function BookingSummary({
           {state.hasRushDelivery && (
             <div className="flex justify-between items-center">
               <span className="text-text-secondary">{isArabic ? "تسليم مستعجل (24 ساعة):" : "Rush Delivery (24h):"}</span>
-              <span className="text-amber-400 font-bold">
+              <span className="text-brand-mauve font-bold">
                 +{formatCurrency(rushDeliveryRate * exchangeRate, currency)}
               </span>
             </div>
@@ -204,10 +204,10 @@ export function BookingSummary({
           {state.needsAiAutoCut && (
             <div className="flex justify-between items-center">
               <span className="flex items-center gap-1.5 text-text-secondary">
-                <Sparkles size={12} className="text-amber-400" />
+                <Sparkles size={12} className="text-brand-mauve" />
                 <span>{isArabic ? "مونتاج ذكاء اصطناعي وترجمة:" : "AI Auto-Cut & Subtitles:"}</span>
               </span>
-              <span className="text-amber-400 font-bold">
+              <span className="text-brand-mauve font-bold">
                 +{formatCurrency(450 * exchangeRate, currency)}
               </span>
             </div>
@@ -239,7 +239,7 @@ export function BookingSummary({
               transition={{ type: "spring", stiffness: 500, damping: 25 }}
               className="text-3xl font-extrabold font-display tracking-tight"
               style={{
-                background: "linear-gradient(135deg,#f59e0b,#fcd34d,#d97706)",
+                background: "linear-gradient(135deg, #ddd3e1, #bba7c3, #987ba5)",
                 backgroundClip: "text",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
@@ -267,7 +267,7 @@ export function BookingSummary({
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 space-y-2.5 text-xs">
           <div className="flex items-center justify-between text-text-primary font-semibold text-[11px] pb-2 border-b border-white/10">
             <span className="flex items-center gap-1.5">
-              <CreditCard size={13} className="text-amber-400" />
+              <CreditCard size={13} className="text-brand-mauve" />
               <span>{isArabic ? "طرق الدفع المعتمدة" : "Accepted Payment Methods"}</span>
             </span>
             <span className="text-emerald-400 text-[10px] flex items-center gap-1">

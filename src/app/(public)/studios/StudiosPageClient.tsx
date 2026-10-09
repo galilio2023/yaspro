@@ -39,13 +39,13 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
   const turnkeyPackages = TURNKEY_STUDIO_PACKAGES.filter((p) => p.id !== "none");
 
   return (
-    <div className="w-full bg-[#060608] text-white min-h-screen selection:bg-amber-500 selection:text-black">
+    <div className="w-full bg-[#060608] text-white min-h-screen selection:bg-brand-mauve selection:text-black">
       {/* ── 1. Compact Hero Header ── */}
       <section className="relative pt-24 pb-10 sm:pt-28 sm:pb-14 border-b border-white/[0.08] overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
             {/* Telemetry Chip */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 text-[10px] sm:text-xs font-mono font-semibold tracking-wider uppercase mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-mauve/30 bg-brand-violet/20 text-brand-mauve-soft text-[10px] sm:text-xs font-mono font-semibold tracking-wider uppercase mb-4">
               <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
               <span>{isArabic ? "آيريس باي • دبي • 6 استوديوهات معتمدة" : "IRIS BAY DUBAI • 6 SOUNDSTAGES"}</span>
             </div>
@@ -54,11 +54,11 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white font-display tracking-tight leading-tight mb-3">
               {isArabic ? (
                 <>
-                  استوديوهات ومسارح تصوير <span className="text-amber-400">بمعايير عالمية</span>
+                  استوديوهات ومسارح تصوير <span className="text-brand-mauve">بمعايير عالمية</span>
                 </>
               ) : (
                 <>
-                  Soundstages &amp; <span className="text-amber-400">Production Suites</span>
+                  Soundstages &amp; <span className="text-brand-mauve">Production Suites</span>
                 </>
               )}
             </h1>
@@ -74,7 +74,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
             <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-8">
               <Link
                 href="/studio-booking"
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm transition-all shadow-md shadow-black/40 active:scale-[0.98]"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs sm:text-sm transition-all shadow-md shadow-brand-violet/20 active:scale-[0.98]"
               >
                 <Calendar size={14} />
                 <span>{isArabic ? "احجز استوديو" : "Book a Studio"}</span>
@@ -101,7 +101,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
             {/* Compact Telemetry Strip */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-3xl p-2.5 sm:p-3 rounded-xl bg-[#0d0d12] border border-white/[0.08]">
               <div className="p-1.5 text-center">
-                <span className="text-base sm:text-lg font-black text-amber-400 font-display">6 Stages</span>
+                <span className="text-base sm:text-lg font-black text-brand-mauve font-display">6 Stages</span>
                 <span className="text-[10px] text-zinc-400 block font-mono">XR • Pod • Cyc</span>
               </div>
               <div className="p-1.5 text-center">
@@ -113,7 +113,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                 <span className="text-[10px] text-zinc-400 block font-mono">Fiber Upload</span>
               </div>
               <div className="p-1.5 text-center">
-                <span className="text-base sm:text-lg font-black text-amber-400 font-display">300+ Items</span>
+                <span className="text-base sm:text-lg font-black text-brand-mauve font-display">300+ Items</span>
                 <span className="text-[10px] text-zinc-400 block font-mono">On-Site Gear</span>
               </div>
             </div>
@@ -141,7 +141,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                   {isActive && (
                     <motion.div
                       layoutId="activeCatalogCategoryPill"
-                      className="absolute inset-0 rounded-full bg-amber-500 shadow-sm -z-10"
+                      className="absolute inset-0 rounded-full bg-brand-mauve shadow-sm -z-10"
                       transition={studioSprings.snappy}
                     />
                   )}
@@ -180,8 +180,8 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
 
                       {/* Top Badges */}
                       <div className="relative z-10 flex items-center justify-between gap-2 pointer-events-none">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/85 backdrop-blur-md border border-amber-500/40 text-[10px] font-mono font-bold tracking-wider text-amber-300 uppercase">
-                          <Sparkles size={10} className="text-amber-400" />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/85 backdrop-blur-md border border-brand-mauve/40 text-[10px] font-mono font-bold tracking-wider text-brand-mauve-soft uppercase">
+                          <Sparkles size={10} className="text-brand-mauve" />
                           <span>{isArabic ? studio.arabicBadge : studio.badge}</span>
                         </span>
 
@@ -205,7 +205,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                                   }
                                   className={cn(
                                     "relative size-8 rounded-md overflow-hidden border transition-all cursor-pointer shrink-0",
-                                    isSelected ? "border-amber-400 ring-1 ring-amber-400" : "border-white/20 opacity-60 hover:opacity-100"
+                                    isSelected ? "border-brand-mauve ring-1 ring-brand-mauve" : "border-white/20 opacity-60 hover:opacity-100"
                                   )}
                                   title={`Photo ${imgIdx + 1}`}
                                 >
@@ -218,12 +218,12 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
 
                         <div className="flex items-center justify-between text-[11px] font-mono text-zinc-200" dir="ltr">
                           <span className="flex items-center gap-1 bg-black/85 px-2.5 py-1 rounded-md border border-white/10">
-                            <Maximize2 size={11} className="text-amber-400" />
+                            <Maximize2 size={11} className="text-brand-mauve" />
                             <span>{studio.areaSqm} m² ({studio.dimensions})</span>
                           </span>
 
                           <span className="flex items-center gap-1 bg-black/85 px-2.5 py-1 rounded-md border border-white/10">
-                            <Users size={11} className="text-amber-400" />
+                            <Users size={11} className="text-brand-mauve" />
                             <span>Max {studio.capacity}</span>
                           </span>
                         </div>
@@ -235,7 +235,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                       <div>
                         {/* Eyebrow */}
                         <div className="flex items-center justify-between gap-2 mb-1.5">
-                          <span className="text-[11px] font-mono text-amber-400 uppercase tracking-wider font-semibold">
+                          <span className="text-[11px] font-mono text-brand-mauve uppercase tracking-wider font-semibold">
                             {isArabic ? studio.arabicCategoryLabel : studio.categoryLabel}
                           </span>
                           <span className="text-[11px] font-mono text-zinc-500">
@@ -249,7 +249,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                         </h2>
 
                         {/* 1-Line Headline */}
-                        <p className="text-xs text-amber-200/80 mb-4 font-medium">
+                        <p className="text-xs text-brand-mauve-soft/80 mb-4 font-medium">
                           {isArabic ? studio.arabicHeadline : studio.headline}
                         </p>
 
@@ -274,7 +274,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                               key={aIdx}
                               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white/[0.03] border border-white/[0.06] text-[11px] text-zinc-300"
                             >
-                              <CheckCircle2 size={11} className="text-amber-400 shrink-0" />
+                              <CheckCircle2 size={11} className="text-brand-mauve shrink-0" />
                               <span className="truncate max-w-[240px]">{amenity}</span>
                             </span>
                           ))}
@@ -285,7 +285,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                       <div className="pt-4 border-t border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
                           <div className="flex items-baseline gap-1">
-                            <span className="text-2xl sm:text-3xl font-black text-amber-400 font-display">
+                            <span className="text-2xl sm:text-3xl font-black text-brand-mauve font-display">
                               {formatCurrency(studio.rate)}
                             </span>
                             <span className="text-xs text-zinc-400">/ {isArabic ? "ساعة" : "hour"}</span>
@@ -300,7 +300,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                         <div className="flex items-center gap-2 shrink-0">
                           <Link
                             href={`/studio-booking?studio=${studio.id}`}
-                            className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs transition-all shadow-md active:scale-98"
+                            className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs transition-all shadow-md active:scale-98"
                           >
                             <Calendar size={13} />
                             <span>{isArabic ? "احجز الآن" : "Book Stage"}</span>
@@ -331,7 +331,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-4 mb-4">
             <div>
-              <span className="text-[10px] font-mono text-amber-400 uppercase tracking-wider font-semibold block">
+              <span className="text-[10px] font-mono text-brand-mauve uppercase tracking-wider font-semibold block">
                 {isArabic ? "المحاكاة ثلاثية الأبعاد" : "3D VIRTUAL SIMULATION"}
               </span>
               <h3 className="text-lg sm:text-xl font-bold text-white font-display">
@@ -354,7 +354,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8">
             <div>
-              <span className="text-[10px] font-mono text-amber-400 uppercase tracking-wider font-semibold block">
+              <span className="text-[10px] font-mono text-brand-mauve uppercase tracking-wider font-semibold block">
                 {isArabic ? "باقات متكاملة" : "ALL-INCLUSIVE PACKAGES"}
               </span>
               <h2 className="text-xl sm:text-3xl font-black text-white font-display">
@@ -375,12 +375,12 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                 className={cn(
                   "relative flex flex-col justify-between p-5 sm:p-6 rounded-2xl border transition-all duration-200 shadow-lg",
                   pkg.isPopular
-                    ? "bg-[#111116] border-amber-500/60 shadow-amber-500/5"
+                    ? "bg-[#111116] border-brand-mauve/60 shadow-brand-violet/20"
                     : "bg-[#0c0c10] border-white/[0.08] hover:border-white/20"
                 )}
               >
                 {pkg.isPopular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-amber-500 text-zinc-950 font-bold text-[9px] tracking-wider uppercase font-mono shadow-sm">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-brand-mauve text-slate-950 font-bold text-[9px] tracking-wider uppercase font-mono shadow-sm">
                     {isArabic ? "الأكثر طلباً" : "Popular"}
                   </div>
                 )}
@@ -396,7 +396,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
 
                   <div className="mb-4 pb-4 border-b border-white/[0.08]">
                     <div className="flex items-baseline gap-1">
-                      <span className="text-2xl sm:text-3xl font-black text-amber-400 font-display">
+                      <span className="text-2xl sm:text-3xl font-black text-brand-mauve font-display">
                         {formatCurrency(pkg.rate)}
                       </span>
                       <span className="text-xs text-zinc-400">
@@ -408,7 +408,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                   <ul className="space-y-2 mb-6">
                     {((isArabic && pkg.arabicFeatures ? pkg.arabicFeatures : pkg.features) || []).map((feat: string, fIdx: number) => (
                       <li key={fIdx} className="flex items-start gap-2 text-xs text-zinc-300">
-                        <CheckCircle2 size={12} className="text-amber-400 shrink-0 mt-0.5" />
+                        <CheckCircle2 size={12} className="text-brand-mauve shrink-0 mt-0.5" />
                         <span className="leading-snug">{feat}</span>
                       </li>
                     ))}
@@ -420,7 +420,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                   className={cn(
                     "w-full py-2.5 px-3 rounded-xl text-center text-xs font-bold transition-all shadow-sm active:scale-98",
                     pkg.isPopular
-                      ? "bg-amber-500 hover:bg-amber-400 text-zinc-950"
+                      ? "bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950"
                       : "bg-white/10 hover:bg-white/20 text-white"
                   )}
                 >
@@ -437,7 +437,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 sm:p-6 rounded-2xl bg-[#0c0c10] border border-white/[0.08]">
             <div className="text-center sm:text-left rtl:sm:text-right">
-              <span className="text-[10px] font-mono text-amber-400 uppercase tracking-wider font-semibold block">
+              <span className="text-[10px] font-mono text-brand-mauve uppercase tracking-wider font-semibold block">
                 {isArabic ? "خزانة المعدات الميدانية" : "ON-SITE CINEMA GEAR LOCKER"}
               </span>
               <p className="text-xs sm:text-sm text-zinc-300 font-medium">
@@ -472,7 +472,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
           <div className="flex items-center justify-center gap-3 pt-2">
             <Link
               href="/studio-booking"
-              className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm transition-all"
+              className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-full bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs sm:text-sm transition-all"
             >
               <Calendar size={14} />
               <span>{isArabic ? "حجز فوري أونلاين" : "Book Online"}</span>

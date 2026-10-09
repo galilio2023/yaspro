@@ -5,7 +5,7 @@ export default function NotFound() {
   return (
     <div className="flex-1 w-full py-20 flex items-center justify-center px-4 relative overflow-hidden bg-background">
       {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-brand-mauve/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="rounded-3xl border border-white/10 bg-[#0f0e15] backdrop-blur-xl p-10 max-w-md w-full text-center relative z-10 shadow-2xl">
         <div className="text-6xl font-black gradient-text-gold mb-4 font-display">

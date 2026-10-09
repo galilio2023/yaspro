@@ -285,7 +285,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                   const isDirectInquiry = card.actionType === "inquiry";
 
                   const CardInner = (
-                    <div className="group relative flex flex-col justify-end h-36 sm:h-56 w-full rounded-2xl overflow-hidden bg-zinc-900 cursor-pointer shadow-lg border border-white/5 hover:border-amber-500/40 transition-colors">
+                    <div className="group relative flex flex-col justify-end h-36 sm:h-56 w-full rounded-2xl overflow-hidden bg-zinc-900 cursor-pointer shadow-lg border border-white/5 hover:border-brand-mauve/40 transition-colors">
                       {/* Real Production Imagery */}
                       <Image
                         src={card.image}
@@ -302,7 +302,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                       {/* Pill Badge for direct contact card */}
                       {isDirectInquiry && (
                         <div className="absolute top-2 end-2 sm:top-3.5 sm:end-3.5 z-10">
-                          <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-medium tracking-wide bg-amber-500/20 text-amber-300 border border-amber-500/30 backdrop-blur-md">
+                          <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-medium tracking-wide bg-brand-violet/30 text-brand-mauve-soft border border-brand-mauve/30 backdrop-blur-md">
                             <PhoneCall size={10} className="sm:size-[11px]" />
                             <span className="hidden xs:inline">{isArabic ? "طلب اتصال" : "Callback"}</span>
                             <span className="inline xs:hidden">{isArabic ? "اتصال" : "Call"}</span>
@@ -312,7 +312,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
 
                       {/* Bottom Title */}
                       <div className="relative z-10 p-3 sm:p-5">
-                        <span className="text-xs sm:text-base md:text-lg font-bold text-white tracking-tight drop-shadow-md group-hover:text-amber-300 transition-colors line-clamp-2">
+                        <span className="text-xs sm:text-base md:text-lg font-bold text-white tracking-tight drop-shadow-md group-hover:text-brand-mauve-soft transition-colors line-clamp-2">
                           {isArabic ? card.labelAr : card.labelEn}
                         </span>
                       </div>
@@ -397,7 +397,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div>
                         <label className="block text-xs font-medium text-zinc-400 mb-1.5">
-                          {isArabic ? "الاسم" : "Name"} <span className="text-amber-400">*</span>
+                          {isArabic ? "الاسم" : "Name"} <span className="text-brand-mauve">*</span>
                         </label>
                         <input
                           type="text"
@@ -411,7 +411,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
 
                       <div>
                         <label className="block text-xs font-medium text-zinc-400 mb-1.5">
-                          {isArabic ? "البريد الإلكتروني" : "Email"} <span className="text-amber-400">*</span>
+                          {isArabic ? "البريد الإلكتروني" : "Email"} <span className="text-brand-mauve">*</span>
                         </label>
                         <input
                           type="email"
@@ -469,7 +469,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                     {/* Phone Number (Crucial for sales team to call) */}
                     <div>
                       <label className="block text-xs font-medium text-zinc-400 mb-1.5">
-                        {isArabic ? "رقم الهاتف للاتصال" : "Phone Number (for Callback)"} <span className="text-amber-400">*</span>
+                        {isArabic ? "رقم الهاتف للاتصال" : "Phone Number (for Callback)"} <span className="text-brand-mauve">*</span>
                       </label>
                       <input
                         type="tel"
@@ -485,7 +485,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                     {/* Message / Details */}
                     <div>
                       <label className="block text-xs font-medium text-zinc-400 mb-1.5">
-                        {isArabic ? "تفاصيل الطلب والاحتياجات" : "Message / What you need"} <span className="text-amber-400">*</span>
+                        {isArabic ? "تفاصيل الطلب والاحتياجات" : "Message / What you need"} <span className="text-brand-mauve">*</span>
                       </label>
                       <textarea
                         required

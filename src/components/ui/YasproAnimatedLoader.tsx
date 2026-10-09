@@ -84,8 +84,8 @@ export function ApertureO({ uid }: { uid: string }) {
         <path d={YAS_YELLOW_BLADE_PATH} fill={`url(#${uid}-yellow)`} />
       </g>
 
-      <circle cx="256" cy="256" r="112" fill="#06020e" stroke="rgba(255,233,0,0.35)" strokeWidth="1.8" />
-      <circle cx="256" cy="256" r="64" fill="rgba(255,233,0,0.18)" />
+      <circle cx="256" cy="256" r="112" fill="#06020e" stroke="rgba(152,123,165,0.4)" strokeWidth="1.8" />
+      <circle cx="256" cy="256" r="64" fill="rgba(152,123,165,0.2)" />
     </svg>
   );
 }
@@ -205,7 +205,7 @@ export function YasproAnimatedLoader({
       {/* Background ambient stage glow with subtle organic breathing */}
       <div className="absolute pointer-events-none" aria-hidden="true">
         <div className="yas-ambient-pulse w-80 h-80 sm:w-[500px] sm:h-[500px] rounded-full bg-brand-violet/25 blur-[130px]" />
-        <div className="yas-ambient-pulse w-64 h-64 rounded-full bg-amber-400/20 blur-[100px] [animation-delay:0.3s]" />
+        <div className="yas-ambient-pulse w-64 h-64 rounded-full bg-brand-mauve/20 blur-[100px] [animation-delay:0.3s]" />
       </div>
 
       {/* ─── CINEMATIC ENTRANCE & ORGANIC BREATHING CONTAINER ───
@@ -237,8 +237,9 @@ export function YasproAnimatedLoader({
           {/* O track: moves across X-axis, O pinned to its right edge */}
           <div className="yas-roll-track absolute inset-0 flex items-center justify-end pointer-events-none will-change-transform">
             <span className="yas-o-spin relative block size-[0.84em] shrink-0 will-change-transform">
-              {/* Soft yellow glow behind the O that pulses with the yellow blade */}
-              <span className="yas-glow-pulse absolute -inset-[18%] rounded-full bg-yellow-400/18 blur-xl pointer-events-none" />
+              {/* Kinetic Mauve & Violet halo glow behind the O */}
+              <span className="yas-glow-pulse absolute -inset-[22%] rounded-full bg-brand-mauve/35 blur-xl pointer-events-none" />
+              <span className="yas-glow-pulse absolute -inset-[36%] rounded-full bg-brand-violet/30 blur-2xl pointer-events-none" />
               <span className="relative block size-full">
                 <ApertureO uid={uid} />
               </span>
@@ -249,7 +250,7 @@ export function YasproAnimatedLoader({
         {/* Subtitle lands softly as the O docks */}
         <div className="yas-subtitle-in flex items-center gap-2 mt-3 text-[10px] sm:text-xs font-mono tracking-[0.25em] text-zinc-400 uppercase font-latin">
           <span>MEDIA GROUP</span>
-          <span className="size-1 rounded-full bg-yellow-400" />
+          <span className="size-1 rounded-full bg-brand-mauve" />
           <span className="text-purple-300">AI HUB</span>
         </div>
       </div>

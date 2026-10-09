@@ -17,7 +17,7 @@ export function ContactSuccess({ onReset }: ContactSuccessProps) {
       <button
         type="button"
         onClick={onReset}
-        className="text-xs text-amber-400 hover:text-white hover:underline cursor-pointer"
+        className="text-xs text-brand-mauve hover:text-white hover:underline cursor-pointer"
       >
         Send another inquiry
       </button>

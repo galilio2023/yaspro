@@ -37,7 +37,7 @@ export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
         </Badge>
 
         <Badge variant="default" className="text-[11px] font-mono gap-1.5 backdrop-blur-md bg-black/70 border border-white/15">
-          <Users size={11} className="text-amber-400" />
+          <Users size={11} className="text-brand-mauve" />
           <span className="text-white font-bold">{creator.totalFollowers}</span>
         </Badge>
       </div>
@@ -46,7 +46,7 @@ export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
       <div className="relative z-10 p-4 sm:p-5 pt-0 sm:pt-0 flex flex-col justify-end">
         {/* Creator Name & Niche */}
         <div className="mb-3">
-          <h3 className="text-xl sm:text-2xl font-black text-white font-display tracking-tight group-hover:text-amber-400 transition-colors line-clamp-1">
+          <h3 className="text-xl sm:text-2xl font-black text-white font-display tracking-tight group-hover:text-brand-mauve transition-colors line-clamp-1">
             <Link
               href={`/influencers/${creator.slug}`}
               className="hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white rounded-sm"
@@ -55,7 +55,7 @@ export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
             </Link>
           </h3>
           <span className="text-xs text-zinc-300 font-semibold flex items-center gap-1.5 mt-1">
-            <span className="size-1.5 rounded-full bg-amber-400 shrink-0" />
+            <span className="size-1.5 rounded-full bg-brand-mauve shrink-0" />
             <span className="line-clamp-1">{creator.role}</span>
           </span>
         </div>
@@ -105,7 +105,7 @@ export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
 
           <Link
             href={`/influencers/${creator.slug}`}
-            className="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-4 py-2 sm:min-h-0 sm:py-1.5 sm:px-3 rounded-full bg-white/10 hover:bg-amber-500 hover:text-zinc-950 text-white text-xs font-semibold backdrop-blur-md transition-all duration-200 active:scale-[0.97]"
+            className="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-4 py-2 sm:min-h-0 sm:py-1.5 sm:px-3 rounded-full bg-white/10 hover:bg-brand-mauve hover:text-zinc-950 hover:shadow-md hover:shadow-brand-violet/30 text-white text-xs font-semibold backdrop-blur-md transition-all duration-200 active:scale-[0.97]"
           >
             <span>{isArabic ? "الملف التعريفي" : "Profile"}</span>
             <ArrowRight size={12} className="rtl:rotate-180 shrink-0 transition-transform" />

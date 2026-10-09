@@ -22,8 +22,8 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
               {project.categoryLabel}
             </Badge>
             {project.client && (
-              <div className="flex items-center gap-1.5 text-xs text-amber-300 font-medium">
-                <ShieldCheck size={14} className="text-amber-400 shrink-0" />
+              <div className="flex items-center gap-1.5 text-xs text-brand-mauve-soft font-medium">
+                <ShieldCheck size={14} className="text-brand-mauve shrink-0" />
                 <span>
                   {isArabic ? `تم التنفيذ لصالح ${project.client}` : `Commissioned by ${project.client}`}
                 </span>

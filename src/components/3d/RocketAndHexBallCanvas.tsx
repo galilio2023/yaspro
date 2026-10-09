@@ -38,7 +38,7 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
     renderer.toneMappingExposure = 1.3;
     container.appendChild(renderer.domElement);
 
-    // Lighting (metallic silver chrome highlights & warm tungsten amber studio glow)
+    // Lighting (metallic silver chrome highlights & cinematic mauve & violet studio glow)
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     scene.add(ambientLight);
 
@@ -46,17 +46,17 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
     keyLight.position.set(5, 7, 5);
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xfef3c7, 1.8);
+    const fillLight = new THREE.DirectionalLight(0xeee9f0, 1.8);
     fillLight.position.set(-6, -4, -3);
     scene.add(fillLight);
 
-    const amberGlowLight = new THREE.PointLight(0xf59e0b, 3.5, 12);
-    amberGlowLight.position.set(-1.8, 1, 1.5);
-    scene.add(amberGlowLight);
+    const mauveGlowLight = new THREE.PointLight(0x765086, 3.5, 12);
+    mauveGlowLight.position.set(-1.8, 1, 1.5);
+    scene.add(mauveGlowLight);
 
-    const goldGlowLight = new THREE.PointLight(0xfbbf24, 3.5, 12);
-    goldGlowLight.position.set(1.8, -1, 1.5);
-    scene.add(goldGlowLight);
+    const violetGlowLight = new THREE.PointLight(0x987ba5, 3.5, 12);
+    violetGlowLight.position.set(1.8, -1, 1.5);
+    scene.add(violetGlowLight);
 
     // Materials
     const silverChromeMat = new THREE.MeshStandardMaterial({
@@ -71,10 +71,10 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
       roughness: 0.35,
     });
 
-    const studioGoldMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
-    const studioAmberMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
-    const flameMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.9 });
-    const innerCoreMat = new THREE.MeshBasicMaterial({ color: 0xd97706, wireframe: true, transparent: true, opacity: 0.65 });
+    const studioGoldMat = new THREE.MeshBasicMaterial({ color: 0xbba7c3 });
+    const studioAmberMat = new THREE.MeshBasicMaterial({ color: 0x987ba5 });
+    const flameMat = new THREE.MeshBasicMaterial({ color: 0x987ba5, transparent: true, opacity: 0.9 });
+    const innerCoreMat = new THREE.MeshBasicMaterial({ color: 0x765086, wireframe: true, transparent: true, opacity: 0.65 });
 
     // ==========================================
     // 1. SILVER HEXAGONAL PERFORATED HOLLOW BALL
@@ -225,7 +225,7 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
     flameMesh.rotation.x = Math.PI;
     rocketGroup.add(flameMesh);
 
-    const thrusterPointLight = new THREE.PointLight(0xf59e0b, 4, 5);
+    const thrusterPointLight = new THREE.PointLight(0x987ba5, 4, 5);
     thrusterPointLight.position.y = -1.3;
     rocketGroup.add(thrusterPointLight);
 
@@ -241,10 +241,10 @@ export function RocketAndHexBallCanvas({ className }: RocketAndHexBallCanvasProp
       starPositions[i * 3] = (Math.random() - 0.5) * 14;
       starPositions[i * 3 + 1] = (Math.random() - 0.5) * 7;
       starPositions[i * 3 + 2] = (Math.random() - 0.5) * 6;
-      const isAmber = Math.random() > 0.4;
-      starColors[i * 3] = isAmber ? 0.96 : 0.9;
-      starColors[i * 3 + 1] = isAmber ? 0.62 : 0.9;
-      starColors[i * 3 + 2] = isAmber ? 0.05 : 0.95;
+      const isMauve = Math.random() > 0.4;
+      starColors[i * 3] = isMauve ? 0.6 : 0.9;
+      starColors[i * 3 + 1] = isMauve ? 0.48 : 0.9;
+      starColors[i * 3 + 2] = isMauve ? 0.65 : 0.95;
     }
     const starGeo = new THREE.BufferGeometry();
     starGeo.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));

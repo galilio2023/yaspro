@@ -12,7 +12,7 @@ export function InfluencerBio({ creator }: InfluencerBioProps) {
 
   return (
     <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-8 sm:p-10 shadow-2xl shadow-black/20">
-      <span className="text-xs uppercase tracking-widest rtl:tracking-normal text-amber-400 font-mono font-semibold block mb-2">
+      <span className="text-xs uppercase tracking-widest rtl:tracking-normal text-brand-mauve font-mono font-semibold block mb-2">
         {isArabic ? "ملف صانع المحتوى" : "Creator Profile"}
       </span>
       <h2 className="text-2xl sm:text-3xl font-black text-white mb-6 font-display rtl:font-arabic tracking-tight rtl:tracking-normal leading-[1.2] rtl:leading-[1.4] text-balance">

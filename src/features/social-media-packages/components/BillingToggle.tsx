@@ -35,7 +35,7 @@ export function BillingToggle({ billingInterval, onChange }: BillingToggleProps)
             <motion.div
               layoutId="billing-pill-active"
               transition={{ type: "spring", stiffness: 450, damping: 30 }}
-              className="absolute inset-0 bg-amber-400 rounded-full shadow-lg shadow-amber-400/25"
+              className="absolute inset-0 bg-brand-mauve rounded-full shadow-lg shadow-brand-violet/40"
             />
           )}
           <span className="relative z-10 font-black tracking-tight">
@@ -44,7 +44,7 @@ export function BillingToggle({ billingInterval, onChange }: BillingToggleProps)
           <span
             className={`relative z-10 text-[10px] font-mono font-black px-1.5 py-0.5 rounded ${
               billingInterval === "yearly"
-                ? "bg-slate-950 text-amber-300"
+                ? "bg-slate-950 text-brand-lavender"
                 : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
             }`}
           >
@@ -81,9 +81,9 @@ export function BillingToggle({ billingInterval, onChange }: BillingToggleProps)
         initial={{ opacity: 0, y: -4 }}
         animate={{ opacity: 1, y: 0 }}
         key={billingInterval}
-        className="text-[11px] sm:text-xs text-amber-400/90 font-mono tracking-wide flex items-center gap-2"
+        className="text-[11px] sm:text-xs text-brand-mauve font-mono tracking-wide flex items-center gap-2"
       >
-        <span className="inline-block size-1.5 rounded-full bg-amber-400 animate-pulse" />
+        <span className="inline-block size-1.5 rounded-full bg-brand-mauve animate-pulse" />
         {billingInterval === "yearly"
           ? isArabic
             ? "خصم 20% ساري · تثبيت أسعار الاستوديو طوال العام وتوفير يصل إلى 25,200 درهم"

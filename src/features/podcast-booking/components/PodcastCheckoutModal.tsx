@@ -57,7 +57,7 @@ export function PodcastCheckoutModal({
         {/* Modal Header */}
         <div className="flex items-center justify-between pb-4 border-b border-white/10">
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-brand-mauve">
               Final Step
             </span>
             <h3 className="text-xl font-bold text-white">
@@ -102,7 +102,7 @@ export function PodcastCheckoutModal({
                 <div key={sess.id} className="text-xs space-y-1.5 pb-3 border-b border-white/5 last:border-0 last:pb-0">
                   <div className="flex justify-between font-bold text-white text-sm">
                     <span>Session {idx + 1}</span>
-                    <span className="text-amber-400">
+                    <span className="text-brand-mauve">
                       AED {((svc?.price || 0) * sess.durationHours).toLocaleString()}
                     </span>
                   </div>
@@ -124,7 +124,7 @@ export function PodcastCheckoutModal({
                     {selectedAddons.length > 0 && (
                       <div className="col-span-2 pt-1">
                         <span className="text-white/40 block">Add-ons:</span>
-                        <span className="text-amber-300/80">{selectedAddons.join(", ")}</span>
+                        <span className="text-brand-lavender">{selectedAddons.join(", ")}</span>
                       </div>
                     )}
                   </div>
@@ -143,7 +143,7 @@ export function PodcastCheckoutModal({
               value={contact.specialRequests || ""}
               onChange={(e) => onUpdateContact({ specialRequests: e.target.value })}
               placeholder="Please share anything you'd like our studio engineer to prepare..."
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 focus:outline-none focus:border-amber-500/50 resize-none"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 focus:outline-none focus:border-brand-mauve/50 resize-none"
             />
           </div>
 
@@ -151,7 +151,7 @@ export function PodcastCheckoutModal({
           <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-xs font-medium text-white/80 flex items-center gap-1.5">
-                <Tag size={13} className="text-amber-400" />
+                <Tag size={13} className="text-brand-mauve" />
                 Promo code
               </label>
               {appliedPromo && (
@@ -177,12 +177,12 @@ export function PodcastCheckoutModal({
                   value={promoInput}
                   onChange={(e) => setPromoInput(e.target.value)}
                   placeholder="Try YAS10 or PODCAST20"
-                  className="flex-1 px-3.5 py-2 min-h-[44px] rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 uppercase focus:outline-none focus:border-amber-500/50"
+                  className="flex-1 px-3.5 py-2 min-h-[44px] rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 uppercase focus:outline-none focus:border-brand-mauve/50"
                 />
                 <button
                   type="button"
                   onClick={() => onApplyPromo(promoInput)}
-                  className="px-4 py-2 min-h-[44px] rounded-xl text-xs font-bold bg-white/10 hover:bg-amber-500 hover:text-black text-white transition cursor-pointer"
+                  className="px-4 py-2 min-h-[44px] rounded-xl text-xs font-bold bg-white/10 hover:bg-brand-mauve hover:text-zinc-950 text-white transition cursor-pointer"
                 >
                   Use code
                 </button>
@@ -207,7 +207,7 @@ export function PodcastCheckoutModal({
                   value={contact.fullName}
                   onChange={(e) => onUpdateContact({ fullName: e.target.value })}
                   placeholder="e.g. Sarah Jenkins"
-                  className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 focus:outline-none focus:border-amber-500/50"
+                  className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 focus:outline-none focus:border-brand-mauve/50"
                 />
               </div>
 
@@ -220,7 +220,7 @@ export function PodcastCheckoutModal({
                     value={contact.email}
                     onChange={(e) => onUpdateContact({ email: e.target.value })}
                     placeholder="sarah@agency.ae"
-                    className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 focus:outline-none focus:border-amber-500/50"
+                    className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 focus:outline-none focus:border-brand-mauve/50"
                   />
                 </div>
                 <div>
@@ -231,7 +231,7 @@ export function PodcastCheckoutModal({
                     value={contact.phone}
                     onChange={(e) => onUpdateContact({ phone: e.target.value })}
                     placeholder="+971 50 123 4567"
-                    className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 focus:outline-none focus:border-amber-500/50"
+                    className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.03] border border-white/10 text-white text-base sm:text-xs placeholder:text-white/30 focus:outline-none focus:border-brand-mauve/50"
                   />
                 </div>
               </div>
@@ -239,8 +239,8 @@ export function PodcastCheckoutModal({
           </div>
 
           {/* Storage notice from live WordPress site */}
-          <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200/90 leading-relaxed flex items-start gap-2.5">
-            <AlertCircle size={16} className="text-amber-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-xl bg-brand-violet/15 border border-brand-mauve/30 text-xs text-brand-lavender leading-relaxed flex items-start gap-2.5">
+            <AlertCircle size={16} className="text-brand-mauve shrink-0 mt-0.5" />
             <p>
               <strong>Important Storage Notice:</strong> If you are not using our post-production editing services, please bring your own high-speed external hard drive (SSD) to collect your raw 4K footage and multi-track audio immediately after the session.
             </p>
@@ -264,7 +264,7 @@ export function PodcastCheckoutModal({
             </div>
             <div className="pt-2 border-t border-white/10 flex justify-between items-baseline text-base font-extrabold text-white">
               <span>Total Amount:</span>
-              <span className="text-2xl text-amber-400">
+              <span className="text-2xl text-brand-mauve">
                 AED {grandTotal.toLocaleString()}
               </span>
             </div>
@@ -276,7 +276,7 @@ export function PodcastCheckoutModal({
               type="checkbox"
               checked={isAgreedToTerms}
               onChange={(e) => onToggleTerms(e.target.checked)}
-              className="mt-0.5 size-4 rounded border-white/20 bg-white/5 text-amber-500 focus:ring-amber-500"
+              className="mt-0.5 size-4 rounded border-white/20 bg-white/5 text-brand-mauve focus:ring-brand-mauve"
             />
             <span className="text-xs text-text-muted leading-relaxed group-hover:text-white transition">
               I agree to the Yas Pro Studio Terms & Conditions, studio cancellation policy, and file transfer guidelines.
@@ -289,7 +289,7 @@ export function PodcastCheckoutModal({
               type="button"
               disabled={isSubmitting || !isAgreedToTerms}
               onClick={() => onSubmit(true)}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-black font-extrabold text-sm uppercase tracking-wider transition-all duration-300 shadow-xl shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-brand-violet via-brand-mauve to-brand-violet text-white font-extrabold text-sm uppercase tracking-wider transition-all duration-300 shadow-xl shadow-brand-violet/40 hover:shadow-brand-mauve/50 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 border border-brand-mauve/30 cursor-pointer"
             >
               {isSubmitting ? (
                 <>Processing Reservation...</>

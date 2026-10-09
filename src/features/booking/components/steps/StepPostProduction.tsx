@@ -22,7 +22,7 @@ export function StepPostProduction({ state, update }: WizardStepProps) {
         total={7}
         title="Post Production"
         description="Optional — hand off editing, grading and sound so you leave with finished assets."
-        aside={<MetaTag tone={selectedIds.length ? "amber" : "neutral"}>{selectedIds.length} selected</MetaTag>}
+        aside={<MetaTag tone={selectedIds.length ? "mauve" : "neutral"}>{selectedIds.length} selected</MetaTag>}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

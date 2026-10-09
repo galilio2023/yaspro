@@ -28,7 +28,7 @@ export function StepProps({ state, update }: WizardStepProps) {
         total={7}
         title="Props & Set Design"
         description="Optional — dress the set with furniture, backdrops and styling pieces."
-        aside={<MetaTag tone={selectedIds.length ? "amber" : "neutral"}>{selectedIds.length} selected</MetaTag>}
+        aside={<MetaTag tone={selectedIds.length ? "mauve" : "neutral"}>{selectedIds.length} selected</MetaTag>}
       />
 
       {/* Category filter — horizontal scroll on mobile */}
