@@ -40,7 +40,7 @@ function WordmarkLetters({ uid = "yas-letters" }: { uid?: string }) {
         <path d={YASPR_VECTOR_PATH} fill={`url(#${uid}-grad)`} />
       </svg>
       {/* Spacer reserving the authentic aperture O slot matching official brand proportions */}
-      <span className="ml-[0.14em] size-[0.80em] shrink-0" />
+      <span className="ml-[0.16em] size-[0.84em] shrink-0" />
     </span>
   );
 }
@@ -84,8 +84,8 @@ function ApertureO({ uid }: { uid: string }) {
         <path d={YAS_YELLOW_BLADE_PATH} fill={`url(#${uid}-yellow)`} />
       </g>
 
-      <circle cx="256" cy="256" r="68" fill="#06020e" stroke="rgba(255,233,0,0.6)" strokeWidth="3" />
-      <circle cx="256" cy="256" r="38" fill="rgba(255,233,0,0.3)" />
+      <circle cx="256" cy="256" r="112" fill="#06020e" stroke="rgba(255,233,0,0.6)" strokeWidth="3.5" />
+      <circle cx="256" cy="256" r="64" fill="rgba(255,233,0,0.3)" />
     </svg>
   );
 }
@@ -236,7 +236,7 @@ export function YasproAnimatedLoader({
 
           {/* O track: moves across X-axis, O pinned to its right edge */}
           <div className="yas-roll-track absolute inset-0 flex items-center justify-end pointer-events-none will-change-transform">
-            <span className="yas-o-spin relative block size-[0.78em] shrink-0 will-change-transform">
+            <span className="yas-o-spin relative block size-[0.84em] shrink-0 will-change-transform">
               {/* Soft yellow glow behind the O that pulses with the yellow blade */}
               <span className="yas-glow-pulse absolute -inset-[22%] rounded-full bg-yellow-400/30 blur-xl pointer-events-none" />
               <span className="relative block size-full">

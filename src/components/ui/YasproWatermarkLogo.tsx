@@ -70,7 +70,7 @@ export function YasproWatermarkLogo({
       </svg>
 
       {/* ─── Aperture [O] matching official brand proportions & geometry ─── */}
-      <span className="ml-[0.14em] size-[0.78em] shrink-0 inline-flex items-center justify-center relative">
+      <span className="ml-[0.16em] size-[0.84em] shrink-0 inline-flex items-center justify-center relative">
         <svg
           viewBox="0 0 512 512"
           fill="none"
@@ -143,7 +143,7 @@ export function YasproWatermarkLogo({
           <circle
             cx="256"
             cy="256"
-            r="68"
+            r="112"
             fill="#06020e"
             stroke="rgba(255,233,0,0.7)"
             strokeWidth="3.5"
@@ -151,7 +151,7 @@ export function YasproWatermarkLogo({
           <circle
             cx="256"
             cy="256"
-            r="38"
+            r="64"
             fill="rgba(255,233,0,0.35)"
           />
         </svg>
