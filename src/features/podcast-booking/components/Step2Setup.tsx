@@ -32,13 +32,7 @@ export function Step2Setup({ session, onChange }: Step2SetupProps) {
             <SelectableCard
               key={studio.key}
               selected={isSelected}
-              onSelect={() => {
-                if (isCapacityMatch) {
-                  onChange({ studioKey: studio.key });
-                } else {
-                  onChange({ studioKey: studio.key, headcount: studio.seats });
-                }
-              }}
+              onSelect={() => onChange({ studioKey: studio.key })}
               className="flex flex-col justify-between"
             >
               <div>
@@ -96,7 +90,7 @@ export function Step2Setup({ session, onChange }: Step2SetupProps) {
                       <Check size={12} strokeWidth={2.5} /> Selected
                     </span>
                   ) : !isCapacityMatch ? (
-                    <span className="text-brand-lavender/80 whitespace-nowrap">Set to {studio.seats} seats</span>
+                    <span className="text-brand-lavender/80 whitespace-nowrap">Needs {session.headcount} seats</span>
                   ) : (
                     <span className="whitespace-nowrap">Available</span>
                   )}

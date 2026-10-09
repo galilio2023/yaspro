@@ -43,7 +43,7 @@ export interface Step5ReviewCheckoutProps {
   isSubmitting: boolean;
   errorMessage: string | null;
   onSubmit: (withZiinaPayment: boolean) => void;
-  onJumpToStep: (step: 1 | 2 | 3 | 4) => void;
+  onEditSession: (index: number) => void;
 }
 
 export function Step5ReviewCheckout({
@@ -62,7 +62,7 @@ export function Step5ReviewCheckout({
   isSubmitting,
   errorMessage,
   onSubmit,
-  onJumpToStep,
+  onEditSession,
 }: Step5ReviewCheckoutProps) {
   const [promoInput, setPromoInput] = useState("");
 
@@ -77,7 +77,7 @@ export function Step5ReviewCheckout({
       />
 
       {errorMessage && (
-        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center gap-2.5">
+        <div role="alert" className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center gap-2.5">
           <AlertCircle size={16} className="shrink-0" />
           <span>{errorMessage}</span>
         </div>
@@ -160,7 +160,7 @@ export function Step5ReviewCheckout({
                     </span>
                     <button
                       type="button"
-                      onClick={() => onJumpToStep(1)}
+                      onClick={() => onEditSession(idx)}
                       className="px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 flex items-center gap-1 transition cursor-pointer"
                     >
                       <Edit3 size={11} /> Edit

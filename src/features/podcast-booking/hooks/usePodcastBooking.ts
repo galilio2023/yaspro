@@ -150,6 +150,34 @@ export function usePodcastBooking() {
     }
   };
 
+  const validateSessions = () => {
+    for (const [index, session] of sessions.entries()) {
+      const studio = PODCAST_STUDIOS.find((item) => item.key === session.studioKey);
+      let message: string | null = null;
+      let invalidStep: PodcastBookingStep = 1;
+
+      if (!session.date) {
+        message = "Please select a session date.";
+      } else if (!session.timeSlot) {
+        message = "Please select a recording time slot.";
+      } else if (!studio) {
+        message = "Please select your preferred podcast studio setup.";
+        invalidStep = 2;
+      } else if (studio.seats < session.headcount) {
+        message = "Please select a studio with enough seats for your guests.";
+        invalidStep = 2;
+      }
+
+      if (message) {
+        setActiveSessionIndex(index);
+        setStep(invalidStep);
+        setErrorMessage(message);
+        return false;
+      }
+    }
+    return true;
+  };
+
   // Step Navigation
   const nextStep = () => {
     setErrorMessage(null);
@@ -181,6 +209,7 @@ export function usePodcastBooking() {
       }
       setStep(4);
     } else if (step === 4) {
+      if (!validateSessions()) return;
       setStep(5);
     }
   };
@@ -213,6 +242,8 @@ export function usePodcastBooking() {
   // Submission
   const submitBooking = async (initiatePayment = false) => {
     setErrorMessage(null);
+
+    if (!validateSessions()) return;
 
     if (!contact.fullName.trim()) {
       setErrorMessage("Full name is required.");

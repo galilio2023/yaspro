@@ -182,7 +182,7 @@ export function PodcastBookingWizard() {
         {/* Main Stage */}
         <div className="min-w-0">
           <div className="rounded-3xl border border-white/[0.08] bg-[#0b0b0f] p-4 sm:p-7 lg:p-8 pb-20 sm:pb-24 lg:pb-8 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)]">
-            {errorMessage && (
+            {errorMessage && step !== 5 && (
               <div className="mb-5">
                 <ErrorBanner message={errorMessage} />
               </div>
@@ -239,9 +239,10 @@ export function PodcastBookingWizard() {
                     isSubmitting={isSubmitting}
                     errorMessage={errorMessage}
                     onSubmit={submitBooking}
-                    onJumpToStep={(s) => {
-                      setDirection(s > step ? 1 : -1);
-                      setStep(s);
+                    onEditSession={(idx) => {
+                      setActiveSessionIndex(idx);
+                      setDirection(-1);
+                      setStep(1);
                       requestAnimationFrame(scrollToTop);
                     }}
                   />
