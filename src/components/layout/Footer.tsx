@@ -17,7 +17,6 @@ import {
   Building2,
   Mail,
   Video,
-  Clock,
   MapPin,
   Phone,
   ArrowUpRight,
@@ -56,7 +55,7 @@ interface StudioLocation {
   city: string;
   cityAr: string;
   country: string;
-  flag: string;
+  code: string;
   role: string;
   roleAr: string;
   address: string;
@@ -71,7 +70,7 @@ const STUDIO_LOCATIONS: readonly StudioLocation[] = [
     city: "Dubai",
     cityAr: "دبي",
     country: "UAE",
-    flag: "🇦🇪",
+    code: "DXB",
     role: "Global HQ & Main Soundstages",
     roleAr: "المقر الرئيسي واستوديوهات التصوير",
     address: "Iris Bay Tower, Level 18, Business Bay",
@@ -84,7 +83,7 @@ const STUDIO_LOCATIONS: readonly StudioLocation[] = [
     city: "Cairo",
     cityAr: "القاهرة",
     country: "Egypt",
-    flag: "🇪🇬",
+    code: "CAI",
     role: "Production & Broadcast Hub",
     roleAr: "مركز الإنتاج والبث الفضائي",
     address: "Elite Tower, Zahraa Al Maadi",
@@ -96,7 +95,7 @@ const STUDIO_LOCATIONS: readonly StudioLocation[] = [
     city: "Amman",
     cityAr: "عَمّان",
     country: "Jordan",
-    flag: "🇯🇴",
+    code: "AMM",
     role: "Levant Regional Studio",
     roleAr: "استوديو بلاد الشام الإقليمي",
     address: "BlackRock Tower, Mecca Street",
@@ -303,63 +302,79 @@ export default function Footer() {
           </div>
 
           {/* Column 4: Architectural Regional Studios Directory (col-span-3) */}
-          <div className="sm:col-span-2 lg:col-span-3 space-y-4">
-            <div className="flex items-center justify-between">
+          <div className="sm:col-span-2 lg:col-span-3 space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
               <h3 className="text-white font-bold text-xs uppercase tracking-[0.2em] font-display flex items-center gap-2">
-                <span className="size-1.5 rounded-full bg-emerald-400" />
+                <span className="size-1.5 rounded-full bg-amber-400" />
                 <span>{t("footer.studiosHubs")}</span>
               </h3>
-              <span className="text-[10px] font-mono text-amber-400">[3 HUBS]</span>
+              <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+                {t("footer.locations")}
+              </span>
             </div>
 
-            <div className="space-y-3">
+            <div className="divide-y divide-white/[0.05]">
               {STUDIO_LOCATIONS.map((loc) => {
                 const time = hubTimes[loc.city];
                 return (
                   <div
                     key={loc.city}
-                    className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/15 transition-all space-y-2"
+                    className="group py-3 first:pt-1 last:pb-0 transition-colors"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm">{loc.flag}</span>
-                        <span className="text-xs font-bold text-white font-display">
-                          {isArabic ? loc.cityAr : loc.city}, {loc.country}
+                    {/* Header: City Name + Hub Code + Live Time */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="font-display text-xs font-bold text-white tracking-wide group-hover:text-amber-400 transition-colors">
+                          {isArabic ? loc.cityAr : loc.city}
+                        </span>
+                        <span className="font-mono text-[9px] text-zinc-400 uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/[0.03] border border-white/[0.06]">
+                          {loc.code} · {loc.country}
                         </span>
                       </div>
+
                       {time && (
-                        <span className="flex items-center gap-1 font-mono text-[10px] text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded border border-amber-400/20">
-                          <Clock size={9} />
+                        <div className="flex items-center gap-1.5 font-mono text-[10px] text-zinc-400 shrink-0 tabular-nums">
+                          <span className="size-1 rounded-full bg-emerald-400 animate-pulse" />
                           <span>{time}</span>
-                        </span>
+                        </div>
                       )}
                     </div>
 
-                    <p className="text-[11px] text-zinc-400 flex items-start gap-1.5 leading-snug">
-                      <MapPin size={11} className="shrink-0 mt-0.5 text-zinc-500" />
-                      <span>{isArabic ? loc.addressAr : loc.address}</span>
+                    {/* Facility Role */}
+                    <p className="mt-1 text-[11px] text-zinc-400 leading-snug">
+                      {isArabic ? loc.roleAr : loc.role}
                     </p>
 
-                    <div className="pt-1.5 border-t border-white/[0.04] flex items-center justify-between text-[10px] font-mono">
-                      {loc.phone && (
-                        <a
-                          href={`tel:${loc.phone}`}
-                          className="text-zinc-400 hover:text-white transition-colors flex items-center gap-1"
-                        >
-                          <Phone size={10} className="text-amber-400" />
-                          <span>{loc.phone}</span>
-                        </a>
-                      )}
+                    {/* Address & Directions */}
+                    <div className="mt-1.5 flex items-start justify-between gap-3 text-[11px]">
+                      <p className="text-zinc-500 text-[10.5px] leading-relaxed flex items-start gap-1 min-w-0">
+                        <MapPin size={11} className="shrink-0 mt-0.5 text-zinc-600" />
+                        <span className="truncate">{isArabic ? loc.addressAr : loc.address}</span>
+                      </p>
+
                       <a
                         href={loc.mapUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-zinc-500 hover:text-zinc-300 transition-colors inline-flex items-center gap-0.5"
+                        className="text-zinc-400 hover:text-amber-400 transition-colors shrink-0 inline-flex items-center gap-0.5 font-mono text-[10px] group/link"
                       >
                         <span>{isArabic ? "الخريطة" : "Map"}</span>
-                        <ArrowUpRight size={10} />
+                        <ArrowUpRight size={10} className="text-zinc-500 group-hover/link:text-amber-400 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
                       </a>
                     </div>
+
+                    {/* Direct phone if available */}
+                    {loc.phone && (
+                      <div className="mt-1.5">
+                        <a
+                          href={`tel:${loc.phone}`}
+                          className="text-zinc-500 hover:text-white transition-colors inline-flex items-center gap-1.5 font-mono text-[10px]"
+                        >
+                          <Phone size={9} className="text-amber-400/80" />
+                          <span>{loc.phone}</span>
+                        </a>
+                      </div>
+                    )}
                   </div>
                 );
               })}
