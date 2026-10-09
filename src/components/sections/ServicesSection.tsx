@@ -16,7 +16,8 @@ export function ServicesSection() {
   const router = useRouter();
   const { isArabic } = useLanguage();
   const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [isHoverPaused, setIsHoverPaused] = useState<boolean>(false);
+  const [isSelectionPaused, setIsSelectionPaused] = useState<boolean>(false);
   const [isFocusWithin, setIsFocusWithin] = useState(false);
   const [inquiryModal, setInquiryModal] = useState<{
     isOpen: boolean;
@@ -31,12 +32,12 @@ export function ServicesSection() {
 
   // Auto-switch which card is expanded every 4 seconds
   useEffect(() => {
-    if (isPaused || isFocusWithin || inquiryModal.isOpen) return;
+    if (isHoverPaused || isSelectionPaused || isFocusWithin || inquiryModal.isOpen) return;
     const timer = setInterval(() => {
       nextSlide();
     }, 4000);
     return () => clearInterval(timer);
-  }, [isPaused, isFocusWithin, inquiryModal.isOpen, nextSlide]);
+  }, [isHoverPaused, isSelectionPaused, isFocusWithin, inquiryModal.isOpen, nextSlide]);
 
   const handleCardClick = (service: ServiceItem) => {
     if (service.id === "studio-booking") {
@@ -59,7 +60,7 @@ export function ServicesSection() {
       className="bg-black relative overflow-hidden py-16 sm:py-24"
     >
       <Container className="relative z-10 max-w-7xl">
-        {/* Section Header with Yas Pro Editorial Hierarchy */}
+        {/* Section Header with Clean Studio Hierarchy */}
         <SectionHeader
           headingId="services-title"
           badge={isArabic ? "ركائز الإنتاج المتكامل" : "Turnkey Production Pillars"}
@@ -70,18 +71,19 @@ export function ServicesSection() {
           gradientVariant="mauve"
           description={
             isArabic
-              ? "من البث المباشر الميداني بعربات OB-VAN وأحدث استوديوهات التصوير الافتراضي إلى صناعة المحتوى السريع وفق أعلى المعايير العالمية."
-              : "From mobile OB-VAN live broadcast to flagship soundstages and high-impact social cutdowns, engineered for visionary brands."
+              ? "استوديوهات تصوير متطورة، بث مباشر ميداني، وحلول إنتاج سينمائي بمعايير عالمية."
+              : "Soundstages, mobile OB-VAN broadcast, and cinema-grade field production."
           }
           align="left"
-          className="mb-10 sm:mb-14"
+          className="mb-8 sm:mb-12"
         />
 
-        {/* Cards: Responsive Grid on Mobile, Expanding Accordion on Desktop */}
+        {/* Cards: Responsive Accordion on Mobile (vertical flex) & Desktop (horizontal flex) */}
         <div
-          className="grid grid-cols-1 sm:grid-cols-2 md:flex md:flex-row md:h-[520px] w-full gap-4 select-none"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
+          className="flex flex-col md:flex-row h-[560px] sm:h-[620px] md:h-[520px] w-full gap-3 sm:gap-4 select-none"
+          onMouseEnter={() => setIsHoverPaused(true)}
+          onMouseLeave={() => setIsHoverPaused(false)}
+          onTouchStart={() => setIsSelectionPaused(true)}
           onFocusCapture={() => setIsFocusWithin(true)}
           onBlurCapture={(event) => {
             if (!event.currentTarget.contains(event.relatedTarget)) setIsFocusWithin(false);
@@ -90,6 +92,7 @@ export function ServicesSection() {
           {SERVICES_DATA.map((service, index) => {
             const isActive = activeIndex === index;
             const title = isArabic ? service.arabicTitle : service.title;
+            const subtitle = isArabic ? service.arabicSubtitle : service.subtitle;
 
             return (
               <motion.button
@@ -99,60 +102,81 @@ export function ServicesSection() {
                 key={service.id}
                 onMouseEnter={() => {
                   setActiveIndex(index);
-                  setIsPaused(true);
+                  setIsHoverPaused(true);
                 }}
-                onClick={() => handleCardClick(service)}
+                onClick={() => {
+                  if (isActive) {
+                    handleCardClick(service);
+                  } else {
+                    setActiveIndex(index);
+                    setIsSelectionPaused(true);
+                  }
+                }}
                 layout
                 transition={{
                   layout: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
                 }}
-                className={`group relative h-48 sm:h-56 md:h-full min-h-0 min-w-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-lavender overflow-hidden cursor-pointer transition-all duration-300 ${
+                className={`group relative min-h-0 min-w-0 rounded-2xl sm:rounded-3xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/40 overflow-hidden cursor-pointer transition-all duration-500 ${
                   isActive
-                    ? "md:flex-[3.5] ring-1 ring-brand-mauve/40 shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
-                    : "md:flex-[1] opacity-90 md:opacity-75 hover:opacity-100"
+                    ? "flex-[3.2] sm:flex-[3] md:flex-[3.5] shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
+                    : "flex-[1] opacity-75 md:opacity-65 hover:opacity-95"
                 }`}
               >
-                {/* 3D Visual Asset */}
+                {/* 3D Visual Asset with Cinematic Vignette */}
                 <Image
                   src={service.image}
                   alt={title}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className={`object-cover object-center transition-transform duration-700 ${
-                    isActive ? "scale-100 brightness-100" : "scale-105 brightness-60 md:brightness-50 group-hover:brightness-80"
+                  className={`object-cover object-center transition-transform duration-700 ease-out ${
+                    isActive ? "scale-100 brightness-100" : "scale-105 brightness-50 md:brightness-40 group-hover:brightness-70"
                   }`}
                   priority={index < 2}
                 />
 
-                {/* Subtle vignette gradient */}
-                <span className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent pointer-events-none" />
+                {/* Subtle Film Vignette Gradient */}
+                <span className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent pointer-events-none" />
 
-                {/* Title: Always visible on mobile, expanded on active desktop */}
-                <span className={`absolute z-10 bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 text-left rtl:text-right transition-opacity duration-300 ${
-                  isActive ? "opacity-100" : "opacity-90 md:hidden"
-                }`}>
-                  <span className="font-bold tracking-tight text-xl sm:text-2xl md:text-3xl text-brand-lavender drop-shadow-md block">
-                    {title}
-                  </span>
-                </span>
+                {/* Content Overlay: Expanded title or compact service label */}
+                {isActive ? (
+                  <div className="absolute bottom-5 left-5 right-5 sm:bottom-7 sm:left-7 sm:right-7 z-10 text-left rtl:text-right pointer-events-none">
+                    <motion.h3
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="font-bold tracking-tight text-2xl sm:text-3xl lg:text-4xl text-white drop-shadow-md"
+                    >
+                      {title}
+                    </motion.h3>
+                  </div>
+                ) : (
+                  <div className="absolute bottom-3 left-4 right-4 sm:bottom-5 sm:left-5 sm:right-5 z-10 text-left rtl:text-right pointer-events-none">
+                    <h3 className="font-semibold tracking-tight text-sm sm:text-base text-white drop-shadow-md">
+                      {title}
+                    </h3>
+                  </div>
+                )}
               </motion.button>
             );
           })}
         </div>
 
-        {/* Bottom Dots Indicator (Desktop accordion indicator) */}
-        <div className="hidden md:flex mt-10 sm:mt-12 items-center justify-center">
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/[0.04] backdrop-blur-md shadow-lg">
+        {/* Bottom Navigation Dots Indicator (Responsive for both Mobile & Desktop) */}
+        <div className="mt-8 sm:mt-12 flex items-center justify-center">
+          <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-zinc-950/80 border border-white/10 backdrop-blur-md shadow-lg">
             {SERVICES_DATA.map((_, idx) => (
               <button
                 key={idx}
                 type="button"
-                onClick={() => setActiveIndex(idx)}
+                onClick={() => {
+                  setActiveIndex(idx);
+                  setIsSelectionPaused(true);
+                }}
                 aria-label={`Go to service ${idx + 1}`}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   activeIndex === idx
-                    ? "w-6 bg-brand-violet"
-                    : "w-2 bg-zinc-600 hover:bg-zinc-400"
+                    ? "w-7 bg-amber-400"
+                    : "w-2 bg-zinc-700 hover:bg-zinc-500"
                 }`}
               />
             ))}
