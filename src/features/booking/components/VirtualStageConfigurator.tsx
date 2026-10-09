@@ -24,7 +24,7 @@ const PRESETS: StagePreset[] = [
     ledCurve: 270,
     lightingRigs: 6,
     cameraTrack: "optical",
-    ambientColor: "#f59e0b",
+    ambientColor: "#987ba5",
     gridDensity: 1.2,
     description: "Curved panoramic LED wall synced with Unreal Engine 5.4 LiveLink optical tracking.",
   },
@@ -34,7 +34,7 @@ const PRESETS: StagePreset[] = [
     ledCurve: 90,
     lightingRigs: 8,
     cameraTrack: "rail",
-    ambientColor: "#d97706",
+    ambientColor: "#765086",
     gridDensity: 0.8,
     description: "Full white/green infinity cyclorama with ceiling motorized SkyPanels for high-fashion.",
   },
@@ -44,7 +44,7 @@ const PRESETS: StagePreset[] = [
     ledCurve: 45,
     lightingRigs: 4,
     cameraTrack: "crane",
-    ambientColor: "#f59e0b",
+    ambientColor: "#bba7c3",
     gridDensity: 0.5,
     description: "Compact acoustic sound room with broadcast pedestal mounts and neon backdrops.",
   },
@@ -65,10 +65,10 @@ function VirtualStage3DModel({
         args={[10, 10]}
         cellSize={0.5}
         cellThickness={1}
-        cellColor="#f59e0b"
+        cellColor="#987ba5"
         sectionSize={2.5}
         sectionThickness={1.5}
-        sectionColor="#d97706"
+        sectionColor="#765086"
         fadeDistance={12}
         fadeStrength={1.5}
       />
@@ -115,7 +115,7 @@ function VirtualStage3DModel({
       {/* Central Actor / Prop Target Marker */}
       <mesh position={[0, -0.9, 0]}>
         <cylinderGeometry args={[0.8, 0.8, 0.05, 32]} />
-        <meshStandardMaterial color="#f59e0b" emissive="#f59e0b" emissiveIntensity={0.3} />
+        <meshStandardMaterial color="#987ba5" emissive="#987ba5" emissiveIntensity={0.3} />
       </mesh>
 
       {/* Camera Position Marker */}
@@ -144,7 +144,7 @@ export function VirtualStageConfigurator() {
   );
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-slate-900/60 backdrop-blur-xl overflow-hidden shadow-2xl mb-8">
+    <div className="rounded-3xl border border-white/10 bg-[#0e0a16]/80 backdrop-blur-xl overflow-hidden shadow-2xl mb-8">
       {/* Top Banner */}
       <div className="p-4 sm:p-5 border-b border-white/10 flex flex-wrap items-center justify-between gap-3 bg-white/[0.02]">
         <div className="flex items-center gap-2.5">
@@ -178,7 +178,7 @@ export function VirtualStageConfigurator() {
                 onClick={() => setActivePreset(p)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   isSelected
-                    ? "bg-brand-mauve text-slate-950 font-extrabold shadow-md shadow-brand-violet/30 border border-brand-mauve-soft"
+                    ? "bg-brand-mauve text-zinc-950 font-extrabold shadow-md shadow-brand-violet/30 border border-brand-mauve-soft"
                     : "bg-white/5 text-text-muted hover:text-white border border-white/5"
                 }`}
               >
@@ -191,7 +191,7 @@ export function VirtualStageConfigurator() {
       </div>
 
       {/* 3D Canvas Viewport */}
-      <div className="relative h-[320px] sm:h-[400px] w-full bg-gradient-to-b from-black to-slate-950">
+      <div className="relative h-[320px] sm:h-[400px] w-full bg-gradient-to-b from-black to-[#0c0912]">
         <Canvas
           camera={{ position: [0, 3, 5.5], fov: 50 }}
           className="size-full cursor-grab active:cursor-grabbing"
@@ -214,19 +214,19 @@ export function VirtualStageConfigurator() {
             <span className="size-2 rounded-full bg-emerald-400" />
             {activePreset.name}
           </div>
-          <div className="text-[10px] text-slate-300">
+          <div className="text-[10px] text-zinc-300">
             • Curvature: {activePreset.ledCurve}° Sweep
           </div>
-          <div className="text-[10px] text-slate-300">
+          <div className="text-[10px] text-zinc-300">
             • Rig: {activePreset.lightingRigs} Motorized DMX Overhead Nodes
           </div>
-          <div className="text-[10px] text-slate-300">
+          <div className="text-[10px] text-zinc-300">
             • Camera Sync: {activePreset.cameraTrack.toUpperCase()} Genlock 24.00 fps
           </div>
         </div>
 
         {/* Drag Hint */}
-        <div className="absolute bottom-4 right-4 pointer-events-none bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[10px] font-mono text-slate-400">
+        <div className="absolute bottom-4 right-4 pointer-events-none bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[10px] font-mono text-zinc-400">
           Click &amp; Drag to rotate 3D volume
         </div>
       </div>

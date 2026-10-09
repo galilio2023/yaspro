@@ -46,7 +46,6 @@ export function usePodcastBooking() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [confirmedResult, setConfirmedResult] = useState<PodcastBookingResult | null>(null);
-  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
 
   const currentSession = sessions[activeSessionIndex] || sessions[0];
 
@@ -151,6 +150,34 @@ export function usePodcastBooking() {
     }
   };
 
+  const validateSessions = () => {
+    for (const [index, session] of sessions.entries()) {
+      const studio = PODCAST_STUDIOS.find((item) => item.key === session.studioKey);
+      let message: string | null = null;
+      let invalidStep: PodcastBookingStep = 1;
+
+      if (!session.date) {
+        message = "Please select a session date.";
+      } else if (!session.timeSlot) {
+        message = "Please select a recording time slot.";
+      } else if (!studio) {
+        message = "Please select your preferred podcast studio setup.";
+        invalidStep = 2;
+      } else if (studio.seats < session.headcount) {
+        message = "Please select a studio with enough seats for your guests.";
+        invalidStep = 2;
+      }
+
+      if (message) {
+        setActiveSessionIndex(index);
+        setStep(invalidStep);
+        setErrorMessage(message);
+        return false;
+      }
+    }
+    return true;
+  };
+
   // Step Navigation
   const nextStep = () => {
     setErrorMessage(null);
@@ -182,8 +209,8 @@ export function usePodcastBooking() {
       }
       setStep(4);
     } else if (step === 4) {
-      // Proceed to checkout modal
-      setIsCheckoutModalOpen(true);
+      if (!validateSessions()) return;
+      setStep(5);
     }
   };
 
@@ -215,6 +242,8 @@ export function usePodcastBooking() {
   // Submission
   const submitBooking = async (initiatePayment = false) => {
     setErrorMessage(null);
+
+    if (!validateSessions()) return;
 
     if (!contact.fullName.trim()) {
       setErrorMessage("Full name is required.");
@@ -251,7 +280,6 @@ export function usePodcastBooking() {
       }
 
       setConfirmedResult(res);
-      setIsCheckoutModalOpen(false);
 
       if (res.success && res.paymentUrl) {
         window.location.href = res.paymentUrl;
@@ -288,8 +316,6 @@ export function usePodcastBooking() {
     isSubmitting,
     errorMessage,
     confirmedResult,
-    isCheckoutModalOpen,
-    setIsCheckoutModalOpen,
     updateCurrentSession,
     setAddonQuantity,
     toggleAddon,

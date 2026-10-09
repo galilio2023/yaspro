@@ -137,8 +137,8 @@ export function ServicesSection() {
                 {/* Subtle Film Vignette Gradient */}
                 <span className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent pointer-events-none" />
 
-                {/* Content Overlay: Expanded title or compact service label */}
-                {isActive ? (
+                {/* Content Overlay: Title ONLY on active card */}
+                {isActive && (
                   <div className="absolute bottom-5 left-5 right-5 sm:bottom-7 sm:left-7 sm:right-7 z-10 text-left rtl:text-right pointer-events-none">
                     <motion.h3
                       initial={{ opacity: 0, y: 8 }}
@@ -148,12 +148,6 @@ export function ServicesSection() {
                     >
                       {title}
                     </motion.h3>
-                  </div>
-                ) : (
-                  <div className="absolute bottom-3 left-4 right-4 sm:bottom-5 sm:left-5 sm:right-5 z-10 text-left rtl:text-right pointer-events-none">
-                    <h3 className="font-semibold tracking-tight text-sm sm:text-base text-white drop-shadow-md">
-                      {title}
-                    </h3>
                   </div>
                 )}
               </motion.button>

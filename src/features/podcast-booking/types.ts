@@ -23,6 +23,8 @@ export interface PodcastService {
   features: PodcastServiceFeature[];
   after: PodcastServiceFeature[];
   note?: string;
+  badge?: string;
+  highlights?: string[];
 }
 
 export interface PodcastAddon {
@@ -58,4 +60,4 @@ export interface PodcastBookingContact {
   promoCode?: string;
 }
 
-export type PodcastBookingStep = 1 | 2 | 3 | 4;
+export type PodcastBookingStep = 1 | 2 | 3 | 4 | 5;

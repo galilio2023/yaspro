@@ -10,6 +10,7 @@ import { createElement } from 'react';
 
 const require = createRequire(import.meta.url);
 function loadSource(file, mocks = {}, globals = {}) {
+  if (!fs.existsSync(file) && file.endsWith(".ts")) file += "x";
   const { outputText } = ts.transpileModule(fs.readFileSync(file, 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX },
   });
@@ -136,7 +137,7 @@ test('Ziina failure returns saved unpaid reservation; successful simulation need
   assert.equal((await simulated.createPodcastBooking({ ...input, initiatePayment: true })).success, true);
 });
 
-function hookFixture(response) {
+function hookFixture(response, onSubmit = () => {}) {
   const states = [];
   let cursor = 0;
   const { usePodcastBooking } = loadSource('src/features/podcast-booking/hooks/usePodcastBooking.ts', {
@@ -145,7 +146,7 @@ function hookFixture(response) {
       if (!(index in states)) states[index] = initial;
       return [states[index], (value) => { states[index] = typeof value === 'function' ? value(states[index]) : value; }];
     } },
-    '../actions': { createPodcastBooking: async () => response },
+    '../actions': { createPodcastBooking: async (input) => { onSubmit(input); return response; } },
   });
   return () => { cursor = 0; return usePodcastBooking(); };
 }
@@ -162,10 +163,9 @@ test('wizard blocks capacity bypass and confirms saved reservation on payment fa
   assert.match(hook.errorMessage, /enough seats/);
   hook.setContact({ fullName: 'Test Guest', email: 'guest@example.com', phone: '+971500000000' });
   hook.setIsAgreedToTerms(true);
-  hook.setIsCheckoutModalOpen(true);
+  hook.updateCurrentSession({ headcount: 2 });
   await render().submitBooking(true);
   assert.equal(render().confirmedResult, response);
-  assert.equal(render().isCheckoutModalOpen, false);
 });
 
 test('calendar defaults and date cards retain local calendar day on both sides of UTC', () => {
@@ -187,18 +187,20 @@ test('calendar defaults and date cards retain local calendar day on both sides o
   }
 });
 
-test('studio UI disables undersized choices and guards card click; confirmation announces payment error', () => {
+test('studio selection preserves headcount; confirmation announces payment error', () => {
   const updates = [];
   const { Step2Setup } = loadSource('src/features/podcast-booking/components/Step2Setup.tsx', { 'next/image': { default: () => null } });
   const tree = Step2Setup({ session: { ...session, headcount: 4 }, onChange: (update) => updates.push(update) });
   const cards = tree.props.children[1].props.children;
   const tooSmall = cards.find((card) => card.key === 'dark-walnut');
-  tooSmall.props.onClick();
-  assert.equal(updates.length, 0);
-  assert.match(renderToStaticMarkup(tooSmall), /disabled=""/);
+  tooSmall.props.onSelect();
+  assert.equal(updates.length, 1);
+  assert.deepEqual(Object.keys(updates[0]), ['studioKey']);
+  assert.equal(updates[0].studioKey, 'dark-walnut');
+  assert.doesNotMatch(renderToStaticMarkup(tooSmall), /disabled=""/);
   assert.match(renderToStaticMarkup(tooSmall), /Needs 4 seats/);
-  cards.find((card) => card.key === 'nature-grid').props.onClick();
-  assert.equal(updates[0].studioKey, 'nature-grid');
+  cards.find((card) => card.key === 'nature-grid').props.onSelect();
+  assert.equal(updates[1].studioKey, 'nature-grid');
   const { PodcastConfirmation } = loadSource('src/features/podcast-booking/components/PodcastConfirmation.tsx', { 'next/link': { default: ({ children }) => children } });
   const html = renderToStaticMarkup(createElement(PodcastConfirmation, { result: { success: false, paymentFailed: true, message: 'Gateway unavailable' }, onBookAnother() {} }));
   assert.match(html, /Unpaid/);
@@ -277,4 +279,97 @@ test('booking management receives every persisted schedule under its single fina
   assert.equal(result[0].totalAmount, '780.00');
   assert.equal(result[0].schedule.length, 2);
   assert.equal(result[0].schedule[1].studioName, 'Secondary');
+});
+
+function findNodes(tree, predicate) {
+  if (!tree) return [];
+  if (Array.isArray(tree)) return tree.flatMap((child) => findNodes(child, predicate));
+  return [...(predicate(tree) ? [tree] : []), ...findNodes(tree.props?.children, predicate)];
+}
+
+test('review and submission validate inactive sessions and return to the first invalid entry', async () => {
+  for (const [updates, step, error] of [
+    [{ date: '' }, 1, /session date/],
+    [{ timeSlot: '' }, 1, /time slot/],
+    [{ studioKey: 'missing' }, 2, /studio setup/],
+    [{ studioKey: 'dark-walnut', headcount: 4 }, 2, /enough seats/],
+  ]) {
+    for (const submit of [false, true]) {
+      const calls = [];
+      const render = hookFixture({ success: true }, (input) => calls.push(input));
+      render().updateCurrentSession(updates);
+      render().addNewSession();
+      render().updateCurrentSession({ date: '' });
+      render().addNewSession();
+      render().setContact(input);
+      render().setIsAgreedToTerms(true);
+      render().setStep(submit ? 5 : 4);
+      if (submit) await render().submitBooking(true);
+      else render().nextStep();
+      assert.equal(render().activeSessionIndex, 0);
+      assert.equal(render().step, step);
+      assert.match(render().errorMessage, error);
+      assert.equal(render().confirmedResult, null);
+      assert.equal(render().isSubmitting, false);
+      assert.equal(calls.length, 0);
+      // Repair the first entry; the next invalid session must now be selected.
+      render().updateCurrentSession(session);
+      render().setStep(4);
+      render().nextStep();
+      assert.equal(render().activeSessionIndex, 1);
+      assert.equal(render().step, 1);
+      render().updateCurrentSession(session);
+      render().setStep(4);
+      render().nextStep();
+      assert.equal(render().step, 5);
+      assert.equal(render().errorMessage, null);
+      await render().submitBooking();
+      assert.equal(calls.length, 1);
+      assert.equal(calls[0].sessions.length, 3);
+      assert.equal(render().confirmedResult.success, true);
+    }
+  }
+});
+
+test('review Edit selects its own session and errors have one display on every step', () => {
+  const render = hookFixture({ success: true });
+  render().addNewSession();
+  render().setStep(5);
+  // Trigger a checkout error without calling the server.
+  render().submitBooking();
+  const Stub = () => null;
+  const Banner = () => null;
+  const Review = () => null;
+  const { PodcastBookingWizard } = loadSource('src/features/podcast-booking/components/PodcastBookingWizard.tsx', {
+    react: { useEffect() {}, useState: (initial) => [initial, () => {}] },
+    '../hooks/usePodcastBooking': { usePodcastBooking: render },
+    './Step1DateTime': { Step1DateTime: Stub }, './Step2Setup': { Step2Setup: Stub },
+    './Step3Service': { Step3Service: Stub }, './Step4Addons': { Step4Addons: Stub },
+    './Step5ReviewCheckout': { Step5ReviewCheckout: Review },
+    './PodcastQuoteRail': { PodcastQuoteRail: Stub }, './PodcastConfirmation': { PodcastConfirmation: Stub },
+    '@/features/booking/components/ui/BookingKit': { BookingStepper: Stub, ErrorBanner: Banner, formatAED: String, studioSprings: {} },
+  }, { requestAnimationFrame() {} });
+  const tree = PodcastBookingWizard();
+  assert.equal(findNodes(tree, (node) => node.type === Banner).length, 0);
+  const reviewProps = findNodes(tree, (node) => node.type === Review)[0].props;
+  assert.equal(reviewProps.errorMessage, 'Full name is required.');
+  const { Step5ReviewCheckout } = loadSource('src/features/podcast-booking/components/Step5ReviewCheckout.tsx', {
+    react: { useState: (initial) => [initial, () => {}] },
+    'next/image': { default: Stub },
+  });
+  const reviewTree = Step5ReviewCheckout(reviewProps);
+  assert.equal(findNodes(reviewTree, (node) => node.props?.role === 'alert').length, 1);
+  const edits = findNodes(reviewTree, (node) => node.type === 'button' && node.props.children?.includes(' Edit'));
+  assert.equal(edits.length, 2);
+  for (const index of [0, 1]) {
+    render().setActiveSessionIndex(1 - index);
+    render().setStep(5);
+    edits[index].props.onClick();
+    assert.equal(render().activeSessionIndex, index);
+    assert.equal(render().step, 1);
+  }
+  for (const step of [1, 2, 3, 4]) {
+    render().setStep(step);
+    assert.equal(findNodes(PodcastBookingWizard(), (node) => node.type === Banner).length, 1);
+  }
 });
