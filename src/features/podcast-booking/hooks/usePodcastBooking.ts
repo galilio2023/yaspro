@@ -46,7 +46,6 @@ export function usePodcastBooking() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [confirmedResult, setConfirmedResult] = useState<PodcastBookingResult | null>(null);
-  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
 
   const currentSession = sessions[activeSessionIndex] || sessions[0];
 
@@ -182,8 +181,7 @@ export function usePodcastBooking() {
       }
       setStep(4);
     } else if (step === 4) {
-      // Proceed to checkout modal
-      setIsCheckoutModalOpen(true);
+      setStep(5);
     }
   };
 
@@ -251,7 +249,6 @@ export function usePodcastBooking() {
       }
 
       setConfirmedResult(res);
-      setIsCheckoutModalOpen(false);
 
       if (res.success && res.paymentUrl) {
         window.location.href = res.paymentUrl;
@@ -288,8 +285,6 @@ export function usePodcastBooking() {
     isSubmitting,
     errorMessage,
     confirmedResult,
-    isCheckoutModalOpen,
-    setIsCheckoutModalOpen,
     updateCurrentSession,
     setAddonQuantity,
     toggleAddon,

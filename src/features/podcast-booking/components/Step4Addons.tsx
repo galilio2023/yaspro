@@ -21,13 +21,13 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
     <div className="space-y-6 animate-in fade-in duration-300">
       <StepIntro
         index={4}
-        total={4}
+        total={5}
         title="Add-ons & Viral Edits"
         description="Accelerate your social reach with viral reels, clickable YouTube thumbnails, 4K multi-cam switches, and express delivery."
         aside={<MetaTag tone={totalAddonsCount > 0 ? "mauve" : "neutral"}>{totalAddonsCount} added</MetaTag>}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
         {PODCAST_ADDONS.map((addon) => {
           const qty = session.addons?.[addon.key] || 0;
           const isAdded = qty > 0;

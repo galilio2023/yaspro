@@ -77,9 +77,16 @@ export const PODCAST_SERVICES: PodcastService[] = [
   {
     key: "recording-pro-edit",
     title: "Recording + Professional Edit",
-    sub: "Perfect for a polished, broadcast-ready finish.",
+    sub: "Full broadcast master ready for YouTube & Spotify.",
+    badge: "Most Popular",
     price: 890,
     best: true,
+    highlights: [
+      "4K Master Edit & Color Grade",
+      "Audio Mastering & Logo Intro",
+      "2 Revisions + Cloud Link",
+      "Raw 4K ISOs & Vocal Stems",
+    ],
     features: [
       { ok: true, text: "Fully equipped Podcast Set of your choice" },
       { ok: true, text: "Studio operator to record everything for you" },
@@ -101,9 +108,16 @@ export const PODCAST_SERVICES: PodcastService[] = [
   {
     key: "recording-live-mix",
     title: "Recording + Live Mix",
-    sub: "Ideal for immediate publishing in horizontal format.",
+    sub: "Live-switched program feed ready for rapid release.",
+    badge: "Live Switched",
     price: 490,
     best: false,
+    highlights: [
+      "Live-Switched 4K Video Feed",
+      "Real-Time Balanced Audio",
+      "Raw 4K Camera ISOs & Stems",
+      "Instant SSD Drive Offload",
+    ],
     features: [
       { ok: true, text: "Fully equipped Podcast Set of your choice" },
       { ok: true, text: "Studio operator to record everything for you" },
@@ -124,9 +138,16 @@ export const PODCAST_SERVICES: PodcastService[] = [
   {
     key: "recording",
     title: "Recording Only",
-    sub: "For raw ISO camera footage you can edit later.",
+    sub: "Pure raw ISO footage capture for external editors.",
+    badge: "Raw Capture",
     price: 390,
     best: false,
+    highlights: [
+      "Raw 4K Sony Cinema ISOs",
+      "Shure SM7B Vocal Stems",
+      "On-Site Sound Engineer",
+      "Instant SSD Drive Offload",
+    ],
     features: [
       { ok: true, text: "Fully equipped Podcast Set of your choice" },
       { ok: true, text: "Studio operator to record everything for you" },

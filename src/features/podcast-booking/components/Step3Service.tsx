@@ -1,146 +1,209 @@
 "use client";
 
-import { Check, X, Zap } from "lucide-react";
+import { useState } from "react";
+import { Check, Zap, ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-react";
 import { PODCAST_SERVICES } from "../data";
 import { PodcastSessionItem } from "../types";
-import { formatAED, MetaTag, SelectableCard, StepIntro } from "@/features/booking/components/ui/BookingKit";
+import { formatAED, MetaTag, SelectableCard, StepIntro, TogglePill, studioSprings } from "@/features/booking/components/ui/BookingKit";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Step3ServiceProps {
   session: PodcastSessionItem;
   onChange: (updates: Partial<PodcastSessionItem>) => void;
 }
 
+const COMPARISON_MATRIX = [
+  { feature: "3x 4K Sony Cinema Cameras & Framing", raw: true, live: true, edit: true },
+  { feature: "Shure SM7B Broadcast Vocal Suite (Up to 5 mics)", raw: true, live: true, edit: true },
+  { feature: "Dedicated On-Site Audio Engineer & Live Levels", raw: true, live: true, edit: true },
+  { feature: "Raw 4K Camera ISO Recordings & Multi-Track Stems", raw: true, live: true, edit: true },
+  { feature: "Live-Switched Multi-Cam Program Feed", raw: false, live: true, edit: true },
+  { feature: "Master Video Editing & Audio Mastering", raw: false, live: false, edit: true },
+  { feature: "Color Grading & Vocal Enhancement", raw: false, live: false, edit: true },
+  { feature: "Motion Logo, Lower Thirds & Intro Integration", raw: false, live: false, edit: true },
+  { feature: "Included Revision Rounds", raw: "None", live: "None", edit: "2 Rounds" },
+  { feature: "Delivery Method", raw: "USB-C SSD", live: "USB-C SSD", edit: "Cloud & SSD" },
+  { feature: "Secure Cloud Storage Archive", raw: "None", live: "None", edit: "14 Days" },
+];
+
 export function Step3Service({ session, onChange }: Step3ServiceProps) {
+  const [showMatrix, setShowMatrix] = useState(false);
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <StepIntro
         index={3}
-        total={4}
+        total={5}
         title="Production Tier"
-        description="Select whether you want raw footage capture, live-switched program mix, or full A24-grade post-production."
+        description="Choose your post-production workflow: raw ISO camera capture, instant live-switched program feed, or full master episode post-production."
         aside={<MetaTag tone="mauve">3 tiers</MetaTag>}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      {/* Spacious, Non-Clamping Horizontal Tier Cards (Full-width rows to prevent any text wrapping) */}
+      <div className="space-y-3.5">
         {PODCAST_SERVICES.map((service) => {
           const isSelected = session.serviceKey === service.key;
           const isBest = service.best;
+          const highlights = service.highlights || [];
 
           return (
             <SelectableCard
               key={service.key}
               selected={isSelected}
               onSelect={() => onChange({ serviceKey: service.key })}
-              className={cn("p-6 sm:p-7 flex-1 justify-between", isBest && !isSelected && "border-brand-mauve/40 bg-white/[0.02]")}
-            >
-              {/* Popular badge */}
-              {isBest && (
-                <div className="inline-flex items-center gap-1.5 self-start px-3 py-1 rounded-full bg-brand-mauve text-zinc-950 text-[10px] font-mono tracking-wider uppercase font-bold mb-3 shadow-md shadow-brand-violet/40">
-                  <Zap size={11} className="fill-zinc-950" />
-                  Most Popular
-                </div>
+              showMark={false}
+              className={cn(
+                "p-4 sm:p-6 transition-all duration-200",
+                isBest && !isSelected && "border-brand-mauve/30 bg-white/[0.015]"
               )}
-
-              <div>
-                <div className="space-y-1.5">
-                  <h3 className="text-xl font-bold text-white tracking-tight leading-snug">
-                    {service.title}
-                  </h3>
-                  <p className="text-xs text-zinc-400 leading-relaxed min-h-[36px]">
-                    {service.sub}
-                  </p>
-                </div>
-
-                {/* Price Display */}
-                <div className="my-5 pb-5 border-b border-white/[0.08] flex items-baseline gap-2">
-                  <span className="text-3xl sm:text-4xl font-black text-brand-mauve tracking-tight tabular-nums">
-                    {formatAED(service.price)}
-                  </span>
-                  <span className="text-xs text-zinc-500 font-medium font-mono">
-                    / hour
-                  </span>
-                </div>
-
-                {/* In Studio Features */}
-                <div className="space-y-3 mb-6">
-                  <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-zinc-400 font-bold">
-                    In Studio Recording:
-                  </p>
-                  <ul className="space-y-2">
-                    {service.features.map((feat, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5 text-xs">
-                        {feat.ok ? (
-                          <div className="size-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                            <Check size={11} strokeWidth={2.5} />
-                          </div>
-                        ) : (
-                          <div className="size-4 rounded-full bg-white/5 text-zinc-600 flex items-center justify-center shrink-0 mt-0.5">
-                            <X size={11} />
-                          </div>
-                        )}
-                        <span className={feat.ok ? "text-zinc-200" : "text-zinc-600 line-through"}>
-                          {feat.text}
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
+                {/* Left & Middle: Tier Details & Key Deliverables */}
+                <div className="space-y-2.5 min-w-0 flex-1">
+                  {/* Eyebrow & Title */}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      {isBest ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-brand-mauve text-zinc-950 text-[10px] font-mono tracking-wider uppercase font-bold shadow-sm shadow-brand-violet/40 whitespace-nowrap shrink-0">
+                          <Zap size={11} className="fill-zinc-950" />
+                          {service.badge || "Most Popular"}
                         </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* What you get after */}
-                <div className="space-y-3 pt-4 border-t border-white/[0.08]">
-                  <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-zinc-400 font-bold">
-                    What You Get After Session:
-                  </p>
-                  <ul className="space-y-2">
-                    {service.after.map((feat, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5 text-xs">
-                        {feat.ok ? (
-                          <div className="size-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                            <Check size={11} strokeWidth={2.5} />
-                          </div>
-                        ) : (
-                          <div className="size-4 rounded-full bg-white/5 text-zinc-600 flex items-center justify-center shrink-0 mt-0.5">
-                            <X size={11} />
-                          </div>
-                        )}
-                        <span className={feat.ok ? "text-zinc-200" : "text-zinc-600 line-through"}>
-                          {feat.text}
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/10 text-zinc-400 text-[10px] font-mono tracking-wider uppercase font-semibold whitespace-nowrap shrink-0">
+                          {service.badge || "Studio Tier"}
                         </span>
-                      </li>
+                      )}
+                    </div>
+
+                    <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                      {service.title}
+                    </h3>
+                    <p className="text-xs text-zinc-400 leading-relaxed">
+                      {service.sub}
+                    </p>
+                  </div>
+
+                  {/* Structured Deliverables Checklist (2-col grid prevents awkward badge stacking) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 pt-1.5">
+                    {highlights.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-1.5 min-w-0 text-[11px] sm:text-xs text-zinc-300"
+                      >
+                        <Check size={12} className="text-brand-mauve shrink-0" strokeWidth={2.5} />
+                        <span className="truncate">{item}</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
 
-                {service.note && (
-                  <p className="mt-4 text-[11px] text-zinc-500 italic">
-                    {service.note}
-                  </p>
-                )}
-              </div>
+                {/* Right: Price & Selection Status Pill */}
+                <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 pt-3 sm:pt-0 border-t sm:border-t-0 sm:border-s border-white/[0.06] sm:ps-6 shrink-0 sm:min-w-[170px]">
+                  <div className="sm:text-end">
+                    <span className="text-2xl sm:text-3xl font-black text-brand-mauve tracking-tight tabular-nums block leading-tight">
+                      {formatAED(service.price)}
+                    </span>
+                    <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block">
+                      per hour
+                    </span>
+                  </div>
 
-              {/* Action Indicator */}
-              <div className="pt-5 mt-5 border-t border-white/[0.08]">
-                <div
-                  className={cn(
-                    "w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2",
-                    isSelected
-                      ? "bg-brand-mauve text-zinc-950 font-extrabold shadow-md shadow-brand-violet/40"
-                      : "bg-white/[0.06] text-zinc-300 group-hover:bg-white/[0.1] group-hover:text-white"
-                  )}
-                >
-                  {isSelected ? (
-                    <>
-                      <Check size={14} strokeWidth={3} /> Selected Package
-                    </>
-                  ) : (
-                    "Choose Tier"
-                  )}
+                  <TogglePill
+                    selected={isSelected}
+                    addLabel="Select Tier"
+                    addedLabel="Selected"
+                  />
                 </div>
               </div>
             </SelectableCard>
           );
         })}
+      </div>
+
+      {/* Optional Granular Comparison Matrix Accordion */}
+      <div className="pt-2">
+        <button
+          type="button"
+          onClick={() => setShowMatrix((prev) => !prev)}
+          className="w-full p-4 rounded-2xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.08] flex items-center justify-between text-xs text-zinc-300 transition cursor-pointer group"
+        >
+          <div className="flex items-center gap-2 font-mono uppercase tracking-wider font-semibold text-zinc-300 group-hover:text-white">
+            <SlidersHorizontal size={14} className="text-brand-mauve" />
+            <span>Compare Full Technical Specs Matrix (Side-by-Side)</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-zinc-400 group-hover:text-white font-mono text-[11px]">
+            <span>{showMatrix ? "Hide Matrix" : "View Details"}</span>
+            {showMatrix ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </div>
+        </button>
+
+        <AnimatePresence>
+          {showMatrix && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={studioSprings.snappy}
+              className="overflow-hidden"
+            >
+              <div className="mt-3 p-4 sm:p-5 rounded-2xl bg-[#0c0c10] border border-white/[0.08] overflow-x-auto">
+                <table className="w-full text-left text-xs min-w-[540px]">
+                  <thead>
+                    <tr className="border-b border-white/[0.08] text-[11px] font-mono uppercase tracking-wider text-zinc-400">
+                      <th className="py-2.5 pr-4 font-bold">Studio Capability</th>
+                      <th className="py-2.5 px-3 text-center">Recording Only (AED 390)</th>
+                      <th className="py-2.5 px-3 text-center">Live Mix (AED 490)</th>
+                      <th className="py-2.5 pl-3 text-center text-brand-mauve font-bold">Pro Edit (AED 890)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/[0.04]">
+                    {COMPARISON_MATRIX.map((row, idx) => (
+                      <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
+                        <td className="py-2.5 pr-4 text-zinc-300 font-medium">
+                          {row.feature}
+                        </td>
+                        <td className="py-2.5 px-3 text-center">
+                          {typeof row.raw === "boolean" ? (
+                            row.raw ? (
+                              <Check size={14} className="text-emerald-400 mx-auto" />
+                            ) : (
+                              <span className="text-zinc-600">—</span>
+                            )
+                          ) : (
+                            <span className="font-mono text-[11px] text-zinc-400">{row.raw}</span>
+                          )}
+                        </td>
+                        <td className="py-2.5 px-3 text-center">
+                          {typeof row.live === "boolean" ? (
+                            row.live ? (
+                              <Check size={14} className="text-emerald-400 mx-auto" />
+                            ) : (
+                              <span className="text-zinc-600">—</span>
+                            )
+                          ) : (
+                            <span className="font-mono text-[11px] text-zinc-400">{row.live}</span>
+                          )}
+                        </td>
+                        <td className="py-2.5 pl-3 text-center bg-brand-violet/[0.06]">
+                          {typeof row.edit === "boolean" ? (
+                            row.edit ? (
+                              <Check size={14} className="text-brand-mauve mx-auto font-bold" />
+                            ) : (
+                              <span className="text-zinc-600">—</span>
+                            )
+                          ) : (
+                            <span className="font-mono text-[11px] text-brand-mauve font-bold">{row.edit}</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

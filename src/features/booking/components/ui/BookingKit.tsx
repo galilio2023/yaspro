@@ -253,7 +253,7 @@ export function MetaTag({ children, tone = "neutral" }: { children: React.ReactN
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md font-mono text-[10px] tracking-[0.14em] uppercase border",
+        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md font-mono text-[10px] tracking-[0.14em] uppercase border whitespace-nowrap shrink-0",
         tone === "amber" || tone === "mauve"
           ? "bg-brand-mauve/15 border-brand-mauve/30 text-brand-mauve font-semibold"
           : "bg-white/[0.03] border-white/10 text-zinc-400"
@@ -394,7 +394,7 @@ export function TogglePill({ selected, addLabel = "Add", addedLabel = "Added" }:
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-colors",
+        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-colors whitespace-nowrap shrink-0",
         selected ? "bg-brand-mauve text-zinc-950" : "bg-white/[0.06] text-zinc-300 group-hover:bg-white/[0.1] group-hover:text-white"
       )}
     >
@@ -528,7 +528,7 @@ export function Panel({
             {description && <p className="text-xs text-zinc-500 mt-0.5">{description}</p>}
           </div>
         </div>
-        {aside}
+        {aside && <div className="shrink-0">{aside}</div>}
       </div>
       {children}
     </section>

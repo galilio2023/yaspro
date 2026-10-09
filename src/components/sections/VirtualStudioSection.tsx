@@ -262,7 +262,7 @@ export function VirtualStudioSection() {
         aria-hidden="true"
       />
       <div
-        className="absolute bottom-10 right-1/4 w-[450px] h-[320px] bg-emerald-500/10 blur-[150px] rounded-full pointer-events-none -z-10"
+        className="absolute bottom-10 right-1/4 w-[450px] h-[320px] bg-brand-mauve/15 blur-[150px] rounded-full pointer-events-none -z-10"
         aria-hidden="true"
       />
 
@@ -272,7 +272,7 @@ export function VirtualStudioSection() {
           {/* ─── LEFT COLUMN: TYPOGRAPHY & VALUE PROPOSITION ─── */}
           <div className="lg:col-span-5 flex flex-col justify-center space-y-6">
             <FadeUp delay={0.05}>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-purple-500/30 bg-purple-950/30 text-brand-lavender text-xs font-semibold tracking-wide backdrop-blur-md mb-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-mauve/30 bg-brand-mauve/10 text-brand-lavender text-xs font-semibold tracking-wide backdrop-blur-md mb-2">
                 <Sparkles size={13} className="text-brand-mauve" />
                 <span>{t("virtualStudio.badge")}</span>
               </div>
@@ -282,7 +282,7 @@ export function VirtualStudioSection() {
                 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-black tracking-tight leading-[1.08] text-white"
               >
                 {t("virtualStudio.title")}{" "}
-                <span className="bg-gradient-to-r from-purple-300 via-brand-mauve to-purple-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-brand-lavender via-brand-mauve to-brand-mauve-soft bg-clip-text text-transparent">
                   {t("virtualStudio.titleGradient")}
                 </span>
               </h2>
@@ -305,7 +305,7 @@ export function VirtualStudioSection() {
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-zinc-950/70 border border-white/10 flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-purple-500/10 text-brand-lavender shrink-0">
+                  <div className="p-2 rounded-lg bg-brand-mauve/15 text-brand-mauve shrink-0">
                     <Zap size={16} />
                   </div>
                   <div>
@@ -319,7 +319,7 @@ export function VirtualStudioSection() {
             <FadeUp delay={0.2} className="pt-2">
               <Link
                 href="/studio-booking"
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-sm font-bold shadow-lg shadow-purple-900/30 transition-all hover:scale-[1.02] active:scale-[0.98] w-fit"
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 text-sm font-bold shadow-lg shadow-brand-violet/40 transition-all hover:scale-[1.02] active:scale-[0.98] w-fit"
               >
                 <span>{t("virtualStudio.bookVirtual")}</span>
                 <ArrowRight size={15} className="rtl:rotate-180 shrink-0" />
@@ -345,7 +345,7 @@ export function VirtualStudioSection() {
                 onPointerCancel={handlePointerUp}
                 onKeyDown={handleKeyDown}
                 style={{ touchAction: "pan-y" }}
-                className="relative w-full aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden border border-white/15 bg-zinc-950 shadow-2xl shadow-purple-950/40 select-none group cursor-ew-resize outline-none focus-visible:ring-2 focus-visible:ring-purple-400/70"
+                className="relative w-full aspect-[16/9] rounded-2xl md:rounded-3xl overflow-hidden border border-white/15 bg-zinc-950 shadow-2xl shadow-brand-violet/30 select-none group cursor-ew-resize outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve/70"
               >
                 {/* Single source video (green top / 3D bottom) — decoded once, drawn to canvas */}
                 <video
@@ -369,10 +369,10 @@ export function VirtualStudioSection() {
                 {/* Seam line + handle — positioned by the render loop in the same frame as the canvas */}
                 <div
                   ref={handleRef}
-                  className="absolute top-0 bottom-0 w-[2px] -translate-x-1/2 bg-gradient-to-b from-purple-400/80 via-white to-purple-400/80 z-20 pointer-events-none shadow-[0_0_12px_rgba(192,132,252,0.8)] will-change-[left]"
+                  className="absolute top-0 bottom-0 w-[2px] -translate-x-1/2 bg-gradient-to-b from-brand-mauve/90 via-white to-brand-mauve/90 z-20 pointer-events-none shadow-[0_0_12px_rgba(152,123,165,0.9)] will-change-[left]"
                   style={{ left: "50%" }}
                 >
-                  <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 size-10 rounded-full bg-zinc-950/90 border border-purple-400/70 shadow-2xl shadow-purple-950 flex items-center justify-center text-purple-200 group-hover:scale-110 group-active:scale-95 transition-transform backdrop-blur-md">
+                  <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 size-10 rounded-full bg-zinc-950/90 border border-brand-mauve/80 shadow-xl shadow-brand-violet/60 flex items-center justify-center text-brand-lavender group-hover:scale-110 group-active:scale-95 transition-transform backdrop-blur-md">
                     <MoveHorizontal size={18} />
                   </div>
                 </div>
@@ -388,8 +388,8 @@ export function VirtualStudioSection() {
                 </div>
 
                 <div className="absolute top-3 right-3 pointer-events-none flex items-center gap-2 z-30">
-                  <div className="flex items-center gap-2 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-purple-500/30 text-[10px] sm:text-xs font-mono text-purple-300 font-latin shadow-lg">
-                    <span className="size-2 rounded-full bg-purple-400" />
+                  <div className="flex items-center gap-2 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-brand-mauve/40 text-[10px] sm:text-xs font-mono text-brand-lavender font-latin shadow-lg">
+                    <span className="size-2 rounded-full bg-brand-mauve" />
                     <span className="font-bold">UNREAL 5.4</span>
                     <span className="text-white/40 hidden sm:inline">|</span>
                     <span className="text-white/80 hidden sm:inline">3D Environment</span>
@@ -404,9 +404,9 @@ export function VirtualStudioSection() {
                       {t("virtualStudio.liveGenlock")}
                     </span>
                     <span className="hidden sm:inline text-white/60">{t("virtualStudio.latency")}</span>
-                    <span className="hidden md:inline text-purple-300">{t("virtualStudio.hdrPipeline")}</span>
+                    <span className="hidden md:inline text-brand-lavender">{t("virtualStudio.hdrPipeline")}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-purple-300 font-bold">
+                  <div className="flex items-center gap-1.5 text-brand-mauve font-bold">
                     <Crosshair size={12} />
                     <span>{t("virtualStudio.tracking")}</span>
                   </div>
@@ -427,7 +427,7 @@ export function VirtualStudioSection() {
                       onClick={() => setMode("auto")}
                       className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 cursor-pointer font-medium ${
                         mode === "auto"
-                          ? "bg-purple-600 text-white shadow"
+                          ? "bg-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/40"
                           : "text-zinc-400 hover:text-white"
                       }`}
                     >
@@ -440,7 +440,7 @@ export function VirtualStudioSection() {
                       onClick={() => setMode("manual")}
                       className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 cursor-pointer font-medium ${
                         mode === "manual"
-                          ? "bg-purple-600 text-white shadow"
+                          ? "bg-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/40"
                           : "text-zinc-400 hover:text-white"
                       }`}
                     >
@@ -459,7 +459,7 @@ export function VirtualStudioSection() {
                 </div>
 
                 <div className="flex items-center gap-2 text-zinc-400 text-[11px] font-mono">
-                  <MoveHorizontal size={13} className="text-purple-300 shrink-0" />
+                  <MoveHorizontal size={13} className="text-brand-mauve shrink-0" />
                   <span>{t("virtualStudio.dragPrompt")}</span>
                 </div>
               </div>

@@ -32,37 +32,37 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
   }, []);
 
   return (
-    <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
+    <div className="space-y-5 sm:space-y-6 animate-in fade-in duration-300">
       <StepIntro
         index={1}
-        total={4}
-        title="Date & Time"
-        description="Choose how many seats you need, session length, and your preferred schedule."
+        total={5}
+        title="Schedule & Format"
+        description="Choose your guest count, session length, and preferred recording schedule."
       />
 
-      {/* 1. Centerpiece Headcount Selector */}
-      <div className="py-8 px-5 sm:px-8 rounded-3xl bg-[#0e0e13] border border-white/[0.08] flex flex-col items-center justify-center text-center space-y-6 shadow-2xl relative overflow-hidden">
+      {/* 1. Compact, Tactile Headcount Selector */}
+      <div className="py-5 px-4 sm:py-6 sm:px-6 rounded-2xl sm:rounded-3xl bg-[#0e0e13] border border-white/[0.08] flex flex-col items-center justify-center text-center space-y-4 shadow-xl relative overflow-hidden">
         {/* Subtle violet/mauve glow behind mic badge */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-brand-violet/20 blur-3xl pointer-events-none rounded-full" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-24 bg-brand-violet/20 blur-3xl pointer-events-none rounded-full" />
 
-        {/* Cinematic Microphone Badge */}
-        <div className="relative size-20 sm:size-24 rounded-3xl bg-brand-mauve/10 border border-brand-mauve/30 flex items-center justify-center text-brand-lavender shadow-[0_0_40px_rgba(84,37,104,0.4)]">
-          <Mic2 size={40} className="stroke-[1.75]" />
-          <span className="absolute -top-1.5 -right-1.5 size-4 rounded-full bg-red-500 animate-pulse border-2 border-[#0e0e13]" title="Live on Air" />
+        {/* Compact Microphone Badge */}
+        <div className="relative size-12 sm:size-14 rounded-2xl bg-brand-mauve/10 border border-brand-mauve/30 flex items-center justify-center text-brand-lavender shadow-[0_0_30px_rgba(84,37,104,0.35)]">
+          <Mic2 size={24} className="stroke-[1.75]" />
+          <span className="absolute -top-1 -right-1 size-3 rounded-full bg-red-500 animate-pulse border-2 border-[#0e0e13]" title="Live on Air" />
         </div>
 
         {/* Heading */}
-        <div className="space-y-1.5 max-w-md">
-          <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-            How many people will be recording?
+        <div className="space-y-1 max-w-sm">
+          <h3 className="text-base sm:text-xl font-bold text-white tracking-tight">
+            How many guests will be recording?
           </h3>
-          <p className="text-xs sm:text-sm text-zinc-400">
-            Select the number of seats & Shure SM7B broadcast microphones for your show
+          <p className="text-xs text-zinc-400">
+            Select seats & Shure SM7B broadcast microphones
           </p>
         </div>
 
         {/* Tactile Headcount Pills */}
-        <div className="flex items-center justify-center gap-3 sm:gap-4 pt-1">
+        <div className="flex items-center justify-center gap-2 sm:gap-3 pt-0.5 flex-wrap">
           {[1, 2, 3, 4, 5].map((count) => {
             const isSelected = session.headcount === count;
             return (
@@ -74,7 +74,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
                 whileTap={{ scale: 0.95 }}
                 transition={studioSprings.snappy}
                 className={cn(
-                  "size-13 sm:size-14 rounded-2xl font-black text-base sm:text-lg transition-all duration-200 flex flex-col items-center justify-center cursor-pointer",
+                  "size-12 sm:size-13 rounded-2xl font-black text-sm sm:text-base transition-all duration-200 flex flex-col items-center justify-center cursor-pointer",
                   isSelected
                     ? "bg-brand-mauve text-zinc-950 shadow-[0_10px_25px_-6px_rgba(152,123,165,0.7)] scale-105 ring-2 ring-brand-mauve-soft"
                     : "bg-white/[0.03] text-zinc-300 border border-white/10 hover:border-white/25 hover:text-white hover:bg-white/[0.06]"
@@ -90,31 +90,64 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
         </div>
       </div>
 
-      {/* 2. Session Duration */}
-      <Panel
-        icon={Clock}
-        title="Session duration"
-        description="Includes studio operator, sound engineer live balance, and instant multi-track capture"
-        aside={
-          <Counter
-            value={session.durationHours}
-            min={1}
-            max={8}
-            onChange={(v) => onChange({ durationHours: v })}
-            format={(v) => `${v}h`}
-            decLabel="Decrease session duration"
-            incLabel="Increase session duration"
-          />
-        }
-      />
+      {/* 2. Mobile-Optimized Session Duration Panel */}
+      <section className="rounded-2xl border border-white/[0.07] bg-white/[0.015] p-4 sm:p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          {/* Left: Icon + Clean Title & Light Subtitle */}
+          <div className="flex items-center gap-3">
+            <div className="size-9 rounded-xl bg-brand-mauve/10 border border-brand-mauve/25 text-brand-lavender flex items-center justify-center shrink-0">
+              <Clock size={17} />
+            </div>
+            <div>
+              <h3 className="text-sm sm:text-base font-semibold text-white leading-tight">
+                Session Duration
+              </h3>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                On-site sound engineer & 4K multi-cam capture included
+              </p>
+            </div>
+          </div>
+
+          {/* Right: Quick Hour Presets + Stepper Counter */}
+          <div className="flex items-center gap-2 pt-1 sm:pt-0 self-start sm:self-auto flex-wrap">
+            <div className="flex items-center gap-1.5">
+              {[1, 2, 3, 4].map((h) => (
+                <button
+                  key={h}
+                  type="button"
+                  onClick={() => onChange({ durationHours: h })}
+                  className={cn(
+                    "px-3 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer",
+                    session.durationHours === h
+                      ? "bg-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/40 scale-105"
+                      : "bg-white/[0.04] text-zinc-400 hover:text-white border border-white/10 hover:bg-white/[0.08]"
+                  )}
+                >
+                  {h}h
+                </button>
+              ))}
+            </div>
+
+            <Counter
+              value={session.durationHours}
+              min={1}
+              max={8}
+              onChange={(v) => onChange({ durationHours: v })}
+              format={(v) => `${v}h`}
+              decLabel="Decrease session duration"
+              incLabel="Increase session duration"
+            />
+          </div>
+        </div>
+      </section>
 
       {/* 3. Date Selection */}
       <Panel
         icon={Calendar}
-        title="Select date"
-        description="Upcoming calendar availability at Iris Bay Studio, Business Bay, Dubai"
+        title="Session Date"
+        description="Iris Bay Studio availability · Level 18"
       >
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-2">
           {upcomingDates.map((item) => {
             const isSelected = session.date === item.iso;
             return (
@@ -125,19 +158,19 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
                 whileTap={{ scale: 0.96 }}
                 transition={studioSprings.snappy}
                 className={cn(
-                  "p-3 rounded-2xl border text-center transition-all duration-200 flex flex-col items-center justify-center gap-1 cursor-pointer",
+                  "p-2.5 sm:p-3 rounded-2xl border text-center transition-all duration-200 flex flex-col items-center justify-center gap-1 cursor-pointer",
                   isSelected
                     ? "bg-brand-mauve text-zinc-950 border-brand-mauve-soft font-bold shadow-[0_10px_25px_-8px_rgba(152,123,165,0.7)] scale-[1.02]"
                     : "bg-white/[0.02] text-zinc-300 border-white/[0.08] hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
                 )}
               >
-                <span className={cn("text-[10px] font-mono uppercase tracking-wider", isSelected ? "text-zinc-950 font-bold" : "text-zinc-500")}>
+                <span className={cn("text-[9px] sm:text-[10px] font-mono uppercase tracking-wider", isSelected ? "text-zinc-950 font-bold" : "text-zinc-500")}>
                   {item.dayName}
                 </span>
-                <span className="text-lg font-black leading-none">
+                <span className="text-base sm:text-lg font-black leading-none">
                   {item.dayNum}
                 </span>
-                <span className={cn("text-[10px] font-mono", isSelected ? "text-zinc-900 font-semibold" : "text-zinc-500")}>
+                <span className={cn("text-[9px] sm:text-[10px] font-mono", isSelected ? "text-zinc-900 font-semibold" : "text-zinc-500")}>
                   {item.monthName}
                 </span>
               </motion.button>
@@ -149,17 +182,17 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
       {/* 4. Time Slot Selection */}
       <Panel
         icon={Clock}
-        title="Select start time"
-        description="Engineered slots with dedicated audio mixer"
+        title="Start Time"
+        description="Engineered recording slots"
         aside={
           session.timeSlot ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 text-xs font-semibold">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 text-xs font-semibold whitespace-nowrap shrink-0">
               <Check size={12} strokeWidth={2.5} /> {session.timeSlot}
             </span>
           ) : undefined
         }
       >
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-7 gap-2">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
           {TIME_SLOTS.map((time) => {
             const isSelected = session.timeSlot === time;
             return (
