@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useReducedMotionVideo } from "../hooks/useReducedMotionVideo";
 import { Calendar, MessageSquare, ArrowRight } from "lucide-react";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function AboutCtaBanner() {
+  const videoRef = useReducedMotionVideo();
   const { t } = useLanguage();
 
   return (
@@ -69,9 +71,8 @@ export function AboutCtaBanner() {
               <div className="absolute w-2/3 h-2/3 rounded-full bg-brand-mauve/15 blur-2xl pointer-events-none" />
 
               <video
+                ref={videoRef}
                 src="/videos/rocket.mp4"
-                autoPlay
-                loop
                 muted
                 playsInline
                 preload="auto"

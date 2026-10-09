@@ -56,7 +56,7 @@ export function FadeUp({
                 el.style.willChange = "auto";
                 el.style.transform = "none";
               }
-            }, 650);
+            }, delay * 1000 + 650);
           }
         });
       },

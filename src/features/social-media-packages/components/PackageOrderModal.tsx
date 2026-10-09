@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useId, useState } from "react";
+import React, { useId, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle2, Send, MessageSquare, Sparkles, AlertCircle } from "lucide-react";
 import { SocialMediaPackage } from "../data/packages";
 import { submitInquiry } from "@/lib/actions";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface PackageOrderModalProps {
@@ -22,6 +23,8 @@ export function PackageOrderModal({
 }: PackageOrderModalProps) {
   const { isArabic } = useLanguage();
   const formId = useId();
+  const headingId = `${formId}-heading`;
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -30,6 +33,23 @@ export function PackageOrderModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleResetAndClose = () => {
+    setIsSuccess(false);
+    setErrorMessage(null);
+    setName("");
+    setEmail("");
+    setPhone("");
+    setCompany("");
+    setNotes("");
+    onClose();
+  };
+
+  useFocusTrap({
+    isOpen: isOpen && !!pkg,
+    onClose: handleResetAndClose,
+    containerRef: dialogRef,
+  });
 
   if (!isOpen || !pkg) return null;
 
@@ -83,17 +103,6 @@ export function PackageOrderModal({
     }
   };
 
-  const handleResetAndClose = () => {
-    setIsSuccess(false);
-    setErrorMessage(null);
-    setName("");
-    setEmail("");
-    setPhone("");
-    setCompany("");
-    setNotes("");
-    onClose();
-  };
-
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
@@ -109,7 +118,10 @@ export function PackageOrderModal({
 
         {/* Modal Window */}
         <motion.div
+          ref={dialogRef}
           role="dialog"
+          aria-labelledby={headingId}
+          tabIndex={-1}
           aria-modal="true"
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -132,7 +144,7 @@ export function PackageOrderModal({
               <div className="size-16 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center mx-auto">
                 <CheckCircle2 size={32} />
               </div>
-              <h3 className="text-2xl font-bold tracking-tight font-display">
+              <h3 id={headingId} className="text-2xl font-bold tracking-tight font-display">
                 {isArabic ? "تم استلام طلب الاشتراك بنجاح!" : "Subscription Request Received!"}
               </h3>
               <p className="text-sm text-zinc-300 max-w-md mx-auto leading-relaxed">
@@ -170,7 +182,7 @@ export function PackageOrderModal({
                     {isArabic ? "تفعيل اشتراك إنتاج المحتوى" : "PRODUCTION ONBOARDING"}
                   </span>
                 </div>
-                <h3 className="text-2xl font-bold tracking-tight font-display">
+                <h3 id={headingId} className="text-2xl font-bold tracking-tight font-display">
                   {isArabic ? `طلب اشتراك: ${pkg.nameAr}` : `Subscribe: ${pkg.nameEn} Plan`}
                 </h3>
                 <p className="text-xs text-zinc-400 mt-1">

@@ -1064,3 +1064,83 @@ test('virtual studio respects reduced motion, explicit playback choices and visi
     harness.unmount();
   }
 });
+
+test('about videos follow reduced-motion changes and clean up playback', async () => {
+  for (const initiallyReduced of [true, false]) {
+    const harness = hookHarness();
+    let onChange;
+    const preference = {
+      matches: initiallyReduced,
+      addEventListener(type, listener) { assert.equal(type, 'change'); onChange = listener; },
+      removeEventListener(type, listener) { assert.equal(type, 'change'); assert.equal(listener, onChange); onChange = null; },
+    };
+    const video = {
+      paused: true, autoplay: false, loop: false,
+      play() { this.paused = false; return Promise.resolve(); },
+      pause() { this.paused = true; },
+    };
+    const { useReducedMotionVideo } = loadSource('src/features/about/hooks/useReducedMotionVideo.ts', {
+      react: harness.hooks,
+    }, { window: { matchMedia: () => preference } });
+    harness.render(() => useReducedMotionVideo()).current = video;
+    harness.commit();
+    const check = () => {
+      assert.equal(video.paused, preference.matches);
+      assert.equal(video.autoplay, !preference.matches);
+      assert.equal(video.loop, !preference.matches);
+    };
+    check();
+    preference.matches = !initiallyReduced;
+    onChange(); check();
+    preference.matches = initiallyReduced;
+    onChange(); check();
+    harness.unmount();
+    assert.equal(onChange, null);
+    assert.equal(video.paused, true);
+  }
+});
+
+test('package dialog names both states and resets through its focus-trap close callback', async () => {
+  const harness = hookHarness();
+  let trap;
+  let closed = 0;
+  const { PackageOrderModal } = loadSource('src/features/social-media-packages/components/PackageOrderModal.tsx', {
+    react: { ...harness.hooks, useId: () => 'package-test' },
+    'framer-motion': { motion: { div: 'div' }, AnimatePresence: 'Presence' },
+    'lucide-react': new Proxy({}, { get: (_, key) => key }),
+    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic: false }) },
+    '@/lib/actions': { submitInquiry: async () => ({ success: true }) },
+    '@/hooks/useFocusTrap': { useFocusTrap: options => { trap = options; } },
+  });
+  const pkg = { nameEn: 'Starter', monthlyPrice: 100 };
+  const render = (isOpen = true, selected = pkg) => harness.render(() => PackageOrderModal({
+    pkg: selected, isOpen, billingInterval: 'monthly', onClose: () => closed++,
+  }));
+  assert.equal(render(false), null);
+  assert.equal(trap.isOpen, false);
+  assert.equal(render(true, null), null);
+  assert.equal(trap.isOpen, false);
+  const checkName = tree => {
+    const dialog = nodes(tree, node => node.props.role === 'dialog')[0];
+    const headings = nodes(tree, node => node.type === 'h3');
+    assert.equal(headings.length, 1);
+    assert.equal(dialog.props['aria-labelledby'], headings[0].props.id);
+    assert.equal(dialog.props.ref, trap.containerRef);
+    assert.equal(trap.isOpen, true);
+  };
+  let tree = render();
+  checkName(tree);
+  nodes(tree, node => node.type === 'input')[0].props.onChange({ target: { value: 'Test Guest' } });
+  tree = render();
+  await nodes(tree, node => node.type === 'form')[0].props.onSubmit({ preventDefault() {} });
+  tree = render();
+  checkName(tree);
+  assert.equal(nodes(tree, node => node.type === 'form').length, 0);
+  trap.onClose();
+  assert.equal(closed, 1);
+  render(false);
+  tree = render();
+  checkName(tree);
+  assert.equal(nodes(tree, node => node.type === 'form').length, 1);
+  assert.equal(nodes(tree, node => node.type === 'input')[0].props.value, '');
+});

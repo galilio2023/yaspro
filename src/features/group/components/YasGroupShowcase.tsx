@@ -68,7 +68,7 @@ export function YasGroupShowcase() {
               >
                 <div>
                   {/* Top Bar: Brand Logo & Holding Status / Index */}
-                  <div className="flex items-center justify-between gap-3 mb-4">
+                  <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 mb-4">
                     {/* Fixed physical LTR container for brand logo */}
                     <div
                       dir="ltr"

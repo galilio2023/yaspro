@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useReducedMotionVideo } from "../hooks/useReducedMotionVideo";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function AboutHeroHeader() {
+  const videoRef = useReducedMotionVideo();
   const { t, isArabic } = useLanguage();
 
   return (
@@ -77,9 +79,8 @@ export function AboutHeroHeader() {
               <div className="absolute w-2/3 h-2/3 rounded-full bg-brand-mauve/15 blur-2xl pointer-events-none" />
 
               <video
+                ref={videoRef}
                 src="/videos/geodesic-orb.mp4"
-                autoPlay
-                loop
                 muted
                 playsInline
                 preload="auto"
