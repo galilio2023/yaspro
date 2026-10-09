@@ -59,7 +59,7 @@ export function ServicesSection() {
       className="bg-black relative overflow-hidden py-16 sm:py-24"
     >
       <Container className="relative z-10 max-w-7xl">
-        {/* Section Header with Yas Pro Editorial Hierarchy */}
+        {/* Section Header with Clean Studio Hierarchy */}
         <SectionHeader
           headingId="services-title"
           badge={isArabic ? "ركائز الإنتاج المتكامل" : "Turnkey Production Pillars"}
@@ -70,11 +70,11 @@ export function ServicesSection() {
           gradientVariant="mauve"
           description={
             isArabic
-              ? "من البث المباشر الميداني بعربات OB-VAN وأحدث استوديوهات التصوير الافتراضي إلى صناعة المحتوى السريع وفق أعلى المعايير العالمية."
-              : "From mobile OB-VAN live broadcast to flagship soundstages and high-impact social cutdowns, engineered for visionary brands."
+              ? "استوديوهات تصوير متطورة، بث مباشر ميداني، وحلول إنتاج سينمائي بمعايير عالمية."
+              : "Soundstages, mobile OB-VAN broadcast, and cinema-grade field production."
           }
           align="left"
-          className="mb-10 sm:mb-14"
+          className="mb-8 sm:mb-12"
         />
 
         {/* Cards: Responsive Accordion on Mobile (vertical flex) & Desktop (horizontal flex) */}
@@ -115,10 +115,10 @@ export function ServicesSection() {
                 transition={{
                   layout: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
                 }}
-                className={`group relative min-h-0 min-w-0 rounded-2xl sm:rounded-3xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-400 overflow-hidden cursor-pointer transition-all duration-500 border ${
+                className={`group relative min-h-0 min-w-0 rounded-2xl sm:rounded-3xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/40 overflow-hidden cursor-pointer transition-all duration-500 ${
                   isActive
-                    ? "flex-[3.2] sm:flex-[3] md:flex-[3.5] border-amber-400/50 shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_30px_rgba(245,158,11,0.15)] ring-1 ring-amber-400/20"
-                    : "flex-[1] border-white/[0.08] hover:border-white/20 opacity-80 md:opacity-70 hover:opacity-100"
+                    ? "flex-[3.2] sm:flex-[3] md:flex-[3.5] shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
+                    : "flex-[1] opacity-75 md:opacity-65 hover:opacity-95"
                 }`}
               >
                 {/* 3D Visual Asset with Cinematic Vignette */}
@@ -128,58 +128,27 @@ export function ServicesSection() {
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className={`object-cover object-center transition-transform duration-700 ease-out ${
-                    isActive ? "scale-100 brightness-100" : "scale-105 brightness-50 md:brightness-45 group-hover:brightness-75"
+                    isActive ? "scale-100 brightness-100" : "scale-105 brightness-50 md:brightness-40 group-hover:brightness-70"
                   }`}
                   priority={index < 2}
                 />
 
-                {/* Ambient Film Vignette Gradient */}
-                <span className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent pointer-events-none" />
+                {/* Subtle Film Vignette Gradient */}
+                <span className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent pointer-events-none" />
 
-                {/* Subtle Amber Glow behind active card text */}
+                {/* Content Overlay: Title ONLY on active card */}
                 {isActive && (
-                  <span className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-amber-500/10 to-transparent pointer-events-none" />
-                )}
-
-                {/* Active & Inactive Content Overlay */}
-                <div className="absolute inset-0 p-4 sm:p-6 flex flex-col justify-end text-left rtl:text-right z-10 pointer-events-none">
-                  {/* Category Micro-Tag */}
-                  <div className={`transition-all duration-300 mb-1.5 flex items-center gap-2 ${
-                    isActive ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 md:opacity-0"
-                  }`}>
-                    <span className="text-[10px] sm:text-[11px] font-mono tracking-widest uppercase text-amber-400/90 font-medium">
-                      0{index + 1} // {isArabic ? service.arabicBadge : service.badge}
-                    </span>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className={`font-bold tracking-tight text-white transition-all duration-300 drop-shadow-md ${
-                    isActive 
-                      ? "text-xl sm:text-2xl md:text-3xl lg:text-4xl text-amber-50" 
-                      : "text-base sm:text-lg md:text-xl text-zinc-300 truncate"
-                  }`}>
-                    {title}
-                  </h3>
-
-                  {/* Subtitle & CTA — revealed when active */}
-                  {isActive && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
+                  <div className="absolute bottom-5 left-5 right-5 sm:bottom-7 sm:left-7 sm:right-7 z-10 text-left rtl:text-right pointer-events-none">
+                    <motion.h3
+                      initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.35, delay: 0.1 }}
-                      className="mt-1 sm:mt-2 space-y-2 sm:space-y-3"
+                      transition={{ duration: 0.3 }}
+                      className="font-bold tracking-tight text-2xl sm:text-3xl lg:text-4xl text-white drop-shadow-md"
                     >
-                      <p className="text-xs sm:text-sm text-zinc-300/90 font-normal line-clamp-1 sm:line-clamp-2 max-w-lg leading-relaxed">
-                        {subtitle}
-                      </p>
-
-                      <div className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-amber-400 group-hover:text-amber-300 transition-colors">
-                        <span>{isArabic ? "استكشف الخدمة والحجز" : "Explore & Reserve"}</span>
-                        <span className="text-xs rtl:rotate-180">→</span>
-                      </div>
-                    </motion.div>
-                  )}
-                </div>
+                      {title}
+                    </motion.h3>
+                  </div>
+                )}
               </motion.button>
             );
           })}
