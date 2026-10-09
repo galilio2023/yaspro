@@ -8,7 +8,7 @@ import { GOV_LOGOS, BRAND_LOGOS } from "@/features/partners/data";
 import { YAS_GROUP_COMPANIES } from "@/features/group/data";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { CountUp } from "@/components/animations/MotionWrappers";
-import { Users, Film, Radio, Building2, ArrowUpRight, ShieldCheck, Sparkles, SlidersHorizontal, Play, Pause } from "lucide-react";
+import { ArrowUpRight, ShieldCheck, Sparkles, SlidersHorizontal, Play, Pause } from "lucide-react";
 
 interface ProductionMetric {
   end: number;
@@ -59,7 +59,7 @@ export function PartnersMarquee() {
   const [isPaused, setIsPaused] = React.useState(false);
   const [marqueeSpeed, setMarqueeSpeed] = React.useState<"normal" | "fast">("normal");
 
-  const speedDurationClass = marqueeSpeed === "fast" ? "[--duration:20s]" : "[--duration:36s]";
+  const speedDurationClass = marqueeSpeed === "fast" ? "[--duration:18s]" : "[--duration:36s]";
 
   return (
     <section
@@ -226,13 +226,13 @@ export function PartnersMarquee() {
               }}
               className="text-[9px] font-mono text-zinc-400 hover:text-white px-1.5 py-0.5 rounded transition-colors"
             >
-              SPEED: {marqueeSpeed === "fast" ? "2.0X" : "1.0X"}
+              {isArabic ? "السرعة" : "SPEED"}: {marqueeSpeed === "fast" ? "2.0X" : "1.0X"}
             </button>
             <span className="text-zinc-700">•</span>
             <button
               type="button"
               onClick={() => setIsPaused((prev) => !prev)}
-              aria-label={isPaused ? "Resume marquee" : "Pause marquee"}
+              aria-label={isPaused ? (isArabic ? "متابعة شريط الشركاء" : "Resume marquee") : (isArabic ? "إيقاف شريط الشركاء" : "Pause marquee")}
               className="text-[9px] font-mono text-zinc-400 hover:text-white px-1.5 py-0.5 rounded flex items-center gap-1 transition-colors"
             >
               {isPaused ? <Play size={8} fill="currentColor" /> : <Pause size={8} fill="currentColor" />}

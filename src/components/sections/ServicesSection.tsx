@@ -16,7 +16,8 @@ export function ServicesSection() {
   const router = useRouter();
   const { isArabic } = useLanguage();
   const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [isHoverPaused, setIsHoverPaused] = useState<boolean>(false);
+  const [isSelectionPaused, setIsSelectionPaused] = useState<boolean>(false);
   const [isFocusWithin, setIsFocusWithin] = useState(false);
   const [inquiryModal, setInquiryModal] = useState<{
     isOpen: boolean;
@@ -31,12 +32,12 @@ export function ServicesSection() {
 
   // Auto-switch which card is expanded every 4 seconds
   useEffect(() => {
-    if (isPaused || isFocusWithin || inquiryModal.isOpen) return;
+    if (isHoverPaused || isSelectionPaused || isFocusWithin || inquiryModal.isOpen) return;
     const timer = setInterval(() => {
       nextSlide();
     }, 4000);
     return () => clearInterval(timer);
-  }, [isPaused, isFocusWithin, inquiryModal.isOpen, nextSlide]);
+  }, [isHoverPaused, isSelectionPaused, isFocusWithin, inquiryModal.isOpen, nextSlide]);
 
   const handleCardClick = (service: ServiceItem) => {
     if (service.id === "studio-booking") {
@@ -80,9 +81,9 @@ export function ServicesSection() {
         {/* Cards: Responsive Accordion on Mobile (vertical flex) & Desktop (horizontal flex) */}
         <div
           className="flex flex-col md:flex-row h-[560px] sm:h-[620px] md:h-[520px] w-full gap-3 sm:gap-4 select-none"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-          onTouchStart={() => setIsPaused(true)}
+          onMouseEnter={() => setIsHoverPaused(true)}
+          onMouseLeave={() => setIsHoverPaused(false)}
+          onTouchStart={() => setIsSelectionPaused(true)}
           onFocusCapture={() => setIsFocusWithin(true)}
           onBlurCapture={(event) => {
             if (!event.currentTarget.contains(event.relatedTarget)) setIsFocusWithin(false);
@@ -101,14 +102,14 @@ export function ServicesSection() {
                 key={service.id}
                 onMouseEnter={() => {
                   setActiveIndex(index);
-                  setIsPaused(true);
+                  setIsHoverPaused(true);
                 }}
                 onClick={() => {
                   if (isActive) {
                     handleCardClick(service);
                   } else {
                     setActiveIndex(index);
-                    setIsPaused(true);
+                    setIsSelectionPaused(true);
                   }
                 }}
                 layout
@@ -136,8 +137,8 @@ export function ServicesSection() {
                 {/* Subtle Film Vignette Gradient */}
                 <span className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent pointer-events-none" />
 
-                {/* Content Overlay: Title ONLY on active card */}
-                {isActive && (
+                {/* Content Overlay: Expanded title or compact service label */}
+                {isActive ? (
                   <div className="absolute bottom-5 left-5 right-5 sm:bottom-7 sm:left-7 sm:right-7 z-10 text-left rtl:text-right pointer-events-none">
                     <motion.h3
                       initial={{ opacity: 0, y: 8 }}
@@ -147,6 +148,12 @@ export function ServicesSection() {
                     >
                       {title}
                     </motion.h3>
+                  </div>
+                ) : (
+                  <div className="absolute bottom-3 left-4 right-4 sm:bottom-5 sm:left-5 sm:right-5 z-10 text-left rtl:text-right pointer-events-none">
+                    <h3 className="font-semibold tracking-tight text-sm sm:text-base text-white drop-shadow-md">
+                      {title}
+                    </h3>
                   </div>
                 )}
               </motion.button>
@@ -163,7 +170,7 @@ export function ServicesSection() {
                 type="button"
                 onClick={() => {
                   setActiveIndex(idx);
-                  setIsPaused(true);
+                  setIsSelectionPaused(true);
                 }}
                 aria-label={`Go to service ${idx + 1}`}
                 className={`h-2 rounded-full transition-all duration-300 ${
