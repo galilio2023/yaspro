@@ -58,6 +58,13 @@
   --text-secondary: #a9a1b4;
   --text-muted: #7b7286;
   --text-ghost: #564e62;
+
+  /* ── Motion & Animation Variables ────────────────────────────────── */
+  --duration: 40s;
+  --speed: 3s;
+  --gap: 1rem;
+  --angle: 0;
+  --radius: 100;
 }
 
 @theme inline {
@@ -120,8 +127,8 @@
   --animate-gradient-shift: gradient-shift 8s ease infinite;
   --animate-marquee: marquee var(--duration, 40s) linear infinite;
   --animate-marquee-vertical: marquee-vertical var(--duration, 40s) linear infinite;
-  --animate-orbit: orbit calc(var(--duration)*1s) linear infinite;
-  --animate-border-beam: border-beam calc(var(--duration)*1s) infinite linear;
+  --animate-orbit: orbit calc(var(--duration, 20) * 1s) linear infinite;
+  --animate-border-beam: border-beam calc(var(--duration, 15) * 1s) infinite linear;
   --animate-shimmer-slide: shimmer-slide var(--speed, 3s) ease-in-out infinite alternate;
   --animate-spin-around: spin-around calc(var(--speed, 3s) * 2) infinite linear;
   --animate-float: float 6s ease-in-out infinite;
@@ -144,7 +151,7 @@ body {
   width: 100%;
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
+  font-family: var(--font-sans), "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Promote body to its own compositor layer */
@@ -266,7 +273,7 @@ section {
 
 /* ─── Keyframe Animations ────────────────────────────────────────────────── */
 @keyframes mesh-float {
-  0%   { transform: translate(0%,   0%)   scale(1); }
+  0%   { transform: translate(0, 0) scale(1); }
   33%  { transform: translate(3%,  -5%)   scale(1.05); }
   66%  { transform: translate(-4%,  3%)   scale(0.97); }
   100% { transform: translate(2%,   5%)   scale(1.03); }
@@ -348,7 +355,7 @@ section {
   0%, 100% {
     transform: translate3d(0, 0, -40px) scale(0.92) rotate(-12deg) scaleX(-1);
     opacity: 0.78;
-    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.95)) blur(0.4px);
+    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.95)) blur(0px);
   }
   50% {
     transform: translate3d(8px, 16px, -110px) scale(0.84) rotate(-10deg) scaleX(-1);
@@ -384,7 +391,7 @@ section {
 }
 
 @keyframes gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
+  0%, 100% { background-position: 0 50%; }
   50%       { background-position: 100% 50%; }
 }
 
@@ -441,8 +448,8 @@ html[dir="rtl"] .animate-marquee {
 }
 
 @keyframes orbit {
-  0%   { transform: rotate(calc(var(--angle) * 1deg)) translateY(calc(var(--radius) * 1px)) rotate(calc(var(--angle) * -1deg)); }
-  100% { transform: rotate(calc(var(--angle) * 1deg + 360deg)) translateY(calc(var(--radius) * 1px)) rotate(calc((var(--angle) * -1deg) - 360deg)); }
+  0%   { transform: rotate(calc(var(--angle, 0) * 1deg)) translateY(calc(var(--radius, 100) * 1px)) rotate(calc(var(--angle, 0) * -1deg)); }
+  100% { transform: rotate(calc(var(--angle, 0) * 1deg + 360deg)) translateY(calc(var(--radius, 100) * 1px)) rotate(calc((var(--angle, 0) * -1deg) - 360deg)); }
 }
 
 @keyframes shimmer-scan {
@@ -625,7 +632,7 @@ html[dir="rtl"] .animate-marquee {
 }
 
 @utility section-title {
-  font-family: var(--font-display);
+  font-family: var(--font-display), "Poppins", system-ui, sans-serif;
   font-size: clamp(2rem, 4.5vw, 3.5rem);
   font-weight: 800;
   line-height: 1.12;
