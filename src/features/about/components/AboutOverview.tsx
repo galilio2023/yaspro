@@ -23,9 +23,9 @@ export function AboutOverview() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
         {/* Philosophy Master Card (7 cols) */}
         <FadeUp className="lg:col-span-7 h-full">
-          <div className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-[#0d0d12]/90 via-[#08080a]/80 to-[#040405]/95 backdrop-blur-2xl p-6 sm:p-9 lg:p-10 h-full flex flex-col justify-between shadow-2xl shadow-black/50 overflow-hidden group">
+          <div className="relative rounded-3xl border border-border/40 bg-card/80 backdrop-blur-2xl p-6 sm:p-9 lg:p-10 h-full flex flex-col justify-between shadow-2xl shadow-black/50 overflow-hidden group">
             {/* Subtle interactive border beam */}
-            <BorderBeam size={220} duration={14} colorFrom="#f59e0b" colorTo="#d97706" />
+            <BorderBeam size={220} duration={14} colorFrom="#987ba5" colorTo="#542568" />
 
             <div>
               <div className="flex items-center justify-between gap-3 mb-6">
@@ -33,7 +33,7 @@ export function AboutOverview() {
                   {t("about.philosophyBadge")}
                 </Badge>
 
-                <span className="text-[11px] font-mono text-amber-400 flex items-center gap-1.5 font-latin" dir="ltr">
+                <span className="text-[11px] font-mono text-brand-mauve flex items-center gap-1.5 font-latin" dir="ltr">
                   <ShieldCheck size={14} /> EST. 2015 DUBAI
                 </span>
               </div>
@@ -54,10 +54,10 @@ export function AboutOverview() {
             {/* Credential micro-strip */}
             <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs text-text-muted">
               <span className="flex items-center gap-1.5 text-white/80">
-                <CheckCircle2 size={14} className="text-emerald-400" />
+                <CheckCircle2 size={14} className="text-brand-mauve" />
                 {isArabic ? "معتمد لدى الجهات الحكومية والسيادية" : "Accredited for Sovereign & Giga Projects"}
               </span>
-              <span className="font-mono text-amber-400 text-[11px] font-latin" dir="ltr">
+              <span className="font-mono text-brand-mauve text-[11px] font-latin" dir="ltr">
                 NMC LICENSED • UAE FTA COMPLIANT
               </span>
             </div>
@@ -66,13 +66,13 @@ export function AboutOverview() {
 
         {/* Scale & Reach Card (5 cols) */}
         <FadeUp delay={0.1} className="lg:col-span-5 h-full">
-          <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] via-white/[0.02] to-transparent backdrop-blur-2xl p-6 sm:p-8 lg:p-9 h-full flex flex-col justify-between shadow-2xl shadow-black/50">
+          <div className="rounded-3xl border border-border/40 bg-card/60 backdrop-blur-2xl p-6 sm:p-8 lg:p-9 h-full flex flex-col justify-between shadow-2xl shadow-black/50">
             <div>
               <div className="flex items-center justify-between gap-2 mb-6">
                 <Badge variant="gold" className="px-3.5 py-1 text-xs">
                   {t("about.scaleBadge")}
                 </Badge>
-                <span className="size-2 rounded-full bg-amber-400" />
+                <span className="size-2 rounded-full bg-brand-mauve shadow-[0_0_8px_rgba(152,123,165,0.6)]" />
               </div>
 
               <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 font-display tracking-tight">
@@ -89,13 +89,13 @@ export function AboutOverview() {
                 {scaleStats.map((stat) => (
                   <div
                     key={stat.label}
-                    className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-white/15 transition-colors"
+                    className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-brand-mauve/20 transition-colors"
                   >
                     <div
                       dir="ltr"
                       className="text-2xl sm:text-3xl lg:text-4xl font-black font-display font-latin text-start mb-1"
                       style={{
-                        background: "linear-gradient(135deg, #F59E0B 0%, #FDE68A 50%, #D97706 100%)",
+                        background: "linear-gradient(135deg, #DDD3E1 0%, #BBA7C3 50%, #987BA5 100%)",
                         WebkitBackgroundClip: "text",
                         WebkitTextFillColor: "transparent",
                       }}
@@ -115,7 +115,7 @@ export function AboutOverview() {
 
             <div className="mt-6 pt-4 border-t border-white/5 text-[11px] text-text-muted flex items-center justify-between">
               <span>{isArabic ? "تحديث العمليات:" : "Operations Telemetry:"}</span>
-              <span className="text-emerald-400 font-mono font-medium">
+              <span className="text-brand-mauve font-mono font-medium">
                 {isArabic ? "كافة الاستوديوهات متصلة" : "All Facilities Active"}
               </span>
             </div>
@@ -142,7 +142,7 @@ export function AboutOverview() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
           {REGIONAL_HUBS_EXPANDED.map((hub) => (
             <FadeUp key={hub.id} className="h-full">
-              <div className="rounded-3xl border border-white/10 bg-card/60 backdrop-blur-xl p-5 sm:p-6 h-full flex flex-col justify-between hover:border-amber-500/40 hover:bg-white/[0.04] transition-all group shadow-xl shadow-black/20">
+              <div className="rounded-3xl border border-border/40 bg-card/60 backdrop-blur-xl p-5 sm:p-6 h-full flex flex-col justify-between hover:border-brand-mauve/40 hover:bg-card/80 transition-all group shadow-xl shadow-black/20">
                 <div>
                   {/* Card Header */}
                   <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
@@ -155,18 +155,18 @@ export function AboutOverview() {
                       </span>
                     </div>
 
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono text-emerald-300 bg-emerald-500/10 border border-emerald-500/20">
-                      <span className="size-1.5 rounded-full bg-emerald-400" />
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono text-brand-mauve bg-brand-violet/20 border border-brand-mauve/30">
+                      <span className="size-1.5 rounded-full bg-brand-mauve" />
                       {isArabic ? hub.arStatus : hub.status}
                     </span>
                   </div>
 
-                  <h4 className="text-base font-bold text-white group-hover:text-amber-400 transition-colors mb-2 font-display">
+                  <h4 className="text-base font-bold text-white group-hover:text-brand-mauve transition-colors mb-2 font-display">
                     {isArabic ? hub.titleAr : hub.titleEn}
                   </h4>
 
                   <p className="text-xs text-zinc-300 font-medium mb-3 flex items-start gap-1.5">
-                    <MapPin size={13} className="shrink-0 text-brand-gold mt-0.5" />
+                    <MapPin size={13} className="shrink-0 text-brand-mauve mt-0.5" />
                     <span>{isArabic ? hub.facilityAr : hub.facilityEn}</span>
                   </p>
 
@@ -177,7 +177,7 @@ export function AboutOverview() {
 
                 <div className="mt-5 pt-3 border-t border-white/5 flex items-center justify-between text-[11px] text-text-muted font-mono">
                   <span>{isArabic ? "المعايير:" : "Standard:"}</span>
-                  <span className="text-amber-400">4K HDR • GENLOCK 120 FPS</span>
+                  <span className="text-brand-mauve">4K HDR • GENLOCK 120 FPS</span>
                 </div>
               </div>
             </FadeUp>
@@ -186,7 +186,7 @@ export function AboutOverview() {
       </div>
 
       {/* ── Section 3: Official Accreditations & Trust Grid ── */}
-      <div className="rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl p-6 sm:p-10">
+      <div className="rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl p-6 sm:p-10">
         <div className="text-start mb-8">
           <Badge variant="gold" className="mb-2">
             {isArabic ? "الاعتمادات والموثوقية" : "Official Compliance"}
@@ -202,9 +202,9 @@ export function AboutOverview() {
             return (
               <div
                 key={idx}
-                className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-amber-500/30 transition-all text-start"
+                className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-brand-mauve/30 transition-all text-start"
               >
-                <div className="size-10 rounded-xl bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center justify-center mb-3">
+                <div className="size-10 rounded-xl bg-brand-violet/20 text-brand-mauve border border-brand-mauve/30 flex items-center justify-center mb-3">
                   <Icon size={18} />
                 </div>
                 <h4 className="text-sm font-bold text-white mb-1.5">

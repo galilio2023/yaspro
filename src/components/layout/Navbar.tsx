@@ -10,7 +10,6 @@ import { MobileNavDrawer, NavLinkItem } from "./MobileNavDrawer";
 import { NavbarUserMenu } from "./NavbarUserMenu";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { useCart } from "@/components/providers/CartProvider";
-import { ScrollProgressBar } from "@/components/ui/ScrollProgressBar";
 
 import { useSession } from "@/lib/auth-client";
 
@@ -160,9 +159,6 @@ export default function Navbar() {
         pathname={pathname}
         navLinks={NAV_LINKS}
       />
-
-      {/* Cinematic scroll progress bar at bottom of navbar */}
-      <ScrollProgressBar />
     </header>
   );
 }

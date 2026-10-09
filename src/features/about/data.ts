@@ -151,7 +151,7 @@ export const REGIONAL_HUBS_EXPANDED = [
     flag: "🇦🇪",
     status: "Active 24/7",
     arStatus: "تشغيل 24/7",
-    color: "amber",
+    color: "mauve",
   },
   {
     id: "cairo",
@@ -168,7 +168,7 @@ export const REGIONAL_HUBS_EXPANDED = [
     flag: "🇪🇬",
     status: "Online",
     arStatus: "نشط ومتصل",
-    color: "emerald",
+    color: "violet",
   },
   {
     id: "amman",
@@ -185,7 +185,7 @@ export const REGIONAL_HUBS_EXPANDED = [
     flag: "🇯🇴",
     status: "Online",
     arStatus: "نشط ومتصل",
-    color: "amber",
+    color: "mauve",
   },
 ];
 

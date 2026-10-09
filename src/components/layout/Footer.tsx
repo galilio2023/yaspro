@@ -1,13 +1,11 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { FooterHubCard, RegionalHub } from "./FooterHubCard";
-import { FooterSocialLinks } from "./FooterSocialLinks";
 import { BrandLogo } from "./BrandLogo";
-import { YasproEmblem } from "@/components/ui/YasproEmblem";
-import { FooterNavLinks } from "./FooterNavLinks";
+import { YasproWatermarkLogo } from "@/components/ui/YasproWatermarkLogo";
+import { FooterSocialLinks } from "./FooterSocialLinks";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-
 import {
   Calendar,
   Radio,
@@ -19,11 +17,27 @@ import {
   Film,
   Building2,
   Mail,
+  Video,
+  Clock,
+  MapPin,
+  Phone,
+  ArrowUpRight,
+  ShieldCheck,
+  ChevronRight,
+  type LucideIcon,
 } from "lucide-react";
-import { FooterLinkItem } from "./FooterNavLinks";
 
-const PRODUCTION_SERVICES: readonly FooterLinkItem[] = [
+interface FooterLink {
+  readonly label: string;
+  readonly href: string;
+  readonly icon?: LucideIcon;
+  readonly key?: string;
+  readonly isExternal?: boolean;
+}
+
+const PRODUCTION_LINKS: readonly FooterLink[] = [
   { key: "footer.services.podcast", label: "Podcast Studio Booking", href: "/podcast-booking", icon: Radio },
+  { key: "footer.services.socialMedia", label: "Social Media Packages", href: "/social-media-packages", icon: Video },
   { key: "footer.services.studios", label: "Soundstages & Studios Hub", href: "/studios", icon: Calendar },
   { key: "footer.services.gear", label: "Cinema Equipment Rental", href: "/shop", icon: Camera },
   { key: "footer.services.bundles", label: "Production Bundles", href: "/shop?category=bundles", icon: Layers },
@@ -31,165 +45,357 @@ const PRODUCTION_SERVICES: readonly FooterLinkItem[] = [
   { key: "footer.services.obVan", label: "OB-VAN Live Broadcast", href: "/contact?service=ob-van", icon: Film },
 ];
 
-const NETWORK_LINKS: readonly FooterLinkItem[] = [
+const NETWORK_LINKS: readonly FooterLink[] = [
   { key: "footer.network.creators", label: "Influencer Talent Network", href: "/influencers", icon: Users },
   { key: "footer.network.shows", label: "Original Shows & Formats", href: "/projects", icon: Tv },
   { key: "footer.network.portfolio", label: "Masterpiece Portfolio", href: "/projects", icon: Film },
   { key: "footer.network.about", label: "About Yas Pro", href: "/about", icon: Building2 },
-  { key: "footer.network.contact", label: "Contact Studios", href: "/contact", icon: Mail },
+  { key: "footer.network.contact", label: "Contact Studios & RFPs", href: "/contact", icon: Mail },
 ];
 
-const REGIONAL_HUBS: readonly RegionalHub[] = [
+interface StudioLocation {
+  city: string;
+  cityAr: string;
+  country: string;
+  flag: string;
+  role: string;
+  roleAr: string;
+  address: string;
+  addressAr: string;
+  phone?: string;
+  timeZone: string;
+  mapUrl: string;
+}
+
+const STUDIO_LOCATIONS: readonly StudioLocation[] = [
   {
-    key: "dubai",
-    city: "Dubai, UAE",
+    city: "Dubai",
+    cityAr: "دبي",
+    country: "UAE",
     flag: "🇦🇪",
-    coordinates: "25.1859° N, 55.2603° E",
-    timeZone: "Asia/Dubai",
-    role: "Headquarters & Main Stages",
-    address: "Iris Bay Tower, Business Bay",
+    role: "Global HQ & Main Soundstages",
+    roleAr: "المقر الرئيسي واستوديوهات التصوير",
+    address: "Iris Bay Tower, Level 18, Business Bay",
+    addressAr: "برج آيريس باي، الخليج التجاري",
     phone: "+971 55 401 0465",
-    mapUrl:
-      "https://www.google.com/maps/place/%D9%8A%D8%A7%D8%B3+%D8%A8%D8%B1%D9%88+%D9%84%D9%84%D8%A5%D8%B9%D9%84%D8%A7%D9%85%E2%80%AD/@25.1859019,55.2602652,17z",
+    timeZone: "Asia/Dubai",
+    mapUrl: "https://www.google.com/maps/place/%D9%8A%D8%A7%D8%B3+%D8%A8%D8%B1%D9%88+%D9%84%D9%84%D8%A5%D8%B9%D9%84%D8%A7%D9%85%E2%80%AD/@25.1859019,55.2602652,17z",
   },
   {
-    key: "cairo",
-    city: "Cairo, Egypt",
+    city: "Cairo",
+    cityAr: "القاهرة",
+    country: "Egypt",
     flag: "🇪🇬",
-    coordinates: "29.9612° N, 31.2888° E",
-    timeZone: "Africa/Cairo",
-    role: "Production & Post Hub",
+    role: "Production & Broadcast Hub",
+    roleAr: "مركز الإنتاج والبث الفضائي",
     address: "Elite Tower, Zahraa Al Maadi",
-    phone: "+20 10 0000 0000",
-    mapUrl:
-      "https://www.google.com/maps/place/YAS+PRO+MEDIA+Egypt/@29.9612031,31.2887851,17z",
+    addressAr: "برج إيليت، زهراء المعادي",
+    timeZone: "Africa/Cairo",
+    mapUrl: "https://www.google.com/maps/place/YAS+PRO+MEDIA+Egypt/@29.9612031,31.2887851,17z",
   },
   {
-    key: "amman",
-    city: "Amman, Jordan",
+    city: "Amman",
+    cityAr: "عَمّان",
+    country: "Jordan",
     flag: "🇯🇴",
-    coordinates: "31.9481° N, 35.9083° E",
-    timeZone: "Asia/Amman",
     role: "Levant Regional Studio",
-    address: "BlackRock Tower, Mecca St",
-    phone: "+962 6 000 0000",
-    mapUrl:
-      "https://www.google.com/maps/place/BlackRock+Technology/@31.9481289,35.9083383,17z",
+    roleAr: "استوديو بلاد الشام الإقليمي",
+    address: "BlackRock Tower, Mecca Street",
+    addressAr: "برج بلاك روك، شارع مكة",
+    timeZone: "Asia/Amman",
+    mapUrl: "https://www.google.com/maps/place/BlackRock+Technology/@31.9481289,35.9083383,17z",
   },
 ];
 
 export default function Footer() {
-  const { t } = useLanguage();
+  const { t, isArabic } = useLanguage();
   const currentYear = new Date().getFullYear();
+
+  // Live clocks for regional hubs
+  const [hubTimes, setHubTimes] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const updateTimes = () => {
+      const times: Record<string, string> = {};
+      STUDIO_LOCATIONS.forEach((loc) => {
+        try {
+          const formatter = new Intl.DateTimeFormat("en-US", {
+            timeZone: loc.timeZone,
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          });
+          times[loc.city] = formatter.format(new Date());
+        } catch {
+          times[loc.city] = "";
+        }
+      });
+      setHubTimes(times);
+    };
+
+    updateTimes();
+    const interval = setInterval(updateTimes, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <footer
       dir="ltr"
       style={{ direction: "ltr" }}
-      className="w-full bg-background border-t border-white/[0.08] relative overflow-hidden film-grain"
+      className="w-full bg-[#06070a] border-t border-white/[0.08] relative overflow-hidden text-left"
     >
-      {/* Architectural Subtle Grid */}
+      {/* Background Micro Film Texture & Subtle Studio Vignette */}
       <div
-        className="absolute inset-0 opacity-[0.025] pointer-events-none"
+        className="absolute inset-0 opacity-[0.015] pointer-events-none"
         style={{
-          backgroundImage: "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
+          backgroundImage:
+            "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
+          backgroundSize: "64px 64px",
         }}
       />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-amber-500/[0.03] blur-[100px] pointer-events-none" />
 
-      {/* Massive Architectural Watermark Typography */}
-      <div
-        aria-hidden="true"
-        dir="ltr"
-        className="pointer-events-none absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 select-none overflow-hidden flex items-center justify-center gap-2 sm:gap-4 font-black tracking-tighter leading-none whitespace-nowrap font-display z-0 opacity-10"
-      >
-        <YasproEmblem
-          size="15vw"
-          idPrefix="footer-bg-emblem"
-          className="filter opacity-40"
-        />
-        <span
-          className="text-[17vw] tracking-tighter text-white"
-          style={{
-            WebkitTextStroke: "1px rgba(255, 255, 255, 0.15)",
-          }}
-        >
-          YASPRO
-        </span>
+      {/* ─── 1. STUDIO PRE-FOOTER ACTION HEADER ─── */}
+      <div className="w-full border-b border-white/[0.06] bg-white/[0.01] relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div className="space-y-2 max-w-xl">
+            <div className="flex items-center gap-2.5 font-mono text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-zinc-400">
+              <span className="size-2 rounded-full bg-red-500 animate-pulse" />
+              <span>[REC ● 4 SOUNDSTAGES ONLINE · 24/7 BROADCAST READY]</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight font-display">
+              {isArabic ? "أين تلتقي التكنولوجيا بالإنتاج السينمائي" : "Where Cinematic Craft Meets AI Media Infrastructure"}
+            </h2>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              {isArabic
+                ? "من استوديوهات دبي في الخليج التجاري وعربات البث المباشر المتنقلة إلى شبكة المبدعين في الشرق الأوسط."
+                : "Flagship soundstages, OB-VAN live broadcast fleets, high-tier gear rental, and premier creator talent across UAE, Egypt, and Jordan."}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/studio-booking"
+              className="px-5 py-2.5 rounded-full bg-white/[0.08] hover:bg-white/[0.15] text-white border border-white/20 hover:border-amber-400/50 font-bold text-xs uppercase tracking-wider transition-all backdrop-blur-md"
+            >
+              {isArabic ? "حجز استوديو تصوير" : "Book Soundstage"}
+            </Link>
+            <Link
+              href="/social-media-packages"
+              className="px-5 py-2.5 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-amber-400/20"
+            >
+              {isArabic ? "باقات السوشيال ميديا" : "Social Media Plans"}
+            </Link>
+            <a
+              href="https://wa.me/971554010465"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 border border-white/10 text-xs font-semibold transition-all flex items-center gap-1.5"
+            >
+              <Phone size={13} className="text-amber-400" />
+              <span className="font-mono text-[11px]">+971 55 401 0465</span>
+            </a>
+          </div>
+        </div>
       </div>
 
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 relative z-10" dir="ltr" style={{ direction: "ltr" }}>
-        {/* Main Footer Directory */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-16 text-left" dir="ltr" style={{ direction: "ltr" }}>
-          {/* Column 1: Brand Info & Socials */}
-          <div className="sm:col-span-2 lg:col-span-4 flex flex-col justify-between text-left">
+      {/* ─── 2. MAIN 4-COLUMN ARCHITECTURAL DIRECTORY ─── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-10 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
+          {/* Column 1: Brand & Media Trust (col-span-4) */}
+          <div className="sm:col-span-2 lg:col-span-4 space-y-6">
             <div>
-              <div className="mb-5">
+              <div className="mb-4">
                 <BrandLogo showIndicator={false} />
               </div>
-
-              <p className="text-zinc-400 text-sm leading-relaxed mb-6 max-w-sm text-left">
+              <p className="text-xs text-zinc-400 leading-relaxed max-w-sm">
                 {t("footer.brandDesc")}
               </p>
             </div>
 
-            <div className="pt-2 text-left">
-              <span className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">
+            {/* Official Social Channels */}
+            <div>
+              <span className="block font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400 mb-3">
                 {t("footer.officialChannels")}
               </span>
               <FooterSocialLinks />
             </div>
-          </div>
 
-          {/* Column 2: Production Services */}
-          <div className="col-span-1 lg:col-span-2 text-left">
-            <h3 className="text-white font-bold text-xs uppercase tracking-widest rtl:tracking-normal font-display rtl:font-arabic leading-snug mb-4 sm:mb-5">
-              {t("footer.productionHeading")}
-            </h3>
-            <FooterNavLinks links={PRODUCTION_SERVICES} />
-          </div>
-
-          {/* Column 3: Network & Formats */}
-          <div className="col-span-1 lg:col-span-2 text-left">
-            <h3 className="text-white font-bold text-xs uppercase tracking-widest rtl:tracking-normal font-display rtl:font-arabic leading-snug mb-4 sm:mb-5">
-              {t("footer.networkHeading")}
-            </h3>
-            <FooterNavLinks links={NETWORK_LINKS} />
-          </div>
-
-          {/* Column 4: Regional Hubs */}
-          <div className="sm:col-span-2 lg:col-span-4 text-left">
-            <div className="flex items-center justify-between mb-4 sm:mb-5">
-              <h3 className="text-white font-bold text-xs uppercase tracking-widest rtl:tracking-normal font-display rtl:font-arabic leading-snug">
-                {t("footer.studiosHubs")}
-              </h3>
-              <span className="text-[11px] font-mono text-amber-400">{t("footer.locations")}</span>
+            {/* Regulatory & Security Badge */}
+            <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-3">
+              <div className="size-8 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center shrink-0">
+                <ShieldCheck size={16} />
+              </div>
+              <div>
+                <span className="block text-[11px] font-bold text-zinc-200">
+                  {isArabic ? "ترخيص إعلامي معتمد وتوثيق رسمي" : "Mawthooq Certified Media Network"}
+                </span>
+                <span className="block text-[10px] text-zinc-500 font-mono">
+                  UAE · SAUDI ARABIA · EGYPT · JORDAN
+                </span>
+              </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
-              {REGIONAL_HUBS.map((hub) => (
-                <FooterHubCard key={hub.city} hub={hub} />
-              ))}
+          </div>
+
+          {/* Column 2: Production Pillars (col-span-3) */}
+          <div className="lg:col-span-3 space-y-4">
+            <h3 className="text-white font-bold text-xs uppercase tracking-[0.2em] font-display flex items-center gap-2">
+              <span className="size-1.5 rounded-full bg-amber-400" />
+              <span>{t("footer.productionHeading")}</span>
+            </h3>
+
+            <ul className="space-y-2">
+              {PRODUCTION_LINKS.map((link) => {
+                const Icon = link.icon;
+                const label = link.key ? t(link.key) : link.label;
+                return (
+                  <li key={link.key || `${link.label}-${link.href}`}>
+                    <Link
+                      href={link.href}
+                      className="group flex items-center justify-between py-1 text-xs text-zinc-400 hover:text-white transition-colors"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        {Icon && (
+                          <span className="size-5 rounded-md bg-white/[0.03] border border-white/[0.06] text-amber-400/80 group-hover:text-amber-300 group-hover:border-amber-400/30 flex items-center justify-center shrink-0 transition-colors">
+                            <Icon size={11} />
+                          </span>
+                        )}
+                        <span className="truncate">{label}</span>
+                      </div>
+                      <ChevronRight size={12} className="text-zinc-600 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all shrink-0" />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          {/* Column 3: Talent & Ecosystem (col-span-2) */}
+          <div className="lg:col-span-2 space-y-4">
+            <h3 className="text-white font-bold text-xs uppercase tracking-[0.2em] font-display flex items-center gap-2">
+              <span className="size-1.5 rounded-full bg-amber-400" />
+              <span>{t("footer.networkHeading")}</span>
+            </h3>
+
+            <ul className="space-y-2">
+              {NETWORK_LINKS.map((link) => {
+                const Icon = link.icon;
+                const label = link.key ? t(link.key) : link.label;
+                return (
+                  <li key={link.key || `${link.label}-${link.href}`}>
+                    <Link
+                      href={link.href}
+                      className="group flex items-center justify-between py-1 text-xs text-zinc-400 hover:text-white transition-colors"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        {Icon && (
+                          <span className="size-5 rounded-md bg-white/[0.03] border border-white/[0.06] text-zinc-400 group-hover:text-white flex items-center justify-center shrink-0 transition-colors">
+                            <Icon size={11} />
+                          </span>
+                        )}
+                        <span className="truncate">{label}</span>
+                      </div>
+                      <ChevronRight size={12} className="text-zinc-600 group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0" />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          {/* Column 4: Architectural Regional Studios Directory (col-span-3) */}
+          <div className="sm:col-span-2 lg:col-span-3 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-white font-bold text-xs uppercase tracking-[0.2em] font-display flex items-center gap-2">
+                <span className="size-1.5 rounded-full bg-emerald-400" />
+                <span>{t("footer.studiosHubs")}</span>
+              </h3>
+              <span className="text-[10px] font-mono text-amber-400">[3 HUBS]</span>
+            </div>
+
+            <div className="space-y-3">
+              {STUDIO_LOCATIONS.map((loc) => {
+                const time = hubTimes[loc.city];
+                return (
+                  <div
+                    key={loc.city}
+                    className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/15 transition-all space-y-2"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm">{loc.flag}</span>
+                        <span className="text-xs font-bold text-white font-display">
+                          {isArabic ? loc.cityAr : loc.city}, {loc.country}
+                        </span>
+                      </div>
+                      {time && (
+                        <span className="flex items-center gap-1 font-mono text-[10px] text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded border border-amber-400/20">
+                          <Clock size={9} />
+                          <span>{time}</span>
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="text-[11px] text-zinc-400 flex items-start gap-1.5 leading-snug">
+                      <MapPin size={11} className="shrink-0 mt-0.5 text-zinc-500" />
+                      <span>{isArabic ? loc.addressAr : loc.address}</span>
+                    </p>
+
+                    <div className="pt-1.5 border-t border-white/[0.04] flex items-center justify-between text-[10px] font-mono">
+                      {loc.phone && (
+                        <a
+                          href={`tel:${loc.phone}`}
+                          className="text-zinc-400 hover:text-white transition-colors flex items-center gap-1"
+                        >
+                          <Phone size={10} className="text-amber-400" />
+                          <span>{loc.phone}</span>
+                        </a>
+                      )}
+                      <a
+                        href={loc.mapUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-zinc-500 hover:text-zinc-300 transition-colors inline-flex items-center gap-0.5"
+                      >
+                        <span>{isArabic ? "الخريطة" : "Map"}</span>
+                        <ArrowUpRight size={10} />
+                      </a>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
 
+        {/* ─── 3. THE GRAND YASPRO VECTOR FINALE WATERMARK ─── */}
+        <div className="mt-14 sm:mt-20 pt-10 border-t border-white/[0.06] relative flex flex-col items-center justify-center">
+          <div className="w-full flex items-center justify-center overflow-hidden py-4 sm:py-6 select-none opacity-40 hover:opacity-60 transition-opacity duration-500">
+            <YasproWatermarkLogo
+              className="text-[14vw] sm:text-[13vw] lg:text-[11.5vw] max-w-full drop-shadow-[0_4px_35px_rgba(255,233,0,0.12)]"
+              idPrefix="footer-grand-yaspro"
+            />
+          </div>
+        </div>
 
+        {/* ─── 4. BOTTOM COPYRIGHT & SYSTEM TELEMETRY STRIP ─── */}
+        <div className="pt-8 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+          <p className="font-mono text-[11px]">
+            © {currentYear} YAS PRO MEDIA LLC · {t("footer.allRights")}
+          </p>
 
-        {/* Bottom Bar: Telemetry & Legal */}
-        <div className="mt-8 pt-6 sm:pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400 text-center sm:text-left" dir="ltr" style={{ direction: "ltr" }}>
-          <p>© {currentYear} YAS PRO MEDIA LLC. {t("footer.allRights")}</p>
-
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-            <Link href="/privacy-policy" className="hover:text-white transition-colors py-1 min-h-[36px] sm:min-h-0 flex items-center">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 font-mono text-[11px]">
+            <Link href="/privacy-policy" className="hover:text-zinc-300 transition-colors">
               {t("footer.privacy")}
             </Link>
-            <Link href="/terms" className="hover:text-white transition-colors py-1 min-h-[36px] sm:min-h-0 flex items-center">
+            <span className="opacity-30">·</span>
+            <Link href="/terms" className="hover:text-zinc-300 transition-colors">
               {t("footer.terms")}
             </Link>
-
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 font-mono text-[11px]">
-              <span className="size-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.7)]" />
-              <span>{t("footer.soundstagesOnline")}</span>
+            <span className="opacity-30">·</span>
+            <span className="inline-flex items-center gap-1.5 text-amber-400">
+              <span className="size-1.5 rounded-full bg-amber-400 animate-pulse" />
+              <span>[25.1859° N, 55.2603° E · BROADCAST READY]</span>
             </span>
           </div>
         </div>

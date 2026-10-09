@@ -52,8 +52,11 @@ export function FadeUp({
             el.style.transform = "translate3d(0, 0, 0)";
             observer.unobserve(el);
             setTimeout(() => {
-              if (el) el.style.willChange = "auto";
-            }, 650);
+              if (el) {
+                el.style.willChange = "auto";
+                el.style.transform = "none";
+              }
+            }, delay * 1000 + 650);
           }
         });
       },

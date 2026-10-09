@@ -14,6 +14,6 @@
   <path d="M 274,141 L 511,239 L 509,218 L 505,197 L 497,170 L 489,150 L 477,127 L 464,107 L 449,88 L 438,76 L 435,74 Z" fill="#FFE900" />
 
   <!-- Center iris circles -->
-  <circle cx="256" cy="256" r="68" fill="#06020e" stroke="#FFE900" stroke-width="4" />
-  <circle cx="256" cy="256" r="38" fill="#FFE900" fill-opacity="0.35" />
+  <circle cx="256" cy="256" r="112" fill="#06020e" stroke="#FFE900" stroke-width="4" />
+  <circle cx="256" cy="256" r="64" fill="#FFE900" fill-opacity="0.35" />
 </svg>

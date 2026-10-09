@@ -15,21 +15,21 @@ export function YasGroupShowcase() {
     <section
       id="conglomerate"
       aria-label={isArabic ? "شركات مجموعة ياس برو الإعلامية" : "Yas Pro Media Group Companies"}
-      className="relative py-16 sm:py-24 lg:py-32 bg-zinc-950 border-t border-white/10 overflow-hidden"
+      className="relative py-16 sm:py-24 lg:py-32 bg-background border-t border-border/40 overflow-hidden"
     >
       {/* Background ambient lighting (GPU hardware-accelerated radial gradient) */}
       <div
         className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[400px] pointer-events-none rounded-full"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(245,158,11,0.06) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse at center, rgba(118,80,134,0.15) 0%, transparent 70%)",
         }}
       />
 
       <Container className="relative z-10">
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-14 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold tracking-wider border border-amber-500/30 bg-amber-500/10 text-amber-400 mb-4 backdrop-blur-md">
-            <Building2 size={13} className="text-amber-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold tracking-wider border border-brand-mauve/30 bg-brand-violet/20 text-brand-mauve mb-4 backdrop-blur-md">
+            <Building2 size={13} className="text-brand-mauve" />
             <span>
               {isArabic ? "المجموعة القابضة والشركات التابعة" : "YAS MEDIA GROUP ECOSYSTEM"}
             </span>
@@ -41,7 +41,7 @@ export function YasGroupShowcase() {
               : "A Multi-Disciplinary Media Conglomerate"}
           </h2>
 
-          <p className="text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-text-secondary max-w-2xl mx-auto leading-relaxed">
             {isArabic
               ? "تضم مجموعة ياس برو شبكة متخصصة من الشركات الشقيقة التي تغطي كافة مجالات الإنتاج السينمائي، البث التلفزيوني، الوكالات الإبداعية، إدارة المشاهير، والتسجيل الصوتي."
               : "Yas Pro Media Group unites specialized sister enterprises spanning cinema production, broadcast soundstages, creative strategy, celebrity talent management, and spatial audio."}
@@ -62,17 +62,17 @@ export function YasGroupShowcase() {
                 transition={{ duration: 0.5, delay: idx * 0.08 }}
                 className={`group relative rounded-3xl border p-6 sm:p-8 flex flex-col justify-between backdrop-blur-xl transition-all duration-500 hover:scale-[1.02] shadow-xl ${
                   isHolding
-                    ? "md:col-span-2 lg:col-span-3 border-amber-500/40 bg-gradient-to-r from-zinc-950 via-amber-950/20 to-zinc-950 shadow-amber-500/10"
-                    : "border-white/10 bg-zinc-900/60 hover:bg-zinc-900/90 hover:border-amber-500/30 shadow-black/40"
+                    ? "md:col-span-2 lg:col-span-3 border-brand-mauve/40 bg-gradient-to-r from-card via-brand-violet-dark/30 to-card shadow-brand-violet/20"
+                    : "border-border/40 bg-card/60 hover:bg-card hover:border-brand-mauve/30 shadow-black/40"
                 }`}
               >
                 <div>
-                  {/* Top Bar: Brand Logo & Division */}
-                  <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 mb-6">
+                  {/* Top Bar: Brand Logo & Holding Status / Index */}
+                  <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 mb-4">
                     {/* Fixed physical LTR container for brand logo */}
                     <div
                       dir="ltr"
-                      className="relative h-12 sm:h-14 w-44 sm:w-52 p-2 rounded-xl bg-black/60 border border-white/10 flex items-center justify-center shrink-0 group-hover:border-amber-500/40 transition-colors"
+                      className="relative h-12 sm:h-14 w-44 sm:w-52 p-2 rounded-xl bg-card border border-white/10 flex items-center justify-center shrink-0 group-hover:border-brand-mauve/40 transition-colors shadow-inner"
                     >
                       <Image
                         src={company.logo}
@@ -83,16 +83,31 @@ export function YasGroupShowcase() {
                       />
                     </div>
 
-                    <span className="text-[11px] font-mono font-semibold px-2.5 py-1 rounded-full border border-white/10 bg-white/5 text-zinc-300 shrink max-w-full break-words text-center">
-                      {isArabic ? company.divisionAr : company.division}
+                    {isHolding ? (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider text-brand-mauve bg-brand-violet/25 border border-brand-mauve/30 shadow-sm shrink-0 whitespace-nowrap">
+                        <span className="size-1.5 rounded-full bg-brand-mauve animate-pulse" />
+                        {isArabic ? "الشركة الأم" : "HOLDING HQ"}
+                      </span>
+                    ) : (
+                      <span className="text-[11px] font-mono font-medium text-zinc-500 uppercase tracking-widest shrink-0 font-latin">
+                        0{idx + 1}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Division Badge: Unconstrained Dedicated Row */}
+                  <div className="mb-4 flex items-center">
+                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] sm:text-xs font-mono font-medium border border-brand-mauve/25 bg-brand-violet/15 text-brand-mauve whitespace-nowrap shadow-sm max-w-full">
+                      <span className="size-1.5 rounded-full bg-brand-mauve/70 shrink-0" />
+                      <span className="truncate">{isArabic ? company.divisionAr : company.division}</span>
                     </span>
                   </div>
 
                   {/* Company Title */}
-                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 font-display group-hover:text-amber-300 transition-colors flex items-center gap-2">
+                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 font-display group-hover:text-brand-mauve transition-colors flex items-center gap-2">
                     <span>{isArabic ? company.nameAr : company.name}</span>
                     {isHolding && (
-                      <span className="size-2 rounded-full bg-amber-400 animate-pulse" />
+                      <span className="size-2 rounded-full bg-brand-mauve animate-pulse" />
                     )}
                   </h3>
 

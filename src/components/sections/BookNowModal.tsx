@@ -72,7 +72,7 @@ const VISUAL_CARDS: VisualBookingCard[] = [
     categoryEn: "Viral Reels",
     categoryAr: "صناعة المحتوى",
     image: "/images/modal/social-media-card.jpg",
-    href: "/contact?service=social-media",
+    href: "/social-media-packages",
   },
   {
     id: "ob-van-broadcast",
