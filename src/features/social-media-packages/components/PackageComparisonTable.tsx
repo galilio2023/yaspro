@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Check, Minus, HelpCircle, Layers } from "lucide-react";
+import { Check, Minus, Layers } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface FeatureRow {

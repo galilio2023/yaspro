@@ -22,7 +22,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const locale = await getLocale();
+  const isArabic = locale === "ar";
+
   return (
     <>
       {/* ── Page Hero & Foundations ── */}
@@ -76,7 +79,7 @@ export default function AboutPage() {
       {/* ── Grand Finale Studio Launch CTA ── */}
       <Section
         id="about-cta"
-        aria-label="Studio Booking & Consultation"
+        aria-label={isArabic ? "حجز الاستوديو والاستشارات" : "Studio Booking & Consultation"}
         className="pt-16 sm:pt-24 pb-20 sm:pb-32 bg-background border-t border-border/40 relative overflow-hidden"
       >
         <Container>

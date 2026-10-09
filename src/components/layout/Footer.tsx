@@ -62,7 +62,7 @@ interface StudioLocation {
   roleAr: string;
   address: string;
   addressAr: string;
-  phone: string;
+  phone?: string;
   timeZone: string;
   mapUrl: string;
 }
@@ -90,7 +90,6 @@ const STUDIO_LOCATIONS: readonly StudioLocation[] = [
     roleAr: "مركز الإنتاج والبث الفضائي",
     address: "Elite Tower, Zahraa Al Maadi",
     addressAr: "برج إيليت، زهراء المعادي",
-    phone: "+20 10 0000 0000",
     timeZone: "Africa/Cairo",
     mapUrl: "https://www.google.com/maps/place/YAS+PRO+MEDIA+Egypt/@29.9612031,31.2887851,17z",
   },
@@ -103,7 +102,6 @@ const STUDIO_LOCATIONS: readonly StudioLocation[] = [
     roleAr: "استوديو بلاد الشام الإقليمي",
     address: "BlackRock Tower, Mecca Street",
     addressAr: "برج بلاك روك، شارع مكة",
-    phone: "+962 6 000 0000",
     timeZone: "Asia/Amman",
     mapUrl: "https://www.google.com/maps/place/BlackRock+Technology/@31.9481289,35.9083383,17z",
   },
@@ -344,13 +342,15 @@ export default function Footer() {
                     </p>
 
                     <div className="pt-1.5 border-t border-white/[0.04] flex items-center justify-between text-[10px] font-mono">
-                      <a
-                        href={`tel:${loc.phone}`}
-                        className="text-zinc-400 hover:text-white transition-colors flex items-center gap-1"
-                      >
-                        <Phone size={10} className="text-amber-400" />
-                        <span>{loc.phone}</span>
-                      </a>
+                      {loc.phone && (
+                        <a
+                          href={`tel:${loc.phone}`}
+                          className="text-zinc-400 hover:text-white transition-colors flex items-center gap-1"
+                        >
+                          <Phone size={10} className="text-amber-400" />
+                          <span>{loc.phone}</span>
+                        </a>
+                      )}
                       <a
                         href={loc.mapUrl}
                         target="_blank"

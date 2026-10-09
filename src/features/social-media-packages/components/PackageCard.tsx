@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Check, Sparkles, ArrowRight, ArrowLeft, Film, ShieldCheck } from "lucide-react";
+import { Check, Sparkles, ArrowRight, ArrowLeft } from "lucide-react";
 import { SocialMediaPackage } from "../data/packages";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 

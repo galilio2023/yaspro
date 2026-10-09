@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle2, Send, MessageSquare, Sparkles, AlertCircle } from "lucide-react";
 import { SocialMediaPackage } from "../data/packages";
@@ -21,6 +21,7 @@ export function PackageOrderModal({
   onClose,
 }: PackageOrderModalProps) {
   const { isArabic } = useLanguage();
+  const formId = useId();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -98,6 +99,7 @@ export function PackageOrderModal({
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
         {/* Backdrop */}
         <motion.div
+          role="presentation"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -107,6 +109,8 @@ export function PackageOrderModal({
 
         {/* Modal Window */}
         <motion.div
+          role="dialog"
+          aria-modal="true"
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
@@ -211,10 +215,11 @@ export function PackageOrderModal({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                    <label htmlFor={`${formId}-name`} className="block text-xs font-medium text-zinc-300 mb-1.5">
                       {isArabic ? "الاسم الكامل *" : "Full Name *"}
                     </label>
                     <input
+                      id={`${formId}-name`}
                       type="text"
                       required
                       value={name}
@@ -224,10 +229,11 @@ export function PackageOrderModal({
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                    <label htmlFor={`${formId}-email`} className="block text-xs font-medium text-zinc-300 mb-1.5">
                       {isArabic ? "البريد الإلكتروني *" : "Work Email *"}
                     </label>
                     <input
+                      id={`${formId}-email`}
                       type="email"
                       required
                       value={email}
@@ -240,10 +246,11 @@ export function PackageOrderModal({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                    <label htmlFor={`${formId}-phone`} className="block text-xs font-medium text-zinc-300 mb-1.5">
                       {isArabic ? "رقم الهاتف / واتساب *" : "Phone / WhatsApp *"}
                     </label>
                     <input
+                      id={`${formId}-phone`}
                       type="tel"
                       required
                       value={phone}
@@ -253,10 +260,11 @@ export function PackageOrderModal({
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                    <label htmlFor={`${formId}-company`} className="block text-xs font-medium text-zinc-300 mb-1.5">
                       {isArabic ? "اسم الشركة أو حساب السوشيال" : "Company or Social Handle"}
                     </label>
                     <input
+                      id={`${formId}-company`}
                       type="text"
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
@@ -267,10 +275,11 @@ export function PackageOrderModal({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                  <label htmlFor={`${formId}-notes`} className="block text-xs font-medium text-zinc-300 mb-1.5">
                     {isArabic ? "ملاحظات إضافية أو أهداف الحملة" : "Campaign Notes or Goals"}
                   </label>
                   <textarea
+                    id={`${formId}-notes`}
                     rows={2}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
