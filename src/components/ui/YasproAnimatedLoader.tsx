@@ -68,7 +68,7 @@ export function ApertureO({ uid }: { uid: string }) {
         </linearGradient>
       </defs>
 
-      <circle cx="256" cy="256" r="252" fill={`url(#${uid}-halo)`} stroke="rgba(168,85,247,0.45)" strokeWidth="6" />
+      <circle cx="256" cy="256" r="252" fill={`url(#${uid}-halo)`} stroke="rgba(168,85,247,0.3)" strokeWidth="2.5" />
 
       {/* Rotating aperture iris */}
       <g
@@ -76,16 +76,16 @@ export function ApertureO({ uid }: { uid: string }) {
         style={{ transformOrigin: "256px 256px" }}
       >
         {/* White seams between the blades */}
-        <path d={YAS_O_RING_PATH} fill="#ffffff" stroke="#ffffff" strokeWidth="5" strokeLinejoin="round" fillRule="evenodd" />
+        <path d={YAS_O_RING_PATH} fill="#ffffff" stroke="#ffffff" strokeWidth="4" strokeLinejoin="round" fillRule="evenodd" />
         {/* Dark blades */}
         <path d={YAS_O_RING_PATH} fill={`url(#${uid}-dark)`} fillRule="evenodd" />
         {/* Signature yellow blade */}
-        <path d={YAS_YELLOW_BLADE_PATH} stroke="#ffffff" strokeWidth="5" strokeLinejoin="round" />
+        <path d={YAS_YELLOW_BLADE_PATH} stroke="#ffffff" strokeWidth="4" strokeLinejoin="round" />
         <path d={YAS_YELLOW_BLADE_PATH} fill={`url(#${uid}-yellow)`} />
       </g>
 
-      <circle cx="256" cy="256" r="112" fill="#06020e" stroke="rgba(255,233,0,0.6)" strokeWidth="3.5" />
-      <circle cx="256" cy="256" r="64" fill="rgba(255,233,0,0.3)" />
+      <circle cx="256" cy="256" r="112" fill="#06020e" stroke="rgba(255,233,0,0.35)" strokeWidth="1.8" />
+      <circle cx="256" cy="256" r="64" fill="rgba(255,233,0,0.18)" />
     </svg>
   );
 }
@@ -238,7 +238,7 @@ export function YasproAnimatedLoader({
           <div className="yas-roll-track absolute inset-0 flex items-center justify-end pointer-events-none will-change-transform">
             <span className="yas-o-spin relative block size-[0.84em] shrink-0 will-change-transform">
               {/* Soft yellow glow behind the O that pulses with the yellow blade */}
-              <span className="yas-glow-pulse absolute -inset-[22%] rounded-full bg-yellow-400/30 blur-xl pointer-events-none" />
+              <span className="yas-glow-pulse absolute -inset-[18%] rounded-full bg-yellow-400/18 blur-xl pointer-events-none" />
               <span className="relative block size-full">
                 <ApertureO uid={uid} />
               </span>
