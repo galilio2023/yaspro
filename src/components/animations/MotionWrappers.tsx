@@ -67,11 +67,11 @@ export function FadeUp({
     return () => observer.disconnect();
   }, [delay]);
 
+  const Component = Tag as any;
   return (
-    // @ts-expect-error dynamic polymorphic JSX tag
-    <Tag ref={ref} dir={dir} className={cn("w-full", className)}>
+    <Component ref={ref} dir={dir} className={cn("w-full", className)}>
       {children}
-    </Tag>
+    </Component>
   );
 }
 
@@ -127,11 +127,11 @@ export function StudioScrollSection({
     return () => observer.disconnect();
   }, []);
 
+  const Component = Tag as any;
   return (
-    // @ts-expect-error dynamic polymorphic JSX tag
-    <Tag ref={ref} id={id} className={cn("w-full", className)}>
+    <Component ref={ref} id={id} className={cn("w-full", className)}>
       {children}
-    </Tag>
+    </Component>
   );
 }
 
@@ -201,11 +201,11 @@ export function StaggerContainer({
     return () => observer.disconnect();
   }, [staggerDelay]);
 
+  const Component = Tag as any;
   return (
-    // @ts-expect-error dynamic polymorphic JSX tag
-    <Tag ref={ref} role={role} className={className}>
+    <Component ref={ref} role={role} className={className}>
       {children}
-    </Tag>
+    </Component>
   );
 }
 
@@ -225,11 +225,11 @@ export function StaggerItem({
   as: Tag = "div",
   id,
 }: StaggerItemProps) {
+  const Component = Tag as any;
   return (
-    // @ts-expect-error dynamic polymorphic JSX tag
-    <Tag id={id} className={cn("w-full h-full", className)}>
+    <Component id={id} className={cn("w-full h-full", className)}>
       {children}
-    </Tag>
+    </Component>
   );
 }
 
