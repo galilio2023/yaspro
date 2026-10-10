@@ -256,17 +256,17 @@ export function VirtualStudioSection() {
       aria-labelledby="virtual-heading"
       className="relative w-full py-16 sm:py-20 lg:py-28 overflow-hidden bg-black text-white"
     >
-      {/* Subtle ambient stage backlights */}
+      {/* Subtle ambient stage backlights (calibrated for mobile clarity & OLED luminance) */}
       <div
-        className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[350px] bg-brand-violet/15 blur-[140px] rounded-full pointer-events-none -z-10"
+        className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-72 sm:w-[550px] h-60 sm:h-[350px] bg-brand-violet/25 sm:bg-brand-violet/15 blur-[60px] sm:blur-[140px] rounded-full pointer-events-none z-0"
         aria-hidden="true"
       />
       <div
-        className="absolute bottom-10 right-1/4 w-[450px] h-[320px] bg-brand-mauve/15 blur-[150px] rounded-full pointer-events-none -z-10"
+        className="absolute bottom-10 right-1/4 w-64 sm:w-[450px] h-56 sm:h-[320px] bg-brand-mauve/20 sm:bg-brand-mauve/15 blur-[60px] sm:blur-[150px] rounded-full pointer-events-none z-0"
         aria-hidden="true"
       />
 
-      <Container>
+      <Container className="relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
 
           {/* ─── LEFT COLUMN: TYPOGRAPHY & VALUE PROPOSITION ─── */}

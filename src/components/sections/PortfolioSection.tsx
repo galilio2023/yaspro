@@ -64,11 +64,11 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
       aria-labelledby="portfolio-title"
       className="bg-transparent border-t border-white/10 relative overflow-hidden py-16 sm:py-24"
     >
-      {/* Hardware-friendly pre-rendered radial glow (Zero GPU blur convolution cost) */}
+      {/* Hardware-friendly pre-rendered radial glow (Zero GPU blur convolution cost, calibrated for mobile OLED) */}
       <div
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] pointer-events-none rounded-full"
+        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[600px] h-[220px] sm:h-[300px] pointer-events-none rounded-full"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(84,37,104,0.2) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse at center, rgba(118,80,134,0.28) 0%, rgba(84,37,104,0.15) 45%, transparent 75%)",
         }}
       />
 
