@@ -68,7 +68,7 @@ export function ApertureO({ uid }: { uid: string }) {
         </linearGradient>
       </defs>
 
-      <circle cx="256" cy="256" r="252" fill={`url(#${uid}-halo)`} stroke="rgba(168,85,247,0.3)" strokeWidth="2.5" />
+      <circle cx="256" cy="256" r="252" fill={`url(#${uid}-halo)`} stroke="rgba(152,123,165,0.4)" strokeWidth="2.5" />
 
       {/* Rotating aperture iris */}
       <g
@@ -84,7 +84,7 @@ export function ApertureO({ uid }: { uid: string }) {
         <path d={YAS_YELLOW_BLADE_PATH} fill={`url(#${uid}-yellow)`} />
       </g>
 
-      <circle cx="256" cy="256" r="112" fill="#06020e" stroke="rgba(152,123,165,0.4)" strokeWidth="1.8" />
+      <circle cx="256" cy="256" r="112" fill="#06020e" stroke="rgba(152,123,165,0.5)" strokeWidth="1.8" />
       <circle cx="256" cy="256" r="64" fill="rgba(152,123,165,0.2)" />
     </svg>
   );

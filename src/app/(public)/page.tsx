@@ -21,10 +21,7 @@ export default function HomePage() {
       <VirtualStudioSection />
       <PartnersMarquee />
       <PortfolioSection />
-      {/*<GearRentalSection />*/}
       <InfluencersSection />
-      {/*<YasGroupEcosystem />*/}
-      {/*<CtaSection />*/}
     </>
   );
 }

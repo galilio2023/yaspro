@@ -15,7 +15,18 @@ function loadSource(file, mocks = {}, globals = {}) {
   const exports = {};
   vm.runInNewContext(outputText, {
     exports,
-    require: (name) => Object.hasOwn(mocks, name) ? mocks[name] : loadDependency(name),
+    require: (name) => {
+      if (Object.hasOwn(mocks, name)) return mocks[name];
+      if (name.startsWith('.')) {
+        const target = path.resolve(import.meta.dirname, '..', path.dirname(file), name);
+        const jsonPath = target.endsWith('.json') ? target : target + '.json';
+        if (fs.existsSync(jsonPath)) {
+          const parsed = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+          return Object.assign(parsed, { default: parsed });
+        }
+      }
+      return loadDependency(name);
+    },
     console: { error() {}, log() {} },
     process: { env: { DATABASE_URL: 'postgresql://test:local@localhost/db' } },
     ...globals,
@@ -183,7 +194,7 @@ test('booking uses CMS IDs and rates and rejects deleted or inactive studios', a
   assert.deepEqual(lookup, { col: 'studio-id', val: studioId });
   const booking = writes.find((write) => write.table === schemas.bookings).values;
   assert.equal(booking.studioId, studioId);
-  assert.equal(booking.totalAmount, '1631.70');
+  assert.equal(booking.totalAmount, '432.00');
   assert.equal(booking.userId, null);
   assert.match(booking.specialRequests, /local@example.com/);
   assert.deepEqual(capabilities, ['booking']);

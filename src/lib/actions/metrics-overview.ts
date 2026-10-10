@@ -6,7 +6,6 @@ import {
   influencers,
   equipment,
   bookings,
-  enterpriseRfps,
   inquiries,
   users,
   studios,
@@ -27,13 +26,12 @@ export async function getCmsOverviewStats() {
   try {
     await requireAdmin();
     if (isDbAvailable()) {
-      const [allProjects, allInfluencers, allGear, allBookings, allRfps, allInquiries, allUsers, allStudios] =
+      const [allProjects, allInfluencers, allGear, allBookings, allInquiries, allUsers, allStudios] =
         await Promise.all([
           db.select({ id: projects.id }).from(projects),
           db.select({ id: influencers.id }).from(influencers),
           db.select({ id: equipment.id }).from(equipment),
           db.select({ id: bookings.id, status: bookings.status }).from(bookings),
-          db.select({ id: enterpriseRfps.id, status: enterpriseRfps.status }).from(enterpriseRfps),
           db.select({ id: inquiries.id, isResolved: inquiries.isResolved }).from(inquiries),
           db.select({ id: users.id, role: users.role }).from(users),
           db.select({ id: studios.id, isActive: studios.isActive }).from(studios),
@@ -46,8 +44,6 @@ export async function getCmsOverviewStats() {
         totalGear: allGear.length || GEAR_DATA.length,
         totalBookings: allBookings.length,
         pendingBookings: allBookings.filter((b) => b.status === "pending").length,
-        totalRfps: allRfps.length,
-        pendingRfps: allRfps.filter((r) => r.status === "pending_review").length,
         totalInquiries: allInquiries.length,
         pendingInquiries: allInquiries.filter((i) => !i.isResolved).length,
         totalUsers: allUsers.length,
@@ -70,8 +66,6 @@ export async function getCmsOverviewStats() {
       totalGear: GEAR_DATA.length,
       totalBookings: 0,
       pendingBookings: 0,
-      totalRfps: 0,
-      pendingRfps: 0,
       totalInquiries: 0,
       pendingInquiries: 0,
       totalUsers: 0,
@@ -90,8 +84,6 @@ export async function getCmsOverviewStats() {
     totalGear: GEAR_DATA.length,
     totalBookings: 12,
     pendingBookings: 3,
-    totalRfps: 8,
-    pendingRfps: 2,
     totalInquiries: 14,
     pendingInquiries: 4,
     totalUsers: 24,

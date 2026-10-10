@@ -6,11 +6,9 @@ import { db } from "@/db";
 import {
   bookings,
   bookingSessions,
-  enterpriseRfps,
   users,
   studios,
   type Booking,
-  type EnterpriseRfp,
 } from "@/db/schema";
 import { eq, desc, asc, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -167,44 +165,6 @@ export async function updateBookingPaymentStatus(
     revalidatePath("/admin/bookings");
     revalidatePath("/account");
     return { success: true, message: `Payment status updated to ${paymentStatus}.` };
-  } catch (error) {
-    return { success: false, error: (error as Error).message };
-  }
-}
-
-/**
- * Retrieves all enterprise tender proposals and RFPs from Neon PostgreSQL.
- *
- * @returns Array of Enterprise RFP records ordered by creation date.
- */
-export async function getCmsEnterpriseRfps(): Promise<EnterpriseRfp[]> {
-  try {
-    await requireAdmin();
-    if (isDbAvailable()) {
-      return await db.select().from(enterpriseRfps).orderBy(desc(enterpriseRfps.createdAt));
-    }
-  } catch (e) {
-    console.error("getCmsEnterpriseRfps error:", e);
-  }
-  return [];
-}
-
-/**
- * Updates the milestone status of an enterprise tender RFP.
- *
- * @param id - UUID of the enterprise proposal.
- * @param status - New status string (e.g., "approved", "sla_active").
- * @returns CMS response confirming update.
- */
-export async function updateEnterpriseRfpStatus(id: string, status: string): Promise<CmsResponse> {
-  try {
-    await requireAdmin();
-    if (isDbAvailable()) {
-      await db.update(enterpriseRfps).set({ status, updatedAt: new Date() }).where(eq(enterpriseRfps.id, id));
-    }
-    revalidatePath("/admin/rfps");
-    revalidatePath("/enterprise/portal");
-    return { success: true, message: `Enterprise proposal status updated to ${status}.` };
   } catch (error) {
     return { success: false, error: (error as Error).message };
   }

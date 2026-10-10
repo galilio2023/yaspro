@@ -484,13 +484,11 @@ test('deleteCmsUser protects self and primary CEO accounts and safely unlinks re
   const successRes = await deleteCmsUser('usr_walaa_admin');
   assert.equal(successRes.success, true);
   assert.equal(transactions, 1);
-  assert.equal(operations.length, 5);
+  assert.equal(operations.length, 4);
   assert.equal(operations[0].op, 'update');
   assert.equal(operations[0].val.userId, null);
-  assert.equal(operations[1].op, 'update');
-  assert.equal(operations[1].val.userId, null);
+  assert.equal(operations[1].op, 'delete');
   assert.equal(operations[2].op, 'delete');
   assert.equal(operations[3].op, 'delete');
-  assert.equal(operations[4].op, 'delete');
 });
 
