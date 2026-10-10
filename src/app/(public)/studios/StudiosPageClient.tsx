@@ -18,7 +18,6 @@ import { formatCurrency, cn } from "@/lib/utils";
 import { studioSprings } from "@/lib/studio-motion";
 import { SOUNDSTAGES_CATALOG, SOUNDSTAGE_CATEGORIES } from "@/features/studios/data";
 import type { StudioCategory, SoundstageDetail } from "@/features/studios/types";
-import { VirtualStageConfigurator } from "@/features/booking/components/VirtualStageConfigurator";
 import { TURNKEY_STUDIO_PACKAGES } from "@/features/booking/constants";
 
 export interface StudiosPageClientProps {
@@ -326,30 +325,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
         </div>
       </section>
 
-      {/* ── 3. Interactive 3D Simulator (Compact Module) ── */}
-      <section className="py-12 bg-[#08080a] border-t border-b border-white/[0.08]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4 mb-4">
-            <div>
-              <span className="text-[10px] font-mono text-brand-mauve uppercase tracking-wider font-semibold block">
-                {isArabic ? "المحاكاة ثلاثية الأبعاد" : "3D VIRTUAL SIMULATION"}
-              </span>
-              <h3 className="text-lg sm:text-xl font-bold text-white font-display">
-                {isArabic ? "محاكاة مسرح الإنتاج الافتراضي 270°" : "270° LED Volume & Rig Preview"}
-              </h3>
-            </div>
-            <span className="text-[10px] font-mono text-zinc-500 hidden sm:inline">
-              WebGL • Unreal 5.4 LiveLink
-            </span>
-          </div>
-
-          <div className="max-w-4xl mx-auto rounded-2xl border border-white/[0.08] overflow-hidden bg-black shadow-xl">
-            <VirtualStageConfigurator />
-          </div>
-        </div>
-      </section>
-
-      {/* ── 4. Turnkey Deals (Clean 3-Card Grid) ── */}
+      {/* ── 3. Turnkey Deals (Clean 3-Card Grid) ── */}
       <section id="packages" className="py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8">

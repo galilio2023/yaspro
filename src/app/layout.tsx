@@ -172,17 +172,6 @@ export default async function RootLayout({
       }
     }
   } catch(e) {}
-  // Suppress benign Three.js / WebGPU console noise
-  var w = console.warn;
-  console.warn = function() {
-    var s = Array.prototype.join.call(arguments, ' ');
-    if (
-      s.indexOf('Multiple instances of Three.js') !== -1 ||
-      s.indexOf('updating from') !== -1 ||
-      s.indexOf('THREE.Clock') !== -1
-    ) { return; }
-    w.apply(console, arguments);
-  };
 })();`,
           }}
         />
