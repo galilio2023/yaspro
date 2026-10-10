@@ -1,23 +1,26 @@
 # 🎬 YAS PRO — Sovereign AI Media Hub & Production Ecosystem
 ### Dubai, UAE • Next-Generation Virtual Production, Soundstage Fleet & Cinema Gear Engine
 
-[![Next.js 15](https://img.shields.io/badge/Next.js-15.1.4-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![React 19](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Next.js 16](https://img.shields.io/badge/Next.js-16.3.6-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React 19](https://img.shields.io/badge/React-19.2-blue?style=for-the-badge&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![Neon Database](https://img.shields.io/badge/Neon-PostgreSQL-00E599?style=for-the-badge&logo=postgresql)](https://neon.tech/)
 [![Drizzle ORM](https://img.shields.io/badge/Drizzle-ORM-C5F74F?style=for-the-badge&logo=drizzle)](https://orm.drizzle.team/)
 [![Better-Auth](https://img.shields.io/badge/Better--Auth-Security-purple?style=for-the-badge)](https://better-auth.com/)
 [![Ziina Payments](https://img.shields.io/badge/Ziina-UAE_Gateway-24C36C?style=for-the-badge)](https://ziina.com/)
-[![Tests Passing](https://img.shields.io/badge/Tests-117%20Passed-brightgreen?style=for-the-badge)](https://github.com/)
+[![Tests Passing](https://img.shields.io/badge/Tests-87%20Passed-brightgreen?style=for-the-badge)](https://github.com/)
+[![Live Deployment](https://img.shields.io/badge/Vercel-Live_Staging-000000?style=for-the-badge&logo=vercel)](https://yaspro-tablawy.vercel.app/)
 
 ---
 
 ## 📌 Executive Overview
 
-**Yas Pro** is an enterprise-grade digital production and media operations platform designed for high-profile cinema productions, sovereign government broadcasts, and commercial creator campaigns across the UAE and the greater GCC region.
+**Yas Pro** is an enterprise-grade digital production and sovereign media operations platform engineered for cinematic feature productions, government broadcasts, commercial creator campaigns, and virtual studio soundstages across the UAE and the greater GCC region.
 
-Built from the ground up to replace legacy monolithic systems, Yas Pro delivers sub-millisecond response times, high-security serverless database resilience via **Neon PostgreSQL**, integrated **Ziina UAE payment processing**, and a streamlined dual-locale architecture supporting native **Arabic (RTL)** and **English (LTR)** workflows.
+Built from the ground up to replace legacy monolithic systems, Yas Pro delivers sub-millisecond response times, high-security serverless database resilience via **Neon PostgreSQL**, integrated **Ziina UAE payment processing**, dynamic **OpenGraph & Twitter media cards**, and a streamlined dual-locale architecture supporting native **Arabic (RTL)** and **English (LTR)** workflows.
+
+🌐 **Live Deployed Staging:** [https://yaspro-tablawy.vercel.app](https://yaspro-tablawy.vercel.app)
 
 ---
 
@@ -26,9 +29,9 @@ Built from the ground up to replace legacy monolithic systems, Yas Pro delivers 
 ```mermaid
 flowchart TB
     subgraph ClientLayer [" Client Experience Layer "]
-        Web["Web Client (Next.js 15 / React 19)"]
+        Web["Web Client (Next.js 16 / React 19)"]
         Mobile["Mobile Web Experience (Responsive)"]
-        Portal["Client Portal (/portal)"]
+        Portal["Client Portal (/account)"]
         Admin["Admin Operations Hub (/admin)"]
     end
 
@@ -44,11 +47,12 @@ flowchart TB
         ZiinaSvc["Ziina UAE Payment Gateway"]
         DialectEng["GCC Arabic Dialect AI Engine"]
         Scheduler["Conflict-Free Soundstage Scheduler"]
+        MetadataSvc["Dynamic OpenGraph & SEO Engine"]
     end
 
     subgraph DataLayer [" Serverless Database (Neon PostgreSQL) "]
         Drizzle["Drizzle ORM HTTP Adapter"]
-        NeonDB[("Neon Serverless PostgreSQL\n(ep-patient-dawn pooler)")]
+        NeonDB[("Neon Serverless PostgreSQL\n(Pooled Connection)")]
     end
 
     Web --> Middleware
@@ -64,6 +68,7 @@ flowchart TB
     Actions --> ZiinaSvc
     Actions --> DialectEng
     Actions --> Scheduler
+    Actions --> MetadataSvc
 
     Actions --> Drizzle
     API --> Drizzle
@@ -200,58 +205,57 @@ erDiagram
 
 ---
 
-## 📊 Live Database Status vs. Legacy Migration Parity
-
-The platform replaced a legacy 598MB WordPress MySQL installation with normalized, high-performance PostgreSQL tables hosted on **Neon Serverless**:
-
-| Neon Entity | Live Records | WordPress Dump (`u363039021_yaspro.sql`) | Migration & Integrity Highlights |
-| :--- | :---: | :---: | :--- |
-| **`equipment`** | **173 items** | 327 product posts (160 unique + duplicate translation posts) | ✅ Cleaned 108 `-2` slug clones. Populated **158 Arabic technical descriptions** directly from legacy translations into `arabic_description`. |
-| **`studios`** | **4 stages** | 3 rudimentary calendar plugins | ✅ Structured soundstage fleet (Main Stage, Cyclorama, Podcast, XR Virtual Production Stage). |
-| **`users`** | **8 accounts** | 15 accounts (8 staff + 7 spam bots) | ✅ Zero external client accounts were lost; all 7 bot registrations purged; 5 core admins + 3 clients active. |
-| **`bookings`** | **8 bookings** | 29 staff plugin test bookings | ✅ Normalized booking records with AED totals and reference codes. |
-| **`projects`** | **9 films** | Elementor raw HTML metadata | ✅ Curated flagship portfolio films (UAE Flag Day, GITEX, DMX, etc.). |
-| **`influencers`**| **8 creators**| Unstructured WP pages | ✅ Verified MENA creators (Abo Flah, Noor Stars, etc.) with metrics. |
-| **`inquiries`**  | **1 active**  | Unformatted contact forms | ✅ Typed equipment rental lead pipeline with client notes. |
-| **`enterprise_rfps`** | **Active Schema** | N/A | ✅ High-security sovereign enterprise RFP intake engine. |
-
----
-
 ## 🚀 Key Modules & Capabilities
 
-### 1. 🎥 Cinema Equipment Fleet & Smart Rental Cart
-* **173 Cataloged Items:** Cinema cameras (ARRI Alexa Mini LF, RED V-Raptor XL, Sony FX3/FX6/FX9), anamorphic glass, Astera Titan tubes, and Sennheiser audio.
-* **Tiered Day Rates:** Real-time multi-day discounting algorithms (`1–2 days`, `3–6 days`, `7+ days`).
-* **Instant Inquiries & Reservations:** Reservation requests auto-generate formatted inquiries with client details and kit requirements.
+### 1. 🎥 Cinema Equipment Fleet & Rental Cart (`/shop`)
+* **170+ Cataloged Items:** Cinema camera bodies (ARRI Alexa Mini LF, RED V-Raptor XL, Sony FX3/FX6/FX9), optical prime packages, Astera Titan sets, and wireless audio.
+* **Tiered Rental Rates:** Real-time multi-day discounting algorithms (`1–2 days`, `3–6 days`, `7+ days`).
+* **Instant Inquiries & Reservations:** Equipment reservation requests auto-generate formatted inquiries with client details and kit requirements.
 
-### 2. 🎙️ Soundstages & Virtual Production Booking
-* **Conflict-Free Scheduling:** Real-time slot locking prevents double bookings for overlapping soundstage timeframes.
-* **Add-On Amenities:** Production control room, lighting grid packages, green screen cyclorama prep, and XR tracking volume.
+### 2. 🎙️ Soundstages, Virtual Production & Podcast Studios
+* **Certified Stages (`/studios`):** 270° Micro-LED virtual production soundstages, Neve & SSL tracking consoles, and infinite cycloramas.
+* **Studio Booking Wizard (`/studio-booking`):** Interactive session type, crew selection, and post-production add-on configuration.
+* **Podcast Suite Booking (`/podcast-booking`):** Luxury 4K multi-cam capture, Shure SM7B broadcast microphones, and live switching feeds.
+* **Social Media Packages (`/social-media-packages`):** Turnkey 4K cinema reels, monthly content engines, and soundstage filming days in Business Bay, Dubai.
 
-### 3. 💳 Ziina UAE Sovereign Payment Engine
+### 3. 🌐 Creator Network & Portfolio Showcases
+* **Creator Hub (`/influencers`):** Top-tier MENA creators (AboFlah, Abir El Saghir, Noor Stars, Narins Beauty) with demographic metrics and portfolio highlights.
+* **Flagship Portfolio (`/projects`):** National campaigns, UAE Flag Day, commercial broadcasts, and original digital productions.
+* **Dynamic OpenGraph Previews:** Dedicated social cards displaying authentic creator avatars and high-resolution project posters on WhatsApp, LinkedIn, Twitter/X, and Facebook.
+
+### 4. 💳 Ziina UAE Sovereign Payment Engine
 * **Instant Card & Apple Pay:** Direct integration with Ziina's UAE payment gateway.
-* **Bank Transfer Fallback:** Automated wire instruction generation for corporate clients.
+* **Bank Transfer Fallback:** Automated wire instruction generation for corporate production entities.
 * **Webhook Reconciler:** Idempotent payment completion handler at `/api/webhooks/production`.
 
-### 4. 🛡️ Mawthooq Compliance & UAE Ad Disclosure
-* **Regulatory Guardian:** AI engine analyzing marketing copy to guarantee compliance with UAE General Authority of Media Regulation (GAMR) Mawthooq licensing rules and `#إعلان` requirements.
-
 ### 5. ⚡ Admin Command Center (`/admin`)
-* **Unified Fleet Management:** Full CRUD operations across gear, studios, influencers, projects, and bookings.
-* **Safe Action Guards:** Interactive `AdminConfirmModal` dialogs replacing native browser `confirm()` / `alert()` popups.
-* **Live Telemetry & Broadcast Metrics:** Real-time revenue summaries and reservation lead counters.
+* **Unified Operations Fleet:** Full CRUD operations across gear, soundstages, bookings, broadcast units, inquiries, creators, and projects.
+* **Safe Action Guards:** Interactive `AdminConfirmModal` dialogs replacing native browser popups.
+* **Broadcast Fleet Telemetry:** Live reservation metrics, revenue tracking, and inquiry status management.
 
 ---
 
-## 🎨 UI/UX Architecture & Layout Rules
+## 🎨 Design, Motion & UI Architecture Standards
 
-As mandated in project rules:
+As defined in the project architecture guidelines:
+
 1. **Global Navigation & Footer Anchoring (Strict LTR):**
    * The Navbar (`Navbar.tsx`), Footer (`Footer.tsx`), and `BrandLogo` are rigidly locked with `dir="ltr"` and `direction: ltr`.
-   * Switching languages to Arabic (RTL) translates text without flipping or reversing the top navigation bar or footer layout.
-2. **Floating Action Elements (Always Anchored Right):**
-   * The Floating Concierge & Copilot actions (`UnifiedFloatingActions.tsx`, `FloatingCopilotButton.tsx`) are rigidly pinned to the bottom-right corner (`right-4 sm:right-6`).
-   * No logical properties like `end-4` are used on floating containers, guaranteeing zero jumpiness when toggling between Arabic and English.
+   * Switching between Arabic and English translates typography without flipping or inverting the physical layout.
+2. **Floating Action Elements (Always Anchored Bottom-Right):**
+   * Floating CTAs and Copilot buttons (`UnifiedFloatingActions.tsx`, `FloatingCopilotButton.tsx`) are pinned to `right-4 sm:right-6` using physical CSS properties.
+   * No logical CSS properties like `end-4` are used, preventing jumps during RTL switching.
+3. **Brand Identity & Geometry:**
+   * Authentic geometric delta triangle (`▲`) with rounded apex corners for the letter `A` in `YASPRO` (`yasprVectorPath.ts`).
+   * Circular camera aperture `[O]` with obsidian blades and `#FFE900` accent blade on 100% transparent backgrounds.
+4. **Color Standards (Purple & Mauve Lighting):**
+   * Studio Mauve (`#987ba5`), Rich Violet (`#765086`), Deep Violet (`#542568`), and Lavender (`#ddd3e1`).
+   * Strictly no amber or yellow shadows anywhere across the application.
+5. **SEO & Metadata Architecture:**
+   * Centralized canonical domain via `SITE_URL` defaulting to `https://yaspro-tablawy.vercel.app`.
+   * Automatic subpage title templating (`%s | Yas Pro`) with zero double suffixes.
+   * Tailored OpenGraph 1200x630 dimensions on all public routes.
+   * `robots: { index: false, follow: false }` protection on `/admin`, `/account`, `/login`, and `/register`.
 
 ---
 
@@ -260,52 +264,50 @@ As mandated in project rules:
 ```
 yaspro/
 ├── src/
-│   ├── app/                         # Next.js App Router
-│   │   ├── (auth)/                  # Sign-in & Sign-up routes
-│   │   ├── admin/                   # Administrative Operations Hub
-│   │   │   ├── gear/                # Equipment management CRUD
-│   │   │   ├── studios/             # Soundstages & scheduling
-│   │   │   ├── inquiries/           # Client lead inbox
-│   │   │   ├── influencers/         # Creator roster
-│   │   │   └── projects/            # Portfolio showcases
-│   │   ├── api/                     # REST endpoints & Ziina webhooks
-│   │   ├── gear/                    # Public Cinema Fleet Catalog
-│   │   ├── studios/                 # Studio detail & booking views
-│   │   ├── portal/                  # Client Self-Service Dashboard
-│   │   └── layout.tsx               # Root layout & providers
-│   ├── components/
-│   │   ├── admin/                   # Admin UI modals & confirm dialogs
-│   │   ├── layout/                  # Navbar, Footer & Brand Logo
-│   │   ├── shared/                  # Reusable badges, buttons & cards
-│   │   └── ui/                      # Base primitives (Radix UI / Tailwind)
-│   ├── db/                          # Neon PostgreSQL database layer
-│   │   ├── index.ts                 # Serverless connection client
-│   │   └── schema.ts                # Drizzle ORM schema definitions
+│   ├── app/                         # Next.js App Router (v16)
+│   │   ├── (admin)/                 # Protected Administrative Operations
+│   │   │   └── admin/               # Gear, bookings, broadcast, CMS
+│   │   ├── (public)/                # Public storefront & discovery routes
+│   │   │   ├── about/               # Heritage & studio vision
+│   │   │   ├── account/             # Client portal & active bookings
+│   │   │   ├── contact/             # Operations & dispatch desk
+│   │   │   ├── influencers/         # Creator roster & profile [slug]
+│   │   │   ├── login/               # Secure client sign-in
+│   │   │   ├── podcast-booking/     # 4K multi-cam podcast wizard
+│   │   │   ├── privacy-policy/      # Privacy governance
+│   │   │   ├── projects/            # Portfolio showcase & [slug]
+│   │   │   ├── register/            # Creator & enterprise registration
+│   │   │   ├── shop/                # Cinema gear rental catalog
+│   │   │   ├── social-media-packages/ # Turnkey digital packages
+│   │   │   ├── studio-booking/      # Soundstage reservation wizard
+│   │   │   ├── studios/             # Soundstage fleet specifications
+│   │   │   └── terms/               # Commercial terms of service
+│   │   ├── api/                     # REST endpoints, auth, webhooks
+│   │   ├── opengraph-image.tsx      # Dynamic brand vector OG generator
+│   │   ├── robots.ts                # Search bot crawler rules
+│   │   ├── sitemap.ts               # Dynamic XML sitemap generator
+│   │   └── layout.tsx               # Root layout, fonts & metadata
+│   ├── components/                  # UI components, layout & animations
+│   ├── db/                          # Neon PostgreSQL & Drizzle schemas
 │   ├── features/                    # Domain-driven feature packages
-│   │   ├── gear/                    # Equipment pricing & cart logic
-│   │   ├── booking/                 # Soundstage calendar scheduler
-│   │   └── rfp/                     # Enterprise RFP multi-step wizard
-│   └── lib/                         # Server actions & utilities
-│       ├── actions/                 # Typed Server Actions (CRUD operations)
-│       ├── ai/                      # Mawthooq & dialect analyzers
-│       ├── auth.ts                  # Better-Auth server configuration
-│       └── ziina.ts                 # Ziina UAE payment integration
-├── public/                          # Optimized images, icons & reels
-└── tests/                           # Unit & integration test suites
+│   └── lib/                         # Server actions, Better-Auth, Ziina, constants
+├── public/                          # Optimized brand assets, aperture icons, reels
+└── tests/                           # 87-test automated unit & integration suite
 ```
 
 ---
 
 ## 🛠️ Environment Variables (`.env.local`)
 
-| Variable | Description | Example / Note |
+| Variable | Description | Example / Default |
 | :--- | :--- | :--- |
-| `DATABASE_URL` | Neon Serverless PostgreSQL connection URL | `postgresql://user:pass@ep-patient-dawn...neon.tech/neondb?sslmode=require` |
-| `BETTER_AUTH_SECRET` | 32-character encryption key for Better-Auth | `w3Z...your-secret-key...` |
-| `NEXT_PUBLIC_APP_URL` | Canonical application URL | `http://localhost:3000` or `https://yasproductions.com` |
+| `DATABASE_URL` | Neon Serverless PostgreSQL connection URL | `postgresql://user:pass@ep-...neon.tech/neondb?sslmode=require` |
+| `BETTER_AUTH_SECRET` | Encryption key for Better-Auth sessions | `32+ character random secret` |
+| `NEXT_PUBLIC_APP_URL` | Canonical application URL | `https://yaspro-tablawy.vercel.app` |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Commercial concierge WhatsApp number | `971554010465` |
 | `ZIINA_API_KEY` | Ziina UAE Gateway Production/Sandbox API key | `sec_...` |
-| `ZIINA_SIMULATE_PAYMENTS` | Allows sandbox mock transactions for testing | `true` in development, `false` in production |
-| `ADMIN_SEED_PASSWORD` | Seed password for initial master admin accounts | Required for running database seed scripts |
+| `ZIINA_SIMULATE_PAYMENTS` | Allows sandbox mock transactions for testing | `true` (dev) / `false` (prod) |
+| `ADMIN_SEED_PASSWORD` | Seed password for initial master admin accounts | Required for running seed scripts |
 
 ---
 
@@ -317,11 +319,8 @@ yaspro/
 
 ### 2. Installation
 ```bash
-# Clone the repository
-git clone https://github.com/yasproductions/yaspro.git
+git clone https://github.com/galilio2023/yaspro.git
 cd yaspro
-
-# Install project dependencies
 npm install
 ```
 
@@ -332,27 +331,31 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### 4. Run Test Suite
-The codebase includes a comprehensive 117-test suite verifying database isolation, payment intents, rate limits, cart pricing, and admin mutations:
+The codebase includes an 87-test suite verifying database isolation, payment intents, rate limits, cart pricing, and admin mutations:
 ```bash
 npm test
 ```
 ```text
-ℹ tests 117
+ℹ tests 87
 ℹ suites 0
-ℹ pass 117
+ℹ pass 87
 ℹ fail 0
-ℹ duration_ms ~9800ms
+```
+
+### 5. Type Check & Production Build
+```bash
+npm run typecheck
+npm run build
 ```
 
 ---
 
 ## 🚢 Deployment
 
-### Vercel Production Deployment
-1. Import the repository into your **Vercel** team account.
+The platform is deployed on **Vercel** with automatic deployment on commit to `main`:
+1. Vercel automatically detects the Next.js 16 App Router configuration.
 2. In **Project Settings ➔ Environment Variables**, configure all variables from `.env.local`.
-3. Set the build command to `npm run build` and output directory to `.next`.
-4. Deploy! Neon PostgreSQL automatically handles pooled connections via `@neondatabase/serverless`.
+3. Neon PostgreSQL handles serverless pooled connections through `@neondatabase/serverless`.
 
 ---
 
