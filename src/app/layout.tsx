@@ -71,13 +71,13 @@ export const metadata: Metadata = {
   ],
   icons: {
     icon: [
-      { url: "/favicon.ico?v=yaspro10", sizes: "any" },
-      { url: "/favicon.svg?v=yaspro10", type: "image/svg+xml" },
-      { url: "/favicon-32x32.png?v=yaspro10", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-16x16.png?v=yaspro10", sizes: "16x16", type: "image/png" },
+      { url: "/favicon.ico?v=yaspro12", sizes: "any" },
+      { url: "/favicon.svg?v=yaspro12", type: "image/svg+xml" },
+      { url: "/favicon-32x32.png?v=yaspro12", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png?v=yaspro12", sizes: "16x16", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-touch-icon.png?v=yaspro10", sizes: "180x180", type: "image/png" },
+      { url: "/apple-touch-icon.png?v=yaspro12", sizes: "180x180", type: "image/png" },
     ],
   },
   manifest: "/manifest.webmanifest",
