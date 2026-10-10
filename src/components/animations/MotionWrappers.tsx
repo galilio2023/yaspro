@@ -67,11 +67,10 @@ export function FadeUp({
     return () => observer.disconnect();
   }, [delay]);
 
-  const Component = Tag as any;
   return (
-    <Component ref={ref} dir={dir} className={cn("w-full", className)}>
+    <Tag ref={ref} dir={dir} className={cn("w-full", className)}>
       {children}
-    </Component>
+    </Tag>
   );
 }
 
@@ -127,11 +126,10 @@ export function StudioScrollSection({
     return () => observer.disconnect();
   }, []);
 
-  const Component = Tag as any;
   return (
-    <Component ref={ref} id={id} className={cn("w-full", className)}>
+    <Tag ref={ref} id={id} className={cn("w-full", className)}>
       {children}
-    </Component>
+    </Tag>
   );
 }
 
@@ -201,11 +199,10 @@ export function StaggerContainer({
     return () => observer.disconnect();
   }, [staggerDelay]);
 
-  const Component = Tag as any;
   return (
-    <Component ref={ref} role={role} className={className}>
+    <Tag ref={ref} role={role} className={className}>
       {children}
-    </Component>
+    </Tag>
   );
 }
 
@@ -225,11 +222,10 @@ export function StaggerItem({
   as: Tag = "div",
   id,
 }: StaggerItemProps) {
-  const Component = Tag as any;
   return (
-    <Component id={id} className={cn("w-full h-full", className)}>
+    <Tag id={id} className={cn("w-full h-full", className)}>
       {children}
-    </Component>
+    </Tag>
   );
 }
 
