@@ -5,9 +5,25 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { FileCheck, Shield, AlertTriangle, Scale } from "lucide-react";
 import { BackButton } from "@/components/ui/back-button";
 
+import { SITE_URL } from "@/lib/constants";
+
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "Terms and conditions governing soundstage booking, equipment rental, outside broadcast dispatch, and creator partnerships with Yas Pro Media LLC.",
+  description:
+    "Standard commercial conditions governing soundstage hire, cinema equipment rental, OB-Van deployment, and creator partnerships.",
+  openGraph: {
+    title: "Terms of Service • Yas Pro",
+    description:
+      "Standard commercial conditions governing soundstage hire, cinema equipment rental, OB-Van deployment, and creator partnerships.",
+    url: `${SITE_URL}/terms`,
+  },
+  twitter: {
+    card: "summary",
+    title: "Terms of Service • Yas Pro",
+  },
+  alternates: {
+    canonical: `${SITE_URL}/terms`,
+  },
 };
 
 export default function TermsOfServicePage() {

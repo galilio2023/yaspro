@@ -6,7 +6,15 @@ import { PortfolioSection } from "@/components/sections/PortfolioSection";
 import InfluencersSection from "@/components/sections/InfluencersSection";
 
 
+import type { Metadata } from "next";
+
 export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default function HomePage() {
   return (

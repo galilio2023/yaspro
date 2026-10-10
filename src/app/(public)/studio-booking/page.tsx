@@ -9,9 +9,36 @@ import { Container } from "@/components/ui/container";
 
 import { StudioBookingPageHeader } from "@/features/booking/components/StudioBookingPageHeader";
 
+import { SITE_URL } from "@/lib/constants";
+
 export const metadata: Metadata = {
-  title: "Studio Booking",
-  description: "Book a professional studio session at Yas Pro. Choose your studio, session type, crew, and post-production services.",
+  title: "Soundstage & Studio Booking",
+  description:
+    "Book a professional studio session at Yas Pro. Choose your studio, session type, crew, and post-production services in Dubai.",
+  openGraph: {
+    title: "Soundstage & Studio Booking • Yas Pro Dubai",
+    description:
+      "Book certified virtual production soundstages, green screen volumes, and broadcast studios at Yas Pro in Business Bay, Dubai.",
+    url: `${SITE_URL}/studio-booking`,
+    images: [
+      {
+        url: `${SITE_URL}/images/studios/nature-grid.jpg`,
+        width: 1200,
+        height: 630,
+        alt: "Yas Pro Studio Booking Dubai",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Soundstage & Studio Booking • Yas Pro Dubai",
+    description:
+      "Book certified virtual production soundstages, green screen volumes, and broadcast studios at Yas Pro.",
+    images: [`${SITE_URL}/images/studios/nature-grid.jpg`],
+  },
+  alternates: {
+    canonical: `${SITE_URL}/studio-booking`,
+  },
 };
 
 const STUDIO_BOOKING_SCHEMA = {

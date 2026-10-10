@@ -10,15 +10,42 @@ import { AboutCtaBanner } from "@/features/about/components/AboutCtaBanner";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 
+import { SITE_URL } from "@/lib/constants";
+
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   const isArabic = locale === "ar";
 
+  const title = isArabic ? "عن الشركة والمنظومة" : "About Us";
+  const desc = isArabic
+    ? "تعرف على Yas Pro Media — المنظومة الإنتاجية الأسرع نمواً في الشرق الأوسط للإنتاج الافتراضي وصناع المحتوى."
+    : "Learn about Yas Pro Media — the premier AI media production and virtual soundstage ecosystem in Dubai.";
+
   return {
-    title: isArabic ? "عن Yas Pro" : "About Us",
-    description: isArabic
-      ? "تعرف على Yas Pro Media — المنظومة الإنتاجية الأسرع نمواً في الشرق الأوسط."
-      : "Learn about Yas Pro Media — the fastest-growing AI media production company in the Gulf region.",
+    title,
+    description: desc,
+    openGraph: {
+      title: `${title} • Yas Pro`,
+      description: desc,
+      url: `${SITE_URL}/about`,
+      images: [
+        {
+          url: `${SITE_URL}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} • Yas Pro`,
+      description: desc,
+      images: [`${SITE_URL}/opengraph-image`],
+    },
+    alternates: {
+      canonical: `${SITE_URL}/about`,
+    },
   };
 }
 

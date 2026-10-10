@@ -20,11 +20,17 @@ import { YasproEmblem } from "@/components/ui/YasproEmblem";
 import { AdminMobileNav } from "@/components/admin/AdminMobileNav";
 import { AdminSignOutButton } from "@/components/admin/AdminSignOutButton";
 
+import type { Metadata } from "next";
+
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Admin CMS | Yas Productions",
+export const metadata: Metadata = {
+  title: "Admin CMS",
   description: "Enterprise content & operations management backed by Neon PostgreSQL and Drizzle ORM.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 const NAV_ITEMS = [

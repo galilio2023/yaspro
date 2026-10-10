@@ -11,11 +11,38 @@ import type { ProjectItem, ProjectCategory } from "@/features/projects/types";
 
 import { ProjectsPageHeader } from "@/features/projects/components/ProjectsPageHeader";
 
+import { SITE_URL } from "@/lib/constants";
+
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Projects & Portfolio",
-  description: "Explore Yas Pro productions: Government initiatives, high-profile commercial campaigns, and original digital shows.",
+  title: "Projects & Production Portfolio",
+  description:
+    "Explore signature productions by Yas Pro: Government initiatives, high-profile commercial campaigns, and original digital shows.",
+  openGraph: {
+    title: "Projects & Production Portfolio • Yas Pro",
+    description:
+      "Explore signature productions by Yas Pro: Government initiatives, high-profile commercial campaigns, and original digital shows.",
+    url: `${SITE_URL}/projects`,
+    images: [
+      {
+        url: `${SITE_URL}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Yas Pro Production Portfolio",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Projects & Production Portfolio • Yas Pro",
+    description:
+      "Explore signature productions by Yas Pro: Government initiatives, high-profile commercial campaigns, and original digital shows.",
+    images: [`${SITE_URL}/opengraph-image`],
+  },
+  alternates: {
+    canonical: `${SITE_URL}/projects`,
+  },
 };
 
 export default async function ProjectsPage() {
