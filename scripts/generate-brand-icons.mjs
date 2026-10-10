@@ -4,17 +4,15 @@ import path from 'path';
 
 /**
  * Creates the authentic Yas Pro Aperture O SVG.
- * For browser tabs (favicons), scale is 0.985 (full-bleed, filling the 16x16/32x32 tab).
+ * Strictly 100% transparent outside the circular aperture perimeter (RGBA 0,0,0,0)
+ * in accordance with Rule 3 of AGENTS.md. Never generates square or dark background tiles.
+ *
  * The purple glow is built directly into:
  * 1) Multi-layered Studio Mauve (#987ba5) & Rich Violet (#765086) perimeter neon aura rings.
  * 2) Internal Deep Violet & Mauve gradient lighting in the aperture body.
  * 3) Luminous Studio Mauve iris pupil and center core.
  */
-function createFaviconSvg({ scale = 0.985, isSolidBg = false } = {}) {
-  const bgElement = isSolidBg
-    ? '<rect width="512" height="512" fill="#03020a" />'
-    : '';
-
+function createFaviconSvg({ scale = 0.985 } = {}) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none">
   <defs>
     <!-- Rich Studio Mauve & Violet Aperture Halo Gradient -->
@@ -49,9 +47,7 @@ function createFaviconSvg({ scale = 0.985, isSolidBg = false } = {}) {
     </filter>
   </defs>
 
-  ${bgElement}
-
-  <!-- Full-bleed Aperture Container (Scales to 98.5% so it fills the browser tab completely) -->
+  <!-- Full-bleed Aperture Container (Transparent background outside perimeter) -->
   <g transform="translate(256, 256) scale(${scale}) translate(-256, -256)">
     <!-- Outer Radiant Purple Aura Ring (glows on dark and light browser tabs) -->
     <circle cx="256" cy="256" r="253" fill="none" stroke="#765086" stroke-width="12" stroke-opacity="0.8" />
@@ -107,29 +103,29 @@ function createIco(pngBuffers) {
 
 async function main() {
   const root = process.cwd();
-  console.log('Generating full-bleed brand icons with radiant Studio Mauve & Violet halo...');
+  console.log('Generating 100% transparent brand icon suite (no background tiles, pure RGBA 0,0,0,0 outside aperture)...');
 
-  // 1. Full-bleed SVG (scale: 0.985) so the browser tab icon is LARGE and fills the tab edge-to-edge
-  const fullBleedSvg = createFaviconSvg({ scale: 0.985, isSolidBg: false });
+  // 1. Vector SVG (100% transparent background)
+  const fullBleedSvg = createFaviconSvg({ scale: 0.985 });
   fs.writeFileSync(path.join(root, 'public/favicon.svg'), fullBleedSvg.trim());
   fs.writeFileSync(path.join(root, 'src/app/icon.svg'), fullBleedSvg.trim());
-  console.log('✓ Written full-bleed public/favicon.svg and src/app/icon.svg');
+  console.log('✓ Written transparent public/favicon.svg and src/app/icon.svg');
 
-  // Master render of full-bleed icon
+  // Master render with transparent background
   const masterBuf = await sharp(Buffer.from(fullBleedSvg)).png().toBuffer();
 
-  // 2. Favicons: 16x16 and 32x32 from the full-bleed master
+  // 2. Favicons: 16x16 and 32x32 (transparent background)
   const png16 = await sharp(masterBuf).resize(16, 16).png().toBuffer();
   fs.writeFileSync(path.join(root, 'public/favicon-16x16.png'), png16);
-  console.log('✓ Written full-bleed public/favicon-16x16.png');
+  console.log('✓ Written transparent public/favicon-16x16.png');
 
   const png32 = await sharp(masterBuf).resize(32, 32).png().toBuffer();
   fs.writeFileSync(path.join(root, 'public/favicon-32x32.png'), png32);
-  console.log('✓ Written full-bleed public/favicon-32x32.png');
+  console.log('✓ Written transparent public/favicon-32x32.png');
 
   const png48 = await sharp(masterBuf).resize(48, 48).png().toBuffer();
 
-  // Multi-size ICO (16x16, 32x32, 48x48)
+  // Multi-size ICO (16x16, 32x32, 48x48) with transparent background
   const icoBuf = createIco([
     { width: 16, height: 16, buffer: png16 },
     { width: 32, height: 32, buffer: png32 },
@@ -137,29 +133,25 @@ async function main() {
   ]);
   fs.writeFileSync(path.join(root, 'public/favicon.ico'), icoBuf);
   fs.writeFileSync(path.join(root, 'src/app/favicon.ico'), icoBuf);
-  console.log('✓ Written full-bleed public/favicon.ico and src/app/favicon.ico');
+  console.log('✓ Written transparent public/favicon.ico and src/app/favicon.ico');
 
-  // 3. PWA launcher icons (large and bold at scale 0.96)
-  const pwaSvg = createFaviconSvg({ scale: 0.96, isSolidBg: false });
-  const pwaMaster = await sharp(Buffer.from(pwaSvg)).png().toBuffer();
-
-  const png192 = await sharp(pwaMaster).resize(192, 192).png().toBuffer();
+  // 3. PWA launcher icons: 192x192 and 512x512 (100% transparent background)
+  const png192 = await sharp(masterBuf).resize(192, 192).png().toBuffer();
   fs.writeFileSync(path.join(root, 'public/icon-192.png'), png192);
-  console.log('✓ Written public/icon-192.png');
+  console.log('✓ Written transparent public/icon-192.png');
 
-  const png512 = await sharp(pwaMaster).resize(512, 512).png().toBuffer();
+  const png512 = await sharp(masterBuf).resize(512, 512).png().toBuffer();
   fs.writeFileSync(path.join(root, 'public/icon-512.png'), png512);
   fs.writeFileSync(path.join(root, 'src/app/icon.png'), png512);
-  console.log('✓ Written public/icon-512.png and src/app/icon.png');
+  console.log('✓ Written transparent public/icon-512.png and src/app/icon.png');
 
-  // 4. Apple Touch Icon (180x180 on dark obsidian background)
-  const iosSvg = createFaviconSvg({ scale: 0.88, isSolidBg: true });
-  const ios180 = await sharp(Buffer.from(iosSvg)).resize(180, 180).png().toBuffer();
-  fs.writeFileSync(path.join(root, 'public/apple-touch-icon.png'), ios180);
-  fs.writeFileSync(path.join(root, 'src/app/apple-icon.png'), ios180);
-  console.log('✓ Written public/apple-touch-icon.png and src/app/apple-icon.png');
+  // 4. Apple Touch Icon: 180x180 (100% transparent background - NO dark square background!)
+  const png180 = await sharp(masterBuf).resize(180, 180).png().toBuffer();
+  fs.writeFileSync(path.join(root, 'public/apple-touch-icon.png'), png180);
+  fs.writeFileSync(path.join(root, 'src/app/apple-icon.png'), png180);
+  console.log('✓ Written transparent public/apple-touch-icon.png and src/app/apple-icon.png');
 
-  console.log('🎉 Brand icons updated successfully: FULL SIZE with radiant purple rim!');
+  console.log('🎉 100% transparent icon suite generated successfully across all assets!');
 }
 
 main().catch((err) => {

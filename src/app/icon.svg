@@ -32,9 +32,7 @@
     </filter>
   </defs>
 
-  
-
-  <!-- Full-bleed Aperture Container (Scales to 98.5% so it fills the browser tab completely) -->
+  <!-- Full-bleed Aperture Container (Transparent background outside perimeter) -->
   <g transform="translate(256, 256) scale(0.985) translate(-256, -256)">
     <!-- Outer Radiant Purple Aura Ring (glows on dark and light browser tabs) -->
     <circle cx="256" cy="256" r="253" fill="none" stroke="#765086" stroke-width="12" stroke-opacity="0.8" />
