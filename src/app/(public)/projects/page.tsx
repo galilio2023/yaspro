@@ -12,6 +12,7 @@ import type { ProjectItem, ProjectCategory } from "@/features/projects/types";
 import { ProjectsPageHeader } from "@/features/projects/components/ProjectsPageHeader";
 
 import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
 
 export const revalidate = 3600;
 
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
   description:
     "Explore signature productions by Yas Pro: Government initiatives, high-profile commercial campaigns, and original digital shows.",
   openGraph: {
+    ...SHARED_OPEN_GRAPH,
     title: "Projects & Production Portfolio • Yas Pro",
     description:
       "Explore signature productions by Yas Pro: Government initiatives, high-profile commercial campaigns, and original digital shows.",

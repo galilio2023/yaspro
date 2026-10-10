@@ -7,6 +7,7 @@ import { Container } from "@/components/ui/container";
 import { BookingHero } from "@/features/booking/components/ui/BookingKit";
 
 import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
 
 export const metadata: Metadata = {
   title: "Podcast Studio Booking in Dubai",
@@ -21,6 +22,7 @@ export const metadata: Metadata = {
     "vodcast studio uae",
   ],
   openGraph: {
+    ...SHARED_OPEN_GRAPH,
     title: "Podcast Studio Booking in Dubai • Yas Pro",
     description:
       "Book your luxury 4K multi-cam podcast session with Sony capture and Shure SM7B mics in Business Bay, Dubai.",

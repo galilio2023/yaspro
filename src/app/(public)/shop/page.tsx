@@ -10,6 +10,7 @@ import type { GearItem, GearCategory } from "@/features/gear/types";
 import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
 
 import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
 
 export const revalidate = 3600;
 
@@ -26,6 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description: desc,
     openGraph: {
+      ...SHARED_OPEN_GRAPH,
       title: `${title} • Yas Pro`,
       description: desc,
       url: `${SITE_URL}/shop`,

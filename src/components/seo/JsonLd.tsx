@@ -44,8 +44,8 @@ export const YAS_PRO_ORGANIZATION_SCHEMA = {
   },
   geo: {
     "@type": "GeoCoordinates",
-    latitude: 25.0345,
-    longitude: 55.1912,
+    latitude: 25.1873,
+    longitude: 55.2602,
   },
   openingHoursSpecification: [
     {

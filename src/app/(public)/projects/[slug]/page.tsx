@@ -11,6 +11,7 @@ import { ProjectTechStack } from "@/features/projects/components/ProjectTechStac
 import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
 
 import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
 
 export const dynamicParams = true;
 export const revalidate = 3600;
@@ -41,6 +42,7 @@ export async function generateMetadata({
     title: project.title,
     description: project.description,
     openGraph: {
+      ...SHARED_OPEN_GRAPH,
       title: `${project.title} • Yas Pro Projects`,
       description: project.description,
       url: `${SITE_URL}/projects/${project.slug}`,

@@ -11,6 +11,7 @@ import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 
 import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -25,6 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description: desc,
     openGraph: {
+      ...SHARED_OPEN_GRAPH,
       title: `${title} • Yas Pro`,
       description: desc,
       url: `${SITE_URL}/about`,

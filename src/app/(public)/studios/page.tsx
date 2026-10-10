@@ -4,6 +4,7 @@ import { getCachedStudios } from "@/lib/cached-queries";
 import { getDynamicSoundstages } from "@/features/studios/data";
 
 import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
 
 export const revalidate = 3600;
 
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
   description:
     "Explore Yas Pro's certified production soundstages in Business Bay, Dubai. Featuring 270° Micro-LED virtual production, Neve & SSL consoles, and infinite cycloramas.",
   openGraph: {
+    ...SHARED_OPEN_GRAPH,
     title: "Soundstages & Production Studios in Dubai • Yas Pro",
     description:
       "Acoustically certified soundstages, live tracking rooms, and podcast suites equipped with Neve, SSL, Shure, and 270° Micro-LED volumes at Business Bay Dubai.",

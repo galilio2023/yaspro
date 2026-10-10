@@ -10,6 +10,7 @@ import { PackageComparisonTable } from "@/features/social-media-packages/compone
 import { PackageFaqSection } from "@/features/social-media-packages/components/PackageFaqSection";
 
 import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -34,6 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
       "إنتاج محتوى رقمي",
     ],
     openGraph: {
+      ...SHARED_OPEN_GRAPH,
       title: isArabic
         ? "باقات السوشيال ميديا السينمائية • Yas Pro دبي"
         : "Social Media Production Packages • Yas Pro Dubai",

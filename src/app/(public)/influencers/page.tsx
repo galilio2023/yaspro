@@ -9,6 +9,7 @@ import type { InfluencerItem, CreatorDemographics } from "@/features/influencers
 import { InfluencersPageHeader } from "@/features/influencers/components/InfluencersPageHeader";
 
 import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
 
 export const revalidate = 3600;
 
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
   description:
     "Explore the creators partnering with Yas Pro: Abo Flah, Abir El Saghir, Noor Stars, Narins Beauty, and leading MENA digital creators.",
   openGraph: {
+    ...SHARED_OPEN_GRAPH,
     title: "Creator Network & Influencer Hub • Yas Pro",
     description:
       "Explore top MENA digital creators partnering with Yas Pro: Abo Flah, Abir El Saghir, Noor Stars, Narins Beauty, and more.",

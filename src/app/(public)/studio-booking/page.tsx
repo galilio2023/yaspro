@@ -10,12 +10,14 @@ import { Container } from "@/components/ui/container";
 import { StudioBookingPageHeader } from "@/features/booking/components/StudioBookingPageHeader";
 
 import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
 
 export const metadata: Metadata = {
   title: "Soundstage & Studio Booking",
   description:
     "Book a professional studio session at Yas Pro. Choose your studio, session type, crew, and post-production services in Dubai.",
   openGraph: {
+    ...SHARED_OPEN_GRAPH,
     title: "Soundstage & Studio Booking • Yas Pro Dubai",
     description:
       "Book certified virtual production soundstages, green screen volumes, and broadcast studios at Yas Pro in Business Bay, Dubai.",

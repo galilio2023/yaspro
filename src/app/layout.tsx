@@ -36,6 +36,7 @@ export const viewport: Viewport = {
 };
 
 import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -69,10 +70,9 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.webmanifest",
   openGraph: {
+    ...SHARED_OPEN_GRAPH,
     type: "website",
-    locale: "en_US",
     url: SITE_URL,
-    siteName: "Yas Pro | AI Media Hub",
     title: "Yas Pro | AI Media Hub & Virtual Production",
     description:
       "Premier AI Media Hub in Dubai: 3D virtual production soundstages, OB-VAN live broadcast, cinema gear rental, and top-tier MENA creator network.",

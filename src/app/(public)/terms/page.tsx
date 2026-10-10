@@ -6,12 +6,14 @@ import { FileCheck, Shield, AlertTriangle, Scale } from "lucide-react";
 import { BackButton } from "@/components/ui/back-button";
 
 import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
   description:
     "Standard commercial conditions governing soundstage hire, cinema equipment rental, OB-Van deployment, and creator partnerships.",
   openGraph: {
+    ...SHARED_OPEN_GRAPH,
     title: "Terms of Service • Yas Pro",
     description:
       "Standard commercial conditions governing soundstage hire, cinema equipment rental, OB-Van deployment, and creator partnerships.",
