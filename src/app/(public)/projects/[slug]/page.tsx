@@ -64,8 +64,8 @@ export default async function ProjectDetailPage({
   return (
     <section className="w-full pt-20 pb-10 sm:pt-28 sm:pb-16 md:py-20 bg-background relative overflow-hidden flex flex-col items-center">
       <JsonLd data={PROJECT_SCHEMA} />
-      {/* Background ambient lighting */}
-      <div className="absolute top-20 right-1/4 size-[600px] bg-brand-mauve/10 rounded-full blur-[160px] pointer-events-none" />
+      {/* Background ambient lighting (responsive sizing & blur for mobile, tablet, and desktop) */}
+      <div className="absolute top-10 sm:top-20 right-4 sm:right-1/4 size-72 sm:size-[500px] lg:size-[600px] bg-brand-mauve/20 sm:bg-brand-mauve/10 rounded-full blur-[60px] sm:blur-[120px] lg:blur-[160px] pointer-events-none" />
 
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <BackButton href="/projects" label="Back to Projects" />

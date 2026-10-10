@@ -34,8 +34,14 @@ export default function HeroSection() {
           {/* ── Left Column: Editorial Studio Content ── */}
           <FadeUp
             dir={isArabic ? "rtl" : "ltr"}
-            className="lg:col-span-7 flex flex-col items-center text-center lg:items-start lg:text-start"
+            className="lg:col-span-7 flex flex-col items-center text-center lg:items-start lg:text-start relative"
           >
+            {/* Mobile & Tablet Key Ambient Backlight (guarantees studio radiance above the fold) */}
+            <div
+              aria-hidden="true"
+              className="lg:hidden absolute -top-8 left-1/2 -translate-x-1/2 w-72 sm:w-96 h-48 sm:h-64 bg-brand-violet/20 blur-[55px] rounded-full pointer-events-none -z-10"
+            />
+
             <h1
               id="hero-title"
               className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-6 font-display rtl:font-arabic tracking-tight leading-[1.1] rtl:leading-[1.4] text-balance drop-shadow-lg"

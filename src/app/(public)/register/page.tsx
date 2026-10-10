@@ -102,7 +102,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-[85vh] flex items-center justify-center p-4 py-12 sm:py-16">
       {/* Ambient Glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[450px] bg-brand-violet/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[550px] h-[260px] sm:h-[450px] bg-brand-violet/25 sm:bg-brand-violet/20 rounded-full blur-2xl sm:blur-3xl pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-lg mx-auto p-6 sm:p-10 rounded-3xl bg-[#0c0b10] border border-white/10 backdrop-blur-2xl shadow-2xl">
         <div className="text-center mb-8">

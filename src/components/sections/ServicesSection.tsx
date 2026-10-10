@@ -59,6 +59,16 @@ export function ServicesSection() {
       aria-label="Services Section"
       className="bg-black relative overflow-hidden py-16 sm:py-24"
     >
+      {/* Subtle ambient stage keylights (responsive violet/mauve radiance) */}
+      <div
+        className="absolute top-1/4 -left-12 sm:left-4 w-64 sm:w-96 h-64 sm:h-96 bg-brand-violet/20 sm:bg-brand-violet/15 blur-[60px] sm:blur-[120px] rounded-full pointer-events-none z-0"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute bottom-10 -right-12 sm:right-4 w-60 sm:w-80 h-60 sm:h-80 bg-brand-mauve/20 sm:bg-brand-mauve/15 blur-[60px] sm:blur-[110px] rounded-full pointer-events-none z-0"
+        aria-hidden="true"
+      />
+
       <Container className="relative z-10 max-w-7xl">
         {/* Section Header with Clean Studio Hierarchy */}
         <SectionHeader

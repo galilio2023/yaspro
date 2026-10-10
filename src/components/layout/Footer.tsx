@@ -151,7 +151,7 @@ export default function Footer() {
           backgroundSize: "64px 64px",
         }}
       />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-amber-500/[0.03] blur-[100px] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-brand-mauve/[0.05] blur-[100px] pointer-events-none" />
 
       {/* ─── 1. STUDIO PRE-FOOTER ACTION HEADER ─── */}
       <div className="w-full border-b border-white/[0.06] bg-white/[0.01] relative z-10">
