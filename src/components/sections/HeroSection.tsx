@@ -22,29 +22,29 @@ export default function HeroSection() {
     <Section
       id="hero"
       aria-labelledby="hero-title"
-      className="min-h-[calc(100dvh-3.5rem)] sm:min-h-[calc(100dvh-4.5rem)] flex items-center justify-center py-8 sm:py-12 md:py-20 bg-transparent relative overflow-hidden film-grain"
+      className="min-h-[calc(100dvh-3.5rem)] sm:min-h-[calc(100dvh-4.5rem)] md:min-h-0 lg:min-h-[calc(100dvh-4.5rem)] flex items-center justify-center py-8 sm:py-10 md:py-12 lg:py-16 xl:py-20 bg-transparent relative overflow-hidden film-grain"
     >
 
 
       <Container className="relative z-10">
         {/* dir="ltr" locks physical column order — text always left, vista always right.
             Arabic content renders RTL inside via dir="auto" on the content column. */}
-        <div dir="ltr" className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-16 items-center">
+        <div dir="ltr" className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-8 lg:gap-16 items-center">
 
           {/* ── Left Column: Editorial Studio Content ── */}
           <FadeUp
             dir={isArabic ? "rtl" : "ltr"}
-            className="lg:col-span-7 flex flex-col items-center text-center lg:items-start lg:text-start relative"
+            className="md:col-span-6 lg:col-span-7 flex flex-col items-center text-center md:items-start md:text-start relative"
           >
-            {/* Mobile & Tablet Key Ambient Backlight (guarantees studio radiance above the fold) */}
+            {/* Mobile Key Ambient Backlight (hidden on md+ since tablet is side-by-side) */}
             <div
               aria-hidden="true"
-              className="lg:hidden absolute -top-8 left-1/2 -translate-x-1/2 w-72 sm:w-96 h-48 sm:h-64 bg-brand-violet/20 blur-[55px] rounded-full pointer-events-none -z-10"
+              className="md:hidden absolute -top-8 left-1/2 -translate-x-1/2 w-72 sm:w-96 h-48 sm:h-64 bg-brand-violet/20 blur-[55px] rounded-full pointer-events-none -z-10"
             />
 
             <h1
               id="hero-title"
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-6 font-display rtl:font-arabic tracking-tight leading-[1.1] rtl:leading-[1.4] text-balance drop-shadow-lg"
+              className="text-4xl sm:text-5xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white mb-4 sm:mb-6 font-display rtl:font-arabic tracking-tight leading-[1.1] rtl:leading-[1.4] text-balance drop-shadow-lg"
             >
               {isArabic ? (
                 <>
@@ -66,11 +66,11 @@ export default function HeroSection() {
               )}
             </h1>
 
-            <p className="text-base sm:text-lg text-zinc-300 mb-8 max-w-full sm:max-w-xl text-balance leading-relaxed font-normal">
+            <p className="text-base sm:text-lg md:text-base lg:text-lg text-zinc-300 mb-6 sm:mb-8 max-w-full sm:max-w-xl md:max-w-md lg:max-w-xl text-balance leading-relaxed font-normal">
               {t("hero.subtitle")}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-10 w-full">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center md:justify-start items-center mb-0 w-full">
               {/* Primary Studio Action - Opens Book Now Modal */}
               <MagneticButton className="w-full sm:w-auto" strength={0.25} radius={90}>
                 <button
@@ -109,9 +109,9 @@ export default function HeroSection() {
           </FadeUp>
 
           {/* ── Right Column: Visionary Creator with Heroic Presence & 3D Media Orbit ── */}
-          <div className="lg:col-span-5 relative flex items-center justify-center mt-12 lg:mt-0 min-h-[500px] sm:min-h-[560px] lg:min-h-[600px]">
+          <div className="md:col-span-6 lg:col-span-5 relative flex items-center justify-center mt-8 md:mt-0 min-h-[380px] sm:min-h-[440px] md:min-h-[480px] lg:min-h-[560px] xl:min-h-[600px]">
             {/* Main Central Persona Container with commanded scale */}
-            <div className="relative w-full max-w-[350px] sm:max-w-[420px] lg:max-w-[460px] xl:max-w-[500px] select-none">
+            <div className="relative w-full max-w-[300px] sm:max-w-[360px] md:max-w-[380px] lg:max-w-[460px] xl:max-w-[500px] select-none">
               
               {/* Studio Key & Rim Light Halo Behind Character (No Badges) */}
               <div className="absolute -inset-4 pointer-events-none -z-10">

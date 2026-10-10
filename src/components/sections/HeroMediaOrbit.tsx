@@ -138,16 +138,30 @@ export function HeroMediaOrbit() {
       const cx = w * 0.5;
       const cy = h * 0.32;
 
-      // Expanded 3D Orbit radii: significantly larger circle envelope
-      const nodes = containerRef.current.querySelectorAll<HTMLElement>("[data-neon-node]");
-      const centerX = rect.left + cx;
-      const viewportClearance = Math.min(centerX, document.documentElement.clientWidth - centerX);
-      // Include maximum depth/hover scale and the horizontal component of the float bob.
-      const nodeHalfWidth = Math.max(0, ...Array.from(nodes, (node) => node.offsetWidth)) * 1.17 * 1.3 / 2;
-      const availableRadius = Math.max(0, viewportClearance - nodeHalfWidth - 8 * Math.abs(sinTilt));
-      const rx = Math.min(w * 0.82, 310, availableRadius);
-      const ry = rx * 0.48; // Generous vertical depth clearance
+      // Expanded 3D Orbit radii with generous breathing room across all screens
+      const clientWidth = typeof window !== "undefined" ? (document.documentElement.clientWidth || window.innerWidth) : 1024;
+      const isTabletOrDesktop = clientWidth >= 768;
 
+      // Target radius calibrated to ensure social media nodes orbit freely with spacious breathing room
+      let targetRx: number;
+      if (clientWidth >= 1200) {
+        targetRx = Math.max(300, Math.min(w * 0.88, 330));
+      } else if (isTabletOrDesktop) {
+        // On tablet, ensure the orbit breathes with a confident, open celestial radius
+        targetRx = Math.max(270, Math.min(w * 0.92, 310));
+      } else {
+        // Mobile
+        targetRx = Math.max(210, Math.min(w * 0.82, 255));
+      }
+
+      // Smooth horizontal viewport bounds without aggressive micro-clamping
+      const centerX = rect.left + cx;
+      const rightClearance = clientWidth - centerX;
+      const safeMaxRadius = Math.max(targetRx * 0.88, rightClearance + 25);
+      const rx = Math.min(targetRx, safeMaxRadius);
+      const ry = rx * 0.49; // Generous vertical depth clearance
+
+      const nodes = containerRef.current.querySelectorAll<HTMLElement>("[data-neon-node]");
       nodes.forEach((el, index) => {
         const item = NEON_MEDIA_NODES[index];
         if (!item) return;
