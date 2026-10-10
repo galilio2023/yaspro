@@ -6,7 +6,6 @@ import {
   sessions,
   accounts,
   bookings,
-  enterpriseRfps,
   type User,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
@@ -159,10 +158,7 @@ export async function deleteCmsUser(userId: string): Promise<CmsResponse> {
         // 1. Unlink historical bookings (preserve booking records with audit trail)
         await tx.update(bookings).set({ userId: null }).where(eq(bookings.userId, userId));
 
-        // 2. Unlink any enterprise RFPs (preserve proposal records)
-        await tx.update(enterpriseRfps).set({ userId: null }).where(eq(enterpriseRfps.userId, userId));
-
-        // 3. Delete active sessions
+        // 2. Delete active sessions
         await tx.delete(sessions).where(eq(sessions.userId, userId));
 
         // 4. Delete authentication accounts / credentials

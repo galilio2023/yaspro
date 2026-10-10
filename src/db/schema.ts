@@ -289,40 +289,6 @@ export const influencers = pgTable("influencers", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// ─── Enterprise RFPs & Sovereign Operations ──────────────────────────────────
-
-export const enterpriseRfps = pgTable(
-  "enterprise_rfps",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
-    referenceCode: text("reference_code").notNull().unique(),
-    organizationName: text("organization_name").notNull(),
-    organizationType: text("organization_type").notNull().default("enterprise"),
-    contactName: text("contact_name").notNull(),
-    contactTitle: text("contact_title"),
-    workEmail: text("work_email").notNull(),
-    phone: text("phone").notNull(),
-    country: text("country").notNull().default("UAE"),
-    projectScope: text("project_scope").notNull(),
-    targetLocations: jsonb("target_locations").$type<string[]>().default([]),
-    estimatedBudget: text("estimated_budget").notNull(),
-    requiresMawthooqCompliance: boolean("requires_mawthooq_compliance").notNull().default(false),
-    requiresObVan: boolean("requires_ob_van").notNull().default(false),
-    projectTimeline: text("project_timeline"),
-    selectedCreators: jsonb("selected_creators").$type<string[]>().default([]),
-    digitalTwinEnvironment: text("digital_twin_environment"),
-    notes: text("notes"),
-    status: text("status").notNull().default("pending_review"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  },
-  (table) => [
-    index("rfps_created_at_idx").on(table.createdAt),
-    index("rfps_status_idx").on(table.status, table.createdAt.desc()),
-  ]
-);
-
 // ─── Relations ────────────────────────────────────────────────────────────────
 
 export const bookingsRelations = relations(bookings, ({ one }) => ({
@@ -354,8 +320,6 @@ export type Project = typeof projects.$inferSelect;
 export type NewProject = typeof projects.$inferInsert;
 export type Influencer = typeof influencers.$inferSelect;
 export type NewInfluencer = typeof influencers.$inferInsert;
-export type EnterpriseRfp = typeof enterpriseRfps.$inferSelect;
-export type NewEnterpriseRfp = typeof enterpriseRfps.$inferInsert;
 export type SessionType = (typeof sessionTypeEnum.enumValues)[number];
 export type InquiryType = (typeof inquiryTypeEnum.enumValues)[number];
 

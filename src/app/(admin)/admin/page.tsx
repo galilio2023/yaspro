@@ -5,7 +5,6 @@ import {
   Users,
   Camera,
   CalendarCheck,
-  FileSpreadsheet,
   ArrowRight,
   TrendingUp,
   Server,
@@ -55,15 +54,6 @@ export default async function AdminDashboardPage() {
       description: "Calendar sessions & call sheets",
       href: "/admin/bookings",
       icon: CalendarCheck,
-      color: "from-brand-violet/25 to-brand-violet/10 border-brand-mauve/30 text-brand-mauve",
-    },
-    {
-      title: "Enterprise RFPs & Tenders",
-      value: stats.totalRfps,
-      badge: `${stats.pendingRfps} Review Needed`,
-      description: "Government & VIP broadcast tenders",
-      href: "/admin/rfps",
-      icon: FileSpreadsheet,
       color: "from-brand-violet/25 to-brand-violet/10 border-brand-mauve/30 text-brand-mauve",
     },
     {

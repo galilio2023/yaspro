@@ -2,7 +2,7 @@
 
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { db } from "@/db";
-import { bookings, bookingSessions, inquiries, users, studios, enterpriseRfps, accounts, type SessionType, type InquiryType } from "@/db/schema";
+import { bookings, bookingSessions, inquiries, users, studios, accounts, type SessionType, type InquiryType } from "@/db/schema";
 import { generateBookingReference } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -15,11 +15,9 @@ import {
   bookingSubmissionSchema,
   inquirySubmissionSchema,
   campaignRequestSchema,
-  enterpriseRfpSchema,
   type BookingSubmissionInput,
   type InquirySubmissionInput,
   type CampaignRequestInput,
-  type EnterpriseRfpInput,
 } from "./validations";
 
 import type { StudioItem } from "@/features/booking/types";
@@ -381,93 +379,6 @@ export async function submitInfluencerCampaignRequest(rawInput: unknown): Promis
   }
 }
 
-export async function submitEnterpriseRfp(rawInput: unknown): Promise<ActionResponse<{ referenceCode: string }>> {
-  const clientId = await getClientIdentifier();
-
-  // Rate limit: max 3 enterprise RFPs per 15 minutes per IP
-  const rateLimit = checkRateLimit(`enterprise:${clientId}`, 3, 15 * 60 * 1000);
-  if (!rateLimit.allowed) {
-    const minutesLeft = Math.ceil(rateLimit.resetInMs / 60000);
-    return {
-      success: false,
-      message: `Too many enterprise RFP submissions. Please wait ${minutesLeft} minute${minutesLeft > 1 ? "s" : ""} before submitting another tender request.`,
-    };
-  }
-
-  const parsed = enterpriseRfpSchema.safeParse(rawInput);
-  if (!parsed.success) {
-    return {
-      success: false,
-      message: "Please complete all required fields for the enterprise proposal.",
-      errors: parsed.error.flatten().fieldErrors,
-    };
-  }
-
-  const data = parsed.data;
-
-  // Idempotency: block duplicate identical enterprise RFP within 60s
-  const idempotencyKey = `enterprise:${data.workEmail.toLowerCase()}:${data.organizationName.toLowerCase()}:${data.projectScope}`;
-  if (!checkIdempotency(idempotencyKey, 60_000)) {
-    return {
-      success: false,
-      message: "An enterprise RFP for this organization and scope is already being evaluated. Please check your inbox for confirmation.",
-    };
-  }
-  const suffix = data.country === "Saudi Arabia" ? "KSA" : data.country === "Egypt" ? "CAI" : "DXB";
-
-  try {
-    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
-      throw new Error("Enterprise RFP database is not configured");
-    }
-
-    const session = await auth.api.getSession({ headers: await headers() });
-    const currentUserId = session?.user?.id ?? null;
-
-    // The unique constraint arbitrates concurrent requests; only return an inserted code.
-    for (let attempt = 0; attempt < 10; attempt++) {
-      const referenceCode = `EXP-${Math.floor(1000 + Math.random() * 9000)}-${suffix}`;
-      const [inserted] = await db.insert(enterpriseRfps).values({
-        referenceCode,
-        userId: currentUserId,
-        organizationName: data.organizationName,
-        organizationType: data.organizationType,
-        contactName: data.contactName,
-        contactTitle: data.contactTitle,
-        workEmail: data.workEmail,
-        phone: data.phone,
-        country: data.country,
-        projectScope: data.projectScope,
-        targetLocations: data.targetLocations,
-        estimatedBudget: data.estimatedBudget,
-        requiresMawthooqCompliance: data.requiresMawthooqCompliance,
-        requiresObVan: data.requiresObVan,
-        projectTimeline: data.projectTimeline,
-        selectedCreators: data.selectedCreators,
-        digitalTwinEnvironment: data.digitalTwinEnvironment,
-        notes: data.notes,
-        status: "pending_review",
-      }).onConflictDoNothing({ target: enterpriseRfps.referenceCode })
-        .returning({ referenceCode: enterpriseRfps.referenceCode });
-      if (!inserted) continue;
-
-      revalidatePath("/enterprise");
-      return {
-        success: true,
-        referenceCode,
-        message: `Enterprise RFP ${referenceCode} received. A Senior Executive Producer from Yas Pro will contact you within 4 hours.`,
-        data: { referenceCode },
-      };
-    }
-    throw new Error("Unable to allocate a unique enterprise RFP reference");
-  } catch (error) {
-    console.error("Enterprise RFP error:", error);
-    return {
-      success: false,
-      message: "We could not save your enterprise RFP. Please try again or contact our team directly.",
-    };
-  }
-}
-
 /**
  * Synchronize registered user profile info directly into the users table
  */
@@ -620,5 +531,5 @@ export async function claimGuestAccount(input: {
   }
 }
 
-export { type BookingSubmissionInput, type InquirySubmissionInput, type CampaignRequestInput, type EnterpriseRfpInput };
+export { type BookingSubmissionInput, type InquirySubmissionInput, type CampaignRequestInput };
 
