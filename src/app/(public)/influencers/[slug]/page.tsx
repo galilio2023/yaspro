@@ -10,6 +10,9 @@ import { InfluencerHighlights } from "@/features/influencers/components/Influenc
 import { InfluencerAudienceCard } from "@/features/influencers/components/InfluencerAudienceCard";
 import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
 
+import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
+
 export const dynamicParams = true;
 export const revalidate = 3600;
 
@@ -27,9 +30,43 @@ export async function generateMetadata({
 
   if (!creator) return { title: "Creator Not Found" };
 
+  const avatarUrl = creator.avatar
+    ? creator.avatar.startsWith("http")
+      ? creator.avatar
+      : `${SITE_URL}${creator.avatar}`
+    : `${SITE_URL}/opengraph-image`;
+
+  const metaDesc =
+    creator.bio ||
+    `Partner with ${creator.name} (${creator.totalFollowers}) through the Yas Pro Creator Network in Dubai.`;
+
   return {
-    title: `${creator.name} (${creator.totalFollowers}) | Yas Pro Creators`,
-    description: creator.bio,
+    title: `${creator.name} (${creator.totalFollowers})`,
+    description: metaDesc,
+    openGraph: {
+      ...SHARED_OPEN_GRAPH,
+      title: `${creator.name} (${creator.totalFollowers}) • Yas Pro Creator Network`,
+      description: metaDesc,
+      url: `${SITE_URL}/influencers/${creator.slug}`,
+      type: "profile",
+      images: [
+        {
+          url: avatarUrl,
+          width: 1200,
+          height: 630,
+          alt: creator.name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${creator.name} (${creator.totalFollowers}) • Yas Pro Creator Network`,
+      description: metaDesc,
+      images: [avatarUrl],
+    },
+    alternates: {
+      canonical: `${SITE_URL}/influencers/${creator.slug}`,
+    },
   };
 }
 
@@ -45,13 +82,19 @@ export default async function InfluencerDetailPage({
     notFound();
   }
 
+  const creatorAvatarUrl = creator.avatar
+    ? creator.avatar.startsWith("http")
+      ? creator.avatar
+      : `${SITE_URL}${creator.avatar}`
+    : `${SITE_URL}/images/influencers/aboflah.jpg`;
+
   const CREATOR_SCHEMA = {
     "@context": "https://schema.org",
     "@type": "Person",
     name: creator.name,
     jobTitle: creator.role,
     description: creator.bio,
-    image: creator.avatar ? (creator.avatar.startsWith("http") ? creator.avatar : `https://yaspro.ae${creator.avatar}`) : "https://yaspro.ae/images/influencers/aboflah.jpg",
+    image: creatorAvatarUrl,
     nationality: creator.nationality,
     worksFor: {
       ...YAS_PRO_ORGANIZATION_SCHEMA,

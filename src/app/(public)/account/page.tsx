@@ -5,11 +5,17 @@ import { auth } from "@/lib/auth";
 import { getClientBookings } from "@/lib/cms-actions";
 import { AccountDashboard } from "@/features/account/components/AccountDashboard";
 
+import type { Metadata } from "next";
+
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "My Account | Yas Pro Productions",
+export const metadata: Metadata = {
+  title: "Client Portal & Bookings",
   description: "View and manage your studio bookings, podcast sessions, cinema gear rentals, and profile.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default async function AccountPage() {

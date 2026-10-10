@@ -35,29 +35,17 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const getSiteUrl = () => {
-  if (process.env.NEXT_PUBLIC_APP_URL) {
-    return process.env.NEXT_PUBLIC_APP_URL;
-  }
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
-  }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  return "https://yaspro-tablawy.vercel.app";
-};
-
-const siteUrl = getSiteUrl();
+import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Yas Pro | AI Media Hub",
     template: "%s | Yas Pro",
   },
   description:
-    "Turning vision into reality. Premier AI Media Hub in Dubai: 3D virtual production soundstages, OB-VAN live broadcast, cinema gear rental, and top-tier MENA creator network across UAE, Egypt, and Jordan.",
+    "Premier AI Media Hub in Dubai: 3D virtual production soundstages, OB-VAN live broadcast, cinema gear rental, and top-tier MENA creator network.",
   keywords: [
     "AI media hub",
     "virtual production",
@@ -82,17 +70,16 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.webmanifest",
   openGraph: {
+    ...SHARED_OPEN_GRAPH,
     type: "website",
-    locale: "en_US",
-    url: siteUrl,
-    siteName: "Yas Pro | AI Media Hub",
+    url: SITE_URL,
     title: "Yas Pro | AI Media Hub & Virtual Production",
     description:
-      "Turning vision into reality. From green screen to another visual dimension, advanced AI technology transforms ideas into powerful media experiences.",
+      "Premier AI Media Hub in Dubai: 3D virtual production soundstages, OB-VAN live broadcast, cinema gear rental, and top-tier MENA creator network.",
     images: [
       {
-        url: `${siteUrl}/opengraph-image`,
-        secureUrl: `${siteUrl}/opengraph-image`,
+        url: `${SITE_URL}/opengraph-image`,
+        secureUrl: `${SITE_URL}/opengraph-image`,
         width: 1200,
         height: 630,
         alt: "Yas Pro | AI Media Hub & Virtual Production",
@@ -104,8 +91,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Yas Pro | AI Media Hub & Virtual Production",
     description:
-      "Turning vision into reality. From green screen to another visual dimension, advanced AI technology transforms ideas into powerful media experiences.",
-    images: [`${siteUrl}/opengraph-image`],
+      "Premier AI Media Hub in Dubai: 3D virtual production soundstages, OB-VAN live broadcast, cinema gear rental, and top-tier MENA creator network.",
+    images: [`${SITE_URL}/opengraph-image`],
   },
 };
 

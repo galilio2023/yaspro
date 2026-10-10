@@ -10,15 +10,44 @@ import { Container } from "@/components/ui/container";
 
 import { Suspense } from "react";
 
+import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
+
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   const isArabic = locale === "ar";
 
+  const title = isArabic ? "تواصل معنا والعمليات" : "Contact & Operations Desk";
+  const desc = isArabic
+    ? "تواصل مع استوديوهات Yas Pro لعربات البث المباشر، حجز الاستوديوهات، أو الدعم الفني في دبي."
+    : "Get in touch with Yas Pro for OB VAN live broadcast, soundstage bookings, or production support in Dubai.";
+
   return {
-    title: isArabic ? "تواصل معنا" : "Contact Us",
-    description: isArabic
-      ? "تواصل مع استوديوهات Yas Pro لعربات البث المباشر، حجز الاستوديوهات، أو الدعم الفني."
-      : "Get in touch with Yas Pro for OB VAN, live broadcast, outdoor filming, studio bookings, or technical support.",
+    title,
+    description: desc,
+    openGraph: {
+      ...SHARED_OPEN_GRAPH,
+      title: `${title} • Yas Pro`,
+      description: desc,
+      url: `${SITE_URL}/contact`,
+      images: [
+        {
+          url: `${SITE_URL}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} • Yas Pro`,
+      description: desc,
+      images: [`${SITE_URL}/opengraph-image`],
+    },
+    alternates: {
+      canonical: `${SITE_URL}/contact`,
+    },
   };
 }
 

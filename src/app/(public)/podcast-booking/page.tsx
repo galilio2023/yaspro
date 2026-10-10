@@ -6,10 +6,13 @@ import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import { BookingHero } from "@/features/booking/components/ui/BookingKit";
 
+import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
+
 export const metadata: Metadata = {
-  title: "Podcast Booking Dubai | Yas Pro AI Media Hub",
+  title: "Podcast Studio Booking in Dubai",
   description:
-    "Book a luxury podcast studio session at Yas Pro in Iris Bay, Dubai. 4K multi-cam Sony capture, Shure SM7B mics, live switcher, and turnkey viral reels editing.",
+    "Book a luxury podcast studio session at Yas Pro in Business Bay, Dubai. 4K multi-cam Sony capture, Shure SM7B mics, live switcher, and turnkey viral reels editing.",
   keywords: [
     "podcast studio dubai",
     "podcast booking dubai",
@@ -19,9 +22,29 @@ export const metadata: Metadata = {
     "vodcast studio uae",
   ],
   openGraph: {
-    title: "Podcast Studio Booking • Yas Pro Dubai",
-    description: "Book your luxury 4K multi-cam podcast session in Business Bay, Dubai.",
-    images: ["/images/studios/nature-grid.jpg"],
+    ...SHARED_OPEN_GRAPH,
+    title: "Podcast Studio Booking in Dubai • Yas Pro",
+    description:
+      "Book your luxury 4K multi-cam podcast session with Sony capture and Shure SM7B mics in Business Bay, Dubai.",
+    url: `${SITE_URL}/podcast-booking`,
+    images: [
+      {
+        url: `${SITE_URL}/images/studios/nature-grid.jpg`,
+        width: 1200,
+        height: 630,
+        alt: "Yas Pro Podcast Studio Dubai",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Podcast Studio Booking in Dubai • Yas Pro",
+    description:
+      "Book your luxury 4K multi-cam podcast session with Sony capture and Shure SM7B mics in Business Bay, Dubai.",
+    images: [`${SITE_URL}/images/studios/nature-grid.jpg`],
+  },
+  alternates: {
+    canonical: `${SITE_URL}/podcast-booking`,
   },
 };
 

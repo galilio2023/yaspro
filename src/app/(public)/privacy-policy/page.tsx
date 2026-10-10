@@ -5,9 +5,27 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { ShieldCheck, Lock, FileText, Globe } from "lucide-react";
 import { BackButton } from "@/components/ui/back-button";
 
+import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
+
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "Learn how Yas Pro Media LLC collects, protects, and manages customer and production data across UAE, Egypt, and Jordan.",
+  description:
+    "How Yas Pro Media LLC collects, protects, and manages client production assets, booking data, and telemetry across the GCC.",
+  openGraph: {
+    ...SHARED_OPEN_GRAPH,
+    title: "Privacy Policy • Yas Pro",
+    description:
+      "How Yas Pro Media LLC collects, protects, and manages client production assets, booking data, and telemetry across the GCC.",
+    url: `${SITE_URL}/privacy-policy`,
+  },
+  twitter: {
+    card: "summary",
+    title: "Privacy Policy • Yas Pro",
+  },
+  alternates: {
+    canonical: `${SITE_URL}/privacy-policy`,
+  },
 };
 
 export default function PrivacyPolicyPage() {

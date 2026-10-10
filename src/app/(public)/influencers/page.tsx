@@ -8,11 +8,40 @@ import type { InfluencerItem, CreatorDemographics } from "@/features/influencers
 
 import { InfluencersPageHeader } from "@/features/influencers/components/InfluencersPageHeader";
 
+import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
+
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Influencer Hub",
-  description: "Explore the creators who partner with Yas Pro: Abo Flah, Abir El Saghir, Noor Stars, Narins Beauty, and more.",
+  title: "Creator Network & Influencer Hub",
+  description:
+    "Explore the creators partnering with Yas Pro: Abo Flah, Abir El Saghir, Noor Stars, Narins Beauty, and leading MENA digital creators.",
+  openGraph: {
+    ...SHARED_OPEN_GRAPH,
+    title: "Creator Network & Influencer Hub • Yas Pro",
+    description:
+      "Explore top MENA digital creators partnering with Yas Pro: Abo Flah, Abir El Saghir, Noor Stars, Narins Beauty, and more.",
+    url: `${SITE_URL}/influencers`,
+    images: [
+      {
+        url: `${SITE_URL}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Yas Pro Creator Network",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Creator Network & Influencer Hub • Yas Pro",
+    description:
+      "Explore top MENA digital creators partnering with Yas Pro: Abo Flah, Abir El Saghir, Noor Stars, Narins Beauty, and more.",
+    images: [`${SITE_URL}/opengraph-image`],
+  },
+  alternates: {
+    canonical: `${SITE_URL}/influencers`,
+  },
 };
 
 export default async function InfluencersPage() {

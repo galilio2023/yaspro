@@ -10,6 +10,9 @@ import { ProjectDeliverables } from "@/features/projects/components/ProjectDeliv
 import { ProjectTechStack } from "@/features/projects/components/ProjectTechStack";
 import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
 
+import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
+
 export const dynamicParams = true;
 export const revalidate = 3600;
 
@@ -29,9 +32,39 @@ export async function generateMetadata({
     return { title: "Project Not Found" };
   }
 
+  const imageUrl = project.image
+    ? project.image.startsWith("http")
+      ? project.image
+      : `${SITE_URL}${project.image}`
+    : `${SITE_URL}/opengraph-image`;
+
   return {
-    title: `${project.title} | Yas Pro Projects`,
+    title: project.title,
     description: project.description,
+    openGraph: {
+      ...SHARED_OPEN_GRAPH,
+      title: `${project.title} • Yas Pro Projects`,
+      description: project.description,
+      url: `${SITE_URL}/projects/${project.slug}`,
+      type: "video.other",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: project.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${project.title} • Yas Pro Projects`,
+      description: project.description,
+      images: [imageUrl],
+    },
+    alternates: {
+      canonical: `${SITE_URL}/projects/${project.slug}`,
+    },
   };
 }
 
@@ -47,13 +80,19 @@ export default async function ProjectDetailPage({
     notFound();
   }
 
+  const projectImageUrl = project.image
+    ? project.image.startsWith("http")
+      ? project.image
+      : `${SITE_URL}${project.image}`
+    : `${SITE_URL}/images/projects/flag-day.jpg`;
+
   const PROJECT_SCHEMA = {
     "@context": "https://schema.org",
     "@type": "Movie",
     name: project.title,
     headline: project.title,
     description: project.description,
-    image: project.image ? (project.image.startsWith("http") ? project.image : `https://yaspro.ae${project.image}`) : "https://yaspro.ae/images/projects/flag-day.jpg",
+    image: projectImageUrl,
     datePublished: project.year,
     productionCompany: {
       ...YAS_PRO_ORGANIZATION_SCHEMA,

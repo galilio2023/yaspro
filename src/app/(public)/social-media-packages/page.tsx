@@ -9,17 +9,20 @@ import { SocialMediaDeliverablesShowcase } from "@/features/social-media-package
 import { PackageComparisonTable } from "@/features/social-media-packages/components/PackageComparisonTable";
 import { PackageFaqSection } from "@/features/social-media-packages/components/PackageFaqSection";
 
+import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
+
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   const isArabic = locale === "ar";
 
   return {
     title: isArabic
-      ? "باقات السوشيال ميديا دبي | استوديوهات Yas Pro"
-      : "Social Media Packages Dubai | Yas Pro AI Media Hub",
+      ? "باقات إنتاج السوشيال ميديا في دبي"
+      : "Social Media Production Packages in Dubai",
     description: isArabic
       ? "باقات إنتاج السوشيال ميديا السينمائية في دبي. ريلز 4K، تصوير احترافي، موشن جرافيكس، وأيام تصوير في استوديوهاتنا بالخليج التجاري أو في موقعك."
-      : "Turnkey social media production packages in Dubai. 4K viral reels, full soundstage shoots, motion graphics, and monthly content engine for growing brands.",
+      : "Turnkey social media production packages in Dubai. 4K viral reels, soundstage shoots, motion graphics, and monthly content engine for growing brands.",
     keywords: [
       "social media packages dubai",
       "social media video production dubai",
@@ -32,16 +35,35 @@ export async function generateMetadata(): Promise<Metadata> {
       "إنتاج محتوى رقمي",
     ],
     openGraph: {
+      ...SHARED_OPEN_GRAPH,
       title: isArabic
         ? "باقات السوشيال ميديا السينمائية • Yas Pro دبي"
-        : "Social Media Packages • Yas Pro Dubai",
+        : "Social Media Production Packages • Yas Pro Dubai",
       description: isArabic
         ? "ارتقِ بعلامتك التجارية مع باقات إنتاج المحتوى الرقمي المتكاملة من استوديوهات Yas Pro."
         : "Turnkey 4K cinema reels, soundstage filming days, and full monthly content delivery in Dubai.",
-      images: ["/images/modal/social-media-card.jpg"],
+      url: `${SITE_URL}/social-media-packages`,
+      images: [
+        {
+          url: `${SITE_URL}/images/modal/social-media-card.jpg`,
+          width: 1200,
+          height: 630,
+          alt: isArabic ? "باقات السوشيال ميديا دبي" : "Social Media Packages Dubai",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: isArabic
+        ? "باقات السوشيال ميديا السينمائية • Yas Pro دبي"
+        : "Social Media Production Packages • Yas Pro Dubai",
+      description: isArabic
+        ? "ارتقِ بعلامتك التجارية مع باقات إنتاج المحتوى الرقمي المتكاملة من استوديوهات Yas Pro."
+        : "Turnkey 4K cinema reels, soundstage filming days, and full monthly content delivery in Dubai.",
+      images: [`${SITE_URL}/images/modal/social-media-card.jpg`],
     },
     alternates: {
-      canonical: "https://yasproductions.com/social-media-packages",
+      canonical: `${SITE_URL}/social-media-packages`,
     },
   };
 }

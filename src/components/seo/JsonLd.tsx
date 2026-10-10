@@ -17,24 +17,26 @@ export function JsonLd({ data }: JsonLdProps) {
   );
 }
 
+import { SITE_URL } from "@/lib/constants";
+
 /**
  * Standard Yas Pro Media Organization & LocalBusiness schema for Dubai Studio HQ
  */
 export const YAS_PRO_ORGANIZATION_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: "Yas Productions",
+  name: "Yas Pro",
   legalName: "Yas Pro Media Productions LLC",
-  url: "https://yaspro.ae",
-  logo: "https://yaspro.ae/images/logo.png",
-  image: "https://yaspro.ae/opengraph-image",
+  url: SITE_URL,
+  logo: `${SITE_URL}/images/branding/yaspro-logo.png`,
+  image: `${SITE_URL}/opengraph-image`,
   description:
     "Next-Gen AI Media Production, 4K Soundstages, Outside Broadcast (OB Van), and Talent Hub in Dubai & the Middle East.",
   telephone: "+971-55-401-0465",
   email: "production@yaspro.ae",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Dubai Production City, Media Hub Phase 2",
+    streetAddress: "Iris Bay Tower, Business Bay",
     addressLocality: "Dubai",
     addressRegion: "Dubai",
     postalCode: "00000",
@@ -42,8 +44,8 @@ export const YAS_PRO_ORGANIZATION_SCHEMA = {
   },
   geo: {
     "@type": "GeoCoordinates",
-    latitude: 25.0345,
-    longitude: 55.1912,
+    latitude: 25.1873,
+    longitude: 55.2602,
   },
   openingHoursSpecification: [
     {

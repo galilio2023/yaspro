@@ -9,17 +9,46 @@ import { Container } from "@/components/ui/container";
 import type { GearItem, GearCategory } from "@/features/gear/types";
 import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
 
+import { SITE_URL } from "@/lib/constants";
+import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
+
 export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   const isArabic = locale === "ar";
 
+  const title = isArabic ? "تأجير كاميرات ومعدات سينمائية" : "Cinema Camera & Equipment Rental";
+  const desc = isArabic
+    ? "استئجار كاميرات سينمائية، عدسات أنامورفيك، معدات إضاءة وعربات بث مباشر متكاملة في دبي، القاهرة، وعَمّان."
+    : "Rent cinema cameras, lenses, lighting, and turnkey broadcast packages across UAE, Egypt, and Jordan.";
+
   return {
-    title: isArabic ? "تأجير المعدات السينمائية" : "Rent Cinema Equipment",
-    description: isArabic
-      ? "استئجار كاميرات سينمائية، عدسات أنامورفيك، معدات إضاءة وعربات بث مباشر متكاملة في دبي، القاهرة، وعَمّان."
-      : "Rent cinema cameras, lenses, lighting, and turnkey broadcast packages across UAE, Egypt, and Jordan.",
+    title,
+    description: desc,
+    openGraph: {
+      ...SHARED_OPEN_GRAPH,
+      title: `${title} • Yas Pro`,
+      description: desc,
+      url: `${SITE_URL}/shop`,
+      images: [
+        {
+          url: `${SITE_URL}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} • Yas Pro`,
+      description: desc,
+      images: [`${SITE_URL}/opengraph-image`],
+    },
+    alternates: {
+      canonical: `${SITE_URL}/shop`,
+    },
   };
 }
 
@@ -71,7 +100,7 @@ export default async function ShopPage() {
           name: gear.name,
           category: gear.categoryLabel,
           description: gear.description || `Professional ${gear.categoryLabel} rental in Dubai & GCC.`,
-          image: gear.image ? (gear.image.startsWith("http") ? gear.image : `https://yaspro.ae${gear.image}`) : "https://yaspro.ae/images/gear/arri-alexa-mini-lf.jpg",
+          image: gear.image ? (gear.image.startsWith("http") ? gear.image : `${SITE_URL}${gear.image}`) : `${SITE_URL}/images/gear/arri-alexa-mini-lf.jpg`,
         },
         priceCurrency: "AED",
         price: gear.dailyRate.toString(),
