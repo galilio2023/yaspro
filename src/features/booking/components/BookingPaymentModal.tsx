@@ -160,7 +160,7 @@ export function BookingPaymentModal({
         aria-modal="true"
         aria-label="Secure UAE Checkout"
         tabIndex={-1}
-        className="relative w-full max-w-lg my-auto rounded-3xl bg-[#090a0f] border border-white/10 shadow-2xl p-6 sm:p-8 text-start animate-fade-up max-h-[92vh] overflow-y-auto overscroll-contain"
+        className="relative w-full max-w-lg my-auto rounded-3xl bg-[#090a0f] border border-white/10 shadow-2xl p-4 sm:p-8 text-start animate-fade-up max-h-[92vh] overflow-y-auto overscroll-contain"
       >
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-5">
@@ -204,12 +204,12 @@ export function BookingPaymentModal({
         <form onSubmit={handlePay} className="space-y-5 text-xs">
           {/* Order Summary & VAT Breakdown Card */}
           <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2.5">
-            <div className="flex items-center justify-between text-xs font-semibold text-white pb-2 border-b border-white/5">
-              <span className="flex items-center gap-1.5">
+            <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs font-semibold text-white pb-2 border-b border-white/5">
+              <span className="flex items-center gap-1.5 shrink-0">
                 <Receipt size={14} className="text-brand-mauve" />
                 {isArabic ? "ملخص الفاتورة الضريبية" : "Tax Invoice Summary"}
               </span>
-              <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+              <span className="text-[9px] sm:text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 shrink-0 whitespace-nowrap">
                 {isArabic ? "شامل ضريبة القيمة المضافة 5%" : "Includes 5% UAE VAT"}
               </span>
             </div>
@@ -251,13 +251,13 @@ export function BookingPaymentModal({
             <label className="block text-slate-300 font-semibold mb-2.5">
               {isArabic ? "طريقة السداد المفضلة" : "Select Payment Method"}
             </label>
-            <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5">
               {/* Ziina / Apple Pay */}
               <button
                 type="button"
                 onClick={() => setPaymentMethod("ziina")}
                 className={cn(
-                  "p-3 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between relative",
+                  "p-2.5 sm:p-3 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between relative",
                   paymentMethod === "ziina"
                     ? "bg-brand-violet/30 border-brand-mauve/60 text-white shadow-lg shadow-brand-violet/20 ring-1 ring-brand-mauve/30"
                     : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]"
@@ -272,7 +272,7 @@ export function BookingPaymentModal({
                     Fast
                   </span>
                 </div>
-                <div className="text-[10px] text-slate-300 mt-2 leading-tight">
+                <div className="text-[10px] text-slate-300 mt-1 sm:mt-2 leading-tight">
                   {isArabic ? "Apple Pay وبطاقات الإمارات" : "Apple Pay & UAE Cards"}
                 </div>
               </button>
@@ -282,7 +282,7 @@ export function BookingPaymentModal({
                 type="button"
                 onClick={() => setPaymentMethod("card")}
                 className={cn(
-                  "p-3 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between",
+                  "p-2.5 sm:p-3 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between",
                   paymentMethod === "card"
                     ? "bg-brand-violet/30 border-brand-mauve/50 text-white ring-1 ring-brand-mauve/30"
                     : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]"
@@ -294,7 +294,7 @@ export function BookingPaymentModal({
                     <span>Card</span>
                   </span>
                 </div>
-                <div className="text-[10px] text-slate-400 mt-2 leading-tight">
+                <div className="text-[10px] text-slate-400 mt-1 sm:mt-2 leading-tight">
                   Visa &bull; Mastercard &bull; AMEX
                 </div>
               </button>
@@ -304,7 +304,7 @@ export function BookingPaymentModal({
                 type="button"
                 onClick={() => setPaymentMethod("bank")}
                 className={cn(
-                  "p-3 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between",
+                  "p-2.5 sm:p-3 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between",
                   paymentMethod === "bank"
                     ? "bg-brand-violet/30 border-brand-mauve/50 text-white ring-1 ring-brand-mauve/30"
                     : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]"
@@ -319,7 +319,7 @@ export function BookingPaymentModal({
                     B2B
                   </span>
                 </div>
-                <div className="text-[10px] text-slate-400 mt-2 leading-tight">
+                <div className="text-[10px] text-slate-400 mt-1 sm:mt-2 leading-tight">
                   {isArabic ? "تحويل بنكي رسمي" : "Corporate Wire Transfer"}
                 </div>
               </button>
@@ -379,20 +379,20 @@ export function BookingPaymentModal({
           {/* Payment Method Details */}
           {paymentMethod === "ziina" ? (
             <div className="p-4 rounded-2xl bg-brand-violet/[0.15] border border-brand-mauve/30 space-y-3">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
                 <div className="flex items-center gap-2 text-brand-mauve-soft font-semibold text-xs">
-                  <Smartphone size={15} />
+                  <Smartphone size={15} className="shrink-0" />
                   <span>{isArabic ? "مرخص من مصرف الإمارات المركزي (Ziina)" : "Central Bank of the UAE Regulated"}</span>
                 </div>
                 {/* Apple Pay & Aani Badges */}
-                <div className="flex items-center gap-1.5" dir="ltr">
-                  <span className="px-2 py-0.5 rounded bg-black border border-white/20 text-white font-mono text-[9px] font-bold">
+                <div className="flex items-center gap-1.5 shrink-0" dir="ltr">
+                  <span className="px-2 py-0.5 rounded bg-black border border-white/20 text-white font-mono text-[9px] font-bold whitespace-nowrap">
                     Pay
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-white text-black font-sans text-[9px] font-bold">
+                  <span className="px-2 py-0.5 rounded bg-white text-black font-sans text-[9px] font-bold whitespace-nowrap">
                     GPay
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold">
+                  <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold whitespace-nowrap">
                     Aani
                   </span>
                 </div>

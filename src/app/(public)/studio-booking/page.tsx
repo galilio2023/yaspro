@@ -99,7 +99,7 @@ export default async function StudioBookingPage() {
     isActive: studio.isActive,
   }));
   return (
-    <Section id="booking-page" aria-labelledby="booking-title" className="py-12 md:py-20 bg-background">
+    <Section id="booking-page" aria-labelledby="booking-title" className="py-6 sm:py-12 md:py-20 bg-background">
       <JsonLd data={STUDIO_BOOKING_SCHEMA} />
       <Container>
         <StudioBookingPageHeader />

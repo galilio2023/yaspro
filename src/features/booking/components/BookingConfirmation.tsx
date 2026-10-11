@@ -27,7 +27,7 @@ export function BookingConfirmation({
 
   return (
     <>
-      <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-10 sm:p-14 text-center max-w-xl mx-auto shadow-2xl">
+      <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-10 lg:p-14 text-center max-w-xl mx-auto shadow-2xl">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -51,19 +51,19 @@ export function BookingConfirmation({
         </div>
 
         {/* Payment Status Pill */}
-        <div className="mb-6 flex items-center justify-center gap-2">
+        <div className="mb-6 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2">
           <span
-            className={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${
+            className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border text-center ${
               paymentStatus === "deposit_paid" || paymentStatus === "paid"
                 ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
-                : "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                : "bg-brand-mauve/15 text-brand-mauve border-brand-mauve/30"
             }`}
           >
             {paymentStatus === "deposit_paid"
               ? "50% DEPOSIT PAID ONLINE"
               : paymentStatus === "paid"
               ? "PAID IN FULL"
-              : "PAYMENT: PENDING (50% DEPOSIT DUE)"}
+              : "PENDING · 50% DEPOSIT DUE"}
           </span>
           {transactionRef && (
             <span className="text-[10px] font-mono text-slate-400">

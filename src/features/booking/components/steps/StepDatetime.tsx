@@ -209,9 +209,14 @@ export function StepDatetime({ state, update }: WizardStepProps) {
 
           {/* Time */}
           <Panel icon={Clock} title="Call time" description="Studio hours 9 AM – 8 PM">
-            <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-3 gap-1.5">
+            <div className="grid grid-cols-4 sm:grid-cols-4 xl:grid-cols-3 gap-1.5">
               {TIME_SLOTS.map((slot) => (
-                <ChoiceChip key={slot} selected={selectedTime === slot} onClick={() => update({ time: slot })} className="text-[11px]">
+                <ChoiceChip
+                  key={slot}
+                  selected={selectedTime === slot}
+                  onClick={() => update({ time: slot })}
+                  className="text-[10px] sm:text-[11px] min-h-[36px] sm:min-h-[40px] px-1"
+                >
                   {slot}
                 </ChoiceChip>
               ))}

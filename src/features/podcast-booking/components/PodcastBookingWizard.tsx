@@ -181,7 +181,7 @@ export function PodcastBookingWizard() {
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
         {/* Main Stage */}
         <div className="min-w-0">
-          <div className="rounded-3xl border border-white/[0.08] bg-[#0b0b0f] p-4 sm:p-7 lg:p-8 pb-20 sm:pb-24 lg:pb-8 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)]">
+          <div className="rounded-3xl border border-white/[0.08] bg-[#0b0b0f] p-4 sm:p-7 lg:p-8 pb-6 sm:pb-8 lg:pb-8 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)]">
             {errorMessage && step !== 5 && (
               <div className="mb-5">
                 <ErrorBanner message={errorMessage} />
@@ -254,7 +254,7 @@ export function PodcastBookingWizard() {
           {/* Action bar — sticky on mobile, inline on desktop */}
           <div
             dir="ltr"
-            className="sticky bottom-3 z-30 mt-4 lg:static lg:mt-5 rounded-2xl border border-white/[0.1] lg:border-transparent bg-[#0b0b0f]/95 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none p-3 lg:p-0 shadow-2xl lg:shadow-none flex items-center gap-3"
+            className="sticky bottom-3 z-30 mt-4 lg:static lg:mt-5 rounded-2xl border border-white/[0.1] lg:border-transparent bg-[#0b0b0f]/95 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:pb-0 lg:p-0 shadow-2xl lg:shadow-none flex items-center gap-3"
           >
             {step > 1 && (
               <motion.button
@@ -270,15 +270,17 @@ export function PodcastBookingWizard() {
               </motion.button>
             )}
 
-            {/* Mobile running total snapshot */}
-            <div className="lg:hidden min-w-0 flex-1">
-              <span className="block font-mono text-[10px] tracking-[0.16em] uppercase text-zinc-500">
-                Total ({sessions.length} {sessions.length === 1 ? "Session" : "Sessions"})
-              </span>
-              <span className="block text-base font-bold text-brand-mauve tabular-nums truncate">
-                {formatAED(grandTotal)}
-              </span>
-            </div>
+            {/* Mobile running total snapshot — hidden on last step since Step5 has its own checkout action card */}
+            {!isLastStep && (
+              <div className="lg:hidden min-w-0 flex-1">
+                <span className="block font-mono text-[10px] tracking-[0.16em] uppercase text-zinc-500">
+                  Total ({sessions.length} {sessions.length === 1 ? "Session" : "Sessions"})
+                </span>
+                <span className="block text-base font-bold text-brand-mauve tabular-nums truncate">
+                  {formatAED(grandTotal)}
+                </span>
+              </div>
+            )}
 
             {!isLastStep && (
               <motion.button

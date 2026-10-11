@@ -106,7 +106,7 @@ const PODCAST_SPECS = [
 
 export default function PodcastBookingPage() {
   return (
-    <Section id="podcast-booking-page" aria-labelledby="podcast-booking-title" className="py-12 md:py-20 bg-background">
+    <Section id="podcast-booking-page" aria-labelledby="podcast-booking-title" className="py-6 sm:py-12 md:py-20 bg-background">
       <JsonLd data={PODCAST_BOOKING_SCHEMA} />
       <Container>
         {/* Cinematic Booking Hero */}

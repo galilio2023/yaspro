@@ -175,7 +175,7 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
           {/* Action bar — sticky on mobile, inline on desktop */}
           <div
             dir="ltr"
-            className="sticky bottom-3 z-30 mt-4 lg:static lg:mt-5 rounded-2xl border border-white/[0.1] lg:border-transparent bg-[#0b0b0f]/95 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none p-3 lg:p-0 shadow-2xl lg:shadow-none flex items-center gap-3"
+            className="sticky bottom-3 z-30 mt-4 lg:static lg:mt-5 rounded-2xl border border-white/[0.1] lg:border-transparent bg-[#0b0b0f]/95 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:pb-0 lg:p-0 shadow-2xl lg:shadow-none flex items-center gap-3"
           >
             {step > 1 && (
               <motion.button
@@ -191,11 +191,13 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
               </motion.button>
             )}
 
-            {/* Mobile running total */}
-            <div className="lg:hidden min-w-0 flex-1">
-              <span className="block font-mono text-[10px] tracking-[0.16em] uppercase text-zinc-500">Total</span>
-              <span className="block text-base font-bold text-brand-mauve tabular-nums truncate">{formatAED(breakdown.total, 2)}</span>
-            </div>
+            {/* Mobile running total — hidden on last step since StepContact has its own submit button with total */}
+            {!isLastStep && (
+              <div className="lg:hidden min-w-0 flex-1">
+                <span className="block font-mono text-[10px] tracking-[0.16em] uppercase text-zinc-500">Total</span>
+                <span className="block text-base font-bold text-brand-mauve tabular-nums truncate">{formatAED(breakdown.total, 2)}</span>
+              </div>
+            )}
 
             {!isLastStep && (
               <motion.button

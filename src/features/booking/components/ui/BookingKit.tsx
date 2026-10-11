@@ -54,9 +54,9 @@ export function BookingHero({
   crossLink?: { href: string; label: string; cta: string };
 }) {
   return (
-    <header className="mb-10 sm:mb-14 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
-      <div className="lg:col-span-7 space-y-5">
-        <div className="inline-flex items-center gap-2.5 font-mono text-[11px] tracking-[0.18em] uppercase text-zinc-400">
+    <header className="mb-6 sm:mb-14 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 lg:gap-12 items-end">
+      <div className="lg:col-span-7 space-y-3 sm:space-y-5">
+        <div className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-[11px] tracking-[0.18em] uppercase text-zinc-400">
           <span className="relative flex size-2">
             <span className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-60" />
             <span className="relative size-2 rounded-full bg-red-500" />
@@ -66,7 +66,7 @@ export function BookingHero({
 
         <h1
           id={headingId}
-          className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.02] text-balance"
+          className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.05] sm:leading-[1.02] text-balance"
         >
           {title}
           {accent && (
@@ -77,12 +77,12 @@ export function BookingHero({
           )}
         </h1>
 
-        <p className="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-xl">{description}</p>
+        <p className="text-xs sm:text-base text-zinc-400 leading-relaxed max-w-xl">{description}</p>
 
         {crossLink && (
           <Link
             href={crossLink.href}
-            className="group inline-flex items-center gap-2 text-xs text-zinc-400 hover:text-white transition-colors"
+            className="group flex flex-wrap sm:inline-flex items-center gap-1.5 sm:gap-2 text-xs text-zinc-400 hover:text-white transition-colors"
           >
             <span>{crossLink.label}</span>
             <span className="inline-flex items-center gap-1 font-semibold text-brand-mauve group-hover:text-brand-mauve-soft">
@@ -93,18 +93,20 @@ export function BookingHero({
         )}
       </div>
 
-      {/* Spec sheet */}
-      <dl className="lg:col-span-5 rounded-2xl border border-white/[0.08] bg-white/[0.015] divide-y divide-white/[0.06] overflow-hidden">
-        <div className="px-5 py-3 flex items-center justify-between bg-white/[0.02]">
-          <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-zinc-500">Production Sheet</span>
-          <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-brand-mauve/90">Iris Bay · DXB</span>
+      {/* Spec sheet: 2x2 micro-grid on mobile, vertical list on desktop */}
+      <dl className="lg:col-span-5 rounded-2xl border border-white/[0.08] bg-white/[0.015] overflow-hidden">
+        <div className="px-3.5 sm:px-5 py-2 sm:py-3 flex items-center justify-between bg-white/[0.02] border-b border-white/[0.06]">
+          <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-zinc-500">Production Sheet</span>
+          <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-brand-mauve/90">Iris Bay · DXB</span>
         </div>
-        {specs.map((spec) => (
-          <div key={spec.label} className="px-5 py-3 flex items-center justify-between gap-4">
-            <dt className="font-mono text-[10px] tracking-[0.18em] uppercase text-zinc-500">{spec.label}</dt>
-            <dd className="text-xs sm:text-sm font-medium text-zinc-100 text-end">{spec.value}</dd>
-          </div>
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 divide-y sm:divide-y-0 lg:divide-y divide-white/[0.06] sm:gap-px sm:bg-white/[0.06] lg:bg-transparent">
+          {specs.map((spec) => (
+            <div key={spec.label} className="px-3.5 sm:px-5 py-2 sm:py-3 flex sm:flex-col lg:flex-row items-center sm:items-start lg:items-center justify-between gap-2 sm:gap-1 lg:gap-4 bg-[#0b0b0f] sm:bg-[#0e0e13] lg:bg-transparent">
+              <dt className="font-mono text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-zinc-500 shrink-0">{spec.label}</dt>
+              <dd className="text-[11px] sm:text-xs font-medium text-zinc-100 text-end sm:text-start lg:text-end truncate max-w-[220px] sm:max-w-none">{spec.value}</dd>
+            </div>
+          ))}
+        </div>
       </dl>
     </header>
   );
@@ -236,15 +238,20 @@ export function StepIntro({
   aside?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 pb-5 mb-6 border-b border-white/[0.06]">
-      <div className="space-y-1.5 min-w-0">
+    <div className="pb-3.5 sm:pb-5 mb-4 sm:mb-6 border-b border-white/[0.06]">
+      <div className="flex items-center justify-between gap-2 mb-1 sm:mb-1.5">
         <span className="block font-mono text-[10px] tracking-[0.22em] uppercase text-brand-mauve">
           Step {pad2(index)} — {pad2(total)}
         </span>
-        <h2 className="text-2xl sm:text-[28px] font-bold text-white tracking-tight leading-tight">{title}</h2>
-        {description && <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-xl">{description}</p>}
+        {aside && <div className="shrink-0 sm:hidden">{aside}</div>}
       </div>
-      {aside && <div className="shrink-0">{aside}</div>}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-3">
+        <div className="space-y-1 min-w-0">
+          <h2 className="text-xl sm:text-[28px] font-bold text-white tracking-tight leading-tight">{title}</h2>
+          {description && <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-xl">{description}</p>}
+        </div>
+        {aside && <div className="hidden sm:block shrink-0">{aside}</div>}
+      </div>
     </div>
   );
 }
@@ -390,15 +397,26 @@ export function PriceLine({
 }
 
 /** Non-interactive visual pill for toggle cards (the whole card is the button). */
-export function TogglePill({ selected, addLabel = "Add", addedLabel = "Added" }: { selected: boolean; addLabel?: string; addedLabel?: string }) {
+export function TogglePill({
+  selected,
+  addLabel = "Add",
+  addedLabel = "Added",
+  className,
+}: {
+  selected: boolean;
+  addLabel?: string;
+  addedLabel?: string;
+  className?: string;
+}) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-colors whitespace-nowrap shrink-0",
-        selected ? "bg-brand-mauve text-zinc-950" : "bg-white/[0.06] text-zinc-300 group-hover:bg-white/[0.1] group-hover:text-white"
+        "inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-[11px] font-semibold transition-colors whitespace-nowrap shrink-0",
+        selected ? "bg-brand-mauve text-zinc-950" : "bg-white/[0.06] text-zinc-300 group-hover:bg-white/[0.1] group-hover:text-white",
+        className
       )}
     >
-      {selected ? <Check size={12} strokeWidth={3} /> : <Plus size={12} />}
+      {selected ? <Check size={11} strokeWidth={3} /> : <Plus size={11} />}
       {selected ? addedLabel : addLabel}
     </span>
   );

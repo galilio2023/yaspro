@@ -197,7 +197,7 @@ export function Step5ReviewCheckout({
                     {selectedAddons.map((addon) => (
                       <span
                         key={addon.key}
-                        className="px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/10 text-brand-lavender text-[11px] font-medium whitespace-nowrap shrink-0"
+                        className="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/10 text-brand-lavender text-[11px] font-medium leading-relaxed"
                       >
                         {addon.title} {addon.qty > 1 && `(x${addon.qty})`} · {formatAED(addon.cost)}
                       </span>

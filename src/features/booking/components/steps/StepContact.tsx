@@ -139,7 +139,7 @@ export function StepContact({
             {["Visa / Mastercard", "Apple Pay", "Google Pay"].map((m) => (
               <span
                 key={m}
-                className="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.08] font-mono text-[10px] tracking-wider uppercase text-zinc-300"
+                className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md bg-white/[0.04] border border-white/[0.08] font-mono text-[9px] sm:text-[10px] tracking-wider uppercase text-zinc-300 shrink-0 whitespace-nowrap"
               >
                 {m}
               </span>
