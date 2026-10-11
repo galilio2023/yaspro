@@ -62,7 +62,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
         </div>
 
         {/* Tactile Headcount Pills */}
-        <div className="flex items-center justify-center gap-2 sm:gap-3 pt-0.5 flex-wrap">
+        <div className="flex items-center justify-center gap-1.5 sm:gap-3 pt-0.5 flex-wrap">
           {[1, 2, 3, 4, 5].map((count) => {
             const isSelected = session.headcount === count;
             return (
@@ -74,7 +74,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
                 whileTap={{ scale: 0.95 }}
                 transition={studioSprings.snappy}
                 className={cn(
-                  "size-12 sm:size-13 rounded-2xl font-black text-sm sm:text-base transition-all duration-200 flex flex-col items-center justify-center cursor-pointer",
+                  "size-11 sm:size-13 rounded-xl sm:rounded-2xl font-black text-xs sm:text-base transition-all duration-200 flex flex-col items-center justify-center cursor-pointer",
                   isSelected
                     ? "bg-brand-mauve text-zinc-950 shadow-[0_10px_25px_-6px_rgba(152,123,165,0.7)] scale-105 ring-2 ring-brand-mauve-soft"
                     : "bg-white/[0.03] text-zinc-300 border border-white/10 hover:border-white/25 hover:text-white hover:bg-white/[0.06]"

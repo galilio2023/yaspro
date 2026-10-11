@@ -263,9 +263,9 @@ export function PodcastBookingWizard() {
                 whileTap={{ scale: 0.96 }}
                 transition={studioSprings.snappy}
                 aria-label="Back"
-                className="h-12 px-4 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/20 text-zinc-200 text-sm font-medium flex items-center gap-2 cursor-pointer transition-colors shrink-0"
+                className="h-11 sm:h-12 px-3.5 sm:px-4 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/20 text-zinc-200 text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 cursor-pointer transition-colors shrink-0"
               >
-                <ArrowLeft size={16} />
+                <ArrowLeft size={15} />
                 <span className="hidden sm:inline">Back</span>
               </motion.button>
             )}
@@ -276,7 +276,7 @@ export function PodcastBookingWizard() {
                 <span className="block font-mono text-[10px] tracking-[0.16em] uppercase text-zinc-500">
                   Total ({sessions.length} {sessions.length === 1 ? "Session" : "Sessions"})
                 </span>
-                <span className="block text-base font-bold text-brand-mauve tabular-nums truncate">
+                <span className="block text-sm sm:text-base font-bold text-brand-mauve tabular-nums truncate">
                   {formatAED(grandTotal)}
                 </span>
               </div>
@@ -289,13 +289,13 @@ export function PodcastBookingWizard() {
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 transition={studioSprings.snappy}
-                className="lg:ms-auto h-12 px-5 sm:px-6 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 text-sm font-bold flex items-center gap-2 cursor-pointer transition-colors shadow-lg shadow-brand-violet/40 shrink-0"
+                className="lg:ms-auto h-11 sm:h-12 px-4 sm:px-6 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 text-xs sm:text-sm font-bold flex items-center gap-1.5 sm:gap-2 cursor-pointer transition-colors shadow-lg shadow-brand-violet/40 shrink-0"
               >
                 <span>
                   <span className="sm:hidden">Continue</span>
                   <span className="hidden sm:inline">Continue · {nextStepLabel}</span>
                 </span>
-                <ArrowRight size={16} />
+                <ArrowRight size={15} />
               </motion.button>
             )}
           </div>

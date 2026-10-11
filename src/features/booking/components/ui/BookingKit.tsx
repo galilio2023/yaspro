@@ -458,7 +458,7 @@ export function ChoiceChip({
       whileTap={disabled ? undefined : { scale: 0.95 }}
       transition={studioSprings.snappy}
       className={cn(
-        "relative min-h-[40px] rounded-xl border text-xs font-semibold tabular-nums transition-colors duration-150 cursor-pointer disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve/50",
+        "relative min-h-[36px] sm:min-h-[40px] rounded-xl border text-[11px] sm:text-xs font-semibold tabular-nums transition-colors duration-150 cursor-pointer disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve/50",
         selected
           ? "bg-brand-mauve border-brand-mauve text-zinc-950 shadow-[0_8px_20px_-8px_rgba(152,123,165,0.6)]"
           : "bg-white/[0.02] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:text-white hover:bg-white/[0.04]",
@@ -488,22 +488,22 @@ export function Counter({
   incLabel?: string;
 }) {
   return (
-    <div dir="ltr" className="inline-flex items-center rounded-xl border border-white/10 bg-black/30 p-1">
+    <div dir="ltr" className="inline-flex items-center rounded-xl border border-white/10 bg-black/30 p-0.5 sm:p-1">
       <button
         type="button"
         aria-label={decLabel}
         disabled={value <= min}
         onClick={() => onChange(Math.max(min, value - 1))}
-        className="size-9 rounded-lg flex items-center justify-center text-zinc-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
+        className="size-8 sm:size-9 rounded-lg flex items-center justify-center text-zinc-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
       >
-        <Minus size={15} />
+        <Minus size={13} className="sm:size-[15px]" />
       </button>
       <motion.span
         key={value}
         initial={{ y: -6, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={studioSprings.snappy}
-        className="min-w-[56px] text-center font-mono text-sm font-semibold text-white tabular-nums"
+        className="min-w-[44px] sm:min-w-[56px] text-center font-mono text-xs sm:text-sm font-semibold text-white tabular-nums"
       >
         {format(value)}
       </motion.span>
@@ -512,9 +512,9 @@ export function Counter({
         aria-label={incLabel}
         disabled={value >= max}
         onClick={() => onChange(Math.min(max, value + 1))}
-        className="size-9 rounded-lg flex items-center justify-center text-zinc-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
+        className="size-8 sm:size-9 rounded-lg flex items-center justify-center text-zinc-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
       >
-        <Plus size={15} />
+        <Plus size={13} className="sm:size-[15px]" />
       </button>
     </div>
   );
@@ -540,12 +540,12 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <section className={cn("rounded-2xl border border-white/[0.07] bg-white/[0.015] p-4 sm:p-6 space-y-4", className)}>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-3 min-w-0">
+    <section className={cn("rounded-2xl border border-white/[0.07] bg-white/[0.015] p-3.5 sm:p-6 space-y-3.5 sm:space-y-4", className)}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
+        <div className="flex items-start gap-2.5 sm:gap-3 min-w-0">
           {Icon && (
-            <span className="size-9 shrink-0 rounded-xl bg-brand-mauve/10 border border-brand-mauve/25 text-brand-lavender flex items-center justify-center">
-              <Icon size={17} />
+            <span className="size-8 sm:size-9 shrink-0 rounded-xl bg-brand-mauve/10 border border-brand-mauve/25 text-brand-lavender flex items-center justify-center">
+              <Icon size={16} />
             </span>
           )}
           <div className="min-w-0">
@@ -553,7 +553,7 @@ export function Panel({
             {description && <p className="text-xs text-zinc-500 mt-0.5">{description}</p>}
           </div>
         </div>
-        {aside && <div className="shrink-0">{aside}</div>}
+        {aside && <div className="self-end sm:self-auto shrink-0">{aside}</div>}
       </div>
       {children}
     </section>

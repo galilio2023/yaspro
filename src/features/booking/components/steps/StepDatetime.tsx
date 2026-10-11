@@ -176,7 +176,26 @@ export function StepDatetime({ state, update }: WizardStepProps) {
             icon={Timer}
             title="Session length"
             description="Billed per hour · max 12h"
-            aside={
+          >
+            <div className="flex items-center justify-between gap-2.5 flex-wrap">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {[1, 2, 4, 8].map((h) => (
+                  <button
+                    key={h}
+                    type="button"
+                    onClick={() => update({ durationHours: h })}
+                    className={cn(
+                      "px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer",
+                      duration === h
+                        ? "bg-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/40 scale-105"
+                        : "bg-white/[0.04] text-zinc-400 hover:text-white border border-white/10 hover:bg-white/[0.08]"
+                    )}
+                  >
+                    {h}h
+                  </button>
+                ))}
+              </div>
+
               <Counter
                 value={duration}
                 min={1}
@@ -186,8 +205,8 @@ export function StepDatetime({ state, update }: WizardStepProps) {
                 decLabel="Decrease duration"
                 incLabel="Increase duration"
               />
-            }
-          />
+            </div>
+          </Panel>
 
           {/* Headcount */}
           <Panel icon={Users} title="People on set" description="Talent & guests recording">

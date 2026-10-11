@@ -68,21 +68,21 @@ export function PodcastConfirmation({ result, onBookAnother }: PodcastConfirmati
       </div>
 
       {/* CTAs */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 pt-2">
         <a
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30"
+          className="w-full sm:w-auto h-11 sm:h-12 px-5 sm:px-6 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30"
         >
-          <MessageCircle size={16} />
+          <MessageCircle size={15} />
           Chat with Studio Concierge
         </a>
 
         <button
           type="button"
           onClick={onBookAnother}
-          className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
+          className="w-full sm:w-auto h-11 sm:h-12 px-5 sm:px-6 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
         >
           Book Another Session
           <ArrowRight size={14} />

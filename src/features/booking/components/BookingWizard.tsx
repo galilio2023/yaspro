@@ -184,9 +184,9 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
                 whileTap={{ scale: 0.96 }}
                 transition={studioSprings.snappy}
                 aria-label="Back"
-                className="h-12 px-4 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/20 text-zinc-200 text-sm font-medium flex items-center gap-2 cursor-pointer transition-colors"
+                className="h-11 sm:h-12 px-3.5 sm:px-4 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/20 text-zinc-200 text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 cursor-pointer transition-colors shrink-0"
               >
-                <ArrowLeft size={16} />
+                <ArrowLeft size={15} />
                 <span className="hidden sm:inline">Back</span>
               </motion.button>
             )}
@@ -195,7 +195,7 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
             {!isLastStep && (
               <div className="lg:hidden min-w-0 flex-1">
                 <span className="block font-mono text-[10px] tracking-[0.16em] uppercase text-zinc-500">Total</span>
-                <span className="block text-base font-bold text-brand-mauve tabular-nums truncate">{formatAED(breakdown.total, 2)}</span>
+                <span className="block text-sm sm:text-base font-bold text-brand-mauve tabular-nums truncate">{formatAED(breakdown.total, 2)}</span>
               </div>
             )}
 
@@ -206,13 +206,13 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 transition={studioSprings.snappy}
-                className="lg:ms-auto h-12 px-5 sm:px-6 rounded-xl bg-white hover:bg-zinc-200 text-black text-sm font-semibold flex items-center gap-2 cursor-pointer transition-colors shadow-[0_12px_30px_-12px_rgba(255,255,255,0.35)]"
+                className="lg:ms-auto h-11 sm:h-12 px-4 sm:px-6 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs sm:text-sm font-semibold flex items-center gap-1.5 sm:gap-2 cursor-pointer transition-colors shadow-[0_12px_30px_-12px_rgba(255,255,255,0.35)] shrink-0"
               >
                 <span>
                   <span className="sm:hidden">Continue</span>
                   <span className="hidden sm:inline">Continue{nextLabel ? ` · ${nextLabel}` : ""}</span>
                 </span>
-                <ArrowRight size={16} />
+                <ArrowRight size={15} />
               </motion.button>
             )}
           </div>

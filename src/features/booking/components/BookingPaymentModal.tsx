@@ -530,7 +530,7 @@ export function BookingPaymentModal({
               type="submit"
               disabled={isProcessing}
               className={cn(
-                "w-full py-3.5 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer disabled:opacity-50",
+                "w-full h-11 sm:h-12 px-4 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer disabled:opacity-50",
                 paymentMethod === "ziina"
                   ? "bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-extrabold shadow-brand-violet/30"
                   : paymentMethod === "card"
