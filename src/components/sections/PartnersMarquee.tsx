@@ -70,21 +70,29 @@ export function PartnersMarquee() {
       {/* ═══════════════════════════════════════════════════════════════
           ACT 1: EDITORIAL HEADER & SOVEREIGN/GLOBAL PARTNERS
       ═══════════════════════════════════════════════════════════════ */}
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sm:mb-12 text-center">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sm:mb-12 text-start flex flex-col items-start">
         {/* Studio Metadata Eyebrow */}
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-[10px] sm:text-[11px] font-mono uppercase tracking-widest text-zinc-400 mb-3 shadow-inner">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-brand-mauve animate-pulse" />
           <span>
             {isArabic ? "سجل ثقة معتمد // شركاء الإنتاج" : "VERIFIED ROSTER // PRODUCTION PARTNERS"}
           </span>
         </div>
 
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display tracking-tight text-white">
-          {isArabic
-            ? "ثقة الكيانات السيادية والعلامات العالمية"
-            : "Trusted by Sovereign Entities & Global Brands"}
+          {isArabic ? (
+            <>
+              ثقة الكيانات السيادية و
+              <span className="gradient-text-mauve ms-2">العلامات العالمية</span>
+            </>
+          ) : (
+            <>
+              Trusted by Sovereign Entities &amp;{" "}
+              <span className="gradient-text-mauve">Global Brands</span>
+            </>
+          )}
         </h2>
-        <p className="mt-2 text-xs sm:text-sm text-zinc-400 max-w-2xl mx-auto font-normal leading-relaxed">
+        <p className="mt-2 text-xs sm:text-sm text-zinc-400 max-w-2xl font-normal leading-relaxed">
           {isArabic
             ? "من الوزارات والمؤسسات الحكومية إلى كبرى شبكات البث والترفيه في الشرق الأوسط والعالم"
             : "From federal government ministries to top-tier commercial platforms across the MENA region and worldwide."}
@@ -280,16 +288,16 @@ export function PartnersMarquee() {
       ═══════════════════════════════════════════════════════════════ */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Contextual Section Header */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 pb-4 mb-5 sm:mb-6 border-b border-white/[0.08]">
-          <div className="text-center sm:text-start">
-            <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-mono uppercase tracking-widest text-amber-400/90 mb-0.5">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 pb-4 mb-5 sm:mb-6 border-b border-white/[0.08]">
+          <div className="text-start">
+            <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-mono uppercase tracking-widest text-brand-mauve mb-0.5">
               <span>[CONGLOMERATE ECOSYSTEM]</span>
             </div>
             <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
               {isArabic ? "منظومة مجموعة ياس برو المتكاملة" : "The Integrated Yas Pro Media Network"}
             </h3>
           </div>
-          <p className="text-xs text-zinc-400 text-center sm:text-end max-w-md font-normal">
+          <p className="text-xs text-zinc-400 text-start sm:text-end max-w-md font-normal">
             {isArabic
               ? "7 كيانات واستوديوهات متخصصة تغطي الإنتاج السينمائي، البث، وإدارة المواهب"
               : "7 specialized studios spanning cinema, broadcast, talent & sound across MENA."}
