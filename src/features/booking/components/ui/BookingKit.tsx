@@ -66,7 +66,7 @@ export function BookingHero({
 
         <h1
           id={headingId}
-          className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.05] sm:leading-[1.02] text-balance"
+          className="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.75rem] font-extrabold tracking-tight text-white leading-[1.12] sm:leading-[1.08] text-balance"
         >
           {title}
           {accent && (

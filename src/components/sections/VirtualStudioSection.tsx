@@ -279,7 +279,7 @@ export function VirtualStudioSection() {
 
               <h2
                 id="virtual-heading"
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-black tracking-tight leading-[1.08] text-white"
+                className="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.5rem] font-extrabold tracking-tight leading-[1.15] rtl:leading-[1.35] text-white"
               >
                 {t("virtualStudio.title")}{" "}
                 <span className="bg-gradient-to-r from-brand-lavender via-brand-mauve to-brand-mauve-soft bg-clip-text text-transparent">

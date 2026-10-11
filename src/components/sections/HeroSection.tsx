@@ -44,7 +44,7 @@ export default function HeroSection() {
 
             <h1
               id="hero-title"
-              className="text-4xl sm:text-5xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white mb-4 sm:mb-6 font-display rtl:font-arabic tracking-tight leading-[1.1] rtl:leading-[1.4] text-balance drop-shadow-lg"
+              className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-[3.25rem] font-extrabold text-white mb-4 sm:mb-6 font-display rtl:font-arabic tracking-tight leading-[1.1] rtl:leading-[1.35] text-balance drop-shadow-lg"
             >
               {isArabic ? (
                 <>

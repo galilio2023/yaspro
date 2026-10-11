@@ -35,7 +35,7 @@ export function YasGroupShowcase() {
             </span>
           </div>
 
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white font-display tracking-tight mb-4 rtl:leading-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white font-display tracking-tight mb-3 sm:mb-4 rtl:leading-tight">
             {isArabic
               ? "منظومة إعلامية متكاملة تقود صناعة المحتوى في الخليج"
               : "A Multi-Disciplinary Media Conglomerate"}

@@ -31,7 +31,7 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
             )}
           </div>
 
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black mb-4 sm:mb-5 font-display rtl:font-arabic text-white tracking-tight rtl:tracking-normal leading-[1.15] rtl:leading-[1.4] text-balance">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-3 sm:mb-4 font-display rtl:font-arabic text-white tracking-tight rtl:tracking-normal leading-[1.15] rtl:leading-[1.4] text-balance">
             {title}
           </h1>
 
