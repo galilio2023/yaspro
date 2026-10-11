@@ -41,7 +41,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
       />
 
       {/* 1. Compact, Tactile Headcount Selector */}
-      <div className="py-5 px-4 sm:py-6 sm:px-6 rounded-2xl sm:rounded-3xl bg-[#0e0e13] border border-white/[0.08] flex flex-col items-center justify-center text-center space-y-4 shadow-xl relative overflow-hidden">
+      <div className="py-4 px-3.5 sm:py-6 sm:px-6 rounded-2xl sm:rounded-3xl bg-[#0e0e13] border border-white/[0.08] flex flex-col items-center justify-center text-center space-y-3.5 sm:space-y-4 shadow-xl relative overflow-hidden">
         {/* Subtle violet/mauve glow behind mic badge */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-24 bg-brand-violet/20 blur-3xl pointer-events-none rounded-full" />
 
@@ -62,7 +62,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
         </div>
 
         {/* Tactile Headcount Pills */}
-        <div className="flex items-center justify-center gap-2 sm:gap-3 pt-0.5 flex-wrap">
+        <div className="flex items-center justify-center gap-1.5 sm:gap-3 pt-0.5 flex-wrap">
           {[1, 2, 3, 4, 5].map((count) => {
             const isSelected = session.headcount === count;
             return (
@@ -74,7 +74,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
                 whileTap={{ scale: 0.95 }}
                 transition={studioSprings.snappy}
                 className={cn(
-                  "size-12 sm:size-13 rounded-2xl font-black text-sm sm:text-base transition-all duration-200 flex flex-col items-center justify-center cursor-pointer",
+                  "size-11 sm:size-13 rounded-xl sm:rounded-2xl font-black text-xs sm:text-base transition-all duration-200 flex flex-col items-center justify-center cursor-pointer",
                   isSelected
                     ? "bg-brand-mauve text-zinc-950 shadow-[0_10px_25px_-6px_rgba(152,123,165,0.7)] scale-105 ring-2 ring-brand-mauve-soft"
                     : "bg-white/[0.03] text-zinc-300 border border-white/10 hover:border-white/25 hover:text-white hover:bg-white/[0.06]"
@@ -192,7 +192,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
           ) : undefined
         }
       >
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+        <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-4 xl:grid-cols-6 gap-1.5 sm:gap-2">
           {TIME_SLOTS.map((time) => {
             const isSelected = session.timeSlot === time;
             return (
@@ -203,7 +203,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
                 whileTap={{ scale: 0.96 }}
                 transition={studioSprings.snappy}
                 className={cn(
-                  "py-2.5 px-2 rounded-xl border text-xs font-semibold transition-all duration-200 text-center cursor-pointer",
+                  "py-2 px-1 sm:py-2.5 sm:px-2 rounded-xl border text-[11px] sm:text-xs font-semibold transition-all duration-200 text-center cursor-pointer",
                   isSelected
                     ? "bg-brand-mauve text-zinc-950 border-brand-mauve-soft font-bold shadow-[0_8px_20px_-6px_rgba(152,123,165,0.6)] scale-[1.02]"
                     : "bg-white/[0.02] text-zinc-300 border-white/[0.08] hover:border-white/20 hover:bg-white/[0.05] hover:text-white"

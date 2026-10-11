@@ -181,7 +181,7 @@ export function PodcastBookingWizard() {
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
         {/* Main Stage */}
         <div className="min-w-0">
-          <div className="rounded-3xl border border-white/[0.08] bg-[#0b0b0f] p-4 sm:p-7 lg:p-8 pb-20 sm:pb-24 lg:pb-8 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)]">
+          <div className="rounded-3xl border border-white/[0.08] bg-[#0b0b0f] p-4 sm:p-7 lg:p-8 pb-6 sm:pb-8 lg:pb-8 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9)]">
             {errorMessage && step !== 5 && (
               <div className="mb-5">
                 <ErrorBanner message={errorMessage} />
@@ -254,7 +254,7 @@ export function PodcastBookingWizard() {
           {/* Action bar — sticky on mobile, inline on desktop */}
           <div
             dir="ltr"
-            className="sticky bottom-3 z-30 mt-4 lg:static lg:mt-5 rounded-2xl border border-white/[0.1] lg:border-transparent bg-[#0b0b0f]/95 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none p-3 lg:p-0 shadow-2xl lg:shadow-none flex items-center gap-3"
+            className="sticky bottom-2 sm:bottom-3 z-30 mt-3 sm:mt-4 lg:static lg:mt-5 rounded-xl sm:rounded-2xl border border-white/[0.1] lg:border-transparent bg-[#0b0b0f]/95 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none p-2 sm:p-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:pb-0 lg:p-0 shadow-2xl lg:shadow-none flex items-center gap-2 sm:gap-3"
           >
             {step > 1 && (
               <motion.button
@@ -263,22 +263,24 @@ export function PodcastBookingWizard() {
                 whileTap={{ scale: 0.96 }}
                 transition={studioSprings.snappy}
                 aria-label="Back"
-                className="h-12 px-4 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/20 text-zinc-200 text-sm font-medium flex items-center gap-2 cursor-pointer transition-colors shrink-0"
+                className="h-9 sm:h-11 px-2.5 sm:px-3.5 rounded-lg sm:rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/20 text-zinc-200 text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 cursor-pointer transition-colors shrink-0"
               >
-                <ArrowLeft size={16} />
+                <ArrowLeft size={14} className="sm:size-[15px]" />
                 <span className="hidden sm:inline">Back</span>
               </motion.button>
             )}
 
-            {/* Mobile running total snapshot */}
-            <div className="lg:hidden min-w-0 flex-1">
-              <span className="block font-mono text-[10px] tracking-[0.16em] uppercase text-zinc-500">
-                Total ({sessions.length} {sessions.length === 1 ? "Session" : "Sessions"})
-              </span>
-              <span className="block text-base font-bold text-brand-mauve tabular-nums truncate">
-                {formatAED(grandTotal)}
-              </span>
-            </div>
+            {/* Mobile running total snapshot — hidden on last step since Step5 has its own checkout action card */}
+            {!isLastStep && (
+              <div className="lg:hidden min-w-0 flex-1">
+                <span className="block font-mono text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-zinc-500">
+                  Total ({sessions.length} {sessions.length === 1 ? "Session" : "Sessions"})
+                </span>
+                <span className="block text-xs sm:text-base font-bold text-brand-mauve tabular-nums truncate">
+                  {formatAED(grandTotal)}
+                </span>
+              </div>
+            )}
 
             {!isLastStep && (
               <motion.button
@@ -287,13 +289,13 @@ export function PodcastBookingWizard() {
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 transition={studioSprings.snappy}
-                className="lg:ms-auto h-12 px-5 sm:px-6 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 text-sm font-bold flex items-center gap-2 cursor-pointer transition-colors shadow-lg shadow-brand-violet/40 shrink-0"
+                className="lg:ms-auto h-9 sm:h-11 px-3 sm:px-5 rounded-lg sm:rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 text-xs sm:text-sm font-bold flex items-center gap-1 sm:gap-2 cursor-pointer transition-colors shadow-md shadow-brand-violet/30 shrink-0"
               >
                 <span>
                   <span className="sm:hidden">Continue</span>
                   <span className="hidden sm:inline">Continue · {nextStepLabel}</span>
                 </span>
-                <ArrowRight size={16} />
+                <ArrowRight size={14} className="sm:size-[15px]" />
               </motion.button>
             )}
           </div>

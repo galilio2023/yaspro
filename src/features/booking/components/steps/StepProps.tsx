@@ -50,10 +50,10 @@ export function StepProps({ state, update }: WizardStepProps) {
           const isSelected = selectedIds.includes(prop.id);
           return (
             <SelectableCard key={prop.id} selected={isSelected} onSelect={() => handleToggle(prop.id)}>
-              <CardMedia src={prop.imageUrl} alt={prop.title} contain className="aspect-square" />
-              <div className="p-3 sm:p-4 flex-1 flex flex-col gap-2.5">
-                <h3 className="text-white font-semibold text-sm tracking-tight line-clamp-2">{prop.title}</h3>
-                <div className="mt-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <CardMedia src={prop.imageUrl} alt={prop.title} contain className="aspect-[4/3] sm:aspect-square" />
+              <div className="p-2.5 sm:p-4 flex-1 flex flex-col gap-1.5 sm:gap-2.5">
+                <h3 className="text-white font-semibold text-xs sm:text-sm tracking-tight line-clamp-1 sm:line-clamp-2">{prop.title}</h3>
+                <div className="mt-auto flex items-center justify-between gap-1.5 pt-1">
                   <PriceLine amount={prop.price} emphasis={isSelected} />
                   <TogglePill selected={isSelected} />
                 </div>

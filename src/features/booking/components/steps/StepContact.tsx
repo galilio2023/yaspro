@@ -139,7 +139,7 @@ export function StepContact({
             {["Visa / Mastercard", "Apple Pay", "Google Pay"].map((m) => (
               <span
                 key={m}
-                className="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.08] font-mono text-[10px] tracking-wider uppercase text-zinc-300"
+                className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md bg-white/[0.04] border border-white/[0.08] font-mono text-[9px] sm:text-[10px] tracking-wider uppercase text-zinc-300 shrink-0 whitespace-nowrap"
               >
                 {m}
               </span>
@@ -151,16 +151,20 @@ export function StepContact({
           type="button"
           onClick={onSubmit}
           disabled={isSubmitting}
-          whileHover={isSubmitting ? undefined : { y: -2 }}
+          whileHover={isSubmitting ? undefined : { y: -1 }}
           whileTap={isSubmitting ? undefined : { scale: 0.98 }}
           transition={studioSprings.snappy}
-          className="w-full min-h-[54px] px-6 rounded-2xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 font-bold text-sm flex items-center justify-between gap-3 shadow-[0_18px_40px_-16px_rgba(152,123,165,0.7)] disabled:opacity-60 disabled:cursor-wait cursor-pointer transition-colors"
+          className="w-full h-10 sm:h-12 px-3.5 sm:px-6 rounded-xl sm:rounded-2xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 font-bold text-xs sm:text-sm flex items-center justify-between gap-2 shadow-lg shadow-brand-violet/30 disabled:opacity-60 disabled:cursor-wait cursor-pointer transition-colors"
         >
-          <span className="flex items-center gap-2">
-            {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Lock size={15} />}
-            {isSubmitting ? "Creating booking…" : "Complete booking & pay"}
+          <span className="flex items-center gap-2 min-w-0">
+            {isSubmitting ? <Loader2 size={15} className="animate-spin shrink-0" /> : <Lock size={14} className="shrink-0" />}
+            <span className="truncate">
+              {isSubmitting ? "Creating booking…" : "Complete Booking & Pay"}
+            </span>
           </span>
-          <span className="font-mono tabular-nums px-2.5 py-1 rounded-lg bg-black/10">{formatAED(breakdown.total, 2)}</span>
+          <span className="font-mono text-xs sm:text-sm font-extrabold tabular-nums px-2.5 py-1 rounded-lg bg-black/10 shrink-0 whitespace-nowrap">
+            {formatAED(breakdown.total, 2)}
+          </span>
         </motion.button>
       </div>
     </div>

@@ -37,7 +37,7 @@ export function Step2Setup({ session, onChange }: Step2SetupProps) {
             >
               <div>
                 {/* Studio Thumbnail with clean overlays */}
-                <div className="relative aspect-[16/10] w-full overflow-hidden bg-black/40">
+                <div className="relative aspect-[16/9] w-full overflow-hidden bg-black/40">
                   <Image
                     src={studio.image}
                     alt={studio.name}
@@ -64,7 +64,7 @@ export function Step2Setup({ session, onChange }: Step2SetupProps) {
                 </div>
 
                 {/* Card Body */}
-                <div className="p-4 sm:p-5 space-y-1.5">
+                <div className="p-3.5 sm:p-5 space-y-1 sm:space-y-1.5">
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-brand-mauve transition-colors truncate">
                       {studio.name}
@@ -78,7 +78,7 @@ export function Step2Setup({ session, onChange }: Step2SetupProps) {
               </div>
 
               {/* Clean Footer Metadata without clashing buttons */}
-              <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-0 mt-auto flex items-center justify-between gap-2 text-xs border-t border-white/[0.04] pt-3">
+              <div className="px-3.5 pb-3.5 sm:px-5 sm:pb-5 pt-2.5 sm:pt-3 mt-auto flex items-center justify-between gap-2 text-xs border-t border-white/[0.04]">
                 <span className="text-zinc-400 flex items-center gap-1 text-[11px] font-mono whitespace-nowrap shrink-0">
                   <Sparkles size={11} className="text-brand-mauve shrink-0" />
                   Iris Bay L18

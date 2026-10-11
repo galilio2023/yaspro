@@ -29,16 +29,16 @@ export function StepStudio({
 
           return (
             <SelectableCard key={s.id} selected={isSelected} onSelect={() => update({ studioId: s.id })}>
-              <CardMedia src={imageSrc} alt={s.name} priority={i < 2}>
-                <span className="absolute top-3 start-3 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/10 font-mono text-[10px] tracking-[0.16em] uppercase text-white/85">
+              <CardMedia src={imageSrc} alt={s.name} priority={i < 2} className="aspect-[2.2/1] sm:aspect-[16/9]">
+                <span className="absolute top-2.5 start-2.5 sm:top-3 sm:start-3 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/10 font-mono text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-white/85">
                   Stage {String(i + 1).padStart(2, "0")}
                 </span>
               </CardMedia>
 
-              <div className="p-4 sm:p-5 flex-1 flex flex-col gap-3">
-                <div className="space-y-1.5">
-                  <h3 className="text-white font-semibold text-base tracking-tight">{s.name}</h3>
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-zinc-500">
+              <div className="p-3.5 sm:p-5 flex-1 flex flex-col gap-2.5 sm:gap-3">
+                <div className="space-y-1 sm:space-y-1.5">
+                  <h3 className="text-white font-semibold text-sm sm:text-base tracking-tight">{s.name}</h3>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10px] sm:text-[11px] text-zinc-500">
                     <span className="inline-flex items-center gap-1">
                       <Users size={12} className="text-brand-mauve/80" />
                       {s.capacity || 10} seats
@@ -49,20 +49,22 @@ export function StepStudio({
                     </span>
                   </div>
                   {(s.description || s.desc) && (
-                    <p className="text-zinc-400 text-xs leading-relaxed line-clamp-2 pt-0.5">{s.description || s.desc}</p>
+                    <p className="text-zinc-400 text-xs leading-relaxed line-clamp-1 sm:line-clamp-2 pt-0.5">{s.description || s.desc}</p>
                   )}
                 </div>
 
                 {s.features && s.features.length > 0 && (
-                  <div className="mt-auto flex flex-wrap gap-1.5 pt-3 border-t border-white/[0.06]">
-                    {s.features.slice(0, 4).map((f) => (
-                      <span
-                        key={f}
-                        className="px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.08] text-[10px] text-zinc-300"
-                      >
-                        {f}
-                      </span>
-                    ))}
+                  <div className="mt-auto pt-2.5 border-t border-white/[0.06]">
+                    <div className="flex flex-nowrap items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-0.5 px-0.5">
+                      {s.features.map((f) => (
+                        <span
+                          key={f}
+                          className="px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.08] text-[10px] text-zinc-300 shrink-0 whitespace-nowrap"
+                        >
+                          {f}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>

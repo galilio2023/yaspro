@@ -54,9 +54,9 @@ export function BookingHero({
   crossLink?: { href: string; label: string; cta: string };
 }) {
   return (
-    <header className="mb-10 sm:mb-14 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
-      <div className="lg:col-span-7 space-y-5">
-        <div className="inline-flex items-center gap-2.5 font-mono text-[11px] tracking-[0.18em] uppercase text-zinc-400">
+    <header className="mb-6 sm:mb-14 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 lg:gap-12 items-end">
+      <div className="lg:col-span-7 space-y-3 sm:space-y-5">
+        <div className="inline-flex items-center gap-2 font-mono text-[10px] sm:text-[11px] tracking-[0.18em] uppercase text-zinc-400">
           <span className="relative flex size-2">
             <span className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-60" />
             <span className="relative size-2 rounded-full bg-red-500" />
@@ -66,7 +66,7 @@ export function BookingHero({
 
         <h1
           id={headingId}
-          className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.02] text-balance"
+          className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.05] sm:leading-[1.02] text-balance"
         >
           {title}
           {accent && (
@@ -77,12 +77,12 @@ export function BookingHero({
           )}
         </h1>
 
-        <p className="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-xl">{description}</p>
+        <p className="text-xs sm:text-base text-zinc-400 leading-relaxed max-w-xl">{description}</p>
 
         {crossLink && (
           <Link
             href={crossLink.href}
-            className="group inline-flex items-center gap-2 text-xs text-zinc-400 hover:text-white transition-colors"
+            className="group flex flex-wrap sm:inline-flex items-center gap-1.5 sm:gap-2 text-xs text-zinc-400 hover:text-white transition-colors"
           >
             <span>{crossLink.label}</span>
             <span className="inline-flex items-center gap-1 font-semibold text-brand-mauve group-hover:text-brand-mauve-soft">
@@ -93,18 +93,27 @@ export function BookingHero({
         )}
       </div>
 
-      {/* Spec sheet */}
-      <dl className="lg:col-span-5 rounded-2xl border border-white/[0.08] bg-white/[0.015] divide-y divide-white/[0.06] overflow-hidden">
-        <div className="px-5 py-3 flex items-center justify-between bg-white/[0.02]">
-          <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-zinc-500">Production Sheet</span>
-          <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-brand-mauve/90">Iris Bay · DXB</span>
+      {/* Spec sheet: 2x2 micro-grid on mobile, vertical list on desktop */}
+      <dl className="lg:col-span-5 rounded-2xl border border-white/[0.08] bg-white/[0.015] overflow-hidden">
+        <div className="px-3.5 sm:px-5 py-2 sm:py-3 flex items-center justify-between bg-white/[0.02] border-b border-white/[0.06]">
+          <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-zinc-500">Production Sheet</span>
+          <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-brand-mauve/90">Iris Bay · DXB</span>
         </div>
-        {specs.map((spec) => (
-          <div key={spec.label} className="px-5 py-3 flex items-center justify-between gap-4">
-            <dt className="font-mono text-[10px] tracking-[0.18em] uppercase text-zinc-500">{spec.label}</dt>
-            <dd className="text-xs sm:text-sm font-medium text-zinc-100 text-end">{spec.value}</dd>
-          </div>
-        ))}
+        <div className="grid grid-cols-2 lg:grid-cols-1 gap-px bg-white/[0.06] lg:bg-transparent lg:divide-y lg:divide-white/[0.06]">
+          {specs.map((spec) => (
+            <div
+              key={spec.label}
+              className="px-3 sm:px-5 py-2 sm:py-2.5 lg:py-3 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-0.5 sm:gap-1 lg:gap-4 bg-[#0e0e13] lg:bg-transparent"
+            >
+              <dt className="font-mono text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-zinc-500 shrink-0">
+                {spec.label}
+              </dt>
+              <dd className="text-[11px] sm:text-xs font-medium text-zinc-100 text-start lg:text-end truncate w-full lg:w-auto max-w-none lg:max-w-[220px]">
+                {spec.value}
+              </dd>
+            </div>
+          ))}
+        </div>
       </dl>
     </header>
   );
@@ -236,15 +245,20 @@ export function StepIntro({
   aside?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 pb-5 mb-6 border-b border-white/[0.06]">
-      <div className="space-y-1.5 min-w-0">
+    <div className="pb-3.5 sm:pb-5 mb-4 sm:mb-6 border-b border-white/[0.06]">
+      <div className="flex items-center justify-between gap-2 mb-1 sm:mb-1.5">
         <span className="block font-mono text-[10px] tracking-[0.22em] uppercase text-brand-mauve">
           Step {pad2(index)} — {pad2(total)}
         </span>
-        <h2 className="text-2xl sm:text-[28px] font-bold text-white tracking-tight leading-tight">{title}</h2>
-        {description && <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-xl">{description}</p>}
+        {aside && <div className="shrink-0 sm:hidden">{aside}</div>}
       </div>
-      {aside && <div className="shrink-0">{aside}</div>}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-3">
+        <div className="space-y-1 min-w-0">
+          <h2 className="text-xl sm:text-[28px] font-bold text-white tracking-tight leading-tight">{title}</h2>
+          {description && <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-xl">{description}</p>}
+        </div>
+        {aside && <div className="hidden sm:block shrink-0">{aside}</div>}
+      </div>
     </div>
   );
 }
@@ -390,15 +404,26 @@ export function PriceLine({
 }
 
 /** Non-interactive visual pill for toggle cards (the whole card is the button). */
-export function TogglePill({ selected, addLabel = "Add", addedLabel = "Added" }: { selected: boolean; addLabel?: string; addedLabel?: string }) {
+export function TogglePill({
+  selected,
+  addLabel = "Add",
+  addedLabel = "Added",
+  className,
+}: {
+  selected: boolean;
+  addLabel?: string;
+  addedLabel?: string;
+  className?: string;
+}) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-colors whitespace-nowrap shrink-0",
-        selected ? "bg-brand-mauve text-zinc-950" : "bg-white/[0.06] text-zinc-300 group-hover:bg-white/[0.1] group-hover:text-white"
+        "inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-[11px] font-semibold transition-colors whitespace-nowrap shrink-0",
+        selected ? "bg-brand-mauve text-zinc-950" : "bg-white/[0.06] text-zinc-300 group-hover:bg-white/[0.1] group-hover:text-white",
+        className
       )}
     >
-      {selected ? <Check size={12} strokeWidth={3} /> : <Plus size={12} />}
+      {selected ? <Check size={11} strokeWidth={3} /> : <Plus size={11} />}
       {selected ? addedLabel : addLabel}
     </span>
   );
@@ -433,7 +458,7 @@ export function ChoiceChip({
       whileTap={disabled ? undefined : { scale: 0.95 }}
       transition={studioSprings.snappy}
       className={cn(
-        "relative min-h-[40px] rounded-xl border text-xs font-semibold tabular-nums transition-colors duration-150 cursor-pointer disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve/50",
+        "relative min-h-[36px] sm:min-h-[40px] rounded-xl border text-[11px] sm:text-xs font-semibold tabular-nums transition-colors duration-150 cursor-pointer disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve/50",
         selected
           ? "bg-brand-mauve border-brand-mauve text-zinc-950 shadow-[0_8px_20px_-8px_rgba(152,123,165,0.6)]"
           : "bg-white/[0.02] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:text-white hover:bg-white/[0.04]",
@@ -463,22 +488,22 @@ export function Counter({
   incLabel?: string;
 }) {
   return (
-    <div dir="ltr" className="inline-flex items-center rounded-xl border border-white/10 bg-black/30 p-1">
+    <div dir="ltr" className="inline-flex items-center rounded-xl border border-white/10 bg-black/30 p-0.5 sm:p-1">
       <button
         type="button"
         aria-label={decLabel}
         disabled={value <= min}
         onClick={() => onChange(Math.max(min, value - 1))}
-        className="size-9 rounded-lg flex items-center justify-center text-zinc-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
+        className="size-8 sm:size-9 rounded-lg flex items-center justify-center text-zinc-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
       >
-        <Minus size={15} />
+        <Minus size={13} className="sm:size-[15px]" />
       </button>
       <motion.span
         key={value}
         initial={{ y: -6, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={studioSprings.snappy}
-        className="min-w-[56px] text-center font-mono text-sm font-semibold text-white tabular-nums"
+        className="min-w-[44px] sm:min-w-[56px] text-center font-mono text-xs sm:text-sm font-semibold text-white tabular-nums"
       >
         {format(value)}
       </motion.span>
@@ -487,9 +512,9 @@ export function Counter({
         aria-label={incLabel}
         disabled={value >= max}
         onClick={() => onChange(Math.min(max, value + 1))}
-        className="size-9 rounded-lg flex items-center justify-center text-zinc-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
+        className="size-8 sm:size-9 rounded-lg flex items-center justify-center text-zinc-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
       >
-        <Plus size={15} />
+        <Plus size={13} className="sm:size-[15px]" />
       </button>
     </div>
   );
@@ -515,12 +540,12 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <section className={cn("rounded-2xl border border-white/[0.07] bg-white/[0.015] p-4 sm:p-6 space-y-4", className)}>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-3 min-w-0">
+    <section className={cn("rounded-2xl border border-white/[0.07] bg-white/[0.015] p-3.5 sm:p-6 space-y-3.5 sm:space-y-4", className)}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
+        <div className="flex items-start gap-2.5 sm:gap-3 min-w-0">
           {Icon && (
-            <span className="size-9 shrink-0 rounded-xl bg-brand-mauve/10 border border-brand-mauve/25 text-brand-lavender flex items-center justify-center">
-              <Icon size={17} />
+            <span className="size-8 sm:size-9 shrink-0 rounded-xl bg-brand-mauve/10 border border-brand-mauve/25 text-brand-lavender flex items-center justify-center">
+              <Icon size={16} />
             </span>
           )}
           <div className="min-w-0">
@@ -528,7 +553,7 @@ export function Panel({
             {description && <p className="text-xs text-zinc-500 mt-0.5">{description}</p>}
           </div>
         </div>
-        {aside && <div className="shrink-0">{aside}</div>}
+        {aside && <div className="self-end sm:self-auto shrink-0">{aside}</div>}
       </div>
       {children}
     </section>
