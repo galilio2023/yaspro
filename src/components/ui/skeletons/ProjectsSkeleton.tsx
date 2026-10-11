@@ -48,7 +48,7 @@ export function ProjectsSkeleton({ className }: { className?: string }) {
 
             <div className="space-y-2 px-2">
               <div className="flex items-center justify-between">
-                <div className="h-3 w-24 rounded bg-amber-400/20 font-mono text-xs" />
+                <div className="h-3 w-24 rounded bg-brand-mauve/20 font-mono text-xs" />
                 <div className="h-3 w-16 rounded bg-white/10" />
               </div>
               <div className="h-6 w-3/4 rounded bg-white/15 animate-pulse" />

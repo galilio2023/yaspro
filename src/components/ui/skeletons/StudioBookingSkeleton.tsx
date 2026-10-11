@@ -15,8 +15,8 @@ export function StudioBookingSkeleton({ className }: { className?: string }) {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-6">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping" />
-            <span className="h-3 w-32 rounded bg-amber-400/20 font-mono text-[10px]" />
+            <span className="h-2 w-2 rounded-full bg-brand-mauve animate-ping" />
+            <span className="h-3 w-32 rounded bg-brand-mauve/20 font-mono text-[10px]" />
           </div>
           <div className="h-10 sm:h-12 w-80 rounded-2xl bg-white/10 animate-pulse" />
           <div className="h-4 w-96 rounded bg-white/5 animate-pulse" />
@@ -25,7 +25,7 @@ export function StudioBookingSkeleton({ className }: { className?: string }) {
         {/* Action Pills */}
         <div className="flex items-center gap-3">
           <div className="h-10 w-32 rounded-xl bg-white/10 animate-pulse" />
-          <div className="h-10 w-40 rounded-xl bg-amber-500/20 border border-amber-500/30 animate-pulse" />
+          <div className="h-10 w-40 rounded-xl bg-brand-violet/20 border border-brand-mauve/30 animate-pulse" />
         </div>
       </div>
 
@@ -40,7 +40,7 @@ export function StudioBookingSkeleton({ className }: { className?: string }) {
             >
               <div className="h-28 w-full rounded-xl bg-white/[0.04] animate-pulse" />
               <div className="h-5 w-3/4 rounded bg-white/15 animate-pulse" />
-              <div className="h-3.5 w-1/2 rounded bg-amber-400/20 animate-pulse" />
+              <div className="h-3.5 w-1/2 rounded bg-brand-mauve/20 animate-pulse" />
             </div>
           ))}
         </div>
@@ -103,7 +103,7 @@ export function StudioBookingSkeleton({ className }: { className?: string }) {
                 className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/[0.04]"
               >
                 <div className="h-3.5 w-24 rounded bg-white/10 animate-pulse" />
-                <div className="h-3.5 w-20 rounded bg-amber-400/25 animate-pulse" />
+                <div className="h-3.5 w-20 rounded bg-brand-mauve/25 animate-pulse" />
               </div>
             ))}
           </div>
@@ -112,9 +112,9 @@ export function StudioBookingSkeleton({ className }: { className?: string }) {
           <div className="pt-6 border-t border-white/[0.08] space-y-4">
             <div className="flex justify-between items-baseline">
               <div className="h-4 w-20 rounded bg-white/10" />
-              <div className="h-7 w-28 rounded bg-amber-400/30 animate-pulse" />
+              <div className="h-7 w-28 rounded bg-brand-mauve/30 animate-pulse" />
             </div>
-            <div className="h-12 w-full rounded-2xl bg-amber-500/20 border border-amber-500/40 animate-pulse" />
+            <div className="h-12 w-full rounded-2xl bg-brand-violet/20 border border-brand-mauve/40 animate-pulse" />
           </div>
         </div>
       </div>

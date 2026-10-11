@@ -80,7 +80,7 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-56 rounded-2xl bg-slate-900/95 border border-white/15 backdrop-blur-2xl shadow-2xl p-2 z-50 animate-scale-in text-xs">
+        <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-slate-900/95 border border-white/15 backdrop-blur-2xl shadow-2xl p-2 z-50 animate-scale-in text-xs">
           {/* User Info Header */}
           <div className="px-3 py-2 border-b border-white/10 mb-1">
             <div className="font-semibold text-white truncate">{user.name}</div>

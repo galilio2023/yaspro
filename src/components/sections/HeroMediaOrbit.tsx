@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import Image from "next/image";
 
 interface NeonMediaNode {
   id: string;
@@ -272,9 +273,11 @@ export function HeroMediaOrbit() {
 
             {/* Authentic Neon Wireframe Icon */}
             <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center transition-transform duration-300 group-hover:scale-130">
-              <img
+              <Image
                 src={node.image}
                 alt={node.name}
+                width={node.width}
+                height={node.height}
                 loading="eager"
                 className="max-w-full max-h-full object-contain filter drop-shadow-[0_0_12px_rgba(255,255,255,0.45)]"
               />
