@@ -26,7 +26,7 @@ export function AboutCtaBanner() {
           </FadeUp>
 
           <FadeUp delay={0.1}>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white font-display tracking-tight leading-tight mb-4">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white font-display tracking-tight leading-tight mb-3 sm:mb-4">
               {t("about.cta.title")}{" "}
               <span className="gradient-text-gold font-serif italic font-normal">
                 {t("about.cta.titleGradient")}

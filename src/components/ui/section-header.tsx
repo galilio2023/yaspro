@@ -47,7 +47,7 @@ export function SectionHeader({
     <FadeUp>
       <div
         className={cn(
-          "w-full mb-12 sm:mb-16 flex flex-col",
+          "w-full mb-8 sm:mb-12 flex flex-col",
           isCenter
             ? "items-center text-center mx-auto max-w-3xl"
             : "items-start text-start",
@@ -79,7 +79,7 @@ export function SectionHeader({
         {/* Heading */}
         <HeadingTag
           id={headingId}
-          className="text-3xl sm:text-4xl lg:text-5xl xl:text-[3.5rem] font-black text-white tracking-tight font-display leading-[1.1] rtl:leading-[1.35] mb-4 sm:mb-5 text-balance"
+          className="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.5rem] font-extrabold text-white tracking-tight font-display leading-[1.15] rtl:leading-[1.35] mb-3 sm:mb-4 text-balance"
         >
           {title}{" "}
           {gradientText && (

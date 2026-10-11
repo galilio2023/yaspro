@@ -57,7 +57,7 @@ export function SocialMediaDeliverablesShowcase() {
           <Sparkles size={13} />
           <span>{isArabic ? "المعايير الاستوديوهات الاحترافية" : "THE STUDIO ADVANTAGE"}</span>
         </div>
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight font-display">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight font-display">
           {isArabic ? "إنتاج سينمائي بمعايير الاستوديو لا وكالات التسويق التقليدية" : "Cinema Studio Craft, Not Generic Social Media Posts"}
         </h2>
         <p className="text-xs sm:text-sm text-zinc-400 mt-2 max-w-xl mx-auto">
