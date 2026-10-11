@@ -228,13 +228,7 @@ export const TURNKEY_STUDIO_PACKAGES: readonly TurnkeyStudioPackage[] = [
   },
 ];
 
-export const STUDIO_ADDONS = [
-  { id: "teleprompter", name: "Professional Teleprompter", rate: 85, rateType: "hourly", desc: "Scrolling teleprompter with operator rig" },
-  { id: "extra-mic", name: "Additional Shure SM7B Vocal Mic", rate: 120, rateType: "flat", desc: "Includes boom arm and XLR connection" },
-  { id: "rush-delivery", name: "24-Hour Express Turnaround", rate: 150, rateType: "flat", desc: "Expedited post-production delivery" },
-] as const;
-
-export const PROMO_CODES: Record<string, { discountPercent?: number; discountFlat?: number }> = {
+const PROMO_CODES: Record<string, { discountPercent?: number; discountFlat?: number }> = {
   YAS10: { discountPercent: 10 },
   YASPRO: { discountPercent: 15 },
   WELCOME50: { discountFlat: 50 },

@@ -27,5 +27,3 @@ export const VIRTUAL_HERO_SCENE: VirtualStudioScene = {
   lightingType: "Studio Key Light + Virtual City Skyline Rim",
   trackingEngine: "Mo-Sys StarTracker Optical",
 };
-
-export const VIRTUAL_SCENES: VirtualStudioScene[] = [VIRTUAL_HERO_SCENE];

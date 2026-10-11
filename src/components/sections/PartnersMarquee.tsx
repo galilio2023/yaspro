@@ -361,5 +361,3 @@ export function PartnersMarquee() {
     </section>
   );
 }
-
-export default PartnersMarquee;

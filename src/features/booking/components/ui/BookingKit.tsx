@@ -282,7 +282,7 @@ export function MetaTag({ children, tone = "neutral" }: { children: React.ReactN
 /*                                    Cards                                   */
 /* -------------------------------------------------------------------------- */
 
-export const cardSurface = (selected: boolean, disabled = false) =>
+const cardSurface = (selected: boolean, disabled = false) =>
   cn(
     "relative rounded-2xl border overflow-hidden text-start flex flex-col transition-[border-color,background-color,box-shadow] duration-200",
     selected
@@ -291,7 +291,7 @@ export const cardSurface = (selected: boolean, disabled = false) =>
     disabled && "opacity-45 hover:border-white/[0.08] hover:bg-[#0e0e12]"
   );
 
-export function SelectedMark({ selected, className }: { selected: boolean; className?: string }) {
+function SelectedMark({ selected, className }: { selected: boolean; className?: string }) {
   return (
     <motion.span
       aria-hidden

@@ -336,7 +336,7 @@ test('deleteCmsEquipment deletes record by id or slug and triggers revalidation'
 });
 
 test('deleteCmsStudio guards against active bookings and deletes when unencumbered', async () => {
-  let bookingsQueryCount = 0;
+  let _bookingsQueryCount = 0;
   let deletedWhere = null;
   let existingBookings = [{ id: 'booking-1' }];
 

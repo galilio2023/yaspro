@@ -471,5 +471,3 @@ export function VirtualStudioSection() {
     </section>
   );
 }
-
-export default VirtualStudioSection;

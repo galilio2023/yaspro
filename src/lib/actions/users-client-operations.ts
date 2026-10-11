@@ -107,31 +107,6 @@ export async function updateUserRole(userId: string, role: "admin" | "client" | 
 
 /**
  * Updates a user's profile details with an explicit allowlist of safe fields.
- *
- * @param userId - ID of the user record.
- * @param data - User fields to update.
- * @returns CMS response confirming update.
- */
-export async function updateUserProfile(userId: string, data: Partial<User>): Promise<CmsResponse> {
-  try {
-    await requireAdmin();
-    if (isDbAvailable()) {
-      const { name, phone, company, image } = data;
-      const safeData: Record<string, unknown> = { updatedAt: new Date() };
-      if (name !== undefined) safeData.name = name;
-      if (phone !== undefined) safeData.phone = phone;
-      if (company !== undefined) safeData.company = company;
-      if (image !== undefined) safeData.image = image;
-
-      await db.update(users).set(safeData).where(eq(users.id, userId));
-    }
-    revalidatePath("/admin/users");
-    revalidatePath("/admin");
-    return { success: true, message: "User profile updated successfully." };
-  } catch (error) {
-    return { success: false, error: (error as Error).message };
-  }
-}
 
 /**
  * Deletes a user record from the database safely.

@@ -88,4 +88,3 @@ export function GlobalAmbientGlow() {
     </div>
   );
 }
-export default GlobalAmbientGlow;

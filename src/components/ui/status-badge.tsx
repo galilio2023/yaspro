@@ -1,5 +1,5 @@
 import React from "react";
-import { CheckCircle2, Clock, XCircle, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Clock, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type StatusVariant =
@@ -74,16 +74,3 @@ export function StatusBadge({ status, label, className, size = "sm" }: StatusBad
   );
 }
 
-/** Special Mawthooq compliance badge */
-export function MawthooqBadge({ className }: { className?: string }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-semibold",
-        className
-      )}
-    >
-      <ShieldCheck size={10} /> Mawthooq
-    </span>
-  );
-}
