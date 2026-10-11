@@ -137,26 +137,15 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `(function(){
   try {
-    var path = window.location.pathname;
-    if (path === '/en' || path.indexOf('/en/') === 0) {
-      document.documentElement.lang = 'en';
-      document.documentElement.dir = 'ltr';
-      document.cookie = 'NEXT_LOCALE=en; path=/; max-age=31536000; SameSite=Lax';
-    } else if (path === '/ar' || path.indexOf('/ar/') === 0) {
-      document.documentElement.lang = 'ar';
-      document.documentElement.dir = 'rtl';
-      document.cookie = 'NEXT_LOCALE=ar; path=/; max-age=31536000; SameSite=Lax';
-    } else {
-      var lang = localStorage.getItem('yaspro_lang');
-      if (lang === 'en') {
-        document.documentElement.lang = 'en';
-        document.documentElement.dir = 'ltr';
-        document.cookie = 'NEXT_LOCALE=en; path=/; max-age=31536000; SameSite=Lax';
-      } else if (lang === 'ar') {
-        document.documentElement.lang = 'ar';
-        document.documentElement.dir = 'rtl';
-        document.cookie = 'NEXT_LOCALE=ar; path=/; max-age=31536000; SameSite=Lax';
-      }
+    var p = window.location.pathname;
+    var l = (p === '/ar' || p.indexOf('/ar/') === 0) ? 'ar'
+          : (p === '/en' || p.indexOf('/en/') === 0) ? 'en'
+          : localStorage.getItem('yaspro_lang');
+    if (l === 'ar' || l === 'en') {
+      document.documentElement.lang = l;
+      document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+      document.cookie = 'NEXT_LOCALE=' + l + '; path=/; max-age=31536000; SameSite=Lax';
+      document.cookie = 'locale=' + l + '; path=/; max-age=31536000; SameSite=Lax';
     }
   } catch(e) {}
 })();`,
