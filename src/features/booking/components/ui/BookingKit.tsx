@@ -99,11 +99,18 @@ export function BookingHero({
           <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-zinc-500">Production Sheet</span>
           <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-brand-mauve/90">Iris Bay · DXB</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 divide-y sm:divide-y-0 lg:divide-y divide-white/[0.06] sm:gap-px sm:bg-white/[0.06] lg:bg-transparent">
+        <div className="grid grid-cols-2 lg:grid-cols-1 gap-px bg-white/[0.06] lg:bg-transparent lg:divide-y lg:divide-white/[0.06]">
           {specs.map((spec) => (
-            <div key={spec.label} className="px-3.5 sm:px-5 py-2 sm:py-3 flex sm:flex-col lg:flex-row items-center sm:items-start lg:items-center justify-between gap-2 sm:gap-1 lg:gap-4 bg-[#0b0b0f] sm:bg-[#0e0e13] lg:bg-transparent">
-              <dt className="font-mono text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-zinc-500 shrink-0">{spec.label}</dt>
-              <dd className="text-[11px] sm:text-xs font-medium text-zinc-100 text-end sm:text-start lg:text-end truncate max-w-[220px] sm:max-w-none">{spec.value}</dd>
+            <div
+              key={spec.label}
+              className="px-3 sm:px-5 py-2 sm:py-2.5 lg:py-3 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-0.5 sm:gap-1 lg:gap-4 bg-[#0e0e13] lg:bg-transparent"
+            >
+              <dt className="font-mono text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-zinc-500 shrink-0">
+                {spec.label}
+              </dt>
+              <dd className="text-[11px] sm:text-xs font-medium text-zinc-100 text-start lg:text-end truncate w-full lg:w-auto max-w-none lg:max-w-[220px]">
+                {spec.value}
+              </dd>
             </div>
           ))}
         </div>
