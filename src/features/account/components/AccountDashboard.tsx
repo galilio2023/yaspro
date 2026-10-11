@@ -41,6 +41,11 @@ interface AccountDashboardProps {
   initialTab?: "bookings" | "profile";
 }
 
+/**
+ * Renders the user's bookings and editable profile.
+ * Manual tab selection takes precedence until the URL's tab query changes;
+ * then the query selects a valid tab, falling back to initialTab otherwise.
+ */
 export function AccountDashboard({
   user,
   bookings,
