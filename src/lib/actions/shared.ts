@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
 
-export const uuidSchema = z.string().uuid();
+const uuidSchema = z.string().uuid();
 
 export function isUuid(id?: string): boolean {
   if (!id) return false;

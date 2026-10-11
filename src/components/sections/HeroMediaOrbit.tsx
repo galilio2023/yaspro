@@ -285,5 +285,3 @@ export function HeroMediaOrbit() {
     </div>
   );
 }
-
-export default HeroMediaOrbit;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signOut } from "@/lib/auth-client";
@@ -41,6 +41,11 @@ interface AccountDashboardProps {
   initialTab?: "bookings" | "profile";
 }
 
+/**
+ * Renders the user's bookings and editable profile.
+ * Manual tab selection takes precedence until the URL's tab query changes;
+ * then the query selects a valid tab, falling back to initialTab otherwise.
+ */
 export function AccountDashboard({
   user,
   bookings,
@@ -51,20 +56,17 @@ export function AccountDashboard({
   const { isArabic } = useLanguage();
 
   const tabQuery = searchParams.get("tab");
-  const [activeTab, setActiveTab] = useState<"bookings" | "profile">(
-    tabQuery === "profile" ? "profile" : initialTab
-  );
+  const [userSelectedTab, setUserSelectedTab] = useState<"bookings" | "profile" | null>(null);
+  const [prevTabQuery, setPrevTabQuery] = useState(tabQuery);
 
-  // Synchronize activeTab when query param changes
-  useEffect(() => {
-    if (tabQuery === "profile") {
-      setActiveTab("profile");
-    } else if (tabQuery === "bookings") {
-      setActiveTab("bookings");
-    } else if (!tabQuery) {
-      setActiveTab(initialTab);
-    }
-  }, [tabQuery, initialTab]);
+  if (tabQuery !== prevTabQuery) {
+    setPrevTabQuery(tabQuery);
+    setUserSelectedTab(null);
+  }
+
+  const activeTab: "bookings" | "profile" =
+    userSelectedTab ??
+    (tabQuery === "profile" ? "profile" : tabQuery === "bookings" ? "bookings" : initialTab);
 
   // Profile Form State
   const [isEditing, setIsEditing] = useState(false);
@@ -207,7 +209,7 @@ export function AccountDashboard({
         <div className="flex items-center gap-2 border-b border-white/10 pb-4 mb-8">
           <button
             type="button"
-            onClick={() => setActiveTab("bookings")}
+            onClick={() => setUserSelectedTab("bookings")}
             className={cn(
               "px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer",
               activeTab === "bookings"
@@ -224,7 +226,7 @@ export function AccountDashboard({
 
           <button
             type="button"
-            onClick={() => setActiveTab("profile")}
+            onClick={() => setUserSelectedTab("profile")}
             className={cn(
               "px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer",
               activeTab === "profile"

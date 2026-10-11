@@ -47,8 +47,3 @@ export const tactilePress = {
   scale: 0.97,
   transition: studioSprings.tactile,
 };
-
-export const subtleHover = {
-  y: -2,
-  transition: studioSprings.snappy,
-};

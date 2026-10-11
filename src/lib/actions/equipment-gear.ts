@@ -131,20 +131,6 @@ export async function getPaginatedEquipment(
   };
 }
 
-/**
- * Retrieves the featured flagship fleet spotlight (6 items) strictly for landing page display.
- * Avoids over-fetching the full 160-item catalog on the homepage.
- */
-export async function getFeaturedEquipmentSpotlight(limit = 6): Promise<Equipment[]> {
-  const result = await getPaginatedEquipment({
-    limit,
-    isPopular: true,
-    sort: "popular",
-  });
-  if (result.items.length >= limit) return result.items;
-  const fallback = await getPaginatedEquipment({ limit });
-  return fallback.items;
-}
 
 /**
  * Retrieves cinema equipment and rental gear catalog from Neon PostgreSQL.

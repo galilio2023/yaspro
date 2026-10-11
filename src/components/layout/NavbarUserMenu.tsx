@@ -30,8 +30,6 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
   const role = user.role || "client";
   const firstName = user.name?.split(" ")[0] || "Account";
 
-  const portalHref = role === "admin" ? "/admin" : "/account";
-
   const bookingsHref = role === "admin" ? "/admin/bookings" : "/account?tab=bookings";
 
   // Close when clicking outside

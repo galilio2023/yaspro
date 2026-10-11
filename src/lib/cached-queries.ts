@@ -14,7 +14,7 @@ import type { InfluencerItem, CreatorDemographics } from "@/features/influencers
  */
 const DEFAULT_REVALIDATE_SECONDS = 3600;
 
-export const CACHE_TAGS = {
+const CACHE_TAGS = {
   projects: "projects",
   project: (slug: string) => `project:${slug}`,
   influencers: "influencers",

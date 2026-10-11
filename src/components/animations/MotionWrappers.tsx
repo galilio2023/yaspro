@@ -74,64 +74,6 @@ export function FadeUp({
   );
 }
 
-// ─── StudioScrollSection ───────────────────────────────────────────────────────
-// Full-width section scroll reveal powered by pure GPU-composited CSS keyframes.
-// Zero JS execution loop on scroll. Smooth, cinematic film camera aperture entry.
-
-interface StudioScrollSectionProps {
-  children: React.ReactNode;
-  className?: string;
-  as?: ElementType;
-  id?: string;
-}
-
-export function StudioScrollSection({
-  children,
-  className,
-  as: Tag = "div",
-  id,
-}: StudioScrollSectionProps) {
-  const ref = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const rect = el.getBoundingClientRect();
-    const isAlreadyInView = rect.top < window.innerHeight && rect.bottom > 0;
-
-    if (isAlreadyInView) {
-      el.style.opacity = "1";
-      el.style.transform = "none";
-      return;
-    }
-
-    // Initial hidden state
-    el.style.opacity = "0";
-    el.style.transform = "translate3d(0, 28px, 0) scale3d(0.985, 0.985, 1)";
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            el.classList.add("studio-scroll-reveal");
-            observer.unobserve(el);
-          }
-        });
-      },
-      { threshold: 0.04, rootMargin: "0px 0px -30px 0px" }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <Tag ref={ref} id={id} className={cn("w-full", className)}>
-      {children}
-    </Tag>
-  );
-}
 
 // ─── StaggerContainer ─────────────────────────────────────────────────────────
 
@@ -276,24 +218,3 @@ export function CountUp({ end, suffix = "", className }: CountUpProps) {
   );
 }
 
-// ─── GradientBorder ───────────────────────────────────────────────────────────
-
-export function GradientBorder({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "relative rounded-2xl p-px",
-        "bg-gradient-to-r from-brand-violet via-brand-mauve to-brand-lavender",
-        className
-      )}
-    >
-      <div className="rounded-2xl bg-secondary h-full w-full">{children}</div>
-    </div>
-  );
-}

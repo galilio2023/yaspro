@@ -14,7 +14,7 @@ export interface StorageProvider {
 /**
  * Local filesystem storage provider (used in development or self-hosted persistent environments).
  */
-export class LocalDiskStorageProvider implements StorageProvider {
+class LocalDiskStorageProvider implements StorageProvider {
   private baseDir: string;
   private publicPath: string;
 
@@ -41,7 +41,7 @@ export class LocalDiskStorageProvider implements StorageProvider {
  * Cloud storage provider (S3 / Cloudflare R2 / Vercel Blob compatible).
  * Ready for cloud credentials activation without altering upload routes.
  */
-export class S3CompatibleStorageProvider implements StorageProvider {
+class S3CompatibleStorageProvider implements StorageProvider {
   private bucket: string;
   private publicUrlBase: string;
 
@@ -104,7 +104,7 @@ export class S3CompatibleStorageProvider implements StorageProvider {
  * Activated automatically when CLOUDINARY_CLOUD_NAME is defined,
  * or when STORAGE_DRIVER === "cloudinary".
  */
-export class CloudinaryStorageProvider implements StorageProvider {
+class CloudinaryStorageProvider implements StorageProvider {
   private folder: string;
 
   constructor(folder = process.env.CLOUDINARY_FOLDER || "yaspro") {

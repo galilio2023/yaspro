@@ -102,7 +102,6 @@ export function ServicesSection() {
           {SERVICES_DATA.map((service, index) => {
             const isActive = activeIndex === index;
             const title = isArabic ? service.arabicTitle : service.title;
-            const subtitle = isArabic ? service.arabicSubtitle : service.subtitle;
 
             return (
               <motion.button
@@ -197,4 +196,3 @@ export function ServicesSection() {
     </Section>
   );
 }
-export default ServicesSection;

@@ -13,7 +13,7 @@ export interface CategoryCardItem {
   filterValue: string;
 }
 
-export const GEAR_PRODUCT_CATEGORIES: CategoryCardItem[] = [
+const GEAR_PRODUCT_CATEGORIES: CategoryCardItem[] = [
   {
     id: "cameras-combo",
     titlePrefix: "RENT",
