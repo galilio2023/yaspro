@@ -175,7 +175,7 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
           {/* Action bar — sticky on mobile, inline on desktop */}
           <div
             dir="ltr"
-            className="sticky bottom-3 z-30 mt-4 lg:static lg:mt-5 rounded-2xl border border-white/[0.1] lg:border-transparent bg-[#0b0b0f]/95 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:pb-0 lg:p-0 shadow-2xl lg:shadow-none flex items-center gap-3"
+            className="sticky bottom-2 sm:bottom-3 z-30 mt-3 sm:mt-4 lg:static lg:mt-5 rounded-xl sm:rounded-2xl border border-white/[0.1] lg:border-transparent bg-[#0b0b0f]/95 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none p-2 sm:p-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:pb-0 lg:p-0 shadow-2xl lg:shadow-none flex items-center gap-2 sm:gap-3"
           >
             {step > 1 && (
               <motion.button
@@ -184,9 +184,9 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
                 whileTap={{ scale: 0.96 }}
                 transition={studioSprings.snappy}
                 aria-label="Back"
-                className="h-11 sm:h-12 px-3.5 sm:px-4 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/20 text-zinc-200 text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 cursor-pointer transition-colors shrink-0"
+                className="h-9 sm:h-11 px-2.5 sm:px-3.5 rounded-lg sm:rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/20 text-zinc-200 text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 cursor-pointer transition-colors shrink-0"
               >
-                <ArrowLeft size={15} />
+                <ArrowLeft size={14} className="sm:size-[15px]" />
                 <span className="hidden sm:inline">Back</span>
               </motion.button>
             )}
@@ -194,8 +194,8 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
             {/* Mobile running total — hidden on last step since StepContact has its own submit button with total */}
             {!isLastStep && (
               <div className="lg:hidden min-w-0 flex-1">
-                <span className="block font-mono text-[10px] tracking-[0.16em] uppercase text-zinc-500">Total</span>
-                <span className="block text-sm sm:text-base font-bold text-brand-mauve tabular-nums truncate">{formatAED(breakdown.total, 2)}</span>
+                <span className="block font-mono text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-zinc-500">Total</span>
+                <span className="block text-xs sm:text-base font-bold text-brand-mauve tabular-nums truncate">{formatAED(breakdown.total, 2)}</span>
               </div>
             )}
 
@@ -206,13 +206,13 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 transition={studioSprings.snappy}
-                className="lg:ms-auto h-11 sm:h-12 px-4 sm:px-6 rounded-xl bg-white hover:bg-zinc-200 text-black text-xs sm:text-sm font-semibold flex items-center gap-1.5 sm:gap-2 cursor-pointer transition-colors shadow-[0_12px_30px_-12px_rgba(255,255,255,0.35)] shrink-0"
+                className="lg:ms-auto h-9 sm:h-11 px-3 sm:px-5 rounded-lg sm:rounded-xl bg-white hover:bg-zinc-200 text-black text-xs sm:text-sm font-bold flex items-center gap-1 sm:gap-2 cursor-pointer transition-colors shadow-md shadow-white/20 shrink-0"
               >
                 <span>
                   <span className="sm:hidden">Continue</span>
                   <span className="hidden sm:inline">Continue{nextLabel ? ` · ${nextLabel}` : ""}</span>
                 </span>
-                <ArrowRight size={15} />
+                <ArrowRight size={14} className="sm:size-[15px]" />
               </motion.button>
             )}
           </div>

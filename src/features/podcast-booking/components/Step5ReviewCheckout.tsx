@@ -398,7 +398,7 @@ export function Step5ReviewCheckout({
             whileHover={{ y: -1 }}
             whileTap={{ scale: 0.98 }}
             transition={studioSprings.snappy}
-            className="h-11 sm:h-12 px-3.5 sm:px-4 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 font-bold text-xs sm:text-sm transition-all duration-200 shadow-md shadow-brand-violet/30 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer min-w-0"
+            className="h-10 sm:h-12 px-3 sm:px-4 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 font-bold text-xs sm:text-sm transition-all duration-200 shadow-md shadow-brand-violet/30 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer min-w-0"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-1.5">
@@ -418,7 +418,7 @@ export function Step5ReviewCheckout({
             type="button"
             disabled={isSubmitting || !isAgreedToTerms}
             onClick={() => onSubmit(false)}
-            className="h-11 sm:h-12 px-3.5 sm:px-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-200 hover:text-white font-semibold text-xs sm:text-sm transition border border-white/10 hover:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer min-w-0"
+            className="h-10 sm:h-12 px-3 sm:px-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-200 hover:text-white font-semibold text-xs sm:text-sm transition border border-white/10 hover:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer min-w-0"
           >
             <Building2 size={15} className="text-zinc-400 shrink-0" />
             <span className="truncate">Pay at Studio Desk</span>
