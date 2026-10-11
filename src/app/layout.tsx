@@ -100,6 +100,15 @@ import { LanguageProvider, type Language } from "@/components/providers/Language
 import { GlobalPageLoaderProvider } from "@/components/layout/GlobalPageLoader";
 import { getLocale, getMessages } from "next-intl/server";
 
+/**
+ * Renders the root document with locale-aware attributes and shared providers.
+ * Loads server locale and messages, defaulting to English on failure. Includes
+ * a pre-hydration script that prioritizes /ar and /en paths over the saved language
+ * to set document language and direction and synchronize both locale cookies.
+ *
+ * @param props - Layout props containing the nested route content.
+ * @returns The root HTML document wrapping children in the application providers.
+ */
 export default async function RootLayout({
   children,
 }: Readonly<{
