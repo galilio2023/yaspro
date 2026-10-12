@@ -20,7 +20,7 @@ export function GearShopSkeleton({ className }: { className?: string }) {
                 key={i}
                 className={cn(
                   "h-9 px-4 rounded-full border border-white/[0.08] bg-white/[0.03] animate-pulse shrink-0 flex items-center",
-                  i === 0 && "border-amber-400/30 bg-amber-400/10"
+                  i === 0 && "border-brand-mauve/30 bg-brand-mauve/10"
                 )}
               >
                 <div className="h-3 w-16 rounded bg-white/20" />
@@ -52,7 +52,7 @@ export function GearShopSkeleton({ className }: { className?: string }) {
             {/* Spec metadata */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <div className="h-3 w-16 rounded bg-amber-400/20" />
+                <div className="h-3 w-16 rounded bg-brand-mauve/20" />
                 <div className="h-3 w-12 rounded bg-white/10" />
               </div>
               <div className="h-5 w-4/5 rounded bg-white/15 animate-pulse" />
@@ -63,7 +63,7 @@ export function GearShopSkeleton({ className }: { className?: string }) {
             <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between">
               <div>
                 <div className="h-2.5 w-10 rounded bg-white/10 mb-1" />
-                <div className="h-5 w-16 rounded bg-amber-400/25 animate-pulse" />
+                <div className="h-5 w-16 rounded bg-brand-mauve/25 animate-pulse" />
               </div>
               <div className="h-9 w-24 rounded-xl bg-white/10 animate-pulse" />
             </div>
