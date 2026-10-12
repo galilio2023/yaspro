@@ -113,14 +113,19 @@ export default function HeroSection() {
             {/* Main Central Persona Container with commanded scale */}
             <div className="relative w-full max-w-[300px] sm:max-w-[360px] md:max-w-[380px] lg:max-w-[460px] xl:max-w-[500px] select-none">
               
-              {/* Studio Key & Rim Light Halo Behind Character (No Badges) */}
-              <div className="absolute -inset-4 pointer-events-none -z-10">
-                {/* Atmospheric Mauve Key Light from upper right */}
-                <div className="absolute top-10 right-4 w-72 h-72 bg-brand-mauve/20 rounded-full blur-[80px]" />
-                {/* Anamorphic Violet/Magenta Rim Backlight from center-left */}
-                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-80 h-80 bg-brand-violet/25 rounded-full blur-[90px]" />
-                {/* Grounding Stage Floor Pedestal Glow */}
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-64 h-20 bg-cyan-500/10 rounded-full blur-2xl" />
+              {/* Dynamic Atmospheric Studio Lighting Behind Persona (Volumetric Breathing Lights) */}
+              <div className="absolute -inset-8 pointer-events-none -z-10 overflow-visible">
+                {/* Atmospheric Mauve Key Light - slow organic drift & scale */}
+                <div className="absolute top-4 right-0 w-80 h-80 bg-brand-mauve/25 rounded-full blur-[85px] animate-mesh-float" />
+                
+                {/* Anamorphic Violet Rim Backlight - counter-sway floating aura */}
+                <div className="absolute top-1/4 left-1/4 -translate-x-1/2 w-84 h-84 bg-brand-violet/30 rounded-full blur-[90px] animate-float-reverse" />
+                
+                {/* Soft Mauve Dynamic Focus - gentle floating breathing */}
+                <div className="absolute top-1/3 right-1/4 w-60 h-60 bg-brand-mauve-soft/20 rounded-full blur-[70px] animate-float-slow" />
+
+                {/* Grounding Stage Floor Pedestal Glow - breathing base wave */}
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-72 sm:w-84 h-24 bg-gradient-to-r from-brand-violet/25 via-cyan-500/15 to-brand-mauve/25 rounded-full blur-2xl animate-pulse-glow" />
               </div>
 
               {/* Persona Image Wrapper */}
@@ -135,11 +140,29 @@ export default function HeroSection() {
                   className="object-contain object-bottom scale-[1.03] origin-bottom transition-transform duration-700"
                 />
 
-                {/* Subtle Cinematic Lens Flare Accent across the chest */}
-                <div className="absolute inset-x-8 top-1/3 h-px bg-gradient-to-r from-transparent via-cyan-400/25 to-transparent pointer-events-none" />
+                {/* Silky-Smooth Curved Dark-to-Mauve Studio Gradient */}
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-x-0 bottom-0 h-24 sm:h-28 pointer-events-none overflow-hidden"
+                >
+                  {/* Layer 1: Silky non-linear curve from translucent dark to radiant mauve */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        "radial-gradient(ellipse 140% 100% at 50% 100%, rgba(12, 9, 18, 0.75) 0%, rgba(12, 9, 18, 0.42) 24%, rgba(84, 37, 104, 0.26) 48%, rgba(152, 123, 165, 0.2) 70%, rgba(152, 123, 165, 0.06) 88%, transparent 100%)",
+                    }}
+                  />
 
-                {/* Gentle fade only at the very bottom edge of the torso */}
-                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background via-background/40 to-transparent pointer-events-none" />
+                  {/* Layer 2: Soft Mauve Studio Luminescence (Airy & Delicate) */}
+                  <div
+                    className="absolute -bottom-2 inset-x-8 h-16 rounded-full blur-xl pointer-events-none opacity-80"
+                    style={{
+                      background:
+                        "radial-gradient(ellipse 90% 70% at 50% 100%, rgba(152, 123, 165, 0.25) 0%, rgba(118, 80, 134, 0.1) 50%, transparent 80%)",
+                    }}
+                  />
+                </div>
               </div>
 
               {/* 3D Solar System Orbit around the head */}
