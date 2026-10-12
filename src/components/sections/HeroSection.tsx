@@ -131,7 +131,7 @@ export default function HeroSection() {
               {/* Persona Image Wrapper */}
               <div className="relative aspect-[3/4] w-full z-10 pointer-events-none filter drop-shadow-[0_20px_45px_rgba(0,0,0,0.85)]">
                 <Image
-                  src="/images/hero/emirati-vr-creator-transparent.png"
+                  src="/images/hero/emirati-vr-creator-transparent.png?v=2"
                   alt={isArabic ? "صانع محتوى ومخرج إماراتي بنظارة الواقع المكاني والذكاء الاصطناعي" : "Emirati visionary filmmaker & AI spatial director"}
                   fill
                   unoptimized
