@@ -160,7 +160,9 @@ export function HeroMediaOrbit() {
       const leftClearance = centerX;
       const rightClearance = clientWidth - centerX;
       const sideClearance = Math.min(leftClearance, rightClearance);
-      const safeMaxRadius = Math.max(targetRx * 0.88, sideClearance + 25);
+      // Account for neon node half-width + safety clearance (40px on mobile, 48px on desktop)
+      const nodeSafetyMargin = clientWidth < 640 ? 40 : 48;
+      const safeMaxRadius = Math.max(120, sideClearance - nodeSafetyMargin);
       const rx = Math.min(targetRx, safeMaxRadius);
       const ry = rx * 0.49; // Generous vertical depth clearance
 

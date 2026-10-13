@@ -139,7 +139,7 @@ export function SendMessageModal({
           {/* Centering Scroll Wrapper */}
           <div
             className="min-h-full flex items-center justify-center p-3 sm:p-6 md:p-8"
-            onClick={(e) => {
+            onMouseDown={(e) => {
               if (e.target === e.currentTarget) {
                 handleModalClose();
               }
