@@ -36,7 +36,7 @@ export function AboutHeroHeader() {
               className="page-hero-title mb-6 text-balance"
             >
               {t("about.title")}{" "}
-              <span className="gradient-text-gold font-serif italic font-normal">
+              <span className="gradient-text-gold font-serif italic font-normal rtl:font-sans rtl:not-italic">
                 {t("about.titleGradient")}
               </span>
             </h1>
@@ -44,14 +44,14 @@ export function AboutHeroHeader() {
 
           {/* Editorial Subtitle */}
           <FadeUp delay={0.15}>
-            <p className="text-sm sm:text-base md:text-lg text-text-secondary leading-relaxed max-w-2xl mb-8 text-balance">
+            <p className="text-sm sm:text-base md:text-lg text-text-secondary leading-relaxed rtl:leading-loose max-w-2xl mb-8 text-balance">
               {t("about.description")}
             </p>
           </FadeUp>
 
           {/* Hero CTA Strip */}
-          <FadeUp delay={0.2}>
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 w-full max-w-md">
+          <FadeUp delay={0.2} className="w-full">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 sm:gap-4 w-full max-w-md">
               <Link
                 href="/studio-booking"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-bold text-xs text-white bg-gradient-to-r from-brand-violet-rich via-brand-purple to-brand-mauve hover:brightness-110 transition-all duration-200 active:scale-[0.97] shadow-xl shadow-brand-violet/30 whitespace-nowrap min-h-[44px]"

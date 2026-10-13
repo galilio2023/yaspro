@@ -26,22 +26,22 @@ export function AboutCtaBanner() {
           </FadeUp>
 
           <FadeUp delay={0.1}>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white font-display tracking-tight leading-tight mb-3 sm:mb-4">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white font-display tracking-tight leading-tight rtl:leading-snug mb-3 sm:mb-4">
               {t("about.cta.title")}{" "}
-              <span className="gradient-text-gold font-serif italic font-normal">
+              <span className="gradient-text-gold font-serif italic font-normal rtl:font-sans rtl:not-italic">
                 {t("about.cta.titleGradient")}
               </span>
             </h2>
           </FadeUp>
 
           <FadeUp delay={0.15}>
-            <p className="text-sm sm:text-base text-text-secondary leading-relaxed max-w-xl mb-8">
+            <p className="text-sm sm:text-base text-text-secondary leading-relaxed rtl:leading-loose max-w-xl mb-8">
               {t("about.cta.desc")}
             </p>
           </FadeUp>
 
-          <FadeUp delay={0.2}>
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 w-full max-w-md">
+          <FadeUp delay={0.2} className="w-full">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 sm:gap-4 w-full max-w-md">
               <Link
                 href="/studio-booking"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-bold text-xs text-white bg-gradient-to-r from-brand-violet-rich via-brand-purple to-brand-mauve hover:brightness-110 transition-all duration-200 active:scale-[0.97] shadow-xl shadow-brand-violet/30 whitespace-nowrap min-h-[44px]"

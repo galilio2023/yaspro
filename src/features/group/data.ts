@@ -9,6 +9,7 @@ export interface YasGroupCompany {
   logo: string;
   accentColor: string;
   tags: string[];
+  tagsAr?: string[];
   link?: string;
 }
 
@@ -24,6 +25,7 @@ export const YAS_GROUP_COMPANIES: readonly YasGroupCompany[] = [
     logo: "/images/group/yas-pro-media-group.png",
     accentColor: "#f59e0b",
     tags: ["Holding", "HQ Dubai", "Media Network"],
+    tagsAr: ["مجموعة_قابضة", "المقر_دبي", "شبكة_إعلامية"],
   },
   {
     id: "media-production",
@@ -36,6 +38,7 @@ export const YAS_GROUP_COMPANIES: readonly YasGroupCompany[] = [
     logo: "/images/group/yas-pro-media-production.png",
     accentColor: "#fbbf24",
     tags: ["Cinema", "8K Filming", "Commercials"],
+    tagsAr: ["إنتاج_سينمائي", "تصوير_8K", "إعلانات_تجارية"],
   },
   {
     id: "broadcast-studios",
@@ -48,6 +51,7 @@ export const YAS_GROUP_COMPANIES: readonly YasGroupCompany[] = [
     logo: "/images/group/yas-pro-broadcast-studios.png",
     accentColor: "#38bdf8",
     tags: ["OB Vans", "Soundstages", "4K Podcast"],
+    tagsAr: ["عربات_بث", "استوديوهات_تصوير", "بودكاست_4K"],
   },
   {
     id: "creative-agency",
@@ -60,6 +64,7 @@ export const YAS_GROUP_COMPANIES: readonly YasGroupCompany[] = [
     logo: "/images/group/yas-pro-creative-agency.png",
     accentColor: "#ec4899",
     tags: ["Branding", "Creative Direction", "360° Campaigns"],
+    tagsAr: ["هوية_بصرية", "إدارة_إبداعية", "حملات_شاملة"],
   },
   {
     id: "stars",
@@ -72,6 +77,7 @@ export const YAS_GROUP_COMPANIES: readonly YasGroupCompany[] = [
     logo: "/images/group/yas-pro-stars.png",
     accentColor: "#eab308",
     tags: ["Talent Management", "Mawthooq", "Gulf Creators"],
+    tagsAr: ["إدارة_مواهب", "ترخيص_موثوق", "صناع_محتوى"],
   },
   {
     id: "records",
@@ -84,6 +90,7 @@ export const YAS_GROUP_COMPANIES: readonly YasGroupCompany[] = [
     logo: "/images/group/yas-pro-records.png",
     accentColor: "#f97316",
     tags: ["Music Label", "Spatial Audio", "Score Composition"],
+    tagsAr: ["إنتاج_موسيقي", "صوت_مكاني", "موسيقى_تصويرية"],
   },
   {
     id: "originals",
@@ -96,5 +103,6 @@ export const YAS_GROUP_COMPANIES: readonly YasGroupCompany[] = [
     logo: "/images/group/yas-pro-originals.png",
     accentColor: "#a855f7",
     tags: ["Original IP", "Docuseries", "Digital Formats"],
+    tagsAr: ["محتوى_أصلي", "سلاسل_وثائقية", "برامج_رقمية"],
   },
 ];

@@ -3,9 +3,8 @@ import { getLocale } from "next-intl/server";
 import { AboutHeroHeader } from "@/features/about/components/AboutHeroHeader";
 import { AboutOverview } from "@/features/about/components/AboutOverview";
 import { AboutMilestones } from "@/features/about/components/AboutMilestones";
-import { AboutPillars } from "@/features/about/components/AboutPillars";
 import { YasGroupShowcase } from "@/features/group/components/YasGroupShowcase";
-import { TeamGrid } from "@/features/about/components/TeamGrid";
+import { FounderSpotlight } from "@/features/about/components/FounderSpotlight";
 import { AboutCtaBanner } from "@/features/about/components/AboutCtaBanner";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
@@ -80,28 +79,17 @@ export default async function AboutPage() {
         </Container>
       </Section>
 
-      {/* ── Pillars & Studio Capabilities ── */}
-      <Section
-        id="about-pillars"
-        aria-labelledby="pillars-title"
-        className="py-16 sm:py-24 bg-background border-t border-border/40"
-      >
-        <Container>
-          <AboutPillars headingId="pillars-title" />
-        </Container>
-      </Section>
-
       {/* ── Yas Media Group Ecosystem & Subsidiaries ── */}
       <YasGroupShowcase />
 
-      {/* ── Executive Leadership & Team Roster ── */}
+      {/* ── Executive Leadership & Founder Spotlight ── */}
       <Section
         id="about-team"
         aria-labelledby="team-title"
         className="py-16 sm:py-24 bg-background-alt border-t border-border/40"
       >
         <Container>
-          <TeamGrid headingId="team-title" />
+          <FounderSpotlight headingId="team-title" />
         </Container>
       </Section>
 
