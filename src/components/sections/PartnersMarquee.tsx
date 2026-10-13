@@ -157,7 +157,7 @@ export function PartnersMarquee() {
                   unoptimized
                   draggable={false}
                   className={cn(
-                    "w-auto max-h-16 object-contain opacity-90 brightness-125 group-hover:opacity-100 group-hover:brightness-150 group-hover:scale-105 transition-all duration-300 pointer-events-none drop-shadow-[0_2px_8px_rgba(255,255,255,0.06)]",
+                    "w-auto object-contain opacity-90 brightness-125 group-hover:opacity-100 group-hover:brightness-150 group-hover:scale-105 transition-all duration-300 pointer-events-none drop-shadow-[0_2px_8px_rgba(255,255,255,0.06)]",
                     gov.className
                   )}
                   style={{
@@ -212,7 +212,7 @@ export function PartnersMarquee() {
                   unoptimized
                   draggable={false}
                   className={cn(
-                    "w-auto max-h-14 object-contain opacity-90 brightness-110 group-hover:opacity-100 group-hover:brightness-130 group-hover:scale-105 transition-all duration-300 pointer-events-none",
+                    "w-auto object-contain opacity-90 brightness-110 group-hover:opacity-100 group-hover:brightness-130 group-hover:scale-105 transition-all duration-300 pointer-events-none",
                     brand.className
                   )}
                   style={{

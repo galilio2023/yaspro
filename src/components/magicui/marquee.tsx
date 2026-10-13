@@ -118,6 +118,9 @@ export function Marquee({
         if (!isPointerDownRef.current) {
           // Base cruising speed (~55-60px per second, 0 if user prefers reduced motion)
           const isReducedMotion = prefersReducedMotionRef.current;
+          if (isReducedMotion) {
+            extraVelocityRef.current = 0;
+          }
           const baseVelocity = isReducedMotion
             ? 0
             : (reverse ? 0.95 : -0.95) * speedMultiplier * (paused ? 0 : 1);
@@ -221,6 +224,7 @@ export function Marquee({
 
     setTimeout(() => {
       isDraggingRef.current = false;
+      dragDistanceRef.current = 0;
     }, 60);
   };
 
