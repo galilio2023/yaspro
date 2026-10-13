@@ -3,76 +3,138 @@ export interface GovernmentLogo {
   name: string;
   logo: string;
   glowColor: string;
+  width: number;
+  height: number;
+  className?: string;
 }
 
 export interface BrandLogoItem {
   id: string;
   name: string;
-  logo?: string;
-  svg?: string;
+  logo: string;
   color: string;
+  width: number;
+  height: number;
+  className?: string;
 }
 
 export const GOV_LOGOS: readonly GovernmentLogo[] = [
   {
+    id: "dubai-gov",
+    name: "Government of Dubai",
+    logo: "/images/partners/gov-dubai.png",
+    glowColor: "rgba(152, 123, 165, 0.45)",
+    width: 525,
+    height: 189,
+    className: "h-11 sm:h-13 lg:h-16",
+  },
+  {
     id: "expo-2020",
     name: "Expo 2020 Dubai",
-    logo: "/images/partners/expo-2020.png",
-    glowColor: "rgba(217,151,38,0.5)",
+    logo: "/images/partners/gov-expo-2020.png",
+    glowColor: "rgba(152, 123, 165, 0.45)",
+    width: 441,
+    height: 234,
+    className: "h-11 sm:h-13 lg:h-16",
   },
   {
     id: "museum-future",
     name: "Museum of the Future",
-    logo: "/images/partners/museum-of-the-future.png",
-    glowColor: "rgba(255,255,255,0.4)",
+    logo: "/images/partners/gov-museum-future.png",
+    glowColor: "rgba(255, 255, 255, 0.4)",
+    width: 528,
+    height: 219,
+    className: "h-11 sm:h-13 lg:h-16",
+  },
+  {
+    id: "szgmc",
+    name: "Sheikh Zayed Grand Mosque Centre",
+    logo: "/images/partners/gov-szgmc.png",
+    glowColor: "rgba(152, 123, 165, 0.45)",
+    width: 468,
+    height: 321,
+    className: "h-12 sm:h-14 lg:h-17",
   },
   {
     id: "presidential-affairs",
     name: "Ministry of Presidential Affairs",
-    logo: "/images/partners/ministry-of-presidential-affairs.png",
-    glowColor: "rgba(217,151,38,0.5)", // Gold
+    logo: "/images/partners/gov-presidential-affairs.png",
+    glowColor: "rgba(152, 123, 165, 0.45)",
+    width: 585,
+    height: 144,
+    className: "h-11 sm:h-13 lg:h-16",
+  },
+  {
+    id: "dubai-municipality",
+    name: "Dubai Municipality",
+    logo: "/images/partners/gov-dubai-municipality.png",
+    glowColor: "rgba(152, 123, 165, 0.4)",
+    width: 540,
+    height: 171,
+    className: "h-11 sm:h-13 lg:h-16",
   },
   {
     id: "dubai-health",
     name: "Dubai Health Authority",
-    logo: "/images/partners/dubai-health-authority.png",
-    glowColor: "rgba(245,158,11,0.4)",
+    logo: "/images/partners/gov-dubai-health.png",
+    glowColor: "rgba(152, 123, 165, 0.4)",
+    width: 534,
+    height: 204,
+    className: "h-11 sm:h-13 lg:h-16",
   },
   {
     id: "dubai-land",
     name: "Dubai Land Department",
-    logo: "/images/partners/dubai-land-department.png",
-    glowColor: "rgba(217,119,6,0.4)",
+    logo: "/images/partners/gov-dubai-land.png",
+    glowColor: "rgba(152, 123, 165, 0.4)",
+    width: 612,
+    height: 144,
+    className: "h-11 sm:h-13 lg:h-16",
   },
   {
     id: "icp-identity",
     name: "Federal Authority for Identity & Citizenship",
-    logo: "/images/partners/federal-authority-identity.png",
-    glowColor: "rgba(217,151,38,0.5)",
+    logo: "/images/partners/gov-federal-identity.png",
+    glowColor: "rgba(152, 123, 165, 0.45)",
+    width: 579,
+    height: 141,
+    className: "h-11 sm:h-13 lg:h-16",
   },
   {
     id: "womens-union",
     name: "General Women's Union",
-    logo: "/images/partners/general-womens-union.png",
-    glowColor: "rgba(245,158,11,0.4)",
+    logo: "/images/partners/gov-womens-union.png",
+    glowColor: "rgba(152, 123, 165, 0.4)",
+    width: 549,
+    height: 141,
+    className: "h-11 sm:h-13 lg:h-16",
   },
   {
     id: "dubai-sports",
     name: "Dubai Sports Council",
-    logo: "/images/partners/dubai-sports-council.png",
-    glowColor: "rgba(217,119,6,0.4)",
+    logo: "/images/partners/gov-dubai-sports.png",
+    glowColor: "rgba(152, 123, 165, 0.4)",
+    width: 321,
+    height: 258,
+    className: "h-12 sm:h-14 lg:h-17",
   },
   {
     id: "family-care",
     name: "Family Care Authority",
-    logo: "/images/partners/family-care-authority.png",
-    glowColor: "rgba(245,158,11,0.4)",
+    logo: "/images/partners/gov-family-care.png",
+    glowColor: "rgba(152, 123, 165, 0.4)",
+    width: 588,
+    height: 246,
+    className: "h-11 sm:h-13 lg:h-16",
   },
   {
     id: "human-resources",
     name: "Human Resources Department",
-    logo: "/images/partners/human-resources-department.png",
-    glowColor: "rgba(217,119,6,0.4)",
+    logo: "/images/partners/gov-human-resources.png",
+    glowColor: "rgba(152, 123, 165, 0.4)",
+    width: 639,
+    height: 102,
+    className: "h-9 sm:h-11 lg:h-13",
   },
 ];
 
@@ -80,113 +142,136 @@ export const BRAND_LOGOS: readonly BrandLogoItem[] = [
   {
     id: "talabat",
     name: "Talabat",
+    logo: "/images/partners/talabat.svg",
     color: "#ff5a00",
-    svg: `<svg viewBox="0 0 120 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-9 w-auto">
-      <rect width="36" height="36" rx="9" fill="#FF5A00"/>
-      <path d="M12 11h12v4.5H19.5V25h-5v-9.5H12V11z" fill="#FFFFFF"/>
-      <text x="44" y="24" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="900" font-size="19" letter-spacing="-0.5">talabat</text>
-    </svg>`,
+    width: 336,
+    height: 71,
+    className: "h-8 sm:h-10 lg:h-12",
   },
   {
     id: "zain",
     name: "Zain",
+    logo: "/images/partners/zain.svg",
     color: "#00a3e0",
-    svg: `<svg viewBox="0 0 110 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-9 w-auto">
-      <circle cx="18" cy="18" r="14" stroke="#00A3E0" stroke-width="4"/>
-      <circle cx="25" cy="14" r="4" fill="#10B981"/>
-      <text x="40" y="24" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="800" font-size="20" letter-spacing="1">ZAIN</text>
-    </svg>`,
+    width: 1024,
+    height: 286,
+    className: "h-9 sm:h-11 lg:h-13",
   },
   {
     id: "orange",
     name: "Orange",
+    logo: "/images/partners/orange.svg",
     color: "#ff7900",
-    svg: `<svg viewBox="0 0 125 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-9 w-auto">
-      <rect x="2" y="5" width="26" height="26" rx="5" fill="#FF7900"/>
-      <text x="36" y="24" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="700" font-size="19" letter-spacing="-0.3">orange</text>
-    </svg>`,
+    width: 284,
+    height: 284,
+    className: "h-10 sm:h-12 lg:h-14",
   },
   {
-    id: "gitex",
-    name: "GITEX Global",
-    color: "#f59e0b",
-    svg: `<svg viewBox="0 0 145 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-9 w-auto">
-      <defs>
-        <linearGradient id="gitex-g" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#f59e0b"/>
-          <stop offset="100%" stop-color="#d97706"/>
-        </linearGradient>
-      </defs>
-      <path d="M6 10l8-4 8 4v16l-8 4-8-4V10z" stroke="url(#gitex-g)" stroke-width="2.5" fill="none"/>
-      <circle cx="14" cy="18" r="3" fill="#f59e0b"/>
-      <text x="30" y="24" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="900" font-size="18" letter-spacing="0.5">GITEX<tspan fill="#f59e0b">.DXB</tspan></text>
-    </svg>`,
+    id: "mbc-group",
+    name: "MBC Group",
+    logo: "/images/partners/brand-mbc.png",
+    color: "#ffffff",
+    width: 399,
+    height: 216,
+    className: "h-10 sm:h-12 lg:h-14",
   },
   {
-    id: "hbo-max",
-    name: "HBO Max",
-    color: "#5822b4",
-    svg: `<svg viewBox="0 0 130 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-auto">
-      <path d="M4 10h5.5v6h6V10H21v16h-5.5v-6h-6v6H4V10z" fill="#FFFFFF"/>
-      <path d="M26 10h8c4.2 0 6.8 2.2 6.8 5.4 0 2-1.2 3.6-2.9 4.4 2.2.9 3.5 2.6 3.5 5 0 3.7-3.1 6-7.4 6H26V10zm5.6 4.6v3.5h2.4c1.3 0 2.2-.7 2.2-1.8s-.9-1.7-2.2-1.7h-2.4zm0 6v3.9h2.8c1.4 0 2.4-.8 2.4-2s-1-1.9-2.4-1.9h-2.8z" fill="#FFFFFF"/>
-      <path d="M51 18c0-4.6 3.7-8.2 8.3-8.2s8.3 3.6 8.3 8.2-3.7 8.2-8.3 8.2-8.3-3.6-8.3-8.2zm11 0c0-2.6-1.1-4.6-2.7-4.6s-2.7 2-2.7 4.6 1.1 4.6 2.7 4.6 2.7-2 2.7-4.6z" fill="#FFFFFF"/>
-      <text x="75" y="24" fill="#A855F7" font-family="system-ui, sans-serif" font-weight="900" font-size="17" letter-spacing="1">MAX</text>
-    </svg>`,
-  },
-  {
-    id: "hulu",
-    name: "Hulu",
-    color: "#1ce783",
-    svg: `<svg viewBox="0 0 90 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-7 w-auto">
-      <text x="2" y="25" fill="#1CE783" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="24" letter-spacing="-0.8">hulu</text>
-    </svg>`,
+    id: "shahid",
+    name: "Shahid",
+    logo: "/images/partners/brand-shahid.png",
+    color: "#22c55e",
+    width: 348,
+    height: 237,
+    className: "h-10 sm:h-12 lg:h-14",
   },
   {
     id: "osn",
     name: "OSN+",
+    logo: "/images/partners/osn-plus.svg",
     color: "#e11d48",
-    svg: `<svg viewBox="0 0 105 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-auto">
-      <text x="4" y="25" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="900" font-size="22" letter-spacing="1.5">osn</text>
-      <text x="64" y="25" fill="#E11D48" font-family="system-ui, sans-serif" font-weight="900" font-size="22">+</text>
-    </svg>`,
+    width: 500,
+    height: 336,
+    className: "h-10 sm:h-12 lg:h-14",
   },
   {
     id: "vox",
     name: "VOX Cinemas",
-    color: "#fbbf24",
-    svg: `<svg viewBox="0 0 145 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-auto">
-      <text x="4" y="25" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="900" font-size="21" letter-spacing="2">VOX</text>
-      <text x="68" y="24" fill="#9CA3AF" font-family="system-ui, sans-serif" font-weight="600" font-size="12" letter-spacing="3">CINEMAS</text>
-    </svg>`,
+    logo: "/images/partners/vox-cinemas.svg",
+    color: "#437dbd",
+    width: 1600,
+    height: 533,
+    className: "h-9 sm:h-11 lg:h-13",
   },
   {
-    id: "dmx",
-    name: "DMX Global",
-    color: "#f59e0b",
-    svg: `<svg viewBox="0 0 125 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-auto">
-      <text x="4" y="25" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="900" font-size="22" letter-spacing="1">dm</text>
-      <text x="48" y="25" fill="#f59e0b" font-family="system-ui, sans-serif" font-weight="900" font-size="22">x</text>
-      <text x="70" y="22" fill="#9ca3af" font-family="system-ui, sans-serif" font-weight="700" font-size="10" letter-spacing="1.5">GLOBAL</text>
-    </svg>`,
+    id: "hbo",
+    name: "HBO",
+    logo: "/images/partners/hbo.svg",
+    color: "#ffffff",
+    width: 512,
+    height: 211,
+    className: "h-9 sm:h-11 lg:h-13",
+  },
+  {
+    id: "hulu",
+    name: "Hulu",
+    logo: "/images/partners/hulu-wordmark.svg",
+    color: "#1ce783",
+    width: 1000,
+    height: 330,
+    className: "h-8 sm:h-10 lg:h-12",
+  },
+  {
+    id: "gitex",
+    name: "GITEX Global",
+    logo: "/images/partners/gitex-white.png",
+    color: "#06b6d4",
+    width: 510,
+    height: 196,
+    className: "h-10 sm:h-12 lg:h-15",
+  },
+  {
+    id: "etisalat",
+    name: "Etisalat e&",
+    logo: "/images/partners/brand-etisalat.png",
+    color: "#78b833",
+    width: 672,
+    height: 153,
+    className: "h-9 sm:h-11 lg:h-13",
+  },
+  {
+    id: "amman-tv",
+    name: "Amman TV",
+    logo: "/images/partners/brand-amman-tv.png",
+    color: "#ffffff",
+    width: 309,
+    height: 270,
+    className: "h-11 sm:h-13 lg:h-15",
   },
   {
     id: "hatta",
     name: "Hatta Dubai",
+    logo: "/images/partners/brand-hatta.png",
     color: "#22c55e",
-    svg: `<svg viewBox="0 0 115 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-auto">
-      <path d="M10 24L20 8l10 16H10z" stroke="#FFFFFF" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
-      <path d="M17 18h6" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round"/>
-      <text x="36" y="23" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="800" font-size="16" letter-spacing="2.5">HATTA</text>
-    </svg>`,
+    width: 351,
+    height: 297,
+    className: "h-11 sm:h-13 lg:h-15",
   },
   {
     id: "delos",
     name: "Delos",
-    color: "#d97706",
-    svg: `<svg viewBox="0 0 115 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-auto">
-      <circle cx="16" cy="18" r="10" stroke="#FFFFFF" stroke-width="2.5" fill="none"/>
-      <path d="M12 18a4 4 0 0 1 8 0" stroke="#d97706" stroke-width="2.5"/>
-      <text x="34" y="24" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="800" font-size="19" letter-spacing="-0.5">delos</text>
-    </svg>`,
+    logo: "/images/partners/brand-delos.png",
+    color: "#ffffff",
+    width: 576,
+    height: 132,
+    className: "h-8 sm:h-10 lg:h-12",
+  },
+  {
+    id: "dmx",
+    name: "Dubai Municipality Academy",
+    logo: "/images/partners/brand-dmx.png",
+    color: "#ffffff",
+    width: 675,
+    height: 96,
+    className: "h-8 sm:h-10 lg:h-12",
   },
 ];

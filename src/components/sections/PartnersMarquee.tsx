@@ -9,6 +9,7 @@ import { YAS_GROUP_COMPANIES } from "@/features/group/data";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { CountUp } from "@/components/animations/MotionWrappers";
 import { ArrowUpRight, ShieldCheck, Sparkles, SlidersHorizontal, Play, Pause } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ProductionMetric {
   end: number;
@@ -58,8 +59,6 @@ export function PartnersMarquee() {
   const { isArabic } = useLanguage();
   const [isPaused, setIsPaused] = React.useState(false);
   const [marqueeSpeed, setMarqueeSpeed] = React.useState<"normal" | "fast">("normal");
-
-  const speedDurationClass = marqueeSpeed === "fast" ? "[--duration:18s]" : "[--duration:36s]";
 
   return (
     <section
@@ -120,7 +119,7 @@ export function PartnersMarquee() {
         <div className="w-full mb-6 sm:mb-9">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-2.5 flex items-center justify-between">
             <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-widest text-zinc-400 flex items-center gap-2">
-              <ShieldCheck size={13} className="text-amber-400" />
+              <ShieldCheck size={13} className="text-brand-mauve" />
               <span className="font-medium text-zinc-300">{isArabic ? "الهيئات الحكومية والسيادية" : "Sovereign & Federal Entities"}</span>
             </span>
             <span className="text-[9px] font-mono uppercase tracking-widest text-zinc-500 hidden sm:inline-block">
@@ -131,15 +130,16 @@ export function PartnersMarquee() {
           <Marquee
             pauseOnHover
             paused={isPaused}
-            repeat={3}
-            gap="2rem"
-            className={`${speedDurationClass} py-2 sm:py-3 items-center`}
+            repeat={4}
+            gap="2.5rem"
+            speedMultiplier={marqueeSpeed === "fast" ? 2.0 : 1.0}
+            className="py-2 sm:py-3 items-center"
           >
             {GOV_LOGOS.map((gov) => (
               <div
                 key={gov.id}
                 title={gov.name}
-                className="relative px-2 sm:px-3 py-1.5 flex items-center justify-center transition-all duration-300 group cursor-pointer shrink-0 select-none"
+                className="relative px-4 sm:px-6 lg:px-7 py-2 sm:py-3 flex items-center justify-center transition-all duration-300 group cursor-pointer shrink-0 select-none h-16 sm:h-20 lg:h-24"
               >
                 {/* Brand Aura Glow */}
                 <div
@@ -152,9 +152,17 @@ export function PartnersMarquee() {
                 <Image
                   src={gov.logo}
                   alt={gov.name}
-                  width={140}
-                  height={45}
-                  className="h-6 sm:h-8 lg:h-9 w-auto max-w-[125px] sm:max-w-[150px] object-contain grayscale opacity-55 brightness-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:brightness-110 group-hover:scale-105 transition-all duration-300"
+                  width={gov.width}
+                  height={gov.height}
+                  unoptimized
+                  draggable={false}
+                  className={cn(
+                    "w-auto object-contain opacity-90 brightness-125 group-hover:opacity-100 group-hover:brightness-150 group-hover:scale-105 transition-all duration-300 pointer-events-none drop-shadow-[0_2px_8px_rgba(255,255,255,0.06)]",
+                    gov.className
+                  )}
+                  style={{
+                    aspectRatio: `${gov.width} / ${gov.height}`,
+                  }}
                 />
               </div>
             ))}
@@ -165,7 +173,7 @@ export function PartnersMarquee() {
         <div className="w-full">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-2.5 flex items-center justify-between">
             <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-widest text-zinc-400 flex items-center gap-2">
-              <Sparkles size={13} className="text-amber-400" />
+              <Sparkles size={13} className="text-brand-mauve" />
               <span className="font-medium text-zinc-300">{isArabic ? "منصات البث والعلامات العالمية" : "Global Commercial & Broadcasters"}</span>
             </span>
             <span className="text-[9px] font-mono uppercase tracking-widest text-zinc-500 hidden sm:inline-block">
@@ -177,15 +185,16 @@ export function PartnersMarquee() {
             pauseOnHover
             paused={isPaused}
             reverse
-            repeat={3}
-            gap="2rem"
-            className={`${speedDurationClass} py-2 sm:py-3 items-center`}
+            repeat={4}
+            gap="2.5rem"
+            speedMultiplier={marqueeSpeed === "fast" ? 2.0 : 1.0}
+            className="py-2 sm:py-3 items-center"
           >
             {BRAND_LOGOS.map((brand) => (
               <div
                 key={brand.id}
                 title={brand.name}
-                className="relative px-2 sm:px-3 py-1.5 flex items-center justify-center transition-all duration-300 group cursor-pointer shrink-0 select-none"
+                className="relative px-4 sm:px-6 lg:px-7 py-2 sm:py-3 flex items-center justify-center transition-all duration-300 group cursor-pointer shrink-0 select-none h-14 sm:h-18 lg:h-20"
               >
                 {/* Brand Spotlight Aura Glow */}
                 <div
@@ -195,20 +204,21 @@ export function PartnersMarquee() {
                   }}
                 />
 
-                {brand.svg ? (
-                  <div
-                    className="flex items-center justify-center grayscale opacity-55 brightness-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:brightness-110 group-hover:scale-105 transition-all duration-300 h-6 sm:h-8 lg:h-9"
-                    dangerouslySetInnerHTML={{ __html: brand.svg }}
-                  />
-                ) : (
-                  <Image
-                    src={brand.logo!}
-                    alt={brand.name}
-                    width={130}
-                    height={40}
-                    className="h-6 sm:h-7 lg:h-8 w-auto max-w-[120px] sm:max-w-[140px] object-contain grayscale opacity-55 brightness-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:brightness-110 group-hover:scale-105 transition-all duration-300"
-                  />
-                )}
+                <Image
+                  src={brand.logo}
+                  alt={brand.name}
+                  width={brand.width}
+                  height={brand.height}
+                  unoptimized
+                  draggable={false}
+                  className={cn(
+                    "w-auto object-contain opacity-90 brightness-110 group-hover:opacity-100 group-hover:brightness-130 group-hover:scale-105 transition-all duration-300 pointer-events-none",
+                    brand.className
+                  )}
+                  style={{
+                    aspectRatio: `${brand.width} / ${brand.height}`,
+                  }}
+                />
               </div>
             ))}
           </Marquee>
