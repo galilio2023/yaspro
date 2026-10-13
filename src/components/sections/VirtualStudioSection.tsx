@@ -4,11 +4,6 @@ import React, { useRef, useState, useEffect, useCallback, useSyncExternalStore }
 import Link from "next/link";
 import {
   ArrowRight,
-  Sparkles,
-  Layers,
-  Zap,
-  CheckCircle2,
-  Crosshair,
   MoveHorizontal,
   Repeat,
   Hand,
@@ -287,31 +282,7 @@ export function VirtualStudioSection() {
               </p>
             </FadeUp>
 
-            <FadeUp delay={0.15}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <div className="p-3.5 rounded-xl bg-zinc-950/70 border border-white/10 flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 shrink-0">
-                    <Layers size={16} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-white font-mono">{t("virtualStudio.cycloramaTitle")}</div>
-                    <div className="text-[11px] text-zinc-400">{t("virtualStudio.cycloramaDesc")}</div>
-                  </div>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-zinc-950/70 border border-white/10 flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-brand-mauve/15 text-brand-mauve shrink-0">
-                    <Zap size={16} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-white font-mono">{t("virtualStudio.unrealTitle")}</div>
-                    <div className="text-[11px] text-zinc-400">{t("virtualStudio.unrealDesc")}</div>
-                  </div>
-                </div>
-              </div>
-            </FadeUp>
-
-            <FadeUp delay={0.2} className="pt-2">
+            <FadeUp delay={0.15} className="pt-2">
               <Link
                 href="/studio-booking"
                 className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 text-sm font-bold shadow-lg shadow-brand-violet/40 transition-all hover:scale-[1.02] active:scale-[0.98] w-fit"
@@ -369,41 +340,6 @@ export function VirtualStudioSection() {
                 >
                   <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 size-10 rounded-full bg-zinc-950/90 border border-brand-mauve/80 shadow-xl shadow-brand-violet/60 flex items-center justify-center text-brand-lavender group-hover:scale-110 group-active:scale-95 transition-transform backdrop-blur-md">
                     <MoveHorizontal size={18} />
-                  </div>
-                </div>
-
-                {/* Top state pills */}
-                <div className="absolute top-3 left-3 pointer-events-none flex items-center gap-2 z-30">
-                  <div className="flex items-center gap-2 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-emerald-500/30 text-[10px] sm:text-xs font-mono text-emerald-400 font-latin shadow-lg">
-                    <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="font-bold">PHYSICAL STAGE</span>
-                    <span className="text-white/40 hidden sm:inline">|</span>
-                    <span className="text-white/80 hidden sm:inline">Green Cyclorama</span>
-                  </div>
-                </div>
-
-                <div className="absolute top-3 right-3 pointer-events-none flex items-center gap-2 z-30">
-                  <div className="flex items-center gap-2 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-brand-mauve/40 text-[10px] sm:text-xs font-mono text-brand-lavender font-latin shadow-lg">
-                    <span className="size-2 rounded-full bg-brand-mauve" />
-                    <span className="font-bold">UNREAL 5.4</span>
-                    <span className="text-white/40 hidden sm:inline">|</span>
-                    <span className="text-white/80 hidden sm:inline">3D Environment</span>
-                  </div>
-                </div>
-
-                {/* Bottom telemetry HUD */}
-                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none text-[9px] sm:text-[11px] font-mono text-white/80 bg-black/85 backdrop-blur-md px-3.5 py-1.5 sm:py-2 rounded-xl border border-white/10 font-latin z-30">
-                  <div className="flex items-center gap-3 sm:gap-4">
-                    <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                      <CheckCircle2 size={12} />
-                      {t("virtualStudio.liveGenlock")}
-                    </span>
-                    <span className="hidden sm:inline text-white/60">{t("virtualStudio.latency")}</span>
-                    <span className="hidden md:inline text-brand-lavender">{t("virtualStudio.hdrPipeline")}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-brand-mauve font-bold">
-                    <Crosshair size={12} />
-                    <span>{t("virtualStudio.tracking")}</span>
                   </div>
                 </div>
               </div>
