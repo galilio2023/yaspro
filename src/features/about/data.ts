@@ -1,139 +1,59 @@
-import { Sparkles, Camera, Radio, Users, Award, ShieldCheck, Clapperboard, Globe2 } from "lucide-react";
-
-export interface TeamMember {
-  role: string;
-  arRole: string;
-  name: string;
-  arName: string;
-  focus: string;
-  arFocus: string;
+export interface FounderProfile {
+  nameEn: string;
+  nameAr: string;
+  roleEn: string;
+  roleAr: string;
+  orgEn: string;
+  orgAr: string;
   initials: string;
-  department: string;
-  arDepartment: string;
-  gradient: string;
+  image?: string;
+  quoteEn: string;
+  quoteAr: string;
+  bioEn: string;
+  bioAr: string;
+  credentialsEn: string[];
+  credentialsAr: string[];
+  stats: {
+    value: string;
+    labelEn: string;
+    labelAr: string;
+    detailEn: string;
+    detailAr: string;
+  }[];
 }
 
-export const TEAM_MEMBERS: TeamMember[] = [
-  {
-    role: "CEO & Founder",
-    arRole: "الرئيس التنفيذي والمؤسس",
-    name: "Yaman Mohammad Alomari",
-    arName: "يمان محمد العمري",
-    focus: "Strategic growth, government media partnerships & sovereign GCC infrastructure expansion",
-    arFocus: "النمو الاستراتيجي، الشراكات الإعلامية الحكومية، والتوسع السيادي في الخليج",
-    initials: "YA",
-    department: "Executive Board",
-    arDepartment: "مجلس الإدارة التنفيذي",
-    gradient: "from-brand-violet-rich via-brand-violet to-brand-mauve",
-  },
-  {
-    role: "Chief Technology Officer",
-    arRole: "المدير التقني التنفيذي",
-    name: "Broadcast & AI Systems Lead",
-    arName: "إدارة أنظمة البث والذكاء الاصطناعي",
-    focus: "Real-time AI video ingestion, SMPTE 2110 IP fabric & neural virtual production pipeline",
-    arFocus: "معالجة الفيديو بالذكاء الاصطناعي اللحظي، شبكات SMPTE 2110، والاستوديوهات الافتراضية العصبية",
-    initials: "CTO",
-    department: "Media Engineering",
-    arDepartment: "الهندسة الإعلامية والتقنية",
-    gradient: "from-brand-violet via-brand-purple to-brand-mauve-soft",
-  },
-  {
-    role: "Head of Studio Operations",
-    arRole: "رئيس إدارة وتشغيل الاستوديوهات",
-    name: "Soundstages & Production Ops",
-    arName: "إدارة الاستوديوهات والتشغيل",
-    focus: "Multi-facility soundstage allocations, tier-one talent workflow & client set coordination",
-    arFocus: "تخصيص استوديوهات التصوير الكبرى، مسارات إنتاج النخبة، والتنسيق الميداني الشامل",
-    initials: "OPS",
-    department: "Physical Studios",
-    arDepartment: "الاستوديوهات الميدانية",
-    gradient: "from-brand-purple-mid via-brand-violet to-brand-mauve",
-  },
-  {
-    role: "OB-VAN & Live Broadcast Director",
-    arRole: "مدير البث المباشر وأساطيل النقل الخارجي",
-    name: "Outside Broadcast Operations",
-    arName: "عمليات البث الميداني والفضائي",
-    focus: "Stadium live sports multi-cam switching, EVS instant replay & mobile satellite telemetry",
-    arFocus: "إدارة البث الرياضي متعدد الكاميرات، إعادة EVS اللحظية، والاتصالات الفضائية المتنقلة",
-    initials: "OB",
-    department: "Tactical Fleet",
-    arDepartment: "أسطول البث التكتيكي",
-    gradient: "from-brand-violet-dark via-brand-violet to-brand-purple",
-  },
-  {
-    role: "Director of Sound & Spatial Audio",
-    arRole: "مدير هندسة الصوت والصوت المحيطي",
-    name: "Acoustics & Dolby Atmos",
-    arName: "الصوتيات وهندسة دولبي أتموس",
-    focus: "Acoustic room calibration, cinema surround mastering & AI spatial voice isolation",
-    arFocus: "معايرة الغرف الصوتية، المكساج السينمائي المحيطي، وعزل الصوت العصبي بالذكاء الاصطناعي",
-    initials: "ATM",
-    department: "Audio Engineering",
-    arDepartment: "الهندسة الصوتية",
-    gradient: "from-brand-violet-rich via-brand-mauve to-brand-lavender",
-  },
-  {
-    role: "Lead Virtual Production Cinematographer",
-    arRole: "مدير التصوير والإنتاج الافتراضي",
-    name: "Optics & Camera Chains",
-    arName: "إدارة البصريات والكاميرات السينمائية",
-    focus: "Unreal Engine 5.4 in-camera VFX (ICVFX), LED wall genlock & ARRI/RED optics optimization",
-    arFocus: "المؤثرات البصرية داخل الكاميرا ICVFX، مزامنة شاشات LED، وتوجيه العدسات السينمائية",
-    initials: "CIN",
-    department: "Virtual Cinematography",
-    arDepartment: "التصوير السينمائي الافتراضي",
-    gradient: "from-brand-violet via-brand-mauve to-brand-purple",
-  },
-];
-
-export const PILLARS = [
-  {
-    icon: Sparkles,
-    badge: "Neural Workflows",
-    arBadge: "مسارات ذكية",
-    title: "AI-Integrated Workflows",
-    arTitle: "مسارات عمل مدعومة بالذكاء الاصطناعي",
-    description: "Harnessing real-time generative AI for automated shot logging, dialect adaptation, neural color transforms, and instantaneous multi-camera clipping.",
-    arDescription: "تسخير الذكاء الاصطناعي التوليدي الفوري لأرشفة اللقطات الذكية، تكييف اللهجات، المعالجة اللونية، والنشر اللحظي متعدد الزوايا.",
-    tags: ["Unreal Engine 5.4", "Dialect AI", "Instant Replay", "Neural Upscaling"],
-    gradient: "from-brand-violet to-brand-purple-dark",
-  },
-  {
-    icon: Camera,
-    badge: "Cinema Soundstages",
-    arBadge: "استوديوهات سينمائية",
-    title: "State-of-the-Art Studios",
-    arTitle: "استوديوهات بأعلى المواصفات العالمية",
-    description: "Purpose-built acoustic environments with automated digital lighting grids, 8K dual-ISO camera chains, podcast suites, and flexible luxury set dressing.",
-    arDescription: "بيئات صوتية معزولة بأحدث شبكات الإضاءة الرقمية، سلاسل كاميرات 8K، أجنحة البودكاست الاحترافية، وتجهيزات ديكور مرنة تلبي أعلى المعايير.",
-    tags: ["8K RAW", "Acoustic NC-20", "DMX Lighting", "Podcast Suites"],
-    gradient: "from-brand-violet-rich to-brand-violet",
-  },
-  {
-    icon: Radio,
-    badge: "Tactical Mobility",
-    arBadge: "جاهزية ميدانية",
-    title: "Broadcast-Grade Mobility",
-    arTitle: "بث تلفزيوني خارجي فائق الجاهزية",
-    description: "Heavy-duty OB-VAN mobile control command units equipped with dark-fiber, satellite uplinks, and redundant generators for arenas and national summits.",
-    arDescription: "عربات نقل خارجي (OB-VAN) متطورة مجهزة بالألياف الضوئية المظلمة، اتصالات الأقمار الصناعية، ومولدات طوارئ للفعاليات والملاعب الرياضية.",
-    tags: ["OB-VAN Fleet", "SMPTE 2110", "Fiber Runs", "Dual Satellite"],
-    gradient: "from-brand-violet to-brand-mauve",
-  },
-  {
-    icon: Users,
-    badge: "Creator Network",
-    arBadge: "شبكة المبدعين",
-    title: "Creator-First Ecosystem",
-    arTitle: "منظومة إنتاجية متكاملة لصناع المحتوى",
-    description: "End-to-end format incubation, commercial sponsorships, and episodic television production designed for top-tier creators commanding 400M+ impressions.",
-    arDescription: "حضانة وتطوير برامج وبودكاست ورعايات تجارية كبرى مخصصة لنخبة صناع المحتوى المؤثرين الذين يتجاوز وصولهم 400 مليون مشاهدة.",
-    tags: ["400M+ Audience", "Episodic Series", "Brand Deals", "Syndication"],
-    gradient: "from-brand-purple-mid to-brand-violet",
-  },
-];
+export const FOUNDER_PROFILE: FounderProfile = {
+  nameEn: "Yaman Mohammad Alomari",
+  nameAr: "يمان محمد العمري",
+  roleEn: "Founder & Chief Executive Officer",
+  roleAr: "المؤسس والرئيس التنفيذي",
+  orgEn: "Yas Pro Media Group",
+  orgAr: "مجموعة ياس برو الإعلامية",
+  initials: "YA",
+  image: "/images/founder/yaman-alomari-portrait.jpg",
+  quoteEn: "We built Yas Pro not as another rental studio, but as an integrated sovereign production ecosystem—where Hollywood cinema craft converges with real-time digital velocity.",
+  quoteAr: "لم نبنِ Yas Pro لتكون مجرد استوديو أو دار لتأجير المعدات، بل صمّمناها كمنظومة إنتاجية سيادية متكاملة تلتقي فيها معايير السينما العالمية مع سرعة وزخم الإعلام الرقمي الحديث.",
+  bioEn: "Under Yaman's executive leadership since 2015, Yas Pro has expanded from broadcast soundstages in Dubai into a multi-facility media group spanning virtual production, outside broadcasting, creative strategy, and digital talent across the UAE, Egypt, and Jordan.",
+  bioAr: "منذ تأسيس الشركة في دبي عام 2015 برؤية يمان العمري، توسعت Yas Pro من استوديوهات تصوير متقدمة إلى مجموعة إعلامية إقليمية رائدة تشمل الإنتاج الافتراضي، أساطيل البث الخارجي، الإدارة الإبداعية، وصناعة المحتوى عبر الإمارات ومصر والأردن.",
+  credentialsEn: [
+    "Steering 6 specialized sister enterprises across Yas Media Group",
+    "Pioneered virtual soundstage & ICVFX infrastructure in Dubai",
+    "Trusted partner for UAE ministries, giga-projects & national campaigns",
+    "Engineered production workflows reaching 400M+ digital audience",
+  ],
+  credentialsAr: [
+    "قيادة 6 شركات شقيقة متخصصة تحت مظلة مجموعة ياس برو الإعلامية",
+    "ريادة تقنيات الاستوديوهات الافتراضية والمؤثرات الميدانية في دبي",
+    "شريك استراتيجي موثوق للوزارات والمشاريع الوطنية والفعاليات الكبرى",
+    "هندسة بنية تحتية للإنتاج والبث تصل لأكثر من 400 مليون مشاهدة",
+  ],
+  stats: [
+    { value: "2015", labelEn: "Established", labelAr: "التأسيس", detailEn: "Dubai NMC Licensed", detailAr: "ترخيص رسمي بدبي" },
+    { value: "6", labelEn: "Group Entities", labelAr: "شركات بالمجموعة", detailEn: "Unified Holding", detailAr: "إدارة قابضة موحدة" },
+    { value: "3", labelEn: "Regional Hubs", labelAr: "مقرات إقليمية", detailEn: "UAE • Egypt • Jordan", detailAr: "الإمارات • مصر • الأردن" },
+    { value: "500+", labelEn: "Prime Delivered", labelAr: "أعمال منجزة", detailEn: "Sovereign & Commercial", detailAr: "مشاريع حكومية وإعلانية" },
+  ],
+};
 
 export const REGIONAL_HUBS_EXPANDED = [
   {
@@ -152,6 +72,9 @@ export const REGIONAL_HUBS_EXPANDED = [
     status: "Active 24/7",
     arStatus: "تشغيل 24/7",
     color: "mauve",
+    image: "/images/hubs/dubai-heritage-3d.jpg",
+    landmarkEn: "Historic Dubai Creek & Al Fahidi",
+    landmarkAr: "خور دبي وحي الفهيدي التاريخي",
   },
   {
     id: "cairo",
@@ -169,6 +92,9 @@ export const REGIONAL_HUBS_EXPANDED = [
     status: "Online",
     arStatus: "نشط ومتصل",
     color: "violet",
+    image: "/images/hubs/cairo-heritage-3d.jpg",
+    landmarkEn: "The Great Pyramids & Giza Plateau",
+    landmarkAr: "أهرامات الجيزة وهضبة الأجداد",
   },
   {
     id: "amman",
@@ -186,36 +112,8 @@ export const REGIONAL_HUBS_EXPANDED = [
     status: "Online",
     arStatus: "نشط ومتصل",
     color: "mauve",
-  },
-];
-
-export const ACCREDITATIONS = [
-  {
-    icon: ShieldCheck,
-    titleEn: "UAE National Media Council",
-    titleAr: "المجلس الوطني للإعلام بدولة الإمارات",
-    descEn: "Officially licensed and accredited since 2015 under UAE NMC media regulations.",
-    descAr: "ترخيص واعتماد رسمي ساري منذ عام 2015 وفق أعلى المعايير التنظيمية الإعلامية.",
-  },
-  {
-    icon: Award,
-    titleEn: "FTA Corporate Tax & VAT Compliant",
-    titleAr: "امتثال ضريبي كامل للهيئة الاتحادية للضرائب",
-    descEn: "Transparent enterprise auditing, legal invoicing & official governmental supplier registry.",
-    descAr: "فواتير ضريبية نظامية وتسجيل رسمي معتمد لدى منصات المشتريات الحكومية.",
-  },
-  {
-    icon: Clapperboard,
-    titleEn: "ARRI & RED Certified Cinema Stages",
-    titleAr: "استوديوهات معتمدة لأنظمة ARRI و RED",
-    descEn: "Standardized optical pipelines, verified anamorphic optics, and RAW 8K genlock calibration.",
-    descAr: "مسارات بصرية سينمائية متطابقة ومعايرة دقيقة لأنظمة الكاميرات السينمائية العالمية.",
-  },
-  {
-    icon: Globe2,
-    titleEn: "Sovereign Confidentiality & Security",
-    titleAr: "سرية تامة وأمن بيانات سيادي",
-    descEn: "Air-gapped on-premise storage and non-disclosure agreements for ministries and giga-projects.",
-    descAr: "خوادم تخزين محلية معزولة واتفاقيات سرية بيانات صارمة لحملات الوزارات والمشاريع السيادية.",
+    image: "/images/hubs/amman-heritage-3d.jpg",
+    landmarkEn: "The Treasury of Petra & Amman Citadel",
+    landmarkAr: "خزنة البتراء التاريخية وقلعة عمّان",
   },
 ];
