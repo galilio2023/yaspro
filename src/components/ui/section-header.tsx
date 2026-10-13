@@ -1,6 +1,5 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 import { FadeUp } from "@/components/animations/MotionWrappers";
 
 export interface SectionHeaderProps {
@@ -54,27 +53,12 @@ export function SectionHeader({
           className
         )}
       >
-        {/* Badge + optional action row */}
-        <div
-          className={cn(
-            "w-full flex items-center gap-2 sm:gap-3 mb-4 sm:mb-5 flex-wrap",
-            isCenter ? "justify-center" : "justify-between"
-          )}
-        >
-          {badge && (
-            <Badge
-              variant={badgeVariant}
-              className="px-3.5 sm:px-4 py-1 sm:py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider rtl:tracking-normal gap-1.5 whitespace-nowrap shrink-0 max-w-full"
-            >
-              {badgeIcon}
-              <span className="whitespace-nowrap font-latin rtl:font-arabic leading-none">{badge}</span>
-            </Badge>
-          )}
-
-          {!isCenter && action && (
+        {/* Optional action row (if non-centered with action) */}
+        {!isCenter && action && (
+          <div className="w-full flex items-center justify-end mb-4 sm:mb-5">
             <div className="hidden sm:block shrink-0">{action}</div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Heading */}
         <HeadingTag

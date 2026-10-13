@@ -11,9 +11,6 @@ export function InfluencersPageHeader() {
     <SectionHeader
       headingId="influencers-title"
       as="h1"
-      badge={isArabic ? "شريك إنتاج صناع المحتوى" : "Creator Production Partner"}
-      badgeVariant="default"
-      badgeIcon={<Users size={13} />}
       title={isArabic ? "منصة انطلاق نخبة" : "Where Elite"}
       gradientText={isArabic ? "المؤثرين والمبدعين" : "Creators Thrive"}
       description={

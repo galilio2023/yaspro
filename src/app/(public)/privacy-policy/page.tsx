@@ -38,9 +38,6 @@ export default function PrivacyPolicyPage() {
           headingId="privacy-title"
           as="h1"
           align="left"
-          badge="Data Protection & Privacy"
-          badgeVariant="default"
-          badgeIcon={<ShieldCheck size={13} />}
           title="Privacy"
           gradientText="Policy"
           description="Last updated: September 2026. This policy details how Yas Pro Media LLC collects, processes, and safeguards client production assets, booking telemetry, and personal information."

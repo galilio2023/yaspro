@@ -53,10 +53,6 @@ export function SocialMediaDeliverablesShowcase() {
   return (
     <div className="w-full mt-20 pt-16 border-t border-white/10">
       <div className="text-center max-w-2xl mx-auto mb-12">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-mauve/10 border border-brand-mauve/25 text-brand-mauve text-xs font-mono uppercase tracking-wider mb-3 shadow-sm shadow-brand-violet/20">
-          <Sparkles size={13} />
-          <span>{isArabic ? "المعايير الاستوديوهات الاحترافية" : "THE STUDIO ADVANTAGE"}</span>
-        </div>
         <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight font-display">
           {isArabic ? "إنتاج سينمائي بمعايير الاستوديو لا وكالات التسويق التقليدية" : "Cinema Studio Craft, Not Generic Social Media Posts"}
         </h2>

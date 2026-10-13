@@ -76,9 +76,6 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
         {/* Section Header */}
         <SectionHeader
           headingId="portfolio-title"
-          badge={t("portfolio.badge")}
-          badgeVariant="purple"
-          badgeIcon={<Award size={13} />}
           title={isArabic ? t("portfolio.title") : "Our Latest"}
           gradientText={isArabic ? t("portfolio.titleGradient") : "Masterpieces"}
           description={t("portfolio.description")}

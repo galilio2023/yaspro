@@ -42,9 +42,6 @@ export function AboutMilestones() {
   return (
     <div className="mb-20 sm:mb-28">
       <SectionHeader
-        badge={t("about.heritageBadge")}
-        badgeVariant="default"
-        badgeIcon={<Milestone size={13} />}
         title={t("about.heritageTitle")}
         gradientText={t("about.heritageGradient")}
         description={t("about.heritageDesc")}

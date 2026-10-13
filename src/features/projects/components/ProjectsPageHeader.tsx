@@ -11,9 +11,6 @@ export function ProjectsPageHeader() {
     <SectionHeader
       headingId="projects-title"
       as="h1"
-      badge={isArabic ? "أعمالنا والإنتاجات الرائدة" : "Portfolio & Masterpieces"}
-      badgeVariant="default"
-      badgeIcon={<Film size={13} />}
       title={isArabic ? "إنتاجات تتصدر" : "Projects That"}
       gradientText={isArabic ? "شاشات العرض" : "Dominate Screens"}
       description={

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useId } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { YASPR_VECTOR_PATH } from "./yasprVectorPath";
 
@@ -55,11 +56,13 @@ function ApertureO({ uid }: { uid: string }) {
           <stop offset="70%" stopColor="#090514" />
           <stop offset="100%" stopColor="#030107" />
         </radialGradient>
-        <linearGradient id={`${uid}-dark`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#1a1228" />
-          <stop offset="50%" stopColor="#0d0817" />
-          <stop offset="100%" stopColor="#140d20" />
+        {/* Crisp Studio White Blade Gradient matching yas-pro-media-group.png */}
+        <linearGradient id={`${uid}-white-blade`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="60%" stopColor="#f8fafc" />
+          <stop offset="100%" stopColor="#e2e8f0" />
         </linearGradient>
+        {/* Authentic Golden Yellow Accent Blade (#FFE900) */}
         <linearGradient id={`${uid}-yellow`} x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#ffffff" />
           <stop offset="25%" stopColor="#fff04d" />
@@ -70,21 +73,31 @@ function ApertureO({ uid }: { uid: string }) {
 
       <circle cx="256" cy="256" r="252" fill={`url(#${uid}-halo)`} stroke="rgba(152,123,165,0.4)" strokeWidth="2.5" />
 
-      {/* Rotating aperture iris */}
+      {/* Rotating aperture iris with authentic white blades and yellow accent blade */}
       <g
         className="yas-iris-spin"
         style={{ transformOrigin: "256px 256px" }}
       >
-        {/* White seams between the blades */}
-        <path d={YAS_O_RING_PATH} fill="#ffffff" stroke="#ffffff" strokeWidth="4" strokeLinejoin="round" fillRule="evenodd" />
-        {/* Dark blades */}
-        <path d={YAS_O_RING_PATH} fill={`url(#${uid}-dark)`} fillRule="evenodd" />
+        {/* 7 White blades with dark seam dividers matching authentic logo */}
+        <path
+          d={YAS_O_RING_PATH}
+          fill={`url(#${uid}-white-blade)`}
+          stroke="#070709"
+          strokeWidth="4.5"
+          strokeLinejoin="round"
+          fillRule="evenodd"
+        />
         {/* Signature yellow blade */}
-        <path d={YAS_YELLOW_BLADE_PATH} stroke="#ffffff" strokeWidth="4" strokeLinejoin="round" />
-        <path d={YAS_YELLOW_BLADE_PATH} fill={`url(#${uid}-yellow)`} />
+        <path
+          d={YAS_YELLOW_BLADE_PATH}
+          fill={`url(#${uid}-yellow)`}
+          stroke="#070709"
+          strokeWidth="4.5"
+          strokeLinejoin="round"
+        />
       </g>
 
-      <circle cx="256" cy="256" r="112" fill="#06020e" stroke="rgba(152,123,165,0.5)" strokeWidth="1.8" />
+      <circle cx="256" cy="256" r="112" fill="#070709" stroke="rgba(152,123,165,0.5)" strokeWidth="1.8" />
       <circle cx="256" cy="256" r="64" fill="rgba(152,123,165,0.2)" />
     </svg>
   );
@@ -247,11 +260,17 @@ export function YasproAnimatedLoader({
           </div>
         </div>
 
-        {/* Subtitle lands softly as the O docks */}
-        <div className="yas-subtitle-in flex items-center gap-2 mt-3 text-[10px] sm:text-xs font-mono tracking-[0.25em] text-zinc-400 uppercase font-latin">
-          <span>MEDIA GROUP</span>
-          <span className="size-1 rounded-full bg-brand-mauve" />
-          <span className="text-purple-300">AI HUB</span>
+        {/* Authentic Subtitle extracted directly from official brand mark */}
+        <div className="yas-subtitle-in flex items-center justify-center mt-3.5 sm:mt-4 select-none pointer-events-none">
+          <Image
+            src="/images/extracted/yaspro-subtext-media-group.png"
+            alt="MEDIA GROUP"
+            width={157}
+            height={9}
+            priority
+            unoptimized
+            className="h-2.5 sm:h-3 w-auto object-contain brightness-100 opacity-90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] filter"
+          />
         </div>
       </div>
 

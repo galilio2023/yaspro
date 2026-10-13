@@ -23,9 +23,6 @@ export default function InfluencersSection() {
       <Container>
         <SectionHeader
           headingId="influencers-title"
-          badge={t("creators.badge")}
-          badgeVariant="default"
-          badgeIcon={<Users size={13} />}
           title={isArabic ? t("creators.title") : "Featured"}
           gradientText={isArabic ? t("creators.titleGradient") : "Influencers"}
           description={t("creators.description")}
