@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Yas Pro Extracted Assets Preview</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px;
+      background: #09060f;
+      color: #ddd3e1;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    h1 {
+      font-size: 22px;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+    p {
+      color: #987ba5;
+      margin-top: 0;
+      margin-bottom: 24px;
+    }
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      max-width: 600px;
+    }
+    .card {
+      background: #140d21;
+      border: 1px solid rgba(152, 123, 165, 0.25);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff04d;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+    .preview-box {
+      background: #06030a;
+      border: 1px dashed rgba(152, 123, 165, 0.4);
+      border-radius: 8px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100px;
+    }
+    img.crisp {
+      image-rendering: pixelated;
+    }
+    .meta {
+      font-size: 12px;
+      color: #887899;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>YAS PRO — Extracted Logo Elements</h1>
+  <p>Extracted directly from <code>yas-pro-media-group.png</code> with alpha transparency.</p>
+
+  <div class="grid">
+    <div class="card">
+      <div class="label">1. [O] Aperture Emblem (Original & 4x Scaled)</div>
+      <div class="preview-box">
+        <img src="yaspro-aperture-o.png" alt="Aperture O 1x" style="margin-right: 30px;" />
+        <img src="yaspro-aperture-o.png" alt="Aperture O 4x" class="crisp" style="width: 168px; height: 168px;" />
+      </div>
+      <div class="meta">File: <code>public/images/extracted/yaspro-aperture-o.png</code> | Dimensions: 42 &times; 42 px</div>
+    </div>
+
+    <div class="card">
+      <div class="label">2. Subtitle Text (Original & 3x Scaled)</div>
+      <div class="preview-box" style="flex-direction: column; gap: 20px;">
+        <img src="yaspro-subtext-media-group.png" alt="Subtext 1x" />
+        <img src="yaspro-subtext-media-group.png" alt="Subtext 3x" class="crisp" style="width: 471px; height: 27px;" />
+      </div>
+      <div class="meta">File: <code>public/images/extracted/yaspro-subtext-media-group.png</code> | Dimensions: 157 &times; 9 px</div>
+    </div>
+
+    <div class="card">
+      <div class="label">3. Combined Dark Background Preview</div>
+      <div class="preview-box">
+        <img src="preview-dark-background.png" alt="Combined Preview" style="max-width: 100%; height: auto; border-radius: 6px;" />
+      </div>
+      <div class="meta">File: <code>public/images/extracted/preview-dark-background.png</code></div>
+    </div>
+  </div>
+</body>
+</html>

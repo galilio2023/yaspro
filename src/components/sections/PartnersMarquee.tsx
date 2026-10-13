@@ -71,14 +71,6 @@ export function PartnersMarquee() {
           ACT 1: EDITORIAL HEADER & SOVEREIGN/GLOBAL PARTNERS
       ═══════════════════════════════════════════════════════════════ */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sm:mb-12 text-start flex flex-col items-start">
-        {/* Studio Metadata Eyebrow */}
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-[10px] sm:text-[11px] font-mono uppercase tracking-widest text-zinc-400 mb-3 shadow-inner">
-          <span className="w-1.5 h-1.5 rounded-full bg-brand-mauve animate-pulse" />
-          <span>
-            {isArabic ? "سجل ثقة معتمد // شركاء الإنتاج" : "VERIFIED ROSTER // PRODUCTION PARTNERS"}
-          </span>
-        </div>
-
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display tracking-tight text-white">
           {isArabic ? (
             <>
@@ -290,9 +282,6 @@ export function PartnersMarquee() {
         {/* Contextual Section Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 pb-4 mb-5 sm:mb-6 border-b border-white/[0.08]">
           <div className="text-start">
-            <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-mono uppercase tracking-widest text-brand-mauve mb-0.5">
-              <span>[CONGLOMERATE ECOSYSTEM]</span>
-            </div>
             <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
               {isArabic ? "منظومة مجموعة ياس برو المتكاملة" : "The Integrated Yas Pro Media Network"}
             </h3>

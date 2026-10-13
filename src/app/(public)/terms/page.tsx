@@ -38,9 +38,6 @@ export default function TermsOfServicePage() {
           headingId="terms-title"
           as="h1"
           align="left"
-          badge="Commercial Governance"
-          badgeVariant="default"
-          badgeIcon={<FileCheck size={13} />}
           title="Terms of"
           gradientText="Service"
           description="Last updated: September 2026. Standard commercial conditions governing studio soundstage hire, cinema equipment rental, OB-Van deployment, and influencer production agreements."

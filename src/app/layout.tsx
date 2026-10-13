@@ -59,13 +59,13 @@ export const metadata: Metadata = {
   ],
   icons: {
     icon: [
-      { url: "/favicon.ico?v=yaspro13", sizes: "any" },
-      { url: "/favicon.svg?v=yaspro13", type: "image/svg+xml" },
-      { url: "/favicon-32x32.png?v=yaspro13", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-16x16.png?v=yaspro13", sizes: "16x16", type: "image/png" },
+      { url: "/favicon.ico?v=yaspro14", sizes: "any" },
+      { url: "/favicon.svg?v=yaspro14", type: "image/svg+xml" },
+      { url: "/favicon-32x32.png?v=yaspro14", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png?v=yaspro14", sizes: "16x16", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-touch-icon.png?v=yaspro13", sizes: "180x180", type: "image/png" },
+      { url: "/apple-touch-icon.png?v=yaspro14", sizes: "180x180", type: "image/png" },
     ],
   },
   manifest: "/manifest.webmanifest",

@@ -1,7 +1,6 @@
 "use client";
 
 import { FadeUp } from "@/components/animations/MotionWrappers";
-import { Badge } from "@/components/ui/badge";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { REGIONAL_HUBS_EXPANDED, ACCREDITATIONS } from "../data";
@@ -28,11 +27,7 @@ export function AboutOverview() {
             <BorderBeam size={220} duration={14} colorFrom="#987ba5" colorTo="#542568" />
 
             <div>
-              <div className="flex items-center justify-between gap-3 mb-6">
-                <Badge variant="gold" className="px-3.5 py-1 text-xs">
-                  {t("about.philosophyBadge")}
-                </Badge>
-
+              <div className="flex items-center justify-end gap-3 mb-6">
                 <span className="text-[11px] font-mono text-brand-mauve flex items-center gap-1.5 font-latin" dir="ltr">
                   <ShieldCheck size={14} /> EST. 2015 DUBAI
                 </span>
@@ -68,10 +63,7 @@ export function AboutOverview() {
         <FadeUp delay={0.1} className="lg:col-span-5 h-full">
           <div className="rounded-3xl border border-border/40 bg-card/60 backdrop-blur-2xl p-6 sm:p-8 lg:p-9 h-full flex flex-col justify-between shadow-2xl shadow-black/50">
             <div>
-              <div className="flex items-center justify-between gap-2 mb-6">
-                <Badge variant="gold" className="px-3.5 py-1 text-xs">
-                  {t("about.scaleBadge")}
-                </Badge>
+              <div className="flex items-center justify-end gap-2 mb-6">
                 <span className="size-2 rounded-full bg-brand-mauve shadow-[0_0_8px_rgba(152,123,165,0.6)]" />
               </div>
 
@@ -126,9 +118,6 @@ export function AboutOverview() {
       {/* ── Section 2: Regional Production Infrastructure Strip ── */}
       <div>
         <div className="text-center max-w-2xl mx-auto mb-8">
-          <Badge variant="gold" className="mb-3">
-            {isArabic ? "البنية التحتية الإقليمية" : "Regional Footprint"}
-          </Badge>
           <h3 className="text-2xl sm:text-3xl font-extrabold text-white font-display">
             {isArabic ? "ثلاثة مقرات استوديو كبرى تحت إدارة موحدة" : "Three Dedicated Regional Production Hubs"}
           </h3>
@@ -188,9 +177,6 @@ export function AboutOverview() {
       {/* ── Section 3: Official Accreditations & Trust Grid ── */}
       <div className="rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl p-6 sm:p-10">
         <div className="text-start mb-8">
-          <Badge variant="gold" className="mb-2">
-            {isArabic ? "الاعتمادات والموثوقية" : "Official Compliance"}
-          </Badge>
           <h3 className="text-xl sm:text-2xl font-bold text-white font-display">
             {isArabic ? "معايير الجودة والاعتمادات الرسمية" : "Verified Credentials & Sovereign Standards"}
           </h3>

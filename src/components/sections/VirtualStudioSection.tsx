@@ -272,11 +272,6 @@ export function VirtualStudioSection() {
           {/* ─── LEFT COLUMN: TYPOGRAPHY & VALUE PROPOSITION ─── */}
           <div className="lg:col-span-5 flex flex-col justify-center space-y-6">
             <FadeUp delay={0.05}>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-mauve/30 bg-brand-mauve/10 text-brand-lavender text-xs font-semibold tracking-wide backdrop-blur-md mb-2">
-                <Sparkles size={13} className="text-brand-mauve" />
-                <span>{t("virtualStudio.badge")}</span>
-              </div>
-
               <h2
                 id="virtual-heading"
                 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.5rem] font-extrabold tracking-tight leading-[1.15] rtl:leading-[1.35] text-white"

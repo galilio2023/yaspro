@@ -73,9 +73,6 @@ export function ServicesSection() {
         {/* Section Header with Clean Studio Hierarchy */}
         <SectionHeader
           headingId="services-title"
-          badge={isArabic ? "ركائز الإنتاج المتكامل" : "Turnkey Production Pillars"}
-          badgeVariant="purple"
-          badgeIcon={<Sparkles size={13} className="text-brand-lavender" />}
           title={isArabic ? "شكل محتواك مع" : "Shape Your Content With"}
           gradientText={isArabic ? "إمكانياتنا الإنتاجية" : "Cinematic Craft"}
           gradientVariant="mauve"

@@ -43,12 +43,6 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
       <section className="relative pt-24 pb-10 sm:pt-28 sm:pb-14 border-b border-white/[0.08] overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
-            {/* Telemetry Chip */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-mauve/30 bg-brand-violet/20 text-brand-mauve-soft text-[10px] sm:text-xs font-mono font-semibold tracking-wider uppercase mb-4">
-              <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>{isArabic ? "آيريس باي • دبي • 6 استوديوهات معتمدة" : "IRIS BAY DUBAI • 6 SOUNDSTAGES"}</span>
-            </div>
-
             {/* Tight, Confident Headline */}
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white font-display tracking-tight leading-tight mb-3">
               {isArabic ? (
@@ -330,9 +324,6 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8">
             <div>
-              <span className="text-[10px] font-mono text-brand-mauve uppercase tracking-wider font-semibold block">
-                {isArabic ? "باقات متكاملة" : "ALL-INCLUSIVE PACKAGES"}
-              </span>
               <h2 className="text-xl sm:text-3xl font-black text-white font-display">
                 {isArabic ? "باقات الاستوديو والإنتاج" : "Turnkey Production Deals"}
               </h2>

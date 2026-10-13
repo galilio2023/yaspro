@@ -17,9 +17,6 @@ export function TeamGrid({ headingId }: TeamGridProps) {
     <div className="mb-20 sm:mb-28">
       <SectionHeader
         headingId={headingId}
-        badge={t("about.teamBadge")}
-        badgeVariant="default"
-        badgeIcon={<Users size={13} />}
         title={t("about.teamTitle")}
         gradientText={t("about.teamGradient")}
         description={t("about.teamDesc")}

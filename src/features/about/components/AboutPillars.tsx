@@ -17,9 +17,6 @@ export function AboutPillars({ headingId }: AboutPillarsProps) {
     <div className="mb-20 sm:mb-28">
       <SectionHeader
         headingId={headingId}
-        badge={t("about.pillarsBadge")}
-        badgeVariant="default"
-        badgeIcon={<Shield size={13} />}
         title={t("about.pillarsTitle")}
         gradientText={t("about.pillarsGradient")}
         description={t("about.pillarsDesc")}

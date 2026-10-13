@@ -12,9 +12,6 @@ export function ContactHeroHeader() {
       headingId="contact-title"
       as="h1"
       align="left"
-      badge={t("contact.badge")}
-      badgeVariant="default"
-      badgeIcon={<MessageSquare size={13} />}
       title={t("contact.title")}
       gradientText={t("contact.titleGradient")}
       description={t("contact.description")}
