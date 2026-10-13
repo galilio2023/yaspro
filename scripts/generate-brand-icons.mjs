@@ -105,8 +105,7 @@ async function main() {
   // 1. Vector SVG (100% transparent background outside perimeter)
   const fullBleedSvg = createFaviconSvg({ scale: 0.985 });
   fs.writeFileSync(path.join(root, 'public/favicon.svg'), fullBleedSvg.trim());
-  fs.writeFileSync(path.join(root, 'src/app/icon.svg'), fullBleedSvg.trim());
-  console.log('✓ Written transparent public/favicon.svg and src/app/icon.svg');
+  console.log('✓ Written transparent public/favicon.svg');
 
   // Master render with transparent background
   const masterBuf = await sharp(Buffer.from(fullBleedSvg)).png().toBuffer();
@@ -129,8 +128,7 @@ async function main() {
     { width: 48, height: 48, buffer: png48 },
   ]);
   fs.writeFileSync(path.join(root, 'public/favicon.ico'), icoBuf);
-  fs.writeFileSync(path.join(root, 'src/app/favicon.ico'), icoBuf);
-  console.log('✓ Written transparent public/favicon.ico and src/app/favicon.ico');
+  console.log('✓ Written transparent public/favicon.ico');
 
   // 3. PWA launcher icons: 192x192 and 512x512 (100% transparent background)
   const png192 = await sharp(masterBuf).resize(192, 192).png().toBuffer();
@@ -139,14 +137,12 @@ async function main() {
 
   const png512 = await sharp(masterBuf).resize(512, 512).png().toBuffer();
   fs.writeFileSync(path.join(root, 'public/icon-512.png'), png512);
-  fs.writeFileSync(path.join(root, 'src/app/icon.png'), png512);
-  console.log('✓ Written transparent public/icon-512.png and src/app/icon.png');
+  console.log('✓ Written transparent public/icon-512.png');
 
   // 4. Apple Touch Icon: 180x180 (100% transparent background)
   const png180 = await sharp(masterBuf).resize(180, 180).png().toBuffer();
   fs.writeFileSync(path.join(root, 'public/apple-touch-icon.png'), png180);
-  fs.writeFileSync(path.join(root, 'src/app/apple-icon.png'), png180);
-  console.log('✓ Written transparent public/apple-touch-icon.png and src/app/apple-icon.png');
+  console.log('✓ Written transparent public/apple-touch-icon.png');
 
   console.log('🎉 Full authentic [O] icon suite generated successfully!');
 }

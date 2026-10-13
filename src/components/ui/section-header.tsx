@@ -5,9 +5,6 @@ import { FadeUp } from "@/components/animations/MotionWrappers";
 export interface SectionHeaderProps {
   headingId?: string;
   as?: "h1" | "h2" | "h3";
-  badge?: React.ReactNode;
-  badgeVariant?: "default" | "secondary" | "destructive" | "outline" | "cyan" | "gold" | "purple" | "yellow" | "live";
-  badgeIcon?: React.ReactNode;
   title: string;
   gradientText?: string;
   gradientVariant?: "gold" | "mauve" | "violet" | "yellow";
@@ -21,9 +18,6 @@ export interface SectionHeaderProps {
 export function SectionHeader({
   headingId,
   as: HeadingTag = "h2",
-  badge,
-  badgeVariant = "default",
-  badgeIcon,
   title,
   gradientText,
   gradientVariant = "mauve",
@@ -53,10 +47,10 @@ export function SectionHeader({
           className
         )}
       >
-        {/* Optional action row (if non-centered with action) */}
+        {/* Optional action row (if non-centered with action, desktop only) */}
         {!isCenter && action && (
-          <div className="w-full flex items-center justify-end mb-4 sm:mb-5">
-            <div className="hidden sm:block shrink-0">{action}</div>
+          <div className="hidden sm:flex w-full items-center justify-end mb-5">
+            <div className="shrink-0">{action}</div>
           </div>
         )}
 

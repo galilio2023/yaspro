@@ -29,7 +29,7 @@ for p in svg_paths:
     svg_str += f'  <path d="{p}" />\n'
 svg_str += '</svg>\n'
 
-with open('public/images/extracted/yaspro-subtext-media-group.svg', 'w') as f:
+with open('public/images/extracted/yaspro-subtext-media-group.svg', 'w', encoding='utf-8') as f:
     f.write(svg_str)
 
 print('Saved public/images/extracted/yaspro-subtext-media-group.svg')

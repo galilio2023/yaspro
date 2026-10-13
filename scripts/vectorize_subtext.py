@@ -35,7 +35,7 @@ for p in paths:
 ts_content += '];\n'
 ts_content += 'export const YAS_SUBTEXT_VIEWBOX = "0 0 157 9";\n'
 
-with open('src/components/ui/yasproSubtextPaths.ts', 'w') as f:
+with open('src/components/ui/yasproSubtextPaths.ts', 'w', encoding='utf-8') as f:
     f.write(ts_content)
 
 print('Saved src/components/ui/yasproSubtextPaths.ts successfully')
