@@ -9,7 +9,6 @@ export interface MarqueeProps extends React.HTMLAttributes<HTMLDivElement> {
   pauseOnHover?: boolean;
   paused?: boolean;
   children: React.ReactNode;
-  vertical?: boolean;
   repeat?: number;
   gap?: string;
   speedMultiplier?: number;
@@ -23,7 +22,6 @@ export function Marquee({
   pauseOnHover = true,
   paused = false,
   children,
-  vertical = false,
   repeat = 4,
   gap = "2.5rem",
   speedMultiplier = 1,
@@ -49,6 +47,20 @@ export function Marquee({
   const lastTimeRef = React.useRef(0);
   const dragDistanceRef = React.useRef(0);
   const isDraggingRef = React.useRef(false);
+  const prefersReducedMotionRef = React.useRef(false);
+
+  // Respect user's system reduced-motion preference
+  React.useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    prefersReducedMotionRef.current = mediaQuery.matches;
+
+    const handleMotionChange = (e: MediaQueryListEvent) => {
+      prefersReducedMotionRef.current = e.matches;
+    };
+    mediaQuery.addEventListener("change", handleMotionChange);
+    return () => mediaQuery.removeEventListener("change", handleMotionChange);
+  }, []);
 
   // Pause animation loop when offscreen to conserve CPU/battery
   React.useEffect(() => {
@@ -104,8 +116,11 @@ export function Marquee({
         }
 
         if (!isPointerDownRef.current) {
-          // Base cruising speed (~55-60px per second)
-          const baseVelocity = (reverse ? 0.95 : -0.95) * speedMultiplier * (paused ? 0 : 1);
+          // Base cruising speed (~55-60px per second, 0 if user prefers reduced motion)
+          const isReducedMotion = prefersReducedMotionRef.current;
+          const baseVelocity = isReducedMotion
+            ? 0
+            : (reverse ? 0.95 : -0.95) * speedMultiplier * (paused ? 0 : 1);
           const currentCruiseSpeed = baseVelocity * hoverDecelRef.current;
 
           // Friction decay on throw or wheel velocity
@@ -217,16 +232,27 @@ export function Marquee({
     }
   };
 
+  // Native non-passive wheel listener to allow cancelling horizontal gestures in modern browsers
+  React.useEffect(() => {
+    const el = containerRef.current;
+    if (!el || !enableWheel) return;
+
+    const cancelHorizontalWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 2) {
+        e.preventDefault();
+      }
+    };
+
+    el.addEventListener("wheel", cancelHorizontalWheel, { passive: false });
+    return () => el.removeEventListener("wheel", cancelHorizontalWheel);
+  }, [enableWheel]);
+
   // Mouse wheel & trackpad boost
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     if (!enableWheel) return;
 
     const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
     if (Math.abs(delta) > 2) {
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-        e.preventDefault();
-      }
-
       // Impulse in scroll direction
       extraVelocityRef.current -= (delta / 80) * 4;
       extraVelocityRef.current = Math.max(-30, Math.min(30, extraVelocityRef.current));

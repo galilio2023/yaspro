@@ -139,7 +139,7 @@ export function PartnersMarquee() {
               <div
                 key={gov.id}
                 title={gov.name}
-                className="relative px-3 sm:px-5 lg:px-6 py-2 sm:py-3 flex items-center justify-center transition-all duration-300 group cursor-pointer shrink-0 select-none h-16 sm:h-20 lg:h-24 min-w-[130px] sm:min-w-[160px] lg:min-w-[190px]"
+                className="relative px-4 sm:px-6 lg:px-7 py-2 sm:py-3 flex items-center justify-center transition-all duration-300 group cursor-pointer shrink-0 select-none h-16 sm:h-20 lg:h-24"
               >
                 {/* Brand Aura Glow */}
                 <div
@@ -152,13 +152,17 @@ export function PartnersMarquee() {
                 <Image
                   src={gov.logo}
                   alt={gov.name}
-                  width={280}
-                  height={90}
+                  width={gov.width}
+                  height={gov.height}
+                  unoptimized
                   draggable={false}
                   className={cn(
-                    "w-auto object-contain grayscale opacity-85 brightness-105 group-hover:grayscale-0 group-hover:opacity-100 group-hover:brightness-120 group-hover:scale-105 transition-all duration-300 pointer-events-none",
-                    gov.className || "h-11 sm:h-13 lg:h-16 max-w-[180px] sm:max-w-[220px] lg:max-w-[260px]"
+                    "w-auto max-h-16 object-contain opacity-90 brightness-125 group-hover:opacity-100 group-hover:brightness-150 group-hover:scale-105 transition-all duration-300 pointer-events-none drop-shadow-[0_2px_8px_rgba(255,255,255,0.06)]",
+                    gov.className
                   )}
+                  style={{
+                    aspectRatio: `${gov.width} / ${gov.height}`,
+                  }}
                 />
               </div>
             ))}
@@ -190,7 +194,7 @@ export function PartnersMarquee() {
               <div
                 key={brand.id}
                 title={brand.name}
-                className="relative px-3 sm:px-5 lg:px-6 py-2 sm:py-3 flex items-center justify-center transition-all duration-300 group cursor-pointer shrink-0 select-none h-14 sm:h-18 lg:h-20 min-w-[120px] sm:min-w-[140px] lg:min-w-[170px]"
+                className="relative px-4 sm:px-6 lg:px-7 py-2 sm:py-3 flex items-center justify-center transition-all duration-300 group cursor-pointer shrink-0 select-none h-14 sm:h-18 lg:h-20"
               >
                 {/* Brand Spotlight Aura Glow */}
                 <div
@@ -203,13 +207,17 @@ export function PartnersMarquee() {
                 <Image
                   src={brand.logo}
                   alt={brand.name}
-                  width={280}
-                  height={90}
+                  width={brand.width}
+                  height={brand.height}
+                  unoptimized
                   draggable={false}
                   className={cn(
-                    "w-auto object-contain grayscale opacity-85 brightness-105 group-hover:grayscale-0 group-hover:opacity-100 group-hover:brightness-120 group-hover:scale-105 transition-all duration-300 pointer-events-none",
-                    brand.className || "h-10 sm:h-12 lg:h-14 max-w-[170px] sm:max-w-[200px] lg:max-w-[240px]"
+                    "w-auto max-h-14 object-contain opacity-90 brightness-110 group-hover:opacity-100 group-hover:brightness-130 group-hover:scale-105 transition-all duration-300 pointer-events-none",
+                    brand.className
                   )}
+                  style={{
+                    aspectRatio: `${brand.width} / ${brand.height}`,
+                  }}
                 />
               </div>
             ))}
