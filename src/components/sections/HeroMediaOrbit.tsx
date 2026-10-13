@@ -89,12 +89,12 @@ const NEON_MEDIA_NODES: NeonMediaNode[] = [
     id: "neon-softbox",
     name: "Studio Light Panel",
     image: "/images/hero/neon-nodes/neon-softbox.png",
-    width: 153,
-    height: 166,
+    width: 278,
+    height: 324,
     angle: 180, // Middle-left (9 o'clock)
     floatSpeed: 0.0018,
     floatPhase: 0.8,
-    glowColor: "rgba(34, 211, 238, 0.75)", // Cyan & Amber Gold
+    glowColor: "rgba(34, 211, 238, 0.75)", // Electric Cyan & Luminous Gold
   },
   {
     id: "neon-camera",
