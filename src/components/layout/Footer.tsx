@@ -200,7 +200,7 @@ export default function Footer() {
 
             {/* Official Social Channels */}
             <div>
-              <span className="block font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400 mb-3">
+              <span className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3 text-start">
                 {t("footer.officialChannels")}
               </span>
               <FooterSocialLinks />
@@ -263,7 +263,7 @@ export default function Footer() {
                 <span className="size-1.5 rounded-full bg-brand-mauve" />
                 <span>{t("footer.studiosHubs")}</span>
               </h3>
-              <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+              <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">
                 {t("footer.locations")}
               </span>
             </div>
@@ -311,7 +311,7 @@ export default function Footer() {
                         href={loc.mapUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-zinc-400 hover:text-brand-mauve-soft transition-colors shrink-0 inline-flex items-center gap-0.5 font-mono text-[10px] group/link"
+                        className="text-zinc-400 hover:text-brand-mauve-soft transition-colors shrink-0 inline-flex items-center gap-0.5 text-[10px] font-medium group/link"
                       >
                         <span>{isArabic ? "الخريطة" : "Map"}</span>
                         <ArrowUpRight size={10} className="text-zinc-500 group-hover/link:text-brand-mauve-soft group-hover/link:translate-x-0.5 rtl:group-hover/link:-translate-x-0.5 group-hover/link:-translate-y-0.5 rtl:scale-x-[-1] transition-transform" />
@@ -339,11 +339,11 @@ export default function Footer() {
 
         {/* ─── BOTTOM COPYRIGHT & SYSTEM TELEMETRY STRIP ─── */}
         <div className="pt-8 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-          <p className="font-mono text-[11px]">
+          <p className="text-[11px]">
             © {currentYear} YAS PRO MEDIA LLC · {t("footer.allRights")}
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 font-mono text-[11px]">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[11px]">
             <Link href="/privacy-policy" className="hover:text-zinc-300 transition-colors">
               {t("footer.privacy")}
             </Link>
@@ -352,7 +352,7 @@ export default function Footer() {
               {t("footer.terms")}
             </Link>
             <span className="opacity-30">·</span>
-            <span className="inline-flex items-center gap-1.5 text-brand-mauve" dir="ltr">
+            <span className="inline-flex items-center gap-1.5 text-brand-mauve font-mono text-[11px]" dir="ltr">
               <span className="size-1.5 rounded-full bg-brand-mauve animate-pulse" />
               <span>[25.1859° N, 55.2603° E · BROADCAST READY]</span>
             </span>
