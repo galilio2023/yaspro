@@ -20,8 +20,6 @@ export function BrandLogo({
 
   const content = (
     <div
-      dir="ltr"
-      style={{ direction: "ltr", unicodeBidi: "isolate" }}
       className={cn("inline-flex flex-row items-center group shrink-0 select-none", className)}
     >
       {/* Official Yas Pro Media Group Logo Image with Studio Backlight */}
@@ -48,8 +46,6 @@ export function BrandLogo({
     return (
       <Link
         href={href}
-        dir="ltr"
-        style={{ direction: "ltr" }}
         className="inline-flex flex-row items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve/40 rounded-xl"
       >
         {content}

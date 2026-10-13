@@ -155,10 +155,14 @@ export function HeroMediaOrbit() {
         targetRx = Math.max(210, Math.min(w * 0.82, 255));
       }
 
-      // Smooth horizontal viewport bounds without aggressive micro-clamping
+      // Smooth horizontal viewport bounds without aggressive micro-clamping (symmetric for LTR & RTL)
       const centerX = rect.left + cx;
+      const leftClearance = centerX;
       const rightClearance = clientWidth - centerX;
-      const safeMaxRadius = Math.max(targetRx * 0.88, rightClearance + 25);
+      const sideClearance = Math.min(leftClearance, rightClearance);
+      // Account for neon node half-width + safety clearance (40px on mobile, 48px on desktop)
+      const nodeSafetyMargin = clientWidth < 640 ? 40 : 48;
+      const safeMaxRadius = Math.max(120, sideClearance - nodeSafetyMargin);
       const rx = Math.min(targetRx, safeMaxRadius);
       const ry = rx * 0.49; // Generous vertical depth clearance
 

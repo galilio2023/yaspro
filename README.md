@@ -239,9 +239,9 @@ erDiagram
 
 As defined in the project architecture guidelines:
 
-1. **Global Navigation & Footer Anchoring (Strict LTR):**
-   * The Navbar (`Navbar.tsx`), Footer (`Footer.tsx`), and `BrandLogo` are rigidly locked with `dir="ltr"` and `direction: ltr`.
-   * Switching between Arabic and English translates typography without flipping or inverting the physical layout.
+1. **Bi-Directional Layouts (EN & AR Responsive Navigation, Hero & Footer):**
+   * The Navbar (`Navbar.tsx`), Hero (`HeroSection.tsx`), Footer (`Footer.tsx`), and `MobileNavDrawer` dynamically adapt to English (`dir="ltr"`) and Arabic (`dir="rtl"`).
+   * Brand visual geometry is preserved while layouts, navigation direction, hero columns, and footer structures naturally respond to the current language.
 2. **Floating Action Elements (Always Anchored Bottom-Right):**
    * Floating CTAs and Copilot buttons (`UnifiedFloatingActions.tsx`, `FloatingCopilotButton.tsx`) are pinned to `right-4 sm:right-6` using physical CSS properties.
    * No logical CSS properties like `end-4` are used, preventing jumps during RTL switching.

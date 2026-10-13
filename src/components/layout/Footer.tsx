@@ -11,11 +11,7 @@ import {
   Camera,
   Layers,
   Wand2,
-  Users,
-  Tv,
   Film,
-  Building2,
-  Mail,
   Video,
   MapPin,
   Phone,
@@ -41,14 +37,6 @@ const PRODUCTION_LINKS: readonly FooterLink[] = [
   { key: "footer.services.bundles", label: "Production Bundles", href: "/shop?category=bundles", icon: Layers },
   { key: "footer.services.virtual", label: "Virtual Production & VFX", href: "/#virtual-studio", icon: Wand2 },
   { key: "footer.services.obVan", label: "OB-VAN Live Broadcast", href: "/contact?service=ob-van", icon: Film },
-];
-
-const NETWORK_LINKS: readonly FooterLink[] = [
-  { key: "footer.network.creators", label: "Influencer Talent Network", href: "/influencers", icon: Users },
-  { key: "footer.network.shows", label: "Original Shows & Formats", href: "/projects", icon: Tv },
-  { key: "footer.network.portfolio", label: "Masterpiece Portfolio", href: "/projects", icon: Film },
-  { key: "footer.network.about", label: "About Yas Pro", href: "/about", icon: Building2 },
-  { key: "footer.network.contact", label: "Contact Studios & RFPs", href: "/contact", icon: Mail },
 ];
 
 interface StudioLocation {
@@ -138,9 +126,8 @@ export default function Footer() {
 
   return (
     <footer
-      dir="ltr"
-      style={{ direction: "ltr" }}
-      className="w-full bg-[#06070a] border-t border-white/[0.08] relative overflow-hidden text-left"
+      dir={isArabic ? "rtl" : "ltr"}
+      className="w-full bg-[#06070a] border-t border-white/[0.08] relative overflow-hidden text-start"
     >
       {/* Background Micro Film Texture & Subtle Studio Vignette */}
       <div
@@ -159,7 +146,7 @@ export default function Footer() {
           <div className="space-y-2 max-w-xl">
             <div className="flex items-center gap-2.5 font-mono text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-zinc-400">
               <span className="size-2 rounded-full bg-red-500 animate-pulse" />
-              <span>[REC ● 4 SOUNDSTAGES ONLINE · 24/7 BROADCAST READY]</span>
+              <span dir="ltr">[REC ● 4 SOUNDSTAGES ONLINE · 24/7 BROADCAST READY]</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight font-display">
               {isArabic ? "أين تلتقي التكنولوجيا بالإنتاج السينمائي" : "Where Cinematic Craft Meets AI Media Infrastructure"}
@@ -213,7 +200,7 @@ export default function Footer() {
 
             {/* Official Social Channels */}
             <div>
-              <span className="block font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400 mb-3">
+              <span className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3 text-start">
                 {t("footer.officialChannels")}
               </span>
               <FooterSocialLinks />
@@ -221,7 +208,7 @@ export default function Footer() {
 
             {/* Regulatory & Security Badge */}
             <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-3">
-              <div className="size-8 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center shrink-0">
+              <div className="size-8 rounded-xl bg-brand-mauve/10 border border-brand-mauve/20 text-brand-mauve flex items-center justify-center shrink-0">
                 <ShieldCheck size={16} />
               </div>
               <div>
@@ -235,32 +222,33 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Column 2: Production Pillars (col-span-3) */}
-          <div className="lg:col-span-3 space-y-4">
+          {/* Column 2: Production Pillars (col-span-4) */}
+          <div className="sm:col-span-1 lg:col-span-4 space-y-4">
             <h3 className="text-white font-bold text-xs uppercase tracking-[0.2em] font-display flex items-center gap-2">
-              <span className="size-1.5 rounded-full bg-amber-400" />
+              <span className="size-1.5 rounded-full bg-brand-mauve" />
               <span>{t("footer.productionHeading")}</span>
             </h3>
 
-            <ul className="space-y-2">
+            <ul className="space-y-2 max-w-[270px]">
               {PRODUCTION_LINKS.map((link) => {
                 const Icon = link.icon;
-                const label = link.key ? t(link.key) : link.label;
+                const translated = link.key ? t(link.key) : "";
+                const label = translated && translated !== link.key ? translated : link.label;
                 return (
                   <li key={link.key || `${link.label}-${link.href}`}>
                     <Link
                       href={link.href}
                       className="group flex items-center justify-between py-1 text-xs text-zinc-400 hover:text-white transition-colors"
                     >
-                      <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="flex items-center gap-2.5 min-w-0 pr-2 rtl:pr-0 rtl:pl-2">
                         {Icon && (
-                          <span className="size-5 rounded-md bg-white/[0.03] border border-white/[0.06] text-amber-400/80 group-hover:text-amber-300 group-hover:border-amber-400/30 flex items-center justify-center shrink-0 transition-colors">
+                          <span className="size-5 rounded-md bg-white/[0.03] border border-white/[0.06] text-brand-mauve group-hover:text-brand-lavender group-hover:border-brand-mauve/40 flex items-center justify-center shrink-0 transition-colors">
                             <Icon size={11} />
                           </span>
                         )}
                         <span className="truncate">{label}</span>
                       </div>
-                      <ChevronRight size={12} className="text-zinc-600 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all shrink-0" />
+                      <ChevronRight size={12} className="text-zinc-600 group-hover:text-brand-mauve group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5 transition-all shrink-0" />
                     </Link>
                   </li>
                 );
@@ -268,47 +256,14 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 3: Talent & Ecosystem (col-span-2) */}
-          <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-white font-bold text-xs uppercase tracking-[0.2em] font-display flex items-center gap-2">
-              <span className="size-1.5 rounded-full bg-amber-400" />
-              <span>{t("footer.networkHeading")}</span>
-            </h3>
-
-            <ul className="space-y-2">
-              {NETWORK_LINKS.map((link) => {
-                const Icon = link.icon;
-                const label = link.key ? t(link.key) : link.label;
-                return (
-                  <li key={link.key || `${link.label}-${link.href}`}>
-                    <Link
-                      href={link.href}
-                      className="group flex items-center justify-between py-1 text-xs text-zinc-400 hover:text-white transition-colors"
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        {Icon && (
-                          <span className="size-5 rounded-md bg-white/[0.03] border border-white/[0.06] text-zinc-400 group-hover:text-white flex items-center justify-center shrink-0 transition-colors">
-                            <Icon size={11} />
-                          </span>
-                        )}
-                        <span className="truncate">{label}</span>
-                      </div>
-                      <ChevronRight size={12} className="text-zinc-600 group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0" />
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-          {/* Column 4: Architectural Regional Studios Directory (col-span-3) */}
-          <div className="sm:col-span-2 lg:col-span-3 space-y-3">
+          {/* Column 3: Architectural Regional Studios Directory (col-span-4) */}
+          <div className="sm:col-span-1 lg:col-span-4 space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
               <h3 className="text-white font-bold text-xs uppercase tracking-[0.2em] font-display flex items-center gap-2">
-                <span className="size-1.5 rounded-full bg-amber-400" />
+                <span className="size-1.5 rounded-full bg-brand-mauve" />
                 <span>{t("footer.studiosHubs")}</span>
               </h3>
-              <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+              <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">
                 {t("footer.locations")}
               </span>
             </div>
@@ -324,7 +279,7 @@ export default function Footer() {
                     {/* Header: City Name + Hub Code + Live Time */}
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
-                        <span className="font-display text-xs font-bold text-white tracking-wide group-hover:text-amber-400 transition-colors">
+                        <span className="font-display text-xs font-bold text-white tracking-wide group-hover:text-brand-mauve-soft transition-colors">
                           {isArabic ? loc.cityAr : loc.city}
                         </span>
                         <span className="font-mono text-[9px] text-zinc-400 uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/[0.03] border border-white/[0.06]">
@@ -356,10 +311,10 @@ export default function Footer() {
                         href={loc.mapUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-zinc-400 hover:text-amber-400 transition-colors shrink-0 inline-flex items-center gap-0.5 font-mono text-[10px] group/link"
+                        className="text-zinc-400 hover:text-brand-mauve-soft transition-colors shrink-0 inline-flex items-center gap-0.5 text-[10px] font-medium group/link"
                       >
                         <span>{isArabic ? "الخريطة" : "Map"}</span>
-                        <ArrowUpRight size={10} className="text-zinc-500 group-hover/link:text-amber-400 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+                        <ArrowUpRight size={10} className="text-zinc-500 group-hover/link:text-brand-mauve-soft group-hover/link:translate-x-0.5 rtl:group-hover/link:-translate-x-0.5 group-hover/link:-translate-y-0.5 rtl:scale-x-[-1] transition-transform" />
                       </a>
                     </div>
 
@@ -370,7 +325,7 @@ export default function Footer() {
                           href={`tel:${loc.phone}`}
                           className="text-zinc-500 hover:text-white transition-colors inline-flex items-center gap-1.5 font-mono text-[10px]"
                         >
-                          <Phone size={9} className="text-amber-400/80" />
+                          <Phone size={9} className="text-brand-mauve" />
                           <span>{loc.phone}</span>
                         </a>
                       </div>
@@ -384,11 +339,11 @@ export default function Footer() {
 
         {/* ─── BOTTOM COPYRIGHT & SYSTEM TELEMETRY STRIP ─── */}
         <div className="pt-8 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-          <p className="font-mono text-[11px]">
+          <p className="text-[11px]">
             © {currentYear} YAS PRO MEDIA LLC · {t("footer.allRights")}
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 font-mono text-[11px]">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[11px]">
             <Link href="/privacy-policy" className="hover:text-zinc-300 transition-colors">
               {t("footer.privacy")}
             </Link>
@@ -397,8 +352,8 @@ export default function Footer() {
               {t("footer.terms")}
             </Link>
             <span className="opacity-30">·</span>
-            <span className="inline-flex items-center gap-1.5 text-amber-400">
-              <span className="size-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span className="inline-flex items-center gap-1.5 text-brand-mauve font-mono text-[11px]" dir="ltr">
+              <span className="size-1.5 rounded-full bg-brand-mauve animate-pulse" />
               <span>[25.1859° N, 55.2603° E · BROADCAST READY]</span>
             </span>
           </div>

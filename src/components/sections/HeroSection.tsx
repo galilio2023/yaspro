@@ -27,11 +27,12 @@ export default function HeroSection() {
 
 
       <Container className="relative z-10">
-        {/* dir="ltr" locks physical column order — text always left, vista always right.
-            Arabic content renders RTL inside via dir="auto" on the content column. */}
-        <div dir="ltr" className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-8 lg:gap-16 items-center">
+        <div
+          dir={isArabic ? "rtl" : "ltr"}
+          className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-8 lg:gap-16 items-center"
+        >
 
-          {/* ── Left Column: Editorial Studio Content ── */}
+          {/* ── Editorial Studio Content Column ── */}
           <FadeUp
             dir={isArabic ? "rtl" : "ltr"}
             className="md:col-span-6 lg:col-span-7 flex flex-col items-center text-center md:items-start md:text-start relative"
@@ -108,7 +109,7 @@ export default function HeroSection() {
             </div>
           </FadeUp>
 
-          {/* ── Right Column: Visionary Creator with Heroic Presence & 3D Media Orbit ── */}
+          {/* ── Visionary Creator with Heroic Presence & 3D Media Orbit Column ── */}
           <div className="md:col-span-6 lg:col-span-5 relative flex items-center justify-center mt-8 md:mt-0 min-h-[380px] sm:min-h-[440px] md:min-h-[480px] lg:min-h-[560px] xl:min-h-[600px]">
             {/* Main Central Persona Container with commanded scale */}
             <div className="relative w-full max-w-[300px] sm:max-w-[360px] md:max-w-[380px] lg:max-w-[460px] xl:max-w-[500px] select-none">

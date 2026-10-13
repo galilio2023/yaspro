@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState, useId, useRef, useEffect } from "react";
+import React, { useState, useId, useRef, useEffect, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { studioSprings } from "@/lib/studio-motion";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { submitInquiry } from "@/lib/actions";
+
+const emptySubscribe = () => () => {};
 
 export interface SendMessageModalProps {
   isOpen: boolean;
@@ -21,6 +24,7 @@ export function SendMessageModal({
   initialService = "ob_van",
   defaultSubject = "",
 }: SendMessageModalProps) {
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const { isArabic } = useLanguage();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -115,35 +119,46 @@ export function SendMessageModal({
     }
   };
 
-  if (!isOpen) return null;
+  if (!mounted) return null;
 
-  return (
+  return createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-6 overflow-y-auto">
-        {/* Soft Cinematic Dimmer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          onClick={handleModalClose}
-          className="fixed inset-0 bg-black/90 backdrop-blur-2xl"
-        />
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] overflow-y-auto">
+          {/* Soft Cinematic Dimmer */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={handleModalClose}
+            className="fixed inset-0 bg-black/90 backdrop-blur-2xl"
+            aria-hidden="true"
+          />
 
-        {/* Modal Sheet */}
-        <motion.div
-          ref={dialogRef}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={headingId}
-          tabIndex={-1}
-          initial={{ opacity: 0, scale: 0.96, y: 15 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.96, y: 15 }}
-          transition={studioSprings.cinematic}
-          dir={isArabic ? "rtl" : "ltr"}
-          className="relative my-auto w-full max-w-xl rounded-3xl bg-[#09090c] border border-white/10 p-6 sm:p-8 md:p-10 z-10 shadow-2xl"
-        >
+          {/* Centering Scroll Wrapper */}
+          <div
+            className="min-h-full flex items-center justify-center p-3 sm:p-6 md:p-8"
+            onMouseDown={(e) => {
+              if (e.target === e.currentTarget) {
+                handleModalClose();
+              }
+            }}
+          >
+            {/* Modal Sheet */}
+            <motion.div
+              ref={dialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={headingId}
+              tabIndex={-1}
+              initial={{ opacity: 0, scale: 0.96, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 15 }}
+              transition={studioSprings.cinematic}
+              dir={isArabic ? "rtl" : "ltr"}
+              className="relative my-auto w-full max-w-xl rounded-3xl bg-[#09090c] border border-white/10 p-6 sm:p-8 md:p-10 z-10 shadow-2xl"
+            >
           {/* Header Row */}
           <div className="flex items-center justify-between mb-6 sm:mb-8 border-b border-white/5 pb-4">
             <h2
@@ -336,8 +351,11 @@ export function SendMessageModal({
               </div>
             </form>
           )}
-        </motion.div>
-      </div>
-    </AnimatePresence>
+            </motion.div>
+          </div>
+        </div>
+      )}
+    </AnimatePresence>,
+    document.body
   );
 }
