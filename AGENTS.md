@@ -10,11 +10,14 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Yas Pro Architecture & UI Layout Rules
 
-## 1. Global Navigation & Footer Anchoring (Strict LTR - No Inversion)
-- **Navbar** (`src/components/layout/Navbar.tsx`) and **Footer** (`src/components/layout/Footer.tsx`), including `MobileNavDrawer`, MUST ALWAYS be rendered with `dir="ltr"` and `direction: ltr`.
-- Under NO circumstance should toggling between English and Arabic reverse or flip the Navbar or Footer layout.
-- The **Brand Logo** (`BrandLogo.tsx`) must ALWAYS remain in physical Left-to-Right orientation on both EN and AR.
-- Navigation actions and menus must never jump sides when changing languages.
+## 1. Bi-Directional Layouts (EN & AR Responsive Navigation, Hero & Footer)
+- **Navbar** (`src/components/layout/Navbar.tsx`), **Hero** (`src/components/sections/HeroSection.tsx`), and **Footer** (`src/components/layout/Footer.tsx`), including `MobileNavDrawer`, MUST respond dynamically to the active locale (`dir="ltr"` for EN, `dir="rtl"` for AR) rather than being fixed to LTR.
+- When switching between English and Arabic:
+  - **Navbar**: In English, brand logo is on the left, navigation items flow left-to-right, action buttons are on the right. In Arabic, brand logo is on the right, navigation items flow right-to-left, action buttons are on the left.
+  - **Hero**: In English, editorial headline and CTAs are on the left, 3D visual/orbit is on the right. In Arabic, editorial headline and CTAs are on the right, 3D visual/orbit is on the left.
+  - **Footer**: Column hierarchy, text alignment, and direction arrows naturally mirror according to locale (`text-start`, `dir="rtl"` for AR, `dir="ltr"` for EN).
+  - **MobileNavDrawer**: Opens from the right in English (`x: 100%`, `right-0`) and from the left in Arabic (`x: -100%`, `left-0`).
+- Brand graphic assets retain their intrinsic art/logo design without distortion, while container positioning respects page direction.
 
 ## 2. Floating Action Button (Always Anchored to the Right)
 - The **Floating Action Buttons** (`UnifiedFloatingActions.tsx`, `FloatingCopilotButton.tsx`, and any floating CTA/concierge triggers) MUST ALWAYS be pinned rigidly to the bottom-right corner using physical CSS properties: `right-4 sm:right-6` with `dir="ltr"` and `direction: ltr`.

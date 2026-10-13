@@ -91,9 +91,10 @@ export const studioSprings = {
 - **Cards**:
   - Asymmetric heights, cinematic aspect ratios (16:9, 2.39:1, 4:5 vertical poster).
   - Real footage / photo focal points with directional vignette shadows.
-- **RTL & Layout Invariance Rules (Strict)**:
-  - **Full Arabic and English support**: Content and editorial body copy use bi-directional flow.
-  - **Navbar & Footer Invariance**: Under NO circumstance should toggling languages flip or reverse `Navbar`, `Footer`, `MobileNavDrawer`, or `BrandLogo`. They must ALWAYS stay strictly anchored in physical `dir="ltr"` so branding, logos, and actions never mirror.
+- **RTL & Bi-Directional Flow Standards**:
+  - **Full Arabic and English support**: Core navigation and landing landmarks—including `Navbar`, `HeroSection`, `Footer`, and `MobileNavDrawer`—respond dynamically to the active language (`ltr` for English, `rtl` for Arabic) rather than being fixed to LTR.
+  - In Arabic (RTL): Navigation items, hero editorial content, and footer directories flow naturally from right to left with proper start-alignment (`text-start`), localized drawer entry (`left-0`), and mirrored direction indicators.
+  - In English (LTR): Content flows left to right.
   - **Floating Action Buttons**: The floating action buttons (`UnifiedFloatingActions`, `FloatingCopilotButton`, WhatsApp concierge) MUST ALWAYS remain anchored at physical `right-4 sm:right-6` (`right-0` for flyouts) with `dir="ltr"`. Never use `end-4` or `end-6` on floating button shells, which would flip them to the left side in Arabic.
   - Strict WCAG 2.1 AA text contrast on all dark surfaces.
 ## 7. Brand Geometry & Loader / Favicon Standards

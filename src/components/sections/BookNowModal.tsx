@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useId, useRef } from "react";
+import React, { useState, useId, useRef, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,6 +10,8 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 import { studioSprings, tactilePress } from "@/lib/studio-motion";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { submitInquiry } from "@/lib/actions";
+
+const emptySubscribe = () => () => {};
 
 interface BookNowModalProps {
   isOpen: boolean;
@@ -87,6 +90,7 @@ const VISUAL_CARDS: VisualBookingCard[] = [
 ];
 
 export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const { isArabic } = useLanguage();
   const [selectedInquiry, setSelectedInquiry] = useState<{
     id: string;
@@ -201,37 +205,48 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
     }
   };
 
-  if (!isOpen) return null;
+  if (!mounted) return null;
 
-  return (
+  return createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-6 overflow-y-auto">
-        {/* Soft Cinematic Dimmer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          onClick={handleModalClose}
-          className="fixed inset-0 bg-black/90 backdrop-blur-2xl"
-        />
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] overflow-y-auto">
+          {/* Soft Cinematic Dimmer */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={handleModalClose}
+            className="fixed inset-0 bg-black/90 backdrop-blur-2xl"
+            aria-hidden="true"
+          />
 
-        {/* Modal Sheet */}
-        <motion.div
-          ref={dialogRef}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={headingId}
-          tabIndex={-1}
-          initial={{ opacity: 0, scale: 0.96, y: 15 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.96, y: 15 }}
-          transition={studioSprings.cinematic}
-          dir={isArabic ? "rtl" : "ltr"}
-          className={`relative my-auto w-full transition-all duration-300 rounded-3xl bg-[#09090c] border border-white/10 p-6 sm:p-8 md:p-10 z-10 shadow-2xl ${
-            selectedInquiry ? "max-w-xl" : "max-w-5xl"
-          }`}
-        >
+          {/* Centering Scroll Wrapper */}
+          <div
+            className="min-h-full flex items-center justify-center p-3 sm:p-6 md:p-8"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                handleModalClose();
+              }
+            }}
+          >
+            {/* Modal Sheet */}
+            <motion.div
+              ref={dialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={headingId}
+              tabIndex={-1}
+              initial={{ opacity: 0, scale: 0.96, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 15 }}
+              transition={studioSprings.cinematic}
+              dir={isArabic ? "rtl" : "ltr"}
+              className={`relative w-full transition-all duration-300 rounded-3xl bg-[#09090c] border border-white/10 p-6 sm:p-8 md:p-10 z-10 shadow-2xl my-auto ${
+                selectedInquiry ? "max-w-xl" : "max-w-5xl"
+              }`}
+            >
           {/* Header Row */}
           <div className="flex items-center justify-between mb-6 sm:mb-8 border-b border-white/5 pb-4">
             <div className="flex items-center gap-3">
@@ -526,8 +541,11 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
               </motion.div>
             )}
           </AnimatePresence>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+            </motion.div>
+          </div>
+        </div>
+      )}
+    </AnimatePresence>,
+    document.body
   );
 }

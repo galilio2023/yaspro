@@ -140,13 +140,15 @@ export function MobileNavDrawer({
             role="dialog"
             aria-modal="true"
             aria-label="Navigation Menu"
-            initial={{ opacity: 0, x: "100%" }}
+            initial={{ opacity: 0, x: isArabic ? "-100%" : "100%" }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
+            exit={{ opacity: 0, x: isArabic ? "-100%" : "100%" }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            dir="ltr"
-            style={{ direction: "ltr" }}
-            className="lg:hidden fixed inset-y-0 right-0 w-[85vw] max-w-xs bg-[#0b0a0f] backdrop-blur-2xl border-l border-white/10 z-[75] flex flex-col justify-between p-5 sm:p-7 overflow-y-auto shadow-2xl shadow-black/80"
+            dir={isArabic ? "rtl" : "ltr"}
+            className={cn(
+              "lg:hidden fixed inset-y-0 w-[85vw] max-w-xs bg-[#0b0a0f] backdrop-blur-2xl z-[75] flex flex-col justify-between p-5 sm:p-7 overflow-y-auto shadow-2xl shadow-black/80",
+              isArabic ? "left-0 border-r border-white/10" : "right-0 border-l border-white/10"
+            )}
           >
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between mb-4 px-1 pb-3 border-b border-white/10">
@@ -169,7 +171,7 @@ export function MobileNavDrawer({
                 </button>
               </div>
 
-              <p className="px-4 text-[10px] uppercase tracking-widest text-text-ghost font-mono mb-1 text-left">
+              <p className="px-4 text-[10px] uppercase tracking-widest text-text-ghost font-mono mb-1 text-start">
                 {isArabic ? "التنقل" : "Navigate"}
               </p>
 

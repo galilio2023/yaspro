@@ -27,7 +27,7 @@ const NAV_LINKS: readonly NavItemConfig[] = [
 ];
 
 export default function Navbar() {
-  const { language, toggleLanguage, t } = useLanguage();
+  const { language, toggleLanguage, t, isArabic } = useLanguage();
   const { data: session } = useSession();
   const { totalCount, openCart } = useCart();
   const [isOpen, setIsOpen] = useState(false);
@@ -48,8 +48,7 @@ export default function Navbar() {
 
   return (
     <header
-      dir="ltr"
-      style={{ direction: "ltr" }}
+      dir={isArabic ? "rtl" : "ltr"}
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
         scrolled
@@ -58,14 +57,12 @@ export default function Navbar() {
       )}
     >
       <nav
-        dir="ltr"
-        style={{ direction: "ltr" }}
         className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
         aria-label="Main navigation"
       >
-        <div className="flex items-center justify-between h-14 sm:h-16 lg:h-18" dir="ltr" style={{ direction: "ltr" }}>
+        <div className="flex items-center justify-between h-14 sm:h-16 lg:h-18">
 
-          {/* ── Left: Brand ── */}
+          {/* ── Brand Logo ── */}
           <BrandLogo />
 
           {/* ── Center: Desktop Nav Links ── */}
@@ -93,7 +90,7 @@ export default function Navbar() {
             })}
           </ul>
 
-          {/* ── Right: Action Strip ── */}
+          {/* ── Action Strip ── */}
           <div className="flex items-center gap-2">
 
             {/* Persistent Gear Cart Trigger (Desktop only; on mobile it is in the drawer) */}
@@ -106,7 +103,7 @@ export default function Navbar() {
             >
               <ShoppingBag size={14} className="text-zinc-300" />
               {totalCount > 0 && (
-                <span className="absolute -top-1 -right-1 size-4 bg-brand-mauve text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-md animate-scale-in">
+                <span className="absolute -top-1 -right-1 rtl:-right-auto rtl:-left-1 size-4 bg-brand-mauve text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-md animate-scale-in">
                   {totalCount}
                 </span>
               )}

@@ -80,7 +80,7 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-slate-900/95 border border-white/15 backdrop-blur-2xl shadow-2xl p-2 z-50 animate-scale-in text-xs">
+        <div className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-56 rounded-2xl bg-slate-900/95 border border-white/15 backdrop-blur-2xl shadow-2xl p-2 z-50 animate-scale-in text-xs">
           {/* User Info Header */}
           <div className="px-3 py-2 border-b border-white/10 mb-1">
             <div className="font-semibold text-white truncate">{user.name}</div>
@@ -150,7 +150,7 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
             <button
               type="button"
               onClick={handleSignOut}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors cursor-pointer text-left"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors cursor-pointer text-start"
             >
               <LogOut size={14} className="shrink-0" />
               <span>Sign Out</span>

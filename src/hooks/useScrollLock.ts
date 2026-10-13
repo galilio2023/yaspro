@@ -5,7 +5,6 @@ import { useEffect } from "react";
 // Global counter for active scroll locks to handle nested modals / drawers
 let lockCount = 0;
 let originalBodyOverflow = "";
-let originalHtmlOverflow = "";
 let originalBodyPaddingRight = "";
 
 export function lockScroll() {
@@ -27,11 +26,6 @@ export function lockScroll() {
         document.body.style.paddingRight = `${scrollbarWidth}px`;
       }
     }
-
-    if (docEl?.style) {
-      originalHtmlOverflow = docEl.style.overflow;
-      docEl.style.overflow = "hidden";
-    }
   }
   lockCount++;
 }
@@ -42,9 +36,6 @@ export function unlockScroll() {
   lockCount = Math.max(0, lockCount - 1);
 
   if (lockCount === 0) {
-    if (document.documentElement?.style) {
-      document.documentElement.style.overflow = originalHtmlOverflow;
-    }
     if (document.body?.style) {
       document.body.style.overflow = originalBodyOverflow;
       document.body.style.paddingRight = originalBodyPaddingRight;
