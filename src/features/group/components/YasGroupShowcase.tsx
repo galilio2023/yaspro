@@ -121,7 +121,7 @@ export function YasGroupShowcase() {
                     {/* ── Right / End Column: Strategic Overview, Metrics, Tags (7 cols) ── */}
                     <div className="lg:col-span-7 flex flex-col justify-between h-full lg:border-s lg:border-white/10 lg:ps-8 xl:ps-12">
                       <div>
-                        <span className="text-[10.5px] font-mono uppercase tracking-widest text-brand-mauve block mb-2 font-latin" dir="ltr">
+                        <span className={`text-[10.5px] font-mono uppercase tracking-widest text-brand-mauve block mb-2 ${isArabic ? "font-arabic" : "font-latin"}`} dir={isArabic ? "rtl" : "ltr"}>
                           {isArabic ? "الرؤية والمنظومة الشاملة" : "CONGLOMERATE ECOSYSTEM"}
                         </span>
 

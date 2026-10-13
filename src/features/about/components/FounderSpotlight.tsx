@@ -175,8 +175,8 @@ export function FounderSpotlight({ headingId }: FounderSpotlightProps) {
                     <span className="font-bold text-zinc-200">
                       {isArabic ? founder.nameAr : founder.nameEn}
                     </span>
-                    <span className="text-brand-mauve font-mono text-[11px] font-latin" dir="ltr">
-                      {isArabic ? "دبي • 2026" : "DUBAI • 2026"}
+                    <span className={`text-brand-mauve font-mono text-[11px] ${isArabic ? "font-arabic" : "font-latin"}`}>
+                      {isArabic ? "دبي" : "DUBAI"} • <bdi dir="ltr">2026</bdi>
                     </span>
                   </footer>
                 </blockquote>

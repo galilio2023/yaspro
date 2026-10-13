@@ -164,7 +164,7 @@ export function AboutOverview() {
                         <span>{isArabic ? hub.cityAr : hub.cityEn}</span>
                       </div>
 
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono text-brand-mauve bg-black/70 backdrop-blur-md border border-brand-mauve/40 shadow-sm font-latin" dir="ltr">
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono text-brand-mauve bg-black/70 backdrop-blur-md border border-brand-mauve/40 shadow-sm ${isArabic ? "font-arabic" : "font-latin"}`} dir={isArabic ? "rtl" : "ltr"}>
                         <span className="size-1.5 rounded-full bg-brand-mauve animate-pulse" />
                         <span>{isArabic ? hub.arStatus : hub.status}</span>
                       </span>
