@@ -456,14 +456,14 @@ export function ServicesPageClient() {
                     </p>
 
                     {/* Spec Pills */}
-                    <div className="grid grid-cols-2 gap-2 mb-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-5">
                       {(isArabic ? service.specsAr : service.specsEn).map((spec, sIdx) => (
                         <div
                           key={sIdx}
-                          className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/[0.03] border border-white/5 text-[11px] text-zinc-300"
+                          className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/[0.03] border border-white/5 text-[11px] text-zinc-300 min-w-0"
                         >
                           <CheckCircle2 size={12} className="text-brand-mauve shrink-0" />
-                          <span className="truncate">{spec}</span>
+                          <span className="leading-snug">{spec}</span>
                         </div>
                       ))}
                     </div>
