@@ -57,6 +57,13 @@
       "when": 1791316456616,
       "tag": "0007_windy_skrulls",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791964570796,
+      "tag": "0008_offers_promo_usage",
+      "breakpoints": true
     }
   ]
 }

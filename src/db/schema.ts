@@ -190,6 +190,7 @@ export const bookings = pgTable(
     currency: text("currency").notNull().default("AED"),
     paymentStatus: text("payment_status").notNull().default("unpaid"),
     paymentReference: text("payment_reference"),
+    promoCode: text("promo_code"),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -198,6 +199,7 @@ export const bookings = pgTable(
     index("bookings_studio_schedule_idx").on(table.studioId, table.status, table.scheduledAt),
     index("bookings_user_id_idx").on(table.userId),
     index("bookings_created_at_idx").on(table.createdAt),
+    index("bookings_promo_code_idx").on(table.promoCode),
   ]
 );
 

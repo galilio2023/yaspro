@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
-import { OFFERS_AND_BUNDLES, OFFERS_PROMO_CODES, STANDARD_TIME_SLOTS } from "../data";
-import { OfferBundleItem, OffersBookingContact, OffersPricingBreakdown } from "../types";
-import { submitOffersBooking, OffersBookingResult } from "../actions";
+import { useState, useMemo, useCallback, useRef } from "react";
+import { OFFERS_AND_BUNDLES } from "../data";
+import { AppliedOffersPromo, OffersBookingContact, OffersPricingBreakdown } from "../types";
+import { getOffersDiscount } from "../pricing";
+import { submitOffersBooking, validateOffersPromoCode, OffersBookingResult } from "../actions";
 
 const INITIAL_CONTACT: OffersBookingContact = {
   firstName: "",
@@ -16,15 +17,15 @@ const INITIAL_CONTACT: OffersBookingContact = {
 
 export function useOffersBooking() {
   const [step, setStep] = useState<number>(1);
-  const [selectedOfferId, setSelectedOfferId] = useState<string>("5-hour-bundles");
+  const [selectedOfferId, updateSelectedOfferId] = useState<string>("5-hour-bundles");
   const [date, setDate] = useState<string>("");
   const [timeSlot, setTimeSlot] = useState<string>("");
   const [contact, setContact] = useState<OffersBookingContact>(INITIAL_CONTACT);
 
   // Promo code state
   const [promoCodeInput, setPromoCodeInput] = useState<string>("");
-  const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
-  const [promoDiscount, setPromoDiscount] = useState<number>(0);
+  const [appliedPromo, setAppliedPromo] = useState<AppliedOffersPromo | null>(null);
+  const promoRequest = useRef(0);
   const [promoError, setPromoError] = useState<string | null>(null);
 
   // Submission state
@@ -39,7 +40,7 @@ export function useOffersBooking() {
   // Pricing calculations
   const breakdown: OffersPricingBreakdown = useMemo(() => {
     const basePrice = selectedOffer ? selectedOffer.price : 0;
-    const discount = promoDiscount;
+    const discount = getOffersDiscount(basePrice, appliedPromo);
     const subtotal = Math.max(0, basePrice - discount);
     const vatRate = 0.05; // 5% UAE VAT
     const vatAmount = Math.round(subtotal * vatRate * 100) / 100;
@@ -53,38 +54,42 @@ export function useOffersBooking() {
       vatAmount,
       grandTotal,
     };
-  }, [selectedOffer, promoDiscount]);
+  }, [selectedOffer, appliedPromo]);
 
-  // Apply Promo
-  const applyPromo = useCallback(
-    (code: string) => {
-      setPromoError(null);
-      const cleanCode = code.trim().toUpperCase();
-      if (!cleanCode) {
-        setPromoError("Please enter a coupon code.");
+  const setSelectedOfferId = useCallback((offerId: string) => {
+    if (offerId === selectedOfferId) return;
+    updateSelectedOfferId(offerId);
+    setDate("");
+    setTimeSlot("");
+    promoRequest.current++;
+    setAppliedPromo((promo) => promo?.eligibleOfferIds && !promo.eligibleOfferIds.includes(offerId) ? null : promo);
+    setPromoError(null);
+  }, [selectedOfferId]);
+
+  const applyPromo = useCallback(async (code: string) => {
+    const request = ++promoRequest.current;
+    setPromoError(null);
+    const cleanCode = code.trim().toUpperCase();
+    if (!cleanCode) {
+      setPromoError("Please enter a coupon code.");
+      return;
+    }
+    try {
+      const result = await validateOffersPromoCode(cleanCode, selectedOfferId);
+      if (request !== promoRequest.current) return;
+      if (!result.success || !result.promo) {
+        setPromoError(result.message || "Invalid promotional code.");
         return;
       }
-      const match = OFFERS_PROMO_CODES[cleanCode];
-      if (!match) {
-        setPromoError("Invalid promotional code.");
-        return;
-      }
-      const base = selectedOffer ? selectedOffer.price : 0;
-      let calculatedDiscount = 0;
-      if (match.discountPercent) {
-        calculatedDiscount = Math.round((base * match.discountPercent) / 100);
-      } else if (match.discountAmount) {
-        calculatedDiscount = Math.min(base, match.discountAmount);
-      }
-      setAppliedPromo(cleanCode);
-      setPromoDiscount(calculatedDiscount);
-    },
-    [selectedOffer]
-  );
+      setAppliedPromo(result.promo);
+    } catch {
+      if (request === promoRequest.current) setPromoError("Unable to validate promotional code. Please try again.");
+    }
+  }, [selectedOfferId]);
 
   const removePromo = useCallback(() => {
+    promoRequest.current++;
     setAppliedPromo(null);
-    setPromoDiscount(0);
     setPromoError(null);
     setPromoCodeInput("");
   }, []);
@@ -163,7 +168,7 @@ export function useOffersBooking() {
           phone: contact.phone,
           company: contact.company,
           specialRequests: contact.specialRequests,
-          promoCode: appliedPromo || undefined,
+          promoCode: appliedPromo?.code,
           initiatePayment: withZiinaPayment,
         });
 
@@ -204,8 +209,7 @@ export function useOffersBooking() {
     updateContact,
     promoCodeInput,
     setPromoCodeInput,
-    appliedPromo,
-    promoDiscount,
+    appliedPromo: appliedPromo?.code || null,
     promoError,
     applyPromo,
     removePromo,

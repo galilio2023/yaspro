@@ -48,3 +48,10 @@ export interface OffersPricingBreakdown {
   vatAmount: number;
   grandTotal: number;
 }
+
+export interface AppliedOffersPromo {
+  code: string;
+  discountPercent?: number;
+  discountAmount?: number;
+  eligibleOfferIds?: string[];
+}

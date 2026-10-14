@@ -7,13 +7,7 @@ import {
   Tag,
   AlertCircle,
   Clock,
-  Calendar,
-  Lock,
-  Building2,
   User,
-  Mail,
-  Phone,
-  FileText,
   Loader2,
   CheckCircle2,
   ShieldCheck,
@@ -25,10 +19,8 @@ import {
   Field,
   StepIntro,
   fieldClass,
-  studioSprings,
 } from "@/features/booking/components/ui/BookingKit";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface Step3CheckoutProps {
@@ -67,7 +59,7 @@ export function Step3Checkout({
   onSubmit,
 }: Step3CheckoutProps) {
   const { isArabic } = useLanguage();
-  const [agreedToTerms, setAgreedToTerms] = useState(true);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const formattedDate = date
     ? new Date(`${date}T00:00:00`).toLocaleDateString(isArabic ? "ar-EG" : "en-US", {

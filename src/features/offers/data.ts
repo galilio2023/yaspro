@@ -388,9 +388,3 @@ export const STANDARD_TIME_SLOTS = [
   "7:00 PM",
   "8:00 PM",
 ];
-
-export const OFFERS_PROMO_CODES: Record<string, { discountPercent?: number; discountAmount?: number; desc: string }> = {
-  YAS10: { discountPercent: 10, desc: "10% Welcome Discount" },
-  CREATOR20: { discountPercent: 20, desc: "20% Creator Grant Discount" },
-  VIP50: { discountPercent: 50, desc: "50% Executive Producer Discount" },
-};

@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, Calendar, Mail, MessageCircle, Copy, Check, ArrowRight } from "lucide-react";
+import { CheckCircle2, MessageCircle, Copy, Check, AlertCircle } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { formatAED, studioSprings } from "@/features/booking/components/ui/BookingKit";
@@ -12,6 +12,7 @@ interface OffersConfirmationProps {
   referenceCode?: string;
   email: string;
   bookingId?: string;
+  paymentFailed?: boolean;
   totalAmount?: number;
   offerName: string;
   date: string;
@@ -19,8 +20,8 @@ interface OffersConfirmationProps {
 }
 
 export function OffersConfirmation({
-  referenceCode = "YAS-OFR-CONFIRMED",
-  email,
+  referenceCode = "YAS-OFR-PENDING",
+  paymentFailed = false,
   totalAmount,
   offerName,
   date,
@@ -36,7 +37,7 @@ export function OffersConfirmation({
   };
 
   const whatsappMessage = encodeURIComponent(
-    `Hello Yas Pro Operations, I have just booked the offer "${offerName}" (Ref: ${referenceCode}) for ${date} at ${timeSlot}.`
+    `Hello Yas Pro Operations, I have submitted a booking request for the offer "${offerName}" (Ref: ${referenceCode}) for ${date} at ${timeSlot}.`
   );
 
   return (
@@ -57,17 +58,26 @@ export function OffersConfirmation({
       {/* Headline */}
       <div className="space-y-2">
         <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-brand-mauve font-semibold">
-          {isArabic ? "تم استلام طلب الحجز بنجاح" : "Reservation Confirmed"}
+          {isArabic ? "طلب الحجز قيد التأكيد" : "Booking Pending Confirmation"}
         </span>
         <h2 className="text-2xl sm:text-3xl font-black text-white font-display">
-          {isArabic ? "أهلاً بك في استوديوهات ياس برو" : "Your Stage is Locked In"}
+          {isArabic ? "تم استلام طلب الحجز" : "Your Booking Request is Received"}
         </h2>
         <p className="text-xs sm:text-sm text-zinc-400 max-w-md mx-auto leading-relaxed">
           {isArabic
-            ? `لقد تم حجز "${offerName}" بنجاح. أرسلنا أمر العمل وتفاصيل الحضور إلى ${email}.`
-            : `Your booking for "${offerName}" is logged. A full production call sheet was sent to ${email}.`}
+            ? `تم استلام طلب حجز "${offerName}" وهو بانتظار تأكيد فريق الاستوديو.`
+            : `Your booking request for "${offerName}" is pending confirmation by the studio team.`}
         </p>
       </div>
+
+      {paymentFailed && (
+        <p role="alert" className="text-sm text-brand-lavender bg-brand-violet/15 border border-brand-mauve/30 rounded-xl p-4">
+          <AlertCircle size={16} className="inline-block me-2" />
+          {isArabic
+            ? "تم استلام طلب الحجز، لكن تعذّر بدء الدفع الإلكتروني. لم يتم تأكيد الدفع. يمكنك الدفع في الاستوديو أو التواصل معنا لإعادة المحاولة."
+            : "Your booking request was received, but online payment could not start. Payment is not confirmed. You can pay at the studio or contact us to retry."}
+        </p>
+      )}
 
       {/* Reference Code Card */}
       <div className="p-4 rounded-2xl bg-black/50 border border-white/10 flex items-center justify-between gap-4 max-w-md mx-auto">
@@ -75,7 +85,7 @@ export function OffersConfirmation({
           <span className="block font-mono text-[9px] uppercase tracking-wider text-zinc-500">
             {isArabic ? "رمز الحجز المرجعي" : "Booking Reference Code"}
           </span>
-          <span className="font-mono text-base sm:text-lg font-bold text-white tracking-wider">
+          <span className="font-mono text-base sm:text-lg font-bold text-white tracking-wider break-all">
             {referenceCode}
           </span>
         </div>

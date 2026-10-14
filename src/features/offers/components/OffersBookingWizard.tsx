@@ -10,7 +10,6 @@ import { Step3Checkout } from "./Step3Checkout";
 import { OffersConfirmation } from "./OffersConfirmation";
 import { BookingStepper, formatAED, studioSprings } from "@/features/booking/components/ui/BookingKit";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import { cn } from "@/lib/utils";
 
 const STEPPER_STEPS_EN = [
   { id: 1, label: "Offers & Bundles", shortLabel: "Packages" },
@@ -49,7 +48,6 @@ export function OffersBookingWizard() {
     promoCodeInput,
     setPromoCodeInput,
     appliedPromo,
-    promoDiscount,
     promoError,
     applyPromo,
     removePromo,
@@ -100,6 +98,7 @@ export function OffersBookingWizard() {
           referenceCode={confirmedResult.referenceCode}
           email={contact.email}
           bookingId={confirmedResult.bookingId}
+          paymentFailed={confirmedResult.paymentFailed}
           totalAmount={confirmedResult.totalAmount || breakdown.grandTotal}
           offerName={isArabic ? selectedOffer.nameAr : selectedOffer.name}
           date={date}
