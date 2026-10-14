@@ -153,7 +153,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
                     className={cn(
                       "relative aspect-square min-h-[38px] rounded-lg text-xs sm:text-sm font-semibold tabular-nums transition-all duration-150 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed",
                       isSelected
-                        ? "bg-brand-mauve text-zinc-950 shadow-[0_8px_20px_-8px_rgba(152,123,165,0.7)]"
+                        ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-[0_8px_20px_-8px_rgba(152,123,165,0.7)]"
                         : isPast
                         ? "text-zinc-700"
                         : "text-zinc-200 hover:bg-white/[0.07] hover:text-white active:scale-95"
@@ -187,7 +187,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
                     className={cn(
                       "px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer",
                       duration === h
-                        ? "bg-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/40 scale-105"
+                        ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-md shadow-brand-violet/40 scale-105"
                         : "bg-white/[0.04] text-zinc-400 hover:text-white border border-white/10 hover:bg-white/[0.08]"
                     )}
                   >

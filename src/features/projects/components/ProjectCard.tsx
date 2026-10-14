@@ -145,7 +145,7 @@ export function ProjectCard({
               <div className="relative flex items-center justify-center">
                 {/* Pulse Ring */}
                 <div className="absolute inset-0 rounded-full bg-brand-mauve/20 scale-100 group-hover/thumb:scale-135 group-hover/thumb:opacity-0 transition-all duration-500 pointer-events-none" />
-                <div className="size-12 sm:size-13 rounded-full bg-zinc-950/90 border border-brand-mauve/40 flex items-center justify-center text-brand-lavender shadow-xl group-hover/thumb:scale-110 group-hover/thumb:bg-brand-mauve group-hover/thumb:text-zinc-950 group-hover/thumb:border-brand-mauve group-hover/thumb:shadow-[0_0_24px_rgba(152,123,165,0.6)] transition-all duration-200">
+                <div className="size-12 sm:size-13 rounded-full bg-zinc-950/90 border border-brand-mauve/40 flex items-center justify-center text-brand-lavender shadow-xl group-hover/thumb:scale-110 group-hover/thumb:bg-brand-violet group-hover/thumb:text-white group-hover/thumb:border-brand-mauve group-hover/thumb:shadow-[0_0_24px_rgba(152,123,165,0.6)] transition-all duration-200">
                   <Play size={18} className="fill-current translate-x-0.5 rtl:-translate-x-0.5" />
                 </div>
               </div>
@@ -234,16 +234,16 @@ export function ProjectCard({
             <button
               type="button"
               onClick={handleReelClick}
-              className="inline-flex items-center justify-center min-h-[38px] px-3.5 py-1.5 gap-1.5 text-xs font-semibold text-zinc-200 rounded-full bg-white/10 border border-white/15 hover:bg-brand-mauve hover:text-zinc-950 hover:border-brand-mauve transition-all cursor-pointer shadow-sm active:scale-[0.97] group/btn"
+              className="inline-flex items-center justify-center min-h-[38px] px-3.5 py-1.5 gap-1.5 text-xs font-semibold text-zinc-200 rounded-full bg-white/10 border border-white/15 hover:bg-brand-violet hover:text-white hover:border-brand-mauve transition-all cursor-pointer shadow-sm active:scale-[0.97] group/btn"
             >
-              <Play size={11} className="fill-current text-brand-mauve group-hover/btn:text-zinc-950 rtl:scale-x-[-1] transition-colors shrink-0" />
+              <Play size={11} className="fill-current text-brand-mauve group-hover/btn:text-white rtl:scale-x-[-1] transition-colors shrink-0" />
               <span>{isArabic ? "مشاهدة الفيديو" : "Watch Reel"}</span>
             </button>
           ) : (
             <Link
               href={`/projects/${project.slug}`}
               onClick={(e) => e.stopPropagation()}
-              className="inline-flex items-center justify-center min-h-[38px] px-3.5 py-1.5 gap-1.5 text-xs font-semibold text-zinc-200 rounded-full bg-white/10 border border-white/15 hover:bg-brand-mauve hover:text-zinc-950 hover:border-brand-mauve transition-all active:scale-[0.97]"
+              className="inline-flex items-center justify-center min-h-[38px] px-3.5 py-1.5 gap-1.5 text-xs font-semibold text-zinc-200 rounded-full bg-white/10 border border-white/15 hover:bg-brand-violet hover:text-white hover:border-brand-mauve transition-all active:scale-[0.97]"
             >
               <span>{isArabic ? "تفاصيل العمل" : "View Case"}</span>
               <ArrowUpRight size={11} className="rtl:rotate-90 rtl:scale-x-[-1]" />

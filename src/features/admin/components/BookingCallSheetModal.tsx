@@ -91,7 +91,7 @@ export function BookingCallSheetModal({
             <button
               type="button"
               onClick={() => window.print()}
-              className="px-3 py-1.5 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-lg shadow-brand-violet/25"
+              className="px-3 py-1.5 rounded-xl btn-brand text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Printer size={13} />
               <span>Print Call Sheet</span>

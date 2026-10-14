@@ -5,11 +5,12 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowLeft, ArrowRight, CheckCircle2, AlertCircle, PhoneCall, Loader2 } from "lucide-react";
+import { X, ArrowLeft, ArrowRight, CheckCircle2, AlertCircle, PhoneCall, Loader2, Sparkles } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { studioSprings, tactilePress } from "@/lib/studio-motion";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { submitInquiry } from "@/lib/actions";
+import { cn } from "@/lib/utils";
 
 const emptySubscribe = () => () => {};
 
@@ -28,6 +29,7 @@ interface VisualBookingCard {
   href?: string;
   actionType?: "inquiry";
   inquiryService?: "ob_van" | "outdoor_filming";
+  isFeatured?: boolean;
 }
 
 const VISUAL_CARDS: VisualBookingCard[] = [
@@ -39,16 +41,7 @@ const VISUAL_CARDS: VisualBookingCard[] = [
     categoryAr: "باقات متكاملة",
     image: "/images/modal/offers-bundles-card.jpg",
     href: "/offers",
-  },
-  {
-    id: "outdoor-filming",
-    labelEn: "Outdoor Filming",
-    labelAr: "التصوير الميداني",
-    categoryEn: "On-Location",
-    categoryAr: "تصوير خارجي",
-    image: "/images/modal/outdoor-filming-card.jpg",
-    actionType: "inquiry",
-    inquiryService: "outdoor_filming",
+    isFeatured: true,
   },
   {
     id: "studio-booking",
@@ -69,13 +62,23 @@ const VISUAL_CARDS: VisualBookingCard[] = [
     href: "/podcast-booking",
   },
   {
-    id: "social-media-packages",
-    labelEn: "Social Media Packages",
-    labelAr: "باقات السوشيال ميديا",
-    categoryEn: "Viral Reels",
-    categoryAr: "صناعة المحتوى",
-    image: "/images/modal/social-media-card.jpg",
-    href: "/social-media-packages",
+    id: "gear-rental",
+    labelEn: "Cinema Gear Rental",
+    labelAr: "تأجير معدات السينما",
+    categoryEn: "ARRI & RED",
+    categoryAr: "كاميرات وإضاءة",
+    image: "/images/gear/arri-commercial-cinema-kit.jpg",
+    href: "/shop",
+  },
+  {
+    id: "outdoor-filming",
+    labelEn: "Outdoor Filming",
+    labelAr: "التصوير الميداني",
+    categoryEn: "On-Location",
+    categoryAr: "تصوير خارجي",
+    image: "/images/modal/outdoor-filming-card.jpg",
+    actionType: "inquiry",
+    inquiryService: "outdoor_filming",
   },
   {
     id: "ob-van-broadcast",
@@ -86,6 +89,15 @@ const VISUAL_CARDS: VisualBookingCard[] = [
     image: "/images/modal/ob-van-broadcast-card.jpg",
     actionType: "inquiry",
     inquiryService: "ob_van",
+  },
+  {
+    id: "social-media-packages",
+    labelEn: "Social Media Packages",
+    labelAr: "باقات السوشيال ميديا",
+    categoryEn: "Viral Reels",
+    categoryAr: "صناعة المحتوى",
+    image: "/images/modal/social-media-card.jpg",
+    href: "/social-media-packages",
   },
 ];
 
@@ -243,12 +255,12 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
               exit={{ opacity: 0, scale: 0.96, y: 15 }}
               transition={studioSprings.cinematic}
               dir={isArabic ? "rtl" : "ltr"}
-              className={`relative w-full transition-all duration-300 rounded-3xl bg-[#09090c] border border-white/10 p-6 sm:p-8 md:p-10 z-10 shadow-2xl my-auto ${
-                selectedInquiry ? "max-w-xl" : "max-w-5xl"
+              className={`relative w-full transition-all duration-300 rounded-3xl bg-[#09090c] border border-white/10 p-5 sm:p-7 md:p-9 z-10 shadow-2xl my-auto ${
+                selectedInquiry ? "max-w-xl" : "max-w-5xl lg:max-w-6xl"
               }`}
             >
           {/* Header Row */}
-          <div className="flex items-center justify-between mb-6 sm:mb-8 border-b border-white/5 pb-4">
+          <div className="flex items-center justify-between mb-5 sm:mb-6 border-b border-white/5 pb-4">
             <div className="flex items-center gap-3">
               {selectedInquiry && (
                 <button
@@ -270,7 +282,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
               >
                 {selectedInquiry
                   ? (isArabic ? "أرسل لنا رسالة" : "SEND US A MESSAGE")
-                  : (isArabic ? "اختر نوع الحجز" : "Select Booking Category")}
+                  : (isArabic ? "اختر نوع الخدمة أو الحجز" : "Select Production Service")}
               </h2>
             </div>
 
@@ -294,13 +306,16 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
-                className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4"
+                className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4"
               >
                 {VISUAL_CARDS.map((card) => {
                   const isDirectInquiry = card.actionType === "inquiry";
 
                   const CardInner = (
-                    <div className="group relative flex flex-col justify-end h-36 sm:h-56 w-full rounded-2xl overflow-hidden bg-zinc-900 cursor-pointer shadow-lg border border-white/5 hover:border-brand-mauve/40 transition-colors">
+                    <div className={cn(
+                      "group relative flex flex-col justify-end w-full rounded-2xl overflow-hidden bg-zinc-900 cursor-pointer shadow-lg border border-white/5 hover:border-brand-mauve/40 transition-colors",
+                      card.isFeatured ? "h-36 sm:h-52 md:h-56" : "h-36 sm:h-52 md:h-56"
+                    )}>
                       {/* Real Production Imagery */}
                       <Image
                         src={card.image}
@@ -308,15 +323,25 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                         fill
                         unoptimized
                         className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
                       />
 
                       {/* Film Vignette Gradient */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent transition-opacity group-hover:via-black/20" />
 
+                      {/* Featured Badge */}
+                      {card.isFeatured && (
+                        <div className="absolute top-2 start-2 sm:top-3 sm:start-3 z-10">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wide uppercase bg-brand-violet/40 text-brand-lavender border border-brand-mauve/30 backdrop-blur-md shadow-md">
+                            <Sparkles size={11} />
+                            <span>{isArabic ? "باقات التوفير" : "Best Value"}</span>
+                          </span>
+                        </div>
+                      )}
+
                       {/* Pill Badge for direct contact card */}
                       {isDirectInquiry && (
-                        <div className="absolute top-2 end-2 sm:top-3.5 sm:end-3.5 z-10">
+                        <div className="absolute top-2 end-2 sm:top-3 sm:end-3 z-10">
                           <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-medium tracking-wide bg-brand-violet/30 text-brand-mauve-soft border border-brand-mauve/30 backdrop-blur-md">
                             <PhoneCall size={10} className="sm:size-[11px]" />
                             <span className="hidden xs:inline">{isArabic ? "طلب اتصال" : "Callback"}</span>
@@ -326,7 +351,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                       )}
 
                       {/* Bottom Title */}
-                      <div className="relative z-10 p-3 sm:p-5">
+                      <div className="relative z-10 p-3 sm:p-4">
                         <span className="text-xs sm:text-base md:text-lg font-bold text-white tracking-tight drop-shadow-md group-hover:text-brand-mauve-soft transition-colors line-clamp-2">
                           {isArabic ? card.labelAr : card.labelEn}
                         </span>
@@ -338,7 +363,10 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                     <motion.div
                       key={card.id}
                       whileTap={tactilePress}
-                      className="w-full"
+                      className={cn(
+                        "w-full",
+                        card.isFeatured && "col-span-2 sm:col-span-2 lg:col-span-2"
+                      )}
                     >
                       {isDirectInquiry ? (
                         <button
@@ -387,7 +415,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                     <button
                       type="button"
                       onClick={handleModalClose}
-                      className="px-6 py-2.5 rounded-full bg-white text-black font-semibold text-sm hover:bg-zinc-200 transition-colors"
+                      className="px-6 py-2.5 rounded-full btn-brand text-sm cursor-pointer"
                     >
                       {isArabic ? "إغلاق" : "Close"}
                     </button>
@@ -516,12 +544,12 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                       />
                     </div>
 
-                    {/* Bottom CTA Button (Let's Talk ↗ styled like 2.png) */}
+                    {/* Bottom CTA Button (Let's Talk ↗) */}
                     <div className="pt-2">
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-white text-black font-semibold text-base sm:text-sm min-h-[44px] hover:bg-zinc-200 transition-all duration-200 shadow-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full btn-brand text-base sm:text-sm min-h-[44px] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         {isSubmitting ? (
                           <>

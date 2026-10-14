@@ -42,8 +42,8 @@ export function PackageCard({ pkg, billingInterval, onSelect }: PackageCardProps
       {/* Top Badge for Growth Tier */}
       {isGrowth && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-brand-mauve text-zinc-950 text-[10px] font-black uppercase tracking-wider shadow-lg shadow-brand-violet/40">
-            <Sparkles size={11} className="fill-zinc-950" />
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-brand-violet/40 text-brand-lavender border border-brand-mauve/30 text-[10px] font-black uppercase tracking-wider shadow-lg shadow-brand-violet/40">
+            <Sparkles size={11} className="fill-brand-lavender text-brand-lavender" />
             {isArabic ? "الباقة الأكثر طلباً · RECOMMENDED" : "MOST POPULAR · PRODUCTION ENGINE"}
           </span>
         </div>
@@ -127,7 +127,7 @@ export function PackageCard({ pkg, billingInterval, onSelect }: PackageCardProps
           onClick={() => onSelect(pkg)}
           className={`w-full py-3.5 px-5 rounded-2xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-2 ${
             isGrowth
-              ? "bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 shadow-lg shadow-brand-violet/40 font-black"
+              ? "btn-brand shadow-lg shadow-brand-violet/40 font-black"
               : isPremium
               ? "bg-brand-mauve/15 hover:bg-brand-mauve/25 text-brand-lavender border border-brand-mauve/40 font-bold shadow-lg shadow-brand-violet/20"
               : "bg-white/[0.08] hover:bg-white/[0.14] text-white border border-white/15"

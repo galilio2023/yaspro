@@ -65,8 +65,8 @@ export function Step3Service({ session, onChange }: Step3ServiceProps) {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       {isBest ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-brand-mauve text-zinc-950 text-[10px] font-mono tracking-wider uppercase font-bold shadow-sm shadow-brand-violet/40 whitespace-nowrap shrink-0">
-                          <Zap size={11} className="fill-zinc-950" />
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-brand-violet/40 text-brand-lavender border border-brand-mauve/30 text-[10px] font-mono tracking-wider uppercase font-bold shadow-sm shadow-brand-violet/40 whitespace-nowrap shrink-0">
+                          <Zap size={11} className="fill-brand-lavender text-brand-lavender" />
                           {service.badge || "Most Popular"}
                         </span>
                       ) : (

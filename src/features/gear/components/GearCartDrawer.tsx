@@ -487,7 +487,7 @@ export function GearCartDrawer({
                         onClick={() => handleSchedulePreset(1)}
                         className={`px-2 py-1.5 rounded-lg text-[10px] font-semibold transition-all cursor-pointer text-center ${
                           effectiveDateRange.totalDays === 1
-                            ? "bg-brand-mauve text-zinc-950 font-bold shadow-sm shadow-brand-violet/30"
+                            ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-sm shadow-brand-violet/30"
                             : "bg-white/5 text-zinc-300 hover:bg-white/10"
                         }`}
                       >
@@ -498,7 +498,7 @@ export function GearCartDrawer({
                         onClick={() => handleSchedulePreset(3)}
                         className={`px-2 py-1.5 rounded-lg text-[10px] font-semibold transition-all cursor-pointer text-center relative ${
                           effectiveDateRange.totalDays === 3
-                            ? "bg-brand-mauve text-zinc-950 font-bold shadow-sm shadow-brand-violet/30"
+                            ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-sm shadow-brand-violet/30"
                             : "bg-white/5 text-zinc-300 hover:bg-white/10"
                         }`}
                       >
@@ -509,7 +509,7 @@ export function GearCartDrawer({
                         onClick={() => handleSchedulePreset(7)}
                         className={`px-2 py-1.5 rounded-lg text-[10px] font-semibold transition-all cursor-pointer text-center relative ${
                           effectiveDateRange.totalDays === 7
-                            ? "bg-brand-mauve text-zinc-950 font-bold shadow-sm shadow-brand-violet/30"
+                            ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-sm shadow-brand-violet/30"
                             : "bg-white/5 text-zinc-300 hover:bg-white/10"
                         }`}
                       >

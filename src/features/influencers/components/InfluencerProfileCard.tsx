@@ -37,8 +37,8 @@ export function InfluencerProfileCard({ creator }: InfluencerProfileCardProps) {
                 <span>{initials}</span>
               )}
             </div>
-            <div className="absolute -bottom-1 -right-1 size-6 rounded-full bg-brand-mauve flex items-center justify-center text-zinc-950 shadow-md z-10">
-              <CheckCircle2 size={15} className="text-zinc-950" />
+            <div className="absolute -bottom-1 -right-1 size-6 rounded-full bg-brand-violet border border-brand-mauve/40 flex items-center justify-center text-white shadow-md z-10">
+              <CheckCircle2 size={15} className="text-white" />
             </div>
           </div>
 

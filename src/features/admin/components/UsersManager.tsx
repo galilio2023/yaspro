@@ -165,7 +165,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
               onClick={() => setRoleFilter(tab)}
               className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize transition-all cursor-pointer ${
                 roleFilter === tab
-                  ? "bg-brand-mauve text-slate-950 font-bold shadow-lg shadow-brand-violet/25"
+                  ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-lg shadow-brand-violet/25"
                   : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
               }`}
             >

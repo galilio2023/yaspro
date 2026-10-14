@@ -190,7 +190,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                 }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize transition-all cursor-pointer ${
                   paymentFilter === payStatus
-                    ? "bg-brand-mauve text-slate-950 font-bold shadow-lg shadow-brand-violet/25"
+                    ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-lg shadow-brand-violet/25"
                     : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
                 }`}
               >
@@ -226,7 +226,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
               >
                 <span>{tab.label}</span>
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                  isActive ? "bg-brand-mauve text-slate-950 font-bold" : "bg-white/10 text-slate-400"
+                  isActive ? "bg-brand-violet text-white font-bold border border-brand-mauve/30" : "bg-white/10 text-slate-400"
                 }`}>
                   {tab.count}
                 </span>

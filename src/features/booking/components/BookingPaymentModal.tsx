@@ -389,7 +389,7 @@ export function BookingPaymentModal({
                   <span className="px-2 py-0.5 rounded bg-black border border-white/20 text-white font-mono text-[9px] font-bold whitespace-nowrap">
                     Pay
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-white text-black font-sans text-[9px] font-bold whitespace-nowrap">
+                  <span className="px-2 py-0.5 rounded bg-white/10 border border-white/20 text-white font-sans text-[9px] font-bold whitespace-nowrap">
                     GPay
                   </span>
                   <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold whitespace-nowrap">
@@ -520,7 +520,7 @@ export function BookingPaymentModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-colors cursor-pointer"
+                className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition-colors cursor-pointer"
               >
                 {isArabic ? "إغلاق والتأكيد" : "Close & Acknowledge"}
               </button>
@@ -532,9 +532,9 @@ export function BookingPaymentModal({
               className={cn(
                 "w-full h-11 sm:h-12 px-4 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer disabled:opacity-50",
                 paymentMethod === "ziina"
-                  ? "bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-extrabold shadow-brand-violet/30"
+                  ? "btn-brand font-extrabold shadow-brand-violet/30"
                   : paymentMethod === "card"
-                  ? "btn-brand text-black"
+                  ? "btn-brand"
                   : "bg-white/10 hover:bg-white/20 text-white border border-white/20"
               )}
             >
@@ -545,7 +545,7 @@ export function BookingPaymentModal({
                 </>
               ) : paymentMethod === "ziina" ? (
                 <>
-                  <Zap size={16} className="fill-black" />
+                  <Zap size={16} className="fill-white text-white" />
                   <span>
                     {isArabic
                       ? `دفع ${formatCurrency(chargeAmount)} عبر Ziina و Apple Pay`

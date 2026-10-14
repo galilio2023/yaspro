@@ -125,7 +125,7 @@ export function PodcastBookingWizard() {
                 key={sess.id}
                 className={`flex items-center rounded-xl transition overflow-hidden shrink-0 border ${
                   isActive
-                    ? "bg-brand-mauve text-zinc-950 border-brand-mauve shadow-md shadow-brand-violet/40"
+                    ? "bg-brand-violet text-white border-brand-mauve/50 shadow-md shadow-brand-violet/40"
                     : "bg-white/[0.04] text-zinc-400 hover:text-white border-white/[0.06] hover:bg-white/[0.08]"
                 }`}
               >
@@ -289,7 +289,7 @@ export function PodcastBookingWizard() {
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 transition={studioSprings.snappy}
-                className="lg:ms-auto h-9 sm:h-11 px-3 sm:px-5 rounded-lg sm:rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 text-xs sm:text-sm font-bold flex items-center gap-1 sm:gap-2 cursor-pointer transition-colors shadow-md shadow-brand-violet/30 shrink-0"
+                className="lg:ms-auto h-9 sm:h-11 px-3 sm:px-5 rounded-lg sm:rounded-xl btn-brand text-xs sm:text-sm font-bold flex items-center gap-1 sm:gap-2 cursor-pointer shrink-0"
               >
                 <span>
                   <span className="sm:hidden">Continue</span>

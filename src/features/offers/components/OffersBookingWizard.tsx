@@ -235,7 +235,7 @@ export function OffersBookingWizard() {
           <button
             type="button"
             onClick={handleNextStep}
-            className="px-6 py-2.5 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shadow-md shadow-brand-violet/20 cursor-pointer active:scale-98"
+            className="px-6 py-2.5 rounded-xl btn-brand text-xs sm:text-sm flex items-center gap-2 transition-all shadow-md cursor-pointer active:scale-98"
           >
             <span>
               {step === 1

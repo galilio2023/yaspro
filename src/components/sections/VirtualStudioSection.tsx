@@ -285,7 +285,7 @@ export function VirtualStudioSection() {
             <FadeUp delay={0.15} className="pt-2">
               <Link
                 href="/studio-booking"
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 text-sm font-bold shadow-lg shadow-brand-violet/40 transition-all hover:scale-[1.02] active:scale-[0.98] w-fit"
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl btn-brand text-sm font-bold w-fit"
               >
                 <span>{t("virtualStudio.bookVirtual")}</span>
                 <ArrowRight size={15} className="rtl:rotate-180 shrink-0" />
@@ -358,7 +358,7 @@ export function VirtualStudioSection() {
                       onClick={() => setMode("auto")}
                       className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 cursor-pointer font-medium ${
                         mode === "auto"
-                          ? "bg-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/40"
+                          ? "bg-brand-violet text-white font-bold shadow-md shadow-brand-violet/40"
                           : "text-zinc-400 hover:text-white"
                       }`}
                     >
@@ -371,7 +371,7 @@ export function VirtualStudioSection() {
                       onClick={() => setMode("manual")}
                       className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 cursor-pointer font-medium ${
                         mode === "manual"
-                          ? "bg-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/40"
+                          ? "bg-brand-violet text-white font-bold shadow-md shadow-brand-violet/40"
                           : "text-zinc-400 hover:text-white"
                       }`}
                     >

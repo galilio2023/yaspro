@@ -142,7 +142,7 @@ export default function RegisterPage() {
                 onClick={() => setAccountType("creator")}
                 className={`py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                   accountType === "creator"
-                    ? "bg-brand-mauve text-slate-950 font-extrabold shadow-md shadow-brand-violet/30"
+                    ? "bg-brand-violet text-white border border-brand-mauve/40 font-bold shadow-md shadow-brand-violet/30"
                     : "text-slate-400 hover:text-white hover:bg-white/5"
                 }`}
               >
@@ -155,7 +155,7 @@ export default function RegisterPage() {
                 onClick={() => setAccountType("enterprise")}
                 className={`py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                   accountType === "enterprise"
-                    ? "bg-brand-mauve text-slate-950 font-extrabold shadow-md shadow-brand-violet/30"
+                    ? "bg-brand-violet text-white border border-brand-mauve/40 font-bold shadow-md shadow-brand-violet/30"
                     : "text-slate-400 hover:text-white hover:bg-white/5"
                 }`}
               >

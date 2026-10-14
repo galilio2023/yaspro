@@ -76,12 +76,12 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
                 className={cn(
                   "size-11 sm:size-13 rounded-xl sm:rounded-2xl font-black text-xs sm:text-base transition-all duration-200 flex flex-col items-center justify-center cursor-pointer",
                   isSelected
-                    ? "bg-brand-mauve text-zinc-950 shadow-[0_10px_25px_-6px_rgba(152,123,165,0.7)] scale-105 ring-2 ring-brand-mauve-soft"
+                    ? "bg-brand-violet text-white shadow-[0_10px_25px_-6px_rgba(152,123,165,0.7)] scale-105 ring-2 ring-brand-mauve-soft"
                     : "bg-white/[0.03] text-zinc-300 border border-white/10 hover:border-white/25 hover:text-white hover:bg-white/[0.06]"
                 )}
               >
                 <span>{count}</span>
-                <span className={cn("text-[9px] font-mono uppercase tracking-wider font-semibold", isSelected ? "text-black/80" : "text-zinc-500")}>
+                <span className={cn("text-[9px] font-mono uppercase tracking-wider font-semibold", isSelected ? "text-brand-lavender font-bold" : "text-zinc-500")}>
                   {count === 1 ? "mic" : "mics"}
                 </span>
               </motion.button>
@@ -119,7 +119,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
                   className={cn(
                     "px-3 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer",
                     session.durationHours === h
-                      ? "bg-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/40 scale-105"
+                      ? "bg-brand-violet text-white font-bold shadow-md shadow-brand-violet/40 scale-105"
                       : "bg-white/[0.04] text-zinc-400 hover:text-white border border-white/10 hover:bg-white/[0.08]"
                   )}
                 >
@@ -160,17 +160,17 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
                 className={cn(
                   "p-2.5 sm:p-3 rounded-2xl border text-center transition-all duration-200 flex flex-col items-center justify-center gap-1 cursor-pointer",
                   isSelected
-                    ? "bg-brand-mauve text-zinc-950 border-brand-mauve-soft font-bold shadow-[0_10px_25px_-8px_rgba(152,123,165,0.7)] scale-[1.02]"
+                    ? "bg-brand-violet text-white border-brand-mauve-soft font-bold shadow-[0_10px_25px_-8px_rgba(152,123,165,0.7)] scale-[1.02]"
                     : "bg-white/[0.02] text-zinc-300 border-white/[0.08] hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
                 )}
               >
-                <span className={cn("text-[9px] sm:text-[10px] font-mono uppercase tracking-wider", isSelected ? "text-zinc-950 font-bold" : "text-zinc-500")}>
+                <span className={cn("text-[9px] sm:text-[10px] font-mono uppercase tracking-wider", isSelected ? "text-brand-lavender font-bold" : "text-zinc-500")}>
                   {item.dayName}
                 </span>
                 <span className="text-base sm:text-lg font-black leading-none">
                   {item.dayNum}
                 </span>
-                <span className={cn("text-[9px] sm:text-[10px] font-mono", isSelected ? "text-zinc-900 font-semibold" : "text-zinc-500")}>
+                <span className={cn("text-[9px] sm:text-[10px] font-mono", isSelected ? "text-white/90 font-semibold" : "text-zinc-500")}>
                   {item.monthName}
                 </span>
               </motion.button>
@@ -205,7 +205,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
                 className={cn(
                   "py-2 px-1 sm:py-2.5 sm:px-2 rounded-xl border text-[11px] sm:text-xs font-semibold transition-all duration-200 text-center cursor-pointer",
                   isSelected
-                    ? "bg-brand-mauve text-zinc-950 border-brand-mauve-soft font-bold shadow-[0_8px_20px_-6px_rgba(152,123,165,0.6)] scale-[1.02]"
+                    ? "bg-brand-violet text-white border-brand-mauve-soft font-bold shadow-[0_8px_20px_-6px_rgba(152,123,165,0.6)] scale-[1.02]"
                     : "bg-white/[0.02] text-zinc-300 border-white/[0.08] hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
                 )}
               >

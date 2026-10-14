@@ -314,7 +314,7 @@ export function Step5ReviewCheckout({
                   onApplyPromo(promoInput);
                   setPromoInput("");
                 }}
-                className="px-4 py-2.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-brand-mauve hover:text-zinc-950 text-white transition cursor-pointer shrink-0"
+                className="px-4 py-2.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-brand-violet hover:text-white text-white transition cursor-pointer shrink-0"
               >
                 Apply Code
               </button>
@@ -398,7 +398,7 @@ export function Step5ReviewCheckout({
             whileHover={{ y: -1 }}
             whileTap={{ scale: 0.98 }}
             transition={studioSprings.snappy}
-            className="h-10 sm:h-12 px-3 sm:px-4 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 font-bold text-xs sm:text-sm transition-all duration-200 shadow-md shadow-brand-violet/30 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer min-w-0"
+            className="h-10 sm:h-12 px-3 sm:px-4 rounded-xl btn-brand text-xs sm:text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer min-w-0"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-1.5">
