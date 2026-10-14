@@ -658,6 +658,11 @@ export interface UpdateGearOrderDetailsInput {
   email?: string;
   phone?: string;
   company?: string;
+  items?: unknown;
+  subtotal?: string;
+  securityDeposit?: string;
+  discountAmount?: string;
+  totalAmount?: string;
 }
 
 /**
@@ -678,6 +683,11 @@ export async function updateCmsGearOrderDetails(
     if (input.startDate !== undefined) updatePayload.startDate = input.startDate;
     if (input.endDate !== undefined) updatePayload.endDate = input.endDate;
     if (input.rentalDays !== undefined) updatePayload.rentalDays = input.rentalDays;
+    if (input.items !== undefined) updatePayload.items = input.items;
+    if (input.subtotal !== undefined) updatePayload.subtotal = input.subtotal;
+    if (input.securityDeposit !== undefined) updatePayload.securityDeposit = input.securityDeposit;
+    if (input.discountAmount !== undefined) updatePayload.discountAmount = input.discountAmount;
+    if (input.totalAmount !== undefined) updatePayload.totalAmount = input.totalAmount;
     if (input.deliveryOption !== undefined) updatePayload.deliveryOption = input.deliveryOption;
     if (input.deliveryAddress !== undefined) updatePayload.deliveryAddress = input.deliveryAddress;
     if (input.notes !== undefined) updatePayload.notes = input.notes;

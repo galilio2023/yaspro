@@ -70,6 +70,27 @@ interface BookingFormData {
   notes: string;
 }
 
+function getDubaiDateTimeParts(d: Date) {
+  const valid = !isNaN(d.getTime()) ? d : new Date();
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Dubai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const parts = formatter.formatToParts(valid);
+  const partMap: Record<string, string> = {};
+  for (const p of parts) {
+    partMap[p.type] = p.value;
+  }
+  const dateStr = `${partMap.year}-${partMap.month}-${partMap.day}`;
+  const timeSlotStr = `${partMap.hour}:${partMap.minute}`;
+  return { dateStr, timeSlotStr };
+}
+
 const DEFAULT_FORM_DATA: BookingFormData = {
   clientName: "",
   clientEmail: "",
@@ -77,7 +98,7 @@ const DEFAULT_FORM_DATA: BookingFormData = {
   clientCompany: "",
   studioId: "",
   sessionType: "video_production",
-  date: new Date().toISOString().slice(0, 10),
+  date: "",
   timeSlot: "10:00",
   durationHours: 4,
   headcount: 5,
@@ -230,8 +251,11 @@ export function BookingsManager({
   // Open Create Modal
   const handleOpenNew = () => {
     setModalError(null);
+    const { dateStr, timeSlotStr } = getDubaiDateTimeParts(new Date());
     setFormData({
       ...DEFAULT_FORM_DATA,
+      date: dateStr,
+      timeSlot: timeSlotStr,
       studioId: studios[0]?.id || "",
     });
   };
@@ -239,13 +263,7 @@ export function BookingsManager({
   // Open Edit Modal
   const handleOpenEdit = (b: EnrichedBooking) => {
     setModalError(null);
-    const scheduledDateObj = new Date(b.scheduledAt);
-    const dateStr = !isNaN(scheduledDateObj.getTime())
-      ? scheduledDateObj.toISOString().slice(0, 10)
-      : new Date().toISOString().slice(0, 10);
-    const hours = String(scheduledDateObj.getHours()).padStart(2, "0");
-    const mins = String(scheduledDateObj.getMinutes()).padStart(2, "0");
-    const timeSlotStr = `${hours}:${mins}`;
+    const { dateStr, timeSlotStr } = getDubaiDateTimeParts(new Date(b.scheduledAt));
 
     let parsedNotes = b.specialRequests || "";
     if (parsedNotes.startsWith("[Contact: ")) {
@@ -289,7 +307,7 @@ export function BookingsManager({
     setModalError(null);
 
     try {
-      const scheduledAt = new Date(`${formData.date}T${formData.timeSlot}:00`);
+      const scheduledAt = new Date(`${formData.date}T${formData.timeSlot}:00+04:00`);
 
       if (formData.id) {
         // Edit existing booking

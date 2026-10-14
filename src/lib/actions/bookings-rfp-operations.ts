@@ -14,7 +14,7 @@ import {
   sessionTypeEnum,
   type Booking,
 } from "@/db/schema";
-import { eq, desc, asc, inArray } from "drizzle-orm";
+import { eq, desc, asc, inArray, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { isDbAvailable, requireAdmin, type CmsResponse } from "./shared";
 
@@ -261,37 +261,37 @@ export async function createManualCmsBooking(
     }] ${input.notes || ""}`.trim();
 
     if (isDbAvailable()) {
-      const [newBooking] = await db
-        .insert(bookings)
-        .values({
-          referenceCode,
-          studioId: input.studioId || null,
-          sessionType: input.sessionType,
-          scheduledAt: input.scheduledAt,
-          durationHours: input.durationHours,
-          headcount: input.headcount,
-          totalAmount: input.totalAmount,
-          currency: input.currency || "AED",
-          status: input.status || "confirmed",
-          paymentStatus: input.paymentStatus || "unpaid",
-          specialRequests,
-        })
-        .returning();
+      const newBooking = await db.transaction(async (tx) => {
+        const [inserted] = await tx
+          .insert(bookings)
+          .values({
+            referenceCode,
+            studioId: input.studioId || null,
+            sessionType: input.sessionType,
+            scheduledAt: input.scheduledAt,
+            durationHours: input.durationHours,
+            headcount: input.headcount,
+            totalAmount: input.totalAmount,
+            currency: input.currency || "AED",
+            status: input.status || "confirmed",
+            paymentStatus: input.paymentStatus || "unpaid",
+            specialRequests,
+          })
+          .returning();
 
-      if (newBooking && input.studioId) {
-        try {
-          await db.insert(bookingSessions).values({
-            bookingId: newBooking.id,
+        if (inserted && input.studioId) {
+          await tx.insert(bookingSessions).values({
+            bookingId: inserted.id,
             studioId: input.studioId,
             scheduledAt: input.scheduledAt,
             durationHours: input.durationHours,
             headcount: input.headcount,
             position: 1,
           });
-        } catch (sessionErr) {
-          console.warn("Could not insert booking session:", sessionErr);
         }
-      }
+
+        return inserted;
+      });
 
       revalidatePath("/admin/bookings");
       revalidatePath("/admin");
@@ -344,41 +344,71 @@ export async function updateCmsBookingDetails(
   try {
     await requireAdmin();
     if (isDbAvailable()) {
-      const updateData: Record<string, unknown> = {
-        updatedAt: new Date(),
-      };
-      if (input.studioId !== undefined) updateData.studioId = input.studioId;
-      if (input.sessionType !== undefined) updateData.sessionType = input.sessionType;
-      if (input.scheduledAt !== undefined) updateData.scheduledAt = input.scheduledAt;
-      if (input.durationHours !== undefined) updateData.durationHours = input.durationHours;
-      if (input.headcount !== undefined) updateData.headcount = input.headcount;
-      if (input.totalAmount !== undefined) updateData.totalAmount = input.totalAmount;
-      if (input.status !== undefined) updateData.status = input.status;
-      if (input.paymentStatus !== undefined) updateData.paymentStatus = input.paymentStatus;
+      await db.transaction(async (tx) => {
+        const updateData: Record<string, unknown> = {
+          updatedAt: new Date(),
+        };
+        if (input.studioId !== undefined) updateData.studioId = input.studioId;
+        if (input.sessionType !== undefined) updateData.sessionType = input.sessionType;
+        if (input.scheduledAt !== undefined) updateData.scheduledAt = input.scheduledAt;
+        if (input.durationHours !== undefined) updateData.durationHours = input.durationHours;
+        if (input.headcount !== undefined) updateData.headcount = input.headcount;
+        if (input.totalAmount !== undefined) updateData.totalAmount = input.totalAmount;
+        if (input.status !== undefined) updateData.status = input.status;
+        if (input.paymentStatus !== undefined) updateData.paymentStatus = input.paymentStatus;
 
-      if (input.clientName || input.clientEmail || input.notes !== undefined) {
-        updateData.specialRequests = `[Contact: ${input.clientName || ""} | ${input.clientEmail || ""} | ${
-          input.clientPhone || ""
-        }${input.clientCompany ? ` | ${input.clientCompany}` : ""}] ${input.notes || ""}`.trim();
-      }
-
-      await db.update(bookings).set(updateData).where(eq(bookings.id, input.id));
-
-      if (input.scheduledAt && input.studioId) {
-        try {
-          await db
-            .update(bookingSessions)
-            .set({
-              scheduledAt: input.scheduledAt,
-              studioId: input.studioId,
-              durationHours: input.durationHours,
-              headcount: input.headcount,
-            })
-            .where(eq(bookingSessions.bookingId, input.id));
-        } catch {
-          // ignore session update error
+        if (input.clientName || input.clientEmail || input.notes !== undefined) {
+          updateData.specialRequests = `[Contact: ${input.clientName || ""} | ${input.clientEmail || ""} | ${
+            input.clientPhone || ""
+          }${input.clientCompany ? ` | ${input.clientCompany}` : ""}] ${input.notes || ""}`.trim();
         }
-      }
+
+        await tx.update(bookings).set(updateData).where(eq(bookings.id, input.id));
+
+        const existingSessions = await tx
+          .select()
+          .from(bookingSessions)
+          .where(eq(bookingSessions.bookingId, input.id))
+          .orderBy(asc(bookingSessions.position));
+
+        if (input.studioId === null) {
+          if (existingSessions.length <= 1) {
+            await tx.delete(bookingSessions).where(eq(bookingSessions.bookingId, input.id));
+          }
+        } else if (input.studioId || input.scheduledAt) {
+          const primaryStudioId = input.studioId !== undefined ? input.studioId : existingSessions[0]?.studioId;
+          const primaryScheduledAt = input.scheduledAt || existingSessions[0]?.scheduledAt;
+
+          if (primaryStudioId && primaryScheduledAt) {
+            const sessionPayload = {
+              studioId: primaryStudioId,
+              scheduledAt: primaryScheduledAt,
+              durationHours: input.durationHours ?? existingSessions[0]?.durationHours ?? 1,
+              headcount: input.headcount ?? existingSessions[0]?.headcount ?? 1,
+              status: input.status ?? existingSessions[0]?.status ?? "confirmed",
+            };
+
+            const pos1 = existingSessions.find((s) => s.position === 1);
+            if (pos1) {
+              await tx
+                .update(bookingSessions)
+                .set(sessionPayload)
+                .where(
+                  and(
+                    eq(bookingSessions.bookingId, input.id),
+                    eq(bookingSessions.position, 1)
+                  )
+                );
+            } else {
+              await tx.insert(bookingSessions).values({
+                bookingId: input.id,
+                position: 1,
+                ...sessionPayload,
+              });
+            }
+          }
+        }
+      });
     }
     revalidatePath("/admin/bookings");
     revalidatePath("/admin");

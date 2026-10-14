@@ -131,14 +131,14 @@ export async function submitOffersBooking(input: OffersBookingInput): Promise<Of
         .returning({ id: bookings.id });
       if (!newBooking?.id) throw new Error("Booking insert did not return an ID.");
 
-      // Record in dedicated offer_claims table if available in DB
+      // Record in dedicated offer_claims table if available in DB (isolated savepoint)
       try {
         if (offerClaims && tx.insert) {
-          await tx.insert(offerClaims).values({
+          const insertPayload = {
             referenceCode,
             offerId: offer.id,
             offerTitle: offer.name,
-            offerCategory: offer.category === "bundle" ? "bundle" : "special",
+            offerCategory: (offer.category === "bundle" ? "bundle" : "special") as "bundle" | "special",
             sessionsCount: 1,
             sessionsSchedule: [
               {
@@ -159,9 +159,17 @@ export async function submitOffersBooking(input: OffersBookingInput): Promise<Of
             totalAmount: grandTotal.toFixed(2),
             currency: "AED",
             promoCode: promo?.code || null,
-            status: "pending",
+            status: "pending" as const,
             paymentStatus: "unpaid",
-          });
+          };
+
+          if (typeof tx.transaction === "function") {
+            await tx.transaction(async (subTx) => {
+              await subTx.insert(offerClaims).values(insertPayload);
+            });
+          } else {
+            await tx.insert(offerClaims).values(insertPayload);
+          }
         }
       } catch {
         // Ignored if offerClaims table isn't migrated yet or mock isn't provided

@@ -187,11 +187,11 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
           })));
         }
 
-        // Record in dedicated podcast_bookings table if table is defined in tx
+        // Record in dedicated podcast_bookings table if table is defined in tx (isolated savepoint)
         try {
           if (podcastBookings && tx.insert) {
             const primaryService = PODCAST_SERVICES.find((srv) => srv.key === primarySession.serviceKey);
-            await tx.insert(podcastBookings).values({
+            const insertPayload = {
               referenceCode,
               packageId: primarySession.serviceKey,
               packageName: primaryService?.title || primarySession.serviceKey,
@@ -205,9 +205,17 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
               totalAmount: grandTotal.toFixed(2),
               discountAmount: discount.toFixed(2),
               promoCode: promoCode || null,
-              status: "pending",
+              status: "pending" as const,
               paymentStatus: "unpaid",
-            });
+            };
+
+            if (typeof tx.transaction === "function") {
+              await tx.transaction(async (subTx) => {
+                await subTx.insert(podcastBookings).values(insertPayload);
+              });
+            } else {
+              await tx.insert(podcastBookings).values(insertPayload);
+            }
           }
         } catch {
           // Ignored if podcastBookings mock isn't provided in lightweight unit tests

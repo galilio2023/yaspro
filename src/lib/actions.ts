@@ -109,9 +109,6 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
             where: eq(studios.slug, matchSlug),
           });
         }
-        if (!studioRecord) {
-          studioRecord = await db.query.studios.findFirst();
-        }
       }
 
       if (!studioRecord || studioRecord.isActive === false) {
@@ -600,36 +597,17 @@ export async function validateUniversalPromoCode(code: string, applicableType: s
 
   const cleanCode = code.trim().toUpperCase();
 
-  // 1. Static built-in promo codes fallback
-  const staticPromos: Record<string, { type: "percentage" | "fixed"; value: number }> = {
-    "YASPRO10": { type: "percentage", value: 10 },
-    "YAS20": { type: "percentage", value: 20 },
-    "CREATOR50": { type: "fixed", value: 50 },
-    "VIPYAS": { type: "percentage", value: 25 },
-    "RAMADAN": { type: "percentage", value: 15 },
-  };
-
-  if (staticPromos[cleanCode]) {
-    return {
-      valid: true,
-      code: cleanCode,
-      discountType: staticPromos[cleanCode].type,
-      discountValue: staticPromos[cleanCode].value,
-      message: `Promo code ${cleanCode} applied!`,
-    };
-  }
-
-  // 2. Database promo code lookup if DB is configured
+  // 1. Database promo code lookup first so all CMS controls, limits, expiries, and active toggles apply
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
       const dbPromo = await db.query.promoCodes.findFirst({
-        where: and(
-          eq(promoCodes.code, cleanCode),
-          eq(promoCodes.isActive, true)
-        ),
+        where: eq(promoCodes.code, cleanCode),
       });
 
       if (dbPromo) {
+        if (!dbPromo.isActive) {
+          return { valid: false, message: "This promo code is currently inactive." };
+        }
         if (dbPromo.expiresAt && new Date(dbPromo.expiresAt).getTime() < Date.now()) {
           return { valid: false, message: "This promo code has expired." };
         }
@@ -653,7 +631,26 @@ export async function validateUniversalPromoCode(code: string, applicableType: s
       }
     }
   } catch (err) {
-    console.warn("DB promo lookup error:", err);
+    console.warn("DB promo lookup error, falling back:", err);
+  }
+
+  // 2. Offline / mock fallback for development without a configured database
+  const staticPromos: Record<string, { type: "percentage" | "fixed"; value: number }> = {
+    "YASPRO10": { type: "percentage", value: 10 },
+    "YAS20": { type: "percentage", value: 20 },
+    "CREATOR50": { type: "fixed", value: 50 },
+    "VIPYAS": { type: "percentage", value: 25 },
+    "RAMADAN": { type: "percentage", value: 15 },
+  };
+
+  if ((!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) && staticPromos[cleanCode]) {
+    return {
+      valid: true,
+      code: cleanCode,
+      discountType: staticPromos[cleanCode].type,
+      discountValue: staticPromos[cleanCode].value,
+      message: `Promo code ${cleanCode} applied!`,
+    };
   }
 
   return { valid: false, message: "Invalid promo code or no longer active." };

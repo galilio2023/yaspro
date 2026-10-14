@@ -25,13 +25,6 @@ export function useOffersBooking() {
   const [selectedOfferId, updateSelectedOfferId] = useState<string>(fallbackOfferId);
   const [prevInitialPkg, setPrevInitialPkg] = useState<string | null>(initialPkg || null);
 
-  if (initialPkg && initialPkg !== prevInitialPkg) {
-    setPrevInitialPkg(initialPkg);
-    if (OFFERS_AND_BUNDLES.some((o) => o.id === initialPkg) && initialPkg !== selectedOfferId) {
-      updateSelectedOfferId(initialPkg);
-    }
-  }
-
   const [date, setDate] = useState<string>("");
   const [timeSlot, setTimeSlot] = useState<string>("");
   const [contact, setContact] = useState<OffersBookingContact>(INITIAL_CONTACT);
@@ -41,7 +34,6 @@ export function useOffersBooking() {
   const [appliedPromo, setAppliedPromo] = useState<AppliedOffersPromo | null>(null);
   const promoRequest = useRef(0);
   const [promoError, setPromoError] = useState<string | null>(null);
-
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -69,6 +61,17 @@ export function useOffersBooking() {
       grandTotal,
     };
   }, [selectedOffer, appliedPromo]);
+
+  if (initialPkg && initialPkg !== prevInitialPkg) {
+    setPrevInitialPkg(initialPkg);
+    if (OFFERS_AND_BUNDLES.some((o) => o.id === initialPkg) && initialPkg !== selectedOfferId) {
+      updateSelectedOfferId(initialPkg);
+      setDate("");
+      setTimeSlot("");
+      setAppliedPromo(null);
+      setPromoError(null);
+    }
+  }
 
   const setSelectedOfferId = useCallback((offerId: string) => {
     if (offerId === selectedOfferId) return;

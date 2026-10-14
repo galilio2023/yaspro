@@ -57,9 +57,9 @@ async function seedInitialAddonsIfEmpty() {
       }
     }
 
-    // Props (seed representative first 20 items to prevent huge batch)
+    // Props
     if (Array.isArray(catalogData.props)) {
-      for (const item of catalogData.props.slice(0, 25)) {
+      for (const item of catalogData.props) {
         toInsert.push({
           id: `prop-${item.id}`,
           category: "props",

@@ -55,15 +55,7 @@ async function runSync() {
     CREATE INDEX IF NOT EXISTS "booking_sessions_studio_schedule_idx" ON "booking_sessions" USING btree ("studio_id","status","scheduled_at");
   `;
 
-  // Backfill session position 1 for existing bookings with studio_id if not present
-  await sql`
-    INSERT INTO "booking_sessions" ("booking_id", "position", "studio_id", "scheduled_at", "duration_hours", "headcount", "status")
-    SELECT "id", 1, "studio_id", "scheduled_at", "duration_hours", "headcount", "status"
-    FROM "bookings"
-    WHERE "studio_id" IS NOT NULL
-    ON CONFLICT ("booking_id", "position") DO NOTHING;
-  `;
-  console.log("✓ booking_sessions table synced and backfilled.");
+  console.log("✓ booking_sessions table synced.");
 
   // 3. Ensure Enums
   console.log("Checking and syncing custom enums...");
