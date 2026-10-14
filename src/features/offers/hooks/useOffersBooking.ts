@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { OFFERS_AND_BUNDLES } from "../data";
 import { AppliedOffersPromo, OffersBookingContact, OffersPricingBreakdown } from "../types";
@@ -16,25 +17,12 @@ const INITIAL_CONTACT: OffersBookingContact = {
 };
 
 export function useOffersBooking() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<number>(1);
   const [selectedOfferId, updateSelectedOfferId] = useState<string>("5-hour-bundles");
   const [date, setDate] = useState<string>("");
   const [timeSlot, setTimeSlot] = useState<string>("");
   const [contact, setContact] = useState<OffersBookingContact>(INITIAL_CONTACT);
-
-  // Parse deep-linked package query param on initial mount (e.g. /offers?package=10-hour-bundles)
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const pkg = params.get("package") || params.get("offer") || params.get("id");
-      if (pkg && OFFERS_AND_BUNDLES.some((o) => o.id === pkg)) {
-        updateSelectedOfferId(pkg);
-      }
-    } catch {
-      // Ignore URL parsing errors
-    }
-  }, []);
 
   // Promo code state
   const [promoCodeInput, setPromoCodeInput] = useState<string>("");
@@ -79,6 +67,13 @@ export function useOffersBooking() {
     setAppliedPromo((promo) => promo?.eligibleOfferIds && !promo.eligibleOfferIds.includes(offerId) ? null : promo);
     setPromoError(null);
   }, [selectedOfferId]);
+
+  const pkg = searchParams?.get("package") || searchParams?.get("offer") || searchParams?.get("id");
+  useEffect(() => {
+    if (pkg && OFFERS_AND_BUNDLES.some((o) => o.id === pkg)) {
+      setSelectedOfferId(pkg);
+    }
+  }, [pkg, setSelectedOfferId]);
 
   const applyPromo = useCallback(async (code: string) => {
     const request = ++promoRequest.current;
