@@ -332,7 +332,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                       {/* Featured Badge */}
                       {card.isFeatured && (
                         <div className="absolute top-2 start-2 sm:top-3 sm:start-3 z-10">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wide uppercase bg-brand-mauve text-slate-950 shadow-md">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wide uppercase bg-brand-violet/40 text-brand-lavender border border-brand-mauve/30 backdrop-blur-md shadow-md">
                             <Sparkles size={11} />
                             <span>{isArabic ? "باقات التوفير" : "Best Value"}</span>
                           </span>
@@ -415,7 +415,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                     <button
                       type="button"
                       onClick={handleModalClose}
-                      className="px-6 py-2.5 rounded-full bg-white text-black font-semibold text-sm hover:bg-zinc-200 transition-colors"
+                      className="px-6 py-2.5 rounded-full btn-brand text-sm cursor-pointer"
                     >
                       {isArabic ? "إغلاق" : "Close"}
                     </button>
@@ -544,12 +544,12 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                       />
                     </div>
 
-                    {/* Bottom CTA Button (Let's Talk ↗ styled like 2.png) */}
+                    {/* Bottom CTA Button (Let's Talk ↗) */}
                     <div className="pt-2">
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-white text-black font-semibold text-base sm:text-sm min-h-[44px] hover:bg-zinc-200 transition-all duration-200 shadow-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full btn-brand text-base sm:text-sm min-h-[44px] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         {isSubmitting ? (
                           <>

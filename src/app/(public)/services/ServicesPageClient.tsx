@@ -387,8 +387,8 @@ export function ServicesPageClient() {
               className={cn(
                 "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer",
                 activeCategory === "all"
-                  ? "bg-brand-mauve text-slate-950 shadow-md shadow-brand-violet/20"
-                  : "text-zinc-300 hover:text-white hover:bg-white/5"
+                  ? "bg-brand-violet text-white border border-brand-mauve/40 shadow-md shadow-brand-violet/25"
+                  : "text-zinc-300 hover:text-white hover:bg-white/5 border border-transparent"
               )}
             >
               {isArabic ? "كافة الخدمات (7)" : "All 7 Services"}
@@ -399,8 +399,8 @@ export function ServicesPageClient() {
               className={cn(
                 "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer",
                 activeCategory === "studios"
-                  ? "bg-brand-mauve text-slate-950 shadow-md shadow-brand-violet/20"
-                  : "text-zinc-300 hover:text-white hover:bg-white/5"
+                  ? "bg-brand-violet text-white border border-brand-mauve/40 shadow-md shadow-brand-violet/25"
+                  : "text-zinc-300 hover:text-white hover:bg-white/5 border border-transparent"
               )}
             >
               {isArabic ? "الاستوديوهات والبودكاست" : "Studios & Suites"}
@@ -411,8 +411,8 @@ export function ServicesPageClient() {
               className={cn(
                 "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer",
                 activeCategory === "broadcast"
-                  ? "bg-brand-mauve text-slate-950 shadow-md shadow-brand-violet/20"
-                  : "text-zinc-300 hover:text-white hover:bg-white/5"
+                  ? "bg-brand-violet text-white border border-brand-mauve/40 shadow-md shadow-brand-violet/25"
+                  : "text-zinc-300 hover:text-white hover:bg-white/5 border border-transparent"
               )}
             >
               {isArabic ? "البث المباشر والتصوير الميداني" : "Broadcast & Field"}
@@ -423,8 +423,8 @@ export function ServicesPageClient() {
               className={cn(
                 "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer",
                 activeCategory === "gear"
-                  ? "bg-brand-mauve text-slate-950 shadow-md shadow-brand-violet/20"
-                  : "text-zinc-300 hover:text-white hover:bg-white/5"
+                  ? "bg-brand-violet text-white border border-brand-mauve/40 shadow-md shadow-brand-violet/25"
+                  : "text-zinc-300 hover:text-white hover:bg-white/5 border border-transparent"
               )}
             >
               {isArabic ? "المعدات وباقات السوشيال" : "Gear & Packages"}
@@ -472,7 +472,7 @@ export function ServicesPageClient() {
 
                   {/* Top Badge */}
                   <div className="absolute top-4 start-4 z-10">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-brand-mauve text-slate-950 shadow-md">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-brand-violet/40 text-brand-lavender border border-brand-mauve/30 backdrop-blur-md shadow-md">
                       <Sparkles size={11} />
                       <span>{isArabic ? service.badgeAr : service.badgeEn}</span>
                     </span>
@@ -520,7 +520,7 @@ export function ServicesPageClient() {
                       <button
                         type="button"
                         onClick={() => handleOpenInquiry(service)}
-                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs sm:text-sm transition-all shadow-md shadow-brand-violet/20 cursor-pointer active:scale-[0.98]"
+                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full btn-brand text-xs sm:text-sm cursor-pointer active:scale-[0.98]"
                       >
                         <PhoneCall size={14} />
                         <span>{isArabic ? service.ctaAr : service.ctaEn}</span>
@@ -528,7 +528,7 @@ export function ServicesPageClient() {
                     ) : (
                       <Link
                         href={service.href || "#"}
-                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs sm:text-sm transition-all shadow-md shadow-brand-violet/20 cursor-pointer active:scale-[0.98]"
+                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full btn-brand text-xs sm:text-sm cursor-pointer active:scale-[0.98]"
                       >
                         <span>{isArabic ? service.ctaAr : service.ctaEn}</span>
                         <ArrowRight size={14} className="rtl:rotate-180" />
@@ -596,7 +596,7 @@ export function ServicesPageClient() {
                   <button
                     type="button"
                     onClick={handleCloseInquiry}
-                    className="px-6 py-2.5 rounded-full bg-brand-mauve text-slate-950 font-bold text-xs transition-transform active:scale-95"
+                    className="px-6 py-2.5 rounded-full btn-brand text-xs transition-transform active:scale-95"
                   >
                     {isArabic ? "حسناً، إغلاق" : "Done"}
                   </button>
@@ -682,7 +682,7 @@ export function ServicesPageClient() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs transition-all disabled:opacity-50 cursor-pointer shadow-md shadow-brand-violet/20"
+                      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full btn-brand text-xs transition-all disabled:opacity-50 cursor-pointer"
                     >
                       {isSubmitting ? (
                         <>
