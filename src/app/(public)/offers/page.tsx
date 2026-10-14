@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { OffersPageClient } from "./OffersPageClient";
 import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
@@ -76,7 +77,9 @@ export default function OffersPage() {
   return (
     <>
       <JsonLd data={OFFERS_CATALOG_SCHEMA} />
-      <OffersPageClient />
+      <Suspense fallback={<div className="min-h-screen bg-background" />}>
+        <OffersPageClient />
+      </Suspense>
     </>
   );
 }

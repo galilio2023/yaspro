@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useSearchParams } from "next/navigation";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { OFFERS_AND_BUNDLES } from "../data";
 import { AppliedOffersPromo, OffersBookingContact, OffersPricingBreakdown } from "../types";
 import { getOffersDiscount } from "../pricing";
@@ -16,6 +17,7 @@ const INITIAL_CONTACT: OffersBookingContact = {
 };
 
 export function useOffersBooking() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<number>(1);
   const [selectedOfferId, updateSelectedOfferId] = useState<string>("5-hour-bundles");
   const [date, setDate] = useState<string>("");
@@ -65,6 +67,13 @@ export function useOffersBooking() {
     setAppliedPromo((promo) => promo?.eligibleOfferIds && !promo.eligibleOfferIds.includes(offerId) ? null : promo);
     setPromoError(null);
   }, [selectedOfferId]);
+
+  const pkg = searchParams?.get("package") || searchParams?.get("offer") || searchParams?.get("id");
+  useEffect(() => {
+    if (pkg && OFFERS_AND_BUNDLES.some((o) => o.id === pkg)) {
+      setSelectedOfferId(pkg);
+    }
+  }, [pkg, setSelectedOfferId]);
 
   const applyPromo = useCallback(async (code: string) => {
     const request = ++promoRequest.current;
