@@ -1,6 +1,7 @@
 import HeroSection from "@/components/sections/HeroSection";
+import { OffersPreviewSection } from "@/components/sections/OffersPreviewSection";
+import { GearPreviewSection } from "@/components/sections/GearPreviewSection";
 import { PartnersMarquee } from "@/components/sections/PartnersMarquee";
-import { ServicesSection } from "@/components/sections/ServicesSection";
 import { VirtualStudioSection } from "@/components/sections/VirtualStudioSection";
 import { PortfolioSection } from "@/components/sections/PortfolioSection";
 import InfluencersSection from "@/components/sections/InfluencersSection";
@@ -22,8 +23,11 @@ export default function HomePage() {
       {/* Above the fold */}
       <HeroSection />
 
-      {/* Second Section: Shape Your Content With Us */}
-      <ServicesSection />
+      {/* Offers & Turnkey Production Bundles Showcase */}
+      <OffersPreviewSection />
+
+      {/* Cinema Gear & Equipment Rental Showcase */}
+      <GearPreviewSection />
 
       {/* Main Feature Sections */}
       <VirtualStudioSection />

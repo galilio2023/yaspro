@@ -1,0 +1,153 @@
+"use client";
+
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, ChevronRight } from "lucide-react";
+import { Container } from "@/components/ui/container";
+import { Section } from "@/components/ui/section";
+import { useLanguage } from "@/components/providers/LanguageProvider";
+import { GEAR_DATA } from "@/features/gear/data";
+import { formatAED } from "@/features/booking/components/ui/BookingKit";
+
+const FEATURED_GEAR_IDS = [
+  "arri-alexa-mini-lf",
+  "sony-fx6-run-gun-kit",
+  "red-v-raptor-xl",
+  "cooke-s4i-set",
+];
+
+export function GearPreviewSection() {
+  const { isArabic } = useLanguage();
+
+  const gearItems = GEAR_DATA.filter((item) =>
+    FEATURED_GEAR_IDS.includes(item.id)
+  );
+
+  return (
+    <Section
+      id="gear-preview"
+      aria-labelledby="gear-preview-title"
+      className="bg-[#070709] relative overflow-hidden py-8 sm:py-10 border-b border-white/[0.06]"
+    >
+      {/* Subtle Studio Key Light */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-80 sm:w-[460px] h-28 bg-brand-violet/15 blur-[80px] rounded-full -z-10"
+      />
+
+      <Container className="relative z-10">
+        {/* ── Sleek, Single-Line Header (No Tabs) ── */}
+        <div
+          dir={isArabic ? "rtl" : "ltr"}
+          className="flex items-center justify-between gap-4 mb-5 pb-3 border-b border-white/[0.06]"
+        >
+          <div>
+            <div className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase text-brand-mauve font-semibold mb-0.5">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-mauve opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-mauve" />
+              </span>
+              <span>
+                {isArabic ? "تأجير معدات التصوير والسينما" : "CINEMA RENTAL FLEET · DUBAI"}
+              </span>
+            </div>
+
+            <h2
+              id="gear-preview-title"
+              className="text-base sm:text-xl font-bold text-white tracking-tight font-display rtl:font-arabic"
+            >
+              {isArabic ? "تأجير الكاميرات والمعدات السينمائية" : "Cinema Gear & Equipment Rental"}
+            </h2>
+          </div>
+
+          {/* Direct Link to Full Gear Catalog */}
+          <Link
+            href="/shop"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-300 hover:text-white transition-colors cursor-pointer shrink-0"
+          >
+            <span>{isArabic ? "عرض كافة المعدات (20+)" : "View all gear (20+)"}</span>
+            <ArrowRight
+              size={13}
+              className={`text-brand-mauve shrink-0 ${isArabic ? "rotate-180" : ""}`}
+            />
+          </Link>
+        </div>
+
+        {/* ── Clean 4-Card Grid (Fast Scanning, No Data Clutter) ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+          {gearItems.map((item) => (
+            <div
+              key={item.id}
+              dir={isArabic ? "rtl" : "ltr"}
+              className="group relative rounded-xl border border-white/[0.08] bg-[#0c0c11] hover:border-brand-mauve/40 transition-all duration-200 flex flex-col overflow-hidden hover:-translate-y-0.5 shadow-sm shadow-black/40"
+            >
+              {/* Thumbnail */}
+              <div className="relative h-32 sm:h-36 w-full overflow-hidden bg-zinc-900">
+                <Image
+                  src={item.image || "/images/gear/arri-alexa-mini-lf.jpg"}
+                  alt={isArabic && item.arabicName ? item.arabicName : item.name}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c11] via-transparent to-black/30" />
+
+                {/* Badge Overlay */}
+                <div className="absolute top-2 start-2 flex items-center gap-1 z-10">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-brand-violet text-white border border-brand-mauve/40 backdrop-blur-md">
+                    {item.categoryLabel}
+                  </span>
+                  {item.isPopular && (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-white border border-white/30 backdrop-blur-md">
+                      {isArabic ? "الأكثر طلباً" : "Popular"}
+                    </span>
+                  )}
+                </div>
+
+                <span className="absolute bottom-2 end-2 font-mono text-[9px] uppercase text-zinc-300 bg-black/75 px-1.5 py-0.5 rounded border border-white/10 backdrop-blur-md">
+                  {isArabic ? "متاح فوري" : "In Stock"}
+                </span>
+              </div>
+
+              {/* Card Details */}
+              <div className="p-3 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-white font-display rtl:font-arabic truncate mb-0.5 group-hover:text-brand-mauve-soft transition-colors">
+                    {isArabic && item.arabicName ? item.arabicName : item.name}
+                  </h3>
+                  <p className="text-[11px] text-zinc-400 truncate mb-2.5">
+                    {item.specs?.[0] || (isArabic ? "معدات سينمائية معتمدة" : "Broadcast certified")}
+                  </p>
+                </div>
+
+                {/* Price & Action */}
+                <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between gap-2">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-sm sm:text-base font-bold text-white font-display">
+                      {formatAED(item.dailyRate)}
+                    </span>
+                    <span className="text-[10px] text-zinc-500 font-mono">
+                      {isArabic ? "/ يوم" : "/ day"}
+                    </span>
+                  </div>
+
+                  <Link
+                    href={`/shop?category=${item.category}`}
+                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full font-semibold text-xs text-white bg-white/10 hover:bg-brand-mauve hover:text-black border border-white/10 hover:border-brand-mauve transition-all duration-150 cursor-pointer whitespace-nowrap active:scale-95"
+                  >
+                    <span>{isArabic ? "استئجار" : "Rent"}</span>
+                    <ChevronRight
+                      size={12}
+                      className={`shrink-0 ${isArabic ? "rotate-180" : ""}`}
+                    />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </Section>
+  );
+}

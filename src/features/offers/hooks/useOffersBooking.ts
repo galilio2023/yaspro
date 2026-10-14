@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { OFFERS_AND_BUNDLES } from "../data";
 import { AppliedOffersPromo, OffersBookingContact, OffersPricingBreakdown } from "../types";
 import { getOffersDiscount } from "../pricing";
@@ -21,6 +21,20 @@ export function useOffersBooking() {
   const [date, setDate] = useState<string>("");
   const [timeSlot, setTimeSlot] = useState<string>("");
   const [contact, setContact] = useState<OffersBookingContact>(INITIAL_CONTACT);
+
+  // Parse deep-linked package query param on initial mount (e.g. /offers?package=10-hour-bundles)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const pkg = params.get("package") || params.get("offer") || params.get("id");
+      if (pkg && OFFERS_AND_BUNDLES.some((o) => o.id === pkg)) {
+        updateSelectedOfferId(pkg);
+      }
+    } catch {
+      // Ignore URL parsing errors
+    }
+  }, []);
 
   // Promo code state
   const [promoCodeInput, setPromoCodeInput] = useState<string>("");
