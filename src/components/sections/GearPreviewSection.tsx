@@ -7,22 +7,68 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import { GEAR_DATA } from "@/features/gear/data";
-import { formatAED } from "@/features/booking/components/ui/BookingKit";
 
-const FEATURED_GEAR_IDS = [
-  "arri-alexa-mini-lf",
-  "sony-fx6-run-gun-kit",
-  "red-v-raptor-xl",
-  "cooke-s4i-set",
+interface GearCategoryPreviewItem {
+  id: string;
+  categorySlug: string;
+  nameEn: string;
+  nameAr: string;
+  taglineEn: string;
+  taglineAr: string;
+  badgeEn: string;
+  badgeAr: string;
+  image: string;
+}
+
+const GEAR_CATEGORIES_PREVIEW: GearCategoryPreviewItem[] = [
+  {
+    id: "cameras",
+    categorySlug: "cameras",
+    nameEn: "Cinema Cameras",
+    nameAr: "كاميرات سينمائية",
+    taglineEn: "ARRI Alexa · RED 8K · Sony Cinema",
+    taglineAr: "أنظمة ARRI و RED وسلسلة Sony FX",
+    badgeEn: "8K & 4K Systems",
+    badgeAr: "أنظمة 8K و 4K",
+    image: "/images/gear/category-cameras.jpg",
+  },
+  {
+    id: "lenses",
+    categorySlug: "lenses",
+    nameEn: "Cinema Lenses",
+    nameAr: "عدسات سينمائية",
+    taglineEn: "Cooke S4/i · Primes & Anamorphics",
+    taglineAr: "أطقم Cooke برايم وعدسات أنامورفيك",
+    badgeEn: "Full Frame & S35",
+    badgeAr: "إطار كامل وسوبر 35",
+    image: "/images/gear/category-lenses.jpg",
+  },
+  {
+    id: "lighting",
+    categorySlug: "lighting",
+    nameEn: "Lighting & Grip",
+    nameAr: "إضاءات الاستوديو",
+    taglineEn: "Aputure 600c · Astera Titan Tubes",
+    taglineAr: "أجهزة Aputure وأنابيب Astera LED",
+    badgeEn: "RGBWW & Daylight",
+    badgeAr: "إضاءة نهارية وألوان RGB",
+    image: "/images/gear/category-lighting.jpg",
+  },
+  {
+    id: "audio",
+    categorySlug: "audio",
+    nameEn: "Sound & Audio Rigs",
+    nameAr: "معدات الصوت الميداني",
+    taglineEn: "Sennheiser MKH · Shure · Wireless",
+    taglineAr: "ميكروفونات سنهايزر وشور ووحدات لاسلكية",
+    badgeEn: "32-Bit Float & Mics",
+    badgeAr: "صوت احترافي للبث",
+    image: "/images/gear/category-audio.jpg",
+  },
 ];
 
 export function GearPreviewSection() {
   const { isArabic } = useLanguage();
-
-  const gearItems = GEAR_DATA.filter((item) =>
-    FEATURED_GEAR_IDS.includes(item.id)
-  );
 
   return (
     <Section
@@ -57,7 +103,7 @@ export function GearPreviewSection() {
               id="gear-preview-title"
               className="text-base sm:text-xl font-bold text-white tracking-tight font-display rtl:font-arabic"
             >
-              {isArabic ? "تأجير الكاميرات والمعدات السينمائية" : "Cinema Gear & Equipment Rental"}
+              {isArabic ? "أقسام ومعدات التصوير السينمائي" : "Cinema Equipment Categories"}
             </h2>
           </div>
 
@@ -74,35 +120,30 @@ export function GearPreviewSection() {
           </Link>
         </div>
 
-        {/* ── Clean 4-Card Grid (Fast Scanning, No Data Clutter) ── */}
+        {/* ── Clean 4-Card Category Grid (Fast Scanning, No Prices) ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-          {gearItems.map((item) => (
+          {GEAR_CATEGORIES_PREVIEW.map((item) => (
             <div
               key={item.id}
               dir={isArabic ? "rtl" : "ltr"}
               className="group relative rounded-xl border border-white/[0.08] bg-[#0c0c11] hover:border-brand-mauve/40 transition-all duration-200 flex flex-col overflow-hidden hover:-translate-y-0.5 shadow-sm shadow-black/40"
             >
-              {/* Thumbnail */}
-              <div className="relative h-32 sm:h-36 w-full overflow-hidden bg-zinc-900">
+              {/* Thumbnail with Generated Category Visual */}
+              <div className="relative h-36 sm:h-40 w-full overflow-hidden bg-zinc-900">
                 <Image
-                  src={item.image || "/images/gear/arri-alexa-mini-lf.jpg"}
-                  alt={isArabic && item.arabicName ? item.arabicName : item.name}
+                  src={item.image}
+                  alt={isArabic ? item.nameAr : item.nameEn}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                  className="object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c11] via-transparent to-black/30" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c11] via-transparent to-black/35" />
 
                 {/* Badge Overlay */}
-                <div className="absolute top-2 start-2 flex items-center gap-1 z-10">
+                <div className="absolute top-2 start-2 z-10">
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-brand-violet text-white border border-brand-mauve/40 backdrop-blur-md">
-                    {item.categoryLabel}
+                    {isArabic ? item.badgeAr : item.badgeEn}
                   </span>
-                  {item.isPopular && (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-white border border-white/30 backdrop-blur-md">
-                      {isArabic ? "الأكثر طلباً" : "Popular"}
-                    </span>
-                  )}
                 </div>
 
                 <span className="absolute bottom-2 end-2 font-mono text-[9px] uppercase text-zinc-300 bg-black/75 px-1.5 py-0.5 rounded border border-white/10 backdrop-blur-md">
@@ -111,32 +152,27 @@ export function GearPreviewSection() {
               </div>
 
               {/* Card Details */}
-              <div className="p-3 flex-1 flex flex-col justify-between">
+              <div className="p-3.5 flex-1 flex flex-col justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-white font-display rtl:font-arabic truncate mb-0.5 group-hover:text-brand-mauve-soft transition-colors">
-                    {isArabic && item.arabicName ? item.arabicName : item.name}
+                    {isArabic ? item.nameAr : item.nameEn}
                   </h3>
-                  <p className="text-[11px] text-zinc-400 truncate mb-2.5">
-                    {item.specs?.[0] || (isArabic ? "معدات سينمائية معتمدة" : "Broadcast certified")}
+                  <p className="text-[11px] text-zinc-400 truncate mb-3">
+                    {isArabic ? item.taglineAr : item.taglineEn}
                   </p>
                 </div>
 
-                {/* Price & Action */}
+                {/* Clean Bottom Action - No Price */}
                 <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between gap-2">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-sm sm:text-base font-bold text-white font-display">
-                      {formatAED(item.dailyRate)}
-                    </span>
-                    <span className="text-[10px] text-zinc-500 font-mono">
-                      {isArabic ? "/ يوم" : "/ day"}
-                    </span>
-                  </div>
+                  <span className="font-mono text-[10px] uppercase text-zinc-400 tracking-wider">
+                    {isArabic ? "متاح للطلب الميداني" : "Rental Fleet"}
+                  </span>
 
                   <Link
-                    href={`/shop?category=${item.category}`}
+                    href={`/shop?category=${item.categorySlug}`}
                     className="inline-flex items-center gap-1 px-3 py-1 rounded-full font-semibold text-xs text-white bg-white/10 hover:bg-brand-mauve hover:text-black border border-white/10 hover:border-brand-mauve transition-all duration-150 cursor-pointer whitespace-nowrap active:scale-95"
                   >
-                    <span>{isArabic ? "استئجار" : "Rent"}</span>
+                    <span>{isArabic ? "استكشف" : "Explore"}</span>
                     <ChevronRight
                       size={12}
                       className={`shrink-0 ${isArabic ? "rotate-180" : ""}`}
