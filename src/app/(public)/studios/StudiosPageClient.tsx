@@ -18,7 +18,6 @@ import { formatCurrency, cn } from "@/lib/utils";
 import { studioSprings } from "@/lib/studio-motion";
 import { SOUNDSTAGES_CATALOG, SOUNDSTAGE_CATEGORIES } from "@/features/studios/data";
 import type { StudioCategory, SoundstageDetail } from "@/features/studios/types";
-import { TURNKEY_STUDIO_PACKAGES } from "@/features/booking/constants";
 
 export interface StudiosPageClientProps {
   initialStudios?: SoundstageDetail[];
@@ -34,8 +33,6 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
     activeCategory === "all"
       ? studiosCatalog
       : studiosCatalog.filter((s) => s.category === activeCategory);
-
-  const turnkeyPackages = TURNKEY_STUDIO_PACKAGES.filter((p) => p.id !== "none");
 
   return (
     <div className="w-full bg-[#060608] text-white min-h-screen selection:bg-brand-mauve selection:text-black">
@@ -73,12 +70,12 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                 <span>{isArabic ? "احجز استوديو" : "Book a Studio"}</span>
               </Link>
 
-              <a
-                href="#packages"
+              <Link
+                href="/offers"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-zinc-200 text-xs sm:text-sm font-medium transition-all"
               >
-                <span>{isArabic ? "الباقات المتكاملة" : "Turnkey Deals"}</span>
-              </a>
+                <span>{isArabic ? "العروض والباقات" : "Offers & Bundles"}</span>
+              </Link>
 
               <a
                 href="https://wa.me/971554010465?text=Hello%20Yas%20Pro%2C%20I%20would%20like%20to%20schedule%20a%20walkthrough%20of%20your%20soundstages%20at%20Iris%20Bay"
@@ -319,85 +316,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
         </div>
       </section>
 
-      {/* ── 3. Turnkey Deals (Clean 3-Card Grid) ── */}
-      <section id="packages" className="py-12 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8">
-            <div>
-              <h2 className="text-xl sm:text-3xl font-black text-white font-display">
-                {isArabic ? "باقات الاستوديو والإنتاج" : "Turnkey Production Deals"}
-              </h2>
-            </div>
-            <p className="text-xs text-zinc-400 max-w-sm">
-              {isArabic
-                ? "تشمل الاستوديو، والمعدات، وطاقم التشغيل الفني بأسعار تفضيلية."
-                : "Stage, gear locker, and dedicated crew bundled at preferential lockout rates."}
-            </p>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
-            {turnkeyPackages.map((pkg) => (
-              <div
-                key={pkg.id}
-                className={cn(
-                  "relative flex flex-col justify-between p-5 sm:p-6 rounded-2xl border transition-all duration-200 shadow-lg",
-                  pkg.isPopular
-                    ? "bg-[#111116] border-brand-mauve/60 shadow-brand-violet/20"
-                    : "bg-[#0c0c10] border-white/[0.08] hover:border-white/20"
-                )}
-              >
-                {pkg.isPopular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-brand-mauve text-slate-950 font-bold text-[9px] tracking-wider uppercase font-mono shadow-sm">
-                    {isArabic ? "الأكثر طلباً" : "Popular"}
-                  </div>
-                )}
-
-                <div>
-                  <h3 className="text-base sm:text-lg font-bold text-white font-display mb-1">
-                    {isArabic ? (pkg.arabicName || pkg.name) : pkg.name}
-                  </h3>
-
-                  <p className="text-xs text-zinc-400 leading-relaxed mb-4">
-                    {isArabic ? (pkg.arabicDescription || pkg.description) : pkg.description}
-                  </p>
-
-                  <div className="mb-4 pb-4 border-b border-white/[0.08]">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-2xl sm:text-3xl font-black text-brand-mauve font-display">
-                        {formatCurrency(pkg.rate)}
-                      </span>
-                      <span className="text-xs text-zinc-400">
-                        / {pkg.includedHours} {isArabic ? "ساعات" : "hours"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <ul className="space-y-2 mb-6">
-                    {((isArabic && pkg.arabicFeatures ? pkg.arabicFeatures : pkg.features) || []).map((feat: string, fIdx: number) => (
-                      <li key={fIdx} className="flex items-start gap-2 text-xs text-zinc-300">
-                        <CheckCircle2 size={12} className="text-brand-mauve shrink-0 mt-0.5" />
-                        <span className="leading-snug">{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <Link
-                  href={`/studio-booking?package=${pkg.id}`}
-                  className={cn(
-                    "w-full py-2.5 px-3 rounded-xl text-center text-xs font-bold transition-all shadow-sm active:scale-98",
-                    pkg.isPopular
-                      ? "bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950"
-                      : "bg-white/10 hover:bg-white/20 text-white"
-                  )}
-                >
-                  {isArabic ? "اختر هذه الباقة" : "Select Deal"}
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── 5. Compact Gear Locker Strip ── */}
       <section className="py-8 bg-[#09090c] border-t border-b border-white/[0.08]">
