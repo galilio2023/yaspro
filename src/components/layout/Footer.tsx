@@ -32,7 +32,7 @@ interface FooterLink {
 const PRODUCTION_LINKS: readonly FooterLink[] = [
   { key: "footer.services.podcast", label: "Podcast Studio Booking", href: "/podcast-booking", icon: Radio },
   { key: "footer.services.socialMedia", label: "Social Media Packages", href: "/social-media-packages", icon: Video },
-  { key: "footer.services.studios", label: "Soundstages & Studios Hub", href: "/studios", icon: Calendar },
+  { key: "footer.services.studios", label: "Production Services Hub", href: "/services", icon: Calendar },
   { key: "footer.services.gear", label: "Cinema Equipment Rental", href: "/shop", icon: Camera },
   { key: "footer.services.bundles", label: "Offers & Bundles", href: "/offers", icon: Layers },
   { key: "footer.services.virtual", label: "Virtual Production & VFX", href: "/#virtual-studio", icon: Wand2 },
