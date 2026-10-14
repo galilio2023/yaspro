@@ -224,15 +224,12 @@ export function ServicesPageClient() {
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const headingId = useId();
-
-  useFocusTrap({
-    isOpen: !!selectedInquiry,
-    onClose: () => setSelectedInquiry(null),
-    containerRef: dialogRef,
-  });
+  const submissionIdRef = useRef(0);
 
   const handleOpenInquiry = (service: ServiceCardData) => {
     if (!service.inquiryService) return;
+    submissionIdRef.current += 1;
+    setIsSubmitting(false);
     setSelectedInquiry({
       id: service.id,
       type: service.inquiryService,
@@ -254,6 +251,8 @@ export function ServicesPageClient() {
   };
 
   const handleCloseInquiry = () => {
+    submissionIdRef.current += 1;
+    setIsSubmitting(false);
     setSelectedInquiry(null);
     setName("");
     setEmail("");
@@ -264,24 +263,31 @@ export function ServicesPageClient() {
     setIsSubmitted(false);
   };
 
+  useFocusTrap({
+    isOpen: !!selectedInquiry,
+    onClose: handleCloseInquiry,
+    containerRef: dialogRef,
+  });
+
   const handleSubmitInquiry = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setSubmitError(null);
 
-    const fullMessage = subject.trim()
-      ? `[Subject: ${subject.trim()}]\n\n${message.trim()}`
-      : message.trim();
-
-    if (fullMessage.length < 10) {
+    const trimmedMessage = message.trim();
+    if (trimmedMessage.length < 10) {
       setSubmitError(
         isArabic
           ? "يرجى كتابة تفاصيل متطلباتك بحد أدنى 10 أحرف."
           : "Please describe your project requirements in at least 10 characters."
       );
-      setIsSubmitting(false);
       return;
     }
+
+    const fullMessage = subject.trim()
+      ? `[Subject: ${subject.trim()}]\n\n${trimmedMessage}`
+      : trimmedMessage;
+    const submissionId = ++submissionIdRef.current;
+    setIsSubmitting(true);
 
     try {
       const res = await submitInquiry({
@@ -292,6 +298,8 @@ export function ServicesPageClient() {
         subject: subject.trim(),
         message: fullMessage,
       });
+
+      if (submissionId !== submissionIdRef.current) return;
 
       if (res && res.success) {
         setIsSubmitted(true);
@@ -304,13 +312,16 @@ export function ServicesPageClient() {
         );
       }
     } catch {
+      if (submissionId !== submissionIdRef.current) return;
       setSubmitError(
         isArabic
           ? "حدث خطأ غير متوقع، يرجى المحاولة ثانية."
           : "An unexpected error occurred. Please try again."
       );
     } finally {
-      setIsSubmitting(false);
+      if (submissionId === submissionIdRef.current) {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -574,6 +585,7 @@ export function ServicesPageClient() {
                 <button
                   type="button"
                   onClick={handleCloseInquiry}
+                  aria-label={isArabic ? "إغلاق" : "Close"}
                   className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                 >
                   <X size={16} />
@@ -611,10 +623,11 @@ export function ServicesPageClient() {
                   )}
 
                   <div>
-                    <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                    <label htmlFor={`${headingId}-name`} className="block text-xs font-medium text-zinc-300 mb-1.5">
                       {isArabic ? "الاسم الكامل *" : "Full Name *"}
                     </label>
                     <input
+                      id={`${headingId}-name`}
                       type="text"
                       required
                       value={name}
@@ -626,10 +639,11 @@ export function ServicesPageClient() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                      <label htmlFor={`${headingId}-email`} className="block text-xs font-medium text-zinc-300 mb-1.5">
                         {isArabic ? "البريد الإلكتروني *" : "Email Address *"}
                       </label>
                       <input
+                        id={`${headingId}-email`}
                         type="email"
                         required
                         value={email}
@@ -639,10 +653,11 @@ export function ServicesPageClient() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                      <label htmlFor={`${headingId}-phone`} className="block text-xs font-medium text-zinc-300 mb-1.5">
                         {isArabic ? "رقم الهاتف *" : "Phone Number *"}
                       </label>
                       <input
+                        id={`${headingId}-phone`}
                         type="tel"
                         required
                         value={phone}
@@ -654,10 +669,11 @@ export function ServicesPageClient() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+                    <label htmlFor={`${headingId}-message`} className="block text-xs font-medium text-zinc-300 mb-1.5">
                       {isArabic ? "تفاصيل المشروع والمتطلبات *" : "Project Requirements & Dates *"}
                     </label>
                     <textarea
+                      id={`${headingId}-message`}
                       required
                       rows={3}
                       value={message}
