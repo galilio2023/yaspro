@@ -8,15 +8,7 @@ export const bookingSubmissionSchema = z
     phone: z.string().trim().min(5, "Valid phone number required").max(30),
     company: z.string().trim().max(100).optional().default(""),
     studioId: z.string().min(1, "Studio selection is required"),
-    sessionType: z.enum([
-      "podcast",
-      "video_production",
-      "virtual_production",
-      "photography",
-      "interview",
-      "commercial",
-      "music_video",
-    ]),
+    sessionType: z.string().min(1, "Session type is required"),
     scheduledAt: z.string().min(1, "Scheduled date and time required"),
     durationHours: z.number().int().min(1).max(24).default(2),
     headcount: z.number().int().min(1).max(100).default(2),
@@ -73,6 +65,98 @@ export const bookingSubmissionSchema = z
   });
 
 export type BookingSubmissionInput = z.infer<typeof bookingSubmissionSchema>;
+
+export const podcastBookingSubmissionSchema = z.object({
+  packageId: z.string().min(1, "Package selection is required"),
+  packageName: z.string().min(1, "Package name is required"),
+  sessionsCount: z.number().int().min(1).default(1),
+  includeVideo: z.boolean().default(false),
+  needsEditing: z.boolean().default(false),
+  needsSocialClips: z.boolean().default(false),
+  fullName: z.string().trim().min(2, "Full name is required").max(100),
+  email: z.string().trim().email("Invalid email address").max(120),
+  phone: z.string().trim().min(5, "Valid phone number required").max(30),
+  company: z.string().trim().max(100).optional().default(""),
+  preferredDate: z.string().min(1, "Date is required"),
+  preferredTime: z.string().min(1, "Time is required"),
+  specialRequests: z.string().max(1000).optional().default(""),
+  promoCode: z.string().trim().max(30).optional().default(""),
+  totalAmount: z.number().nonnegative().optional(),
+});
+
+export type PodcastBookingSubmissionInput = z.infer<typeof podcastBookingSubmissionSchema>;
+
+export const offerClaimSubmissionSchema = z.object({
+  offerId: z.string().min(1, "Offer ID is required"),
+  offerTitle: z.string().min(1, "Offer title is required"),
+  offerCategory: z.enum(["bundle", "special"]).default("bundle"),
+  sessionsCount: z.number().int().min(1).default(1),
+  sessionsSchedule: z.array(z.object({
+    position: z.number().int(),
+    date: z.string().min(1),
+    timeSlot: z.string().min(1),
+    studioId: z.string().min(1),
+    notes: z.string().optional(),
+  })).min(1, "At least one session must be scheduled"),
+  name: z.string().trim().min(2, "Name is required").max(100),
+  email: z.string().trim().email("Valid email required").max(120),
+  phone: z.string().trim().min(5, "Valid phone number required").max(30),
+  company: z.string().trim().max(100).optional().default(""),
+  notes: z.string().max(1000).optional().default(""),
+  promoCode: z.string().trim().max(30).optional().default(""),
+});
+
+export type OfferClaimSubmissionInput = z.infer<typeof offerClaimSubmissionSchema>;
+
+export const gearOrderSubmissionSchema = z.object({
+  items: z.array(z.object({
+    gearId: z.string().min(1),
+    slug: z.string().min(1),
+    name: z.string().min(1),
+    quantity: z.number().int().min(1),
+    dailyRate: z.number().nonnegative(),
+    days: z.number().int().min(1),
+    lineTotal: z.number().nonnegative(),
+  })).min(1, "Please select at least one gear item"),
+  startDate: z.string().min(1, "Rental start date is required"),
+  endDate: z.string().min(1, "Rental end date is required"),
+  rentalDays: z.number().int().min(1).default(1),
+  fullName: z.string().trim().min(2, "Full name is required").max(100),
+  email: z.string().trim().email("Valid email is required").max(120),
+  phone: z.string().trim().min(5, "Valid phone number required").max(30),
+  company: z.string().trim().max(100).optional().default(""),
+  deliveryOption: z.enum(["pickup", "delivery"]).default("pickup"),
+  deliveryAddress: z.string().max(300).optional().default(""),
+  notes: z.string().max(1000).optional().default(""),
+  promoCode: z.string().trim().max(30).optional().default(""),
+});
+
+export type GearOrderSubmissionInput = z.infer<typeof gearOrderSubmissionSchema>;
+
+export const serviceInquirySubmissionSchema = z.object({
+  pillar: z.enum([
+    "general",
+    "studios",
+    "podcast",
+    "production",
+    "influencers",
+    "social_media",
+    "equipment_rental",
+    "outdoor_broadcast",
+  ]).default("general"),
+  targetId: z.string().optional().default(""),
+  targetName: z.string().optional().default(""),
+  name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
+  email: z.string().trim().email("Valid email address is required").max(120),
+  phone: z.string().trim().max(30).optional().default(""),
+  company: z.string().trim().max(100).optional().default(""),
+  budgetRange: z.string().max(100).optional().default(""),
+  timeline: z.string().max(100).optional().default(""),
+  goals: z.array(z.string()).optional().default([]),
+  message: z.string().trim().min(10, "Message must be at least 10 characters").max(3000),
+});
+
+export type ServiceInquirySubmissionInput = z.infer<typeof serviceInquirySubmissionSchema>;
 
 export const inquirySubmissionSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),

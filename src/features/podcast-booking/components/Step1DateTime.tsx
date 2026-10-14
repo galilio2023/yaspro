@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Clock, Calendar, Check, Mic2 } from "lucide-react";
 import { TIME_SLOTS } from "../data";
 import { PodcastSessionItem } from "../types";
 import { Counter, Panel, StepIntro, studioSprings } from "@/features/booking/components/ui/BookingKit";
 import { getLocalCalendarDate } from "@/features/gear/lib/rental-schedule";
+import { getPublicBlockedDates } from "@/lib/actions/schedule-blackouts";
+import type { BlockedSchedule } from "@/db/schema";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +31,20 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
       list.push({ iso, dayName, monthName, dayNum });
     }
     return list;
+  }, []);
+
+  const [blockedSchedules, setBlockedSchedules] = useState<BlockedSchedule[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getPublicBlockedDates({ scope: "podcast_booking" })
+      .then((records) => {
+        if (!cancelled) setBlockedSchedules(records);
+      })
+      .catch((err) => console.error("Error loading podcast blocked schedules:", err));
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
@@ -150,17 +166,26 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-2">
           {upcomingDates.map((item) => {
             const isSelected = session.date === item.iso;
+            const blackout = blockedSchedules.find(
+              (b) => item.iso >= b.startDate && item.iso <= b.endDate
+            );
+            const isBlocked = !!blackout && !blackout.startTime && !blackout.endTime;
+
             return (
               <motion.button
                 key={item.iso}
                 type="button"
+                disabled={isBlocked}
                 onClick={() => onChange({ date: item.iso })}
-                whileTap={{ scale: 0.96 }}
+                whileTap={isBlocked ? undefined : { scale: 0.96 }}
                 transition={studioSprings.snappy}
+                title={isBlocked ? `Blocked: ${blackout?.reason}` : undefined}
                 className={cn(
-                  "p-2.5 sm:p-3 rounded-2xl border text-center transition-all duration-200 flex flex-col items-center justify-center gap-1 cursor-pointer",
+                  "p-2.5 sm:p-3 rounded-2xl border text-center transition-all duration-200 flex flex-col items-center justify-center gap-1 cursor-pointer disabled:cursor-not-allowed",
                   isSelected
                     ? "bg-brand-violet text-white border-brand-mauve-soft font-bold shadow-[0_10px_25px_-8px_rgba(152,123,165,0.7)] scale-[1.02]"
+                    : isBlocked
+                    ? "bg-rose-500/[0.04] text-rose-400/40 border-rose-500/10 line-through"
                     : "bg-white/[0.02] text-zinc-300 border-white/[0.08] hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
                 )}
               >

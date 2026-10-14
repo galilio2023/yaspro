@@ -1,4 +1,5 @@
 import { getCachedStudios } from "@/lib/cached-queries";
+import { getPublicAddons } from "@/lib/actions/booking-addons";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { BookingWizard } from "@/features/booking/components/BookingWizard";
@@ -88,7 +89,11 @@ function BookingWizardLoading() {
 }
 
 export default async function StudioBookingPage() {
-  const cmsStudios = await getCachedStudios();
+  const [cmsStudios, addons] = await Promise.all([
+    getCachedStudios(),
+    getPublicAddons(),
+  ]);
+
   const studios = cmsStudios.filter((studio) => studio.isActive).map((studio) => ({
     id: studio.id,
     slug: studio.slug,
@@ -105,7 +110,7 @@ export default async function StudioBookingPage() {
         <StudioBookingPageHeader />
 
         <Suspense fallback={<BookingWizardLoading />}>
-          <BookingWizard studios={studios} />
+          <BookingWizard studios={studios} addons={addons} />
         </Suspense>
       </Container>
     </Section>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   CalendarDays,
   Clock,
@@ -8,14 +8,14 @@ import {
   ChevronRight,
   Info,
   Check,
-  AlertCircle,
 } from "lucide-react";
 import { OfferBundleItem } from "../types";
 import { STANDARD_TIME_SLOTS } from "../data";
-import { StepIntro, Panel, studioSprings } from "@/features/booking/components/ui/BookingKit";
+import { StepIntro } from "@/features/booking/components/ui/BookingKit";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { getPublicBlockedDates } from "@/lib/actions/schedule-blackouts";
+import type { BlockedSchedule } from "@/db/schema";
 
 interface Step2ScheduleProps {
   offer: OfferBundleItem;
@@ -83,6 +83,20 @@ export function Step2Schedule({
     }
     return STANDARD_TIME_SLOTS;
   }, [offer]);
+
+  const [blockedSchedules, setBlockedSchedules] = useState<BlockedSchedule[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getPublicBlockedDates({ scope: "offer_claim" })
+      .then((records) => {
+        if (!cancelled) setBlockedSchedules(records);
+      })
+      .catch((err) => console.error("Error loading offers blocked schedules:", err));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const isDayAllowedByOffer = (dayOfWeek: number) => {
     if (!offer.restrictedDays || offer.restrictedDays.length === 0) return true;
@@ -187,7 +201,11 @@ export function Step2Schedule({
 
               const isPast = dayISO < todayISO;
               const isAllowedDay = isDayAllowedByOffer(dayOfWeek);
-              const isDisabled = isPast || !isAllowedDay;
+              const blackout = blockedSchedules.find(
+                (b) => dayISO >= b.startDate && dayISO <= b.endDate
+              );
+              const isBlocked = !!blackout && !blackout.startTime && !blackout.endTime;
+              const isDisabled = isPast || !isAllowedDay || isBlocked;
               const isSelected = selectedDate === dayISO;
               const isToday = dayISO === todayISO;
 
@@ -204,11 +222,18 @@ export function Step2Schedule({
                     !isSelected &&
                       !isDisabled &&
                       "bg-white/[0.03] text-zinc-200 hover:bg-white/[0.08] hover:text-white border border-white/[0.05]",
+                    isBlocked &&
+                      "text-rose-400/40 line-through bg-rose-500/[0.04] opacity-40 cursor-not-allowed hover:bg-rose-500/[0.04]",
                     isDisabled &&
+                      !isBlocked &&
                       "text-zinc-600 bg-transparent opacity-40 cursor-not-allowed hover:bg-transparent"
                   )}
                   title={
-                    !isAllowedDay
+                    isBlocked
+                      ? isArabic
+                        ? `محجوب للصيانة: ${blackout?.reason}`
+                        : `Blocked: ${blackout?.reason}`
+                      : !isAllowedDay
                       ? isArabic
                         ? "هذا اليوم غير متاح لعرض " + offer.nameAr
                         : `This day is not available for ${offer.name}`
@@ -216,7 +241,7 @@ export function Step2Schedule({
                   }
                 >
                   <span>{d}</span>
-                  {isToday && !isSelected && (
+                  {isToday && !isSelected && !isBlocked && (
                     <span className="size-1 rounded-full bg-brand-mauve absolute bottom-1" />
                   )}
                 </button>

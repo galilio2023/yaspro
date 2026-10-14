@@ -56,7 +56,9 @@ function getInitialBookingState(searchParams: ReturnType<typeof useSearchParams>
   };
 }
 
-export function useBookingWizard(cmsStudios: StudioItem[]) {
+import type { BookingAddon } from "@/db/schema";
+
+export function useBookingWizard(cmsStudios: StudioItem[], cmsAddons?: BookingAddon[]) {
   // Merge CMS studios with canonical studios
   const studios = cmsStudios && cmsStudios.length > 0 ? cmsStudios : (STUDIOS as StudioItem[]);
   const searchParams = useSearchParams();
@@ -77,26 +79,77 @@ export function useBookingWizard(cmsStudios: StudioItem[]) {
   const studio = studios.find((s) => s.id === state.studioId) || studios[0];
   const sessionTypeObj = SESSION_TYPES.find((s) => s.id === state.sessionType) || SESSION_TYPES[0];
 
+  const crewEquipmentPool: CrewEquipmentItem[] =
+    cmsAddons && cmsAddons.length > 0 && cmsAddons.some((a) => a.category === "crew" || a.category === "equipment")
+      ? cmsAddons
+          .filter((a) => a.category === "crew" || a.category === "equipment")
+          .map((a) => ({
+            id: a.id,
+            title: a.name,
+            description: a.description || "",
+            price: parseFloat(a.price),
+            priceType: a.priceUnit === "hourly" ? "hourly" : "flat",
+            category: a.category as "crew" | "equipment",
+            imageUrl: a.imageUrl || "/images/booking/crew-40.jpg",
+          }))
+      : (CREW_EQUIPMENT_ITEMS as CrewEquipmentItem[]);
+
+  const propsPool: PropItem[] =
+    cmsAddons && cmsAddons.length > 0 && cmsAddons.some((a) => a.category === "props")
+      ? cmsAddons
+          .filter((a) => a.category === "props")
+          .map((a) => ({
+            id: a.id,
+            title: a.name,
+            price: parseFloat(a.price),
+            priceType: a.priceUnit === "hourly" ? "hourly" : "flat",
+            category: a.propCategory || "Other",
+            imageUrl: a.imageUrl || "/images/booking/prop-43.png",
+          }))
+      : (PROPS_ITEMS as PropItem[]);
+
+  const addonsPool: AddonItem[] =
+    cmsAddons && cmsAddons.length > 0 && cmsAddons.some((a) => a.category === "post_production")
+      ? cmsAddons
+          .filter((a) => a.category === "post_production")
+          .map((a) => ({
+            id: a.id,
+            title: a.name,
+            description: a.description || "",
+            price: parseFloat(a.price),
+            priceType: a.priceUnit === "hourly" ? "hourly" : "flat",
+            imageUrl: a.imageUrl || "/images/booking/addon-103.jpg",
+          }))
+      : (ADDONS_ITEMS as AddonItem[]);
+
   const selectedCrewItems: CrewEquipmentItem[] = (state.selectedCrewEquipmentIds || [])
-    .map((id) => CREW_EQUIPMENT_ITEMS.find((c) => c.id === id))
+    .map((id) => crewEquipmentPool.find((c) => c.id === id) || CREW_EQUIPMENT_ITEMS.find((c) => c.id === id))
     .filter(Boolean) as CrewEquipmentItem[];
 
   const selectedPropItems: PropItem[] = (state.selectedPropIds || [])
-    .map((id) => PROPS_ITEMS.find((p) => p.id === id))
+    .map((id) => propsPool.find((p) => p.id === id) || PROPS_ITEMS.find((p) => p.id === id))
     .filter(Boolean) as PropItem[];
 
   const selectedAddonItems: AddonItem[] = (state.selectedAddonIds || [])
-    .map((id) => ADDONS_ITEMS.find((a) => a.id === id))
+    .map((id) => addonsPool.find((a) => a.id === id) || ADDONS_ITEMS.find((a) => a.id === id))
     .filter(Boolean) as AddonItem[];
 
-  const breakdown = calculateBookingPrice({
-    sessionTypeId: state.sessionType,
-    durationHours: state.durationHours,
-    selectedCrewEquipmentIds: state.selectedCrewEquipmentIds,
-    selectedPropIds: state.selectedPropIds,
-    selectedAddonIds: state.selectedAddonIds,
-    promoCode: state.promoCode,
-  }, studio);
+  const breakdown = calculateBookingPrice(
+    {
+      sessionTypeId: state.sessionType,
+      durationHours: state.durationHours,
+      selectedCrewEquipmentIds: state.selectedCrewEquipmentIds,
+      selectedPropIds: state.selectedPropIds,
+      selectedAddonIds: state.selectedAddonIds,
+      promoCode: state.promoCode,
+    },
+    studio,
+    {
+      crewEquipment: crewEquipmentPool,
+      props: propsPool,
+      addons: addonsPool,
+    }
+  );
 
   const { total } = breakdown;
 
@@ -260,6 +313,9 @@ export function useBookingWizard(cmsStudios: StudioItem[]) {
     selectedCrewItems,
     selectedPropItems,
     selectedAddonItems,
+    crewEquipmentPool,
+    propsPool,
+    addonsPool,
     removeCrewItem,
     removePropItem,
     removeAddonItem,

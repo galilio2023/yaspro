@@ -28,6 +28,8 @@ export function DataTableHeader({
   children: React.ReactNode;
   className?: string;
 }) {
+  const isTr = React.isValidElement(children) && children.type === "tr";
+
   return (
     <thead
       className={cn(
@@ -35,7 +37,7 @@ export function DataTableHeader({
         className
       )}
     >
-      {children}
+      {isTr ? children : <tr>{children}</tr>}
     </thead>
   );
 }

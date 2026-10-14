@@ -282,7 +282,12 @@ export interface BookingPricingBreakdown {
  */
 export function calculateBookingPrice(
   input: BookingPricingInput,
-  _selectedStudio?: StudioItem
+  _selectedStudio?: StudioItem,
+  customItems?: {
+    crewEquipment?: readonly CrewEquipmentItem[] | CrewEquipmentItem[];
+    props?: readonly PropItem[] | PropItem[];
+    addons?: readonly AddonItem[] | AddonItem[];
+  }
 ): BookingPricingBreakdown {
   const duration = Math.max(1, input.durationHours ?? 1);
 
@@ -295,9 +300,10 @@ export function calculateBookingPrice(
 
   // 2. Crew & Equipment cost
   let crewCost = 0;
+  const crewPool = customItems?.crewEquipment || CREW_EQUIPMENT_ITEMS;
   if (input.selectedCrewEquipmentIds && input.selectedCrewEquipmentIds.length > 0) {
     for (const id of input.selectedCrewEquipmentIds) {
-      const item = CREW_EQUIPMENT_ITEMS.find((c) => c.id === id);
+      const item = crewPool.find((c) => c.id === id) || CREW_EQUIPMENT_ITEMS.find((c) => c.id === id);
       if (item) {
         crewCost += item.priceType === "hourly" ? item.price * duration : item.price;
       }
@@ -308,9 +314,10 @@ export function calculateBookingPrice(
 
   // 3. Props cost
   let propsCost = 0;
+  const propsPool = customItems?.props || PROPS_ITEMS;
   if (input.selectedPropIds && input.selectedPropIds.length > 0) {
     for (const id of input.selectedPropIds) {
-      const prop = PROPS_ITEMS.find((p) => p.id === id);
+      const prop = propsPool.find((p) => p.id === id) || PROPS_ITEMS.find((p) => p.id === id);
       if (prop) {
         propsCost += prop.priceType === "hourly" ? prop.price * duration : prop.price;
       }
@@ -319,9 +326,10 @@ export function calculateBookingPrice(
 
   // 4. Post-production Addons cost
   let addonsCost = 0;
+  const addonsPool = customItems?.addons || ADDONS_ITEMS;
   if (input.selectedAddonIds && input.selectedAddonIds.length > 0) {
     for (const id of input.selectedAddonIds) {
-      const addon = ADDONS_ITEMS.find((a) => a.id === id);
+      const addon = addonsPool.find((a) => a.id === id) || ADDONS_ITEMS.find((a) => a.id === id);
       if (addon) {
         addonsCost += addon.priceType === "hourly" ? addon.price * duration : addon.price;
       }

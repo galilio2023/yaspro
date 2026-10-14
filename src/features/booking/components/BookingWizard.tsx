@@ -30,7 +30,9 @@ const stepVariants: Variants = {
   exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -28 : 28, transition: { duration: 0.14, ease: "easeIn" } }),
 };
 
-export function BookingWizard({ studios }: { studios: StudioItem[] }) {
+import type { BookingAddon } from "@/db/schema";
+
+export function BookingWizard({ studios, addons }: { studios: StudioItem[]; addons?: BookingAddon[] }) {
   const {
     step,
     setStep,
@@ -44,6 +46,9 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
     selectedCrewItems,
     selectedPropItems,
     selectedAddonItems,
+    crewEquipmentPool,
+    propsPool,
+    addonsPool,
     removeCrewItem,
     removePropItem,
     removeAddonItem,
@@ -55,7 +60,7 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
     bookingId,
     errorMessage,
     handleSubmit,
-  } = useBookingWizard(studios);
+  } = useBookingWizard(studios, addons);
 
   const [direction, setDirection] = useState(1);
   const totalSteps = WIZARD_STEPS.length;
@@ -149,9 +154,9 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
                 {step === 1 && <StepDatetime state={state} update={update} />}
                 {step === 2 && <StepSessionType state={state} update={update} />}
                 {step === 3 && <StepStudio state={state} update={update} studios={wizardStudios} />}
-                {step === 4 && <StepCrewEquipment state={state} update={update} />}
-                {step === 5 && <StepProps state={state} update={update} />}
-                {step === 6 && <StepPostProduction state={state} update={update} />}
+                {step === 4 && <StepCrewEquipment state={state} update={update} items={crewEquipmentPool} />}
+                {step === 5 && <StepProps state={state} update={update} items={propsPool} />}
+                {step === 6 && <StepPostProduction state={state} update={update} items={addonsPool} />}
                 {step === 7 && (
                   <StepContact
                     state={state}

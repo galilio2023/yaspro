@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { WizardStepProps } from "../../types";
+import type { CrewEquipmentItem, WizardStepProps } from "../../types";
 import { CREW_EQUIPMENT_ITEMS } from "../../constants";
 import { CardMedia, ChoiceChip, MetaTag, PriceLine, SelectableCard, StepIntro, TogglePill } from "../ui/BookingKit";
 
@@ -11,7 +11,11 @@ const FILTERS = [
   { id: "equipment", label: "Equipment" },
 ] as const;
 
-export function StepCrewEquipment({ state, update }: WizardStepProps) {
+interface StepCrewEquipmentProps extends WizardStepProps {
+  items?: CrewEquipmentItem[];
+}
+
+export function StepCrewEquipment({ state, update, items: customItems }: StepCrewEquipmentProps) {
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("all");
   const selectedIds = state.selectedCrewEquipmentIds || [];
 
@@ -23,8 +27,9 @@ export function StepCrewEquipment({ state, update }: WizardStepProps) {
     });
   };
 
-  const items = filter === "all" ? CREW_EQUIPMENT_ITEMS : CREW_EQUIPMENT_ITEMS.filter((i) => i.category === filter);
-  const hasCategories = CREW_EQUIPMENT_ITEMS.some((i) => i.category === "crew") && CREW_EQUIPMENT_ITEMS.some((i) => i.category === "equipment");
+  const pool = customItems && customItems.length > 0 ? customItems : CREW_EQUIPMENT_ITEMS;
+  const items = filter === "all" ? pool : pool.filter((i) => i.category === filter);
+  const hasCategories = pool.some((i) => i.category === "crew") && pool.some((i) => i.category === "equipment");
 
   return (
     <div>

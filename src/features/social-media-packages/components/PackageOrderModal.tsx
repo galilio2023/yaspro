@@ -4,7 +4,7 @@ import React, { useId, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle2, Send, MessageSquare, Sparkles, AlertCircle } from "lucide-react";
 import { SocialMediaPackage } from "../data/packages";
-import { submitInquiry } from "@/lib/actions";
+import { submitServiceInquiry } from "@/lib/actions";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
@@ -82,12 +82,16 @@ export function PackageOrderModal({
     ].join("\n");
 
     try {
-      const res = await submitInquiry({
+      const res = await submitServiceInquiry({
+        pillar: "social_media",
+        targetId: pkg.id,
+        targetName: pkg.nameEn,
         name,
         email,
         phone,
         company,
-        inquiryType: "general",
+        budgetRange: priceText,
+        timeline: billingInterval === "yearly" ? "Annual Contract" : "Monthly Recurring",
         message: inquiryMessage,
       });
 

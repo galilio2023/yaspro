@@ -5,7 +5,7 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { BookingHero } from "@/features/booking/components/ui/BookingKit";
 import { OffersBookingWizard } from "@/features/offers/components/OffersBookingWizard";
-import { HelpCircle, Sparkles, Clock, ShieldCheck, Zap } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 
 export function OffersPageClient() {
   const { isArabic } = useLanguage();

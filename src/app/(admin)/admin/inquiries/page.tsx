@@ -1,13 +1,23 @@
 import React from "react";
-import { getCmsInquiries } from "@/lib/cms-actions";
+import { getCmsInquiries, getCmsCampaignInquiries } from "@/lib/cms-actions";
 import { InquiriesManager } from "@/features/admin";
 
 export const metadata = {
-  title: "Inquiries & Leads Desk | Yas Productions CMS",
-  description: "Manage client inquiries, OB Van broadcast quotes, and creator briefs.",
+  title: "Inquiries & RFPs Desk | Yas Productions CMS",
+  description: "Manage client inquiries, campaign RFPs, creator briefs, and OB Van broadcast quotes.",
 };
 
 export default async function AdminInquiriesPage() {
-  const initialInquiries = await getCmsInquiries();
-  return <InquiriesManager initialInquiries={initialInquiries} />;
+  const [initialInquiries, initialCampaignInquiries] = await Promise.all([
+    getCmsInquiries(),
+    getCmsCampaignInquiries(),
+  ]);
+
+  return (
+    <InquiriesManager
+      initialInquiries={initialInquiries}
+      initialCampaignInquiries={initialCampaignInquiries}
+    />
+  );
 }
+

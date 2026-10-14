@@ -233,6 +233,7 @@ function hookFixture(validate = async (code) => ({ success: true, promo: { code,
       },
       useMemo: (fn) => fn(), useCallback: (fn) => fn,
     },
+    'next/navigation': { useSearchParams: () => null },
     '../actions': { validateOffersPromoCode: validate, submitOffersBooking: async () => ({ success: true }) },
   });
   const { useOffersBooking } = load('src/features/offers/hooks/useOffersBooking.ts');

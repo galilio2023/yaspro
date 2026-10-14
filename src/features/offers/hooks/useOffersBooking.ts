@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { OFFERS_AND_BUNDLES } from "../data";
 import { AppliedOffersPromo, OffersBookingContact, OffersPricingBreakdown } from "../types";
 import { getOffersDiscount } from "../pricing";
@@ -18,8 +18,20 @@ const INITIAL_CONTACT: OffersBookingContact = {
 
 export function useOffersBooking() {
   const searchParams = useSearchParams();
+  const initialPkg = searchParams?.get("package") || searchParams?.get("offer") || searchParams?.get("id");
+  const fallbackOfferId = initialPkg && OFFERS_AND_BUNDLES.some((o) => o.id === initialPkg) ? initialPkg : "5-hour-bundles";
+
   const [step, setStep] = useState<number>(1);
-  const [selectedOfferId, updateSelectedOfferId] = useState<string>("5-hour-bundles");
+  const [selectedOfferId, updateSelectedOfferId] = useState<string>(fallbackOfferId);
+  const [prevInitialPkg, setPrevInitialPkg] = useState<string | null>(initialPkg || null);
+
+  if (initialPkg && initialPkg !== prevInitialPkg) {
+    setPrevInitialPkg(initialPkg);
+    if (OFFERS_AND_BUNDLES.some((o) => o.id === initialPkg) && initialPkg !== selectedOfferId) {
+      updateSelectedOfferId(initialPkg);
+    }
+  }
+
   const [date, setDate] = useState<string>("");
   const [timeSlot, setTimeSlot] = useState<string>("");
   const [contact, setContact] = useState<OffersBookingContact>(INITIAL_CONTACT);
@@ -67,13 +79,6 @@ export function useOffersBooking() {
     setAppliedPromo((promo) => promo?.eligibleOfferIds && !promo.eligibleOfferIds.includes(offerId) ? null : promo);
     setPromoError(null);
   }, [selectedOfferId]);
-
-  const pkg = searchParams?.get("package") || searchParams?.get("offer") || searchParams?.get("id");
-  useEffect(() => {
-    if (pkg && OFFERS_AND_BUNDLES.some((o) => o.id === pkg)) {
-      setSelectedOfferId(pkg);
-    }
-  }, [pkg, setSelectedOfferId]);
 
   const applyPromo = useCallback(async (code: string) => {
     const request = ++promoRequest.current;

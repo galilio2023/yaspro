@@ -2,7 +2,18 @@
 
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { db } from "@/db";
-import { bookings, bookingSessions, inquiries, users, studios, type SessionType, type InquiryType } from "@/db/schema";
+import {
+  bookings,
+  bookingSessions,
+  inquiries,
+  campaignInquiries,
+  users,
+  studios,
+  promoCodes,
+  type SessionType,
+  type InquiryType,
+  type InquiryPillar,
+} from "@/db/schema";
 import { generateBookingReference } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -14,9 +25,11 @@ import {
   bookingSubmissionSchema,
   inquirySubmissionSchema,
   campaignRequestSchema,
+  serviceInquirySubmissionSchema,
   type BookingSubmissionInput,
   type InquirySubmissionInput,
   type CampaignRequestInput,
+  type ServiceInquirySubmissionInput,
 } from "./validations";
 
 import type { StudioItem } from "@/features/booking/types";
@@ -83,9 +96,23 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
       // Resolve CMS IDs from the wizard and slugs from existing booking links.
       const selectedSlug = data.studioId || "studio-a";
       const isStudioUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(selectedSlug);
-      const studioRecord = await db.query.studios.findFirst({
+      let studioRecord = await db.query.studios.findFirst({
         where: isStudioUuid ? eq(studios.id, selectedSlug) : eq(studios.slug, selectedSlug),
       });
+
+      if (!studioRecord) {
+        // Try finding by name or fallback to first studio if using catalog integer ID
+        const matchedStudio = (STUDIOS || []).find((s) => s.id === selectedSlug || s.slug === selectedSlug);
+        if (matchedStudio) {
+          const matchSlug = matchedStudio.slug || "studio-a";
+          studioRecord = await db.query.studios.findFirst({
+            where: eq(studios.slug, matchSlug),
+          });
+        }
+        if (!studioRecord) {
+          studioRecord = await db.query.studios.findFirst();
+        }
+      }
 
       if (!studioRecord || studioRecord.isActive === false) {
         return { success: false, message: "This studio is no longer available. Please select another studio." };
@@ -172,13 +199,28 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
         ? (catalogNotes ? `[${catalogNotes}] ${data.specialRequests || ""}`.trim() : data.specialRequests)
         : `[Contact: ${data.firstName} ${data.lastName} | ${data.email} | ${data.phone} | ${data.company || ""}]${catalogNotes ? ` [${catalogNotes}]` : ""} ${data.specialRequests || ""}`.trim();
 
+      // Map numerical sessionType IDs or strings to valid SessionType enum values
+      const sessionTypeMap: Record<string, SessionType> = {
+        "98": "photography",
+        "95": "video_production",
+        "84": "commercial",
+        "100": "podcast",
+        "podcast": "podcast",
+        "video_production": "video_production",
+        "photography": "photography",
+        "interview": "interview",
+        "commercial": "commercial",
+        "music_video": "music_video",
+      };
+      const resolvedSessionType = sessionTypeMap[data.sessionType] || "video_production";
+
       const [newBooking] = await db
         .insert(bookings)
         .values({
           referenceCode,
           userId: resolvedUserId,
           studioId: studioRecord?.id,
-          sessionType: data.sessionType as SessionType,
+          sessionType: resolvedSessionType,
           scheduledAt: new Date(data.scheduledAt || Date.now()),
           durationHours: data.durationHours,
           headcount: data.headcount,
@@ -355,6 +397,25 @@ export async function submitInfluencerCampaignRequest(rawInput: unknown): Promis
 
   try {
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+      try {
+        if (campaignInquiries && typeof db.insert === "function") {
+          await db.insert(campaignInquiries).values({
+            pillar: "influencers",
+            targetId: data.creatorId,
+            targetName: data.creatorName,
+            name: data.contactName,
+            email: data.email,
+            phone: data.phone,
+            company: data.brandName,
+            budgetRange: data.budgetTier,
+            message: `[Influencer Campaign RFP for ${data.creatorName}]\nObjective: ${data.campaignObjective}\nBudget Tier: ${data.budgetTier}\nTarget Facility: ${data.targetStudio || "N/A"}\nDetails: ${data.message || "None"}`,
+          });
+        }
+      } catch {
+        // Ignored if campaignInquiries table is not yet migrated in database
+      }
+
+      // Backward-compatible mirror into inquiries table
       await db.insert(inquiries).values({
         name: `${data.contactName} (${data.brandName})`,
         email: data.email,
@@ -444,5 +505,159 @@ export async function syncUserProfile(input: {
   }
 }
 
-export { type BookingSubmissionInput, type InquirySubmissionInput, type CampaignRequestInput };
+export async function submitServiceInquiry(rawInput: unknown): Promise<ActionResponse> {
+  const clientId = await getClientIdentifier();
+
+  // Rate limit: max 5 inquiries per 10 minutes per IP
+  const rateLimit = checkRateLimit(`service-inquiry:${clientId}`, 5, 10 * 60 * 1000);
+  if (!rateLimit.allowed) {
+    const minutesLeft = Math.ceil(rateLimit.resetInMs / 60000);
+    return {
+      success: false,
+      message: `Too many inquiry requests. Please wait ${minutesLeft} minute${minutesLeft > 1 ? "s" : ""} before submitting another message.`,
+    };
+  }
+
+  const parsed = serviceInquirySubmissionSchema.safeParse(rawInput);
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: "Please ensure all required fields are properly filled.",
+      errors: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = parsed.data;
+
+  // Idempotency: block duplicate identical inquiry from same email within 60s
+  const idempotencyKey = `service-inquiry:${data.email.toLowerCase()}:${data.pillar}:${data.message.slice(0, 50)}`;
+  if (!checkIdempotency(idempotencyKey, 60_000)) {
+    return {
+      success: false,
+      message: "Your inquiry is already being processed by our team. Please wait a few moments.",
+    };
+  }
+
+  try {
+    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+      try {
+        if (campaignInquiries && typeof db.insert === "function") {
+          await db.insert(campaignInquiries).values({
+            pillar: data.pillar as InquiryPillar,
+            targetId: data.targetId || null,
+            targetName: data.targetName || null,
+            name: data.name,
+            email: data.email,
+            phone: data.phone || null,
+            company: data.company || null,
+            budgetRange: data.budgetRange || null,
+            timeline: data.timeline || null,
+            goals: data.goals || [],
+            message: data.message,
+          });
+        }
+      } catch {
+        // Ignored if campaignInquiries table is not yet migrated in database
+      }
+
+      // Mirror to inquiries for standard inbox
+      await db.insert(inquiries).values({
+        name: data.name,
+        email: data.email,
+        phone: data.phone || null,
+        company: data.company || null,
+        inquiryType: "general",
+        message: `[Pillar: ${data.pillar}]${data.targetName ? ` Target: ${data.targetName}` : ""}\n${data.message}`,
+      });
+    }
+
+    return {
+      success: true,
+      message: "Thank you! Our production concierge will reach out within 24 hours.",
+    };
+  } catch (error) {
+    console.error("Service inquiry error:", error);
+    return {
+      success: false,
+      message: "We could not send your message. Please try again or contact our concierge directly.",
+    };
+  }
+}
+
+/**
+ * Universal Promo Code Validator across all platforms
+ */
+export async function validateUniversalPromoCode(code: string, applicableType: string = "all"): Promise<{
+  valid: boolean;
+  code?: string;
+  discountType?: "percentage" | "fixed";
+  discountValue?: number;
+  message?: string;
+}> {
+  if (!code || !code.trim()) {
+    return { valid: false, message: "Please provide a valid promo code." };
+  }
+
+  const cleanCode = code.trim().toUpperCase();
+
+  // 1. Static built-in promo codes fallback
+  const staticPromos: Record<string, { type: "percentage" | "fixed"; value: number }> = {
+    "YASPRO10": { type: "percentage", value: 10 },
+    "YAS20": { type: "percentage", value: 20 },
+    "CREATOR50": { type: "fixed", value: 50 },
+    "VIPYAS": { type: "percentage", value: 25 },
+    "RAMADAN": { type: "percentage", value: 15 },
+  };
+
+  if (staticPromos[cleanCode]) {
+    return {
+      valid: true,
+      code: cleanCode,
+      discountType: staticPromos[cleanCode].type,
+      discountValue: staticPromos[cleanCode].value,
+      message: `Promo code ${cleanCode} applied!`,
+    };
+  }
+
+  // 2. Database promo code lookup if DB is configured
+  try {
+    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+      const dbPromo = await db.query.promoCodes.findFirst({
+        where: and(
+          eq(promoCodes.code, cleanCode),
+          eq(promoCodes.isActive, true)
+        ),
+      });
+
+      if (dbPromo) {
+        if (dbPromo.expiresAt && new Date(dbPromo.expiresAt).getTime() < Date.now()) {
+          return { valid: false, message: "This promo code has expired." };
+        }
+        if (dbPromo.maxUses && dbPromo.usedCount >= dbPromo.maxUses) {
+          return { valid: false, message: "This promo code has reached its maximum redemptions." };
+        }
+        if (applicableType !== "all" && dbPromo.applicableTypes && Array.isArray(dbPromo.applicableTypes)) {
+          const types = dbPromo.applicableTypes as string[];
+          if (!types.includes("all") && !types.includes(applicableType)) {
+            return { valid: false, message: `This promo code is not valid for ${applicableType.replace("_", " ")}.` };
+          }
+        }
+
+        return {
+          valid: true,
+          code: dbPromo.code,
+          discountType: dbPromo.discountType as "percentage" | "fixed",
+          discountValue: Number(dbPromo.discountValue),
+          message: `Promo code ${dbPromo.code} applied!`,
+        };
+      }
+    }
+  } catch (err) {
+    console.warn("DB promo lookup error:", err);
+  }
+
+  return { valid: false, message: "Invalid promo code or no longer active." };
+}
+
+export { type BookingSubmissionInput, type InquirySubmissionInput, type CampaignRequestInput, type ServiceInquirySubmissionInput };
 

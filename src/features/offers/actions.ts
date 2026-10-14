@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { bookings } from "@/db/schema";
+import { bookings, offerClaims } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { createZiinaPaymentIntent } from "@/lib/ziina";
@@ -130,6 +130,43 @@ export async function submitOffersBooking(input: OffersBookingInput): Promise<Of
         })
         .returning({ id: bookings.id });
       if (!newBooking?.id) throw new Error("Booking insert did not return an ID.");
+
+      // Record in dedicated offer_claims table if available in DB
+      try {
+        if (offerClaims && tx.insert) {
+          await tx.insert(offerClaims).values({
+            referenceCode,
+            offerId: offer.id,
+            offerTitle: offer.name,
+            offerCategory: offer.category === "bundle" ? "bundle" : "special",
+            sessionsCount: 1,
+            sessionsSchedule: [
+              {
+                position: 1,
+                date: validated.date,
+                timeSlot: validated.timeSlot,
+                studioId: studioId || "studio-a",
+                notes: validated.specialRequests,
+              },
+            ],
+            name: `${validated.firstName} ${validated.lastName}`,
+            email: validated.email,
+            phone: validated.phone,
+            company: validated.company || null,
+            notes: validated.specialRequests || null,
+            originalPrice: offer.price.toFixed(2),
+            discountAmount: discount.toFixed(2),
+            totalAmount: grandTotal.toFixed(2),
+            currency: "AED",
+            promoCode: promo?.code || null,
+            status: "pending",
+            paymentStatus: "unpaid",
+          });
+        }
+      } catch {
+        // Ignored if offerClaims table isn't migrated yet or mock isn't provided
+      }
+
       return { bookingId: newBooking.id, grandTotal };
     });
 

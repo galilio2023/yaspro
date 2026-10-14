@@ -1,10 +1,14 @@
 "use client";
 
-import type { WizardStepProps } from "../../types";
+import type { AddonItem, WizardStepProps } from "../../types";
 import { ADDONS_ITEMS } from "../../constants";
 import { CardMedia, MetaTag, PriceLine, SelectableCard, StepIntro, TogglePill } from "../ui/BookingKit";
 
-export function StepPostProduction({ state, update }: WizardStepProps) {
+interface StepPostProductionProps extends WizardStepProps {
+  items?: AddonItem[];
+}
+
+export function StepPostProduction({ state, update, items: customItems }: StepPostProductionProps) {
   const selectedIds = state.selectedAddonIds || [];
 
   const handleToggle = (id: string) => {
@@ -14,6 +18,8 @@ export function StepPostProduction({ state, update }: WizardStepProps) {
         : [...selectedIds, id],
     });
   };
+
+  const items = customItems && customItems.length > 0 ? customItems : ADDONS_ITEMS;
 
   return (
     <div>
@@ -26,7 +32,7 @@ export function StepPostProduction({ state, update }: WizardStepProps) {
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {ADDONS_ITEMS.map((item) => {
+        {items.map((item) => {
           const isSelected = selectedIds.includes(item.id);
           return (
             <SelectableCard key={item.id} selected={isSelected} onSelect={() => handleToggle(item.id)}>

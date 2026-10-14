@@ -15,6 +15,10 @@ import {
   MessageSquare,
   Layers,
   Radio,
+  Tag,
+  CalendarOff,
+  Sliders,
+  Boxes,
   ArrowUpRight,
 } from "lucide-react";
 import { YasproEmblem } from "@/components/ui/YasproEmblem";
@@ -23,9 +27,13 @@ import { AdminSignOutButton } from "@/components/admin/AdminSignOutButton";
 const NAV_ITEMS = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/users", label: "Users & Accounts", icon: UserCheck },
+  { href: "/admin/promos", label: "Promo Codes", icon: Tag },
   { href: "/admin/inquiries", label: "Inquiries & Leads", icon: MessageSquare },
   { href: "/admin/studios", label: "Soundstages & Rates", icon: Layers },
   { href: "/admin/bookings", label: "Studio Bookings", icon: CalendarCheck },
+  { href: "/admin/schedule", label: "Schedule & Blackouts", icon: CalendarOff },
+  { href: "/admin/addons", label: "Assets & Add-ons", icon: Sliders },
+  { href: "/admin/packages", label: "Service Packages", icon: Boxes },
   { href: "/admin/broadcast", label: "Broadcast & OB Van", icon: Radio },
   { href: "/admin/gear", label: "Gear & Equipment", icon: Camera },
   { href: "/admin/projects", label: "Projects CMS", icon: Film },

@@ -3,7 +3,9 @@
 import { db } from "@/db";
 import {
   inquiries,
+  campaignInquiries,
   type Inquiry,
+  type CampaignInquiry,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -107,3 +109,104 @@ export async function deleteCmsInquiry(id: string): Promise<CmsResponse> {
     return { success: false, error: (error as Error).message };
   }
 }
+
+/**
+ * Retrieves all campaign inquiries and RFPs from Neon PostgreSQL.
+ *
+ * @returns Array of CampaignInquiry records ordered by creation date.
+ */
+export async function getCmsCampaignInquiries(): Promise<CampaignInquiry[]> {
+  await requireAdmin();
+  try {
+    if (isDbAvailable()) {
+      return await db.select().from(campaignInquiries).orderBy(desc(campaignInquiries.createdAt));
+    }
+  } catch (e) {
+    console.error("getCmsCampaignInquiries error:", e);
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    return [];
+  }
+
+  // Preview mode demo inquiries (non-production local dev only)
+  return [
+    {
+      id: "cinq-01",
+      pillar: "influencers",
+      targetId: "abir-saghir",
+      targetName: "Abir El Saghir",
+      name: "Zaid Al-Harbi",
+      email: "zaid@gulfgourmet.com",
+      phone: "+971 50 123 4567",
+      company: "Gulf Gourmet Food Group",
+      budgetRange: "50k_100k",
+      timeline: "next_month",
+      goals: ["brand_awareness", "product_launch"],
+      message: "Looking for an exclusive brand ambassador campaign for our new artisanal culinary range across GCC.",
+      status: "new",
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2),
+    },
+    {
+      id: "cinq-02",
+      pillar: "production",
+      targetId: "commercial-tvc",
+      targetName: "Cinematic TVC Production",
+      name: "Lina Kabbani",
+      email: "lina@vertexmedia.ae",
+      phone: "+971 55 987 6543",
+      company: "Vertex Media Agency",
+      budgetRange: "100k_plus",
+      timeline: "immediate",
+      goals: ["conversion", "tvc_broadcast"],
+      message: "Require 4K anamorphic TV commercial shoot with robotic motion control at Yas Studio A.",
+      status: "contacted",
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 18),
+    },
+  ];
+}
+
+/**
+ * Updates the administrative status of a campaign inquiry / RFP.
+ *
+ * @param id - UUID of the campaign inquiry.
+ * @param status - Updated status ("new" | "contacted" | "in_progress" | "closed").
+ * @returns CMS response confirming update.
+ */
+export async function updateCampaignInquiryStatus(
+  id: string,
+  status: "new" | "contacted" | "in_progress" | "closed"
+): Promise<CmsResponse> {
+  try {
+    await requireAdmin();
+    if (isDbAvailable()) {
+      await db.update(campaignInquiries).set({ status }).where(eq(campaignInquiries.id, id));
+    }
+    revalidatePath("/admin/inquiries");
+    revalidatePath("/admin");
+    return { success: true, message: `Campaign RFP marked as ${status}.` };
+  } catch (error) {
+    return { success: false, error: (error as Error).message };
+  }
+}
+
+/**
+ * Deletes a campaign inquiry record from Neon PostgreSQL.
+ *
+ * @param id - UUID of the campaign inquiry.
+ * @returns CMS response confirming deletion.
+ */
+export async function deleteCmsCampaignInquiry(id: string): Promise<CmsResponse> {
+  try {
+    await requireAdmin();
+    if (isDbAvailable()) {
+      await db.delete(campaignInquiries).where(eq(campaignInquiries.id, id));
+    }
+    revalidatePath("/admin/inquiries");
+    revalidatePath("/admin");
+    return { success: true, message: "Campaign RFP deleted." };
+  } catch (error) {
+    return { success: false, error: (error as Error).message };
+  }
+}
+

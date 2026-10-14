@@ -6,3 +6,7 @@ export { InquiriesManager } from "./components/InquiriesManager";
 export { ProjectsManager } from "./components/ProjectsManager";
 export { StudiosManager } from "./components/StudiosManager";
 export { UsersManager } from "./components/UsersManager";
+export { PromoCodesManager } from "./components/PromoCodesManager";
+export { ScheduleBlackoutManager } from "./components/ScheduleBlackoutManager";
+export { AddonsManager } from "./components/AddonsManager";
+export { ServicePackagesManager } from "./components/ServicePackagesManager";

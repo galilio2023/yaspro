@@ -8,6 +8,10 @@ import {
   bookingSessions,
   users,
   studios,
+  podcastBookings,
+  offerClaims,
+  bookingStatusEnum,
+  sessionTypeEnum,
   type Booking,
 } from "@/db/schema";
 import { eq, desc, asc, inArray } from "drizzle-orm";
@@ -21,6 +25,19 @@ export interface EnrichedBooking extends Booking {
   userCompany?: string | null;
   studioName?: string | null;
   schedule?: (typeof bookingSessions.$inferSelect & { studioName: string | null })[];
+  podcastDetails?: {
+    packageName?: string;
+    includeVideo?: boolean;
+    needsEditing?: boolean;
+    needsSocialClips?: boolean;
+    sessionsCount?: number;
+  } | null;
+  offerDetails?: {
+    offerTitle?: string;
+    offerCategory?: string;
+    originalPrice?: string;
+    discountAmount?: string | null;
+  } | null;
 }
 
 /**
@@ -46,12 +63,34 @@ export async function getCmsBookings(): Promise<EnrichedBooking[]> {
         .leftJoin(studios, eq(bookings.studioId, studios.id))
         .orderBy(desc(bookings.createdAt));
 
-      const schedule = records.length ? await db
-        .select({ session: bookingSessions, studioName: studios.name })
-        .from(bookingSessions)
-        .leftJoin(studios, eq(bookingSessions.studioId, studios.id))
-        .where(inArray(bookingSessions.bookingId, records.map((record) => record.booking.id)))
-        .orderBy(asc(bookingSessions.position)) : [];
+      let schedule: { session: typeof bookingSessions.$inferSelect; studioName: string | null }[] = [];
+      try {
+        if (records.length) {
+          schedule = await db
+            .select({ session: bookingSessions, studioName: studios.name })
+            .from(bookingSessions)
+            .leftJoin(studios, eq(bookingSessions.studioId, studios.id))
+            .where(inArray(bookingSessions.bookingId, records.map((record) => record.booking.id)))
+            .orderBy(asc(bookingSessions.position));
+        }
+      } catch (err) {
+        console.warn("Could not load booking sessions schedule:", err);
+      }
+      const refCodes = records.map((r) => r.booking.referenceCode).filter(Boolean);
+
+      let podcasts: (typeof podcastBookings.$inferSelect)[] = [];
+      let offers: (typeof offerClaims.$inferSelect)[] = [];
+
+      try {
+        if (refCodes.length) {
+          [podcasts, offers] = await Promise.all([
+            db.select().from(podcastBookings).where(inArray(podcastBookings.referenceCode, refCodes)),
+            db.select().from(offerClaims).where(inArray(offerClaims.referenceCode, refCodes)),
+          ]);
+        }
+      } catch (err) {
+        console.warn("Could not load supplementary podcast/offer records:", err);
+      }
 
       return records.map((r) => {
         let guestName = r.userName;
@@ -67,6 +106,10 @@ export async function getCmsBookings(): Promise<EnrichedBooking[]> {
             guestCompany = match[4]?.trim() || guestCompany;
           }
         }
+
+        const matchingPodcast = podcasts.find((p) => p.referenceCode === r.booking.referenceCode);
+        const matchingOffer = offers.find((o) => o.referenceCode === r.booking.referenceCode);
+
         return {
           ...r.booking,
           schedule: schedule.filter((item) => item.session.bookingId === r.booking.id)
@@ -76,6 +119,23 @@ export async function getCmsBookings(): Promise<EnrichedBooking[]> {
           userPhone: guestPhone,
           userCompany: guestCompany,
           studioName: r.studioName,
+          podcastDetails: matchingPodcast
+            ? {
+                packageName: matchingPodcast.packageName,
+                includeVideo: matchingPodcast.includeVideo,
+                needsEditing: matchingPodcast.needsEditing,
+                needsSocialClips: matchingPodcast.needsSocialClips,
+                sessionsCount: matchingPodcast.sessionsCount,
+              }
+            : null,
+          offerDetails: matchingOffer
+            ? {
+                offerTitle: matchingOffer.offerTitle,
+                offerCategory: matchingOffer.offerCategory,
+                originalPrice: matchingOffer.originalPrice,
+                discountAmount: matchingOffer.discountAmount,
+              }
+            : null,
         };
       });
     }
@@ -169,3 +229,180 @@ export async function updateBookingPaymentStatus(
     return { success: false, error: (error as Error).message };
   }
 }
+
+export interface ManualBookingInput {
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  clientCompany?: string;
+  studioId?: string | null;
+  sessionType: (typeof sessionTypeEnum.enumValues)[number];
+  scheduledAt: Date;
+  durationHours: number;
+  headcount: number;
+  totalAmount: string;
+  currency?: string;
+  notes?: string;
+  status?: (typeof bookingStatusEnum.enumValues)[number];
+  paymentStatus?: "unpaid" | "deposit_paid" | "paid" | "refunded";
+}
+
+/**
+ * Creates a booking manually from the admin CMS dashboard.
+ */
+export async function createManualCmsBooking(
+  input: ManualBookingInput
+): Promise<CmsResponse & { booking?: EnrichedBooking }> {
+  try {
+    await requireAdmin();
+    const referenceCode = `YAS-ADM-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+    const specialRequests = `[Contact: ${input.clientName} | ${input.clientEmail} | ${input.clientPhone}${
+      input.clientCompany ? ` | ${input.clientCompany}` : ""
+    }] ${input.notes || ""}`.trim();
+
+    if (isDbAvailable()) {
+      const [newBooking] = await db
+        .insert(bookings)
+        .values({
+          referenceCode,
+          studioId: input.studioId || null,
+          sessionType: input.sessionType,
+          scheduledAt: input.scheduledAt,
+          durationHours: input.durationHours,
+          headcount: input.headcount,
+          totalAmount: input.totalAmount,
+          currency: input.currency || "AED",
+          status: input.status || "confirmed",
+          paymentStatus: input.paymentStatus || "unpaid",
+          specialRequests,
+        })
+        .returning();
+
+      if (newBooking && input.studioId) {
+        try {
+          await db.insert(bookingSessions).values({
+            bookingId: newBooking.id,
+            studioId: input.studioId,
+            scheduledAt: input.scheduledAt,
+            durationHours: input.durationHours,
+            headcount: input.headcount,
+            position: 1,
+          });
+        } catch (sessionErr) {
+          console.warn("Could not insert booking session:", sessionErr);
+        }
+      }
+
+      revalidatePath("/admin/bookings");
+      revalidatePath("/admin");
+      return {
+        success: true,
+        message: `Booking ${referenceCode} created successfully.`,
+        booking: {
+          ...newBooking,
+          userName: input.clientName,
+          userEmail: input.clientEmail,
+          userPhone: input.clientPhone,
+          userCompany: input.clientCompany || null,
+          studioName: null,
+          schedule: [],
+          podcastDetails: null,
+          offerDetails: null,
+        },
+      };
+    }
+
+    return { success: false, error: "Database not available" };
+  } catch (error) {
+    return { success: false, error: (error as Error).message };
+  }
+}
+
+export interface UpdateBookingDetailsInput {
+  id: string;
+  studioId?: string | null;
+  sessionType?: (typeof sessionTypeEnum.enumValues)[number];
+  scheduledAt?: Date;
+  durationHours?: number;
+  headcount?: number;
+  totalAmount?: string;
+  notes?: string;
+  status?: (typeof bookingStatusEnum.enumValues)[number];
+  paymentStatus?: "unpaid" | "deposit_paid" | "paid" | "refunded";
+  clientName?: string;
+  clientEmail?: string;
+  clientPhone?: string;
+  clientCompany?: string;
+}
+
+/**
+ * Updates full booking reservation details from admin CMS.
+ */
+export async function updateCmsBookingDetails(
+  input: UpdateBookingDetailsInput
+): Promise<CmsResponse> {
+  try {
+    await requireAdmin();
+    if (isDbAvailable()) {
+      const updateData: Record<string, unknown> = {
+        updatedAt: new Date(),
+      };
+      if (input.studioId !== undefined) updateData.studioId = input.studioId;
+      if (input.sessionType !== undefined) updateData.sessionType = input.sessionType;
+      if (input.scheduledAt !== undefined) updateData.scheduledAt = input.scheduledAt;
+      if (input.durationHours !== undefined) updateData.durationHours = input.durationHours;
+      if (input.headcount !== undefined) updateData.headcount = input.headcount;
+      if (input.totalAmount !== undefined) updateData.totalAmount = input.totalAmount;
+      if (input.status !== undefined) updateData.status = input.status;
+      if (input.paymentStatus !== undefined) updateData.paymentStatus = input.paymentStatus;
+
+      if (input.clientName || input.clientEmail || input.notes !== undefined) {
+        updateData.specialRequests = `[Contact: ${input.clientName || ""} | ${input.clientEmail || ""} | ${
+          input.clientPhone || ""
+        }${input.clientCompany ? ` | ${input.clientCompany}` : ""}] ${input.notes || ""}`.trim();
+      }
+
+      await db.update(bookings).set(updateData).where(eq(bookings.id, input.id));
+
+      if (input.scheduledAt && input.studioId) {
+        try {
+          await db
+            .update(bookingSessions)
+            .set({
+              scheduledAt: input.scheduledAt,
+              studioId: input.studioId,
+              durationHours: input.durationHours,
+              headcount: input.headcount,
+            })
+            .where(eq(bookingSessions.bookingId, input.id));
+        } catch {
+          // ignore session update error
+        }
+      }
+    }
+    revalidatePath("/admin/bookings");
+    revalidatePath("/admin");
+    return { success: true, message: "Booking details updated successfully." };
+  } catch (error) {
+    return { success: false, error: (error as Error).message };
+  }
+}
+
+/**
+ * Deletes a booking record and associated session schedules.
+ */
+export async function deleteCmsBooking(id: string): Promise<CmsResponse> {
+  try {
+    await requireAdmin();
+    if (isDbAvailable()) {
+      await db.delete(bookingSessions).where(eq(bookingSessions.bookingId, id));
+      await db.delete(bookings).where(eq(bookings.id, id));
+    }
+    revalidatePath("/admin/bookings");
+    revalidatePath("/admin");
+    return { success: true, message: "Booking reservation deleted." };
+  } catch (error) {
+    return { success: false, error: (error as Error).message };
+  }
+}
+

@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import type { WizardStepProps } from "../../types";
-import { CalendarDays, ChevronLeft, ChevronRight, Clock, Users, Timer } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, Clock, Users, Timer, AlertCircle } from "lucide-react";
 import { ChoiceChip, Counter, Panel, StepIntro } from "../ui/BookingKit";
 import { cn } from "@/lib/utils";
+import { getPublicBlockedDates } from "@/lib/actions/schedule-blackouts";
+import type { BlockedSchedule } from "@/db/schema";
 
 const TIME_SLOTS = [
   "9:00 AM",
@@ -75,6 +77,35 @@ export function StepDatetime({ state, update }: WizardStepProps) {
   const leadingBlanks = Array.from({ length: firstDayOfWeek });
   const currentMonthDays = Array.from({ length: daysInCurrentMonth }, (_, i) => i + 1);
 
+  const [blockedSchedules, setBlockedSchedules] = useState<BlockedSchedule[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getPublicBlockedDates({ studioId: state.studioId, scope: "studio_booking" })
+      .then((records) => {
+        if (!cancelled) setBlockedSchedules(records);
+      })
+      .catch((err) => console.error("Error loading blocked dates:", err));
+    return () => {
+      cancelled = true;
+    };
+  }, [state.studioId]);
+
+  const selectedBlackout = blockedSchedules.find((b) => {
+    if (!selectedDateStr) return false;
+    if (selectedDateStr < b.startDate || selectedDateStr > b.endDate) return false;
+    if (b.studioId && state.studioId && b.studioId !== state.studioId) return false;
+    return true;
+  });
+
+  const convertSlotTo24h = (slot: string) => {
+    const [time, modifier] = slot.split(" ");
+    let [hours] = time.split(":").map(Number);
+    if (modifier === "PM" && hours < 12) hours += 12;
+    if (modifier === "AM" && hours === 12) hours = 0;
+    return `${String(hours).padStart(2, "0")}:00`;
+  };
+
   const selectedLabel = selectedDateStr
     ? new Date(`${selectedDateStr}T00:00:00`).toLocaleDateString("en-US", {
         weekday: "short",
@@ -142,31 +173,72 @@ export function StepDatetime({ state, update }: WizardStepProps) {
                 const isPast = iso < todayISO;
                 const isToday = iso === todayISO;
 
+                // Check blackout
+                const blackout = blockedSchedules.find((b) => {
+                  if (iso < b.startDate || iso > b.endDate) return false;
+                  if (b.studioId && state.studioId && b.studioId !== state.studioId) return false;
+                  return true;
+                });
+                const isFullDayBlocked = !!blackout && !blackout.startTime && !blackout.endTime;
+                const isPartialBlocked = !!blackout && (!!blackout.startTime || !!blackout.endTime);
+
                 return (
                   <button
                     key={iso}
                     type="button"
-                    disabled={isPast}
+                    disabled={isPast || isFullDayBlocked}
                     onClick={() => update({ date: iso })}
                     aria-pressed={isSelected}
                     aria-label={iso}
+                    title={
+                      isFullDayBlocked
+                        ? `Blocked: ${blackout?.reason}`
+                        : isPartialBlocked
+                        ? `Partial blackout (${blackout?.startTime || "00:00"} - ${blackout?.endTime || "23:59"}): ${blackout?.reason}`
+                        : undefined
+                    }
                     className={cn(
                       "relative aspect-square min-h-[38px] rounded-lg text-xs sm:text-sm font-semibold tabular-nums transition-all duration-150 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed",
                       isSelected
                         ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-[0_8px_20px_-8px_rgba(152,123,165,0.7)]"
                         : isPast
                         ? "text-zinc-700"
+                        : isFullDayBlocked
+                        ? "text-rose-400/40 line-through bg-rose-500/[0.04] border border-rose-500/10"
+                        : isPartialBlocked
+                        ? "text-brand-mauve-soft hover:bg-white/[0.07] hover:text-white"
                         : "text-zinc-200 hover:bg-white/[0.07] hover:text-white active:scale-95"
                     )}
                   >
                     {d}
-                    {isToday && !isSelected && (
+                    {isToday && !isSelected && !isFullDayBlocked && (
                       <span aria-hidden className="absolute bottom-1.5 size-1 rounded-full bg-brand-mauve" />
+                    )}
+                    {isPartialBlocked && !isSelected && (
+                      <span aria-hidden className="absolute top-1 right-1 size-1.5 rounded-full bg-brand-mauve-soft animate-pulse" />
                     )}
                   </button>
                 );
               })}
             </div>
+
+            {selectedBlackout && (
+              <div className="mt-4 p-3 rounded-xl bg-brand-violet/10 border border-brand-mauve/25 text-xs text-brand-lavender flex items-start gap-2">
+                <AlertCircle size={15} className="text-brand-mauve shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-semibold text-white">Notice for {selectedDateStr}: </span>
+                  {selectedBlackout.startTime && selectedBlackout.endTime ? (
+                    <span>
+                      Partial schedule restriction between {selectedBlackout.startTime} and {selectedBlackout.endTime} ({selectedBlackout.reason}).
+                    </span>
+                  ) : (
+                    <span className="text-rose-300">
+                      This date is currently marked for maintenance/blackout ({selectedBlackout.reason}).
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </Panel>
 
@@ -229,16 +301,30 @@ export function StepDatetime({ state, update }: WizardStepProps) {
           {/* Time */}
           <Panel icon={Clock} title="Call time" description="Studio hours 9 AM – 8 PM">
             <div className="grid grid-cols-4 sm:grid-cols-4 xl:grid-cols-3 gap-1.5">
-              {TIME_SLOTS.map((slot) => (
-                <ChoiceChip
-                  key={slot}
-                  selected={selectedTime === slot}
-                  onClick={() => update({ time: slot })}
-                  className="text-[10px] sm:text-[11px] min-h-[36px] sm:min-h-[40px] px-1"
-                >
-                  {slot}
-                </ChoiceChip>
-              ))}
+              {TIME_SLOTS.map((slot) => {
+                const slot24 = convertSlotTo24h(slot);
+                const isSlotBlocked =
+                  !!selectedBlackout &&
+                  !!selectedBlackout.startTime &&
+                  !!selectedBlackout.endTime &&
+                  selectedBlackout.startTime <= slot24 &&
+                  slot24 <= selectedBlackout.endTime;
+
+                return (
+                  <ChoiceChip
+                    key={slot}
+                    disabled={isSlotBlocked}
+                    selected={selectedTime === slot}
+                    onClick={() => update({ time: slot })}
+                    className={cn(
+                      "text-[10px] sm:text-[11px] min-h-[36px] sm:min-h-[40px] px-1",
+                      isSlotBlocked && "opacity-30 line-through cursor-not-allowed hover:border-transparent"
+                    )}
+                  >
+                    {slot}
+                  </ChoiceChip>
+                );
+              })}
             </div>
           </Panel>
         </div>

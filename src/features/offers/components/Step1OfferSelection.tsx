@@ -2,24 +2,24 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import { Check, Sparkles, Clock, ShieldCheck, Tag, Info } from "lucide-react";
+import { motion } from "framer-motion";
+import { Check, Sparkles, Clock, Info } from "lucide-react";
 import { OFFERS_AND_BUNDLES } from "../data";
-import { OfferBundleItem, OfferCategory } from "../types";
-import { formatAED, studioSprings, StepIntro, Panel } from "@/features/booking/components/ui/BookingKit";
+import { OfferCategory } from "../types";
+import { formatAED, studioSprings, StepIntro } from "@/features/booking/components/ui/BookingKit";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { cn } from "@/lib/utils";
 
 interface Step1OfferSelectionProps {
   selectedOfferId: string;
   onSelectOffer: (id: string) => void;
-  onContinue: () => void;
+  onContinue?: () => void;
 }
 
 export function Step1OfferSelection({
   selectedOfferId,
   onSelectOffer,
-  onContinue,
+  onContinue: _onContinue,
 }: Step1OfferSelectionProps) {
   const { isArabic } = useLanguage();
   const [filter, setFilter] = useState<OfferCategory>("all");

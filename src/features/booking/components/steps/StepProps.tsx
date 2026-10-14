@@ -1,11 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import type { WizardStepProps } from "../../types";
+import type { PropItem, WizardStepProps } from "../../types";
 import { PROPS_ITEMS, PROP_CATEGORIES } from "../../constants";
 import { CardMedia, ChoiceChip, MetaTag, PriceLine, SelectableCard, StepIntro, TogglePill } from "../ui/BookingKit";
 
-export function StepProps({ state, update }: WizardStepProps) {
+interface StepPropsComponentProps extends WizardStepProps {
+  items?: PropItem[];
+}
+
+export function StepProps({ state, update, items: customItems }: StepPropsComponentProps) {
   const [activeCategory, setActiveCategory] = useState("All");
   const selectedIds = state.selectedPropIds || [];
 
@@ -17,9 +21,14 @@ export function StepProps({ state, update }: WizardStepProps) {
     });
   };
 
+  const pool = customItems && customItems.length > 0 ? customItems : PROPS_ITEMS;
+  const categories = customItems && customItems.length > 0
+    ? ["All", ...Array.from(new Set(pool.map((p) => p.category).filter(Boolean)))]
+    : PROP_CATEGORIES;
+
   const filteredProps = activeCategory === "All"
-    ? PROPS_ITEMS
-    : PROPS_ITEMS.filter((p) => p.category === activeCategory);
+    ? pool
+    : pool.filter((p) => p.category === activeCategory);
 
   return (
     <div>
@@ -33,7 +42,7 @@ export function StepProps({ state, update }: WizardStepProps) {
 
       {/* Category filter — horizontal scroll on mobile */}
       <div className="-mx-1 px-1 mb-5 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {PROP_CATEGORIES.map((cat) => (
+        {categories.map((cat) => (
           <ChoiceChip
             key={cat}
             selected={activeCategory === cat}

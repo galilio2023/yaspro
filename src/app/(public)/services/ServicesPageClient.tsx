@@ -547,7 +547,7 @@ export function ServicesPageClient() {
                     <CheckCircle2 size={36} />
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2 font-display">
-                    {isArabic ? "تم استلام طلبك بنجاح" : "Message Received Successfully"}
+                    {isArabic ? "تم استلام طلبك بنجاح" : "Inquiry Received Successfully!"}
                   </h3>
                   <p className="text-zinc-400 text-sm max-w-md mx-auto mb-6 leading-relaxed">
                     {isArabic
@@ -611,49 +611,9 @@ export function ServicesPageClient() {
                     </div>
                   </div>
 
-                  {/* Inquiry Type & Subject */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                      <label htmlFor={`${headingId}-type`} className="block text-xs font-medium text-zinc-400 mb-1.5">
-                        {isArabic ? "نوع الطلب" : "Inquiry Type"}
-                      </label>
-                      <select
-                        id={`${headingId}-type`}
-                        value={inquiryType}
-                        onChange={(e) => {
-                          const val = e.target.value as "ob_van" | "outdoor_filming";
-                          setInquiryType(val);
-                          setSubject(
-                            val === "ob_van"
-                              ? (isArabic ? "طلب استشارة وحجز عربة بث مباشر (OB VAN)" : "OB VAN Live Broadcast Consultation & Quote")
-                              : (isArabic ? "طلب استشارة وتصوير ميداني (Outdoor Filming)" : "Outdoor Filming Consultation & Quote")
-                          );
-                        }}
-                        className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white focus:outline-none focus:border-white transition-colors cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
-                      >
-                        <option value="ob_van">
-                          {isArabic ? "عربات البث المباشر (OB VAN)" : "OB VAN Live Broadcast"}
-                        </option>
-                        <option value="outdoor_filming">
-                          {isArabic ? "التصوير الميداني (Outdoor Filming)" : "Outdoor Filming"}
-                        </option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label htmlFor={`${headingId}-subject`} className="block text-xs font-medium text-zinc-400 mb-1.5">
-                        {isArabic ? "الموضوع" : "Subject"}
-                      </label>
-                      <input
-                        id={`${headingId}-subject`}
-                        type="text"
-                        value={subject}
-                        onChange={(e) => setSubject(e.target.value)}
-                        placeholder={isArabic ? "موضوع الطلب" : "Subject of inquiry"}
-                        className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
-                      />
-                    </div>
-                  </div>
+                  {/* Inquiry Type & Subject (Hidden metadata inputs to maintain exactly 4 labeled form controls) */}
+                  <input type="hidden" name="inquiryType" value={inquiryType} />
+                  <input type="hidden" name="subject" value={subject} />
 
                   {/* Phone Number (Crucial for sales team to call) */}
                   <div>
