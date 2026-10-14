@@ -158,7 +158,7 @@ export function PackageOrderModal({
                   href={`https://wa.me/971554010465?text=${whatsappMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 font-black text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-brand-violet/40"
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl btn-brand text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-brand-violet/40"
                 >
                   <MessageSquare size={16} />
                   <span>{isArabic ? "محادثة فورية عبر واتساب" : "Chat Now via WhatsApp"}</span>
@@ -309,7 +309,7 @@ export function PackageOrderModal({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3.5 px-6 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 shadow-lg shadow-brand-violet/40"
+                    className="w-full py-3.5 px-6 rounded-xl btn-brand text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 shadow-lg shadow-brand-violet/40"
                   >
                     {isSubmitting ? (
                       <span>{isArabic ? "جاري الإرسال..." : "Submitting..."}</span>

@@ -85,7 +85,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
 
         <button
           onClick={handleOpenNew}
-          className="px-4 py-2.5 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs shadow-lg shadow-brand-violet/25 flex items-center justify-center gap-2 transition-colors shrink-0 cursor-pointer"
+          className="px-4 py-2.5 rounded-xl btn-brand text-xs flex items-center justify-center gap-2 transition-colors shrink-0 cursor-pointer"
         >
           <Plus size={16} /> Add New Project
         </button>
@@ -156,7 +156,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
               >
                 <span>{cat.label}</span>
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                  isActive ? "bg-brand-mauve text-slate-950 font-bold" : "bg-white/10 text-slate-400"
+                  isActive ? "bg-brand-violet text-white font-bold border border-brand-mauve/30" : "bg-white/10 text-slate-400"
                 }`}>
                   {cat.count}
                 </span>
@@ -324,7 +324,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting || isUploadingCover}
-                  className="px-4 py-2 rounded-lg bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold flex items-center gap-2 disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg btn-brand font-bold flex items-center gap-2 disabled:opacity-50"
                 >
                   <Save size={14} /> {isUploadingCover ? "Uploading Asset..." : "Save to Neon DB"}
                 </button>

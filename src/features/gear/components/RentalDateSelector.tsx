@@ -55,7 +55,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
             onClick={() => setPreset(1)}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               dateRange.totalDays === 1
-                ? "bg-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/40"
+                ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-md shadow-brand-violet/40"
                 : "bg-white/5 text-text-secondary hover:text-white hover:bg-white/10"
             }`}
           >
@@ -66,7 +66,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
             onClick={() => setPreset(3)}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               dateRange.totalDays === 3
-                ? "bg-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/40"
+                ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-md shadow-brand-violet/40"
                 : "bg-white/5 text-text-secondary hover:text-white hover:bg-white/10"
             }`}
           >
@@ -77,7 +77,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
             onClick={() => setPreset(7)}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               dateRange.totalDays === 7
-                ? "bg-brand-mauve text-zinc-950 font-bold shadow-md shadow-brand-violet/40"
+                ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-md shadow-brand-violet/40"
                 : "bg-white/5 text-text-secondary hover:text-white hover:bg-white/10"
             }`}
           >

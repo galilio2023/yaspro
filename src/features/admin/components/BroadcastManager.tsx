@@ -255,7 +255,7 @@ export function BroadcastManager() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-2.5 rounded-xl btn-brand text-zinc-950 font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-violet/25 transition-all disabled:opacity-50 cursor-pointer"
+              className="w-full py-2.5 rounded-xl btn-brand font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-violet/25 transition-all disabled:opacity-50 cursor-pointer"
             >
               <Send size={13} />
               <span>{isSubmitting ? "Broadcasting..." : "Dispatch to Relay Edge"}</span>

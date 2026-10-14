@@ -61,7 +61,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect("/login?error=admin_required");
   }
   return (
-    <div className="min-h-screen bg-[#070709] text-slate-100 flex flex-col md:flex-row antialiased selection:bg-brand-mauve selection:text-black">
+    <div className="min-h-screen bg-[#070709] text-slate-100 flex flex-col md:flex-row antialiased selection:bg-brand-mauve selection:text-white">
       <AdminMobileNav adminName={adminName} />
       {/* Sidebar — desktop only */}
       <aside className="hidden md:flex w-full md:w-64 border-b md:border-b-0 md:border-r border-white/10 bg-[#0c0b10] backdrop-blur-xl p-4 sm:p-6 shrink-0 flex-col justify-between">

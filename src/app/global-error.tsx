@@ -38,7 +38,7 @@ export default function GlobalError({
               onClick={() => {
                 if (typeof window !== "undefined") window.location.reload();
               }}
-              className="flex-1 inline-flex items-center justify-center py-3 px-4 rounded-xl font-bold btn-brand text-zinc-950 text-xs cursor-pointer shadow-lg shadow-brand-violet/25"
+              className="flex-1 inline-flex items-center justify-center py-3 px-4 rounded-xl font-bold btn-brand text-xs cursor-pointer shadow-lg shadow-brand-violet/25"
             >
               Reload Page
             </button>

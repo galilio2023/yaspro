@@ -190,7 +190,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                 amenities: ["10Gbps Symmetrical Fiber", "Green Room", "Hair & Makeup Suite"],
               })
             }
-            className="px-4 py-2.5 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs flex items-center gap-2 transition-colors shadow-lg shadow-brand-violet/25 cursor-pointer"
+            className="px-4 py-2.5 rounded-xl btn-brand text-xs flex items-center gap-2 transition-colors cursor-pointer"
           >
             <Plus size={14} />
             <span>Add Soundstage</span>
@@ -262,7 +262,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
               >
                 <span>{status.label}</span>
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                  isActive ? "bg-brand-mauve text-slate-950 font-bold" : "bg-white/10 text-slate-400"
+                  isActive ? "bg-brand-violet text-white font-bold border border-brand-mauve/30" : "bg-white/10 text-slate-400"
                 }`}>
                   {status.count}
                 </span>
@@ -540,7 +540,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-5 py-2.5 rounded-xl bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold flex items-center gap-2 shadow-lg shadow-brand-violet/25 disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2.5 rounded-xl btn-brand font-bold flex items-center gap-2 disabled:opacity-50 cursor-pointer"
               >
                 <Save size={14} />
                 <span>{isSubmitting ? "Saving..." : "Save Soundstage"}</span>

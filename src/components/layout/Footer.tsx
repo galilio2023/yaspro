@@ -167,7 +167,7 @@ export default function Footer() {
             </Link>
             <Link
               href="/social-media-packages"
-              className="px-5 py-2.5 rounded-full bg-brand-mauve hover:bg-brand-mauve-soft text-zinc-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-brand-violet/40"
+              className="px-5 py-2.5 rounded-full btn-brand text-xs uppercase tracking-wider"
             >
               {isArabic ? "باقات السوشيال ميديا" : "Social Media Plans"}
             </Link>

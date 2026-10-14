@@ -76,14 +76,14 @@ export function Step1OfferSelection({
               onClick={() => setFilter(cat.id)}
               className={cn(
                 "relative px-4 py-2 rounded-full text-xs font-semibold transition-colors duration-150 cursor-pointer whitespace-nowrap z-10 flex items-center gap-2",
-                isActive ? "text-zinc-950 font-bold" : "text-zinc-400 hover:text-white"
+                isActive ? "text-white font-bold" : "text-zinc-400 hover:text-white"
               )}
             >
               <span>{isArabic ? cat.labelAr : cat.labelEn}</span>
               <span
                 className={cn(
                   "px-1.5 py-0.2 rounded-full text-[10px] font-mono",
-                  isActive ? "bg-black/20 text-zinc-950 font-bold" : "bg-white/10 text-zinc-400"
+                  isActive ? "bg-white/20 text-white font-bold" : "bg-white/10 text-zinc-400"
                 )}
               >
                 {cat.count}
@@ -91,7 +91,7 @@ export function Step1OfferSelection({
               {isActive && (
                 <motion.div
                   layoutId="activeOffersFilterPill"
-                  className="absolute inset-0 rounded-full bg-brand-mauve shadow-md -z-10"
+                  className="absolute inset-0 rounded-full bg-brand-violet border border-brand-mauve/40 shadow-md shadow-brand-violet/40 -z-10"
                   transition={studioSprings.snappy}
                 />
               )}
@@ -154,8 +154,8 @@ export function Step1OfferSelection({
                     </span>
 
                     {offer.badge && (
-                      <span className="px-2.5 py-0.5 rounded-full font-mono text-[10px] uppercase font-bold tracking-wider bg-amber-400 text-slate-950 shadow-sm flex items-center gap-1">
-                        <Sparkles size={11} className="fill-slate-950" />
+                      <span className="px-2.5 py-0.5 rounded-full font-mono text-[10px] uppercase font-bold tracking-wider bg-brand-violet/40 text-brand-lavender border border-brand-mauve/30 shadow-sm flex items-center gap-1">
+                        <Sparkles size={11} className="fill-brand-lavender text-brand-lavender" />
                         <span>{isArabic ? offer.badgeAr || offer.badge : offer.badge}</span>
                       </span>
                     )}
@@ -166,7 +166,7 @@ export function Step1OfferSelection({
                     className={cn(
                       "size-6 rounded-full flex items-center justify-center border transition-all duration-200 shrink-0",
                       isSelected
-                        ? "bg-brand-mauve border-brand-mauve text-slate-950 shadow-md"
+                        ? "bg-brand-violet border-brand-mauve text-white shadow-md"
                         : "bg-black/60 border-white/30 text-transparent"
                     )}
                   >
@@ -252,7 +252,7 @@ export function Step1OfferSelection({
                     className={cn(
                       "px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer",
                       isSelected
-                        ? "bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950"
+                        ? "btn-brand text-xs"
                         : "bg-white/10 hover:bg-white/20 text-white"
                     )}
                   >

@@ -195,7 +195,7 @@ export function SendMessageModal({
               <button
                 type="button"
                 onClick={handleModalClose}
-                className="px-6 py-2.5 rounded-full bg-white text-black font-semibold text-sm hover:bg-zinc-200 transition-colors"
+                className="px-6 py-2.5 rounded-full btn-brand text-sm cursor-pointer"
               >
                 {isArabic ? "إغلاق" : "Close"}
               </button>
@@ -334,7 +334,7 @@ export function SendMessageModal({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-white text-black font-semibold text-sm hover:bg-zinc-200 transition-all duration-200 shadow-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full btn-brand text-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <>

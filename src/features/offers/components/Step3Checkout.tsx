@@ -345,11 +345,11 @@ export function Step3Checkout({
                 type="button"
                 disabled={isSubmitting || !agreedToTerms}
                 onClick={() => onSubmit(true)}
-                className="w-full py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 transition-all shadow-lg shadow-brand-violet/25 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer active:scale-[0.99]"
+                className="w-full py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm btn-brand flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer active:scale-[0.99]"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 size={16} className="animate-spin text-slate-950" />
+                    <Loader2 size={16} className="animate-spin text-white" />
                     <span>{isArabic ? "جاري التجهيز..." : "Preparing Checkout..."}</span>
                   </>
                 ) : (

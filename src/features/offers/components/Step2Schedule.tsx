@@ -200,7 +200,7 @@ export function Step2Schedule({
                   className={cn(
                     "aspect-square rounded-xl sm:rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-150 flex flex-col items-center justify-center relative cursor-pointer",
                     isSelected &&
-                      "bg-brand-mauve text-slate-950 font-bold shadow-[0_6px_20px_-4px_rgba(152,123,165,0.7)] scale-105 z-10",
+                      "bg-brand-violet text-white font-bold border border-brand-mauve/50 shadow-[0_6px_20px_-4px_rgba(152,123,165,0.7)] scale-105 z-10",
                     !isSelected &&
                       !isDisabled &&
                       "bg-white/[0.03] text-zinc-200 hover:bg-white/[0.08] hover:text-white border border-white/[0.05]",
@@ -252,7 +252,7 @@ export function Step2Schedule({
                     className={cn(
                       "py-2.5 px-3 rounded-xl font-mono text-xs font-semibold transition-all duration-150 flex items-center justify-center gap-1.5 border cursor-pointer",
                       isSelected
-                        ? "bg-brand-mauve border-brand-mauve text-slate-950 font-bold shadow-md shadow-brand-violet/20"
+                        ? "bg-brand-violet border-brand-mauve text-white font-bold shadow-md shadow-brand-violet/20"
                         : "bg-white/[0.03] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:text-white"
                     )}
                   >

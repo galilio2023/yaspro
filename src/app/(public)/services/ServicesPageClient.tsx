@@ -322,7 +322,7 @@ export function ServicesPageClient() {
   return (
     <div
       dir={isArabic ? "rtl" : "ltr"}
-      className="w-full bg-[#060608] text-white min-h-screen selection:bg-brand-mauve selection:text-black overflow-x-hidden"
+      className="w-full bg-[#060608] text-white min-h-screen selection:bg-brand-mauve selection:text-white overflow-x-hidden"
     >
       {/* ── 1. Hero Stage Header ── */}
       <section className="relative pt-20 pb-8 sm:pt-24 sm:pb-10 border-b border-white/[0.08] overflow-hidden">

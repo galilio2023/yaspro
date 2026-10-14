@@ -200,8 +200,8 @@ export function BookingStepper({
                 <span
                   className={cn(
                     "size-8 rounded-full flex items-center justify-center font-mono text-[11px] font-semibold transition-all duration-200 ring-4 ring-[#070709]",
-                    isCurrent && "bg-brand-mauve text-zinc-950 shadow-[0_0_0_1px_rgba(187,167,195,0.6),0_8px_24px_-6px_rgba(152,123,165,0.55)]",
-                    isDone && "bg-zinc-100 text-black group-hover:bg-white",
+                    isCurrent && "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-[0_0_0_1px_rgba(187,167,195,0.6),0_8px_24px_-6px_rgba(152,123,165,0.55)]",
+                    isDone && "bg-brand-mauve/25 text-brand-lavender border border-brand-mauve/40 group-hover:bg-brand-mauve/35",
                     !isCurrent && !isDone && "bg-[#111115] text-zinc-500 border border-white/10 group-enabled:group-hover:border-white/25 group-enabled:group-hover:text-zinc-300",
                     "group-focus-visible:ring-brand-mauve/40"
                   )}
@@ -301,7 +301,7 @@ function SelectedMark({ selected, className }: { selected: boolean; className?: 
       animate={{ scale: selected ? 1 : 0.6, opacity: selected ? 1 : 0 }}
       transition={studioSprings.snappy}
       className={cn(
-        "absolute top-3 end-3 z-10 size-7 rounded-full bg-brand-mauve text-zinc-950 flex items-center justify-center shadow-lg shadow-black/40",
+        "absolute top-3 end-3 z-10 size-7 rounded-full bg-brand-violet text-white border border-brand-mauve/40 flex items-center justify-center shadow-lg shadow-black/40",
         className
       )}
     >
@@ -421,7 +421,7 @@ export function TogglePill({
     <span
       className={cn(
         "inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-[11px] font-semibold transition-colors whitespace-nowrap shrink-0",
-        selected ? "bg-brand-mauve text-zinc-950" : "bg-white/[0.06] text-zinc-300 group-hover:bg-white/[0.1] group-hover:text-white",
+        selected ? "bg-brand-violet text-white border border-brand-mauve/40 shadow-sm" : "bg-white/[0.06] text-zinc-300 group-hover:bg-white/[0.1] group-hover:text-white",
         className
       )}
     >
@@ -462,7 +462,7 @@ export function ChoiceChip({
       className={cn(
         "relative min-h-[36px] sm:min-h-[40px] rounded-xl border text-[11px] sm:text-xs font-semibold tabular-nums transition-colors duration-150 cursor-pointer disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve/50",
         selected
-          ? "bg-brand-mauve border-brand-mauve text-zinc-950 shadow-[0_8px_20px_-8px_rgba(152,123,165,0.6)]"
+          ? "bg-brand-violet border-brand-mauve/40 text-white shadow-[0_8px_20px_-8px_rgba(152,123,165,0.6)] font-bold"
           : "bg-white/[0.02] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:text-white hover:bg-white/[0.04]",
         className
       )}

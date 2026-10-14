@@ -98,7 +98,7 @@ export function PodcastQuoteRail({
               onClick={() => onSelectSessionIndex(idx)}
               className={`px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition shrink-0 cursor-pointer ${
                 idx === activeSessionIndex
-                  ? "bg-brand-mauve text-zinc-950 shadow-sm shadow-brand-violet/40"
+                  ? "bg-brand-violet text-white border border-brand-mauve/40 shadow-sm shadow-brand-violet/40"
                   : "bg-white/[0.04] text-zinc-400 hover:text-white"
               }`}
             >
@@ -259,7 +259,7 @@ export function PodcastQuoteRail({
                         onApplyPromo(promoInput);
                         setPromoInput("");
                       }}
-                      className="px-2.5 py-1.5 rounded-lg bg-brand-mauve text-zinc-950 font-bold text-xs hover:bg-brand-mauve-soft transition cursor-pointer"
+                      className="px-2.5 py-1.5 rounded-lg btn-brand text-xs font-bold cursor-pointer"
                     >
                       Apply
                     </button>

@@ -179,7 +179,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
               onClick={() => setFilterStatus(tab)}
               className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize transition-all cursor-pointer ${
                 filterStatus === tab
-                  ? "bg-brand-mauve text-slate-950 font-bold shadow-lg shadow-brand-violet/25"
+                  ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-lg shadow-brand-violet/25"
                   : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
               }`}
             >
@@ -293,7 +293,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
                     className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer w-full text-center disabled:opacity-50 ${
                       inq.isResolved
                         ? "bg-white/5 hover:bg-white/10 text-slate-400"
-                        : "bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold"
+                        : "bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
                     }`}
                   >
                     {inq.isResolved ? "Reopen Lead" : "Mark Resolved"}

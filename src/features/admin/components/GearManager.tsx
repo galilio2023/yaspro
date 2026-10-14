@@ -207,7 +207,7 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
                 }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize transition-all cursor-pointer ${
                   selectedAvailability === status
-                    ? "bg-emerald-500 text-slate-950 font-bold shadow-lg shadow-emerald-500/20"
+                    ? "bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-500/20"
                     : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
                 }`}
               >
@@ -244,7 +244,7 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
               >
                 <span>{cat.label}</span>
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                  isActive ? "bg-emerald-500 text-slate-950 font-bold" : "bg-white/10 text-slate-400"
+                  isActive ? "bg-emerald-600 text-white font-bold" : "bg-white/10 text-slate-400"
                 }`}>
                   {cat.count}
                 </span>
@@ -419,7 +419,7 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-2 rounded-lg btn-brand text-zinc-950 font-bold flex items-center gap-2 disabled:opacity-50 shadow-md shadow-brand-violet/25 transition-all cursor-pointer"
+                  className="px-4 py-2 rounded-lg btn-brand font-bold flex items-center gap-2 disabled:opacity-50 shadow-md shadow-brand-violet/25 transition-all cursor-pointer"
                 >
                   <Save size={14} /> Save Equipment
                 </button>

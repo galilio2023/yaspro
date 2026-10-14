@@ -51,7 +51,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
                     <button
                       type="button"
                       onClick={() => setActiveVideoModal(addon)}
-                      className="size-7 rounded-lg bg-white/10 hover:bg-brand-mauve hover:text-zinc-950 text-white/80 flex items-center justify-center transition shrink-0 cursor-pointer"
+                      className="size-7 rounded-lg bg-white/10 hover:bg-brand-violet hover:text-white text-white/80 flex items-center justify-center transition shrink-0 cursor-pointer"
                       title="Watch Sample Video"
                     >
                       <Play size={13} className="ml-0.5" />
@@ -94,7 +94,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
                         <button
                           type="button"
                           onClick={() => onSetQuantity(addon.key, qty + 1)}
-                          className="size-7 rounded-lg bg-brand-mauve text-zinc-950 font-bold flex items-center justify-center transition cursor-pointer"
+                          className="size-7 rounded-lg bg-brand-violet hover:bg-brand-mauve text-white font-bold flex items-center justify-center transition cursor-pointer"
                           aria-label={`Increase quantity for ${addon.title}`}
                         >
                           <Plus size={12} />
@@ -104,7 +104,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
                       <button
                         type="button"
                         onClick={() => onSetQuantity(addon.key, 1)}
-                        className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-brand-mauve hover:text-zinc-950 text-white transition flex items-center gap-1 cursor-pointer"
+                        className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-brand-violet hover:text-white text-white transition flex items-center gap-1 cursor-pointer"
                       >
                         <Plus size={12} /> Add
                       </button>
@@ -117,8 +117,8 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
                     onClick={() => onToggle(addon.key)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer ${
                       isAdded
-                        ? "bg-brand-mauve text-zinc-950 shadow-md shadow-brand-violet/40"
-                        : "bg-white/10 text-white hover:bg-brand-mauve hover:text-zinc-950"
+                        ? "bg-brand-violet text-white border border-brand-mauve/40 shadow-md shadow-brand-violet/40"
+                        : "bg-white/10 text-white hover:bg-brand-violet hover:text-white"
                     }`}
                   >
                     {isAdded ? (

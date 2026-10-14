@@ -206,7 +206,7 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 transition={studioSprings.snappy}
-                className="lg:ms-auto h-9 sm:h-11 px-3 sm:px-5 rounded-lg sm:rounded-xl bg-white hover:bg-zinc-200 text-black text-xs sm:text-sm font-bold flex items-center gap-1 sm:gap-2 cursor-pointer transition-colors shadow-md shadow-white/20 shrink-0"
+                className="lg:ms-auto h-9 sm:h-11 px-3 sm:px-5 rounded-lg sm:rounded-xl btn-brand text-xs sm:text-sm flex items-center gap-1 sm:gap-2 cursor-pointer transition-colors shrink-0"
               >
                 <span>
                   <span className="sm:hidden">Continue</span>

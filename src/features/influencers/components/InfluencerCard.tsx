@@ -105,7 +105,7 @@ export function InfluencerCard({ creator }: { creator: InfluencerItem }) {
 
           <Link
             href={`/influencers/${creator.slug}`}
-            className="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-4 py-2 sm:min-h-0 sm:py-1.5 sm:px-3 rounded-full bg-white/10 hover:bg-brand-mauve hover:text-zinc-950 hover:shadow-md hover:shadow-brand-violet/30 text-white text-xs font-semibold backdrop-blur-md transition-all duration-200 active:scale-[0.97]"
+            className="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-4 py-2 sm:min-h-0 sm:py-1.5 sm:px-3 rounded-full bg-white/10 hover:bg-brand-violet hover:text-white hover:shadow-md hover:shadow-brand-violet/30 text-white text-xs font-semibold backdrop-blur-md transition-all duration-200 active:scale-[0.97]"
           >
             <span>{isArabic ? "الملف التعريفي" : "Profile"}</span>
             <ArrowRight size={12} className="rtl:rotate-180 shrink-0 transition-transform" />

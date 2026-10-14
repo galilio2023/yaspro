@@ -35,7 +35,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
       : studiosCatalog.filter((s) => s.category === activeCategory);
 
   return (
-    <div className="w-full bg-[#060608] text-white min-h-screen selection:bg-brand-mauve selection:text-black">
+    <div className="w-full bg-[#060608] text-white min-h-screen selection:bg-brand-mauve selection:text-white">
       {/* ── 1. Compact Hero Header ── */}
       <section className="relative pt-24 pb-10 sm:pt-28 sm:pb-14 border-b border-white/[0.08] overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -64,7 +64,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
             <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-8">
               <Link
                 href="/studio-booking"
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs sm:text-sm transition-all shadow-md shadow-brand-violet/20 active:scale-[0.98]"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full btn-brand text-xs sm:text-sm transition-all shadow-md active:scale-[0.98]"
               >
                 <Calendar size={14} />
                 <span>{isArabic ? "احجز استوديو" : "Book a Studio"}</span>
@@ -125,13 +125,13 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                   onClick={() => setActiveCategory(cat.id)}
                   className={cn(
                     "relative px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors duration-150 cursor-pointer whitespace-nowrap z-10",
-                    isActive ? "text-zinc-950 font-bold" : "text-zinc-400 hover:text-white"
+                    isActive ? "text-white font-bold" : "text-zinc-400 hover:text-white"
                   )}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="activeCatalogCategoryPill"
-                      className="absolute inset-0 rounded-full bg-brand-mauve shadow-sm -z-10"
+                      className="absolute inset-0 rounded-full bg-brand-violet border border-brand-mauve/40 shadow-sm shadow-brand-violet/40 -z-10"
                       transition={studioSprings.snappy}
                     />
                   )}
@@ -290,7 +290,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
                         <div className="flex items-center gap-2 shrink-0">
                           <Link
                             href={`/studio-booking?studio=${studio.id}`}
-                            className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs transition-all shadow-md active:scale-98"
+                            className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full btn-brand text-xs transition-all shadow-md active:scale-98"
                           >
                             <Calendar size={13} />
                             <span>{isArabic ? "احجز الآن" : "Book Stage"}</span>
@@ -358,7 +358,7 @@ export function StudiosPageClient({ initialStudios }: StudiosPageClientProps = {
           <div className="flex items-center justify-center gap-3 pt-2">
             <Link
               href="/studio-booking"
-              className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-full bg-brand-mauve hover:bg-brand-mauve-soft text-slate-950 font-bold text-xs sm:text-sm transition-all"
+              className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-full btn-brand text-xs sm:text-sm transition-all"
             >
               <Calendar size={14} />
               <span>{isArabic ? "حجز فوري أونلاين" : "Book Online"}</span>
