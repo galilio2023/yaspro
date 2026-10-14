@@ -8,7 +8,7 @@ import { GOV_LOGOS, BRAND_LOGOS } from "@/features/partners/data";
 import { YAS_GROUP_COMPANIES } from "@/features/group/data";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { CountUp } from "@/components/animations/MotionWrappers";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Pause, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ProductionMetric {
@@ -47,6 +47,10 @@ const PRODUCTION_METRICS: readonly ProductionMetric[] = [
 
 export function PartnersMarquee() {
   const { isArabic } = useLanguage();
+  const [isPaused, setIsPaused] = React.useState(false);
+
+  const pauseLabel = isArabic ? "إيقاف حركة شعارات الشركاء مؤقتاً" : "Pause partner logos animation";
+  const resumeLabel = isArabic ? "استئناف حركة شعارات الشركاء" : "Resume partner logos animation";
 
   return (
     <section
@@ -60,9 +64,37 @@ export function PartnersMarquee() {
         <div className="pointer-events-none absolute inset-y-0 start-0 w-6 sm:w-24 lg:w-44 bg-gradient-to-r from-background via-background/95 to-transparent z-20" />
         <div className="pointer-events-none absolute inset-y-0 end-0 w-6 sm:w-24 lg:w-44 bg-gradient-to-l from-background via-background/95 to-transparent z-20" />
 
+        {/* Accessible Keyboard & Screen Reader Pause/Play Control (WCAG 2.2.2) */}
+        <div className="absolute top-2 end-3 sm:end-6 z-30">
+          <button
+            type="button"
+            onClick={() => setIsPaused((prev) => !prev)}
+            aria-pressed={isPaused}
+            aria-label={isPaused ? resumeLabel : pauseLabel}
+            title={isPaused ? resumeLabel : pauseLabel}
+            className={cn(
+              "p-2 rounded-full border transition-all duration-200 outline-none select-none",
+              // Accessible keyboard focus state: always prominently visible on Tab focus
+              "focus-visible:ring-2 focus-visible:ring-brand-mauve focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:opacity-100",
+              // Visual styling: ultra-clean, minimal obsidian style without cluttering titles/descriptions
+              "bg-black/40 backdrop-blur-md border-white/10 hover:border-brand-mauve/40 hover:bg-black/70 text-white/60 hover:text-white",
+              // When paused, show gentle mauve glow accent to clearly signal paused state
+              isPaused && "border-brand-mauve/60 text-brand-mauve bg-brand-violet/20 shadow-[0_0_12px_rgba(152,123,165,0.3)] opacity-100"
+            )}
+          >
+            {isPaused ? (
+              <Play className="w-3.5 h-3.5 fill-current" aria-hidden="true" />
+            ) : (
+              <Pause className="w-3.5 h-3.5 fill-current" aria-hidden="true" />
+            )}
+            <span className="sr-only">{isPaused ? resumeLabel : pauseLabel}</span>
+          </button>
+        </div>
+
         {/* Track 1: Official UAE Government Entities */}
         <div className="w-full mb-6 sm:mb-9">
           <Marquee
+            paused={isPaused}
             pauseOnHover
             repeat={4}
             gap="2.5rem"
@@ -105,6 +137,7 @@ export function PartnersMarquee() {
         {/* Track 2: Premier Global Commercial Brands (Reverse Flow) */}
         <div className="w-full">
           <Marquee
+            paused={isPaused}
             pauseOnHover
             reverse
             repeat={4}
