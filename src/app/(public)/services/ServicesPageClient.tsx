@@ -344,50 +344,25 @@ export function ServicesPageClient() {
         />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Split 50/50 Layout: Title on half the page, telemetry on the other half */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-end mb-6 sm:mb-8">
-            {/* Left/Start: Title & Subtitle taking half the page */}
-            <div className="lg:col-span-7 text-start">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white font-display tracking-tight leading-tight mb-2.5">
-                {isArabic ? (
-                  <>
-                    خدمات الإنتاج <span className="text-brand-mauve">والبنية التحتية</span>
-                  </>
-                ) : (
-                  <>
-                    Production Services &amp; <span className="text-brand-mauve">Infrastructure</span>
-                  </>
-                )}
-              </h1>
+          {/* Clean Title & Subtitle taking half the page */}
+          <div className="max-w-2xl text-start mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white font-display tracking-tight leading-tight mb-2.5">
+              {isArabic ? (
+                <>
+                  خدمات الإنتاج <span className="text-brand-mauve">والبنية التحتية</span>
+                </>
+              ) : (
+                <>
+                  Production Services &amp; <span className="text-brand-mauve">Infrastructure</span>
+                </>
+              )}
+            </h1>
 
-              <p className="text-xs sm:text-sm text-zinc-400 max-w-xl leading-relaxed">
-                {isArabic
-                  ? "استوديوهات تصوير معتمدة، عربات بث تلفزيوني 4K، مستودع كاميرات ARRI وباقات سوشيال ميديا متكاملة."
-                  : "Certified soundstages, 12-cam live OB-VAN broadcasting, cinema gear rental, and turnkey production packages."}
-              </p>
-            </div>
-
-            {/* Right/End: Compact Telemetry Strip taking the other half */}
-            <div className="lg:col-span-5 w-full">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 sm:p-2.5 rounded-2xl bg-[#0d0d12] border border-white/[0.08] shadow-lg">
-                <div className="p-1.5 text-center border-e border-white/5 last:border-none">
-                  <span className="text-base sm:text-lg font-black text-brand-mauve font-display block">7 Pillars</span>
-                  <span className="text-[10px] text-zinc-400 font-mono">{isArabic ? "خدمات متكاملة" : "Turnkey"}</span>
-                </div>
-                <div className="p-1.5 text-center border-e border-white/5 last:border-none">
-                  <span className="text-base sm:text-lg font-black text-white font-display block">STC 65+</span>
-                  <span className="text-[10px] text-zinc-400 font-mono">{isArabic ? "عزل صوتي" : "Acoustic"}</span>
-                </div>
-                <div className="p-1.5 text-center border-e border-white/5 last:border-none">
-                  <span className="text-base sm:text-lg font-black text-brand-mauve-soft font-display block">12-Cam 4K</span>
-                  <span className="text-[10px] text-zinc-400 font-mono">{isArabic ? "عربات بث" : "Fiber OB-VAN"}</span>
-                </div>
-                <div className="p-1.5 text-center">
-                  <span className="text-base sm:text-lg font-black text-white font-display block">24/7 Crew</span>
-                  <span className="text-[10px] text-zinc-400 font-mono">{isArabic ? "طواقم فورية" : "Dispatch"}</span>
-                </div>
-              </div>
-            </div>
+            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+              {isArabic
+                ? "استوديوهات تصوير معتمدة، عربات بث تلفزيوني 4K، مستودع كاميرات ARRI وباقات سوشيال ميديا متكاملة."
+                : "Certified soundstages, 12-cam live OB-VAN broadcasting, cinema gear rental, and turnkey production packages."}
+            </p>
           </div>
 
           {/* Category Filter Pills (Start-aligned, minimal height) */}
@@ -480,14 +455,6 @@ export function ServicesPageClient() {
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c11] via-[#0c0c11]/30 to-transparent pointer-events-none" />
-
-                  {/* Top Badge */}
-                  <div className="absolute top-4 start-4 z-10">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-brand-violet/40 text-brand-lavender border border-brand-mauve/30 backdrop-blur-md shadow-md">
-                      <Sparkles size={11} />
-                      <span>{isArabic ? service.badgeAr : service.badgeEn}</span>
-                    </span>
-                  </div>
                 </div>
 
                 {/* Content Card Body */}
@@ -572,75 +539,88 @@ export function ServicesPageClient() {
               role="dialog"
               aria-modal="true"
               aria-labelledby={headingId}
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              initial={{ opacity: 0, scale: 0.96, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              exit={{ opacity: 0, scale: 0.96, y: 15 }}
               transition={studioSprings.cinematic}
-              className="relative w-full max-w-lg rounded-3xl bg-[#09090c] border border-white/10 p-6 sm:p-8 z-10 shadow-2xl my-auto text-start"
+              className="relative w-full max-w-xl rounded-3xl bg-[#09090c] border border-white/10 p-5 sm:p-7 md:p-9 z-10 shadow-2xl my-auto text-start"
             >
-              <div className="flex items-center justify-between mb-5 border-b border-white/5 pb-4">
-                <h3 id={headingId} className="text-lg sm:text-xl font-bold text-white font-display">
-                  {isArabic ? selectedInquiry.titleAr : selectedInquiry.titleEn}
-                </h3>
+              {/* Header Row */}
+              <div className="flex items-center justify-between mb-5 sm:mb-6 border-b border-white/5 pb-4">
+                <h2
+                  id={headingId}
+                  className="font-bold text-white text-xl sm:text-2xl uppercase tracking-wider font-display"
+                >
+                  {isArabic ? "أرسل لنا رسالة" : "SEND US A MESSAGE"}
+                </h2>
+
                 <button
                   type="button"
                   onClick={handleCloseInquiry}
                   aria-label={isArabic ? "إغلاق" : "Close"}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                 >
-                  <X size={16} />
+                  <X size={18} />
                 </button>
               </div>
 
               {isSubmitted ? (
-                <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
-                  <div className="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
-                    <CheckCircle2 size={32} />
+                <div className="py-10 text-center flex flex-col items-center justify-center">
+                  <div className="h-16 w-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-5 text-emerald-400">
+                    <CheckCircle2 size={36} />
                   </div>
-                  <h4 className="text-lg font-bold text-white">
-                    {isArabic ? "تم استلام طلبك بنجاح!" : "Inquiry Received Successfully!"}
-                  </h4>
-                  <p className="text-xs sm:text-sm text-zinc-400 max-w-xs leading-relaxed">
+                  <h3 className="text-xl font-bold text-white mb-2 font-display">
+                    {isArabic ? "تم استلام طلبك بنجاح" : "Message Received Successfully"}
+                  </h3>
+                  <p className="text-zinc-400 text-sm max-w-md mx-auto mb-6 leading-relaxed">
                     {isArabic
-                      ? "سيتواصل معك فريق الإنتاج التنفيذي خلال وقت وجيز لمناقشة التفاصيل والتسعير."
-                      : "Our executive production team will contact you shortly to review requirements and quote."}
+                      ? "سيتواصل معك فريق الإنتاج التنفيذي في ياس برو هاتفياً في أقرب وقت لمناقشة التفاصيل وتقديم العرض المناسب."
+                      : "Our executive production team at Yas Pro will review your requirements and call you shortly to discuss full details and pricing."}
                   </p>
                   <button
                     type="button"
                     onClick={handleCloseInquiry}
-                    className="px-6 py-2.5 rounded-full btn-brand text-xs transition-transform active:scale-95"
+                    className="px-6 py-2.5 rounded-full btn-brand text-sm cursor-pointer"
                   >
-                    {isArabic ? "حسناً، إغلاق" : "Done"}
+                    {isArabic ? "إغلاق" : "Close"}
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmitInquiry} className="space-y-4">
+                <form onSubmit={handleSubmitInquiry} className="space-y-6">
+                  {/* Subtitle / Service tag */}
+                  <p className="text-xs text-zinc-400">
+                    {isArabic
+                      ? "سجل بياناتك وسيطلبك فريق المبيعات والإنتاج لتحديد التجهيزات والمواعيد المناسبة."
+                      : "Submit your requirements below and our sales & production team will call you to arrange complete specifications and dates."}
+                  </p>
+
                   {submitError && (
-                    <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs">
-                      <AlertCircle size={15} className="shrink-0" />
+                    <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center gap-2.5 text-red-400 text-xs">
+                      <AlertCircle size={16} className="shrink-0" />
                       <span>{submitError}</span>
                     </div>
                   )}
 
-                  <div>
-                    <label htmlFor={`${headingId}-name`} className="block text-xs font-medium text-zinc-300 mb-1.5">
-                      {isArabic ? "الاسم الكامل *" : "Full Name *"}
-                    </label>
-                    <input
-                      id={`${headingId}-name`}
-                      type="text"
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder={isArabic ? "مثال: عبد الله المري" : "e.g. Alexander Vance"}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-brand-mauve transition-colors"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Name & Email */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                      <label htmlFor={`${headingId}-email`} className="block text-xs font-medium text-zinc-300 mb-1.5">
-                        {isArabic ? "البريد الإلكتروني *" : "Email Address *"}
+                      <label htmlFor={`${headingId}-name`} className="block text-xs font-medium text-zinc-400 mb-1.5">
+                        {isArabic ? "الاسم" : "Name"} <span className="text-brand-mauve">*</span>
+                      </label>
+                      <input
+                        id={`${headingId}-name`}
+                        type="text"
+                        required
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder={isArabic ? "اسمك الكريم" : "Your full name"}
+                        className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor={`${headingId}-email`} className="block text-xs font-medium text-zinc-400 mb-1.5">
+                        {isArabic ? "البريد الإلكتروني" : "Email"} <span className="text-brand-mauve">*</span>
                       </label>
                       <input
                         id={`${headingId}-email`}
@@ -648,65 +628,110 @@ export function ServicesPageClient() {
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="producer@agency.com"
-                        className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-brand-mauve transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor={`${headingId}-phone`} className="block text-xs font-medium text-zinc-300 mb-1.5">
-                        {isArabic ? "رقم الهاتف *" : "Phone Number *"}
-                      </label>
-                      <input
-                        id={`${headingId}-phone`}
-                        type="tel"
-                        required
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="+971 50 000 0000"
-                        className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-brand-mauve transition-colors"
+                        placeholder="name@company.com"
+                        className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
                       />
                     </div>
                   </div>
 
+                  {/* Inquiry Type & Subject */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                      <label htmlFor={`${headingId}-type`} className="block text-xs font-medium text-zinc-400 mb-1.5">
+                        {isArabic ? "نوع الطلب" : "Inquiry Type"}
+                      </label>
+                      <select
+                        id={`${headingId}-type`}
+                        value={inquiryType}
+                        onChange={(e) => {
+                          const val = e.target.value as "ob_van" | "outdoor_filming";
+                          setInquiryType(val);
+                          setSubject(
+                            val === "ob_van"
+                              ? (isArabic ? "طلب استشارة وحجز عربة بث مباشر (OB VAN)" : "OB VAN Live Broadcast Consultation & Quote")
+                              : (isArabic ? "طلب استشارة وتصوير ميداني (Outdoor Filming)" : "Outdoor Filming Consultation & Quote")
+                          );
+                        }}
+                        className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white focus:outline-none focus:border-white transition-colors cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
+                      >
+                        <option value="ob_van">
+                          {isArabic ? "عربات البث المباشر (OB VAN)" : "OB VAN Live Broadcast"}
+                        </option>
+                        <option value="outdoor_filming">
+                          {isArabic ? "التصوير الميداني (Outdoor Filming)" : "Outdoor Filming"}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label htmlFor={`${headingId}-subject`} className="block text-xs font-medium text-zinc-400 mb-1.5">
+                        {isArabic ? "الموضوع" : "Subject"}
+                      </label>
+                      <input
+                        id={`${headingId}-subject`}
+                        type="text"
+                        value={subject}
+                        onChange={(e) => setSubject(e.target.value)}
+                        placeholder={isArabic ? "موضوع الطلب" : "Subject of inquiry"}
+                        className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Phone Number (Crucial for sales team to call) */}
                   <div>
-                    <label htmlFor={`${headingId}-message`} className="block text-xs font-medium text-zinc-300 mb-1.5">
-                      {isArabic ? "تفاصيل المشروع والمتطلبات *" : "Project Requirements & Dates *"}
+                    <label htmlFor={`${headingId}-phone`} className="block text-xs font-medium text-zinc-400 mb-1.5">
+                      {isArabic ? "رقم الهاتف للاتصال" : "Phone Number (for Callback)"} <span className="text-brand-mauve">*</span>
+                    </label>
+                    <input
+                      id={`${headingId}-phone`}
+                      type="tel"
+                      required
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+971 50 000 0000"
+                      dir="ltr"
+                      className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors text-start"
+                    />
+                  </div>
+
+                  {/* Message / Details */}
+                  <div>
+                    <label htmlFor={`${headingId}-message`} className="block text-xs font-medium text-zinc-400 mb-1.5">
+                      {isArabic ? "تفاصيل الطلب والاحتياجات" : "Message / What you need"} <span className="text-brand-mauve">*</span>
                     </label>
                     <textarea
                       id={`${headingId}-message`}
                       required
-                      rows={3}
+                      rows={4}
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder={
                         isArabic
-                          ? "اذكر موقع التصوير المقترح، التواريخ، عدد الكاميرات أو متطلبات البث..."
-                          : "Describe location, tentative filming dates, camera count, or broadcast details..."
+                          ? "اكتب تفاصيل التغطية أو التصوير، التاريخ المقترح، موقع العمل، وأي متطلبات فنية خاصة..."
+                          : "Provide details on production dates, location, multi-camera needs, or any specific broadcast requirements..."
                       }
-                      className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-brand-mauve transition-colors resize-none"
+                      className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors resize-none"
                     />
                   </div>
 
-                  <div className="flex items-center justify-end gap-3 pt-2">
-                    <button
-                      type="button"
-                      onClick={handleCloseInquiry}
-                      className="px-4 py-2 rounded-full border border-white/10 text-zinc-300 hover:text-white text-xs font-medium"
-                    >
-                      {isArabic ? "إلغاء" : "Cancel"}
-                    </button>
+                  {/* Bottom CTA Button (Let's Talk ↗) */}
+                  <div className="pt-2">
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full btn-brand text-xs transition-all disabled:opacity-50 cursor-pointer"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full btn-brand text-base sm:text-sm min-h-[44px] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? (
                         <>
-                          <Loader2 size={13} className="animate-spin" />
-                          <span>{isArabic ? "جاري الإرسال..." : "Sending..."}</span>
+                          <Loader2 size={16} className="animate-spin" />
+                          <span>{isArabic ? "جارٍ الإرسال..." : "Sending..."}</span>
                         </>
                       ) : (
-                        <span>{isArabic ? "إرسال الطلب" : "Submit Inquiry"}</span>
+                        <>
+                          <span>{isArabic ? "تواصل معنا" : "Let's Talk"}</span>
+                          <span className="text-base leading-none">↗</span>
+                        </>
                       )}
                     </button>
                   </div>

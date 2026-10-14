@@ -332,8 +332,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                       {/* Featured Badge */}
                       {card.isFeatured && (
                         <div className="absolute top-2 start-2 sm:top-3 sm:start-3 z-10">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wide uppercase bg-brand-violet/40 text-brand-lavender border border-brand-mauve/30 backdrop-blur-md shadow-md">
-                            <Sparkles size={11} />
+                          <span className="inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wide uppercase bg-brand-violet/40 text-brand-lavender border border-brand-mauve/30 backdrop-blur-md shadow-md">
                             <span>{isArabic ? "باقات التوفير" : "Best Value"}</span>
                           </span>
                         </div>
