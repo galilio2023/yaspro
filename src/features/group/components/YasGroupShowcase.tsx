@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Building2 } from "lucide-react";
+import { Building2, ShieldCheck, Radio, Sparkles } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { YAS_GROUP_COMPANIES, YasGroupCompany } from "../data";
@@ -129,71 +129,47 @@ export function YasGroupShowcase() {
                           {isArabic ? company.descriptionAr : company.description}
                         </p>
 
-                        {/* Conglomerate Mini-Telemetry Strip */}
-                        <div className="grid grid-cols-3 gap-2.5 sm:gap-4 mb-7">
-                          <div className="p-3 sm:p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 text-start">
-                            <div className="text-xl sm:text-2xl font-black font-display text-start mb-0.5">
-                              <span
-                                dir="ltr"
-                                className="font-latin inline-block"
-                                style={{
-                                  background: "linear-gradient(135deg, #DDD3E1 0%, #BBA7C3 50%, #987BA5 100%)",
-                                  WebkitBackgroundClip: "text",
-                                  WebkitTextFillColor: "transparent",
-                                }}
-                              >
-                                6
-                              </span>
+                        {/* Conglomerate Strategic Capability Pillars */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3.5 mb-7">
+                          <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 text-start flex flex-col justify-between">
+                            <div className="size-8 rounded-xl bg-brand-violet/20 border border-brand-mauve/30 flex items-center justify-center text-brand-mauve mb-2.5">
+                              <ShieldCheck size={16} />
                             </div>
-                            <div className="text-[11px] font-bold text-white leading-tight">
-                              {isArabic ? "شركات متخصصة" : "Specialized Entities"}
-                            </div>
-                            <div className="text-[10px] text-zinc-400 leading-tight mt-0.5">
-                              {isArabic ? "إدارة موحدة" : "Unified Management"}
+                            <div>
+                              <div className="text-xs font-bold text-white mb-0.5">
+                                {isArabic ? "الإنتاج السيادي والحكومي" : "Sovereign Operations"}
+                              </div>
+                              <div className="text-[10.5px] text-zinc-400 leading-snug">
+                                {isArabic ? "شريك معتمد للمشاريع الوطنية" : "Accredited for National Tenders"}
+                              </div>
                             </div>
                           </div>
 
-                          <div className="p-3 sm:p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 text-start">
-                            <div className="text-xl sm:text-2xl font-black font-display text-start mb-0.5">
-                              <span
-                                dir="ltr"
-                                className="font-latin inline-block"
-                                style={{
-                                  background: "linear-gradient(135deg, #DDD3E1 0%, #BBA7C3 50%, #987BA5 100%)",
-                                  WebkitBackgroundClip: "text",
-                                  WebkitTextFillColor: "transparent",
-                                }}
-                              >
-                                3
-                              </span>
+                          <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 text-start flex flex-col justify-between">
+                            <div className="size-8 rounded-xl bg-brand-violet/20 border border-brand-mauve/30 flex items-center justify-center text-brand-mauve mb-2.5">
+                              <Radio size={16} />
                             </div>
-                            <div className="text-[11px] font-bold text-white leading-tight">
-                              {isArabic ? "مقرات إقليمية" : "Regional Hubs"}
-                            </div>
-                            <div className="text-[10px] text-zinc-400 leading-tight mt-0.5 font-latin" dir="ltr">
-                              UAE • EG • JO
+                            <div>
+                              <div className="text-xs font-bold text-white mb-0.5">
+                                {isArabic ? "بث مباشر وأساطيل OB-VAN" : "Live Broadcast Fleets"}
+                              </div>
+                              <div className="text-[10.5px] text-zinc-400 leading-snug">
+                                {isArabic ? "تغطية فورية عبر الألياف البصرية" : "SMPTE Fiber & Satellite Uplink"}
+                              </div>
                             </div>
                           </div>
 
-                          <div className="p-3 sm:p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 text-start">
-                            <div className="text-xl sm:text-2xl font-black font-display text-start mb-0.5">
-                              <span
-                                dir="ltr"
-                                className="font-latin inline-block"
-                                style={{
-                                  background: "linear-gradient(135deg, #DDD3E1 0%, #BBA7C3 50%, #987BA5 100%)",
-                                  WebkitBackgroundClip: "text",
-                                  WebkitTextFillColor: "transparent",
-                                }}
-                              >
-                                400M+
-                              </span>
+                          <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 text-start flex flex-col justify-between">
+                            <div className="size-8 rounded-xl bg-brand-violet/20 border border-brand-mauve/30 flex items-center justify-center text-brand-mauve mb-2.5">
+                              <Sparkles size={16} />
                             </div>
-                            <div className="text-[11px] font-bold text-white leading-tight">
-                              {isArabic ? "وصول الشبكة" : "Digital Reach"}
-                            </div>
-                            <div className="text-[10px] text-zinc-400 leading-tight mt-0.5">
-                              {isArabic ? "جمهور المحتوى" : "Combined Audience"}
+                            <div>
+                              <div className="text-xs font-bold text-white mb-0.5">
+                                {isArabic ? "منظومة المواهب والمحتوى" : "Creator & IP Ecosystem"}
+                              </div>
+                              <div className="text-[10.5px] text-zinc-400 leading-snug">
+                                {isArabic ? "ترخيص موثوق وإدارة المشاهير" : "Mawthooq Certified Talent Network"}
+                              </div>
                             </div>
                           </div>
                         </div>

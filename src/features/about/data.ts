@@ -9,14 +9,11 @@ export interface FounderProfile {
   image?: string;
   quoteEn: string;
   quoteAr: string;
-  bioEn: string;
-  bioAr: string;
   credentialsEn: string[];
   credentialsAr: string[];
-  stats: {
-    value: string;
-    labelEn: string;
-    labelAr: string;
+  focusAreas: {
+    titleEn: string;
+    titleAr: string;
     detailEn: string;
     detailAr: string;
   }[];
@@ -33,25 +30,23 @@ export const FOUNDER_PROFILE: FounderProfile = {
   image: "/images/founder/yaman-alomari-portrait.jpg",
   quoteEn: "We built Yas Pro not as another rental studio, but as an integrated sovereign production ecosystem—where Hollywood cinema craft converges with real-time digital velocity.",
   quoteAr: "لم نبنِ Yas Pro لتكون مجرد استوديو أو دار لتأجير المعدات، بل صمّمناها كمنظومة إنتاجية سيادية متكاملة تلتقي فيها معايير السينما العالمية مع سرعة وزخم الإعلام الرقمي الحديث.",
-  bioEn: "Under Yaman's executive leadership since 2015, Yas Pro has expanded from broadcast soundstages in Dubai into a multi-facility media group spanning virtual production, outside broadcasting, creative strategy, and digital talent across the UAE, Egypt, and Jordan.",
-  bioAr: "منذ تأسيس الشركة في دبي عام 2015 برؤية يمان العمري، توسعت Yas Pro من استوديوهات تصوير متقدمة إلى مجموعة إعلامية إقليمية رائدة تشمل الإنتاج الافتراضي، أساطيل البث الخارجي، الإدارة الإبداعية، وصناعة المحتوى عبر الإمارات ومصر والأردن.",
   credentialsEn: [
     "Steering 6 specialized sister enterprises across Yas Media Group",
     "Pioneered virtual soundstage & ICVFX infrastructure in Dubai",
-    "Trusted partner for UAE ministries, giga-projects & national campaigns",
-    "Engineered production workflows reaching 400M+ digital audience",
+    "Trusted strategic partner for UAE ministries, giga-projects & national campaigns",
+    "Architected high-throughput media pipelines serving regional broadcast networks",
   ],
   credentialsAr: [
     "قيادة 6 شركات شقيقة متخصصة تحت مظلة مجموعة ياس برو الإعلامية",
     "ريادة تقنيات الاستوديوهات الافتراضية والمؤثرات الميدانية في دبي",
     "شريك استراتيجي موثوق للوزارات والمشاريع الوطنية والفعاليات الكبرى",
-    "هندسة بنية تحتية للإنتاج والبث تصل لأكثر من 400 مليون مشاهدة",
+    "هندسة بنية تحتية للإنتاج والبث تخدم كبرى الشبكات الإعلامية في المنطقة",
   ],
-  stats: [
-    { value: "2015", labelEn: "Established", labelAr: "التأسيس", detailEn: "Dubai NMC Licensed", detailAr: "ترخيص رسمي بدبي" },
-    { value: "6", labelEn: "Group Entities", labelAr: "شركات بالمجموعة", detailEn: "Unified Holding", detailAr: "إدارة قابضة موحدة" },
-    { value: "3", labelEn: "Regional Hubs", labelAr: "مقرات إقليمية", detailEn: "UAE • Egypt • Jordan", detailAr: "الإمارات • مصر • الأردن" },
-    { value: "500+", labelEn: "Prime Delivered", labelAr: "أعمال منجزة", detailEn: "Sovereign & Commercial", detailAr: "مشاريع حكومية وإعلانية" },
+  focusAreas: [
+    { titleEn: "Virtual Production", titleAr: "الإنتاج الافتراضي", detailEn: "Unreal Engine 5.4 & ICVFX", detailAr: "أنريل إنجن 5.4 ومؤثرات ميدانية" },
+    { titleEn: "Sovereign Media", titleAr: "الإعلام السيادي", detailEn: "National Tenders & Campaigns", detailAr: "المشاريع والفعاليات الوطنية الكبرى" },
+    { titleEn: "Live Broadcast", titleAr: "البث التلفزيوني", detailEn: "Mobile OB-VAN 12-Channel", detailAr: "عربات النقل المباشر وألياف SMPTE" },
+    { titleEn: "Creator Economy", titleAr: "اقتصاد المبدعين", detailEn: "Mawthooq Certified Talent", detailAr: "شبكة صناع المحتوى وترخيص موثوق" },
   ],
 };
 
