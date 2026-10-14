@@ -11,7 +11,6 @@ import {
   Video,
   Sparkles,
   PhoneCall,
-  MessageCircle,
   ArrowRight,
   CheckCircle2,
   AlertCircle,
@@ -300,15 +299,15 @@ export function ServicesPageClient() {
         setSubmitError(
           res?.message ||
             (isArabic
-              ? "تعذر إرسال الطلب حالياً، يرجى المحاولة لاحقاً أو مراسلتنا عبر واتساب."
-              : "Failed to send request. Please try again or reach out directly on WhatsApp.")
+              ? "تعذر إرسال الطلب حالياً، يرجى المحاولة لاحقاً."
+              : "Failed to send request. Please try again later.")
         );
       }
     } catch {
       setSubmitError(
         isArabic
-          ? "حدث خطأ غير متوقع، يرجى التواصل عبر واتساب."
-          : "An unexpected error occurred. Please contact us via WhatsApp."
+          ? "حدث خطأ غير متوقع، يرجى المحاولة ثانية."
+          : "An unexpected error occurred. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -326,116 +325,110 @@ export function ServicesPageClient() {
       className="w-full bg-[#060608] text-white min-h-screen selection:bg-brand-mauve selection:text-black overflow-x-hidden"
     >
       {/* ── 1. Hero Stage Header ── */}
-      <section className="relative pt-24 pb-12 sm:pt-32 sm:pb-16 border-b border-white/[0.08] overflow-hidden">
+      <section className="relative pt-20 pb-8 sm:pt-24 sm:pb-10 border-b border-white/[0.08] overflow-hidden">
         {/* Ambient Mauve & Violet Studio Glows (strictly purple, no amber) */}
         <div
-          className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] sm:w-[900px] h-[350px] bg-brand-violet/20 blur-[120px] rounded-full pointer-events-none z-0"
-          aria-hidden="true"
-        />
-        <div
-          className="absolute top-1/2 -start-20 w-80 h-80 bg-brand-mauve/15 blur-[100px] rounded-full pointer-events-none z-0"
+          className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] sm:w-[900px] h-[300px] bg-brand-violet/20 blur-[120px] rounded-full pointer-events-none z-0"
           aria-hidden="true"
         />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
-            {/* Top Pill */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-violet/20 border border-brand-mauve/30 text-brand-mauve text-xs font-semibold uppercase tracking-wider mb-4">
-              <Sparkles size={13} className="text-brand-mauve" />
-              <span>{isArabic ? "منظومة الإنتاج المتكاملة" : "7 Production Pillars"}</span>
+          {/* Split 50/50 Layout: Title on half the page, telemetry on the other half */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-end mb-6 sm:mb-8">
+            {/* Left/Start: Title & Subtitle taking half the page */}
+            <div className="lg:col-span-7 text-start">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white font-display tracking-tight leading-tight mb-2.5">
+                {isArabic ? (
+                  <>
+                    خدمات الإنتاج <span className="text-brand-mauve">والبنية التحتية</span>
+                  </>
+                ) : (
+                  <>
+                    Production Services &amp; <span className="text-brand-mauve">Infrastructure</span>
+                  </>
+                )}
+              </h1>
+
+              <p className="text-xs sm:text-sm text-zinc-400 max-w-xl leading-relaxed">
+                {isArabic
+                  ? "استوديوهات تصوير معتمدة، عربات بث تلفزيوني 4K، مستودع كاميرات ARRI وباقات سوشيال ميديا متكاملة."
+                  : "Certified soundstages, 12-cam live OB-VAN broadcasting, cinema gear rental, and turnkey production packages."}
+              </p>
             </div>
 
-            {/* Main Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white font-display tracking-tight leading-tight mb-4">
-              {isArabic ? (
-                <>
-                  خدمات الإنتاج <span className="text-brand-mauve">والبنية التحتية</span> الإعلامية
-                </>
-              ) : (
-                <>
-                  Full-Spectrum <span className="text-brand-mauve">Production Services</span>
-                </>
+            {/* Right/End: Compact Telemetry Strip taking the other half */}
+            <div className="lg:col-span-5 w-full">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 sm:p-2.5 rounded-2xl bg-[#0d0d12] border border-white/[0.08] shadow-lg">
+                <div className="p-1.5 text-center border-e border-white/5 last:border-none">
+                  <span className="text-base sm:text-lg font-black text-brand-mauve font-display block">7 Pillars</span>
+                  <span className="text-[10px] text-zinc-400 font-mono">{isArabic ? "خدمات متكاملة" : "Turnkey"}</span>
+                </div>
+                <div className="p-1.5 text-center border-e border-white/5 last:border-none">
+                  <span className="text-base sm:text-lg font-black text-white font-display block">STC 65+</span>
+                  <span className="text-[10px] text-zinc-400 font-mono">{isArabic ? "عزل صوتي" : "Acoustic"}</span>
+                </div>
+                <div className="p-1.5 text-center border-e border-white/5 last:border-none">
+                  <span className="text-base sm:text-lg font-black text-brand-mauve-soft font-display block">12-Cam 4K</span>
+                  <span className="text-[10px] text-zinc-400 font-mono">{isArabic ? "عربات بث" : "Fiber OB-VAN"}</span>
+                </div>
+                <div className="p-1.5 text-center">
+                  <span className="text-base sm:text-lg font-black text-white font-display block">24/7 Crew</span>
+                  <span className="text-[10px] text-zinc-400 font-mono">{isArabic ? "طواقم فورية" : "Dispatch"}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Category Filter Pills (Start-aligned, minimal height) */}
+          <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-white/[0.06]">
+            <button
+              type="button"
+              onClick={() => setActiveCategory("all")}
+              className={cn(
+                "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer",
+                activeCategory === "all"
+                  ? "bg-brand-mauve text-slate-950 shadow-md shadow-brand-violet/20"
+                  : "text-zinc-300 hover:text-white hover:bg-white/5"
               )}
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-sm sm:text-base text-zinc-400 max-w-2xl leading-relaxed mb-8">
-              {isArabic
-                ? "من استوديوهات التصوير المجهزة بأحدث شاشات الليد إلى عربات البث التلفزيوني ومستودع كاميرات ARRI ومقاطع السوشيال ميديا الفيروسية."
-                : "From STC 65+ soundproof stages and 12-cam live OB vans to certified ARRI/RED rental kits and viral short-form commercial content."}
-            </p>
-
-            {/* Telemetry Strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-3xl p-2.5 sm:p-3 rounded-2xl bg-[#0d0d12] border border-white/[0.08] shadow-lg mb-8">
-              <div className="p-2 text-center border-e border-white/5 last:border-none">
-                <span className="text-lg sm:text-xl font-black text-brand-mauve font-display block">7 Pillars</span>
-                <span className="text-[10px] text-zinc-400 font-mono">{isArabic ? "خدمات متكاملة" : "Turnkey Services"}</span>
-              </div>
-              <div className="p-2 text-center border-e border-white/5 last:border-none">
-                <span className="text-lg sm:text-xl font-black text-white font-display block">STC 65+</span>
-                <span className="text-[10px] text-zinc-400 font-mono">{isArabic ? "عزل صوتي كامل" : "Acoustic Stage"}</span>
-              </div>
-              <div className="p-2 text-center border-e border-white/5 last:border-none">
-                <span className="text-lg sm:text-xl font-black text-brand-mauve-soft font-display block">12-Cam 4K</span>
-                <span className="text-[10px] text-zinc-400 font-mono">{isArabic ? "عربات بث ألياف" : "SMPTE Fiber OB-VAN"}</span>
-              </div>
-              <div className="p-2 text-center">
-                <span className="text-lg sm:text-xl font-black text-white font-display block">24/7 Crew</span>
-                <span className="text-[10px] text-zinc-400 font-mono">{isArabic ? "طواقم فورية" : "Dispatch & Support"}</span>
-              </div>
-            </div>
-
-            {/* Category Filter Pills */}
-            <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
-              <button
-                type="button"
-                onClick={() => setActiveCategory("all")}
-                className={cn(
-                  "px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer",
-                  activeCategory === "all"
-                    ? "bg-brand-mauve text-slate-950 shadow-md shadow-brand-violet/20"
-                    : "text-zinc-300 hover:text-white hover:bg-white/5"
-                )}
-              >
-                {isArabic ? "كافة الخدمات (7)" : "All 7 Services"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveCategory("studios")}
-                className={cn(
-                  "px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer",
-                  activeCategory === "studios"
-                    ? "bg-brand-mauve text-slate-950 shadow-md shadow-brand-violet/20"
-                    : "text-zinc-300 hover:text-white hover:bg-white/5"
-                )}
-              >
-                {isArabic ? "الاستوديوهات والبودكاست" : "Studios & Suites"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveCategory("broadcast")}
-                className={cn(
-                  "px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer",
-                  activeCategory === "broadcast"
-                    ? "bg-brand-mauve text-slate-950 shadow-md shadow-brand-violet/20"
-                    : "text-zinc-300 hover:text-white hover:bg-white/5"
-                )}
-              >
-                {isArabic ? "البث المباشر والتصوير الميداني" : "Broadcast & Field"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveCategory("gear")}
-                className={cn(
-                  "px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer",
-                  activeCategory === "gear"
-                    ? "bg-brand-mauve text-slate-950 shadow-md shadow-brand-violet/20"
-                    : "text-zinc-300 hover:text-white hover:bg-white/5"
-                )}
-              >
-                {isArabic ? "المعدات وباقات السوشيال" : "Gear & Packages"}
-              </button>
-            </div>
+            >
+              {isArabic ? "كافة الخدمات (7)" : "All 7 Services"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveCategory("studios")}
+              className={cn(
+                "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer",
+                activeCategory === "studios"
+                  ? "bg-brand-mauve text-slate-950 shadow-md shadow-brand-violet/20"
+                  : "text-zinc-300 hover:text-white hover:bg-white/5"
+              )}
+            >
+              {isArabic ? "الاستوديوهات والبودكاست" : "Studios & Suites"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveCategory("broadcast")}
+              className={cn(
+                "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer",
+                activeCategory === "broadcast"
+                  ? "bg-brand-mauve text-slate-950 shadow-md shadow-brand-violet/20"
+                  : "text-zinc-300 hover:text-white hover:bg-white/5"
+              )}
+            >
+              {isArabic ? "البث المباشر والتصوير الميداني" : "Broadcast & Field"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveCategory("gear")}
+              className={cn(
+                "px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer",
+                activeCategory === "gear"
+                  ? "bg-brand-mauve text-slate-950 shadow-md shadow-brand-violet/20"
+                  : "text-zinc-300 hover:text-white hover:bg-white/5"
+              )}
+            >
+              {isArabic ? "المعدات وباقات السوشيال" : "Gear & Packages"}
+            </button>
           </div>
         </div>
       </section>
@@ -495,7 +488,7 @@ export function ServicesPageClient() {
                 >
                   <div>
                     {/* Header */}
-                    <h2 className="text-xl sm:text-2xl font-bold text-white font-display tracking-tight mb-2 group-hover:text-brand-mauve-soft transition-colors">
+                    <h2 className="text-lg sm:text-xl font-bold text-white font-display tracking-tight mb-2 group-hover:text-brand-mauve-soft transition-colors">
                       {isArabic ? service.titleAr : service.titleEn}
                     </h2>
 
@@ -522,7 +515,7 @@ export function ServicesPageClient() {
                   </div>
 
                   {/* Action Strip */}
-                  <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-white/5">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/5">
                     {service.actionType === "inquiry" ? (
                       <button
                         type="button"
@@ -541,20 +534,6 @@ export function ServicesPageClient() {
                         <ArrowRight size={14} className="rtl:rotate-180" />
                       </Link>
                     )}
-
-                    {/* WhatsApp Quick Trigger */}
-                    <a
-                      href={`https://wa.me/971554010465?text=${encodeURIComponent(
-                        `Hello Yas Pro, I would like to inquire about: ${service.titleEn}`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs font-semibold transition-all"
-                      title={isArabic ? "تواصل واتساب" : "Direct WhatsApp"}
-                    >
-                      <MessageCircle size={14} className="text-emerald-400" />
-                      <span>{isArabic ? "واتساب" : "WhatsApp"}</span>
-                    </a>
                   </div>
                 </div>
               </motion.article>
@@ -661,7 +640,7 @@ export function ServicesPageClient() {
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-zinc-300 mb-1.5">
-                        {isArabic ? "رقم الهاتف / واتساب *" : "Phone / WhatsApp *"}
+                        {isArabic ? "رقم الهاتف *" : "Phone Number *"}
                       </label>
                       <input
                         type="tel"
