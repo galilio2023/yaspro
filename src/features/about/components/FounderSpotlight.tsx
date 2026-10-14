@@ -115,31 +115,18 @@ export function FounderSpotlight({ headingId }: FounderSpotlightProps) {
                 </div>
               </div>
 
-              {/* Leadership Telemetry Grid */}
-              <div className="mt-8 pt-6 border-t border-white/10 grid grid-cols-2 gap-3 sm:gap-4">
-                {founder.stats.map((stat, i) => (
+              {/* Leadership Focus Areas */}
+              <div className="mt-8 pt-6 border-t border-white/10 grid grid-cols-2 gap-2.5 sm:gap-3">
+                {founder.focusAreas.map((area, i) => (
                   <div
                     key={i}
                     className="p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-brand-mauve/25 transition-colors text-start"
                   >
-                    <div className="text-xl sm:text-2xl font-black font-display text-start mb-0.5">
-                      <span
-                        dir="ltr"
-                        className="font-latin inline-block"
-                        style={{
-                          background: "linear-gradient(135deg, #DDD3E1 0%, #BBA7C3 50%, #987BA5 100%)",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                        }}
-                      >
-                        {stat.value}
-                      </span>
+                    <div className="text-xs font-bold text-white mb-1 leading-snug">
+                      {isArabic ? area.titleAr : area.titleEn}
                     </div>
-                    <div className="text-[11px] font-bold text-white leading-tight">
-                      {isArabic ? stat.labelAr : stat.labelEn}
-                    </div>
-                    <div className="text-[10px] text-zinc-400 leading-tight mt-0.5 rtl:leading-normal">
-                      {isArabic ? stat.detailAr : stat.detailEn}
+                    <div className="text-[10px] text-zinc-400 leading-tight">
+                      {isArabic ? area.detailAr : area.detailEn}
                     </div>
                   </div>
                 ))}
@@ -180,11 +167,6 @@ export function FounderSpotlight({ headingId }: FounderSpotlightProps) {
                     </span>
                   </footer>
                 </blockquote>
-
-                {/* Bio Narrative */}
-                <p className="text-sm sm:text-base text-zinc-300 leading-relaxed rtl:leading-loose mb-8">
-                  {isArabic ? founder.bioAr : founder.bioEn}
-                </p>
 
                 {/* Executive Credentials & Proven Track Record */}
                 <div className="space-y-3">
