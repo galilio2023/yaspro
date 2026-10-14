@@ -38,7 +38,7 @@ const VISUAL_CARDS: VisualBookingCard[] = [
     categoryEn: "Packages",
     categoryAr: "باقات متكاملة",
     image: "/images/modal/offers-bundles-card.jpg",
-    href: "/studios#packages",
+    href: "/offers",
   },
   {
     id: "outdoor-filming",

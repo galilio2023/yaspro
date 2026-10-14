@@ -34,7 +34,7 @@ const PRODUCTION_LINKS: readonly FooterLink[] = [
   { key: "footer.services.socialMedia", label: "Social Media Packages", href: "/social-media-packages", icon: Video },
   { key: "footer.services.studios", label: "Soundstages & Studios Hub", href: "/studios", icon: Calendar },
   { key: "footer.services.gear", label: "Cinema Equipment Rental", href: "/shop", icon: Camera },
-  { key: "footer.services.bundles", label: "Production Bundles", href: "/shop?category=bundles", icon: Layers },
+  { key: "footer.services.bundles", label: "Offers & Bundles", href: "/offers", icon: Layers },
   { key: "footer.services.virtual", label: "Virtual Production & VFX", href: "/#virtual-studio", icon: Wand2 },
   { key: "footer.services.obVan", label: "OB-VAN Live Broadcast", href: "/contact?service=ob-van", icon: Film },
 ];
