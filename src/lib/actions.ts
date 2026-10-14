@@ -611,7 +611,7 @@ export async function validateUniversalPromoCode(code: string, applicableType: s
         if (dbPromo.expiresAt && new Date(dbPromo.expiresAt).getTime() < Date.now()) {
           return { valid: false, message: "This promo code has expired." };
         }
-        if (dbPromo.maxUses && dbPromo.usedCount >= dbPromo.maxUses) {
+        if (dbPromo.maxUses !== null && dbPromo.usedCount >= dbPromo.maxUses) {
           return { valid: false, message: "This promo code has reached its maximum redemptions." };
         }
         if (applicableType !== "all" && dbPromo.applicableTypes && Array.isArray(dbPromo.applicableTypes)) {

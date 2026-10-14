@@ -216,8 +216,9 @@ test('server revalidates promo eligibility, expiry, and atomic usage limits befo
   assert.equal(f.locks.at(-1).params[0], 'offers-promo:CAPPED');
 });
 
-function hookFixture(validate = async (code) => ({ success: true, promo: { code, discountPercent: 10 } })) {
+function hookFixture(validate = async (code) => ({ success: true, promo: { code, discountPercent: 10 } }), getSearchParams = () => null) {
   const states = [];
+  const effects = [];
   let cursor = 0;
   const load = sourceLoader({
     react: {
@@ -232,12 +233,22 @@ function hookFixture(validate = async (code) => ({ success: true, promo: { code,
         return states[index];
       },
       useMemo: (fn) => fn(), useCallback: (fn) => fn,
+      useEffect: (fn, deps) => {
+        const index = cursor++;
+        if (!states[index] || deps.some((value, i) => !Object.is(value, states[index][i]))) effects.push(fn);
+        states[index] = deps;
+      },
     },
-    'next/navigation': { useSearchParams: () => null },
+    'next/navigation': { useSearchParams: getSearchParams },
     '../actions': { validateOffersPromoCode: validate, submitOffersBooking: async () => ({ success: true }) },
   });
   const { useOffersBooking } = load('src/features/offers/hooks/useOffersBooking.ts');
-  return () => { cursor = 0; return useOffersBooking(); };
+  return () => {
+    cursor = 0;
+    const hook = useOffersBooking();
+    effects.splice(0).forEach((effect) => effect());
+    return hook;
+  };
 }
 
 test('offer changes reset scheduling and recalculate percentage or capped fixed discounts', async () => {
@@ -277,6 +288,48 @@ test('promo validation responses cannot restore a removed promo or apply it to a
   finish({ success: true, promo: { code: 'YAS10', discountPercent: 10 } });
   await pending;
   assert.equal(render().appliedPromo, null);
+});
+
+test('query offer changes reset scheduling and invalidate pending promo validation', async () => {
+  let query = new URLSearchParams('offer=5-hour-bundles');
+  let finish;
+  const render = hookFixture(() => new Promise((resolve) => { finish = resolve; }), () => query);
+  let hook = render();
+  hook.setDate('2026-10-19');
+  hook.setTimeSlot('9:00 AM');
+  const pending = hook.applyPromo('YAS10');
+  query = new URLSearchParams('offer=student-fund');
+  render();
+  hook = render();
+  assert.equal(hook.selectedOfferId, 'student-fund');
+  assert.equal(hook.date, '');
+  assert.equal(hook.timeSlot, '');
+  finish({ success: true, promo: { code: 'YAS10', eligibleOfferIds: ['5-hour-bundles'], discountPercent: 10 } });
+  await pending;
+  assert.equal(render().appliedPromo, null);
+});
+
+test('removing and restoring an offer query reuses the offer reset behavior', async () => {
+  let query = new URLSearchParams('package=5-hour-bundles');
+  const render = hookFixture(async (code) => ({ success: true, promo: {
+    code, discountPercent: 10, eligibleOfferIds: ['student-fund'],
+  } }), () => query);
+  render();
+  query = new URLSearchParams();
+  render();
+  render().setSelectedOfferId('student-fund');
+  let hook = render();
+  hook.setDate('2026-10-19');
+  hook.setTimeSlot('9:00 AM');
+  await hook.applyPromo('TEST');
+  assert.equal(render().appliedPromo, 'TEST');
+  query = new URLSearchParams('package=5-hour-bundles');
+  render();
+  hook = render();
+  assert.equal(hook.selectedOfferId, '5-hour-bundles');
+  assert.equal(hook.date, '');
+  assert.equal(hook.timeSlot, '');
+  assert.equal(hook.appliedPromo, null);
 });
 
 function uiFixture(isArabic) {

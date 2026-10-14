@@ -287,6 +287,9 @@ export async function createManualCmsBooking(
             durationHours: input.durationHours,
             headcount: input.headcount,
             position: 1,
+            status: inserted.status,
+          }).onConflictDoNothing({
+            target: [bookingSessions.bookingId, bookingSessions.position],
           });
         }
 
@@ -363,50 +366,35 @@ export async function updateCmsBookingDetails(
           }${input.clientCompany ? ` | ${input.clientCompany}` : ""}] ${input.notes || ""}`.trim();
         }
 
-        await tx.update(bookings).set(updateData).where(eq(bookings.id, input.id));
-
-        const existingSessions = await tx
-          .select()
-          .from(bookingSessions)
-          .where(eq(bookingSessions.bookingId, input.id))
-          .orderBy(asc(bookingSessions.position));
+        const [updatedBooking] = await tx.update(bookings).set(updateData)
+          .where(eq(bookings.id, input.id)).returning();
+        if (!updatedBooking) throw new Error("Booking not found.");
 
         if (input.studioId === null) {
-          if (existingSessions.length <= 1) {
-            await tx.delete(bookingSessions).where(eq(bookingSessions.bookingId, input.id));
-          }
-        } else if (input.studioId || input.scheduledAt) {
-          const primaryStudioId = input.studioId !== undefined ? input.studioId : existingSessions[0]?.studioId;
-          const primaryScheduledAt = input.scheduledAt || existingSessions[0]?.scheduledAt;
-
-          if (primaryStudioId && primaryScheduledAt) {
-            const sessionPayload = {
-              studioId: primaryStudioId,
-              scheduledAt: primaryScheduledAt,
-              durationHours: input.durationHours ?? existingSessions[0]?.durationHours ?? 1,
-              headcount: input.headcount ?? existingSessions[0]?.headcount ?? 1,
-              status: input.status ?? existingSessions[0]?.status ?? "confirmed",
-            };
-
-            const pos1 = existingSessions.find((s) => s.position === 1);
-            if (pos1) {
-              await tx
-                .update(bookingSessions)
-                .set(sessionPayload)
-                .where(
-                  and(
-                    eq(bookingSessions.bookingId, input.id),
-                    eq(bookingSessions.position, 1)
-                  )
-                );
-            } else {
-              await tx.insert(bookingSessions).values({
-                bookingId: input.id,
-                position: 1,
-                ...sessionPayload,
-              });
-            }
-          }
+          await tx.delete(bookingSessions).where(and(
+            eq(bookingSessions.bookingId, input.id),
+            eq(bookingSessions.position, 1)
+          ));
+        } else if (
+          updatedBooking.studioId &&
+          [input.studioId, input.scheduledAt, input.durationHours, input.headcount, input.status]
+            .some((value) => value !== undefined)
+        ) {
+          const sessionPayload = {
+            studioId: updatedBooking.studioId,
+            scheduledAt: updatedBooking.scheduledAt,
+            durationHours: updatedBooking.durationHours,
+            headcount: updatedBooking.headcount,
+            status: updatedBooking.status,
+          };
+          await tx.insert(bookingSessions).values({
+            bookingId: input.id,
+            position: 1,
+            ...sessionPayload,
+          }).onConflictDoUpdate({
+            target: [bookingSessions.bookingId, bookingSessions.position],
+            set: sessionPayload,
+          });
         }
       });
     }
