@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/db";
-import { bookings, bookingSessions, studios } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { bookings, bookingSessions, studios, studioBlackouts } from "@/db/schema";
+import { eq, or, isNull } from "drizzle-orm";
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { createZiinaPaymentIntent } from "@/lib/ziina";
 import { PODCAST_SERVICES, PODCAST_PROMO_CODES } from "./data";
@@ -151,10 +151,49 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
         if (foundStudio.capacity < session.headcount) {
           return { success: false, message: "The selected studio cannot fit all guests." };
         }
+        const sessionStart = parseScheduledDate(session);
+        const sessionEnd = new Date(sessionStart.getTime() + session.durationHours * 60 * 60 * 1000);
+
+        if (typeof db.select === "function") {
+          try {
+            const blackouts = await db
+              .select({
+                id: studioBlackouts.id,
+                startTime: studioBlackouts.startTime,
+                endTime: studioBlackouts.endTime,
+              })
+              .from(studioBlackouts)
+              .where(
+                or(
+                  eq(studioBlackouts.studioId, studioDbId),
+                  eq(studioBlackouts.podcastSetId, session.studioKey),
+                  isNull(studioBlackouts.studioId)
+                )
+              );
+
+            const hasBlackout = blackouts.some((b) => {
+              const bStart = new Date(b.startTime);
+              const bEnd = new Date(b.endTime);
+              return sessionStart < bEnd && sessionEnd > bStart;
+            });
+
+            if (hasBlackout) {
+              return {
+                success: false,
+                message: `The selected studio (${foundStudio.name || session.studioKey}) has a scheduled maintenance or blackout window at that time. Please pick another date or time slot.`,
+              };
+            }
+          } catch (blackoutErr) {
+            if (typeof console.warn === "function") {
+              console.warn("[createPodcastBooking] Blackout check skipped:", (blackoutErr as Error)?.message);
+            }
+          }
+        }
+
         schedule.push({
           studioId: studioDbId,
           position: index + 1,
-          scheduledAt: parseScheduledDate(session),
+          scheduledAt: sessionStart,
           durationHours: session.durationHours,
           headcount: session.headcount,
         });

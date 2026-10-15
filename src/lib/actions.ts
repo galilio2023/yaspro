@@ -2,12 +2,12 @@
 
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { db } from "@/db";
-import { bookings, bookingSessions, inquiries, users, studios, type SessionType, type InquiryType } from "@/db/schema";
+import { bookings, bookingSessions, inquiries, users, studios, studioBlackouts, type SessionType, type InquiryType } from "@/db/schema";
 import { generateBookingReference } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, inArray, or, isNull } from "drizzle-orm";
 import { checkRateLimit, checkIdempotency, getClientIdentifier } from "@/lib/rate-limit";
 import { sendBookingConfirmationNotification, sendInquiryNotification } from "@/lib/notifications";
 import {
@@ -149,6 +149,44 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
             success: false,
             message: `This soundstage (${studioRecord.name || selectedSlug}) is already reserved during your selected time window. Please select an alternate time slot or choose another studio.`,
           };
+        }
+
+        // Check for active maintenance or studio blackout windows
+        if (typeof db.select === "function") {
+          try {
+            const activeBlackouts = await db
+              .select({
+                id: studioBlackouts.id,
+                title: studioBlackouts.title,
+                startTime: studioBlackouts.startTime,
+                endTime: studioBlackouts.endTime,
+              })
+              .from(studioBlackouts)
+              .where(
+                or(
+                  eq(studioBlackouts.studioId, studioRecord.id),
+                  isNull(studioBlackouts.studioId)
+                )
+              );
+
+            const hasBlackoutConflict = activeBlackouts.some((b) => {
+              const bStart = new Date(b.startTime);
+              const bEnd = new Date(b.endTime);
+              return requestedStart < bEnd && requestedEnd > bStart;
+            });
+
+            if (hasBlackoutConflict) {
+              return {
+                success: false,
+                message: `This soundstage (${studioRecord.name || selectedSlug}) is temporarily closed for maintenance or blackout during your selected time window. Please choose another date or stage.`,
+              };
+            }
+          } catch (blackoutErr) {
+            // Gracefully continue if blackout table is not yet migrated
+            if (typeof console.warn === "function") {
+              console.warn("[createBooking] Blackout check skipped:", (blackoutErr as Error)?.message);
+            }
+          }
         }
       }
 

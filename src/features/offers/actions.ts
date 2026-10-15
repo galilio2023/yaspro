@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/db";
-import { bookings } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { bookings, studioBlackouts } from "@/db/schema";
+import { eq, sql, or, isNull } from "drizzle-orm";
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { createZiinaPaymentIntent } from "@/lib/ziina";
 import { STANDARD_TIME_SLOTS } from "./data";
@@ -87,6 +87,42 @@ export async function submitOffersBooking(input: OffersBookingInput): Promise<Of
       }
     } catch (err) {
       console.warn("Could not fetch default studio from DB:", err);
+    }
+
+    // Overlap check with active studio blackouts
+    if (typeof db.select === "function") {
+      try {
+        const requestedEnd = new Date(scheduledAt.getTime() + offer.hours * 60 * 60 * 1000);
+        const blackouts = await db
+          .select({
+            id: studioBlackouts.id,
+            startTime: studioBlackouts.startTime,
+            endTime: studioBlackouts.endTime,
+          })
+          .from(studioBlackouts)
+          .where(
+            studioId
+              ? or(eq(studioBlackouts.studioId, studioId), isNull(studioBlackouts.studioId))
+              : isNull(studioBlackouts.studioId)
+          );
+
+        const hasBlackout = blackouts.some((b) => {
+          const bStart = new Date(b.startTime);
+          const bEnd = new Date(b.endTime);
+          return scheduledAt < bEnd && requestedEnd > bStart;
+        });
+
+        if (hasBlackout) {
+          return {
+            success: false,
+            message: "The studio has a scheduled maintenance or blackout period during this slot. Please choose another date or time.",
+          };
+        }
+      } catch (blackoutErr) {
+        if (typeof console.warn === "function") {
+          console.warn("[submitOffersBooking] Blackout check skipped:", (blackoutErr as Error)?.message);
+        }
+      }
     }
 
     const contactFields = [
