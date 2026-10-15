@@ -156,7 +156,7 @@ test('broadcast cards omit resolved RFPs before limiting and reuse resolved labe
     ...Array.from({ length: 5 }, (_, id) => ({ ...inquiry, id: `open-${id}`, name: `Open client ${id}` })),
   ];
   const html = renderToStaticMarkup(React.createElement(BroadcastManager, { initialBroadcastInquiries: inquiries }));
-  assert.match(html, /Production RFPs \(5\)/);
+  assert.match(html, /Production Inquiries \(5\)/);
   assert.doesNotMatch(html, /Resolved client|Open client 4/);
   assert.match(html, /Open client 3/);
   assert.match(html, />Outdoor Filming<\/span>/);

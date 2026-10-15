@@ -92,20 +92,6 @@ export const inquirySubmissionSchema = z.object({
 
 export type InquirySubmissionInput = z.infer<typeof inquirySubmissionSchema>;
 
-export const campaignRequestSchema = z.object({
-  creatorId: z.string().min(1, "Creator ID is required"),
-  creatorName: z.string().min(1, "Creator name is required"),
-  brandName: z.string().trim().min(1, "Brand or company name is required").max(100),
-  contactName: z.string().trim().min(1, "Contact name is required").max(100),
-  email: z.string().trim().email("Valid corporate email required").max(120),
-  phone: z.string().trim().min(5, "Valid phone number required").max(30),
-  campaignObjective: z.string().min(1, "Campaign objective is required"),
-  budgetTier: z.string().min(1, "Budget tier selection is required"),
-  targetStudio: z.string().optional().default(""),
-  message: z.string().max(3000).optional().default(""),
-});
-
-export type CampaignRequestInput = z.infer<typeof campaignRequestSchema>;
 
 // ─── Real Email & Registration Validation ──────────────────────────────────────
 
@@ -188,20 +174,8 @@ export const registerUserSchema = z.object({
   email: legitimateEmailSchema,
   password: z.string().min(8, "Password must be at least 8 characters").max(128),
   phone: z.string().trim().min(6, "Valid direct phone number is required").max(30),
-  accountType: z.enum(["creator", "enterprise"]).default("creator"),
   company: z.string().trim().max(100).optional().default(""),
-}).refine(
-  (data) => {
-    if (data.accountType === "enterprise" && (!data.company || data.company.trim().length < 2)) {
-      return false;
-    }
-    return true;
-  },
-  {
-    message: "Company or Organization name is required for Enterprise accounts.",
-    path: ["company"],
-  }
-);
+});
 
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 

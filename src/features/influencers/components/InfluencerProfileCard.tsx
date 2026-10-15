@@ -3,7 +3,6 @@ import { CheckCircle2, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import { InfluencerSocialList } from "./InfluencerSocialList";
-import { InfluencerBookCampaignButton } from "./InfluencerBookCampaignButton";
 import type { InfluencerItem } from "../types";
 
 export interface InfluencerProfileCardProps {
@@ -64,11 +63,6 @@ export function InfluencerProfileCard({ creator }: InfluencerProfileCardProps) {
         </div>
 
         <InfluencerSocialList creator={creator} />
-
-        {/* Action Button: Book Creator Campaign */}
-        <div className="mt-6 pt-5 border-t border-white/10">
-          <InfluencerBookCampaignButton creator={creator} />
-        </div>
       </div>
     </>
   );

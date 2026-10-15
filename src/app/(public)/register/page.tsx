@@ -16,7 +16,6 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [accountType, setAccountType] = useState<"creator" | "enterprise">("creator");
   const [company, setCompany] = useState("");
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +34,6 @@ export default function RegisterPage() {
       email,
       password,
       phone,
-      accountType,
       company: company || undefined,
     });
 
@@ -45,7 +43,6 @@ export default function RegisterPage() {
     }
 
     const validData = parseResult.data;
-    const targetRole = validData.accountType === "enterprise" ? "enterprise" : "client";
     setIsLoading(true);
 
     try {
@@ -81,7 +78,7 @@ export default function RegisterPage() {
           name: validData.name,
           phone: validData.phone,
           company: validData.company || "",
-          role: targetRole,
+          role: "client",
         });
 
         if (!syncRes.success) {
@@ -131,40 +128,6 @@ export default function RegisterPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
-          {/* Account Type Selector Tabs */}
-          <div>
-            <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">
-              {t("accountTypeLabel")}
-            </label>
-            <div className="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-white/[0.03] border border-white/10">
-              <button
-                type="button"
-                onClick={() => setAccountType("creator")}
-                className={`py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                  accountType === "creator"
-                    ? "bg-brand-violet text-white border border-brand-mauve/40 font-bold shadow-md shadow-brand-violet/30"
-                    : "text-slate-400 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <User size={14} />
-                <span>{t("accountTypeCreator")}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setAccountType("enterprise")}
-                className={`py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                  accountType === "enterprise"
-                    ? "bg-brand-violet text-white border border-brand-mauve/40 font-bold shadow-md shadow-brand-violet/30"
-                    : "text-slate-400 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <Building size={14} />
-                <span>{t("accountTypeEnterprise")}</span>
-              </button>
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">{t("fullNameLabel")}</label>
@@ -184,24 +147,17 @@ export default function RegisterPage() {
             <div>
               <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">
                 {t("companyLabel")}{" "}
-                {accountType === "enterprise" ? (
-                  <span className="text-brand-mauve">*</span>
-                ) : (
-                  <span className="text-slate-500 text-[10px] font-normal">({t("companyLabel") ? "Optional" : ""})</span>
-                )}
+                <span className="text-slate-500 text-[10px] font-normal">({t("companyLabel") ? "Optional" : ""})</span>
               </label>
               <div className="relative">
                 <input
                   type="text"
-                  required={accountType === "enterprise"}
                   placeholder={t("companyPlaceholder")}
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
                   className="w-full ps-10 pe-4 py-3 min-h-[44px] rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve transition-colors text-base sm:text-sm"
                 />
-                <Building size={16} className={`absolute start-3.5 top-1/2 -translate-y-1/2 pointer-events-none ${
-                  accountType === "enterprise" ? "text-brand-mauve" : "text-slate-400"
-                }`} />
+                <Building size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
             </div>
           </div>

@@ -272,16 +272,12 @@ test('checkout loads platform settings when omitted, merges defaults, and respec
   const cleanup = effects[0]();
   await Promise.resolve();
   let tree = render();
-  find(tree, (node) => node.type === 'button' && typeof node.props.children === 'object' && find(node, (child) => child.type === 'span' && child.props.children === 'Bank').length > 0)[0].props.onClick();
-  tree = render();
-  assert.ok(find(tree, (node) => node.props?.children === 'CMS IBAN').length > 0);
-  assert.ok(find(tree, (node) => node.props?.children === 'YAS PRO MEDIA PRODUCTION LLC').length > 0);
   assert.ok(find(tree, (node) => node.props?.children === '250').length > 0);
   cleanup();
-  tree = render({ paymentSettings: { iban: 'Caller IBAN' } });
+  tree = render({ paymentSettings: { depositPercent: 30 } });
   effects[0]();
   assert.equal(reads, 1);
-  assert.ok(find(tree, (node) => node.props?.children === 'Caller IBAN').length > 0);
+  assert.ok(find(tree, (node) => node.props?.children === '300').length > 0);
 });
 
 test('public booking pages pass current catalogs into their client wizards', async () => {

@@ -5,19 +5,14 @@ import { createPortal } from "react-dom";
 import React, { useState, useRef, useEffect } from "react";
 import {
   CreditCard,
-  ShieldCheck,
   Lock,
   AlertCircle,
   X,
   Loader2,
   Smartphone,
   Zap,
-  Building2,
-  Copy,
-  Check,
   Receipt,
 } from "lucide-react";
-import { processBookingOnlinePayment, markBookingBankTransferPending } from "@/lib/payment-actions";
 import { createZiinaPaymentIntent } from "@/lib/ziina";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { formatCurrency, cn } from "@/lib/utils";
@@ -52,14 +47,8 @@ export function BookingPaymentModal({
 }: BookingPaymentModalProps) {
   const { isArabic } = useLanguage();
   const [paymentType, setPaymentType] = useState<"deposit" | "full">("deposit");
-  const [paymentMethod, setPaymentMethod] = useState<"ziina" | "card" | "bank">("ziina");
-  const [cardNumber, setCardNumber] = useState("4242 •••• •••• 4242");
-  const [cardExpiry, setCardExpiry] = useState("12/28");
-  const [cardCvc, setCardCvc] = useState("•••");
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [copiedIban, setCopiedIban] = useState(false);
-  const [bankConfirmed, setBankConfirmed] = useState(false);
 
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap({ isOpen, onClose, containerRef: dialogRef });
@@ -99,87 +88,33 @@ export function BookingPaymentModal({
   const vatAmount = Math.round((chargeAmount - chargeAmount / vatRate) * 100) / 100;
   const netAmount = Math.round((chargeAmount - vatAmount) * 100) / 100;
 
-  const handleCopyIban = async () => {
-    if (!activeSettings) return;
-    try {
-      await navigator.clipboard.writeText(activeSettings.iban);
-      setCopiedIban(true);
-      setTimeout(() => setCopiedIban(false), 2000);
-    } catch (e) {
-      console.error("Failed to copy IBAN:", e);
-    }
-  };
-
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeSettings) return;
-    if (paymentMethod === "bank") {
-      setIsProcessing(true);
-      setErrorMsg(null);
-      try {
-        const res = await markBookingBankTransferPending(
-          bookingId || "",
-          referenceCode
-        );
-        if (res.success) {
-          setBankConfirmed(true);
-        } else {
-          setErrorMsg(res.error || (isArabic ? "فشل تسجيل طلب التحويل البنكي" : "Failed to record wire transfer request."));
-        }
-      } catch (err) {
-        setErrorMsg((err as Error).message || "An unexpected error occurred.");
-      } finally {
-        setIsProcessing(false);
-      }
-      return;
-    }
 
     setIsProcessing(true);
     setErrorMsg(null);
 
     try {
-      if (paymentMethod === "ziina") {
-        const res = await createZiinaPaymentIntent(
-          bookingId || "",
-          chargeAmount,
-          paymentType,
-          referenceCode
-        );
+      const res = await createZiinaPaymentIntent(
+        bookingId || "",
+        chargeAmount,
+        paymentType,
+        referenceCode
+      );
 
-        if (res.paymentUrl) {
-          // eslint-disable-next-line react-hooks/immutability
-          window.location.href = res.paymentUrl;
-          return;
-        }
-
-        if (res.success && res.paymentStatus && res.transactionId) {
-          onPaymentSuccess(res.paymentStatus, res.transactionId);
-          onClose();
-          return;
-        }
-
-        setErrorMsg(res.error || (isArabic ? "تم مقاطعة عملية تفويض الدفع عبر زينا" : "Ziina payment authorization was interrupted."));
-      } else {
-        const res = await processBookingOnlinePayment(
-          bookingId || "",
-          chargeAmount,
-          paymentType,
-          referenceCode
-        );
-
-        if (res.success && res.paymentStatus && res.transactionId) {
-          onPaymentSuccess(res.paymentStatus, res.transactionId);
-          onClose();
-          return;
-        }
-
-        setErrorMsg(
-          res.error ||
-            (isArabic
-              ? "فشلت عملية الدفع. يرجى التحقق من بيانات البطاقة والمحاولة مجدداً."
-              : "Payment failed. Please verify your payment details and retry.")
-        );
+      if (res.paymentUrl) {
+        window.location.href = res.paymentUrl;
+        return;
       }
+
+      if (res.success && res.paymentStatus && res.transactionId) {
+        onPaymentSuccess(res.paymentStatus, res.transactionId);
+        onClose();
+        return;
+      }
+
+      setErrorMsg(res.error || (isArabic ? "تم مقاطعة عملية تفويض الدفع عبر زينا" : "Ziina payment authorization was interrupted."));
     } catch (err) {
       setErrorMsg((err as Error).message || (isArabic ? "تعذر الاتصال ببوابة الدفع. يرجى المحاولة لاحقاً." : "Unable to reach payment gateway. Please retry."));
     } finally {
@@ -193,7 +128,7 @@ export function BookingPaymentModal({
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Secure UAE Checkout"
+        aria-label="Secure UAE Checkout via Ziina"
         tabIndex={-1}
         className="relative w-full max-w-lg my-auto rounded-3xl bg-[#090a0f] border border-white/10 shadow-2xl p-4 sm:p-8 text-start animate-fade-up max-h-[92vh] overflow-y-auto overscroll-contain"
       >
@@ -201,11 +136,11 @@ export function BookingPaymentModal({
         <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-5">
           <div className="flex items-center gap-3">
             <div className="size-10 rounded-2xl bg-brand-violet/30 border border-brand-mauve/40 text-brand-mauve flex items-center justify-center">
-              <CreditCard size={20} />
+              <Zap size={20} className="fill-brand-mauve text-brand-mauve" />
             </div>
             <div>
               <h3 className="font-bold text-white text-base sm:text-lg font-display">
-                {isArabic ? "بوابة الدفع الآمنة في الإمارات" : "Secure UAE Checkout"}
+                {isArabic ? "بوابة الدفع الآمنة (Ziina)" : "Secure UAE Checkout"}
               </h3>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="text-[10px] font-mono text-brand-mauve font-semibold" dir="ltr">
@@ -288,86 +223,6 @@ export function BookingPaymentModal({
             </div>
           </div>
 
-          {/* Payment Rail Selector: Ziina vs Direct Card vs Bank Transfer */}
-          <div>
-            <label className="block text-slate-300 font-semibold mb-2.5">
-              {isArabic ? "طريقة السداد المفضلة" : "Select Payment Method"}
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5">
-              {/* Ziina / Apple Pay */}
-              <button
-                type="button"
-                onClick={() => setPaymentMethod("ziina")}
-                className={cn(
-                  "p-2.5 sm:p-3 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between relative",
-                  paymentMethod === "ziina"
-                    ? "bg-brand-violet/30 border-brand-mauve/60 text-white shadow-lg shadow-brand-violet/20 ring-1 ring-brand-mauve/30"
-                    : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]"
-                )}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <span className="text-xs font-bold text-brand-mauve-soft flex items-center gap-1 font-display">
-                    <Zap size={13} className="text-brand-mauve fill-brand-mauve shrink-0" />
-                    <span>Ziina</span>
-                  </span>
-                  <span className="text-[8px] uppercase px-1 py-0.5 rounded bg-brand-violet/40 text-brand-mauve-soft font-semibold">
-                    Fast
-                  </span>
-                </div>
-                <div className="text-[10px] text-slate-300 mt-1 sm:mt-2 leading-tight">
-                  {isArabic ? "Apple Pay وبطاقات الإمارات" : "Apple Pay & UAE Cards"}
-                </div>
-              </button>
-
-              {/* Direct Card */}
-              <button
-                type="button"
-                onClick={() => setPaymentMethod("card")}
-                className={cn(
-                  "p-2.5 sm:p-3 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between",
-                  paymentMethod === "card"
-                    ? "bg-brand-violet/30 border-brand-mauve/50 text-white ring-1 ring-brand-mauve/30"
-                    : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]"
-                )}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <span className="text-xs font-bold text-white flex items-center gap-1">
-                    <CreditCard size={13} className="text-brand-mauve shrink-0" />
-                    <span>Card</span>
-                  </span>
-                </div>
-                <div className="text-[10px] text-slate-400 mt-1 sm:mt-2 leading-tight">
-                  Visa &bull; Mastercard &bull; AMEX
-                </div>
-              </button>
-
-              {/* Bank Wire */}
-              <button
-                type="button"
-                onClick={() => setPaymentMethod("bank")}
-                className={cn(
-                  "p-2.5 sm:p-3 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between",
-                  paymentMethod === "bank"
-                    ? "bg-brand-violet/30 border-brand-mauve/50 text-white ring-1 ring-brand-mauve/30"
-                    : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.04]"
-                )}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <span className="text-xs font-bold text-white flex items-center gap-1">
-                    <Building2 size={13} className="text-brand-mauve shrink-0" />
-                    <span>Bank</span>
-                  </span>
-                  <span className="text-[8px] uppercase px-1 py-0.5 rounded bg-white/10 text-text-muted">
-                    B2B
-                  </span>
-                </div>
-                <div className="text-[10px] text-slate-400 mt-1 sm:mt-2 leading-tight">
-                  {isArabic ? "تحويل بنكي رسمي" : "Corporate Wire Transfer"}
-                </div>
-              </button>
-            </div>
-          </div>
-
           {/* Option Selector: Configured Deposit vs Full */}
           <div>
             <label className="block text-slate-300 font-semibold mb-2">
@@ -418,201 +273,69 @@ export function BookingPaymentModal({
             </div>
           </div>
 
-          {/* Payment Method Details */}
-          {paymentMethod === "ziina" ? (
-            <div className="p-4 rounded-2xl bg-brand-violet/[0.15] border border-brand-mauve/30 space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
-                <div className="flex items-center gap-2 text-brand-mauve-soft font-semibold text-xs">
-                  <Smartphone size={15} className="shrink-0" />
-                  <span>{isArabic ? "مرخص من مصرف الإمارات المركزي (Ziina)" : "Central Bank of the UAE Regulated"}</span>
-                </div>
-                {/* Apple Pay & Aani Badges */}
-                <div className="flex items-center gap-1.5 shrink-0" dir="ltr">
-                  <span className="px-2 py-0.5 rounded bg-black border border-white/20 text-white font-mono text-[9px] font-bold whitespace-nowrap">
-                    Pay
-                  </span>
-                  <span className="px-2 py-0.5 rounded bg-white/10 border border-white/20 text-white font-sans text-[9px] font-bold whitespace-nowrap">
-                    GPay
-                  </span>
-                  <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold whitespace-nowrap">
-                    Aani
-                  </span>
-                </div>
+          {/* Ziina UAE Gateway Information */}
+          <div className="p-4 rounded-2xl bg-brand-violet/[0.15] border border-brand-mauve/30 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
+              <div className="flex items-center gap-2 text-brand-mauve-soft font-semibold text-xs">
+                <Smartphone size={15} className="shrink-0" />
+                <span>{isArabic ? "مرخص من مصرف الإمارات المركزي (Ziina)" : "Central Bank of the UAE Regulated (Ziina)"}</span>
               </div>
-
-              <p className="text-[11px] text-slate-300 leading-relaxed">
-                {isArabic
-                  ? "ادفع بأمان وسرعة فائقة باستخدام Apple Pay أو بطاقات الائتمان المحلية والدولية. يتم إصدار أمر الحجز وتأكيد الطاقم الفني فوراً."
-                  : "Pay instantly using Apple Pay, Google Pay, or any GCC/International card. Your production call sheet is confirmed immediately."}
-              </p>
-            </div>
-          ) : paymentMethod === "card" ? (
-            /* Direct Card Form */
-            <div className="space-y-3 pt-1">
-              <div>
-                <label className="block text-slate-400 font-medium mb-1">
-                  {isArabic ? "رقم البطاقة" : "Card Number"}
-                </label>
-                <input
-                  type="text"
-                  value={cardNumber}
-                  onChange={(e) => setCardNumber(e.target.value)}
-                  required
-                  dir="ltr"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-brand-mauve"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3" dir="ltr">
-                <div>
-                  <label className="block text-slate-400 font-medium mb-1 text-xs">
-                    {isArabic ? "تاريخ الانتهاء" : "Expires"}
-                  </label>
-                  <input
-                    type="text"
-                    value={cardExpiry}
-                    onChange={(e) => setCardExpiry(e.target.value)}
-                    required
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-brand-mauve"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-400 font-medium mb-1 text-xs">CVC</label>
-                  <input
-                    type="password"
-                    value={cardCvc}
-                    onChange={(e) => setCardCvc(e.target.value)}
-                    required
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white font-mono focus:outline-none focus:border-brand-mauve"
-                  />
-                </div>
-              </div>
-            </div>
-          ) : (
-            /* Corporate Bank Transfer (UAE Direct Wire) */
-            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">
-              <div className="flex items-center justify-between text-xs text-brand-mauve font-bold">
-                <span className="flex items-center gap-1.5">
-                  <Building2 size={14} />
-                  {isArabic ? "تفاصيل الحساب البنكي الرسمي" : "Official UAE Corporate Account"}
+              {/* Apple Pay & Card Badges */}
+              <div className="flex items-center gap-1.5 shrink-0" dir="ltr">
+                <span className="px-2 py-0.5 rounded bg-black border border-white/20 text-white font-mono text-[9px] font-bold whitespace-nowrap">
+                  Pay
                 </span>
-                <span className="text-[10px] font-mono text-text-muted">{activeSettings.bankName.split("—")[0].trim()}</span>
+                <span className="px-2 py-0.5 rounded bg-white/10 border border-white/20 text-white font-sans text-[9px] font-bold whitespace-nowrap">
+                  GPay
+                </span>
+                <span className="px-2 py-0.5 rounded bg-white/10 border border-white/20 text-white font-sans text-[9px] font-bold whitespace-nowrap">
+                  Visa / MC
+                </span>
+                <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold whitespace-nowrap">
+                  Aani
+                </span>
               </div>
-
-              <div className="space-y-1.5 text-[11px] font-mono" dir="ltr">
-                <div className="flex justify-between text-slate-400">
-                  <span>Beneficiary:</span>
-                  <span className="text-white font-bold">{activeSettings.beneficiaryName}</span>
-                </div>
-                <div className="flex justify-between text-slate-400">
-                  <span>Bank:</span>
-                  <span className="text-white">{activeSettings.bankName}</span>
-                </div>
-                <div className="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
-                  <span className="text-brand-mauve-soft font-bold truncate">{activeSettings.iban}</span>
-                  <button
-                    type="button"
-                    onClick={handleCopyIban}
-                    className="flex items-center gap-1 px-2 py-1 rounded bg-brand-violet/30 text-brand-mauve-soft text-[10px] font-sans hover:bg-brand-violet/50 transition-colors cursor-pointer shrink-0 ml-2"
-                  >
-                    {copiedIban ? <Check size={11} /> : <Copy size={11} />}
-                    <span>{copiedIban ? "Copied" : "Copy IBAN"}</span>
-                  </button>
-                </div>
-                <div className="flex justify-between text-slate-400">
-                  <span>SWIFT / BIC:</span>
-                  <span className="text-white font-bold">{activeSettings.swift}</span>
-                </div>
-              </div>
-
-              <p className="text-[10.5px] text-text-muted leading-relaxed">
-                {isArabic
-                  ? "يرجى ذكر الرمز المرجعي في تفاصيل التحويل. سيقوم فريق الحسابات بتأكيد الحجز فور وصول الإشعار البنكي."
-                  : "Include your reference code in the transfer narration. Accounts team reconciles within 2 hours of receipt."}
-              </p>
             </div>
-          )}
+
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              {isArabic
+                ? "ادفع بأمان وسرعة فائقة عبر منصة Ziina الإماراتية الرسمية باستخدام Apple Pay أو Google Pay أو أي بطاقة بنكية. يتم تأكيد الحجز وإشعار الإدارة والعميل فوراً."
+                : "Pay instantly and securely via Ziina UAE using Apple Pay, Google Pay, or any GCC/International credit or debit card. Your booking is confirmed immediately."}
+            </p>
+          </div>
 
           {/* Security & Regulatory Notice */}
           <div className="flex items-center gap-2 text-[11px] text-slate-400 py-1">
             <Lock size={13} className="text-emerald-400 shrink-0" />
             <span>
               {isArabic
-                ? "تشفير TLS عالي الأمان عبر قنوات الدفع السيادية المعتمدة في الإمارات"
-                : "256-bit TLS encrypted via sovereign UAE payment rails"}
+                ? "تشفير TLS 256-bit عالي الأمان عبر بوابة Ziina السيادية المعتمدة في دولة الإمارات"
+                : "256-bit TLS encrypted via Ziina UAE sovereign payment rails"}
             </span>
           </div>
 
-          {/* Pay Button / Bank Confirmation */}
-          {bankConfirmed ? (
-            <div className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 space-y-3 text-start">
-              <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs sm:text-sm">
-                <Check size={18} className="shrink-0" />
+          {/* Pay Button */}
+          <button
+            type="submit"
+            disabled={isProcessing}
+            className="w-full h-11 sm:h-12 px-4 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer disabled:opacity-50 btn-brand font-extrabold shadow-brand-violet/30"
+          >
+            {isProcessing ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                <span>{isArabic ? "جاري التوجيه إلى Ziina..." : "Redirecting to Ziina..."}</span>
+              </>
+            ) : (
+              <>
+                <Zap size={16} className="fill-white text-white" />
                 <span>
                   {isArabic
-                    ? "تم تسجيل طلب التحويل البنكي — الحجز قيد التأكيد"
-                    : "Wire Transfer Logged — Awaiting Bank Settlement"}
+                    ? `دفع ${formatCurrency(chargeAmount)} عبر Ziina و Apple Pay`
+                    : `Pay ${formatCurrency(chargeAmount)} with Ziina · Apple Pay`}
                 </span>
-              </div>
-              <p className="text-[11px] text-slate-300 leading-relaxed">
-                {isArabic
-                  ? "تم حفظ حجز الاستوديو بانتظار استلام الحوالة البنكية وفق التفاصيل الموضحة أعلاه. الحجز غير مدفوع بعد، وسيتم تأكيده فور مطابقة الإشعار البنكي."
-                  : "Your studio reservation is on hold awaiting receipt of the bank transfer as outlined above. This booking remains unpaid until bank reconciliation."}
-              </p>
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition-colors cursor-pointer"
-              >
-                {isArabic ? "إغلاق والتأكيد" : "Close & Acknowledge"}
-              </button>
-            </div>
-          ) : (
-            <button
-              type="submit"
-              disabled={isProcessing}
-              className={cn(
-                "w-full h-11 sm:h-12 px-4 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer disabled:opacity-50",
-                paymentMethod === "ziina"
-                  ? "btn-brand font-extrabold shadow-brand-violet/30"
-                  : paymentMethod === "card"
-                  ? "btn-brand"
-                  : "bg-white/10 hover:bg-white/20 text-white border border-white/20"
-              )}
-            >
-              {isProcessing ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" />
-                  <span>{isArabic ? "جاري معالجة التفويض..." : "Processing Authorization..."}</span>
-                </>
-              ) : paymentMethod === "ziina" ? (
-                <>
-                  <Zap size={16} className="fill-white text-white" />
-                  <span>
-                    {isArabic
-                      ? `دفع ${formatCurrency(chargeAmount)} عبر Ziina و Apple Pay`
-                      : `Pay ${formatCurrency(chargeAmount)} with Ziina · Apple Pay`}
-                  </span>
-                </>
-              ) : paymentMethod === "card" ? (
-                <>
-                  <ShieldCheck size={16} />
-                  <span>
-                    {isArabic
-                      ? `سداد ${formatCurrency(chargeAmount)} بأمان`
-                      : `Pay ${formatCurrency(chargeAmount)} Securely`}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <Building2 size={16} />
-                  <span>
-                    {isArabic ? "تأكيد طلب التحويل البنكي" : "Acknowledge Wire Transfer Instructions"}
-                  </span>
-                </>
-              )}
-            </button>
-          )}
+              </>
+            )}
+          </button>
         </form>
         )}
       </div>
