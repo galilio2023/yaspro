@@ -131,10 +131,7 @@ export function useAdminCrud<T>({
           prev.filter((item) => {
             const pId = getItemId(item);
             const pSlug = getItemSlug?.(item);
-            return (
-              (pId && pId !== targetId) &&
-              (!pSlug || pSlug !== targetId)
-            );
+            return pId !== targetId && pSlug !== targetId;
           })
         );
         const name = getItemName?.(itemToDelete) || "Item";

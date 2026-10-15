@@ -227,8 +227,8 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         }
       />
 
-      {/* Bookings Table (Desktop) */}
-      <div className="hidden md:block">
+      {/* Bookings Table */}
+      <div>
         <DataTable>
           <DataTableHeader>
             <tr>

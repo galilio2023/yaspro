@@ -37,20 +37,37 @@ export function useAdminFilter<Item, Filter extends string = string, SecondaryFi
   }, [data, searchQuery, filterValue, secondaryFilterValue, predicate]);
 
   const pagination = usePagination(filteredData, pageSize);
+  const { resetPage } = pagination;
+
+  const setSearch = (val: string) => {
+    setSearchQuery(val);
+    resetPage();
+  };
+
+  const setFilter = (val: Filter) => {
+    setFilterValue(val);
+    resetPage();
+  };
+
+  const setSecondary = (val: SecondaryFilter | undefined) => {
+    setSecondaryFilterValue(val);
+    resetPage();
+  };
 
   const resetFilters = () => {
     setSearchQuery("");
     setFilterValue(initialFilter);
     setSecondaryFilterValue(initialSecondaryFilter);
+    resetPage();
   };
 
   return {
     searchQuery,
-    setSearchQuery,
+    setSearchQuery: setSearch,
     filterValue,
-    setFilterValue,
+    setFilterValue: setFilter,
     secondaryFilterValue,
-    setSecondaryFilterValue,
+    setSecondaryFilterValue: setSecondary,
     filteredData,
     pagination,
     resetFilters,

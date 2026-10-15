@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 import { db } from "@/db";
 import {
@@ -109,7 +109,9 @@ export async function deleteCmsProject(id: string): Promise<CmsResponse> {
   try {
     await requireAdmin();
     if (isDbAvailable()) {
-      await db.delete(projects).where(eq(projects.id, id));
+      await db.delete(projects).where(
+        isUuid(id) ? eq(projects.id, id) : eq(projects.slug, id)
+      );
     }
     revalidatePath("/projects");
     revalidatePath("/admin/projects");

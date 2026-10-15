@@ -119,9 +119,12 @@ function StudioFormContent({
           required
           placeholder="25"
           suffixNode="People"
-          value={formData.capacity || 20}
+          value={formData.capacity ?? ""}
           onChange={(e) =>
-            setFormData((prev) => ({ ...prev, capacity: parseInt(e.target.value) || 10 }))
+            setFormData((prev) => ({
+              ...prev,
+              capacity: e.target.value === "" ? undefined : parseInt(e.target.value, 10),
+            }))
           }
         />
       </div>

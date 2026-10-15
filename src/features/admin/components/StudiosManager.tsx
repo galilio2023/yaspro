@@ -28,6 +28,7 @@ import {
 } from "@/components/admin";
 import { useAdminCrud } from "../hooks/useAdminCrud";
 import { useAdminFilter } from "../hooks/useAdminFilter";
+import { PaginationControls } from "@/components/ui/pagination-controls";
 
 interface StudiosManagerProps {
   initialStudios: Studio[];
@@ -173,7 +174,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filter.filteredData.map((studio) => {
+          {filter.pagination.paginatedItems.map((studio) => {
             const rateNum = parseFloat(studio.hourlyRate) || 0;
             return (
               <div
@@ -292,6 +293,18 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
           })}
         </div>
       )}
+
+      {/* Pagination Controls */}
+      <PaginationControls
+        currentPage={filter.pagination.currentPage}
+        pageCount={filter.pagination.pageCount}
+        total={filter.pagination.total}
+        startIndex={filter.pagination.startIndex}
+        endIndex={filter.pagination.endIndex}
+        onPrev={filter.pagination.prevPage}
+        onNext={filter.pagination.nextPage}
+        variant="card"
+      />
 
       {/* Form Modal */}
       <StudioFormModal
