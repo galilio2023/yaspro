@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import {
   MessageSquare,
-  Search,
   CheckCircle2,
   Clock,
   Trash2,
@@ -19,21 +18,25 @@ import {
 } from "lucide-react";
 import { updateInquiryStatus, deleteCmsInquiry } from "@/lib/actions/inquiries-leads-operations";
 import type { Inquiry } from "@/db/schema";
-import { FeedbackAlert } from "@/components/ui/feedback-alert";
+import {
+  AdminPageHeader,
+  AdminStatsGrid,
+  AdminFilterBar,
+  AdminConfirmModal,
+} from "@/components/admin";
 import { PaginationControls } from "@/components/ui/pagination-controls";
-import { usePagination } from "@/hooks/usePagination";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
-import { AdminConfirmModal } from "@/components/admin/AdminConfirmModal";
+import { useAdminFilter } from "../hooks/useAdminFilter";
 
 interface InquiriesManagerProps {
   initialInquiries: Inquiry[];
 }
 
 const INQUIRY_ICONS: Record<string, React.ReactNode> = {
-  ob_van: <Radio size={14} className="text-amber-400" />,
-  live_broadcast: <Radio size={14} className="text-amber-500" />,
+  ob_van: <Radio size={14} className="text-brand-mauve" />,
+  live_broadcast: <Radio size={14} className="text-brand-mauve" />,
   outdoor_filming: <Camera size={14} className="text-emerald-400" />,
-  studio_booking: <Layers size={14} className="text-amber-400" />,
+  studio_booking: <Layers size={14} className="text-brand-lavender" />,
   technical_support: <Wrench size={14} className="text-stone-300" />,
   general: <HelpCircle size={14} className="text-slate-400" />,
 };
@@ -49,9 +52,6 @@ const INQUIRY_LABELS: Record<string, string> = {
 
 export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
   const [inquiriesList, setInquiriesList] = useState<Inquiry[]>(initialInquiries);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterType, setFilterType] = useState<string>("all");
-  const [filterStatus, setFilterStatus] = useState<"all" | "open" | "resolved">("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [inquiryToDelete, setInquiryToDelete] = useState<Inquiry | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -59,24 +59,31 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
 
   const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3000);
 
-  const filteredInquiries = inquiriesList.filter((i) => {
-    const query = searchQuery.toLowerCase();
-    const matchesSearch =
-      i.name.toLowerCase().includes(query) ||
-      i.email.toLowerCase().includes(query) ||
-      (i.company && i.company.toLowerCase().includes(query)) ||
-      i.message.toLowerCase().includes(query);
-    const matchesType = filterType === "all" || i.inquiryType === filterType;
-    const matchesStatus =
-      filterStatus === "all"
-        ? true
-        : filterStatus === "resolved"
-        ? i.isResolved
-        : !i.isResolved;
-    return matchesSearch && matchesType && matchesStatus;
-  });
+  const filter = useAdminFilter<Inquiry, "all" | "open" | "resolved", string>({
+    data: inquiriesList,
+    initialFilter: "all",
+    initialSecondaryFilter: "all",
+    pageSize: 20,
+    predicate: (i, query, status, type) => {
+      const matchesSearch =
+        !query ||
+        i.name.toLowerCase().includes(query) ||
+        i.email.toLowerCase().includes(query) ||
+        (i.company && i.company.toLowerCase().includes(query)) ||
+        i.message.toLowerCase().includes(query);
 
-  const pagination = usePagination(filteredInquiries, 20);
+      const matchesStatus =
+        status === "all"
+          ? true
+          : status === "resolved"
+          ? i.isResolved
+          : !i.isResolved;
+
+      const matchesType = !type || type === "all" || i.inquiryType === type;
+
+      return Boolean(matchesSearch && matchesStatus && matchesType);
+    },
+  });
 
   const totalPending = inquiriesList.filter((i) => !i.isResolved).length;
   const totalResolved = inquiriesList.filter((i) => i.isResolved).length;
@@ -122,75 +129,72 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white font-display flex items-center gap-2.5">
-            <MessageSquare size={24} className="text-amber-400" />
-            Client Inquiries &amp; Production Leads
-          </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Incoming briefs from contact inquiries, OB Van quotes, and influencer collaboration forms.
-          </p>
+      <AdminPageHeader
+        title="Client Inquiries & Production Leads"
+        description="Incoming briefs from contact inquiries, OB Van quotes, and studio production requests."
+        icon={MessageSquare}
+        feedback={feedback}
+        onDismissFeedback={clearFeedback}
+      />
+
+      {errorMessage && (
+        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center justify-between">
+          <span>{errorMessage}</span>
+          <button
+            type="button"
+            onClick={() => setErrorMessage(null)}
+            className="text-rose-400 hover:text-white"
+          >
+            Dismiss
+          </button>
         </div>
-        <div className="flex flex-col gap-2">
-          {feedback && (
-            <FeedbackAlert type="success" message={feedback} onDismiss={clearFeedback} />
-          )}
-          {errorMessage && (
-            <FeedbackAlert type="error" message={errorMessage} onDismiss={() => setErrorMessage(null)} />
-          )}
-        </div>
-      </div>
+      )}
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[
-          { label: "Total Inquiries", icon: <MessageSquare size={14} className="text-amber-400" />, value: inquiriesList.length, color: "text-white" },
-          { label: "Action Required (Open)", icon: <Clock size={14} className="text-amber-400" />, value: totalPending, color: "text-amber-400" },
-          { label: "Resolved Leads", icon: <CheckCircle2 size={14} className="text-emerald-400" />, value: totalResolved, color: "text-emerald-300" },
-        ].map(({ label, icon, value, color }) => (
-          <div key={label} className="p-4 rounded-2xl bg-white/[0.02] border border-white/10">
-            <span className="text-xs text-slate-400 flex items-center gap-1.5">
-              {icon} {label}
-            </span>
-            <span className={`text-2xl font-bold mt-1 block ${color}`}>{value}</span>
-          </div>
-        ))}
-      </div>
+      <AdminStatsGrid
+        columns={3}
+        stats={[
+          {
+            label: "Total Inquiries",
+            value: inquiriesList.length,
+            unit: "Leads",
+            icon: MessageSquare,
+            variant: "default",
+          },
+          {
+            label: "Action Required (Open)",
+            value: totalPending,
+            unit: "Pending",
+            icon: Clock,
+            variant: "warning",
+          },
+          {
+            label: "Resolved Leads",
+            value: totalResolved,
+            unit: "Completed",
+            icon: CheckCircle2,
+            variant: "success",
+          },
+        ]}
+      />
 
-      {/* Search and Filters */}
-      <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="relative w-full sm:w-80">
-          <input
-            type="text"
-            placeholder="Search leads by name, email, company, keyword..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve transition-colors"
-          />
-          <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
-        </div>
-
-        <div className="flex items-center gap-2 flex-wrap self-end sm:self-auto">
-          {(["all", "open", "resolved"] as const).map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setFilterStatus(tab)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize transition-all cursor-pointer ${
-                filterStatus === tab
-                  ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-lg shadow-brand-violet/25"
-                  : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
-              }`}
-            >
-              {tab === "all" ? "All Status" : tab}
-            </button>
-          ))}
-
+      {/* Search & Filters */}
+      <AdminFilterBar
+        searchQuery={filter.searchQuery}
+        onSearchChange={filter.setSearchQuery}
+        searchPlaceholder="Search leads by name, email, company, keyword..."
+        filterValue={filter.filterValue}
+        onFilterChange={filter.setFilterValue}
+        filterOptions={[
+          { id: "all", label: "All Status", count: inquiriesList.length },
+          { id: "open", label: "Open Leads", count: totalPending },
+          { id: "resolved", label: "Resolved", count: totalResolved },
+        ]}
+        secondaryFilters={
           <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
-            className="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 text-xs text-slate-300 focus:outline-none focus:border-brand-mauve"
+            value={filter.secondaryFilterValue || "all"}
+            onChange={(e) => filter.setSecondaryFilterValue(e.target.value)}
+            className="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 text-xs text-slate-300 focus:outline-none focus:border-brand-mauve cursor-pointer"
           >
             <option value="all">All Inquiry Types</option>
             <option value="ob_van">OB Van Broadcast</option>
@@ -200,17 +204,17 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
             <option value="technical_support">Technical Support</option>
             <option value="general">General Inquiry</option>
           </select>
-        </div>
-      </div>
+        }
+      />
 
       {/* Inquiries Cards */}
       <div className="space-y-3">
-        {filteredInquiries.length === 0 ? (
-          <div className="p-12 text-center text-slate-500 rounded-2xl bg-white/[0.01] border border-white/10">
+        {filter.filteredData.length === 0 ? (
+          <div className="p-12 text-center text-slate-500 rounded-2xl bg-white/[0.01] border border-white/10 text-xs">
             No inquiries match your current filters.
           </div>
         ) : (
-          pagination.paginatedItems.map((inq) => (
+          filter.pagination.paginatedItems.map((inq) => (
             <div
               key={inq.id}
               className={`p-5 rounded-2xl border transition-all ${
@@ -220,7 +224,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
               }`}
             >
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                <div className="space-y-2 flex-1">
+                <div className="space-y-2.5 flex-1">
                   {/* Category and Status */}
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/5 border border-white/10 text-white">
@@ -231,7 +235,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
                       className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
                         inq.isResolved
                           ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
-                          : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                          : "bg-amber-500/15 text-amber-300 border-amber-500/30"
                       }`}
                     >
                       {inq.isResolved ? "Resolved" : "Pending Action"}
@@ -249,7 +253,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
                   {/* Client Info */}
                   <div className="flex items-center gap-4 text-xs flex-wrap text-slate-300">
                     <span className="font-semibold text-white flex items-center gap-1.5">
-                      <User size={13} className="text-amber-400" /> {inq.name}
+                      <User size={13} className="text-brand-mauve" /> {inq.name}
                     </span>
                     {inq.company && (
                       <span className="text-slate-400 flex items-center gap-1">
@@ -258,7 +262,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
                     )}
                     <a
                       href={`mailto:${inq.email}`}
-                      className="text-amber-400 hover:text-amber-300 flex items-center gap-1 font-mono"
+                      className="text-brand-mauve hover:text-brand-mauve-soft flex items-center gap-1 font-mono transition-colors"
                     >
                       <Mail size={13} /> {inq.email}
                     </a>
@@ -316,14 +320,13 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
       </div>
 
       <PaginationControls
-        currentPage={pagination.currentPage}
-        pageCount={pagination.pageCount}
-        total={pagination.total}
-        startIndex={pagination.startIndex}
-        endIndex={pagination.endIndex}
-        onPrev={pagination.prevPage}
-        onNext={pagination.nextPage}
-        variant="card"
+        currentPage={filter.pagination.currentPage}
+        pageCount={filter.pagination.pageCount}
+        total={filter.pagination.total}
+        startIndex={filter.pagination.startIndex}
+        endIndex={filter.pagination.endIndex}
+        onPrev={filter.pagination.prevPage}
+        onNext={filter.pagination.nextPage}
       />
 
       {inquiryToDelete && (
