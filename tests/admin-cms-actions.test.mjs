@@ -423,6 +423,48 @@ test('deleteCmsInfluencer removes creator profile and revalidates caches', async
   assert.ok(updatedTags.includes('influencers'));
 });
 
+test('deleteCmsProject deletes by UUID and slug and revalidates caches', async () => {
+  let deletedWhere = null;
+  const revalidatedPaths = [];
+  const updatedTags = [];
+
+  const mockDb = {
+    delete: () => ({
+      where: (clause) => {
+        deletedWhere = clause;
+        return Promise.resolve();
+      },
+    }),
+  };
+
+  const { deleteCmsProject } = loadSource('src/lib/actions/projects.ts', {
+    '@/db': { db: mockDb },
+    '@/db/schema': schemaMock,
+    'drizzle-orm': { eq: (col, val) => ({ col, val }), desc: () => {} },
+    'next/cache': {
+      revalidatePath: (p) => revalidatedPaths.push(p),
+      updateTag: (t) => updatedTags.push(t),
+    },
+    './shared': {
+      isDbAvailable: () => true,
+      requireAdmin: async () => {},
+      isUuid: (id) => id?.includes('-'),
+    },
+    '@/features/projects/data': { PROJECTS_DATA: [] },
+  });
+
+  const resUuid = await deleteCmsProject('12345678-1234-1234-1234-123456789abc');
+  assert.equal(resUuid.success, true);
+  assert.equal(deletedWhere.val, '12345678-1234-1234-1234-123456789abc');
+
+  const resSlug = await deleteCmsProject('flag-day-national');
+  assert.equal(resSlug.success, true);
+  assert.equal(deletedWhere.val, 'flag-day-national');
+  assert.ok(revalidatedPaths.includes('/projects'));
+  assert.ok(revalidatedPaths.includes('/admin/projects'));
+  assert.ok(updatedTags.includes('projects'));
+});
+
 test('an empty CMS studio table does not resurrect the static catalog', async () => {
   const { getCmsStudios } = loadSource('src/lib/actions/studios-soundstages-operations.ts', {
     '@/db': { db: { select: () => ({ from: () => ({ orderBy: async () => [] }) }) } },

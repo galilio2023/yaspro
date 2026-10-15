@@ -1,19 +1,33 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef } from "react";
 import {
   CalendarCheck,
   FileText,
-  Search,
+  Clock,
+  CheckCircle2,
+  DollarSign,
 } from "lucide-react";
-import { updateBookingStatus, updateBookingPaymentStatus, type EnrichedBooking } from "@/lib/actions/bookings-rfp-operations";
-import { formatCurrency } from "@/lib/utils";
-import { FeedbackAlert } from "@/components/ui/feedback-alert";
-import { DataTable, DataTableHeader, DataTableBody, DataTableRow, DataTableEmpty } from "@/components/ui/data-table";
+import {
+  updateBookingStatus,
+  updateBookingPaymentStatus,
+  type EnrichedBooking,
+} from "@/lib/actions/bookings-rfp-operations";
+import {
+  AdminPageHeader,
+  AdminStatsGrid,
+  AdminFilterBar,
+} from "@/components/admin";
+import {
+  DataTable,
+  DataTableHeader,
+  DataTableBody,
+  DataTableRow,
+  DataTableEmpty,
+} from "@/components/ui/data-table";
 import { PaginationControls } from "@/components/ui/pagination-controls";
-import { StatusBadge } from "@/components/ui/status-badge";
-import { usePagination } from "@/hooks/usePagination";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
+import { useAdminFilter } from "../hooks/useAdminFilter";
 import { BookingCallSheetModal } from "./BookingCallSheetModal";
 
 interface BookingsManagerProps {
@@ -22,39 +36,45 @@ interface BookingsManagerProps {
 
 export function BookingsManager({ initialBookings }: BookingsManagerProps) {
   const [bookingList, setBookingList] = useState<EnrichedBooking[]>(initialBookings);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "confirmed" | "completed" | "cancelled">("all");
-  const [paymentFilter, setPaymentFilter] = useState<"all" | "unpaid" | "deposit_paid" | "paid" | "refunded">("all");
   const [updatingIds, setUpdatingIds] = useState<Set<string>>(new Set());
   const [callSheetBookingId, setCallSheetBookingId] = useState<string | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3000);
 
-  const filteredBookings = bookingList.filter((b) => {
-    const q = searchQuery.toLowerCase();
-    const matchesSearch =
-      !q ||
-      b.referenceCode.toLowerCase().includes(q) ||
-      (b.userName && b.userName.toLowerCase().includes(q)) ||
-      (b.userEmail && b.userEmail.toLowerCase().includes(q)) ||
-      (b.userPhone && b.userPhone.toLowerCase().includes(q)) ||
-      (b.userCompany && b.userCompany.toLowerCase().includes(q)) ||
-      (b.studioName && b.studioName.toLowerCase().includes(q)) ||
-      b.sessionType.toLowerCase().includes(q);
+  const filter = useAdminFilter<
+    EnrichedBooking,
+    "all" | "pending" | "confirmed" | "completed" | "cancelled",
+    "all" | "unpaid" | "deposit_paid" | "paid" | "refunded"
+  >({
+    data: bookingList,
+    initialFilter: "all",
+    initialSecondaryFilter: "all",
+    pageSize: 20,
+    predicate: (b, q, status, payment) => {
+      const matchesSearch =
+        !q ||
+        b.referenceCode.toLowerCase().includes(q) ||
+        (b.userName && b.userName.toLowerCase().includes(q)) ||
+        (b.userEmail && b.userEmail.toLowerCase().includes(q)) ||
+        (b.userPhone && b.userPhone.toLowerCase().includes(q)) ||
+        (b.userCompany && b.userCompany.toLowerCase().includes(q)) ||
+        (b.studioName && b.studioName.toLowerCase().includes(q)) ||
+        b.sessionType.toLowerCase().includes(q);
 
-    const matchesStatus = statusFilter === "all" || b.status === statusFilter;
-    const matchesPayment = paymentFilter === "all" || b.paymentStatus === paymentFilter;
+      const matchesStatus = status === "all" || b.status === status;
+      const matchesPayment = !payment || payment === "all" || b.paymentStatus === payment;
 
-    return matchesSearch && matchesStatus && matchesPayment;
+      return Boolean(matchesSearch && matchesStatus && matchesPayment);
+    },
   });
-
-  const pagination = usePagination(filteredBookings, 20);
 
   const totalPending = bookingList.filter((b) => b.status === "pending").length;
   const totalConfirmed = bookingList.filter((b) => b.status === "confirmed").length;
   const totalCompleted = bookingList.filter((b) => b.status === "completed").length;
-  const totalPaid = bookingList.filter((b) => b.paymentStatus === "paid" || b.paymentStatus === "deposit_paid").length;
+  const totalPaid = bookingList.filter(
+    (b) => b.paymentStatus === "paid" || b.paymentStatus === "deposit_paid"
+  ).length;
 
   const callSheetBooking =
     bookingList.find((b) => b.id === callSheetBookingId) ?? null;
@@ -103,7 +123,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         setBookingList((prev) =>
           prev.map((b) => (b.id === id ? { ...b, paymentStatus } : b))
         );
-        showFeedback(`Payment updated to ${paymentStatus.replace("_", " ")}`);
+        showFeedback(`Payment updated to ${paymentStatus}`);
       } else {
         alert(res.error || "Failed to update payment status.");
       }
@@ -114,367 +134,180 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
     }
   };
 
-  const handleCloseCallSheet = useCallback(() => {
-    setCallSheetBookingId(null);
-    triggerRef.current?.focus();
-  }, []);
-
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5 font-display">
-            <CalendarCheck className="text-brand-mauve" /> Studio Bookings &amp; Financial Desk
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Review sessions, reconcile wire/card payments, approve reservations, and export official Call Sheets.
-          </p>
-        </div>
+      <AdminPageHeader
+        title="Production Bookings & Call Sheets"
+        description="Studio soundstage reservations, calendar allocations, automated call sheets, and deposit tracking."
+        icon={CalendarCheck}
+        feedback={feedback}
+        onDismissFeedback={clearFeedback}
+      />
 
-        {feedback && (
-          <FeedbackAlert
-            type="success"
-            message={feedback}
-            onDismiss={clearFeedback}
-          />
-        )}
-      </div>
+      {/* KPI Stats Grid */}
+      <AdminStatsGrid
+        columns={4}
+        stats={[
+          {
+            label: "Total Reservations",
+            value: bookingList.length,
+            unit: "Sessions",
+            icon: CalendarCheck,
+            variant: "default",
+          },
+          {
+            label: "Pending Review",
+            value: totalPending,
+            unit: "Pending",
+            icon: Clock,
+            variant: "warning",
+          },
+          {
+            label: "Confirmed Sessions",
+            value: totalConfirmed,
+            unit: "Approved",
+            icon: CheckCircle2,
+            variant: "success",
+          },
+          {
+            label: "Paid / Secured",
+            value: totalPaid,
+            unit: "Deposits",
+            icon: DollarSign,
+            variant: "brand",
+          },
+        ]}
+      />
 
-      {/* KPI Summary Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
-          <span className="text-[11px] text-slate-400 font-mono uppercase block">Total Bookings</span>
-          <span className="text-xl font-bold text-white font-mono mt-1 block">{bookingList.length}</span>
-        </div>
-        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
-          <span className="text-[11px] text-amber-400 font-mono uppercase block">Pending Approval</span>
-          <span className="text-xl font-bold text-amber-300 font-mono mt-1 block">{totalPending}</span>
-        </div>
-        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
-          <span className="text-[11px] text-emerald-400 font-mono uppercase block">Confirmed Sessions</span>
-          <span className="text-xl font-bold text-emerald-300 font-mono mt-1 block">{totalConfirmed}</span>
-        </div>
-        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10">
-          <span className="text-[11px] text-blue-400 font-mono uppercase block">Paid / Deposit Paid</span>
-          <span className="text-xl font-bold text-blue-300 font-mono mt-1 block">{totalPaid}</span>
-        </div>
-      </div>
-
-      {/* Search and Filter Controls */}
-      <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="relative w-full sm:w-80">
-            <input
-              type="text"
-              placeholder="Search reference, client, email, studio..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                pagination.resetPage();
-              }}
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve transition-colors"
-            />
-            <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
-          </div>
-
-          {/* Payment Status Quick Filter Pills */}
-          <div className="flex items-center gap-1.5 self-end sm:self-auto flex-wrap">
-            {(["all", "paid", "deposit_paid", "unpaid"] as const).map((payStatus) => (
+      {/* Filter & Search Bar */}
+      <AdminFilterBar
+        searchQuery={filter.searchQuery}
+        onSearchChange={filter.setSearchQuery}
+        searchPlaceholder="Search reference, client, email, studio..."
+        filterValue={filter.filterValue}
+        onFilterChange={filter.setFilterValue}
+        filterOptions={[
+          { id: "all", label: "All Bookings", count: bookingList.length },
+          { id: "pending", label: "Pending", count: totalPending },
+          { id: "confirmed", label: "Confirmed", count: totalConfirmed },
+          { id: "completed", label: "Completed", count: totalCompleted },
+          {
+            id: "cancelled",
+            label: "Cancelled",
+            count: bookingList.filter((b) => b.status === "cancelled").length,
+          },
+        ]}
+        secondaryFilters={
+          <div className="flex items-center gap-1 bg-white/[0.04] p-1 rounded-xl border border-white/5">
+            {[
+              { id: "all", label: "All Payments" },
+              { id: "paid", label: "Paid" },
+              { id: "deposit_paid", label: "Deposit Paid" },
+              { id: "unpaid", label: "Unpaid" },
+            ].map((opt) => (
               <button
-                key={payStatus}
+                key={opt.id}
                 type="button"
-                onClick={() => {
-                  setPaymentFilter(payStatus);
-                  pagination.resetPage();
-                }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize transition-all cursor-pointer ${
-                  paymentFilter === payStatus
-                    ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-lg shadow-brand-violet/25"
-                    : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
+                onClick={() =>
+                  filter.setSecondaryFilterValue(
+                    opt.id as "all" | "unpaid" | "deposit_paid" | "paid" | "refunded"
+                  )
+                }
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors cursor-pointer ${
+                  (filter.secondaryFilterValue || "all") === opt.id
+                    ? "bg-white/10 text-white font-semibold"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
-                {payStatus === "all" ? "All Payments" : payStatus.replace("_", " ")}
+                {opt.label}
               </button>
             ))}
           </div>
-        </div>
+        }
+      />
 
-        {/* Booking Status Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pt-1 pb-0.5 scrollbar-none">
-          {[
-            { id: "all", label: "All Bookings", count: bookingList.length },
-            { id: "pending", label: "Pending", count: totalPending },
-            { id: "confirmed", label: "Confirmed", count: totalConfirmed },
-            { id: "completed", label: "Completed", count: totalCompleted },
-            { id: "cancelled", label: "Cancelled", count: bookingList.filter(b => b.status === "cancelled").length },
-          ].map((tab) => {
-            const isActive = statusFilter === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => {
-                  setStatusFilter(tab.id as typeof statusFilter);
-                  pagination.resetPage();
-                }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition-all cursor-pointer ${
-                  isActive
-                    ? "bg-white/15 text-white border border-white/20 shadow-md"
-                    : "bg-white/[0.03] text-slate-400 hover:text-white border border-white/5 hover:bg-white/[0.06]"
-                }`}
-              >
-                <span>{tab.label}</span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                  isActive ? "bg-brand-violet text-white font-bold border border-brand-mauve/30" : "bg-white/10 text-slate-400"
-                }`}>
-                  {tab.count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Mobile Bookings Cards (< md) */}
-      <div className="md:hidden space-y-3">
-        {filteredBookings.length === 0 ? (
-          <div className="p-8 text-center text-xs text-slate-500 rounded-2xl bg-white/[0.02] border border-white/5">
-            No bookings matching your search or filters.
-          </div>
-        ) : (
-          pagination.paginatedItems.map((b) => (
-            <div
-              key={b.id}
-              className="p-4 rounded-2xl bg-[#0b0f19] border border-white/10 space-y-3 shadow-lg"
-            >
-              {/* Card Header: Reference & Booking Status */}
-              <div className="flex items-center justify-between border-b border-white/5 pb-2.5">
-                <span className="font-mono font-bold text-amber-300 text-xs">
-                  {b.referenceCode}
-                </span>
-                <StatusBadge status={b.status} />
-              </div>
-
-              {/* Client & Session Info */}
-              <div className="space-y-1 text-xs">
-                <div className="flex justify-between items-start">
-                  <span className="text-slate-400">Client:</span>
-                  <div className="text-right">
-                    <span className="font-semibold text-white block">
-                      {b.userName || "Direct Client"}
+      {/* Bookings Table */}
+      <div>
+        <DataTable>
+          <DataTableHeader>
+            <tr>
+              <th className="py-3 px-4">Booking Ref</th>
+              <th className="py-3 px-4">Client &amp; Contact</th>
+              <th className="py-3 px-4">Session Type &amp; Studio</th>
+              <th className="py-3 px-4">Scheduled Date</th>
+              <th className="py-3 px-4">Status</th>
+              <th className="py-3 px-4">Payment</th>
+              <th className="py-3 px-4 text-right">Actions</th>
+            </tr>
+          </DataTableHeader>
+          <DataTableBody>
+            {filter.filteredData.length === 0 ? (
+              <DataTableEmpty
+                colSpan={7}
+                message="No reservations found matching your criteria."
+              />
+            ) : (
+              filter.pagination.paginatedItems.map((b) => (
+                <DataTableRow key={b.id}>
+                  <td className="py-3 px-4 font-mono font-bold text-brand-lavender text-xs">
+                    {b.referenceCode}
+                  </td>
+                  <td className="py-3 px-4">
+                    <div>
+                      <span className="font-semibold text-white block">
+                        {b.userName || "Direct Client"}
+                      </span>
+                      {b.userEmail && (
+                        <span className="text-[11px] text-slate-400 font-mono block">
+                          {b.userEmail}
+                        </span>
+                      )}
+                      {b.userPhone && (
+                        <span className="text-[10px] text-brand-mauve font-mono block">
+                          {b.userPhone}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="font-medium text-white block">
+                      {b.studioName ||
+                        (b.equipmentIds && b.equipmentIds.length > 0
+                          ? `${b.equipmentIds.length} Equipment items`
+                          : b.sessionType.replace("_", " "))}
                     </span>
-                    {b.userEmail && (
-                      <span className="text-[10px] text-slate-400 font-mono block">
-                        {b.userEmail}
-                      </span>
-                    )}
-                    {b.userPhone && (
-                      <span className="text-[10px] text-amber-400 font-mono block">
-                        {b.userPhone}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-center pt-1">
-                  <span className="text-slate-400">Session / Gear:</span>
-                  <span className="font-semibold text-white">
-                    {b.studioName || (b.equipmentIds && b.equipmentIds.length > 0 ? `${b.equipmentIds.length} Equipment items` : b.sessionType.replace("_", " "))}
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Scheduled Date:</span>
-                  <span className="text-slate-300 font-mono text-[11px]">
+                    <span className="text-[10px] text-slate-500 font-mono capitalize">
+                      {b.sessionType.replace("_", " ")}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 font-mono text-slate-300 text-xs">
                     {new Date(b.scheduledAt).toLocaleDateString("en-US", {
                       timeZone: "Asia/Dubai",
                       month: "short",
                       day: "numeric",
                       year: "numeric",
                     })}
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Total Amount:</span>
-                  <span className="font-bold text-white font-mono text-sm">
-                    {formatCurrency(Number(b.totalAmount), b.currency || "AED")}
-                  </span>
-                </div>
-
-                {/* Payment Selector */}
-                <div className="flex justify-between items-center pt-1.5">
-                  <span className="text-slate-400">Payment:</span>
-                  <select
-                    value={b.paymentStatus || "unpaid"}
-                    disabled={updatingIds.has(b.id)}
-                    onChange={(e) =>
-                      handlePaymentStatusChange(
-                        b.id,
-                        e.target.value as "unpaid" | "deposit_paid" | "paid" | "refunded"
-                      )
-                    }
-                    className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg border focus:outline-none cursor-pointer ${
-                      b.paymentStatus === "paid"
-                        ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
-                        : b.paymentStatus === "deposit_paid"
-                        ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
-                        : b.paymentStatus === "refunded"
-                        ? "bg-slate-500/10 text-slate-400 border-slate-500/30"
-                        : "bg-rose-500/10 text-rose-400 border-rose-500/30"
-                    }`}
-                  >
-                    <option value="unpaid">Unpaid</option>
-                    <option value="deposit_paid">Deposit (50%)</option>
-                    <option value="paid">Paid Full</option>
-                    <option value="refunded">Refunded</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/5">
-                <button
-                  type="button"
-                  ref={(el) => {
-                    if (el && b.id === callSheetBookingId) triggerRef.current = el;
-                  }}
-                  onClick={(e) => {
-                    triggerRef.current = e.currentTarget;
-                    setCallSheetBookingId(b.id);
-                  }}
-                  className="px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer min-h-[40px]"
-                >
-                  <FileText size={13} />
-                  <span>Call Sheet</span>
-                </button>
-
-                <button
-                  type="button"
-                  disabled={updatingIds.has(b.id)}
-                  onClick={() => handleStatusChange(b.id, "confirmed")}
-                  className="px-3 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-xs font-medium transition-colors cursor-pointer disabled:opacity-50 min-h-[40px]"
-                >
-                  Confirm
-                </button>
-
-                <button
-                  type="button"
-                  disabled={updatingIds.has(b.id)}
-                  onClick={() => handleStatusChange(b.id, "completed")}
-                  className="px-3 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 text-xs font-medium transition-colors cursor-pointer disabled:opacity-50 min-h-[40px]"
-                >
-                  Complete
-                </button>
-
-                <button
-                  type="button"
-                  disabled={updatingIds.has(b.id)}
-                  onClick={() => handleStatusChange(b.id, "cancelled")}
-                  className="px-3 py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 text-xs font-medium transition-colors cursor-pointer disabled:opacity-50 min-h-[40px]"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* Bookings Table (Desktop md+) */}
-      <div className="hidden md:block">
-        <DataTable>
-          <DataTableHeader>
-            <tr>
-              <th className="py-3 px-4">Reference</th>
-              <th className="py-3 px-4">Client &amp; Contact</th>
-              <th className="py-3 px-4">Session &amp; Stage</th>
-              <th className="py-3 px-4">Scheduled Date</th>
-              <th className="py-3 px-4">Duration</th>
-              <th className="py-3 px-4">Amount</th>
-              <th className="py-3 px-4">Payment</th>
-              <th className="py-3 px-4">Booking Status</th>
-              <th className="py-3 px-4 text-right">Actions</th>
-            </tr>
-          </DataTableHeader>
-          <DataTableBody>
-            {filteredBookings.length === 0 ? (
-              <DataTableEmpty colSpan={9} message="No bookings matching your search or filters." />
-            ) : (
-              pagination.paginatedItems.map((b) => (
-                <DataTableRow key={b.id}>
-                  {/* Reference */}
-                  <td className="py-3.5 px-4 font-mono font-semibold text-amber-300">
-                    {b.referenceCode}
                   </td>
-
-                  {/* Client & Contact */}
-                  <td className="py-3.5 px-4">
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-white text-xs">
-                        {b.userName || "Direct Client"}
-                      </span>
-                      {b.userEmail && (
-                        <span className="text-[11px] text-slate-400 font-mono">
-                          {b.userEmail}
-                        </span>
-                      )}
-                      {(b.userPhone || b.userCompany) && (
-                        <span className="text-[10px] text-amber-400 font-mono flex items-center gap-1 mt-0.5">
-                          {b.userPhone && <span>{b.userPhone}</span>}
-                          {b.userCompany && <span className="text-slate-500">({b.userCompany})</span>}
-                        </span>
-                      )}
-                    </div>
+                  <td className="py-3 px-4">
+                    <select
+                      value={b.status}
+                      disabled={updatingIds.has(b.id)}
+                      onChange={(e) =>
+                        handleStatusChange(
+                          b.id,
+                          e.target.value as "pending" | "confirmed" | "cancelled" | "completed"
+                        )
+                      }
+                      className="text-[11px] font-semibold px-2.5 py-1 rounded-xl bg-slate-800 border border-white/10 text-white focus:outline-none focus:border-brand-mauve cursor-pointer"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="completed">Completed</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
                   </td>
-
-                  {/* Session Type & Studio */}
-                  <td className="py-3.5 px-4 capitalize text-slate-300">
-                    <span className="font-semibold text-white block">
-                      {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
-                        ? "Cinema Gear Rental"
-                        : b.sessionType.replace("_", " ")}
-                    </span>
-                    <span className="text-[11px] text-amber-300 font-medium block">
-                      {b.studioName || (!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
-                        ? `${b.equipmentIds.length} Equipment Item${b.equipmentIds.length > 1 ? "s" : ""}`
-                        : "Soundstage")}
-                    </span>
-                    <span className="text-[10px] text-slate-400">
-                      {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
-                        ? b.propsNotes || "Dispatch & Delivery"
-                        : `Headcount: ${b.headcount} pax`}
-                    </span>
-                  </td>
-
-                  {/* Scheduled Date */}
-                  <td className="py-3.5 px-4 text-slate-300 font-mono text-[11px]">
-                    {b.schedule && b.schedule.length > 1 ? b.schedule.map((session) => (
-                      <div key={session.id} className="mb-2">
-                        {session.studioName} · {new Date(session.scheduledAt).toLocaleString("en-US", {
-                          timeZone: "Asia/Dubai", month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
-                        })} · {session.durationHours}h · {session.headcount} seats
-                      </div>
-                    )) : new Date(b.scheduledAt).toLocaleDateString("en-US", {
-                      timeZone: "Asia/Dubai", month: "short", day: "numeric", year: "numeric",
-                    })}
-                  </td>
-
-                  {/* Duration */}
-                  <td className="py-3.5 px-4 text-slate-300 font-mono">
-                    {!b.studioId && b.equipmentIds && b.equipmentIds.length > 0
-                      ? `${Math.max(1, Math.round(b.durationHours / 24))} Days`
-                      : `${b.schedule?.length ? b.schedule.reduce((total, session) => total + session.durationHours, 0) : b.durationHours} hrs`}
-                  </td>
-
-                  {/* Amount */}
-                  <td className="py-3.5 px-4 font-semibold text-white font-mono">
-                    {formatCurrency(Number(b.totalAmount), b.currency || "AED")}
-                  </td>
-
-                  {/* Payment Reconciliation */}
-                  <td className="py-3.5 px-4">
+                  <td className="py-3 px-4">
                     <select
                       value={b.paymentStatus || "unpaid"}
                       disabled={updatingIds.has(b.id)}
@@ -484,74 +317,25 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                           e.target.value as "unpaid" | "deposit_paid" | "paid" | "refunded"
                         )
                       }
-                      className={`text-[10px] font-semibold px-2 py-1 rounded-lg border focus:outline-none cursor-pointer ${
-                        b.paymentStatus === "paid"
-                          ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
-                          : b.paymentStatus === "deposit_paid"
-                          ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
-                          : b.paymentStatus === "refunded"
-                          ? "bg-slate-500/10 text-slate-400 border-slate-500/30"
-                          : "bg-rose-500/10 text-rose-400 border-rose-500/30"
-                      }`}
+                      className="text-[11px] font-semibold px-2.5 py-1 rounded-xl bg-slate-800 border border-white/10 text-white focus:outline-none focus:border-brand-mauve cursor-pointer"
                     >
                       <option value="unpaid">Unpaid</option>
-                      <option value="deposit_paid">Deposit (50%)</option>
-                      <option value="paid">Paid Full</option>
+                      <option value="deposit_paid">Deposit Paid</option>
+                      <option value="paid">Paid in Full</option>
                       <option value="refunded">Refunded</option>
                     </select>
                   </td>
-
-                  {/* Booking Status */}
-                  <td className="py-3.5 px-4">
-                    <StatusBadge status={b.status} />
-                  </td>
-
-                  {/* Action Controls */}
-                  <td className="py-3.5 px-4 text-right">
-                    <div className="flex items-center justify-end gap-1.5 flex-wrap">
-                      <button
-                        type="button"
-                        ref={(el) => {
-                          if (el && b.id === callSheetBookingId) triggerRef.current = el;
-                        }}
-                        onClick={(e) => {
-                          triggerRef.current = e.currentTarget;
-                          setCallSheetBookingId(b.id);
-                        }}
-                        className="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[11px] font-medium transition-colors flex items-center gap-1 cursor-pointer"
-                        title="Generate Printable Call Sheet"
-                      >
-                        <FileText size={11} />
-                        <span>Call Sheet</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        disabled={updatingIds.has(b.id)}
-                        onClick={() => handleStatusChange(b.id, "confirmed")}
-                        className="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
-                      >
-                        Confirm
-                      </button>
-
-                      <button
-                        type="button"
-                        disabled={updatingIds.has(b.id)}
-                        onClick={() => handleStatusChange(b.id, "completed")}
-                        className="px-2 py-1 rounded bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
-                      >
-                        Complete
-                      </button>
-
-                      <button
-                        type="button"
-                        disabled={updatingIds.has(b.id)}
-                        onClick={() => handleStatusChange(b.id, "cancelled")}
-                        className="px-2 py-1 rounded bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50"
-                      >
-                        Cancel
-                      </button>
-                    </div>
+                  <td className="py-3 px-4 text-right">
+                    <button
+                      type="button"
+                      ref={triggerRef}
+                      onClick={() => setCallSheetBookingId(b.id)}
+                      className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-brand-lavender text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ml-auto"
+                      title="Generate Call Sheet"
+                    >
+                      <FileText size={13} />
+                      <span>Call Sheet</span>
+                    </button>
                   </td>
                 </DataTableRow>
               ))
@@ -560,22 +344,24 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         </DataTable>
       </div>
 
+      {/* Pagination Controls */}
       <PaginationControls
-        currentPage={pagination.currentPage}
-        pageCount={pagination.pageCount}
-        total={pagination.total}
-        startIndex={pagination.startIndex}
-        endIndex={pagination.endIndex}
-        onPrev={pagination.prevPage}
-        onNext={pagination.nextPage}
-        variant="table"
+        currentPage={filter.pagination.currentPage}
+        pageCount={filter.pagination.pageCount}
+        total={filter.pagination.total}
+        startIndex={filter.pagination.startIndex}
+        endIndex={filter.pagination.endIndex}
+        onPrev={filter.pagination.prevPage}
+        onNext={filter.pagination.nextPage}
       />
 
       {/* Printable Call Sheet Modal */}
-      <BookingCallSheetModal
-        booking={callSheetBooking}
-        onClose={handleCloseCallSheet}
-      />
+      {callSheetBooking && (
+        <BookingCallSheetModal
+          booking={callSheetBooking}
+          onClose={() => setCallSheetBookingId(null)}
+        />
+      )}
     </div>
   );
 }

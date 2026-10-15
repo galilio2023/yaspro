@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import {
   Users,
-  Search,
   Shield,
   ShieldCheck,
   Building,
@@ -15,12 +14,22 @@ import {
 } from "lucide-react";
 import { updateUserRole, deleteCmsUser } from "@/lib/actions/users-client-operations";
 import type { User } from "@/db/schema";
-import { FeedbackAlert } from "@/components/ui/feedback-alert";
-import { DataTable, DataTableHeader, DataTableBody, DataTableRow, DataTableEmpty } from "@/components/ui/data-table";
+import {
+  AdminPageHeader,
+  AdminStatsGrid,
+  AdminFilterBar,
+  AdminConfirmModal,
+} from "@/components/admin";
+import {
+  DataTable,
+  DataTableHeader,
+  DataTableBody,
+  DataTableRow,
+  DataTableEmpty,
+} from "@/components/ui/data-table";
 import { PaginationControls } from "@/components/ui/pagination-controls";
-import { usePagination } from "@/hooks/usePagination";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
-import { AdminConfirmModal } from "@/components/admin/AdminConfirmModal";
+import { useAdminFilter } from "../hooks/useAdminFilter";
 
 interface UsersManagerProps {
   initialUsers: User[];
@@ -28,28 +37,33 @@ interface UsersManagerProps {
 
 export function UsersManager({ initialUsers }: UsersManagerProps) {
   const [usersList, setUsersList] = useState<User[]>(initialUsers);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState<"all" | "client" | "enterprise" | "admin">("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
-  const [roleTarget, setRoleTarget] = useState<{ user: User; newRole: "client" | "enterprise" | "admin" } | null>(null);
+  const [roleTarget, setRoleTarget] = useState<{
+    user: User;
+    newRole: "client" | "enterprise" | "admin";
+  } | null>(null);
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3000);
 
-  const filteredUsers = usersList.filter((u) => {
-    const query = searchQuery.toLowerCase();
-    const matchesSearch =
-      u.name.toLowerCase().includes(query) ||
-      u.email.toLowerCase().includes(query) ||
-      (u.company && u.company.toLowerCase().includes(query)) ||
-      (u.phone && u.phone.toLowerCase().includes(query));
-    const matchesRole = roleFilter === "all" || u.role === roleFilter;
-    return matchesSearch && matchesRole;
-  });
+  const filter = useAdminFilter<User, "all" | "client" | "enterprise" | "admin">({
+    data: usersList,
+    initialFilter: "all",
+    pageSize: 20,
+    predicate: (u, query, role) => {
+      const matchesSearch =
+        !query ||
+        u.name.toLowerCase().includes(query) ||
+        u.email.toLowerCase().includes(query) ||
+        (u.company && u.company.toLowerCase().includes(query)) ||
+        (u.phone && u.phone.toLowerCase().includes(query));
 
-  const pagination = usePagination(filteredUsers, 20);
+      const matchesRole = role === "all" || u.role === role;
+      return Boolean(matchesSearch && matchesRole);
+    },
+  });
 
   const totalClients = usersList.filter((u) => u.role === "client").length;
   const totalEnterprise = usersList.filter((u) => u.role === "enterprise").length;
@@ -110,77 +124,83 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white font-display flex items-center gap-2.5">
-            <Users size={24} className="text-brand-mauve" />
-            Registered Users &amp; Client Accounts
-          </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Real production clients, verified phone contacts, and enterprise administrators.
-          </p>
+      <AdminPageHeader
+        title="Registered Users & Client Accounts"
+        description="Real production clients, verified phone contacts, and enterprise administrators."
+        icon={Users}
+        feedback={feedback}
+        onDismissFeedback={clearFeedback}
+      />
+
+      {errorMessage && (
+        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center justify-between">
+          <span>{errorMessage}</span>
+          <button
+            type="button"
+            onClick={() => setErrorMessage(null)}
+            className="text-rose-400 hover:text-white"
+          >
+            Dismiss
+          </button>
         </div>
-        <div className="flex flex-col gap-2">
-          {feedback && (
-            <FeedbackAlert type="success" message={feedback} onDismiss={clearFeedback} />
-          )}
-          {errorMessage && (
-            <FeedbackAlert type="error" message={errorMessage} onDismiss={() => setErrorMessage(null)} />
-          )}
-        </div>
-      </div>
+      )}
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {[
-          { label: "Total Accounts", icon: <Users size={14} className="text-brand-mauve" />, value: usersList.length },
-          { label: "Production Clients", icon: <Building size={14} className="text-stone-300" />, value: totalClients },
-          { label: "Enterprise Vaults", icon: <Shield size={14} className="text-brand-mauve" />, value: totalEnterprise },
-          { label: "System Admins", icon: <ShieldCheck size={14} className="text-emerald-400" />, value: totalAdmins },
-        ].map(({ label, icon, value }) => (
-          <div key={label} className="p-4 rounded-2xl bg-white/[0.02] border border-white/10">
-            <span className="text-xs text-slate-400 flex items-center gap-1.5">{icon} {label}</span>
-            <span className="text-2xl font-bold text-white mt-1 block">{value}</span>
-          </div>
-        ))}
-      </div>
+      <AdminStatsGrid
+        columns={4}
+        stats={[
+          {
+            label: "Total Accounts",
+            value: usersList.length,
+            unit: "Users",
+            icon: Users,
+            variant: "default",
+          },
+          {
+            label: "Production Clients",
+            value: totalClients,
+            unit: "Clients",
+            icon: Building,
+            variant: "default",
+          },
+          {
+            label: "Enterprise Partners",
+            value: totalEnterprise,
+            unit: "Vaults",
+            icon: Shield,
+            variant: "brand",
+          },
+          {
+            label: "System Admins",
+            value: totalAdmins,
+            unit: "Secured",
+            icon: ShieldCheck,
+            variant: "success",
+          },
+        ]}
+      />
 
-      {/* Search and Filters */}
-      <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="relative w-full sm:w-80">
-          <input
-            type="text"
-            placeholder="Search by name, email, company, phone..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-mauve transition-colors"
-          />
-          <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
-        </div>
-        <div className="flex items-center gap-1.5 self-end sm:self-auto flex-wrap">
-          {(["all", "client", "enterprise", "admin"] as const).map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setRoleFilter(tab)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize transition-all cursor-pointer ${
-                roleFilter === tab
-                  ? "bg-brand-violet text-white font-bold border border-brand-mauve/40 shadow-lg shadow-brand-violet/25"
-                  : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
-              }`}
-            >
-              {tab === "all" ? "All Users" : tab === "enterprise" ? "Enterprise" : `${tab}s`}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Search & Filters */}
+      <AdminFilterBar
+        searchQuery={filter.searchQuery}
+        onSearchChange={filter.setSearchQuery}
+        searchPlaceholder="Search by name, email, company, phone..."
+        filterValue={filter.filterValue}
+        onFilterChange={filter.setFilterValue}
+        filterOptions={[
+          { id: "all", label: "All Users", count: usersList.length },
+          { id: "client", label: "Clients", count: totalClients },
+          { id: "enterprise", label: "Enterprise", count: totalEnterprise },
+          { id: "admin", label: "Admins", count: totalAdmins },
+        ]}
+      />
 
       {/* Users Table */}
       <DataTable>
         <DataTableHeader>
           <tr>
             <th className="py-3 px-4">User &amp; Organization</th>
-            <th className="py-3 px-4">Actual Email &amp; Verification</th>
+            <th className="py-3 px-4">Email &amp; Status</th>
             <th className="py-3 px-4">Contact Phone</th>
             <th className="py-3 px-4">Role</th>
             <th className="py-3 px-4">Registered Date</th>
@@ -188,10 +208,10 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
           </tr>
         </DataTableHeader>
         <DataTableBody>
-          {filteredUsers.length === 0 ? (
+          {filter.filteredData.length === 0 ? (
             <DataTableEmpty colSpan={6} message="No registered users match your search criteria." />
           ) : (
-            pagination.paginatedItems.map((user) => (
+            filter.pagination.paginatedItems.map((user) => (
               <DataTableRow key={user.id}>
                 {/* User & Organization */}
                 <td className="py-3.5 px-4">
@@ -250,12 +270,12 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                         e.target.value as "client" | "enterprise" | "admin"
                       )
                     }
-                    className={`text-[10px] font-semibold px-2 py-1 rounded-lg border focus:outline-none cursor-pointer transition-colors ${
+                    className={`text-[10px] font-semibold px-2.5 py-1.5 rounded-xl border focus:outline-none cursor-pointer transition-colors ${
                       user.role === "admin"
                         ? "bg-brand-violet/20 text-brand-mauve border-brand-mauve/30"
                         : user.role === "enterprise"
                         ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
-                        : "bg-slate-700/40 text-slate-300 border-slate-600/30"
+                        : "bg-slate-800 text-slate-300 border-white/10"
                     }`}
                   >
                     <option value="client" className="bg-slate-900 text-white">Client</option>
@@ -295,14 +315,13 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
       </DataTable>
 
       <PaginationControls
-        currentPage={pagination.currentPage}
-        pageCount={pagination.pageCount}
-        total={pagination.total}
-        startIndex={pagination.startIndex}
-        endIndex={pagination.endIndex}
-        onPrev={pagination.prevPage}
-        onNext={pagination.nextPage}
-        variant="table"
+        currentPage={filter.pagination.currentPage}
+        pageCount={filter.pagination.pageCount}
+        total={filter.pagination.total}
+        startIndex={filter.pagination.startIndex}
+        endIndex={filter.pagination.endIndex}
+        onPrev={filter.pagination.prevPage}
+        onNext={filter.pagination.nextPage}
       />
 
       {/* Delete User Confirmation Modal */}

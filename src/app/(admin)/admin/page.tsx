@@ -12,6 +12,7 @@ import {
   UserCheck,
   MessageSquare,
   Radio,
+  ExternalLink,
 } from "lucide-react";
 import { getCmsOverviewStats } from "@/lib/cms-actions";
 
@@ -36,7 +37,7 @@ export default async function AdminDashboardPage() {
       description: "Contact briefs, quotes & RFPs",
       href: "/admin/inquiries",
       icon: MessageSquare,
-      color: "from-zinc-500/20 to-zinc-600/10 border-zinc-500/30 text-zinc-300",
+      color: "from-brand-violet/20 to-slate-900/60 border-brand-mauve/20 text-brand-lavender",
     },
     {
       title: "Soundstages & Rates",
@@ -94,17 +95,17 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl bg-[#0c0b10] border border-brand-mauve/20 backdrop-blur-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl bg-[#0c0b10] border border-brand-mauve/20 backdrop-blur-xl shadow-xl shadow-brand-violet/5">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-mauve/10 border border-brand-mauve/30 text-brand-mauve text-xs font-mono uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-mauve/10 border border-brand-mauve/30 text-brand-mauve text-xs font-mono uppercase tracking-wider mb-2.5">
             <Server size={12} /> Neon Serverless + Drizzle ORM
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-display">
             Operational Management Control Center
           </h1>
-          <p className="text-sm text-slate-400 mt-1 max-w-2xl">
-            Real-time management for all Yas Productions media assets, creator partnerships,
-            cinema gear rentals, and enterprise RFP workflows.
+          <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl leading-relaxed">
+            Real-time operations for Yas Productions soundstages, creator roster,
+            cinema fleet inventory, and live client briefs.
           </p>
         </div>
 
@@ -114,57 +115,59 @@ export default async function AdminDashboardPage() {
             target="_blank"
             className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-semibold transition-colors flex items-center gap-2 text-slate-200"
           >
-            View Live Site <ArrowRight size={14} className="rtl:rotate-180" />
+            <span>Live Site</span>
+            <ExternalLink size={13} className="rtl:rotate-180" />
           </Link>
           <Link
             href="/admin/projects"
-            className="px-4 py-2.5 rounded-xl btn-brand text-xs font-bold transition-all flex items-center gap-2"
+            className="px-4 py-2.5 rounded-xl btn-brand text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
           >
-            Manage Content <Layers size={14} />
+            <span>Manage Content</span>
+            <Layers size={14} />
           </Link>
         </div>
       </div>
 
       {metricsUnavailable && (
-        <div role="status" className="p-4 rounded-xl border border-brand-mauve/30 bg-brand-mauve/10 text-brand-mauve">
+        <div role="status" className="p-4 rounded-xl border border-brand-mauve/30 bg-brand-mauve/10 text-brand-mauve text-xs">
           Current metrics are unavailable. Refresh this page to retry.
         </div>
       )}
 
       {/* Metrics Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {METRIC_CARDS.map((card) => {
           const Icon = card.icon;
           return (
             <Link
               key={card.title}
               href={card.href}
-              className={`p-6 rounded-2xl bg-gradient-to-br ${card.color} border backdrop-blur-md hover:scale-[1.02] transition-all flex flex-col justify-between group`}
+              className={`p-5 rounded-2xl bg-gradient-to-br ${card.color} border backdrop-blur-md hover:scale-[1.02] transition-all flex flex-col justify-between group shadow-lg`}
             >
               <div className="flex items-start justify-between">
-                <div className="size-11 rounded-xl bg-white/10 flex items-center justify-center">
-                  <Icon size={22} />
+                <div className="size-10 rounded-xl bg-white/10 flex items-center justify-center">
+                  <Icon size={20} />
                 </div>
                 {card.badge && !metricsUnavailable && (
-                  <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-brand-mauve/20 text-brand-mauve border border-brand-mauve/30">
+                  <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-brand-mauve/20 text-brand-mauve border border-brand-mauve/30 font-mono">
                     {card.badge}
                   </span>
                 )}
               </div>
 
-              <div className="mt-6">
-                <span className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white block">
+              <div className="mt-5">
+                <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white block font-mono">
                   {metricsUnavailable ? "Unavailable" : card.value}
                 </span>
-                <span className="font-semibold text-slate-200 text-base mt-1 block group-hover:text-white">
+                <span className="font-semibold text-slate-200 text-sm mt-1 block group-hover:text-white">
                   {card.title}
                 </span>
-                <p className="text-xs text-slate-400 mt-1">{card.description}</p>
+                <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">{card.description}</p>
               </div>
 
-              <div className="mt-5 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-medium text-slate-300 group-hover:text-white">
-                <span>View & Manage</span>
-                <ArrowRight size={14} className="group-hover:translate-x-1 rtl:group-hover:-translate-x-1 rtl:rotate-180 transition-transform" />
+              <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-medium text-slate-300 group-hover:text-white">
+                <span>Open Section</span>
+                <ArrowRight size={13} className="group-hover:translate-x-1 rtl:group-hover:-translate-x-1 rtl:rotate-180 transition-transform text-brand-mauve" />
               </div>
             </Link>
           );
@@ -173,7 +176,7 @@ export default async function AdminDashboardPage() {
 
       {/* Database Quick Actions & Health */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="p-6 rounded-2xl bg-slate-900/60 border border-white/10 backdrop-blur-xl space-y-4">
+        <div className="p-6 rounded-3xl bg-slate-900/60 border border-white/10 backdrop-blur-xl space-y-4">
           <div className="flex items-center gap-2 text-sm font-semibold text-white">
             <TrendingUp size={16} className="text-brand-mauve" />
             <span>Fast Management Tasks</span>
@@ -201,34 +204,34 @@ export default async function AdminDashboardPage() {
               <span className="text-slate-400">Manage daily rates, camera kits, and equipment stock</span>
             </Link>
             <Link
-              href="/admin/rfps"
+              href="/admin/bookings"
               className="p-3.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-colors block"
             >
-              <span className="font-semibold text-stone-300 block mb-1">Tender Status Board</span>
-              <span className="text-slate-400">Update milestone approvals & client notifications</span>
+              <span className="font-semibold text-brand-lavender block mb-1">Studio Booking Board</span>
+              <span className="text-slate-400">Review schedule allocations & automated call sheets</span>
             </Link>
           </div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-slate-900/60 border border-white/10 backdrop-blur-xl space-y-4">
+        <div className="p-6 rounded-3xl bg-slate-900/60 border border-white/10 backdrop-blur-xl space-y-4">
           <div className="flex items-center gap-2 text-sm font-semibold text-white">
             <Server size={16} className="text-emerald-400" />
             <span>Drizzle & Neon Engine Architecture</span>
           </div>
           <ul className="space-y-3 text-xs text-slate-300">
-            <li className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
+            <li className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
               <span>Database Provider</span>
               <span className="font-mono text-brand-mauve">Neon Serverless (PostgreSQL 16)</span>
             </li>
-            <li className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
+            <li className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
               <span>Type-Safe ORM</span>
               <span className="font-mono text-emerald-300">Drizzle ORM v0.45</span>
             </li>
-            <li className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
+            <li className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
               <span>Seed & Catalog Sync</span>
               <span className="font-mono text-brand-mauve">npm run db:push / npm run seed</span>
             </li>
-            <li className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
+            <li className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
               <span>Availability Strategy</span>
               <span className="font-mono text-brand-mauve">Dual-layer (DB First + Instant Fallback)</span>
             </li>

@@ -7,7 +7,7 @@ import { AlertTriangle, Trash2, CheckCircle2, Loader2 } from "lucide-react";
 export interface AdminConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void | Promise<void>;
+  onConfirm: () => unknown | Promise<unknown>;
   title: string;
   message: string;
   confirmLabel?: string;
