@@ -125,7 +125,8 @@ export function BookingsManager({ initialBookings, studios = [] }: BookingsManag
         (b.userCompany && b.userCompany.toLowerCase().includes(q)) ||
         (b.studioName && b.studioName.toLowerCase().includes(q)) ||
         (b.packageName && b.packageName.toLowerCase().includes(q)) ||
-        b.sessionType.toLowerCase().includes(q);
+        b.sessionType.toLowerCase().includes(q) ||
+        (b.equipmentItems && b.equipmentItems.some((eq) => eq.name.toLowerCase().includes(q)));
 
       const matchesStatus = status === "all" || b.status === status;
       const matchesPayment = !payment || payment === "all" || b.paymentStatus === payment;
@@ -376,7 +377,11 @@ export function BookingsManager({ initialBookings, studios = [] }: BookingsManag
                       <span className="font-medium text-white block">
                         {b.packageName ||
                           b.studioName ||
-                          (b.equipmentIds && b.equipmentIds.length > 0
+                          (b.equipmentItems && b.equipmentItems.length > 0
+                            ? b.equipmentItems.length === 1
+                              ? b.equipmentItems[0].name
+                              : `${b.equipmentItems[0].name} (+${b.equipmentItems.length - 1} more)`
+                            : b.equipmentIds && b.equipmentIds.length > 0
                             ? `${b.equipmentIds.length} Equipment items`
                             : b.sessionType.replace("_", " "))}
                       </span>
@@ -389,6 +394,10 @@ export function BookingsManager({ initialBookings, studios = [] }: BookingsManag
                           <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-brand-violet/30 text-brand-lavender border border-brand-mauve/20">
                             Podcast
                           </span>
+                        ) : b.equipmentIds && b.equipmentIds.length > 0 && !b.studioName ? (
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-brand-mauve/20 text-brand-lavender border border-brand-mauve/30">
+                            Gear Rental
+                          </span>
                         ) : (
                           <span className="text-[10px] text-slate-500 font-mono capitalize">
                             {b.sessionType.replace("_", " ")}
@@ -397,6 +406,11 @@ export function BookingsManager({ initialBookings, studios = [] }: BookingsManag
                         {b.studioName && b.packageName && (
                           <span className="text-[10px] text-slate-400 font-mono">
                             · {b.studioName}
+                          </span>
+                        )}
+                        {b.equipmentItems && b.equipmentItems.length > 0 && b.studioName && (
+                          <span className="text-[10px] text-brand-mauve font-mono">
+                            · +{b.equipmentItems.length} gear add-on{b.equipmentItems.length > 1 ? "s" : ""}
                           </span>
                         )}
                       </div>

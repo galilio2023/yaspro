@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS "podcast_sets" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
-
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "podcast_addons" (
 	"id" text PRIMARY KEY NOT NULL,
 	"title" text NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS "podcast_addons" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
-
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "studio_blackouts" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"studio_id" uuid,
@@ -40,12 +40,14 @@ CREATE TABLE IF NOT EXISTS "studio_blackouts" (
 	"created_by_id" text,
 	"created_at" timestamp DEFAULT now() NOT NULL
 );
-
+--> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "studio_blackouts" ADD CONSTRAINT "studio_blackouts_studio_id_studios_id_fk" FOREIGN KEY ("studio_id") REFERENCES "public"."studios"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
-
+--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "studio_blackouts_time_idx" ON "studio_blackouts" USING btree ("start_time","end_time");
+--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "studio_blackouts_studio_idx" ON "studio_blackouts" USING btree ("studio_id");
+
