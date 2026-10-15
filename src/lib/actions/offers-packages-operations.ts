@@ -39,9 +39,8 @@ export interface CmsOfferInput {
   sortOrder?: number;
 }
 
-/** Lists database offers plus built-in static fallbacks for admin management */
-export async function getCmsOffers(): Promise<CmsOfferItem[]> {
-  await requireAdmin();
+/** Lists the current catalog, with database entries overriding static packages. */
+export async function getBookingOffers(): Promise<CmsOfferItem[]> {
   const result: CmsOfferItem[] = [];
   const dbIds = new Set<string>();
 
@@ -55,6 +54,7 @@ export async function getCmsOffers(): Promise<CmsOfferItem[]> {
       for (const row of rows) {
         dbIds.add(row.id);
         result.push({
+          ...OFFERS_AND_BUNDLES.find((item) => item.id === row.id),
           id: row.id,
           category: row.category as "bundle" | "offer",
           name: row.name,
@@ -97,6 +97,12 @@ export async function getCmsOffers(): Promise<CmsOfferItem[]> {
   }
 
   return result;
+}
+
+/** Includes paused packages for admin management. */
+export async function getCmsOffers(): Promise<CmsOfferItem[]> {
+  await requireAdmin();
+  return getBookingOffers();
 }
 
 /** Create or update an offer/bundle */
@@ -168,16 +174,19 @@ export async function upsertCmsOffer(input: CmsOfferInput): Promise<CmsResponse<
       updatedAt: new Date(),
     };
 
-    await db
-      .insert(offers)
-      .values({
-        ...payload,
-        createdAt: new Date(),
-      })
-      .onConflictDoUpdate({
-        target: offers.id,
-        set: payload,
-      });
+    const insert = db.insert(offers).values({ ...payload, createdAt: new Date() });
+    if (input.id?.trim()) {
+      await insert.onConflictDoUpdate({ target: offers.id, set: payload });
+    } else {
+      // A generated slug must never turn a create request into an update.
+      if (OFFERS_AND_BUNDLES.some((item) => item.id === id)) {
+        return { success: false, error: "A package with this slug already exists." };
+      }
+      const created = await insert.onConflictDoNothing({ target: offers.id }).returning({ id: offers.id });
+      if (created.length === 0) {
+        return { success: false, error: "A package with this slug already exists." };
+      }
+    }
 
     revalidatePath("/admin/offers");
     revalidatePath("/offers");

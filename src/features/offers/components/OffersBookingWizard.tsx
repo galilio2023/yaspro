@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import type { OfferBundleItem } from "../types";
 import { useOffersBooking } from "../hooks/useOffersBooking";
 import { Step1OfferSelection } from "./Step1OfferSelection";
 import { Step2Schedule } from "./Step2Schedule";
@@ -29,9 +30,10 @@ const stepVariants: Variants = {
   exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -28 : 28, transition: { duration: 0.14, ease: "easeIn" } }),
 };
 
-export function OffersBookingWizard() {
+export function OffersBookingWizard({ catalog }: { catalog?: OfferBundleItem[] }) {
   const { isArabic } = useLanguage();
   const {
+    offers,
     step,
     setStep,
     nextStep,
@@ -58,7 +60,7 @@ export function OffersBookingWizard() {
     submitBooking,
     canProceedToStep2,
     canProceedToStep3,
-  } = useOffersBooking();
+  } = useOffersBooking(catalog);
 
   const [direction, setDirection] = useState<number>(1);
   const stepperSteps = isArabic ? STEPPER_STEPS_AR : STEPPER_STEPS_EN;
@@ -90,6 +92,10 @@ export function OffersBookingWizard() {
     prevStep();
     requestAnimationFrame(scrollToWizard);
   };
+
+  if (!selectedOffer) {
+    return <p>{isArabic ? "لا توجد باقات متاحة حاليًا." : "No packages are currently available."}</p>;
+  }
 
   if (confirmedResult) {
     return (
@@ -143,6 +149,7 @@ export function OffersBookingWizard() {
               exit="exit"
             >
               <Step1OfferSelection
+                  offers={offers}
                 selectedOfferId={selectedOfferId}
                 onSelectOffer={setSelectedOfferId}
                 onContinue={handleNextStep}

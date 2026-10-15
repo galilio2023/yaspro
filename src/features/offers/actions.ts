@@ -5,7 +5,8 @@ import { bookings } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { createZiinaPaymentIntent } from "@/lib/ziina";
-import { OFFERS_AND_BUNDLES, STANDARD_TIME_SLOTS } from "./data";
+import { STANDARD_TIME_SLOTS } from "./data";
+import { getBookingOffers } from "@/lib/actions/offers-packages-operations";
 import { randomUUID } from "node:crypto";
 import { OffersPromoError, resolveOffersPromo } from "./promo-codes";
 import { readDbPromoRule } from "./promo-db";
@@ -45,9 +46,9 @@ export interface OffersBookingResult {
 export async function submitOffersBooking(input: OffersBookingInput): Promise<OffersBookingResult> {
   try {
     const validated = offersBookingSchema.parse(input);
-    const offer = OFFERS_AND_BUNDLES.find((o) => o.id === validated.offerId);
+    const offer = (await getBookingOffers()).find((o) => o.id === validated.offerId);
 
-    if (!offer) {
+    if (!offer || offer.isActive === false) {
       return { success: false, message: "The selected offer or bundle is invalid." };
     }
 
@@ -190,7 +191,7 @@ export async function validateOffersPromoCode(code: string, offerId: string): Pr
 }> {
   try {
     const input = z.object({ code: z.string().trim().min(1), offerId: z.string().min(1) }).parse({ code, offerId });
-    if (!OFFERS_AND_BUNDLES.some((offer) => offer.id === input.offerId)) {
+    if (!(await getBookingOffers()).some((offer) => offer.id === input.offerId && offer.isActive !== false)) {
       return { success: false, message: "The selected offer or bundle is invalid." };
     }
     const promo = await resolveOffersPromo(input.code, input.offerId,

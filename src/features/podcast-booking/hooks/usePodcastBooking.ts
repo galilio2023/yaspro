@@ -3,7 +3,7 @@
 import { getLocalCalendarDate } from "@/features/gear/lib/rental-schedule";
 
 import { useState, useMemo } from "react";
-import { PodcastSessionItem, PodcastBookingContact, PodcastBookingStep } from "../types";
+import { PodcastSessionItem, PodcastBookingContact, PodcastBookingStep, PodcastStudio, PodcastAddon } from "../types";
 import { PODCAST_STUDIOS, PODCAST_SERVICES, PODCAST_ADDONS, PODCAST_PROMO_CODES, TIME_SLOTS } from "../data";
 import { createPodcastBooking, PodcastBookingResult } from "../actions";
 
@@ -13,23 +13,23 @@ function getTomorrowDateString(): string {
   return getLocalCalendarDate(tomorrow);
 }
 
-function createDefaultSession(index = 1): PodcastSessionItem {
+function createDefaultSession(index = 1, studios: PodcastStudio[] = PODCAST_STUDIOS): PodcastSessionItem {
   return {
     id: `session-${Date.now()}-${index}`,
     date: getTomorrowDateString(),
     timeSlot: TIME_SLOTS[0] || "5:30 PM",
     durationHours: 1,
     headcount: 2,
-    studioKey: "nature-grid",
+    studioKey: studios.find((studio) => studio.isAvailable !== false)?.key || "",
     serviceKey: "recording-pro-edit",
     addons: {},
     notes: "",
   };
 }
 
-export function usePodcastBooking() {
+export function usePodcastBooking(studios: PodcastStudio[] = PODCAST_STUDIOS, addons: PodcastAddon[] = PODCAST_ADDONS) {
   const [step, setStep] = useState<PodcastBookingStep>(1);
-  const [sessions, setSessions] = useState<PodcastSessionItem[]>([createDefaultSession(1)]);
+  const [sessions, setSessions] = useState<PodcastSessionItem[]>([createDefaultSession(1, studios)]);
   const [activeSessionIndex, setActiveSessionIndex] = useState(0);
 
   const [contact, setContact] = useState<PodcastBookingContact>({
@@ -50,8 +50,8 @@ export function usePodcastBooking() {
   const currentSession = sessions[activeSessionIndex] || sessions[0];
 
   const currentStudio = useMemo(() => {
-    return PODCAST_STUDIOS.find((s) => s.key === currentSession?.studioKey) || PODCAST_STUDIOS[0];
-  }, [currentSession?.studioKey]);
+    return studios.find((s) => s.key === currentSession?.studioKey);
+  }, [currentSession?.studioKey, studios]);
 
   const currentService = useMemo(() => {
     return PODCAST_SERVICES.find((s) => s.key === currentSession?.serviceKey) || PODCAST_SERVICES[0];
@@ -67,8 +67,8 @@ export function usePodcastBooking() {
     if (session.addons) {
       for (const [addonKey, qty] of Object.entries(session.addons)) {
         if (qty > 0) {
-          const addon = PODCAST_ADDONS.find((a) => a.key === addonKey);
-          if (addon) {
+          const addon = addons.find((a) => a.key === addonKey);
+          if (addon && addon.isActive !== false) {
             addonsCost += addon.priceNum * qty;
           }
         }
@@ -81,13 +81,9 @@ export function usePodcastBooking() {
     };
   };
 
-  const currentSessionBreakdown = useMemo(() => {
-    return getSessionPrice(currentSession);
-  }, [currentSession]);
+  const currentSessionBreakdown = getSessionPrice(currentSession);
 
-  const subtotalAllSessions = useMemo(() => {
-    return sessions.reduce((acc, sess) => acc + getSessionPrice(sess).total, 0);
-  }, [sessions]);
+  const subtotalAllSessions = sessions.reduce((acc, sess) => acc + getSessionPrice(sess).total, 0);
 
   const promoDiscount = useMemo(() => {
     if (!appliedPromo) return 0;
@@ -136,7 +132,7 @@ export function usePodcastBooking() {
 
   // Multi-session
   const addNewSession = () => {
-    const newSess = createDefaultSession(sessions.length + 1);
+    const newSess = createDefaultSession(sessions.length + 1, studios);
     setSessions((prev) => [...prev, newSess]);
     setActiveSessionIndex(sessions.length);
     setStep(1);
@@ -152,7 +148,7 @@ export function usePodcastBooking() {
 
   const validateSessions = () => {
     for (const [index, session] of sessions.entries()) {
-      const studio = PODCAST_STUDIOS.find((item) => item.key === session.studioKey);
+      const studio = studios.find((item) => item.key === session.studioKey);
       let message: string | null = null;
       let invalidStep: PodcastBookingStep = 1;
 
@@ -160,12 +156,18 @@ export function usePodcastBooking() {
         message = "Please select a session date.";
       } else if (!session.timeSlot) {
         message = "Please select a recording time slot.";
-      } else if (!studio) {
+      } else if (!studio || studio.isAvailable === false) {
         message = "Please select your preferred podcast studio setup.";
         invalidStep = 2;
       } else if (studio.seats < session.headcount) {
         message = "Please select a studio with enough seats for your guests.";
         invalidStep = 2;
+      }
+
+      if (!message && Object.entries(session.addons).some(([key, qty]) =>
+        qty > 0 && !addons.some((addon) => addon.key === key && addon.isActive !== false))) {
+        message = "The selected add-on is unavailable. Please update your add-ons.";
+        invalidStep = 4;
       }
 
       if (message) {
@@ -192,8 +194,8 @@ export function usePodcastBooking() {
       }
       setStep(2);
     } else if (step === 2) {
-      const studio = PODCAST_STUDIOS.find((item) => item.key === currentSession.studioKey);
-      if (!studio) {
+      const studio = studios.find((item) => item.key === currentSession.studioKey);
+      if (!studio || studio.isAvailable === false) {
         setErrorMessage("Please select your preferred podcast studio setup.");
         return;
       }
@@ -293,6 +295,8 @@ export function usePodcastBooking() {
   };
 
   return {
+    studios,
+    addons,
     step,
     setStep,
     nextStep,

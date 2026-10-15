@@ -5,9 +5,11 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { BookingHero } from "@/features/booking/components/ui/BookingKit";
 import { OffersBookingWizard } from "@/features/offers/components/OffersBookingWizard";
-import { HelpCircle, Sparkles, Clock, ShieldCheck, Zap } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 
-export function OffersPageClient() {
+import type { OfferBundleItem } from "@/features/offers/types";
+
+export function OffersPageClient({ catalog }: { catalog?: OfferBundleItem[] }) {
   const { isArabic } = useLanguage();
 
   const specs = [
@@ -89,7 +91,7 @@ export function OffersPageClient() {
         />
 
         {/* Dynamic 3-Step Wizard */}
-        <OffersBookingWizard />
+        <OffersBookingWizard catalog={catalog} />
 
         {/* ── Production FAQs ── */}
         <div className="mt-16 sm:mt-24 pt-12 border-t border-white/[0.08] max-w-4xl mx-auto">

@@ -46,6 +46,7 @@ function OfferFormContent({
     image: initialOffer?.image || "/images/offers/5-hour-bundles.webp",
     features: initialOffer?.features || [],
     featuresAr: initialOffer?.featuresAr || [],
+    restrictedDays: initialOffer?.restrictedDays ?? null,
     restrictionNoteEn: initialOffer?.restrictionNoteEn || "",
     restrictionNoteAr: initialOffer?.restrictionNoteAr || "",
     isActive: initialOffer?.isActive ?? true,

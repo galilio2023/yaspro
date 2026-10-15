@@ -28,6 +28,7 @@ export interface PodcastService {
 }
 
 export interface PodcastAddon {
+  isActive?: boolean;
   key: string;
   title: string;
   desc: string;

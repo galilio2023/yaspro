@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { PodcastStudio, PodcastAddon } from "../types";
 import { usePodcastBooking } from "../hooks/usePodcastBooking";
 import { Step1DateTime } from "./Step1DateTime";
 import { Step2Setup } from "./Step2Setup";
@@ -27,8 +28,10 @@ const stepVariants: Variants = {
   exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -28 : 28, transition: { duration: 0.14, ease: "easeIn" } }),
 };
 
-export function PodcastBookingWizard() {
+export function PodcastBookingWizard({ studios: catalogStudios, addons: catalogAddons }: { studios?: PodcastStudio[]; addons?: PodcastAddon[] } = {}) {
   const {
+    studios,
+    addons,
     step,
     setStep,
     nextStep,
@@ -59,7 +62,7 @@ export function PodcastBookingWizard() {
     applyPromo,
     removePromo,
     submitBooking,
-  } = usePodcastBooking();
+  } = usePodcastBooking(catalogStudios, catalogAddons);
 
   const [direction, setDirection] = useState(1);
 
@@ -205,6 +208,7 @@ export function PodcastBookingWizard() {
                 )}
                 {step === 2 && (
                   <Step2Setup
+                    studios={studios}
                     session={currentSession}
                     onChange={updateCurrentSession}
                   />
@@ -217,6 +221,7 @@ export function PodcastBookingWizard() {
                 )}
                 {step === 4 && (
                   <Step4Addons
+                    addons={addons}
                     session={currentSession}
                     onSetQuantity={setAddonQuantity}
                     onToggle={toggleAddon}
@@ -224,6 +229,8 @@ export function PodcastBookingWizard() {
                 )}
                 {step === 5 && (
                   <Step5ReviewCheckout
+                    studios={studios}
+                    addons={addons}
                     sessions={sessions}
                     contact={contact}
                     onUpdateContact={(up) => setContact((prev) => ({ ...prev, ...up }))}
@@ -303,7 +310,8 @@ export function PodcastBookingWizard() {
 
         {/* Live Studio Quote Rail (Sticky on desktop) */}
         <div className="hidden lg:block sticky top-28">
-          <PodcastQuoteRail
+          {currentStudio && <PodcastQuoteRail
+            addons={addons}
             session={currentSession}
             studio={currentStudio}
             service={currentService}
@@ -318,7 +326,7 @@ export function PodcastBookingWizard() {
             onApplyPromo={applyPromo}
             onRemovePromo={removePromo}
             promoError={promoError}
-          />
+          />}
         </div>
       </div>
     </div>

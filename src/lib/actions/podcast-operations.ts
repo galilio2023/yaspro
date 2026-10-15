@@ -1,11 +1,12 @@
 "use server";
 
 import { db } from "@/db";
-import { podcastSets, podcastAddons, type PodcastSet, type PodcastAddonEntity } from "@/db/schema";
-import { PODCAST_STUDIOS, PODCAST_ADDONS } from "@/features/podcast-booking/data";
+import { podcastSets, podcastAddons, studios, type PodcastSet, type PodcastAddonEntity } from "@/db/schema";
+import { PODCAST_STUDIOS, PODCAST_ADDONS, PODCAST_SERVICES } from "@/features/podcast-booking/data";
 import type { PodcastStudio, PodcastAddon } from "@/features/podcast-booking/types";
 import { eq, asc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { ensurePodcastCatalog } from "@/lib/podcast-catalog";
 import { isDbAvailable, requireAdmin, type CmsResponse } from "./shared";
 
 // ─── Podcast Studios Operations ───────────────────────────────────────────────
@@ -19,14 +20,11 @@ export async function getCmsPodcastSets(): Promise<PodcastStudio[]> {
   }
 
   try {
+    await ensurePodcastCatalog();
     const rows = await db
       .select()
       .from(podcastSets)
       .orderBy(asc(podcastSets.sortOrder), asc(podcastSets.name));
-
-    if (rows.length === 0) {
-      return PODCAST_STUDIOS;
-    }
 
     return rows.map((r) => ({
       key: r.id,
@@ -87,27 +85,18 @@ export async function upsertCmsPodcastSet(data: {
       return { success: false, error: "Database not connected. Studio changes cannot be persisted." };
     }
 
+    await ensurePodcastCatalog();
+
     const cleanId = data.id.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "-");
     if (!cleanId || !data.name.trim()) {
       return { success: false, error: "Unique Set Key and Name are required." };
     }
 
-    const [row] = await db
-      .insert(podcastSets)
-      .values({
-        id: cleanId,
-        name: data.name.trim(),
-        seats: data.seats || 2,
-        location: data.location?.trim() || "Iris Bay - Business Bay, Dubai",
-        image: data.image?.trim() || "/images/studios/nature-grid.jpg",
-        gradient: data.gradient?.trim() || "linear-gradient(135deg,#3a2a1a 0%,#5a4a3a 100%)",
-        description: data.description?.trim() || "",
-        isAvailable: data.isAvailable ?? true,
-        updatedAt: new Date(),
-      })
-      .onConflictDoUpdate({
-        target: podcastSets.id,
-        set: {
+    const row = await db.transaction(async (tx) => {
+      const [saved] = await tx
+        .insert(podcastSets)
+        .values({
+          id: cleanId,
           name: data.name.trim(),
           seats: data.seats || 2,
           location: data.location?.trim() || "Iris Bay - Business Bay, Dubai",
@@ -116,12 +105,41 @@ export async function upsertCmsPodcastSet(data: {
           description: data.description?.trim() || "",
           isAvailable: data.isAvailable ?? true,
           updatedAt: new Date(),
-        },
-      })
-      .returning();
+        })
+        .onConflictDoUpdate({
+          target: podcastSets.id,
+          set: {
+            name: data.name.trim(),
+            seats: data.seats || 2,
+            location: data.location?.trim() || "Iris Bay - Business Bay, Dubai",
+            image: data.image?.trim() || "/images/studios/nature-grid.jpg",
+            gradient: data.gradient?.trim() || "linear-gradient(135deg,#3a2a1a 0%,#5a4a3a 100%)",
+            description: data.description?.trim() || "",
+            isAvailable: data.isAvailable ?? true,
+            updatedAt: new Date(),
+          },
+        })
+        .returning();
+
+      // Keep the scheduling resource aligned with CMS keys and capacity.
+      await tx.insert(studios).values({
+        slug: cleanId,
+        name: saved.name,
+        capacity: saved.seats,
+        hourlyRate: String(PODCAST_SERVICES.find((service) => service.key === "recording")!.price),
+        category: "podcast",
+        imageUrl: saved.image,
+      }).onConflictDoUpdate({
+        target: studios.slug,
+        set: { name: saved.name, capacity: saved.seats, imageUrl: saved.image },
+        setWhere: eq(studios.category, "podcast"),
+      });
+      return saved;
+    });
 
     revalidatePath("/admin/podcast");
     revalidatePath("/podcast-production");
+    revalidatePath("/podcast-booking");
     return { success: true, data: row };
   } catch (err) {
     console.error("[podcast-operations] upsert set error:", err);
@@ -143,6 +161,8 @@ export async function togglePodcastSetAvailability(
       return { success: false, error: "Database not connected." };
     }
 
+    await ensurePodcastCatalog();
+
     await db
       .update(podcastSets)
       .set({ isAvailable, updatedAt: new Date() })
@@ -150,6 +170,7 @@ export async function togglePodcastSetAvailability(
 
     revalidatePath("/admin/podcast");
     revalidatePath("/podcast-production");
+    revalidatePath("/podcast-booking");
     return { success: true };
   } catch (err) {
     return { success: false, error: (err as Error).message };
@@ -167,9 +188,12 @@ export async function deleteCmsPodcastSet(id: string): Promise<CmsResponse<void>
       return { success: false, error: "Database not connected." };
     }
 
+    await ensurePodcastCatalog();
+
     await db.delete(podcastSets).where(eq(podcastSets.id, id));
     revalidatePath("/admin/podcast");
     revalidatePath("/podcast-production");
+    revalidatePath("/podcast-booking");
     return { success: true };
   } catch (err) {
     return { success: false, error: (err as Error).message };
@@ -181,20 +205,17 @@ export async function deleteCmsPodcastSet(id: string): Promise<CmsResponse<void>
 /**
  * Returns all podcast post-production addons from DB, falling back to static PODCAST_ADDONS.
  */
-export async function getCmsPodcastAddons(): Promise<(PodcastAddon & { isActive?: boolean })[]> {
+export async function getCmsPodcastAddons(): Promise<PodcastAddon[]> {
   if (!isDbAvailable()) {
     return PODCAST_ADDONS.map((a) => ({ ...a, isActive: true }));
   }
 
   try {
+    await ensurePodcastCatalog();
     const rows = await db
       .select()
       .from(podcastAddons)
       .orderBy(asc(podcastAddons.sortOrder), asc(podcastAddons.title));
-
-    if (rows.length === 0) {
-      return PODCAST_ADDONS.map((a) => ({ ...a, isActive: true }));
-    }
 
     return rows.map((r) => ({
       key: r.id,
@@ -258,6 +279,8 @@ export async function upsertCmsPodcastAddon(data: {
       return { success: false, error: "Database not connected. Add-on changes cannot be persisted." };
     }
 
+    await ensurePodcastCatalog();
+
     const cleanId = data.id.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "-");
     if (!cleanId || !data.title.trim()) {
       return { success: false, error: "Unique Add-on Key and Title are required." };
@@ -299,6 +322,7 @@ export async function upsertCmsPodcastAddon(data: {
 
     revalidatePath("/admin/podcast");
     revalidatePath("/podcast-production");
+    revalidatePath("/podcast-booking");
     return { success: true, data: row };
   } catch (err) {
     console.error("[podcast-operations] upsert addon error:", err);
@@ -320,6 +344,8 @@ export async function togglePodcastAddonStatus(
       return { success: false, error: "Database not connected." };
     }
 
+    await ensurePodcastCatalog();
+
     await db
       .update(podcastAddons)
       .set({ isActive, updatedAt: new Date() })
@@ -327,6 +353,7 @@ export async function togglePodcastAddonStatus(
 
     revalidatePath("/admin/podcast");
     revalidatePath("/podcast-production");
+    revalidatePath("/podcast-booking");
     return { success: true };
   } catch (err) {
     return { success: false, error: (err as Error).message };
@@ -344,9 +371,12 @@ export async function deleteCmsPodcastAddon(id: string): Promise<CmsResponse<voi
       return { success: false, error: "Database not connected." };
     }
 
+    await ensurePodcastCatalog();
+
     await db.delete(podcastAddons).where(eq(podcastAddons.id, id));
     revalidatePath("/admin/podcast");
     revalidatePath("/podcast-production");
+    revalidatePath("/podcast-booking");
     return { success: true };
   } catch (err) {
     return { success: false, error: (err as Error).message };

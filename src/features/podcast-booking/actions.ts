@@ -5,7 +5,9 @@ import { bookings, bookingSessions, studios } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { createZiinaPaymentIntent } from "@/lib/ziina";
-import { PODCAST_SERVICES, PODCAST_ADDONS, PODCAST_PROMO_CODES, PODCAST_STUDIOS } from "./data";
+import { PODCAST_SERVICES, PODCAST_PROMO_CODES } from "./data";
+import { getCmsPodcastSets, getCmsPodcastAddons } from "@/lib/actions/podcast-operations";
+import type { PodcastAddon } from "./types";
 import { z } from "zod";
 
 const podcastSessionSchema = z.object({
@@ -14,21 +16,11 @@ const podcastSessionSchema = z.object({
   timeSlot: z.string().min(1, "Time slot is required"),
   durationHours: z.number().int().min(1).max(12).default(1),
   headcount: z.number().int().min(1).max(10).default(2),
-  studioKey: z.string().refine((key) => PODCAST_STUDIOS.some((studio) => studio.key === key), "Invalid studio"),
+  studioKey: z.string().min(1, "Invalid studio"),
   serviceKey: z.string().refine((key) => PODCAST_SERVICES.some((service) => service.key === key), "Invalid service package"),
-  addons: z.record(
-    z.string().refine((key) => PODCAST_ADDONS.some((addon) => addon.key === key), "Invalid add-on"),
-    z.number().int().min(0),
-  ).default({}).refine((addons) => Object.entries(addons).every(([key, quantity]) => {
-    const addon = PODCAST_ADDONS.find((item) => item.key === key);
-    const allowsQuantity = addon && /reel|cover|hour|minute/.test(addon.unit);
-    return allowsQuantity || quantity <= 1;
-  }), "This add-on allows a maximum quantity of one"),
+  addons: z.record(z.string(), z.number().int().min(0)).default({}),
   notes: z.string().optional(),
-}).refine((session) => {
-  const studio = PODCAST_STUDIOS.find((item) => item.key === session.studioKey);
-  return !studio || studio.seats >= session.headcount;
-}, { message: "The selected studio cannot fit all guests.", path: ["studioKey"] });
+});
 
 const podcastBookingInputSchema = z.object({
   sessions: z.array(podcastSessionSchema).min(1, "At least one session is required"),
@@ -53,7 +45,7 @@ export interface PodcastBookingResult {
   paymentFailed?: boolean;
 }
 
-function calculateSessionPrice(session: z.infer<typeof podcastSessionSchema>): number {
+function calculateSessionPrice(session: z.infer<typeof podcastSessionSchema>, addons: PodcastAddon[]): number {
   const service = PODCAST_SERVICES.find((s) => s.key === session.serviceKey)!;
   const serviceRate = service.price;
   const duration = Math.max(1, session.durationHours);
@@ -62,7 +54,7 @@ function calculateSessionPrice(session: z.infer<typeof podcastSessionSchema>): n
   let addonsCost = 0;
   for (const [addonKey, qty] of Object.entries(session.addons)) {
     if (qty > 0) {
-      const addon = PODCAST_ADDONS.find((a) => a.key === addonKey);
+      const addon = addons.find((a) => a.key === addonKey);
       if (addon) {
         addonsCost += addon.priceNum * qty;
       }
@@ -81,10 +73,30 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
 
   const { sessions: sessionList, fullName, email, phone, specialRequests, promoCode, initiatePayment, paymentType } = parsed.data;
 
+  const [catalogStudios, catalogAddons] = await Promise.all([getCmsPodcastSets(), getCmsPodcastAddons()]);
+  for (const session of sessionList) {
+    const studio = catalogStudios.find((item) => item.key === session.studioKey);
+    if (!studio || studio.isAvailable === false) {
+      return { success: false, message: "The selected studio is unavailable. Please select another studio." };
+    }
+    if (studio.seats < session.headcount) {
+      return { success: false, message: "The selected studio cannot fit all guests." };
+    }
+    for (const [key, quantity] of Object.entries(session.addons)) {
+      const addon = catalogAddons.find((item) => item.key === key);
+      if (!addon || (quantity > 0 && addon.isActive === false)) {
+        return { success: false, message: "The selected add-on is unavailable." };
+      }
+      if (!/reel|cover|hour|minute/.test(addon.unit) && quantity > 1) {
+        return { success: false, message: "This add-on allows a maximum quantity of one" };
+      }
+    }
+  }
+
   // 1. Calculate server-verified total price
   let subtotal = 0;
   for (const s of sessionList) {
-    subtotal += calculateSessionPrice(s);
+    subtotal += calculateSessionPrice(s, catalogAddons);
   }
 
   let discount = 0;
@@ -152,7 +164,7 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
       const sessionsSummary = sessionList
         .map((s, idx) => {
           const svc = PODCAST_SERVICES.find((srv) => srv.key === s.serviceKey)?.title || s.serviceKey;
-          const st = PODCAST_STUDIOS.find((std) => std.key === s.studioKey)?.name || s.studioKey;
+          const st = catalogStudios.find((std) => std.key === s.studioKey)?.name || s.studioKey;
           const addonsList = Object.entries(s.addons)
             .filter(([, qty]) => qty > 0)
             .map(([k, qty]) => `${k} (x${qty})`)

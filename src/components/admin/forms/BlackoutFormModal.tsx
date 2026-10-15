@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { getLocalCalendarDate } from "@/features/gear/lib/rental-schedule";
 import { AdminModal } from "../shared/AdminModal";
 import { AdminInput, AdminSwitch, AdminSelect } from "../shared/AdminFormFields";
 
@@ -49,7 +50,7 @@ function BlackoutFormContent({
 }: BlackoutFormModalProps) {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomorrowStr = tomorrow.toISOString().split("T")[0];
+  const tomorrowStr = getLocalCalendarDate(tomorrow);
 
   const [title, setTitle] = useState("Private VIP Session / Maintenance");
   const [reason, setReason] = useState("Acoustic calibration & VIP private production lockout");
@@ -70,15 +71,12 @@ function BlackoutFormContent({
     if (!startDate) errors.startDate = "Start date is required";
     if (!endDate) errors.endDate = "End date is required";
 
-    const startIso = allDay
-      ? `${startDate}T00:00:00.000Z`
-      : `${startDate}T${startTime || "00:00"}:00.000Z`;
-    const endIso = allDay
-      ? `${endDate}T23:59:59.000Z`
-      : `${endDate}T${endTime || "23:59"}:00.000Z`;
-
-    const startD = new Date(startIso);
-    const endD = new Date(endIso);
+    const [startYear, startMonth, startDay] = startDate.split("-").map(Number);
+    const [endYear, endMonth, endDay] = endDate.split("-").map(Number);
+    const [startHour, startMinute] = (allDay ? "00:00" : startTime || "00:00").split(":").map(Number);
+    const [endHour, endMinute] = (allDay ? "23:59" : endTime || "23:59").split(":").map(Number);
+    const startD = new Date(startYear, startMonth - 1, startDay, startHour, startMinute);
+    const endD = new Date(endYear, endMonth - 1, endDay, endHour, endMinute, allDay ? 59 : 0);
 
     if (isNaN(startD.getTime()) || isNaN(endD.getTime()) || startD >= endD) {
       errors.range = "End time must be strictly after start time";
@@ -94,8 +92,8 @@ function BlackoutFormContent({
       reason: reason.trim() || undefined,
       podcastSetId: targetType === "podcast" && selectedPodcastSet ? selectedPodcastSet : null,
       studioId: null,
-      startTime: startIso,
-      endTime: endIso,
+      startTime: startD.toISOString(),
+      endTime: endD.toISOString(),
       allDay,
     });
   };

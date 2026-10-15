@@ -4,7 +4,8 @@ import { OffersPageClient } from "./OffersPageClient";
 import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
 import { SITE_URL } from "@/lib/constants";
 import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
-import { OFFERS_AND_BUNDLES } from "@/features/offers/data";
+import { getBookingOffers } from "@/lib/actions/offers-packages-operations";
+import { connection } from "next/server";
 
 export const metadata: Metadata = {
   title: "Offers & Bundles in Dubai • Production Packages | Yas Pro",
@@ -46,39 +47,41 @@ export const metadata: Metadata = {
   },
 };
 
-const OFFERS_CATALOG_SCHEMA = {
-  ...YAS_PRO_ORGANIZATION_SCHEMA,
-  "@type": "EntertainmentBusiness",
-  name: "Yas Pro Offers & Production Bundles Dubai",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Iris Bay Tower, Level 18, Business Bay",
-    addressLocality: "Dubai",
-    addressCountry: "AE",
-  },
-  priceRange: "AED 390 - AED 8,400",
-  hasOfferCatalog: {
-    "@type": "OfferCatalog",
-    name: "Production Offers & Bundles Catalog",
-    itemListElement: OFFERS_AND_BUNDLES.slice(0, 6).map((item) => ({
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Service",
-        name: item.name,
-        description: item.description,
-      },
-      priceCurrency: "AED",
-      price: String(item.price),
-    })),
-  },
-};
+export default async function OffersPage() {
+  await connection();
+  const catalog = await getBookingOffers();
+  const offersCatalogSchema = {
+    ...YAS_PRO_ORGANIZATION_SCHEMA,
+    "@type": "EntertainmentBusiness",
+    name: "Yas Pro Offers & Production Bundles Dubai",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Iris Bay Tower, Level 18, Business Bay",
+      addressLocality: "Dubai",
+      addressCountry: "AE",
+    },
+    priceRange: "AED 390 - AED 8,400",
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Production Offers & Bundles Catalog",
+      itemListElement: catalog.filter((item) => item.isActive !== false).slice(0, 6).map((item) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: item.name,
+          description: item.description,
+        },
+        priceCurrency: "AED",
+        price: String(item.price),
+      })),
+    },
+  };
 
-export default function OffersPage() {
   return (
     <>
-      <JsonLd data={OFFERS_CATALOG_SCHEMA} />
+      <JsonLd data={offersCatalogSchema} />
       <Suspense fallback={<div className="min-h-screen bg-background" />}>
-        <OffersPageClient />
+        <OffersPageClient catalog={catalog} />
       </Suspense>
     </>
   );

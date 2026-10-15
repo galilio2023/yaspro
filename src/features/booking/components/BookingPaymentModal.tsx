@@ -1,7 +1,8 @@
 "use client";
 
+import { getPlatformSettings } from "@/lib/actions/platform-settings-operations";
 import { createPortal } from "react-dom";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   CreditCard,
   ShieldCheck,
@@ -63,7 +64,18 @@ export function BookingPaymentModal({
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap({ isOpen, onClose, containerRef: dialogRef });
 
-  const activeSettings = { ...DEFAULT_PLATFORM_SETTINGS, ...paymentSettings };
+  const [loadedSettings, setLoadedSettings] = useState<Partial<PlatformPaymentSettings>>({});
+  useEffect(() => {
+    if (!isOpen || paymentSettings) return;
+    let cancelled = false;
+    getPlatformSettings().then((settings) => {
+      if (!cancelled) setLoadedSettings(settings);
+    }).catch(() => {
+      if (!cancelled) setLoadedSettings({});
+    });
+    return () => { cancelled = true; };
+  }, [isOpen, paymentSettings]);
+  const activeSettings = { ...DEFAULT_PLATFORM_SETTINGS, ...(paymentSettings ?? loadedSettings) };
 
   if (!isOpen) return null;
 

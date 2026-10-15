@@ -7,12 +7,13 @@ import { PodcastSessionItem, PodcastAddon } from "../types";
 import { MetaTag, StepIntro } from "@/features/booking/components/ui/BookingKit";
 
 interface Step4AddonsProps {
+  addons?: PodcastAddon[];
   session: PodcastSessionItem;
   onSetQuantity: (addonKey: string, qty: number) => void;
   onToggle: (addonKey: string) => void;
 }
 
-export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsProps) {
+export function Step4Addons({ session, onSetQuantity, onToggle, addons = PODCAST_ADDONS }: Step4AddonsProps) {
   const [activeVideoModal, setActiveVideoModal] = useState<PodcastAddon | null>(null);
 
   const totalAddonsCount = Object.values(session.addons || {}).reduce((acc, qty) => acc + (qty > 0 ? 1 : 0), 0);
@@ -28,7 +29,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle }: Step4AddonsPro
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-        {PODCAST_ADDONS.map((addon) => {
+        {addons.filter((addon) => addon.isActive !== false).map((addon) => {
           const qty = session.addons?.[addon.key] || 0;
           const isAdded = qty > 0;
 
