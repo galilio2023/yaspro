@@ -44,20 +44,20 @@ export function AdminFilterBar<T extends string = string>({
       <div className="relative flex-1 min-w-[200px]">
         <Search
           size={14}
-          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+          className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
         />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder={searchPlaceholder}
-          className="w-full pl-9 pr-8 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-brand-mauve transition-colors"
+          className="w-full ps-9 pe-8 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-brand-mauve transition-colors"
         />
         {searchQuery && (
           <button
             type="button"
             onClick={() => onSearchChange("")}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5 rounded cursor-pointer"
+            className="absolute end-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 cursor-pointer transition-colors"
             aria-label="Clear search"
           >
             <X size={13} />

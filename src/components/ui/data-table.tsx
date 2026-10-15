@@ -15,7 +15,7 @@ export function DataTable({ children, className }: DataTableProps) {
       )}
     >
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs">{children}</table>
+        <table className="w-full text-start text-xs">{children}</table>
       </div>
     </div>
   );
@@ -76,17 +76,30 @@ export function DataTableRow({
 export function DataTableEmpty({
   colSpan,
   message = "No records found.",
+  onReset,
+  resetLabel = "Clear all filters",
 }: {
   colSpan: number;
   message?: string;
+  onReset?: () => void;
+  resetLabel?: string;
 }) {
   return (
     <tr>
       <td
         colSpan={colSpan}
-        className="py-12 text-center text-slate-400 text-xs font-medium"
+        className="py-12 text-center text-slate-400 text-xs font-medium space-y-2"
       >
-        {message}
+        <p>{message}</p>
+        {onReset && (
+          <button
+            type="button"
+            onClick={onReset}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-brand-mauve border border-brand-mauve/30 text-xs font-semibold transition-colors cursor-pointer"
+          >
+            {resetLabel}
+          </button>
+        )}
       </td>
     </tr>
   );

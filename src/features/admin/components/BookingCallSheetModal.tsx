@@ -5,7 +5,7 @@ import { Printer, X, CheckCircle2 } from "lucide-react";
 import type { Booking } from "@/db/schema";
 import type { EnrichedBooking } from "@/lib/actions/bookings-rfp-operations";
 import { formatCurrency } from "@/lib/utils";
-import { YasproEmblem } from "@/components/ui/YasproEmblem";
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 interface BookingCallSheetModalProps {
@@ -36,7 +36,12 @@ export function BookingCallSheetModal({
   if (!booking) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 print:p-0 print:static print:bg-transparent print:z-auto">
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 print:p-0 print:static print:bg-transparent print:z-auto"
+    >
       {/* Scoped print styles — isolated to this modal */}
       <style>{`
         @media print {
@@ -69,19 +74,16 @@ export function BookingCallSheetModal({
       >
         {/* — Modal Controls — */}
         <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6 no-print">
-          <div className="flex items-center gap-2.5">
-            <div className="size-8 rounded-xl bg-brand-violet/30 border border-brand-mauve/40 flex items-center justify-center text-brand-mauve font-bold text-xs shadow-md">
-              <YasproEmblem size={16} idPrefix="callsheet-emblem" />
-            </div>
-            <div>
+          <div className="flex items-center gap-3">
+            <BrandLogo href="" />
+            <div className="border-s border-white/10 ps-3">
               <h2
                 id="call-sheet-modal-title"
-                className="text-base font-bold text-white flex items-center gap-1.5"
+                className="text-xs font-bold text-brand-mauve tracking-wider uppercase font-mono"
               >
-                <span>YASPRO</span>
-                <span className="text-brand-mauve font-normal">Call Sheet</span>
+                Call Sheet
               </h2>
-              <span className="text-[10px] font-mono text-brand-mauve">
+              <span className="text-[10px] font-mono text-slate-400">
                 REF: {booking.referenceCode}
               </span>
             </div>
@@ -100,7 +102,7 @@ export function BookingCallSheetModal({
               type="button"
               onClick={onClose}
               aria-label="Close Call Sheet"
-              className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+              className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
             >
               <X size={16} />
             </button>
@@ -118,7 +120,7 @@ export function BookingCallSheetModal({
                 {booking.studioName || "Yas Pro Soundstages"} &bull; Dubai Studio City
               </p>
             </div>
-            <div className="text-right">
+            <div className="text-end">
               <span className="text-xs font-mono font-bold text-slate-900 block">
                 REF: {booking.referenceCode}
               </span>

@@ -16,7 +16,7 @@ import {
   Layers,
   Radio,
 } from "lucide-react";
-import { YasproEmblem } from "@/components/ui/YasproEmblem";
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import { AdminSignOutButton } from "./AdminSignOutButton";
 import { cn } from "@/lib/utils";
 
@@ -40,26 +40,16 @@ export function AdminSidebar({ adminName }: AdminSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex w-full md:w-64 border-b md:border-b-0 md:border-r border-white/10 bg-[#0c0b10] backdrop-blur-xl p-4 sm:p-6 shrink-0 flex-col justify-between">
+    <aside className="hidden md:flex w-full md:w-64 border-b md:border-b-0 md:border-r rtl:md:border-r-0 rtl:md:border-l border-white/10 bg-[#0c0b10] backdrop-blur-xl p-4 sm:p-6 shrink-0 flex-col justify-between">
       <div>
         {/* Logo / Brand */}
         <div className="flex items-center justify-between pb-6 border-b border-white/10">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="size-9 rounded-xl bg-brand-violet/30 border border-brand-mauve/40 flex items-center justify-center shadow-lg shadow-brand-violet/20">
-              <YasproEmblem size={18} idPrefix="admin-emblem" />
-            </div>
-            <div>
-              <div className="flex items-center">
-                <span className="font-extrabold tracking-tight text-white group-hover:text-brand-mauve-soft transition-colors">
-                  YASPRO
-                </span>
-                <span className="ml-1 text-xs font-bold text-brand-mauve">OPS</span>
-              </div>
-              <span className="block text-[10px] text-brand-mauve-soft font-mono tracking-wider uppercase">
-                Studio Console
-              </span>
-            </div>
-          </Link>
+          <div className="flex items-center gap-2.5">
+            <BrandLogo href="/admin" />
+            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-brand-mauve/15 text-brand-mauve border border-brand-mauve/30 shrink-0">
+              Admin
+            </span>
+          </div>
         </div>
 
         {/* Navigation Links */}

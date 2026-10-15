@@ -62,14 +62,31 @@ function GearFormContent({
     isKit: initialGear?.isKit ?? false,
     specs: Array.isArray(initialGear?.specs) ? initialGear.specs : [],
   }));
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.dailyRate || !formData.category) return;
+    const newErrors: Record<string, string> = {};
+    if (!formData.name?.trim()) {
+      newErrors.name = "Equipment name is required";
+    }
+    if (!formData.category) {
+      newErrors.category = "Category is required";
+    }
+    if (!formData.dailyRate || Number(formData.dailyRate) <= 0) {
+      newErrors.dailyRate = "Valid daily rental rate is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setFieldErrors(newErrors);
+      return;
+    }
+    setFieldErrors({});
 
     const slug =
       formData.slug ||
-      formData.name
+      formData.name!
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)+/g, "");
@@ -88,10 +105,10 @@ function GearFormContent({
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
-      isSubmitting={isSubmitting}
+      isSubmitting={isSubmitting || isUploadingMedia}
       title={isEdit ? "Edit Fleet Equipment" : "Add Equipment Item"}
       description="Configure rental pricing, category specs, deposit requirement, and rental availability."
-      submitLabel={isEdit ? "Update Equipment" : "Add to Fleet"}
+      submitLabel={isUploadingMedia ? "Uploading Media..." : isEdit ? "Update Equipment" : "Add to Fleet"}
       maxWidth="lg"
     >
       {error && (
@@ -106,7 +123,11 @@ function GearFormContent({
           required
           placeholder="e.g. ARRI Alexa 35 Cinema Package"
           value={formData.name || ""}
-          onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+          error={fieldErrors.name}
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, name: e.target.value }));
+            if (fieldErrors.name) setFieldErrors((prev) => ({ ...prev, name: "" }));
+          }}
         />
         <AdminInput
           label="Equipment Name (Arabic - اسم المعدات)"
@@ -123,7 +144,11 @@ function GearFormContent({
           required
           options={CATEGORY_OPTIONS}
           value={formData.category || "cameras"}
-          onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
+          error={fieldErrors.category}
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, category: e.target.value }));
+            if (fieldErrors.category) setFieldErrors((prev) => ({ ...prev, category: "" }));
+          }}
         />
         <AdminInput
           label="Slug (Unique Identifier)"
@@ -141,7 +166,11 @@ function GearFormContent({
           required
           suffixNode="AED/day"
           value={formData.dailyRate || ""}
-          onChange={(e) => setFormData((prev) => ({ ...prev, dailyRate: e.target.value }))}
+          error={fieldErrors.dailyRate}
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, dailyRate: e.target.value }));
+            if (fieldErrors.dailyRate) setFieldErrors((prev) => ({ ...prev, dailyRate: "" }));
+          }}
         />
         <AdminInput
           label="Security Deposit"
@@ -156,6 +185,7 @@ function GearFormContent({
       <div>
         <AdminImageUploader
           value={formData.imageUrl}
+          onUploadingChange={setIsUploadingMedia}
           onChange={(url) => setFormData((prev) => ({ ...prev, imageUrl: url }))}
           label="Equipment Media Photo (Cloudinary / CDN)"
           helperText="Upload equipment asset photo (PNG, JPG, WEBP up to 25MB)"

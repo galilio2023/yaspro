@@ -28,7 +28,7 @@ export function AdminSignOutButton({ className = "" }: AdminSignOutButtonProps) 
       title="Terminate admin session"
       aria-label="Sign out of Admin CMS"
     >
-      <LogOut size={13} className="shrink-0" />
+      <LogOut size={13} className="shrink-0 rtl:-scale-x-100" />
       <span>Sign Out</span>
     </button>
   );

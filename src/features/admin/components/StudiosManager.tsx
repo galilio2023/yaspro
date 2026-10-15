@@ -83,17 +83,24 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
         )
       : 0;
 
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+
   const handleToggleActive = async (studio: Studio) => {
     const nextStatus = !studio.isActive;
     const targetId = studio.id || studio.slug;
-    const res = await toggleStudioActiveStatus(targetId, nextStatus);
-    if (res.success) {
-      crud.updateItemDirect(targetId, { isActive: nextStatus });
-      crud.showFeedback(
-        `Studio ${studio.name} marked as ${nextStatus ? "active" : "under maintenance"}`
-      );
-    } else {
-      alert(res.error || "Failed to update studio status");
+    setErrorMessage(null);
+    try {
+      const res = await toggleStudioActiveStatus(targetId, nextStatus);
+      if (res.success) {
+        crud.updateItemDirect(targetId, { isActive: nextStatus });
+        crud.showFeedback(
+          `Studio ${studio.name} marked as ${nextStatus ? "active" : "under maintenance"}`
+        );
+      } else {
+        setErrorMessage(res.error || "Failed to update studio status");
+      }
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Failed to update studio status");
     }
   };
 
@@ -117,6 +124,19 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
           </button>
         }
       />
+
+      {errorMessage && (
+        <div role="alert" className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center justify-between animate-in fade-in">
+          <span>{errorMessage}</span>
+          <button
+            type="button"
+            onClick={() => setErrorMessage(null)}
+            className="text-rose-400 hover:text-white cursor-pointer px-2 py-0.5"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* KPI Stats Grid */}
       <AdminStatsGrid
@@ -169,8 +189,15 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
 
       {/* Soundstages Grid */}
       {filter.filteredData.length === 0 ? (
-        <div className="p-12 text-center rounded-2xl border border-white/10 bg-slate-900/40 text-slate-400 text-xs font-medium">
-          No soundstages found matching your search or filter criteria.
+        <div className="p-12 text-center rounded-2xl border border-white/10 bg-slate-900/40 text-slate-400 text-xs font-medium space-y-3">
+          <p>No soundstages found matching your search or filter criteria.</p>
+          <button
+            type="button"
+            onClick={filter.resetFilters}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-brand-mauve border border-brand-mauve/30 text-xs font-semibold transition-colors cursor-pointer"
+          >
+            Clear all filters
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -273,18 +300,20 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
                     <button
                       type="button"
                       onClick={() => crud.handleOpenEdit(studio)}
-                      className="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                      className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer min-h-[36px]"
+                      aria-label={`Edit specifications for ${studio.name}`}
                     >
-                      <Edit2 size={12} />
+                      <Edit2 size={13} />
                       <span>Edit Stage Specs</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => crud.handleOpenDelete(studio)}
-                      className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors cursor-pointer"
+                      className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                       title="Delete Soundstage"
+                      aria-label={`Delete soundstage ${studio.name}`}
                     >
-                      <Trash2 size={13} />
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </div>

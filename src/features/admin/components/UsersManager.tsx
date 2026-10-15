@@ -204,12 +204,16 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
             <th className="py-3 px-4">Contact Phone</th>
             <th className="py-3 px-4">Role</th>
             <th className="py-3 px-4">Registered Date</th>
-            <th className="py-3 px-4 text-right">Actions</th>
+            <th className="py-3 px-4 text-end">Actions</th>
           </tr>
         </DataTableHeader>
         <DataTableBody>
           {filter.filteredData.length === 0 ? (
-            <DataTableEmpty colSpan={6} message="No registered users match your search criteria." />
+            <DataTableEmpty
+              colSpan={6}
+              message="No registered users match your search criteria."
+              onReset={filter.resetFilters}
+            />
           ) : (
             filter.pagination.paginatedItems.map((user) => (
               <DataTableRow key={user.id}>
@@ -249,10 +253,11 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                         href={`https://wa.me/${user.phone.replace(/[^0-9]/g, "")}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-1 rounded-md bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25 border border-emerald-500/30 transition-colors"
+                        className="p-1.5 rounded-lg bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25 border border-emerald-500/30 transition-colors"
                         title="Chat on WhatsApp"
+                        aria-label={`Chat with ${user.name} on WhatsApp`}
                       >
-                        <ExternalLink size={11} />
+                        <ExternalLink size={12} />
                       </a>
                     </div>
                   ) : (
@@ -295,16 +300,17 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                   </div>
                 </td>
                 {/* Actions */}
-                <td className="py-3.5 px-4 text-right">
+                <td className="py-3.5 px-4 text-end">
                   <div className="flex items-center justify-end gap-1.5">
                     <button
                       type="button"
                       onClick={() => setUserToDelete(user)}
                       disabled={updatingId === user.id}
-                      className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer disabled:opacity-50"
+                      className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer disabled:opacity-50 min-h-[36px] min-w-[36px] flex items-center justify-center"
                       title="Delete User"
+                      aria-label={`Delete account for ${user.name}`}
                     >
-                      <Trash2 size={13} />
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </td>

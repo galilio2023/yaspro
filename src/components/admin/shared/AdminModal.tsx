@@ -18,6 +18,8 @@ export interface AdminModalProps {
   maxWidth?: DialogProps["maxWidth"];
   className?: string;
   hideFooter?: boolean;
+  closeOnBackdropClick?: boolean;
+  initialFocusRef?: React.RefObject<HTMLElement | null>;
 }
 
 export function AdminModal({
@@ -33,6 +35,8 @@ export function AdminModal({
   maxWidth = "2xl",
   className,
   hideFooter = false,
+  closeOnBackdropClick,
+  initialFocusRef,
 }: AdminModalProps) {
   const content = (
     <div className="flex flex-col max-h-[80vh]">
@@ -96,9 +100,11 @@ export function AdminModal({
       maxWidth={maxWidth}
       className={cn("p-6 sm:p-7", className)}
       hideCloseButton={isSubmitting}
+      closeOnBackdropClick={closeOnBackdropClick ?? (onSubmit ? false : true)}
+      initialFocusRef={initialFocusRef}
     >
       {onSubmit ? (
-        <form onSubmit={onSubmit} className="contents">
+        <form onSubmit={onSubmit} noValidate className="contents">
           {content}
         </form>
       ) : (

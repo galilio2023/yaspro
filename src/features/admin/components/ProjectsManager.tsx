@@ -169,7 +169,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
             <th className="py-3 px-4">Category</th>
             <th className="py-3 px-4">Client</th>
             <th className="py-3 px-4">Year</th>
-            <th className="py-3 px-4 text-right">Actions</th>
+            <th className="py-3 px-4 text-end">Actions</th>
           </tr>
         </DataTableHeader>
         <DataTableBody>
@@ -177,6 +177,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
             <DataTableEmpty
               colSpan={5}
               message="No projects found matching your category or search query."
+              onReset={filter.resetFilters}
             />
           ) : (
             filter.pagination.paginatedItems.map((proj) => (
@@ -213,32 +214,35 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                 </td>
                 <td className="py-3 px-4 text-slate-300">{proj.client || "—"}</td>
                 <td className="py-3 px-4 text-slate-400 font-mono">{proj.year || "—"}</td>
-                <td className="py-3 px-4 text-right">
+                <td className="py-3 px-4 text-end">
                   <div className="flex items-center justify-end gap-2">
                     <a
                       href={`/projects/${proj.slug}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+                      className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                       title="View Public Page"
+                      aria-label={`View public page for ${proj.title}`}
                     >
-                      <ExternalLink size={14} />
+                      <ExternalLink size={15} />
                     </a>
                     <button
                       type="button"
                       onClick={() => crud.handleOpenEdit(proj)}
-                      className="p-1.5 rounded-lg bg-brand-violet/20 hover:bg-brand-violet/35 text-brand-mauve transition-colors cursor-pointer"
+                      className="p-2 rounded-xl bg-brand-violet/20 hover:bg-brand-violet/35 text-brand-mauve transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                       title="Edit Project"
+                      aria-label={`Edit ${proj.title}`}
                     >
-                      <Edit3 size={14} />
+                      <Edit3 size={15} />
                     </button>
                     <button
                       type="button"
                       onClick={() => crud.handleOpenDelete(proj)}
-                      className="p-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 transition-colors cursor-pointer"
+                      className="p-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                       title="Delete Project"
+                      aria-label={`Delete ${proj.title}`}
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={15} />
                     </button>
                   </div>
                 </td>

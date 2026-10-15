@@ -15,6 +15,10 @@ import {
   Layers,
   Wrench,
   HelpCircle,
+  Table,
+  LayoutGrid,
+  Eye,
+  Phone,
 } from "lucide-react";
 import { updateInquiryStatus, deleteCmsInquiry } from "@/lib/actions/inquiries-leads-operations";
 import type { Inquiry } from "@/db/schema";
@@ -24,6 +28,14 @@ import {
   AdminFilterBar,
   AdminConfirmModal,
 } from "@/components/admin";
+import { AdminModal } from "@/components/admin/shared/AdminModal";
+import {
+  DataTable,
+  DataTableHeader,
+  DataTableBody,
+  DataTableRow,
+  DataTableEmpty,
+} from "@/components/ui/data-table";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
 import { useAdminFilter } from "../hooks/useAdminFilter";
@@ -52,6 +64,8 @@ const INQUIRY_LABELS: Record<string, string> = {
 
 export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
   const [inquiriesList, setInquiriesList] = useState<Inquiry[]>(initialInquiries);
+  const [viewMode, setViewMode] = useState<"table" | "cards">("table");
+  const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [inquiryToDelete, setInquiryToDelete] = useState<Inquiry | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -97,6 +111,9 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
       setInquiriesList((prev) =>
         prev.map((i) => (i.id === inquiry.id ? { ...i, isResolved: newStatus } : i))
       );
+      if (selectedInquiry?.id === inquiry.id) {
+        setSelectedInquiry((prev) => (prev ? { ...prev, isResolved: newStatus } : null));
+      }
       showFeedback(`Inquiry marked as ${newStatus ? "resolved" : "open"}`);
     } else {
       setErrorMessage(res.error || "Failed to update status");
@@ -113,6 +130,9 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
       const res = await deleteCmsInquiry(inquiryToDelete.id);
       if (res.success) {
         setInquiriesList((prev) => prev.filter((i) => i.id !== inquiryToDelete.id));
+        if (selectedInquiry?.id === inquiryToDelete.id) {
+          setSelectedInquiry(null);
+        }
         showFeedback(`Inquiry from ${inquiryToDelete.name} deleted.`);
         setInquiryToDelete(null);
       } else {
@@ -178,7 +198,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
         ]}
       />
 
-      {/* Search & Filters */}
+      {/* Search & Filters with Table/Cards View Toggle */}
       <AdminFilterBar
         searchQuery={filter.searchQuery}
         onSearchChange={filter.setSearchQuery}
@@ -205,120 +225,333 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
             <option value="general">General Inquiry</option>
           </select>
         }
+        actions={
+          <div className="flex items-center p-1 bg-white/[0.04] rounded-xl border border-white/10 shrink-0" role="group" aria-label="View Mode">
+            <button
+              type="button"
+              aria-pressed={viewMode === "table"}
+              onClick={() => setViewMode("table")}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                viewMode === "table"
+                  ? "bg-brand-mauve text-white shadow-sm shadow-brand-violet/20"
+                  : "text-slate-400 hover:text-white"
+              }`}
+              title="Table View"
+              aria-label="Table View"
+            >
+              <Table size={13} />
+              <span className="hidden sm:inline">Table</span>
+            </button>
+            <button
+              type="button"
+              aria-pressed={viewMode === "cards"}
+              onClick={() => setViewMode("cards")}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                viewMode === "cards"
+                  ? "bg-brand-mauve text-white shadow-sm shadow-brand-violet/20"
+                  : "text-slate-400 hover:text-white"
+              }`}
+              title="Cards View"
+              aria-label="Cards View"
+            >
+              <LayoutGrid size={13} />
+              <span className="hidden sm:inline">Cards</span>
+            </button>
+          </div>
+        }
       />
 
-      {/* Inquiries Cards */}
-      <div className="space-y-3">
-        {filter.filteredData.length === 0 ? (
-          <div className="p-12 text-center text-slate-500 rounded-2xl bg-white/[0.01] border border-white/10 text-xs">
-            No inquiries match your current filters.
-          </div>
-        ) : (
-          filter.pagination.paginatedItems.map((inq) => (
-            <div
-              key={inq.id}
-              className={`p-5 rounded-2xl border transition-all ${
-                inq.isResolved
-                  ? "bg-white/[0.01] border-white/5 opacity-70"
-                  : "bg-slate-900/60 border-white/10 shadow-lg"
-              }`}
-            >
-              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                <div className="space-y-2.5 flex-1">
-                  {/* Category and Status */}
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/5 border border-white/10 text-white">
-                      {INQUIRY_ICONS[inq.inquiryType] || <HelpCircle size={12} />}
-                      {INQUIRY_LABELS[inq.inquiryType] || inq.inquiryType}
-                    </span>
-                    <span
-                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
+      {/* Main Content: DataTable vs Cards */}
+      {viewMode === "table" ? (
+        <div>
+          <DataTable>
+            <DataTableHeader>
+              <tr>
+                <th className="py-3 px-4">Client &amp; Organization</th>
+                <th className="py-3 px-4">Inquiry Type</th>
+                <th className="py-3 px-4">Message Brief</th>
+                <th className="py-3 px-4">Received</th>
+                <th className="py-3 px-4">Status</th>
+                <th className="py-3 px-4 text-end">Actions</th>
+              </tr>
+            </DataTableHeader>
+            <DataTableBody>
+              {filter.filteredData.length === 0 ? (
+                <DataTableEmpty
+                  colSpan={6}
+                  message="No inquiries match your current filters."
+                  onReset={filter.resetFilters}
+                />
+              ) : (
+                filter.pagination.paginatedItems.map((inq) => (
+                  <DataTableRow
+                    key={inq.id}
+                    className={inq.isResolved ? "opacity-60 hover:opacity-100" : ""}
+                  >
+                    {/* Client & Organization */}
+                    <td className="py-3 px-4">
+                      <div className="font-semibold text-white flex items-center gap-1.5">
+                        <User size={13} className="text-brand-mauve shrink-0" />
+                        <span>{inq.name}</span>
+                      </div>
+                      {inq.company && (
+                        <div className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                          <Building size={11} className="text-stone-300 shrink-0" />
+                          <span className="truncate max-w-[180px]">{inq.company}</span>
+                        </div>
+                      )}
+                      <div className="text-[11px] text-brand-mauve font-mono mt-0.5 truncate max-w-[200px]">
+                        <a
+                          href={`mailto:${inq.email}`}
+                          className="hover:underline flex items-center gap-1"
+                        >
+                          <Mail size={11} className="shrink-0" />
+                          <span className="truncate">{inq.email}</span>
+                        </a>
+                      </div>
+                    </td>
+
+                    {/* Inquiry Type */}
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-white/5 border border-white/10 text-white">
+                        {INQUIRY_ICONS[inq.inquiryType] || <HelpCircle size={12} />}
+                        <span>{INQUIRY_LABELS[inq.inquiryType] || inq.inquiryType}</span>
+                      </span>
+                    </td>
+
+                    {/* Message Brief */}
+                    <td className="py-3 px-4 max-w-xs sm:max-w-md">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedInquiry(inq)}
+                        className="text-start group block cursor-pointer w-full"
+                        title="Click to view full message"
+                        aria-label={`View full message from ${inq.name}`}
+                      >
+                        <p className="text-slate-300 text-xs line-clamp-2 leading-relaxed group-hover:text-white transition-colors">
+                          {inq.message}
+                        </p>
+                        <span className="text-[10px] text-brand-mauve opacity-0 group-hover:opacity-100 transition-opacity font-medium mt-0.5 inline-block">
+                          View full brief →
+                        </span>
+                      </button>
+                    </td>
+
+                    {/* Received */}
+                    <td className="py-3 px-4 whitespace-nowrap text-slate-400 font-mono text-[11px]">
+                      <div>
+                        {new Date(inq.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </div>
+                      <div className="text-[10px] text-slate-500">
+                        {new Date(inq.createdAt).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </div>
+                    </td>
+
+                    {/* Status */}
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      <span
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
+                          inq.isResolved
+                            ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                            : "bg-brand-violet/25 text-brand-lavender border-brand-mauve/30"
+                        }`}
+                      >
+                        {inq.isResolved ? "Resolved" : "Pending Action"}
+                      </span>
+                    </td>
+
+                    {/* Actions */}
+                    <td className="py-3 px-4 text-end whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-1.5">
+                        {inq.phone && (
+                          <a
+                            href={`https://wa.me/${inq.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+                              `Hello ${inq.name}, thank you for contacting Yas Productions regarding your inquiry. How can our production team assist you?`
+                            )}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                            title="Chat on WhatsApp"
+                            aria-label={`Chat with ${inq.name} on WhatsApp`}
+                          >
+                            <ExternalLink size={14} />
+                          </a>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => setSelectedInquiry(inq)}
+                          className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                          title="View Full Inquiry"
+                          aria-label={`View full inquiry from ${inq.name}`}
+                        >
+                          <Eye size={14} />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleToggleResolved(inq)}
+                          disabled={updatingId === inq.id}
+                          className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50 min-h-[36px] ${
+                            inq.isResolved
+                              ? "bg-white/5 hover:bg-white/10 text-slate-400"
+                              : "bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+                          }`}
+                          title={inq.isResolved ? "Reopen Lead" : "Mark Resolved"}
+                          aria-label={inq.isResolved ? "Reopen Lead" : "Mark Resolved"}
+                        >
+                          {inq.isResolved ? "Reopen" : "Resolve"}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setInquiryToDelete(inq)}
+                          disabled={updatingId === inq.id}
+                          className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer disabled:opacity-50 min-h-[36px] min-w-[36px] flex items-center justify-center"
+                          title="Delete Inquiry"
+                          aria-label={`Delete inquiry from ${inq.name}`}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </td>
+                  </DataTableRow>
+                ))
+              )}
+            </DataTableBody>
+          </DataTable>
+        </div>
+      ) : (
+        /* Cards View */
+        <div className="space-y-3">
+          {filter.filteredData.length === 0 ? (
+            <div className="p-12 text-center text-slate-400 rounded-2xl bg-white/[0.01] border border-white/10 text-xs space-y-3">
+              <p>No inquiries match your current filters.</p>
+              <button
+                type="button"
+                onClick={filter.resetFilters}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-brand-mauve border border-brand-mauve/30 text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Clear all filters
+              </button>
+            </div>
+          ) : (
+            filter.pagination.paginatedItems.map((inq) => (
+              <div
+                key={inq.id}
+                className={`p-5 rounded-2xl border transition-all ${
+                  inq.isResolved
+                    ? "bg-white/[0.01] border-white/5 opacity-70"
+                    : "bg-slate-900/60 border-white/10 shadow-lg"
+                }`}
+              >
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                  <div className="space-y-2.5 flex-1">
+                    {/* Category and Status */}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/5 border border-white/10 text-white">
+                        {INQUIRY_ICONS[inq.inquiryType] || <HelpCircle size={12} />}
+                        {INQUIRY_LABELS[inq.inquiryType] || inq.inquiryType}
+                      </span>
+                      <span
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
+                          inq.isResolved
+                            ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                            : "bg-brand-violet/25 text-brand-lavender border-brand-mauve/30"
+                        }`}
+                      >
+                        {inq.isResolved ? "Resolved" : "Pending Action"}
+                      </span>
+                      <span className="text-[11px] text-slate-500 font-mono">
+                        {new Date(inq.createdAt).toLocaleString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+
+                    {/* Client Info */}
+                    <div className="flex items-center gap-4 text-xs flex-wrap text-slate-300">
+                      <span className="font-semibold text-white flex items-center gap-1.5">
+                        <User size={13} className="text-brand-mauve" /> {inq.name}
+                      </span>
+                      {inq.company && (
+                        <span className="text-slate-400 flex items-center gap-1">
+                          <Building size={13} className="text-stone-300" /> {inq.company}
+                        </span>
+                      )}
+                      <a
+                        href={`mailto:${inq.email}`}
+                        className="text-brand-mauve hover:text-brand-mauve-soft flex items-center gap-1 font-mono transition-colors"
+                      >
+                        <Mail size={13} /> {inq.email}
+                      </a>
+                    </div>
+
+                    {/* Message */}
+                    <div className="p-3.5 rounded-xl bg-black/30 border border-white/5 text-xs text-slate-200 leading-relaxed">
+                      {inq.message}
+                    </div>
+                  </div>
+
+                  {/* Quick Actions */}
+                  <div className="flex items-center md:flex-col justify-end gap-2 shrink-0">
+                    {inq.phone && (
+                      <a
+                        href={`https://wa.me/${inq.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+                          `Hello ${inq.name}, thank you for contacting Yas Productions regarding your inquiry. How can our production team assist you?`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-colors w-full justify-center min-h-[36px]"
+                        aria-label={`Chat with ${inq.name} on WhatsApp`}
+                      >
+                        <span>WhatsApp</span>
+                        <ExternalLink size={13} />
+                      </a>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => handleToggleResolved(inq)}
+                      disabled={updatingId === inq.id}
+                      className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer w-full text-center disabled:opacity-50 min-h-[36px] ${
                         inq.isResolved
-                          ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
-                          : "bg-amber-500/15 text-amber-300 border-amber-500/30"
+                          ? "bg-white/5 hover:bg-white/10 text-slate-400"
+                          : "bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
                       }`}
                     >
-                      {inq.isResolved ? "Resolved" : "Pending Action"}
-                    </span>
-                    <span className="text-[11px] text-slate-500 font-mono">
-                      {new Date(inq.createdAt).toLocaleString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  </div>
+                      {inq.isResolved ? "Reopen Lead" : "Mark Resolved"}
+                    </button>
 
-                  {/* Client Info */}
-                  <div className="flex items-center gap-4 text-xs flex-wrap text-slate-300">
-                    <span className="font-semibold text-white flex items-center gap-1.5">
-                      <User size={13} className="text-brand-mauve" /> {inq.name}
-                    </span>
-                    {inq.company && (
-                      <span className="text-slate-400 flex items-center gap-1">
-                        <Building size={13} className="text-stone-300" /> {inq.company}
-                      </span>
-                    )}
-                    <a
-                      href={`mailto:${inq.email}`}
-                      className="text-brand-mauve hover:text-brand-mauve-soft flex items-center gap-1 font-mono transition-colors"
+                    <button
+                      type="button"
+                      onClick={() => setInquiryToDelete(inq)}
+                      disabled={updatingId === inq.id}
+                      className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer disabled:opacity-50 self-end min-h-[36px] min-w-[36px] flex items-center justify-center"
+                      title="Delete Inquiry"
+                      aria-label={`Delete inquiry from ${inq.name}`}
                     >
-                      <Mail size={13} /> {inq.email}
-                    </a>
+                      <Trash2 size={14} />
+                    </button>
                   </div>
-
-                  {/* Message */}
-                  <div className="p-3.5 rounded-xl bg-black/30 border border-white/5 text-xs text-slate-200 leading-relaxed">
-                    {inq.message}
-                  </div>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="flex items-center md:flex-col justify-end gap-2 shrink-0">
-                  {inq.phone && (
-                    <a
-                      href={`https://wa.me/${inq.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
-                        `Hello ${inq.name}, thank you for contacting Yas Productions regarding your inquiry. How can our production team assist you?`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-colors w-full justify-center"
-                    >
-                      <span>WhatsApp</span>
-                      <ExternalLink size={12} />
-                    </a>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => handleToggleResolved(inq)}
-                    disabled={updatingId === inq.id}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer w-full text-center disabled:opacity-50 ${
-                      inq.isResolved
-                        ? "bg-white/5 hover:bg-white/10 text-slate-400"
-                        : "bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
-                    }`}
-                  >
-                    {inq.isResolved ? "Reopen Lead" : "Mark Resolved"}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setInquiryToDelete(inq)}
-                    disabled={updatingId === inq.id}
-                    className="p-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer disabled:opacity-50 self-end"
-                    title="Delete Inquiry"
-                  >
-                    <Trash2 size={13} />
-                  </button>
                 </div>
               </div>
-            </div>
-          ))
-        )}
-      </div>
+            ))
+          )}
+        </div>
+      )}
 
+      {/* Pagination */}
       <PaginationControls
         currentPage={filter.pagination.currentPage}
         pageCount={filter.pagination.pageCount}
@@ -329,6 +562,116 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
         onNext={filter.pagination.nextPage}
       />
 
+      {/* Inquiry Detail Modal */}
+      {selectedInquiry && (
+        <AdminModal
+          isOpen={Boolean(selectedInquiry)}
+          onClose={() => setSelectedInquiry(null)}
+          title={`Inquiry from ${selectedInquiry.name}`}
+          description={`Received on ${new Date(selectedInquiry.createdAt).toLocaleString()} · ${
+            INQUIRY_LABELS[selectedInquiry.inquiryType] || selectedInquiry.inquiryType
+          }`}
+          maxWidth="md"
+        >
+          <div className="space-y-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-xl bg-white/[0.02] border border-white/10 font-mono">
+              <div>
+                <span className="text-[10px] text-slate-500 uppercase block">Client Name</span>
+                <span className="font-semibold text-white text-sm flex items-center gap-1.5 mt-0.5">
+                  <User size={13} className="text-brand-mauve" />
+                  {selectedInquiry.name}
+                </span>
+              </div>
+              {selectedInquiry.company && (
+                <div>
+                  <span className="text-[10px] text-slate-500 uppercase block">Company / Agency</span>
+                  <span className="text-slate-300 flex items-center gap-1.5 mt-0.5">
+                    <Building size={13} className="text-stone-300" />
+                    {selectedInquiry.company}
+                  </span>
+                </div>
+              )}
+              <div>
+                <span className="text-[10px] text-slate-500 uppercase block">Email Address</span>
+                <a
+                  href={`mailto:${selectedInquiry.email}`}
+                  className="text-brand-mauve hover:underline flex items-center gap-1.5 mt-0.5"
+                >
+                  <Mail size={13} />
+                  {selectedInquiry.email}
+                </a>
+              </div>
+              {selectedInquiry.phone && (
+                <div>
+                  <span className="text-[10px] text-slate-500 uppercase block">Phone / Mobile</span>
+                  <a
+                    href={`tel:${selectedInquiry.phone}`}
+                    className="text-slate-300 hover:text-white flex items-center gap-1.5 mt-0.5"
+                  >
+                    <Phone size={13} />
+                    {selectedInquiry.phone}
+                  </a>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <span className="text-[10px] text-slate-500 uppercase font-mono block mb-1.5">
+                Client Narrative Brief / Message
+              </span>
+              <div className="p-4 rounded-xl bg-black/40 border border-white/10 text-slate-200 leading-relaxed whitespace-pre-wrap font-sans text-xs sm:text-sm">
+                {selectedInquiry.message}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-3 border-t border-white/10 flex-wrap gap-2">
+              <span
+                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
+                  selectedInquiry.isResolved
+                    ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                    : "bg-brand-violet/25 text-brand-lavender border-brand-mauve/30"
+                }`}
+              >
+                {selectedInquiry.isResolved ? "Resolved Lead" : "Action Required (Open)"}
+              </span>
+
+              <div className="flex items-center gap-2">
+                {selectedInquiry.phone && (
+                  <a
+                    href={`https://wa.me/${selectedInquiry.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+                      `Hello ${selectedInquiry.name}, thank you for contacting Yas Productions regarding your inquiry. How can our production team assist you?`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <span>WhatsApp</span>
+                    <ExternalLink size={12} />
+                  </a>
+                )}
+                <button
+                  type="button"
+                  disabled={updatingId === selectedInquiry.id}
+                  onClick={() => handleToggleResolved(selectedInquiry)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50 ${
+                    selectedInquiry.isResolved
+                      ? "bg-white/5 hover:bg-white/10 text-slate-300"
+                      : "btn-brand font-bold"
+                  }`}
+                >
+                  {updatingId === selectedInquiry.id
+                    ? "Updating..."
+                    : selectedInquiry.isResolved
+                    ? "Reopen Lead"
+                    : "Mark Resolved"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </AdminModal>
+      )}
+
+      {/* Delete Confirmation Modal */}
       {inquiryToDelete && (
         <AdminConfirmModal
           isOpen={Boolean(inquiryToDelete)}

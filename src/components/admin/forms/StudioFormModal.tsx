@@ -46,14 +46,31 @@ function StudioFormContent({
       : ["10Gbps Symmetrical Fiber", "Green Room", "Sound Isolated"],
     isActive: initialStudio?.isActive ?? true,
   }));
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.hourlyRate) return;
+    const newErrors: Record<string, string> = {};
+    if (!formData.name?.trim()) {
+      newErrors.name = "Stage name is required";
+    }
+    if (!formData.hourlyRate || Number(formData.hourlyRate) <= 0) {
+      newErrors.hourlyRate = "Valid hourly rate is required";
+    }
+    if (!formData.capacity || formData.capacity <= 0) {
+      newErrors.capacity = "Headcount capacity must be at least 1";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setFieldErrors(newErrors);
+      return;
+    }
+    setFieldErrors({});
 
     const slug =
       formData.slug ||
-      formData.name
+      formData.name!
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)+/g, "");
@@ -73,10 +90,10 @@ function StudioFormContent({
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
-      isSubmitting={isSubmitting}
+      isSubmitting={isSubmitting || isUploadingMedia}
       title={isEdit ? "Edit Soundstage Specifications" : "Provision New Soundstage"}
       description="Configure soundstage pricing, maximum headcount, amenities, and availability for the booking wizard."
-      submitLabel={isEdit ? "Update Soundstage" : "Create Soundstage"}
+      submitLabel={isUploadingMedia ? "Uploading Media..." : isEdit ? "Update Soundstage" : "Create Soundstage"}
       maxWidth="lg"
     >
       {error && (
@@ -91,7 +108,11 @@ function StudioFormContent({
           required
           placeholder="e.g. Studio C — Green Cyc Stage"
           value={formData.name || ""}
-          onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+          error={fieldErrors.name}
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, name: e.target.value }));
+            if (fieldErrors.name) setFieldErrors((prev) => ({ ...prev, name: "" }));
+          }}
         />
         <AdminInput
           label="Stage Name (Arabic - اسم الاستوديو)"
@@ -111,7 +132,11 @@ function StudioFormContent({
           placeholder="800.00"
           suffixNode="AED/hr"
           value={formData.hourlyRate || ""}
-          onChange={(e) => setFormData((prev) => ({ ...prev, hourlyRate: e.target.value }))}
+          error={fieldErrors.hourlyRate}
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, hourlyRate: e.target.value }));
+            if (fieldErrors.hourlyRate) setFieldErrors((prev) => ({ ...prev, hourlyRate: "" }));
+          }}
         />
         <AdminInput
           label="Max Headcount (Capacity)"
@@ -120,18 +145,21 @@ function StudioFormContent({
           placeholder="25"
           suffixNode="People"
           value={formData.capacity ?? ""}
-          onChange={(e) =>
+          error={fieldErrors.capacity}
+          onChange={(e) => {
             setFormData((prev) => ({
               ...prev,
               capacity: e.target.value === "" ? undefined : parseInt(e.target.value, 10),
-            }))
-          }
+            }));
+            if (fieldErrors.capacity) setFieldErrors((prev) => ({ ...prev, capacity: "" }));
+          }}
         />
       </div>
 
       <div>
         <AdminImageUploader
           value={formData.imageUrl}
+          onUploadingChange={setIsUploadingMedia}
           onChange={(url) => setFormData((prev) => ({ ...prev, imageUrl: url }))}
           label="Studio Soundstage Cover Photo (Cloudinary / CDN)"
           helperText="Upload stage photo (PNG, JPG, WEBP up to 25MB)"

@@ -14,6 +14,8 @@ export interface DialogProps {
   className?: string;
   maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
   hideCloseButton?: boolean;
+  closeOnBackdropClick?: boolean;
+  initialFocusRef?: React.RefObject<HTMLElement | null>;
 }
 
 const MAX_WIDTH_MAP = {
@@ -37,6 +39,8 @@ export function Dialog({
   className,
   maxWidth = "xl",
   hideCloseButton = false,
+  closeOnBackdropClick = true,
+  initialFocusRef,
 }: DialogProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -45,7 +49,7 @@ export function Dialog({
     isOpen,
     onClose,
     containerRef,
-    initialFocusRef: hideCloseButton ? undefined : closeButtonRef,
+    initialFocusRef: initialFocusRef ?? (hideCloseButton ? undefined : undefined),
   });
 
   if (!isOpen) return null;
@@ -54,7 +58,7 @@ export function Dialog({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto overscroll-contain bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (closeOnBackdropClick && e.target === e.currentTarget) onClose();
       }}
       role="presentation"
     >
@@ -76,14 +80,14 @@ export function Dialog({
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="absolute top-5 right-5 p-2 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+            className="absolute top-5 right-5 rtl:right-auto rtl:left-5 p-2 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer z-10"
           >
             <X size={18} />
           </button>
         )}
 
         {(title || description) && (
-          <div className="mb-6 pr-10">
+          <div className="mb-6 pr-10 rtl:pr-0 rtl:pl-10">
             {title && (
               <h2 className="text-xl font-bold font-display text-white tracking-tight">
                 {title}

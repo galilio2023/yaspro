@@ -67,6 +67,8 @@ function InfluencerFormContent({
     imageUrl: initialCreator?.imageUrl || "/images/influencers/creator-1.jpg",
     isFeatured: initialCreator?.isFeatured ?? true,
   }));
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
 
   const handleNationalityChange = (nat: string) => {
     setFormData((prev) => ({
@@ -78,11 +80,20 @@ function InfluencerFormContent({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name) return;
+    const newErrors: Record<string, string> = {};
+    if (!formData.name?.trim()) {
+      newErrors.name = "Creator full name is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setFieldErrors(newErrors);
+      return;
+    }
+    setFieldErrors({});
 
     const slug =
       formData.slug ||
-      formData.name
+      formData.name!
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)+/g, "");
@@ -101,10 +112,10 @@ function InfluencerFormContent({
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
-      isSubmitting={isSubmitting}
+      isSubmitting={isSubmitting || isUploadingMedia}
       title={isEdit ? "Edit Creator Profile" : "Register Mawthooq Creator"}
       description="Configure influencer demographics, social handles, verified status, and audience metrics."
-      submitLabel={isEdit ? "Update Profile" : "Add to Roster"}
+      submitLabel={isUploadingMedia ? "Uploading Media..." : isEdit ? "Update Profile" : "Add to Roster"}
       maxWidth="lg"
     >
       {error && (
@@ -119,7 +130,11 @@ function InfluencerFormContent({
           required
           placeholder="e.g. Sultan Al-Qasimi"
           value={formData.name || ""}
-          onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+          error={fieldErrors.name}
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, name: e.target.value }));
+            if (fieldErrors.name) setFieldErrors((prev) => ({ ...prev, name: "" }));
+          }}
         />
         <AdminInput
           label="Slug (Unique Identifier)"
@@ -190,6 +205,7 @@ function InfluencerFormContent({
         <AdminImageUploader
           label="Creator Portrait (Cloudinary / CDN)"
           value={formData.imageUrl}
+          onUploadingChange={setIsUploadingMedia}
           onChange={(url) => setFormData((prev) => ({ ...prev, imageUrl: url }))}
           helperText="Upload creator press portrait (PNG, JPG, WEBP up to 15MB)"
         />

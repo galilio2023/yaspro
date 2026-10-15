@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Radio,
   Send,
@@ -70,7 +70,46 @@ export function BroadcastManager() {
   const [level, setLevel] = useState<SeverityLevel>("info");
   const [summary, setSummary] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [dispatchedFeed, setDispatchedFeed] = useState<TelemetryEventItem[]>(INITIAL_DISPATCHED_FEED);
+  const isLoadedRef = useRef(false);
+
+  // Safely hydrate stored events from localStorage after mount to prevent hydration mismatch
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("yaspro_admin_telemetry_feed");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (
+          Array.isArray(parsed) &&
+          parsed.length > 0 &&
+          parsed.every(
+            (item) =>
+              item &&
+              typeof item === "object" &&
+              typeof item.id === "string" &&
+              typeof item.summary === "string"
+          )
+        ) {
+          setDispatchedFeed(parsed);
+        }
+      }
+    } catch {
+      // ignore storage parse error
+    } finally {
+      isLoadedRef.current = true;
+    }
+  }, []);
+
+  // Persist feed updates safely in an effect rather than inside the state updater
+  useEffect(() => {
+    if (!isLoadedRef.current) return;
+    try {
+      localStorage.setItem("yaspro_admin_telemetry_feed", JSON.stringify(dispatchedFeed));
+    } catch {
+      // ignore storage quota error
+    }
+  }, [dispatchedFeed]);
 
   const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3500);
 
@@ -81,8 +120,9 @@ export function BroadcastManager() {
     summary: string;
   }) => {
     if (isSubmitting) return;
+    setErrorMessage(null);
     if (!eventData.summary.trim()) {
-      alert("Please provide an event description.");
+      setErrorMessage("Please provide an event description before dispatching.");
       return;
     }
 
@@ -97,20 +137,20 @@ export function BroadcastManager() {
         });
         setDispatchedFeed((prev) => [
           {
-            id: `ev-${prev.length + 1}`,
+            id: `ev-${Date.now()}`,
             ...eventData,
             timestamp: dispatchTime,
           },
           ...prev,
-        ]);
+        ].slice(0, 50));
 
         showFeedback("Event dispatched to sovereign edge relays!");
         setSummary("");
       } else {
-        alert(res.error || "Failed to dispatch event");
+        setErrorMessage(res.error || "Failed to dispatch event");
       }
     } catch (err) {
-      alert((err as Error).message || "An unexpected error occurred while dispatching event");
+      setErrorMessage((err as Error).message || "An unexpected error occurred while dispatching event");
     } finally {
       setIsSubmitting(false);
     }
@@ -126,6 +166,19 @@ export function BroadcastManager() {
         feedback={feedback}
         onDismissFeedback={clearFeedback}
       />
+
+      {errorMessage && (
+        <div role="alert" className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center justify-between animate-in fade-in">
+          <span>{errorMessage}</span>
+          <button
+            type="button"
+            onClick={() => setErrorMessage(null)}
+            className="text-rose-400 hover:text-white cursor-pointer px-2 py-0.5"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* KPI Stats */}
       <AdminStatsGrid

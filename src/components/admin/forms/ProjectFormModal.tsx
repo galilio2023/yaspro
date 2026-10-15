@@ -57,15 +57,28 @@ function ProjectFormContent({
     isFeatured: initialProject?.isFeatured ?? true,
     tags: Array.isArray(initialProject?.tags) ? initialProject.tags : [],
   }));
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isUploadingCover, setIsUploadingCover] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.category) return;
+    const newErrors: Record<string, string> = {};
+    if (!formData.title?.trim()) {
+      newErrors.title = "Project title is required";
+    }
+    if (!formData.category) {
+      newErrors.category = "Category is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setFieldErrors(newErrors);
+      return;
+    }
+    setFieldErrors({});
 
     const slug =
       formData.slug ||
-      formData.title
+      formData.title!
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)+/g, "");
@@ -102,7 +115,11 @@ function ProjectFormContent({
           required
           placeholder="e.g. Flag Day National Campaign"
           value={formData.title || ""}
-          onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
+          error={fieldErrors.title}
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, title: e.target.value }));
+            if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
+          }}
         />
         <AdminInput
           label="Project Title (Arabic - عنوان المشروع)"
@@ -125,9 +142,11 @@ function ProjectFormContent({
           required
           options={PROJECT_CATEGORIES}
           value={formData.category || "commercial"}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, category: e.target.value as Project["category"] }))
-          }
+          error={fieldErrors.category}
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, category: e.target.value as Project["category"] }));
+            if (fieldErrors.category) setFieldErrors((prev) => ({ ...prev, category: "" }));
+          }}
         />
       </div>
 
