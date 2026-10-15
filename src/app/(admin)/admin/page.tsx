@@ -13,8 +13,13 @@ import {
   MessageSquare,
   Radio,
   ExternalLink,
+  Sparkles,
+  CreditCard,
+  DollarSign,
+  CheckCircle2,
 } from "lucide-react";
 import { getCmsOverviewStats } from "@/lib/cms-actions";
+import { formatCurrency } from "@/lib/utils";
 
 export default async function AdminDashboardPage() {
   const stats = await getCmsOverviewStats();
@@ -33,19 +38,19 @@ export default async function AdminDashboardPage() {
     {
       title: "Client Leads & Inquiries",
       value: stats.totalInquiries,
-      badge: `${stats.pendingInquiries || 0} Action Req`,
-      description: "Contact briefs, quotes & RFPs",
+      badge: `${stats.retainerLeads || 0} Retainers · ${stats.pendingInquiries || 0} Open`,
+      description: "Social retainers, briefs & RFPs",
       href: "/admin/inquiries",
       icon: MessageSquare,
       color: "from-brand-violet/20 to-slate-900/60 border-brand-mauve/20 text-brand-lavender",
     },
     {
-      title: "Soundstages & Rates",
-      value: stats.totalStudios,
-      badge: `${stats.activeStudios} Active Stages`,
-      description: "Hourly rates, capacity & amenities",
-      href: "/admin/studios",
-      icon: Layers,
+      title: "Turnkey Offers & Bundles",
+      value: stats.offerBookings || 0,
+      badge: "Turnkey Packages",
+      description: "Packaged productions & live mixing",
+      href: "/admin/offers",
+      icon: Sparkles,
       color: "from-brand-violet/25 to-brand-violet/10 border-brand-mauve/30 text-brand-mauve",
     },
     {
@@ -58,10 +63,19 @@ export default async function AdminDashboardPage() {
       color: "from-brand-violet/25 to-brand-violet/10 border-brand-mauve/30 text-brand-mauve",
     },
     {
+      title: "Soundstages & Rates",
+      value: stats.totalStudios,
+      badge: `${stats.activeStudios} Active Stages`,
+      description: "Hourly rates, capacity & amenities",
+      href: "/admin/studios",
+      icon: Layers,
+      color: "from-brand-violet/25 to-brand-violet/10 border-brand-mauve/30 text-brand-mauve",
+    },
+    {
       title: "Broadcast & OB Van",
-      value: "Live Edge",
-      badge: "ST-2110 PTP",
-      description: "Ka-band telemetry & C2C ingest",
+      value: `${stats.broadcastLeads || 0} RFPs`,
+      badge: "Ka-Band Telemetry",
+      description: "Mobile live edge broadcast vehicle",
       href: "/admin/broadcast",
       icon: Radio,
       color: "from-emerald-500/20 to-emerald-600/10 border-emerald-500/30 text-emerald-400",
@@ -105,7 +119,7 @@ export default async function AdminDashboardPage() {
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl leading-relaxed">
             Real-time operations for Yas Productions soundstages, creator roster,
-            cinema fleet inventory, and live client briefs.
+            cinema fleet inventory, turnkey offers, and live client briefs.
           </p>
         </div>
 
@@ -119,11 +133,11 @@ export default async function AdminDashboardPage() {
             <ExternalLink size={13} className="rtl:rotate-180" />
           </Link>
           <Link
-            href="/admin/projects"
+            href="/admin/offers"
             className="px-4 py-2.5 rounded-xl btn-brand text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
           >
-            <span>Manage Content</span>
-            <Layers size={14} />
+            <span>Manage Offers</span>
+            <Sparkles size={14} />
           </Link>
         </div>
       </div>
@@ -134,8 +148,50 @@ export default async function AdminDashboardPage() {
         </div>
       )}
 
+      {/* Financial Telemetry Banner */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-brand-violet/20 via-slate-900/80 to-[#0c0b10] border border-brand-mauve/30 shadow-xl shadow-brand-violet/10">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-brand-mauve-soft text-xs font-mono font-semibold uppercase tracking-wider">
+            <DollarSign size={14} className="text-brand-mauve" />
+            <span>Total Gross Booked Pipeline</span>
+          </div>
+          <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono tracking-tight">
+            {metricsUnavailable ? "Unavailable" : formatCurrency(stats.totalBookedRevenue)}
+          </div>
+          <p className="text-[11px] text-slate-400">
+            Across soundstage sessions, turnkey bundles, and gear orders
+          </p>
+        </div>
+
+        <div className="space-y-1 border-t md:border-t-0 md:border-s border-white/10 md:ps-6 pt-3 md:pt-0">
+          <div className="flex items-center gap-2 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-wider">
+            <CheckCircle2 size={14} className="text-emerald-400" />
+            <span>Settled &amp; Paid Revenue</span>
+          </div>
+          <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono tracking-tight">
+            {metricsUnavailable ? "Unavailable" : formatCurrency(stats.paidRevenue)}
+          </div>
+          <p className="text-[11px] text-slate-400">
+            Verified payments captured through Ziina Payment Intent
+          </p>
+        </div>
+
+        <div className="space-y-1 border-t md:border-t-0 md:border-s border-white/10 md:ps-6 pt-3 md:pt-0">
+          <div className="flex items-center gap-2 text-brand-lavender text-xs font-mono font-semibold uppercase tracking-wider">
+            <CreditCard size={14} className="text-brand-mauve" />
+            <span>Active Financial Gateways</span>
+          </div>
+          <div className="text-sm font-semibold text-white mt-1">
+            Ziina Digital Direct + Apple Pay
+          </div>
+          <p className="text-[11px] text-slate-400">
+            Dual-currency AED settlement with automatic call sheet issue
+          </p>
+        </div>
+      </div>
+
       {/* Metrics Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
         {METRIC_CARDS.map((card) => {
           const Icon = card.icon;
           return (
@@ -183,32 +239,32 @@ export default async function AdminDashboardPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <Link
+              href="/admin/offers"
+              className="p-3.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-colors block"
+            >
+              <span className="font-semibold text-brand-mauve block mb-1">Manage Turnkey Offers</span>
+              <span className="text-slate-400">Configure bundles, promo codes, and blackout hours</span>
+            </Link>
+            <Link
+              href="/admin/inquiries?filter=social_media_package"
+              className="p-3.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-colors block"
+            >
+              <span className="font-semibold text-brand-lavender block mb-1">Review Retainer Leads</span>
+              <span className="text-slate-400">High-value commercial social media subscriptions</span>
+            </Link>
+            <Link
               href="/admin/projects"
               className="p-3.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-colors block"
             >
               <span className="font-semibold text-brand-mauve block mb-1">Add Portfolio Film</span>
-              <span className="text-slate-400">Add high-resolution project with 4K Vimeo embedding</span>
+              <span className="text-slate-400">Set deliverables, tech stack, and 4K Vimeo stream</span>
             </Link>
             <Link
-              href="/admin/influencers"
+              href="/admin/broadcast"
               className="p-3.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-colors block"
             >
-              <span className="font-semibold text-brand-mauve block mb-1">Sync Creator Media Kit</span>
-              <span className="text-slate-400">Update follower stats & Mawthooq compliance records</span>
-            </Link>
-            <Link
-              href="/admin/gear"
-              className="p-3.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-colors block"
-            >
-              <span className="font-semibold text-emerald-300 block mb-1">Update Rental Rates</span>
-              <span className="text-slate-400">Manage daily rates, camera kits, and equipment stock</span>
-            </Link>
-            <Link
-              href="/admin/bookings"
-              className="p-3.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-colors block"
-            >
-              <span className="font-semibold text-brand-lavender block mb-1">Studio Booking Board</span>
-              <span className="text-slate-400">Review schedule allocations & automated call sheets</span>
+              <span className="font-semibold text-emerald-300 block mb-1">OB Van &amp; Broadcast</span>
+              <span className="text-slate-400">Manage live telemetry and broadcast command feeds</span>
             </Link>
           </div>
         </div>
@@ -216,7 +272,7 @@ export default async function AdminDashboardPage() {
         <div className="p-6 rounded-3xl bg-slate-900/60 border border-white/10 backdrop-blur-xl space-y-4">
           <div className="flex items-center gap-2 text-sm font-semibold text-white">
             <Server size={16} className="text-emerald-400" />
-            <span>Drizzle & Neon Engine Architecture</span>
+            <span>Drizzle &amp; Neon Engine Architecture</span>
           </div>
           <ul className="space-y-3 text-xs text-slate-300">
             <li className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
@@ -228,7 +284,7 @@ export default async function AdminDashboardPage() {
               <span className="font-mono text-emerald-300">Drizzle ORM v0.45</span>
             </li>
             <li className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
-              <span>Seed & Catalog Sync</span>
+              <span>Seed &amp; Catalog Sync</span>
               <span className="font-mono text-brand-mauve">npm run db:push / npm run seed</span>
             </li>
             <li className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5">

@@ -64,7 +64,17 @@ const PRESET_EVENTS = [
   },
 ];
 
-export function BroadcastManager() {
+import type { Inquiry } from "@/db/schema";
+import Link from "next/link";
+import { resolveInquiryCategory } from "./InquiriesManager";
+import { MessageSquare, ExternalLink, ArrowRight, Sparkles } from "lucide-react";
+
+export interface BroadcastManagerProps {
+  initialBroadcastInquiries?: Inquiry[];
+}
+
+export function BroadcastManager({ initialBroadcastInquiries = [] }: BroadcastManagerProps) {
+  const activeInquiries = initialBroadcastInquiries.filter((inq) => !inq.isResolved);
   const [source, setSource] = useState("OB-VAN MERCEDES 01");
   const [type, setType] = useState<TelemetryType>("OB_VAN_GPS");
   const [level, setLevel] = useState<SeverityLevel>("info");
@@ -214,6 +224,64 @@ export function BroadcastManager() {
           },
         ]}
       />
+
+      {/* Live Broadcast RFPs from Services & BookNow modal */}
+      {activeInquiries.length > 0 && (
+        <div className="p-5 rounded-3xl bg-slate-900/80 border border-brand-mauve/30 backdrop-blur-xl space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm font-bold text-white">
+              <Radio size={16} className="text-brand-mauve" />
+              <span>Active Broadcast &amp; Outdoor Production RFPs ({activeInquiries.length})</span>
+            </div>
+            <Link
+              href="/admin/inquiries"
+              className="text-xs text-brand-mauve hover:text-white flex items-center gap-1 font-semibold"
+            >
+              <span>View in Inquiries Desk</span>
+              <ArrowRight size={13} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {activeInquiries.slice(0, 4).map((inq) => {
+              const category = resolveInquiryCategory(inq);
+              return (
+                <div
+                  key={inq.id}
+                  className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-2 hover:border-brand-mauve/20 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-white text-xs">
+                      {inq.name} {inq.company ? `(${inq.company})` : ""}
+                    </span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-brand-mauve/20 text-brand-lavender border border-brand-mauve/30 uppercase">
+                      {category.label}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 line-clamp-2 leading-relaxed">
+                    {inq.message}
+                  </p>
+                  <div className="flex items-center justify-between pt-1 text-[10px] text-slate-500 font-mono">
+                    <span>{new Date(inq.createdAt).toLocaleDateString()}</span>
+                    {inq.phone && (
+                      <a
+                        href={`https://wa.me/${inq.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+                          `Hello ${inq.name}, following up from Yas Productions regarding your ${category.label} inquiry.`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-emerald-400 hover:underline flex items-center gap-1"
+                      >
+                        <span>WhatsApp Followup</span>
+                        <ExternalLink size={10} />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Quick Preset Dispatch Buttons */}
       <div className="space-y-2">

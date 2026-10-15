@@ -61,6 +61,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         (b.userPhone && b.userPhone.toLowerCase().includes(q)) ||
         (b.userCompany && b.userCompany.toLowerCase().includes(q)) ||
         (b.studioName && b.studioName.toLowerCase().includes(q)) ||
+        (b.packageName && b.packageName.toLowerCase().includes(q)) ||
         b.sessionType.toLowerCase().includes(q);
 
       const matchesStatus = status === "all" || b.status === status;
@@ -268,15 +269,25 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
               filter.pagination.paginatedItems.map((b) => (
                 <DataTableRow key={b.id}>
                   <td className="py-3 px-4 font-mono font-bold text-brand-lavender text-xs">
-                    {b.referenceCode}
+                    <div>{b.referenceCode}</div>
+                    {b.promoCode && (
+                      <span className="inline-block mt-1 px-1.5 py-0.5 rounded text-[9px] bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono">
+                        PROMO: {b.promoCode}
+                      </span>
+                    )}
                   </td>
                   <td className="py-3 px-4">
                     <div>
                       <span className="font-semibold text-white block">
                         {b.userName || "Direct Client"}
                       </span>
+                      {b.userCompany && (
+                        <span className="text-[10px] text-stone-300 block truncate max-w-[160px]">
+                          {b.userCompany}
+                        </span>
+                      )}
                       {b.userEmail && (
-                        <span className="text-[11px] text-slate-400 font-mono block">
+                        <span className="text-[11px] text-slate-400 font-mono block truncate max-w-[180px]">
                           {b.userEmail}
                         </span>
                       )}
@@ -288,15 +299,35 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                     </div>
                   </td>
                   <td className="py-3 px-4">
-                    <span className="font-medium text-white block">
-                      {b.studioName ||
-                        (b.equipmentIds && b.equipmentIds.length > 0
-                          ? `${b.equipmentIds.length} Equipment items`
-                          : b.sessionType.replace("_", " "))}
-                    </span>
-                    <span className="text-[10px] text-slate-500 font-mono capitalize">
-                      {b.sessionType.replace("_", " ")}
-                    </span>
+                    <div className="space-y-0.5">
+                      <span className="font-medium text-white block">
+                        {b.packageName ||
+                          b.studioName ||
+                          (b.equipmentIds && b.equipmentIds.length > 0
+                            ? `${b.equipmentIds.length} Equipment items`
+                            : b.sessionType.replace("_", " "))}
+                      </span>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {b.referenceCode.startsWith("YAS-OFR") ? (
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-brand-mauve/20 text-brand-mauve border border-brand-mauve/30">
+                            Offer Bundle
+                          </span>
+                        ) : b.referenceCode.startsWith("POD-") ? (
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-brand-violet/30 text-brand-lavender border border-brand-mauve/20">
+                            Podcast
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-slate-500 font-mono capitalize">
+                            {b.sessionType.replace("_", " ")}
+                          </span>
+                        )}
+                        {b.studioName && b.packageName && (
+                          <span className="text-[10px] text-slate-400 font-mono">
+                            · {b.studioName}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </td>
                   <td className="py-3 px-4 font-mono text-slate-300 text-xs">
                     {new Date(b.scheduledAt).toLocaleDateString("en-US", {

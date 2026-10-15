@@ -231,9 +231,10 @@ function hookFixture(validate = async (code) => ({ success: true, promo: { code,
         if (!(index in states)) states[index] = { current: initial };
         return states[index];
       },
-      useMemo: (fn) => fn(), useCallback: (fn) => fn,
+      useMemo: (fn) => fn(), useCallback: (fn) => fn, useEffect: (fn) => fn(),
     },
     '../actions': { validateOffersPromoCode: validate, submitOffersBooking: async () => ({ success: true }) },
+    'next/navigation': { useSearchParams: () => new URLSearchParams() },
   });
   const { useOffersBooking } = load('src/features/offers/hooks/useOffersBooking.ts');
   return () => { cursor = 0; return useOffersBooking(); };
@@ -318,4 +319,43 @@ test('English and Arabic confirmation copy describes pending bookings and paymen
     assert.match(fallback, isArabic ? /يمكنك الدفع في الاستوديو/ : /pay at the studio/);
     assert.doesNotMatch(html, /role="alert"/);
   }
+});
+
+
+test('offer contact fields round-trip separators, Unicode and percent escapes through CMS parsing', async () => {
+  const f = fixture();
+  const contact = {
+    firstName: 'Test | ليلى', lastName: 'Guest ] 100%', email: 'guest+ops@example.com',
+    phone: '+97150|1234567', company: ' Studio | [A] %7C ',
+  };
+  assert.equal((await f.submitOffersBooking({ ...input, ...contact })).success, true);
+  const notes = [
+    f.writes[0].specialRequests,
+    '[Contact: Legacy %7C Guest | legacy@example.com | +971500000000 | Old Company]',
+    '[Contact URI: Bad%escape | bad%40example.com | %2B971500000000]',
+  ];
+  const query = {
+    leftJoin: () => query,
+    orderBy: async () => notes.map((specialRequests, id) => ({ booking: { id, specialRequests } })),
+    where: () => ({ orderBy: async () => [] }),
+  };
+  const load = sourceLoader({
+    '@/db': { db: { select: () => ({ from: () => query }) } },
+    '@/db/schema': { bookings: {}, bookingSessions: {}, users: {}, studios: {} },
+    'drizzle-orm': { eq() {}, desc() {}, asc() {}, inArray() {} },
+    'next/cache': {}, 'next/headers': {}, '@/lib/auth': {},
+    './shared': { isDbAvailable: () => true, requireAdmin: async () => {} },
+  });
+  const bookings = await load('src/lib/actions/bookings-rfp-operations.ts').getCmsBookings();
+  assert.equal(bookings.length, 3);
+  assert.equal(bookings[0].userName, `${contact.firstName} ${contact.lastName}`);
+  assert.equal(bookings[0].userEmail, contact.email);
+  assert.equal(bookings[0].userPhone, contact.phone);
+  assert.equal(bookings[0].userCompany, contact.company);
+  assert.equal(bookings[1].userName, 'Legacy %7C Guest');
+  assert.equal(bookings[1].userEmail, 'legacy@example.com');
+  assert.equal(bookings[1].userPhone, '+971500000000');
+  assert.equal(bookings[1].userCompany, 'Old Company');
+  assert.equal(bookings[2].userName, 'Bad%escape');
+  assert.equal(bookings[2].userEmail, 'bad@example.com');
 });

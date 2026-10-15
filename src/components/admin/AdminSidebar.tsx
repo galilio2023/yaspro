@@ -15,6 +15,7 @@ import {
   MessageSquare,
   Layers,
   Radio,
+  Sparkles,
 } from "lucide-react";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { AdminSignOutButton } from "./AdminSignOutButton";
@@ -22,6 +23,7 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
+  { href: "/admin/offers", label: "Offers & Bundles", icon: Sparkles },
   { href: "/admin/users", label: "Users & Accounts", icon: UserCheck },
   { href: "/admin/inquiries", label: "Inquiries & Leads", icon: MessageSquare },
   { href: "/admin/studios", label: "Soundstages & Rates", icon: Layers },

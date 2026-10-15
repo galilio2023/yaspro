@@ -95,7 +95,7 @@ test('preset subjects cannot satisfy the trimmed description minimum', async () 
   await f.submit();
   assert.equal(calls.length, 1);
   assert.equal(calls[0].message, `[Subject: ${calls[0].subject}]\n\n1234567890`);
-  assert.ok(f.render().some((node) => node.props?.children === 'Inquiry Received Successfully!'));
+  assert.ok(f.render().some((node) => ['Inquiry Received Successfully!', 'Message Received Successfully', 'تم استلام طلبك بنجاح'].includes(node.props?.children)));
 });
 
 for (const outcome of ['success', 'failure', 'exception']) {
@@ -116,10 +116,10 @@ for (const outcome of ['success', 'failure', 'exception']) {
       else requests[0].resolve({ success: outcome === 'success', message: 'old failure' });
       await oldSubmission;
       assert.equal(f.submitting(), true, 'stale completion must not clear current loading state');
-      assert.equal(f.render().some((node) => ['old failure', 'An unexpected error occurred. Please try again.', 'Inquiry Received Successfully!'].includes(node.props?.children)), false);
+      assert.equal(f.render().some((node) => ['old failure', 'An unexpected error occurred. Please try again.', 'Inquiry Received Successfully!', 'Message Received Successfully', 'تم استلام طلبك بنجاح'].includes(node.props?.children)), false);
       requests[1].resolve({ success: true });
       await newSubmission;
-      assert.ok(f.render().some((node) => node.props?.children === 'Inquiry Received Successfully!'));
+      assert.ok(f.render().some((node) => ['Inquiry Received Successfully!', 'Message Received Successfully', 'تم استلام طلبك بنجاح'].includes(node.props?.children)));
     });
   }
 }
@@ -147,13 +147,13 @@ test('close has a localized accessible name and visible labels match stable cont
     f.open();
     assert.ok(f.find((node) => node.type === 'button' && node.props['aria-label'] === (isArabic ? 'إغلاق' : 'Close')));
     const labels = f.render().filter((node) => node.type === 'label');
-    assert.equal(labels.length, 4);
+    assert.equal(labels.length, 6);
     const ids = labels.map((label) => label.props.htmlFor);
-    assert.equal(new Set(ids).size, 4);
+    assert.equal(new Set(ids).size, 6);
     for (const id of ids) {
       assert.ok(id);
       const control = f.find((node) => node.props?.id === id);
-      assert.ok(['input', 'textarea'].includes(control.type));
+      assert.ok(['input', 'textarea', 'select'].includes(control.type));
     }
     f.close();
     f.open();

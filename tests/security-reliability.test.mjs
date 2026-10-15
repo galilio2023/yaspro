@@ -96,6 +96,7 @@ test('production metrics fallback is unavailable and dashboard hides its numbers
   assert.equal(stats.status, 'unavailable');
   const { default: Page } = load('src/app/(admin)/admin/page.tsx', {
     '@/lib/cms-actions': { getCmsOverviewStats: async () => ({ ...stats, totalUsers: 1234567 }) },
+    '@/lib/utils': { cn: (...args) => args.filter(Boolean).join(' '), formatCurrency: (v) => `${v} SAR` },
     'next/link': { default: ({ children, ...props }) => dependency('react').createElement('a', props, children) },
   });
   const html = renderToStaticMarkup(await Page());

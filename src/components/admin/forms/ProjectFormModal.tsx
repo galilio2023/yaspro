@@ -26,6 +26,8 @@ const PROJECT_CATEGORIES = [
   { value: "government", label: "Government & National Day" },
   { value: "documentary", label: "Documentary Film" },
   { value: "event", label: "Live Event & Broadcast" },
+  { value: "influencer", label: "Creator & Influencer Campaign" },
+  { value: "shows", label: "Original Shows & Series" },
 ];
 
 export function ProjectFormModal(props: ProjectFormModalProps) {
@@ -56,6 +58,8 @@ function ProjectFormContent({
     coverImageUrl: initialProject?.coverImageUrl || "/images/projects/flag-day.jpg",
     isFeatured: initialProject?.isFeatured ?? true,
     tags: Array.isArray(initialProject?.tags) ? initialProject.tags : [],
+    deliverables: Array.isArray(initialProject?.deliverables) ? initialProject.deliverables : [],
+    techStack: Array.isArray(initialProject?.techStack) ? initialProject.techStack : [],
   }));
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isUploadingCover, setIsUploadingCover] = useState(false);
@@ -205,7 +209,21 @@ function ProjectFormContent({
       />
 
       <AdminTagsInput
-        label="Deliverables & Keywords"
+        label="Key Deliverables (Public Checkmarks)"
+        placeholder="Add deliverable (e.g. Official 4K Broadcast Film, Social Multi-Platform Cutdowns, Color Master Package)..."
+        tags={(formData.deliverables as string[]) || []}
+        onChange={(deliverables) => setFormData((prev) => ({ ...prev, deliverables }))}
+      />
+
+      <AdminTagsInput
+        label="Production Tech Stack (Equipment & Software)"
+        placeholder="Add tech stack item (e.g. ARRI Alexa 35, Mo-Sys StarTracker, Unreal Engine 5.4, DaVinci Resolve)..."
+        tags={(formData.techStack as string[]) || []}
+        onChange={(techStack) => setFormData((prev) => ({ ...prev, techStack }))}
+      />
+
+      <AdminTagsInput
+        label="Metadata Tags & Keywords"
         placeholder="Add tag (e.g. 4K Master, DCI-P3, HDR, 60s TVC)..."
         tags={(formData.tags as string[]) || []}
         onChange={(tags) => setFormData((prev) => ({ ...prev, tags }))}

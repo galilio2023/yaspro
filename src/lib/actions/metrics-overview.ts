@@ -31,11 +31,38 @@ export async function getCmsOverviewStats() {
           db.select({ id: projects.id }).from(projects),
           db.select({ id: influencers.id }).from(influencers),
           db.select({ id: equipment.id }).from(equipment),
-          db.select({ id: bookings.id, status: bookings.status }).from(bookings),
-          db.select({ id: inquiries.id, isResolved: inquiries.isResolved }).from(inquiries),
+          db
+            .select({
+              id: bookings.id,
+              status: bookings.status,
+              referenceCode: bookings.referenceCode,
+              totalAmount: bookings.totalAmount,
+              paymentStatus: bookings.paymentStatus,
+            })
+            .from(bookings),
+          db
+            .select({
+              id: inquiries.id,
+              inquiryType: inquiries.inquiryType,
+              message: inquiries.message,
+              isResolved: inquiries.isResolved,
+            })
+            .from(inquiries),
           db.select({ id: users.id, role: users.role }).from(users),
           db.select({ id: studios.id, isActive: studios.isActive }).from(studios),
         ]);
+
+      const totalBookedRevenue = Math.round(
+        allBookings
+          .filter((b) => b.status !== "cancelled")
+          .reduce((acc, curr) => acc + (parseFloat(curr.totalAmount) || 0), 0)
+      );
+      const paidRevenue = Math.round(
+        allBookings
+          // Captured deposit amounts are not stored on bookings.
+          .filter((b) => b.paymentStatus === "paid")
+          .reduce((acc, curr) => acc + (parseFloat(curr.totalAmount) || 0), 0)
+      );
 
       return {
         status: "available" as const,
@@ -44,8 +71,16 @@ export async function getCmsOverviewStats() {
         totalGear: allGear.length || GEAR_DATA.length,
         totalBookings: allBookings.length,
         pendingBookings: allBookings.filter((b) => b.status === "pending").length,
+        offerBookings: allBookings.filter((b) => b.referenceCode?.startsWith("YAS-OFR")).length,
+        podcastBookings: allBookings.filter((b) => b.referenceCode?.startsWith("POD-")).length,
         totalInquiries: allInquiries.length,
         pendingInquiries: allInquiries.filter((i) => !i.isResolved).length,
+        retainerLeads: allInquiries.filter((i) => i.message?.includes("[Social Media Package Subscription Request]")).length,
+        broadcastLeads: allInquiries.filter(
+          (i) => i.inquiryType === "ob_van" || i.inquiryType === "live_broadcast" || i.message?.includes("[OB-VAN")
+        ).length,
+        totalBookedRevenue,
+        paidRevenue,
         totalUsers: allUsers.length,
         clientUsers: allUsers.filter((u) => u.role === "client").length,
         adminUsers: allUsers.filter((u) => u.role === "admin").length,
@@ -66,8 +101,14 @@ export async function getCmsOverviewStats() {
       totalGear: GEAR_DATA.length,
       totalBookings: 0,
       pendingBookings: 0,
+      offerBookings: 0,
+      podcastBookings: 0,
       totalInquiries: 0,
       pendingInquiries: 0,
+      retainerLeads: 0,
+      broadcastLeads: 0,
+      totalBookedRevenue: 0,
+      paidRevenue: 0,
       totalUsers: 0,
       clientUsers: 0,
       adminUsers: 0,
@@ -84,8 +125,14 @@ export async function getCmsOverviewStats() {
     totalGear: GEAR_DATA.length,
     totalBookings: 12,
     pendingBookings: 3,
+    offerBookings: 4,
+    podcastBookings: 6,
     totalInquiries: 14,
     pendingInquiries: 4,
+    retainerLeads: 3,
+    broadcastLeads: 2,
+    totalBookedRevenue: 68500,
+    paidRevenue: 42000,
     totalUsers: 24,
     clientUsers: 21,
     adminUsers: 3,
