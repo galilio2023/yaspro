@@ -2,12 +2,13 @@ import "server-only";
 
 import type { AppliedOffersPromo } from "./types";
 
-interface OffersPromoRule {
+export interface OffersPromoRule {
   discountPercent?: number;
   discountAmount?: number;
   eligibleOfferIds?: string[];
   expiresAt?: string;
   maxUses?: number;
+  isActive?: boolean;
 }
 
 // These existing codes have no configured expiry or redemption cap. Add policies
@@ -24,9 +25,13 @@ export async function resolveOffersPromo(
   code: string,
   offerId: string,
   readUsage: (code: string) => Promise<number>,
+  readDbRule?: (code: string) => Promise<OffersPromoRule | null>,
 ): Promise<AppliedOffersPromo> {
   const cleanCode = code.trim().toUpperCase();
-  const rule = Object.hasOwn(OFFERS_PROMO_CODES, cleanCode) ? OFFERS_PROMO_CODES[cleanCode] : undefined;
+  // Admin-managed (database) rules take precedence; static codes remain the fallback.
+  const dbRule = readDbRule ? await readDbRule(cleanCode) : null;
+  if (dbRule && dbRule.isActive === false) throw new OffersPromoError("Invalid promotional code.");
+  const rule = dbRule ?? (Object.hasOwn(OFFERS_PROMO_CODES, cleanCode) ? OFFERS_PROMO_CODES[cleanCode] : undefined);
   if (!rule) throw new OffersPromoError("Invalid promotional code.");
   if (rule.eligibleOfferIds && !rule.eligibleOfferIds.includes(offerId)) {
     throw new OffersPromoError("This promotional code is not available for the selected offer.");

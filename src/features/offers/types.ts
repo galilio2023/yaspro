@@ -29,6 +29,7 @@ export interface OfferBundleItem {
   };
   restrictionNoteEn?: string;
   restrictionNoteAr?: string;
+  isActive?: boolean;
 }
 
 export interface OffersBookingContact {

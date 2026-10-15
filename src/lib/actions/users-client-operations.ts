@@ -10,6 +10,7 @@ import {
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { randomUUID } from "node:crypto";
 import { isDbAvailable, requireAdmin, type CmsResponse } from "./shared";
 
 
@@ -106,8 +107,82 @@ export async function updateUserRole(userId: string, role: "admin" | "client" | 
 }
 
 /**
- * Updates a user's profile details with an explicit allowlist of safe fields.
+ * Updates a user's profile details with an explicit allowlist of safe fields
+ * (name, phone, company). Email and role are intentionally not editable here.
+ *
+ * @param userId - ID of the user record.
+ * @param data - Profile fields to update.
+ * @returns CMS response confirming update.
+ */
+export async function updateCmsUserProfile(
+  userId: string,
+  data: { name: string; phone?: string | null; company?: string | null }
+): Promise<CmsResponse> {
+  try {
+    await requireAdmin();
+    const name = data.name?.trim();
+    if (!name) return { success: false, error: "Name cannot be empty." };
+    if (isDbAvailable()) {
+      await db.update(users).set({
+        name,
+        phone: data.phone?.trim() || null,
+        company: data.company?.trim() || null,
+        updatedAt: new Date(),
+      }).where(eq(users.id, userId));
+    }
+    revalidatePath("/admin/users");
+    return { success: true, message: "User profile updated." };
+  } catch (error) {
+    console.error("updateCmsUserProfile error:", error);
+    return { success: false, error: "Failed to update user profile." };
+  }
+}
 
+/**
+ * Provisions a verified client account with a credential login.
+ * Uses Better Auth's password hashing so the user can sign in immediately.
+ */
+export async function createCmsUser(data: {
+  name: string;
+  email: string;
+  password: string;
+  role: "client" | "enterprise" | "admin";
+  phone?: string;
+  company?: string;
+}): Promise<CmsResponse> {
+  try {
+    await requireAdmin();
+    const name = data.name?.trim();
+    const email = data.email?.trim().toLowerCase();
+    if (!name) return { success: false, error: "Name is required." };
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email ?? "")) return { success: false, error: "A valid email is required." };
+    if (!data.password || data.password.length < 8) return { success: false, error: "Password must be at least 8 characters." };
+    if (!["client", "enterprise", "admin"].includes(data.role)) return { success: false, error: "Invalid role specified." };
+    if (!isDbAvailable()) return { success: true, message: "User created in preview mode." };
+
+    const [existing] = await db.select({ id: users.id }).from(users).where(eq(users.email, email)).limit(1);
+    if (existing) return { success: false, error: "A user with this email already exists." };
+
+    const { hashPassword } = await import("better-auth/crypto");
+    const id = randomUUID();
+    const passwordHash = await hashPassword(data.password);
+    await db.transaction(async (tx) => {
+      await tx.insert(users).values({
+        id, name, email, role: data.role, emailVerified: true,
+        phone: data.phone?.trim() || null, company: data.company?.trim() || null,
+      });
+      await tx.insert(accounts).values({
+        id: randomUUID(), accountId: id, providerId: "credential", userId: id, password: passwordHash,
+      });
+    });
+    revalidatePath("/admin/users");
+    revalidatePath("/admin");
+    return { success: true, message: "User account created." };
+  } catch (error) {
+    console.error("createCmsUser error:", error);
+    return { success: false, error: "Failed to create user account." };
+  }
+}
 /**
  * Deletes a user record from the database safely.
  * Unlinks historical bookings and RFPs so audit records are preserved,

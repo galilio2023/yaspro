@@ -8,6 +8,7 @@ import { createZiinaPaymentIntent } from "@/lib/ziina";
 import { OFFERS_AND_BUNDLES, STANDARD_TIME_SLOTS } from "./data";
 import { randomUUID } from "node:crypto";
 import { OffersPromoError, resolveOffersPromo } from "./promo-codes";
+import { readDbPromoRule } from "./promo-db";
 import { getOffersDiscount } from "./pricing";
 import type { AppliedOffersPromo } from "./types";
 import { z } from "zod";
@@ -111,7 +112,7 @@ export async function submitOffersBooking(input: OffersBookingInput): Promise<Of
         const code = validated.promoCode.trim().toUpperCase();
         await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${`offers-promo:${code}`}))`);
         promo = await resolveOffersPromo(code, offer.id,
-          (promoCode) => tx.$count(bookings, eq(bookings.promoCode, promoCode)));
+          (promoCode) => tx.$count(bookings, eq(bookings.promoCode, promoCode)), readDbPromoRule);
       }
       const discount = getOffersDiscount(offer.price, promo);
       const subtotal = Math.max(0, offer.price - discount);
@@ -193,7 +194,7 @@ export async function validateOffersPromoCode(code: string, offerId: string): Pr
       return { success: false, message: "The selected offer or bundle is invalid." };
     }
     const promo = await resolveOffersPromo(input.code, input.offerId,
-      (promoCode) => db.$count(bookings, eq(bookings.promoCode, promoCode)));
+      (promoCode) => db.$count(bookings, eq(bookings.promoCode, promoCode)), readDbPromoRule);
     return { success: true, promo };
   } catch (error) {
     return { success: false, message: error instanceof OffersPromoError ? error.message : "Unable to validate promotional code. Please try again." };

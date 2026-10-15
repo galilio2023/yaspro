@@ -3,27 +3,47 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Sparkles,
   Tag,
   CheckCircle2,
   Clock,
   ExternalLink,
-  ShieldAlert,
   Percent,
   CalendarCheck,
   Layers,
   ArrowRight,
+  Plus,
+  Edit3,
+  Trash2,
 } from "lucide-react";
 import { OFFERS_AND_BUNDLES } from "@/features/offers/data";
 import type { OfferBundleItem } from "@/features/offers/types";
 import type { EnrichedBooking } from "@/lib/actions/bookings-rfp-operations";
+import {
+  upsertCmsPromoCode,
+  togglePromoCodeStatus,
+  deleteCmsPromoCode,
+  type CmsPromoCode,
+  type PromoCodeInput,
+} from "@/lib/actions/offers-promo-operations";
+import {
+  upsertCmsOffer,
+  toggleOfferStatus,
+  deleteCmsOffer,
+  type CmsOfferInput,
+  type CmsOfferItem,
+} from "@/lib/actions/offers-packages-operations";
 import { formatCurrency } from "@/lib/utils";
 import {
   AdminPageHeader,
   AdminStatsGrid,
   AdminFilterBar,
+  AdminConfirmModal,
 } from "@/components/admin";
+import { PromoCodeFormModal } from "@/components/admin/forms/PromoCodeFormModal";
+import { OfferFormModal } from "@/components/admin/forms/OfferFormModal";
 import {
   DataTable,
   DataTableHeader,
@@ -31,30 +51,169 @@ import {
   DataTableRow,
   DataTableEmpty,
 } from "@/components/ui/data-table";
+import { PaginationControls } from "@/components/ui/pagination-controls";
+
+export interface OffersManagerPromoItem extends Partial<CmsPromoCode> {
+  code: string;
+  discount?: string;
+  type?: string;
+  eligibility?: string;
+}
 
 interface OffersManagerProps {
   initialBookings?: EnrichedBooking[];
-  promoCodes: { code: string; discount: string; type: string; eligibility: string }[];
+  promoCodes: OffersManagerPromoItem[];
+  initialOffers?: (OfferBundleItem | CmsOfferItem)[];
 }
 
-export function OffersManager({ initialBookings = [], promoCodes }: OffersManagerProps) {
+export function OffersManager({
+  initialBookings = [],
+  promoCodes,
+  initialOffers,
+}: OffersManagerProps) {
+  const router = useRouter();
+  const promoList = promoCodes;
+  const [packageList, setPackageList] = useState<(OfferBundleItem | CmsOfferItem)[]>(
+    initialOffers && initialOffers.length > 0 ? initialOffers : OFFERS_AND_BUNDLES
+  );
+  const [prevOffers, setPrevOffers] = useState(initialOffers);
+  if (initialOffers && prevOffers !== initialOffers) {
+    setPrevOffers(initialOffers);
+    setPackageList(initialOffers);
+  }
+
   const [activeTab, setActiveTab] = useState<"catalog" | "promos" | "bookings">("catalog");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<"all" | "bundle" | "offer">("all");
+
+  // Promo Engine state
+  const [promoEditing, setPromoEditing] = useState<Partial<PromoCodeInput> | null>(null);
+  const [promoDeleting, setPromoDeleting] = useState<OffersManagerPromoItem | null>(null);
+  const [promoBusy, setPromoBusy] = useState(false);
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [promoFeedback, setPromoFeedback] = useState<string | null>(null);
+
+  // Package Catalog state
+  const [offerEditing, setOfferEditing] = useState<Partial<CmsOfferInput> | null>(null);
+  const [offerDeleting, setOfferDeleting] = useState<(OfferBundleItem | CmsOfferItem) | null>(null);
+  const [offerBusy, setOfferBusy] = useState(false);
+  const [offerError, setOfferError] = useState<string | null>(null);
+  const [offerFeedback, setOfferFeedback] = useState<string | null>(null);
+
+  const [now] = useState(() => Date.now());
+
+  const handleOfferSave = async (offer: CmsOfferInput): Promise<boolean> => {
+    setOfferBusy(true);
+    setOfferError(null);
+    try {
+      const res = await upsertCmsOffer(offer);
+      if (!res.success) {
+        setOfferError(res.error || "Failed to save package.");
+        return false;
+      }
+      setOfferFeedback(res.message || "Package saved.");
+      setOfferEditing(null);
+      router.refresh();
+      return true;
+    } catch (err) {
+      setOfferError(err instanceof Error ? err.message : "Failed to save package.");
+      return false;
+    } finally {
+      setOfferBusy(false);
+    }
+  };
+
+  const handleOfferToggle = async (pkg: OfferBundleItem | CmsOfferItem) => {
+    setOfferBusy(true);
+    try {
+      const newActive = pkg.isActive === false;
+      const res = await toggleOfferStatus(pkg.id, newActive);
+      setOfferFeedback(res.success ? res.message || "Updated." : res.error || "Update failed.");
+      if (res.success) {
+        setPackageList((prev) =>
+          prev.map((item) => (item.id === pkg.id ? { ...item, isActive: newActive } : item))
+        );
+        router.refresh();
+      }
+    } finally {
+      setOfferBusy(false);
+    }
+  };
+
+  const handleOfferDelete = async () => {
+    if (!offerDeleting) return;
+    setOfferBusy(true);
+    try {
+      const res = await deleteCmsOffer(offerDeleting.id);
+      setOfferFeedback(res.success ? res.message || "Deleted." : res.error || "Delete failed.");
+      if (res.success) {
+        setPackageList((prev) => prev.filter((item) => item.id !== offerDeleting.id));
+        router.refresh();
+      }
+    } finally {
+      setOfferBusy(false);
+      setOfferDeleting(null);
+    }
+  };
+
+  const handlePromoSave = async (promo: PromoCodeInput): Promise<boolean> => {
+    setPromoBusy(true);
+    setPromoError(null);
+    try {
+      const res = await upsertCmsPromoCode(promo);
+      if (!res.success) {
+        setPromoError(res.error || "Failed to save promo code.");
+        return false;
+      }
+      setPromoFeedback(res.message || "Promo code saved.");
+      setPromoEditing(null);
+      router.refresh();
+      return true;
+    } catch (err) {
+      setPromoError(err instanceof Error ? err.message : "Failed to save promo code.");
+      return false;
+    } finally {
+      setPromoBusy(false);
+    }
+  };
+
+  const handlePromoToggle = async (promo: OffersManagerPromoItem) => {
+    if (!promo.id) return;
+    const res = await togglePromoCodeStatus(promo.id, !promo.isActive);
+    setPromoFeedback(res.success ? res.message || "Updated." : res.error || "Update failed.");
+    if (res.success) router.refresh();
+  };
+
+  const handlePromoDelete = async () => {
+    if (!promoDeleting?.id) return;
+    setPromoBusy(true);
+    try {
+      const res = await deleteCmsPromoCode(promoDeleting.id);
+      setPromoFeedback(res.success ? res.message || "Deleted." : res.error || "Delete failed.");
+      if (res.success) router.refresh();
+    } finally {
+      setPromoBusy(false);
+      setPromoDeleting(null);
+    }
+  };
 
   const offerBookings = initialBookings.filter(
     (b) => b.referenceCode.startsWith("YAS-OFR")
   );
 
-  const filteredPackages = OFFERS_AND_BUNDLES.filter((pkg) => {
+  const [catalogPage, setCatalogPage] = useState(0);
+  const [promoPage, setPromoPage] = useState(0);
+  const pageSize = 6;
+
+  const filteredPackages = packageList.filter((pkg) => {
     const q = searchQuery.toLowerCase().trim();
     const matchesSearch =
       !q ||
       pkg.name.toLowerCase().includes(q) ||
       pkg.nameAr.toLowerCase().includes(q) ||
-      pkg.tagline.toLowerCase().includes(q) ||
-      pkg.description.toLowerCase().includes(q) ||
-      pkg.features.some((f) => f.toLowerCase().includes(q));
+      (pkg.tagline && pkg.tagline.toLowerCase().includes(q)) ||
+      (pkg.description && pkg.description.toLowerCase().includes(q)) ||
+      (Array.isArray(pkg.features) && pkg.features.some((f) => f.toLowerCase().includes(q)));
 
     const matchesCategory =
       categoryFilter === "all" || pkg.category === categoryFilter;
@@ -62,12 +221,23 @@ export function OffersManager({ initialBookings = [], promoCodes }: OffersManage
     return matchesSearch && matchesCategory;
   });
 
-  const totalBundles = OFFERS_AND_BUNDLES.filter((p) => p.category === "bundle").length;
-  const totalSpecialOffers = OFFERS_AND_BUNDLES.filter((p) => p.category === "offer").length;
-  const avgPackagePrice = Math.round(
-    OFFERS_AND_BUNDLES.reduce((acc, curr) => acc + curr.price, 0) /
-      OFFERS_AND_BUNDLES.length
-  );
+  const catalogTotal = filteredPackages.length;
+  const catalogPageCount = Math.ceil(catalogTotal / pageSize) || 1;
+  const safeCatalogPage = Math.min(catalogPage, Math.max(0, catalogPageCount - 1));
+  const catalogStartIndex = safeCatalogPage * pageSize;
+  const catalogEndIndex = Math.min(catalogStartIndex + pageSize, catalogTotal);
+  const paginatedPackages = filteredPackages.slice(catalogStartIndex, catalogEndIndex);
+
+  const promoTotal = promoList.length;
+  const promoPageCount = Math.ceil(promoTotal / pageSize) || 1;
+  const safePromoPage = Math.min(promoPage, Math.max(0, promoPageCount - 1));
+  const promoStartIndex = safePromoPage * pageSize;
+  const promoEndIndex = Math.min(promoStartIndex + pageSize, promoTotal);
+  const paginatedPromos = promoList.slice(promoStartIndex, promoEndIndex);
+
+  const totalBundles = packageList.filter((p) => p.category === "bundle").length;
+  const totalSpecialOffers = packageList.filter((p) => p.category === "offer").length;
+
 
   return (
     <div className="space-y-6">
@@ -96,7 +266,7 @@ export function OffersManager({ initialBookings = [], promoCodes }: OffersManage
         stats={[
           {
             label: "Active Packages",
-            value: OFFERS_AND_BUNDLES.length,
+            value: packageList.length,
             unit: "Bundles",
             icon: Sparkles,
             variant: "brand",
@@ -128,7 +298,7 @@ export function OffersManager({ initialBookings = [], promoCodes }: OffersManage
       {/* Navigation Tabs */}
       <div className="flex items-center gap-2 border-b border-white/10 pb-3">
         {[
-          { id: "catalog", label: "Package Catalog", count: OFFERS_AND_BUNDLES.length },
+          { id: "catalog", label: "Package Catalog", count: packageList.length },
           { id: "promos", label: "Promo Codes & Discounts", count: promoCodes.length },
           { id: "bookings", label: "Offer Bookings Log", count: offerBookings.length },
         ].map((tab) => (
@@ -153,6 +323,32 @@ export function OffersManager({ initialBookings = [], promoCodes }: OffersManage
       {/* TAB 1: Package Catalog */}
       {activeTab === "catalog" && (
         <div className="space-y-5">
+          <div className="p-5 rounded-2xl bg-brand-violet/15 border border-brand-mauve/20 backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Sparkles size={15} className="text-brand-mauve" />
+                <span>Turnkey Packages & Soundstage Lockouts</span>
+              </h3>
+              <p className="text-xs text-slate-400 mt-1 max-w-2xl leading-relaxed">
+                Manage bundle pricing in AED, session duration, included deliverables, marketing badges, and scheduling restrictions. Any changes update the live checkout wizard immediately.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setOfferError(null); setOfferEditing({}); }}
+              className="px-4 py-2.5 rounded-xl btn-brand text-xs flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+            >
+              <Plus size={16} />
+              <span>New Package</span>
+            </button>
+          </div>
+
+          {offerFeedback && (
+            <div role="status" className="p-3 rounded-xl bg-brand-violet/15 border border-brand-mauve/20 text-xs text-brand-lavender">
+              {offerFeedback}
+            </div>
+          )}
+
           <AdminFilterBar
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -160,14 +356,14 @@ export function OffersManager({ initialBookings = [], promoCodes }: OffersManage
             filterValue={categoryFilter}
             onFilterChange={(v) => setCategoryFilter(v as typeof categoryFilter)}
             filterOptions={[
-              { id: "all", label: "All Packages", count: OFFERS_AND_BUNDLES.length },
+              { id: "all", label: "All Packages", count: packageList.length },
               { id: "bundle", label: "Production Bundles", count: totalBundles },
               { id: "offer", label: "Creator & Special Offers", count: totalSpecialOffers },
             ]}
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredPackages.map((pkg) => (
+            {paginatedPackages.map((pkg) => (
               <div
                 key={pkg.id}
                 className="rounded-3xl border border-white/10 bg-slate-900/60 backdrop-blur-xl overflow-hidden flex flex-col justify-between hover:border-brand-mauve/30 transition-all shadow-xl group"
@@ -191,6 +387,15 @@ export function OffersManager({ initialBookings = [], promoCodes }: OffersManage
                           {pkg.badge}
                         </span>
                       )}
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase border ${
+                          pkg.isActive === false
+                            ? "bg-rose-500/15 border-rose-500/30 text-rose-300"
+                            : "bg-emerald-500/15 border-emerald-500/30 text-emerald-400"
+                        }`}
+                      >
+                        {pkg.isActive === false ? "Disabled" : "Active"}
+                      </span>
                     </div>
                     {pkg.savings && (
                       <div className="absolute bottom-3 end-3 px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
@@ -241,8 +446,8 @@ export function OffersManager({ initialBookings = [], promoCodes }: OffersManage
                   </div>
                 </div>
 
-                {/* Footer Pricing & CTA */}
-                <div className="p-5 pt-3 border-t border-white/10 flex items-center justify-between bg-black/20">
+                {/* Footer Pricing & Actions */}
+                <div className="p-5 pt-3 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-black/20">
                   <div>
                     <div className="flex items-baseline gap-2">
                       <span className="text-lg font-bold font-mono text-white">
@@ -259,64 +464,268 @@ export function OffersManager({ initialBookings = [], promoCodes }: OffersManage
                     </span>
                   </div>
 
-                  <Link
-                    href={`/offers?pkg=${pkg.id}`}
-                    target="_blank"
-                    className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 text-xs font-semibold text-white transition-colors flex items-center gap-1.5"
-                  >
-                    <span>Test Wizard</span>
-                    <ArrowRight size={13} />
-                  </Link>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOfferError(null);
+                        setOfferEditing({
+                          id: pkg.id,
+                          category: pkg.category,
+                          name: pkg.name,
+                          nameAr: pkg.nameAr,
+                          tagline: pkg.tagline,
+                          taglineAr: pkg.taglineAr,
+                          description: pkg.description,
+                          descriptionAr: pkg.descriptionAr,
+                          price: pkg.price,
+                          originalPrice: pkg.originalPrice,
+                          savings: pkg.savings,
+                          savingsAr: pkg.savingsAr,
+                          hours: pkg.hours,
+                          badge: pkg.badge,
+                          badgeAr: pkg.badgeAr,
+                          image: pkg.image,
+                          features: pkg.features,
+                          featuresAr: pkg.featuresAr,
+                          restrictedDays: pkg.restrictedDays,
+                          restrictionNoteEn: pkg.restrictionNoteEn,
+                          restrictionNoteAr: pkg.restrictionNoteAr,
+                          isActive: pkg.isActive !== false,
+                        });
+                      }}
+                      className="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-200 flex items-center gap-1 cursor-pointer transition-colors"
+                      title="Edit package"
+                      aria-label={`Edit package ${pkg.name}`}
+                    >
+                      <Edit3 size={12} />
+                      <span>Edit</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleOfferToggle(pkg)}
+                      className="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-200 cursor-pointer transition-colors"
+                      title={pkg.isActive === false ? "Enable package" : "Pause package"}
+                    >
+                      {pkg.isActive === false ? "Enable" : "Pause"}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setOfferDeleting(pkg)}
+                      className="p-1.5 rounded-xl text-rose-400 hover:bg-rose-500/10 cursor-pointer transition-colors"
+                      aria-label={`Delete package ${pkg.name}`}
+                      title="Delete package"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+
+                    <Link
+                      href={`/offers?pkg=${pkg.id}`}
+                      target="_blank"
+                      className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 text-xs font-semibold text-white transition-colors flex items-center gap-1"
+                      title="Open and test in client booking wizard"
+                    >
+                      <span>Test Wizard</span>
+                      <ArrowRight size={12} />
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
+
+          <PaginationControls
+            currentPage={safeCatalogPage}
+            pageCount={catalogPageCount}
+            total={catalogTotal}
+            startIndex={catalogStartIndex}
+            endIndex={catalogEndIndex}
+            onPrev={() => setCatalogPage((p) => Math.max(0, p - 1))}
+            onNext={() => setCatalogPage((p) => Math.min(catalogPageCount - 1, p + 1))}
+            variant="card"
+          />
+
+          <OfferFormModal
+            isOpen={offerEditing !== null}
+            onClose={() => setOfferEditing(null)}
+            onSave={handleOfferSave}
+            initialOffer={offerEditing}
+            isSubmitting={offerBusy}
+            error={offerError}
+          />
+          <AdminConfirmModal
+            isOpen={offerDeleting !== null}
+            onClose={() => setOfferDeleting(null)}
+            onConfirm={handleOfferDelete}
+            title="Delete package?"
+            message={`Permanently remove "${offerDeleting?.name}"? You can also Pause it instead to hide it without deleting.`}
+            confirmLabel="Delete Package"
+            isSubmitting={offerBusy}
+          />
         </div>
       )}
 
       {/* TAB 2: Promo Codes */}
       {activeTab === "promos" && (
         <div className="space-y-4">
-          <div className="p-5 rounded-2xl bg-brand-violet/15 border border-brand-mauve/20 backdrop-blur-xl flex items-center justify-between">
+          <div className="p-5 rounded-2xl bg-brand-violet/15 border border-brand-mauve/20 backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <Percent size={15} className="text-brand-mauve" />
-                <span>Cryptographic &amp; Transactional Promo Engine</span>
+                <span>Promo Code Engine</span>
               </h3>
               <p className="text-xs text-slate-400 mt-1 max-w-2xl leading-relaxed">
-                Promo codes in Yas Pro are validated server-side in <code>promo-codes.ts</code> using advisory locks to prevent concurrent race-condition redemptions.
+                Database codes take effect instantly at checkout and override same-name built-in codes. Built-in codes
+                can be overridden or disabled by saving them as a database promo.
               </p>
             </div>
+            <button
+              type="button"
+              onClick={() => { setPromoError(null); setPromoEditing({}); }}
+              className="px-4 py-2.5 rounded-xl btn-brand text-xs flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+            >
+              <Plus size={16} />
+              <span>New Promo Code</span>
+            </button>
           </div>
 
+          {promoFeedback && (
+            <div role="status" className="p-3 rounded-xl bg-brand-violet/15 border border-brand-mauve/20 text-xs text-brand-lavender">
+              {promoFeedback}
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {promoCodes.map((promo) => (
-              <div
-                key={promo.code}
-                className="p-5 rounded-2xl bg-slate-900/60 border border-white/10 space-y-3"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="px-3 py-1 rounded-xl bg-brand-mauve/20 border border-brand-mauve/40 text-brand-mauve font-mono font-bold text-sm">
-                    {promo.code}
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold uppercase">
-                    Active
-                  </span>
+                {paginatedPromos.map((promo) => {
+                  const expired = promo.expiresAt ? new Date(promo.expiresAt).getTime() < now : false;
+                  const eligibility =
+                    promo.eligibility ||
+                    (promo.eligibleOfferIds?.length
+                      ? promo.eligibleOfferIds
+                          .map((id) => OFFERS_AND_BUNDLES.find((o) => o.id === id)?.name || id)
+                          .join(", ")
+                      : "All valid offers & bundles");
+                  const displayDiscount =
+                    promo.discount ||
+                    (promo.discountPercent != null
+                      ? `${promo.discountPercent}% OFF`
+                      : `${formatCurrency(Number(promo.discountAmount || 0))} OFF`);
+                  const displayLabel =
+                    promo.label || promo.type || (promo.source === "static" ? "Built-in code" : "Promo");
+                  const isActive = promo.isActive ?? true;
+
+                  return (
+                    <div
+                      key={promo.id || promo.code}
+                      className="p-5 rounded-2xl bg-slate-900/60 border border-white/10 space-y-3"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="px-3 py-1 rounded-xl bg-brand-mauve/20 border border-brand-mauve/40 text-brand-mauve font-mono font-bold text-sm">
+                          {promo.code}
+                        </span>
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase border ${
+                            !isActive || expired
+                              ? "bg-rose-500/15 border-rose-500/30 text-rose-300"
+                              : "bg-emerald-500/15 border-emerald-500/30 text-emerald-400"
+                          }`}
+                        >
+                          {!isActive ? "Disabled" : expired ? "Expired" : "Active"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-xl font-bold font-mono text-white block">
+                          {displayDiscount}
+                        </span>
+                        <span className="text-xs font-semibold text-slate-300 block mt-0.5">
+                          {displayLabel}
+                        </span>
+                        <p className="text-[11px] text-slate-400 mt-1">{eligibility}</p>
+                        <p className="text-[11px] text-slate-500 mt-1 font-mono">
+                          Used {promo.usageCount ?? 0}
+                          {promo.maxUses ? ` / ${promo.maxUses}` : ""}
+                          {promo.expiresAt
+                            ? ` · Expires ${new Date(promo.expiresAt).toLocaleDateString("en-GB")}`
+                            : ""}
+                        </p>
+                      </div>
+                  <div className="flex items-center gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPromoError(null);
+                        setPromoEditing({
+                          id: promo.id,
+                          code: promo.code,
+                          label: promo.label ?? undefined,
+                          discountPercent: promo.discountPercent,
+                          discountAmount: promo.discountAmount,
+                          eligibleOfferIds: promo.eligibleOfferIds,
+                          expiresAt: promo.expiresAt ? new Date(promo.expiresAt).toISOString() : null,
+                          maxUses: promo.maxUses,
+                          isActive: promo.isActive,
+                        });
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-200 flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Edit3 size={12} /> Edit
+                    </button>
+                    {promo.source === "database" && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => handlePromoToggle(promo)}
+                          className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-200 cursor-pointer"
+                        >
+                          {promo.isActive ? "Disable" : "Enable"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setPromoDeleting(promo)}
+                          aria-label={`Delete promo ${promo.code}`}
+                          className="ms-auto p-1.5 rounded-lg text-rose-400 hover:bg-rose-500/10 cursor-pointer"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <span className="text-xl font-bold font-mono text-white block">
-                    {promo.discount}
-                  </span>
-                  <span className="text-xs font-semibold text-slate-300 block mt-0.5">
-                    {promo.type}
-                  </span>
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    {promo.eligibility}
-                  </p>
-                </div>
-              </div>
-            ))}
+                );
+              })}
           </div>
+
+          <PaginationControls
+            currentPage={safePromoPage}
+            pageCount={promoPageCount}
+            total={promoTotal}
+            startIndex={promoStartIndex}
+            endIndex={promoEndIndex}
+            onPrev={() => setPromoPage((p) => Math.max(0, p - 1))}
+            onNext={() => setPromoPage((p) => Math.min(promoPageCount - 1, p + 1))}
+            variant="card"
+          />
+
+          <PromoCodeFormModal
+            isOpen={promoEditing !== null}
+            onClose={() => setPromoEditing(null)}
+            onSave={handlePromoSave}
+            initialPromo={promoEditing}
+            offerOptions={OFFERS_AND_BUNDLES.map((o) => ({ id: o.id, name: o.name }))}
+            isSubmitting={promoBusy}
+            error={promoError}
+          />
+          <AdminConfirmModal
+            isOpen={promoDeleting !== null}
+            onClose={() => setPromoDeleting(null)}
+            onConfirm={handlePromoDelete}
+            title="Delete promo code?"
+            message={`"${promoDeleting?.code}" will stop working at checkout. Existing bookings keep their recorded code.`}
+            confirmLabel="Delete"
+            isSubmitting={promoBusy}
+          />
         </div>
       )}
 

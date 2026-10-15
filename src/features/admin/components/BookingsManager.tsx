@@ -1,23 +1,33 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   CalendarCheck,
   FileText,
   Clock,
   CheckCircle2,
   DollarSign,
+  Plus,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import {
   updateBookingStatus,
   updateBookingPaymentStatus,
+  createCmsBooking,
+  updateCmsBookingDetails,
+  deleteCmsBooking,
+  type CmsBookingInput,
   type EnrichedBooking,
 } from "@/lib/actions/bookings-rfp-operations";
 import {
   AdminPageHeader,
   AdminStatsGrid,
   AdminFilterBar,
+  AdminConfirmModal,
 } from "@/components/admin";
+import { BookingFormModal } from "@/components/admin/forms/BookingFormModal";
 import {
   DataTable,
   DataTableHeader,
@@ -32,16 +42,69 @@ import { BookingCallSheetModal } from "./BookingCallSheetModal";
 
 interface BookingsManagerProps {
   initialBookings: EnrichedBooking[];
+  studios?: { id: string; name: string }[];
 }
 
-export function BookingsManager({ initialBookings }: BookingsManagerProps) {
+export function BookingsManager({ initialBookings, studios = [] }: BookingsManagerProps) {
+  const router = useRouter();
   const [bookingList, setBookingList] = useState<EnrichedBooking[]>(initialBookings);
+  const [prevInitial, setPrevInitial] = useState(initialBookings);
+  // Re-sync local rows whenever the server re-renders with fresh data (after create/edit/delete).
+  if (prevInitial !== initialBookings) {
+    setPrevInitial(initialBookings);
+    setBookingList(initialBookings);
+  }
   const [updatingIds, setUpdatingIds] = useState<Set<string>>(new Set());
   const [callSheetBookingId, setCallSheetBookingId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [formBooking, setFormBooking] = useState<Partial<CmsBookingInput> | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [bookingToDelete, setBookingToDelete] = useState<EnrichedBooking | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3000);
+
+  const handleSaveBooking = async (input: CmsBookingInput): Promise<boolean> => {
+    setIsSaving(true);
+    setFormError(null);
+    try {
+      const res = input.id ? await updateCmsBookingDetails(input.id, input) : await createCmsBooking(input);
+      if (!res.success) {
+        setFormError(res.error || "Failed to save booking.");
+        return false;
+      }
+      showFeedback(res.message || "Booking saved.");
+      setFormBooking(null);
+      router.refresh();
+      return true;
+    } catch (err) {
+      setFormError((err as Error).message || "Failed to save booking.");
+      return false;
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDeleteBooking = async () => {
+    if (!bookingToDelete) return;
+    setIsSaving(true);
+    try {
+      const res = await deleteCmsBooking(bookingToDelete.id);
+      if (res.success) {
+        setBookingList((prev) => prev.filter((b) => b.id !== bookingToDelete.id));
+        showFeedback(res.message || "Booking deleted.");
+        router.refresh();
+      } else {
+        setErrorMessage(res.error || "Failed to delete booking.");
+      }
+    } catch (err) {
+      setErrorMessage((err as Error).message || "Failed to delete booking.");
+    } finally {
+      setIsSaving(false);
+      setBookingToDelete(null);
+    }
+  };
 
   const filter = useAdminFilter<
     EnrichedBooking,
@@ -147,6 +210,16 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         icon={CalendarCheck}
         feedback={feedback}
         onDismissFeedback={clearFeedback}
+        actions={
+          <button
+            type="button"
+            onClick={() => { setFormError(null); setFormBooking({}); }}
+            className="px-4 py-2.5 rounded-xl btn-brand text-xs flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+          >
+            <Plus size={16} />
+            <span>New Booking</span>
+          </button>
+        }
       />
 
       {errorMessage && (
@@ -374,17 +447,49 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                     </select>
                   </td>
                   <td className="py-3 px-4 text-end">
-                    <button
-                      type="button"
-                      ref={triggerRef}
-                      onClick={() => setCallSheetBookingId(b.id)}
-                      className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-brand-lavender text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ms-auto"
-                      title="Generate Call Sheet"
-                      aria-label={`Generate call sheet for booking ${b.referenceCode}`}
-                    >
-                      <FileText size={14} />
-                      <span>Call Sheet</span>
-                    </button>
+                    <div className="flex items-center justify-end gap-1.5">
+                      <button
+                        type="button"
+                        ref={triggerRef}
+                        onClick={() => setCallSheetBookingId(b.id)}
+                        className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-brand-lavender text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                        title="Generate Call Sheet"
+                        aria-label={`Generate call sheet for booking ${b.referenceCode}`}
+                      >
+                        <FileText size={14} />
+                        <span>Call Sheet</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormError(null);
+                          setFormBooking({
+                            id: b.id,
+                            studioId: b.studioId,
+                            sessionType: b.sessionType,
+                            scheduledAt: new Date(b.scheduledAt).toISOString(),
+                            durationHours: b.durationHours,
+                            headcount: b.headcount,
+                            totalAmount: b.totalAmount,
+                            notes: b.specialRequests ?? "",
+                          });
+                        }}
+                        className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 transition-colors cursor-pointer"
+                        aria-label={`Edit booking ${b.referenceCode}`}
+                        title="Edit / Reschedule"
+                      >
+                        <Pencil size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setBookingToDelete(b)}
+                        className="p-2 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                        aria-label={`Delete booking ${b.referenceCode}`}
+                        title="Delete"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </td>
                 </DataTableRow>
               ))
@@ -411,6 +516,25 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
           onClose={() => setCallSheetBookingId(null)}
         />
       )}
+
+      <BookingFormModal
+        isOpen={formBooking !== null}
+        onClose={() => setFormBooking(null)}
+        onSave={handleSaveBooking}
+        initialBooking={formBooking}
+        studios={studios}
+        isSubmitting={isSaving}
+        error={formError}
+      />
+      <AdminConfirmModal
+        isOpen={bookingToDelete !== null}
+        onClose={() => setBookingToDelete(null)}
+        onConfirm={handleDeleteBooking}
+        title="Delete booking?"
+        message={`Permanently delete ${bookingToDelete?.referenceCode}? This cannot be undone — consider setting it to Cancelled to keep a record.`}
+        confirmLabel="Delete"
+        isSubmitting={isSaving}
+      />
     </div>
   );
 }

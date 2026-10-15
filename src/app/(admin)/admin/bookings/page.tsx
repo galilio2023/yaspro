@@ -1,5 +1,5 @@
 import React from "react";
-import { getCmsBookings } from "@/lib/cms-actions";
+import { getCmsBookings, getCmsStudios } from "@/lib/cms-actions";
 import { BookingsManager } from "@/features/admin";
 
 export const metadata = {
@@ -7,6 +7,11 @@ export const metadata = {
 };
 
 export default async function AdminBookingsPage() {
-  const initialBookings = await getCmsBookings();
-  return <BookingsManager initialBookings={initialBookings} />;
+  const [initialBookings, studios] = await Promise.all([getCmsBookings(), getCmsStudios()]);
+  return (
+    <BookingsManager
+      initialBookings={initialBookings}
+      studios={studios.map((s) => ({ id: s.id, name: s.name }))}
+    />
+  );
 }

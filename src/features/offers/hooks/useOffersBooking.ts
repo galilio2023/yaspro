@@ -68,7 +68,11 @@ export function useOffersBooking() {
     setPromoError(null);
   }, [selectedOfferId]);
 
-  const pkg = searchParams?.get("package") || searchParams?.get("offer") || searchParams?.get("id");
+  const pkg =
+    searchParams?.get("package") ||
+    searchParams?.get("offer") ||
+    searchParams?.get("pkg") ||
+    searchParams?.get("id");
   useEffect(() => {
     if (pkg && OFFERS_AND_BUNDLES.some((o) => o.id === pkg)) {
       setSelectedOfferId(pkg);

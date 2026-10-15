@@ -21,6 +21,10 @@ import { createZiinaPaymentIntent } from "@/lib/ziina";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { formatCurrency, cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import {
+  DEFAULT_PLATFORM_SETTINGS,
+  type PlatformPaymentSettings,
+} from "@/lib/types/platform-settings";
 
 interface BookingPaymentModalProps {
   isOpen: boolean;
@@ -31,6 +35,7 @@ interface BookingPaymentModalProps {
   securityDeposit?: number;
   orderTitle?: string;
   onPaymentSuccess: (paymentStatus: "deposit_paid" | "paid", transactionId: string) => void;
+  paymentSettings?: Partial<PlatformPaymentSettings>;
 }
 
 export function BookingPaymentModal({
@@ -42,6 +47,7 @@ export function BookingPaymentModal({
   securityDeposit = 0,
   orderTitle,
   onPaymentSuccess,
+  paymentSettings,
 }: BookingPaymentModalProps) {
   const { isArabic } = useLanguage();
   const [paymentType, setPaymentType] = useState<"deposit" | "full">("deposit");
@@ -57,18 +63,22 @@ export function BookingPaymentModal({
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap({ isOpen, onClose, containerRef: dialogRef });
 
+  const activeSettings = { ...DEFAULT_PLATFORM_SETTINGS, ...paymentSettings };
+
   if (!isOpen) return null;
 
-  const depositAmount = Math.round(totalAmount * 0.5);
+  const depositMultiplier = (activeSettings.depositPercent || 50) / 100;
+  const depositAmount = Math.round(totalAmount * depositMultiplier);
   const chargeAmount = paymentType === "deposit" ? depositAmount : totalAmount;
 
-  // 5% UAE VAT calculation breakdown
-  const vatAmount = Math.round((chargeAmount - chargeAmount / 1.05) * 100) / 100;
+  // Dynamic UAE VAT calculation breakdown
+  const vatRate = 1 + (activeSettings.vatRatePercent || 5) / 100;
+  const vatAmount = Math.round((chargeAmount - chargeAmount / vatRate) * 100) / 100;
   const netAmount = Math.round((chargeAmount - vatAmount) * 100) / 100;
 
   const handleCopyIban = async () => {
     try {
-      await navigator.clipboard.writeText("AE240260001023456789001");
+      await navigator.clipboard.writeText(activeSettings.iban || "AE240260001023456789001");
       setCopiedIban(true);
       setTimeout(() => setCopiedIban(false), 2000);
     } catch (e) {
@@ -454,20 +464,20 @@ export function BookingPaymentModal({
                   <Building2 size={14} />
                   {isArabic ? "تفاصيل الحساب البنكي الرسمي" : "Official UAE Corporate Account"}
                 </span>
-                <span className="text-[10px] font-mono text-text-muted">Emirates NBD</span>
+                <span className="text-[10px] font-mono text-text-muted">{activeSettings.bankName.split("—")[0].trim()}</span>
               </div>
 
               <div className="space-y-1.5 text-[11px] font-mono" dir="ltr">
                 <div className="flex justify-between text-slate-400">
                   <span>Beneficiary:</span>
-                  <span className="text-white font-bold">YAS PRO MEDIA PRODUCTION LLC</span>
+                  <span className="text-white font-bold">{activeSettings.beneficiaryName}</span>
                 </div>
                 <div className="flex justify-between text-slate-400">
                   <span>Bank:</span>
-                  <span className="text-white">Emirates NBD — Business Bay, Dubai</span>
+                  <span className="text-white">{activeSettings.bankName}</span>
                 </div>
                 <div className="flex items-center justify-between bg-black/40 p-2 rounded-xl border border-white/5">
-                  <span className="text-brand-mauve-soft font-bold truncate">AE24 0260 0010 2345 6789 001</span>
+                  <span className="text-brand-mauve-soft font-bold truncate">{activeSettings.iban}</span>
                   <button
                     type="button"
                     onClick={handleCopyIban}
@@ -479,7 +489,7 @@ export function BookingPaymentModal({
                 </div>
                 <div className="flex justify-between text-slate-400">
                   <span>SWIFT / BIC:</span>
-                  <span className="text-white font-bold">EBILAEADXXX</span>
+                  <span className="text-white font-bold">{activeSettings.swift}</span>
                 </div>
               </div>
 

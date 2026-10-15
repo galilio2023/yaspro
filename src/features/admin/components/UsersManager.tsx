@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Users,
   Shield,
@@ -11,8 +12,15 @@ import {
   ExternalLink,
   CheckCircle2,
   Clock,
+  Plus,
+  Pencil,
 } from "lucide-react";
-import { updateUserRole, deleteCmsUser } from "@/lib/actions/users-client-operations";
+import {
+  updateUserRole,
+  deleteCmsUser,
+  updateCmsUserProfile,
+  createCmsUser,
+} from "@/lib/actions/users-client-operations";
 import type { User } from "@/db/schema";
 import {
   AdminPageHeader,
@@ -20,6 +28,7 @@ import {
   AdminFilterBar,
   AdminConfirmModal,
 } from "@/components/admin";
+import { UserFormModal, type UserFormValues } from "@/components/admin/forms/UserFormModal";
 import {
   DataTable,
   DataTableHeader,
@@ -36,9 +45,19 @@ interface UsersManagerProps {
 }
 
 export function UsersManager({ initialUsers }: UsersManagerProps) {
+  const router = useRouter();
   const [usersList, setUsersList] = useState<User[]>(initialUsers);
+  const [prevInitial, setPrevInitial] = useState(initialUsers);
+  // Re-sync when the server re-renders with fresh data (after creating a user).
+  if (prevInitial !== initialUsers) {
+    setPrevInitial(initialUsers);
+    setUsersList(initialUsers);
+  }
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [userFormOpen, setUserFormOpen] = useState(false);
+  const [userToEdit, setUserToEdit] = useState<User | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const [roleTarget, setRoleTarget] = useState<{
     user: User;
     newRole: "client" | "enterprise" | "admin";
@@ -99,6 +118,39 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
     }
   };
 
+  const handleSaveUser = async (values: UserFormValues, editingId: string | null): Promise<boolean> => {
+    setIsSubmittingAction(true);
+    setFormError(null);
+    try {
+      const res = editingId
+        ? await updateCmsUserProfile(editingId, { name: values.name, phone: values.phone, company: values.company })
+        : await createCmsUser(values);
+      if (!res.success) {
+        setFormError(res.error || "Failed to save user.");
+        return false;
+      }
+      if (editingId) {
+        setUsersList((prev) =>
+          prev.map((u) =>
+            u.id === editingId
+              ? { ...u, name: values.name.trim(), phone: values.phone.trim() || null, company: values.company.trim() || null }
+              : u
+          )
+        );
+      } else {
+        router.refresh();
+      }
+      showFeedback(res.message || "User saved.");
+      setUserFormOpen(false);
+      return true;
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : "Failed to save user.");
+      return false;
+    } finally {
+      setIsSubmittingAction(false);
+    }
+  };
+
   const handleConfirmDeleteUser = async () => {
     if (!userToDelete) return;
     setIsSubmittingAction(true);
@@ -130,6 +182,16 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
         icon={Users}
         feedback={feedback}
         onDismissFeedback={clearFeedback}
+        actions={
+          <button
+            type="button"
+            onClick={() => { setFormError(null); setUserToEdit(null); setUserFormOpen(true); }}
+            className="px-4 py-2.5 rounded-xl btn-brand text-xs flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+          >
+            <Plus size={16} />
+            <span>New User</span>
+          </button>
+        }
       />
 
       {errorMessage && (
@@ -304,6 +366,15 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                   <div className="flex items-center justify-end gap-1.5">
                     <button
                       type="button"
+                      onClick={() => { setFormError(null); setUserToEdit(user); setUserFormOpen(true); }}
+                      className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                      title="Edit Profile"
+                      aria-label={`Edit profile for ${user.name}`}
+                    >
+                      <Pencil size={14} />
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => setUserToDelete(user)}
                       disabled={updatingId === user.id}
                       className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer disabled:opacity-50 min-h-[36px] min-w-[36px] flex items-center justify-center"
@@ -328,6 +399,15 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
         endIndex={filter.pagination.endIndex}
         onPrev={filter.pagination.prevPage}
         onNext={filter.pagination.nextPage}
+      />
+
+      <UserFormModal
+        isOpen={userFormOpen}
+        onClose={() => setUserFormOpen(false)}
+        user={userToEdit}
+        onSave={handleSaveUser}
+        isSubmitting={isSubmittingAction}
+        error={formError}
       />
 
       {/* Delete User Confirmation Modal */}

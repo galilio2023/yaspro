@@ -64,7 +64,7 @@ export async function getCmsInquiries(): Promise<Inquiry[]> {
       isResolved: false,
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48),
     },
-  ];
+  ].map((i) => ({ ...i, inquiryType: i.inquiryType as Inquiry["inquiryType"], internalNotes: null as string | null }));
 }
 
 /**
@@ -103,6 +103,56 @@ export async function deleteCmsInquiry(id: string): Promise<CmsResponse> {
     revalidatePath("/admin/inquiries");
     revalidatePath("/admin");
     return { success: true, message: "Inquiry record deleted." };
+  } catch (error) {
+    return { success: false, error: (error as Error).message };
+  }
+}
+
+/**
+ * Saves internal staff follow-up notes on a lead (never shown to customers).
+ */
+export async function updateInquiryNotes(id: string, internalNotes: string): Promise<CmsResponse> {
+  try {
+    await requireAdmin();
+    if (internalNotes.length > 5000) return { success: false, error: "Notes must be 5000 characters or fewer." };
+    if (isDbAvailable()) {
+      await db.update(inquiries).set({ internalNotes: internalNotes.trim() || null }).where(eq(inquiries.id, id));
+    }
+    revalidatePath("/admin/inquiries");
+    return { success: true, message: "Internal notes saved." };
+  } catch (error) {
+    return { success: false, error: (error as Error).message };
+  }
+}
+
+/**
+ * Logs a manual lead (phone call / walk-in) from the admin panel.
+ */
+export async function createCmsInquiry(input: {
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  inquiryType: Inquiry["inquiryType"];
+  message: string;
+}): Promise<CmsResponse> {
+  try {
+    await requireAdmin();
+    if (!input.name?.trim() || !input.message?.trim()) return { success: false, error: "Name and message are required." };
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email?.trim() ?? "")) return { success: false, error: "A valid email is required." };
+    if (isDbAvailable()) {
+      await db.insert(inquiries).values({
+        name: input.name.trim(),
+        email: input.email.trim(),
+        phone: input.phone?.trim() || null,
+        company: input.company?.trim() || null,
+        inquiryType: input.inquiryType,
+        message: input.message.trim(),
+      });
+    }
+    revalidatePath("/admin/inquiries");
+    revalidatePath("/admin");
+    return { success: true, message: "Lead logged." };
   } catch (error) {
     return { success: false, error: (error as Error).message };
   }
