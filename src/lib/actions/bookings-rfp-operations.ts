@@ -20,6 +20,7 @@ export interface EnrichedBooking extends Booking {
   userPhone?: string | null;
   userCompany?: string | null;
   studioName?: string | null;
+  packageName?: string | null;
   schedule?: (typeof bookingSessions.$inferSelect & { studioName: string | null })[];
 }
 
@@ -58,15 +59,30 @@ export async function getCmsBookings(): Promise<EnrichedBooking[]> {
         let guestEmail = r.userEmail;
         let guestPhone = r.userPhone;
         let guestCompany = r.userCompany;
-        if (!guestEmail && r.booking.specialRequests?.startsWith("[Contact: ")) {
-          const match = r.booking.specialRequests.match(/\[Contact:\s*([^|]+)\|\s*([^|]+)\|\s*([^|\]]+)(?:\|\s*([^\]]+))?\]/);
+        let packageName: string | null = null;
+
+        const notes = r.booking.specialRequests || "";
+
+        if (!guestEmail && notes.includes("[Contact: ")) {
+          const match = notes.match(/\[Contact:\s*([^|]+)\|\s*([^|]+)\|\s*([^|\]]+)(?:\|\s*([^\]]+))?\]/);
           if (match) {
             guestName = match[1]?.trim() || guestName;
             guestEmail = match[2]?.trim() || guestEmail;
             guestPhone = match[3]?.trim() || guestPhone;
             guestCompany = match[4]?.trim() || guestCompany;
           }
+        } else if (!guestName && notes.includes("Client: ")) {
+          const clientMatch = notes.match(/Client:\s*([^|]+)/);
+          if (clientMatch) guestName = clientMatch[1].trim();
+          const compMatch = notes.match(/Company:\s*([^|]+)/);
+          if (compMatch && compMatch[1].trim() !== "N/A") guestCompany = compMatch[1].trim();
         }
+
+        if (notes.includes("Package: ")) {
+          const pkgMatch = notes.match(/Package:\s*([^|]+)/);
+          if (pkgMatch) packageName = pkgMatch[1].trim();
+        }
+
         return {
           ...r.booking,
           schedule: schedule.filter((item) => item.session.bookingId === r.booking.id)
@@ -76,6 +92,7 @@ export async function getCmsBookings(): Promise<EnrichedBooking[]> {
           userPhone: guestPhone,
           userCompany: guestCompany,
           studioName: r.studioName,
+          packageName,
         };
       });
     }

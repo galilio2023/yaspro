@@ -231,9 +231,10 @@ function hookFixture(validate = async (code) => ({ success: true, promo: { code,
         if (!(index in states)) states[index] = { current: initial };
         return states[index];
       },
-      useMemo: (fn) => fn(), useCallback: (fn) => fn,
+      useMemo: (fn) => fn(), useCallback: (fn) => fn, useEffect: (fn) => fn(),
     },
     '../actions': { validateOffersPromoCode: validate, submitOffersBooking: async () => ({ success: true }) },
+    'next/navigation': { useSearchParams: () => new URLSearchParams() },
   });
   const { useOffersBooking } = load('src/features/offers/hooks/useOffersBooking.ts');
   return () => { cursor = 0; return useOffersBooking(); };

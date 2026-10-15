@@ -19,6 +19,7 @@ import {
   LayoutGrid,
   Eye,
   Phone,
+  Sparkles,
 } from "lucide-react";
 import { updateInquiryStatus, deleteCmsInquiry } from "@/lib/actions/inquiries-leads-operations";
 import type { Inquiry } from "@/db/schema";
@@ -62,6 +63,69 @@ const INQUIRY_LABELS: Record<string, string> = {
   general: "General Inquiry",
 };
 
+export function resolveInquiryCategory(inq: Inquiry): {
+  typeKey: string;
+  label: string;
+  icon: React.ReactNode;
+  badgeStyle: string;
+} {
+  const msg = inq.message || "";
+  if (msg.includes("[Social Media Package Subscription Request]")) {
+    return {
+      typeKey: "social_media_package",
+      label: "Social Retainer Lead",
+      icon: <Sparkles size={12} className="text-brand-mauve" />,
+      badgeStyle: "bg-brand-mauve/20 text-brand-mauve border-brand-mauve/40",
+    };
+  }
+  if (msg.includes("[Equipment Rental Reservation Request]")) {
+    return {
+      typeKey: "gear_rental",
+      label: "Gear Rental RFP",
+      icon: <Camera size={12} className="text-emerald-400" />,
+      badgeStyle: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+    };
+  }
+  if (inq.inquiryType === "ob_van" || msg.includes("[OB-VAN")) {
+    return {
+      typeKey: "ob_van",
+      label: "OB Van Broadcast",
+      icon: <Radio size={12} className="text-brand-mauve" />,
+      badgeStyle: "bg-brand-violet/25 text-brand-lavender border-brand-mauve/30",
+    };
+  }
+  if (inq.inquiryType === "outdoor_filming" || msg.includes("[Outdoor Filming")) {
+    return {
+      typeKey: "outdoor_filming",
+      label: "Outdoor Filming",
+      icon: <Camera size={12} className="text-emerald-400" />,
+      badgeStyle: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+    };
+  }
+  if (inq.inquiryType === "studio_booking") {
+    return {
+      typeKey: "studio_booking",
+      label: "Soundstage Inquiry",
+      icon: <Layers size={12} className="text-brand-lavender" />,
+      badgeStyle: "bg-brand-violet/20 text-brand-lavender border-brand-mauve/20",
+    };
+  }
+  if (inq.inquiryType === "technical_support") {
+    return {
+      typeKey: "technical_support",
+      label: "Technical Support",
+      icon: <Wrench size={12} className="text-stone-300" />,
+      badgeStyle: "bg-stone-500/15 text-stone-300 border-stone-500/30",
+    };
+  }
+  return {
+    typeKey: inq.inquiryType || "general",
+    label: INQUIRY_LABELS[inq.inquiryType] || "General Inquiry",
+    icon: INQUIRY_ICONS[inq.inquiryType] || <HelpCircle size={12} className="text-slate-400" />,
+    badgeStyle: "bg-white/5 text-slate-300 border-white/10",
+  };
+}
+
 export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
   const [inquiriesList, setInquiriesList] = useState<Inquiry[]>(initialInquiries);
   const [viewMode, setViewMode] = useState<"table" | "cards">("table");
@@ -93,7 +157,8 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
           ? i.isResolved
           : !i.isResolved;
 
-      const matchesType = !type || type === "all" || i.inquiryType === type;
+      const cat = resolveInquiryCategory(i);
+      const matchesType = !type || type === "all" || cat.typeKey === type || i.inquiryType === type;
 
       return Boolean(matchesSearch && matchesStatus && matchesType);
     },
@@ -217,12 +282,13 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
             className="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 text-xs text-slate-300 focus:outline-none focus:border-brand-mauve cursor-pointer"
           >
             <option value="all">All Inquiry Types</option>
-            <option value="ob_van">OB Van Broadcast</option>
-            <option value="live_broadcast">Live Broadcast</option>
-            <option value="studio_booking">Studio Booking</option>
-            <option value="outdoor_filming">Outdoor Filming</option>
-            <option value="technical_support">Technical Support</option>
-            <option value="general">General Inquiry</option>
+            <option value="social_media_package">Social Media Retainers ✨</option>
+            <option value="gear_rental">Cinema Gear Rentals 🎥</option>
+            <option value="ob_van">OB Van Broadcast 📡</option>
+            <option value="outdoor_filming">Outdoor Filming 🎬</option>
+            <option value="studio_booking">Studio Booking 🏢</option>
+            <option value="technical_support">Technical Support 🔧</option>
+            <option value="general">General Inquiry 💬</option>
           </select>
         }
         actions={
@@ -313,10 +379,15 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
 
                     {/* Inquiry Type */}
                     <td className="py-3 px-4 whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-white/5 border border-white/10 text-white">
-                        {INQUIRY_ICONS[inq.inquiryType] || <HelpCircle size={12} />}
-                        <span>{INQUIRY_LABELS[inq.inquiryType] || inq.inquiryType}</span>
-                      </span>
+                      {(() => {
+                        const cat = resolveInquiryCategory(inq);
+                        return (
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold border ${cat.badgeStyle}`}>
+                            {cat.icon}
+                            <span>{cat.label}</span>
+                          </span>
+                        );
+                      })()}
                     </td>
 
                     {/* Message Brief */}
@@ -456,10 +527,15 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
                   <div className="space-y-2.5 flex-1">
                     {/* Category and Status */}
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/5 border border-white/10 text-white">
-                        {INQUIRY_ICONS[inq.inquiryType] || <HelpCircle size={12} />}
-                        {INQUIRY_LABELS[inq.inquiryType] || inq.inquiryType}
-                      </span>
+                      {(() => {
+                        const cat = resolveInquiryCategory(inq);
+                        return (
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold border ${cat.badgeStyle}`}>
+                            {cat.icon}
+                            {cat.label}
+                          </span>
+                        );
+                      })()}
                       <span
                         className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
                           inq.isResolved
@@ -569,7 +645,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
           onClose={() => setSelectedInquiry(null)}
           title={`Inquiry from ${selectedInquiry.name}`}
           description={`Received on ${new Date(selectedInquiry.createdAt).toLocaleString()} · ${
-            INQUIRY_LABELS[selectedInquiry.inquiryType] || selectedInquiry.inquiryType
+            resolveInquiryCategory(selectedInquiry).label
           }`}
           maxWidth="md"
         >

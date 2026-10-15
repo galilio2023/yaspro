@@ -185,8 +185,8 @@ function StudioFormContent({
       </div>
 
       <AdminTagsInput
-        label="Stage Amenities"
-        placeholder="Add amenity (e.g. Green Room, 10Gbps Fiber)..."
+        label="Soundstage Specifications & Amenities"
+        placeholder="Add spec or amenity (e.g. STC 65 Sound Isolation, 3-Phase 125A Power, 5.5m Clear Height, VIP Green Room)..."
         tags={(formData.amenities as string[]) || []}
         onChange={(newTags) => setFormData((prev) => ({ ...prev, amenities: newTags }))}
       />

@@ -189,7 +189,7 @@ test('booking uses CMS IDs and rates and rejects deleted or inactive studios', a
     '@/lib/rate-limit': { getClientIdentifier: async () => 'local', checkRateLimit: () => ({ allowed: true }), checkIdempotency: () => true },
     '@/lib/notifications': { sendBookingConfirmationNotification: async () => {} },
   });
-  const input = { studioId, firstName: 'Local', lastName: 'Tester', email: 'local@example.com', scheduledAt: '2026-10-15T10:00', durationHours: 2, totalAmount: 1 };
+  const input = { studioId, firstName: 'Local', lastName: 'Tester', email: 'local@example.com', scheduledAt: '2026-10-25T10:00', durationHours: 2, totalAmount: 1 };
   assert.equal((await createBooking(input)).success, true);
   assert.deepEqual(lookup, { col: 'studio-id', val: studioId });
   const booking = writes.find((write) => write.table === schemas.bookings).values;

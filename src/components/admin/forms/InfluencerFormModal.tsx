@@ -8,6 +8,7 @@ import {
   AdminTextarea,
   AdminSelect,
   AdminSwitch,
+  AdminTagsInput,
 } from "../shared/AdminFormFields";
 import { AdminImageUploader } from "../AdminImageUploader";
 
@@ -66,6 +67,8 @@ function InfluencerFormContent({
     rawFollowers: initialCreator?.rawFollowers || 10,
     imageUrl: initialCreator?.imageUrl || "/images/influencers/creator-1.jpg",
     isFeatured: initialCreator?.isFeatured ?? true,
+    collaborations: Array.isArray(initialCreator?.collaborations) ? initialCreator.collaborations : [],
+    signatureProductions: Array.isArray(initialCreator?.signatureProductions) ? initialCreator.signatureProductions : [],
   }));
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
@@ -228,6 +231,20 @@ function InfluencerFormContent({
           onChange={(e) => setFormData((prev) => ({ ...prev, arabicBio: e.target.value }))}
         />
       </div>
+
+      <AdminTagsInput
+        label="Notable Brand Collaborations"
+        placeholder="Add brand collaboration (e.g. Emirates, Dubai Tourism, Red Bull, Apple)..."
+        tags={(formData.collaborations as string[]) || []}
+        onChange={(collaborations) => setFormData((prev) => ({ ...prev, collaborations }))}
+      />
+
+      <AdminTagsInput
+        label="Signature Productions & Media Campaigns"
+        placeholder="Add production title (e.g. Saudi National Day TVC, Expo 2020 Hero Film)..."
+        tags={(formData.signatureProductions as string[]) || []}
+        onChange={(signatureProductions) => setFormData((prev) => ({ ...prev, signatureProductions }))}
+      />
 
       <AdminSwitch
         label="Featured Creator"

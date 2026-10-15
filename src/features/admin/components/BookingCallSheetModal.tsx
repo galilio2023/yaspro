@@ -213,11 +213,16 @@ export function BookingCallSheetModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2">
               <span className="text-[10px] text-slate-500 uppercase font-mono block">
-                Production Category
+                Production Category &amp; Package
               </span>
               <span className="font-bold text-white text-sm capitalize block">
-                {booking.sessionType.replace("_", " ")}
+                {booking.packageName || booking.sessionType.replace("_", " ")}
               </span>
+              {booking.promoCode && (
+                <span className="inline-block px-2 py-0.5 rounded text-[10px] bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono">
+                  PROMO: {booking.promoCode}
+                </span>
+              )}
               <p className="text-[11px] text-slate-400">
                 Yas Pro Soundstage Facilities &bull; Dubai Studio City
               </p>
