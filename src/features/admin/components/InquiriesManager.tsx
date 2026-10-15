@@ -139,7 +139,7 @@ export function resolveInquiryCategory(inq: Inquiry): {
   if (msg.includes("[Equipment Rental Reservation Request]")) {
     return {
       typeKey: "gear_rental",
-      label: "Gear Rental RFP",
+      label: "Gear Rental Lead",
       icon: <Camera size={12} className="text-emerald-400" />,
       badgeStyle: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
     };

@@ -9,7 +9,7 @@ export interface UserFormValues {
   name: string;
   email: string;
   password: string;
-  role: "client" | "enterprise" | "admin";
+  role: "client" | "admin";
   phone: string;
   company: string;
 }
@@ -90,7 +90,6 @@ function UserFormContent({ isOpen, onClose, user, onSave, isSubmitting = false, 
             onChange={set("role")}
             options={[
               { value: "client", label: "Client" },
-              { value: "enterprise", label: "Enterprise Partner" },
               { value: "admin", label: "System Admin" },
             ]}
           />

@@ -60,7 +60,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
   const [formError, setFormError] = useState<string | null>(null);
   const [roleTarget, setRoleTarget] = useState<{
     user: User;
-    newRole: "client" | "enterprise" | "admin";
+    newRole: "client" | "admin";
   } | null>(null);
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -86,9 +86,10 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
 
   const totalClients = usersList.filter((u) => u.role === "client").length;
   const totalEnterprise = usersList.filter((u) => u.role === "enterprise").length;
+  const totalCorporate = usersList.filter((u) => Boolean(u.company)).length;
   const totalAdmins = usersList.filter((u) => u.role === "admin").length;
 
-  const handleRoleSelect = (user: User, newRole: "client" | "enterprise" | "admin") => {
+  const handleRoleSelect = (user: User, newRole: "client" | "admin") => {
     if (user.role === newRole) return;
     setRoleTarget({ user, newRole });
   };
@@ -178,7 +179,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
       {/* Header */}
       <AdminPageHeader
         title="Registered Users & Client Accounts"
-        description="Real production clients, verified phone contacts, and enterprise administrators."
+        description="Production clients, corporate accounts, and system administrators."
         icon={Users}
         feedback={feedback}
         onDismissFeedback={clearFeedback}
@@ -226,9 +227,9 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
             variant: "default",
           },
           {
-            label: "Enterprise Partners",
-            value: totalEnterprise,
-            unit: "Vaults",
+            label: "Corporate Accounts",
+            value: totalCorporate,
+            unit: "Companies",
             icon: Shield,
             variant: "brand",
           },
@@ -334,19 +335,17 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                     onChange={(e) =>
                       handleRoleSelect(
                         user,
-                        e.target.value as "client" | "enterprise" | "admin"
+                        e.target.value as "client" | "admin"
                       )
                     }
                     className={`text-[10px] font-semibold px-2.5 py-1.5 rounded-xl border focus:outline-none cursor-pointer transition-colors ${
                       user.role === "admin"
                         ? "bg-brand-violet/20 text-brand-mauve border-brand-mauve/30"
-                        : user.role === "enterprise"
-                        ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
                         : "bg-slate-800 text-slate-300 border-white/10"
                     }`}
                   >
                     <option value="client" className="bg-slate-900 text-white">Client</option>
-                    <option value="enterprise" className="bg-slate-900 text-white">Enterprise Partner</option>
+                    <option value="enterprise" disabled className="bg-slate-900 text-white">Enterprise</option>
                     <option value="admin" className="bg-slate-900 text-white">System Admin</option>
                   </select>
                 </td>

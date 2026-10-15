@@ -26,7 +26,6 @@ function loadSource(file, mocks = {}, globals = {}) {
 const {
   bookingSubmissionSchema,
   inquirySubmissionSchema,
-  campaignRequestSchema,
 } = loadSource('src/lib/validations.ts');
 
 test('bookingSubmissionSchema validates correct inputs and rejects malformed fields', () => {
@@ -126,26 +125,6 @@ test('inquirySubmissionSchema enforces minimum message length and valid categori
   assert.equal(inquirySubmissionSchema.safeParse(badType).success, false);
 });
 
-test('campaignRequestSchema validates influencer brief fields', () => {
-  const validCampaign = {
-    creatorId: 'aboflah',
-    creatorName: 'AboFlah',
-    brandName: 'National Telecom',
-    contactName: 'Director of Marketing',
-    email: 'marketing@telecom.sa',
-    phone: '+966500000000',
-    campaignObjective: 'Brand Awareness Campaign',
-    budgetTier: 'tier_large',
-  };
-
-  assert.equal(campaignRequestSchema.safeParse(validCampaign).success, true);
-
-  // Missing brand name
-  assert.equal(campaignRequestSchema.safeParse({ ...validCampaign, brandName: '' }).success, false);
-
-  // Invalid email
-  assert.equal(campaignRequestSchema.safeParse({ ...validCampaign, email: 'bad' }).success, false);
-});
 
 test('validateLegitimateEmail accepts real personal/business domains and rejects disposable/hallucinated domains', () => {
   const { validateLegitimateEmail, registerUserSchema } = loadSource('src/lib/validations.ts');

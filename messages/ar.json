@@ -349,6 +349,7 @@
       "fullNameLabel": "الاسم الكامل",
       "fullNamePlaceholder": "مثال: طارق منصور",
       "companyLabel": "الشركة / الوكالة",
+      "optional": "اختياري",
       "companyPlaceholder": "مثال: وكالة دبي الإعلامية",
       "emailLabel": "البريد الإلكتروني المهني",
       "emailPlaceholder": "name@company.com",

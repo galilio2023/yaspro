@@ -8,6 +8,7 @@ import {
   bookingSessions,
   users,
   studios,
+  equipment,
   bookingStatusEnum,
   sessionTypeEnum,
   type Booking,
@@ -17,6 +18,15 @@ import { revalidatePath } from "next/cache";
 import { isDbAvailable, isUuid, requireAdmin, type CmsResponse } from "./shared";
 import { replaceBookingNotes } from "../booking-notes";
 import { generateBookingReference } from "@/lib/utils";
+import { GEAR_DATA } from "@/features/gear/data";
+
+export interface EquipmentSummary {
+  id: string;
+  name: string;
+  category?: string | null;
+  dailyRate?: string | null;
+  imageUrl?: string | null;
+}
 
 export interface EnrichedBooking extends Booking {
   userName?: string | null;
@@ -26,6 +36,7 @@ export interface EnrichedBooking extends Booking {
   studioName?: string | null;
   packageName?: string | null;
   schedule?: (typeof bookingSessions.$inferSelect & { studioName: string | null })[];
+  equipmentItems?: EquipmentSummary[];
 }
 
 /**
@@ -57,6 +68,48 @@ export async function getCmsBookings(): Promise<EnrichedBooking[]> {
         .leftJoin(studios, eq(bookingSessions.studioId, studios.id))
         .where(inArray(bookingSessions.bookingId, records.map((record) => record.booking.id)))
         .orderBy(asc(bookingSessions.position)) : [];
+
+      const allEquipIds = Array.from(new Set(records.flatMap((record) => (record.booking.equipmentIds as string[]) || [])));
+      const equipmentMap = new Map<string, EquipmentSummary>();
+
+      for (const g of GEAR_DATA) {
+        equipmentMap.set(g.id, {
+          id: g.id,
+          name: g.name,
+          category: g.category,
+          dailyRate: g.dailyRate.toString(),
+          imageUrl: g.image,
+        });
+      }
+
+      if (allEquipIds.length > 0) {
+        try {
+          const dbEquip = await db
+            .select({
+              id: equipment.id,
+              slug: equipment.slug,
+              name: equipment.name,
+              category: equipment.category,
+              dailyRate: equipment.dailyRate,
+              imageUrl: equipment.imageUrl,
+            })
+            .from(equipment);
+
+          for (const item of dbEquip) {
+            const summary: EquipmentSummary = {
+              id: item.id,
+              name: item.name,
+              category: item.category,
+              dailyRate: item.dailyRate,
+              imageUrl: item.imageUrl,
+            };
+            equipmentMap.set(item.id, summary);
+            equipmentMap.set(item.slug, summary);
+          }
+        } catch (equipErr) {
+          console.warn("Failed to query equipment table for booking enrichment:", equipErr);
+        }
+      }
 
       return records.map((r) => {
         let guestName = r.userName;
@@ -96,6 +149,11 @@ export async function getCmsBookings(): Promise<EnrichedBooking[]> {
           if (pkgMatch) packageName = pkgMatch[1].trim();
         }
 
+        const equipIds = (r.booking.equipmentIds as string[]) || [];
+        const equipmentItems: EquipmentSummary[] = equipIds.map((id) => {
+          return equipmentMap.get(id) || { id, name: id };
+        });
+
         return {
           ...r.booking,
           schedule: schedule.filter((item) => item.session.bookingId === r.booking.id)
@@ -106,6 +164,7 @@ export async function getCmsBookings(): Promise<EnrichedBooking[]> {
           userCompany: guestCompany,
           studioName: r.studioName,
           packageName,
+          equipmentItems,
         };
       });
     }

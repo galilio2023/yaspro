@@ -78,7 +78,7 @@ export async function getCmsUsers(): Promise<User[]> {
  * @param role - Updated role ("admin" | "client" | "enterprise").
  * @returns CMS response confirming update.
  */
-export async function updateUserRole(userId: string, role: "admin" | "client" | "enterprise"): Promise<CmsResponse> {
+export async function updateUserRole(userId: string, role: "admin" | "client"): Promise<CmsResponse> {
   try {
     const session = await requireAdmin();
 
@@ -90,7 +90,7 @@ export async function updateUserRole(userId: string, role: "admin" | "client" | 
       return { success: false, error: "The primary CEO executive account is protected and must remain an administrator." };
     }
 
-    if (role !== "admin" && role !== "client" && role !== "enterprise") {
+    if (role !== "admin" && role !== "client") {
       return { success: false, error: "Invalid role specified." };
     }
 

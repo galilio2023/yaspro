@@ -4,7 +4,7 @@ import { UsersManager } from "@/features/admin";
 
 export const metadata = {
   title: "Registered Users & Clients CMS | Yas Productions",
-  description: "View and manage all registered clients, enterprise partners, and administrators.",
+  description: "View and manage all registered clients and administrators.",
 };
 
 export default async function AdminUsersPage() {

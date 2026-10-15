@@ -269,6 +269,49 @@ export function BookingCallSheetModal({
             </div>
           </div>
 
+          {/* Cinema Equipment & Rental Dispatch Packing Slip */}
+          {booking.equipmentItems && booking.equipmentItems.length > 0 && (
+            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                  Equipment Dispatch &amp; Packing Slip ({booking.equipmentItems.length} items)
+                </span>
+                <span className="text-[10px] font-mono text-brand-mauve font-semibold">
+                  Field &amp; Soundstage Verification
+                </span>
+              </div>
+              <div className="divide-y divide-white/5 border border-white/10 rounded-xl overflow-hidden bg-black/20">
+                {booking.equipmentItems.map((item, idx) => (
+                  <div key={item.id + idx} className="flex items-center justify-between p-2.5 text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-5 h-5 rounded bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-mono text-slate-400">
+                        {idx + 1}
+                      </span>
+                      <div>
+                        <span className="font-semibold text-white block">{item.name}</span>
+                        {item.category && (
+                          <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                            {item.category}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 text-end">
+                      {item.dailyRate && (
+                        <span className="font-mono text-xs text-brand-lavender block">
+                          {formatCurrency(Number(item.dailyRate))} / day
+                        </span>
+                      )}
+                      <span className="px-2 py-0.5 rounded text-[9px] font-mono border border-slate-600 text-slate-400 uppercase">
+                        [ &nbsp; ] Checked
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Production Notes */}
           {(booking.propsNotes || booking.specialRequests) && (
             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">

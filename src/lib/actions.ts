@@ -13,10 +13,8 @@ import { sendBookingConfirmationNotification, sendInquiryNotification } from "@/
 import {
   bookingSubmissionSchema,
   inquirySubmissionSchema,
-  campaignRequestSchema,
   type BookingSubmissionInput,
   type InquirySubmissionInput,
-  type CampaignRequestInput,
 } from "./validations";
 
 import type { StudioItem } from "@/features/booking/types";
@@ -358,64 +356,6 @@ export async function submitInquiry(rawInput: unknown): Promise<ActionResponse> 
   }
 }
 
-export async function submitInfluencerCampaignRequest(rawInput: unknown): Promise<ActionResponse> {
-  const clientId = await getClientIdentifier();
-
-  // Rate limit: max 5 campaign briefs per 10 minutes per IP
-  const rateLimit = checkRateLimit(`campaign:${clientId}`, 5, 10 * 60 * 1000);
-  if (!rateLimit.allowed) {
-    const minutesLeft = Math.ceil(rateLimit.resetInMs / 60000);
-    return {
-      success: false,
-      message: `Too many collaboration requests. Please wait ${minutesLeft} minute${minutesLeft > 1 ? "s" : ""} before submitting another brief.`,
-    };
-  }
-
-  const parsed = campaignRequestSchema.safeParse(rawInput);
-  if (!parsed.success) {
-    return {
-      success: false,
-      message: "Please complete all required fields for the collaboration brief.",
-      errors: parsed.error.flatten().fieldErrors,
-    };
-  }
-
-  const data = parsed.data;
-
-  // Idempotency: block duplicate identical campaign request within 60s
-  const idempotencyKey = `campaign:${data.email.toLowerCase()}:${data.creatorId}:${data.brandName.toLowerCase()}`;
-  if (!checkIdempotency(idempotencyKey, 60_000)) {
-    return {
-      success: false,
-      message: "A collaboration request for this brand and creator is already submitted. Our talent team is reviewing it.",
-    };
-  }
-
-  try {
-    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-      await db.insert(inquiries).values({
-        name: `${data.contactName} (${data.brandName})`,
-        email: data.email,
-        phone: data.phone,
-        company: data.brandName,
-        inquiryType: "studio_booking",
-        message: `[Influencer Campaign RFP for ${data.creatorName}]\nObjective: ${data.campaignObjective}\nBudget Tier: ${data.budgetTier}\nTarget Facility: ${data.targetStudio || "N/A"}\nDetails: ${data.message || "None"}`,
-      });
-    }
-
-    return {
-      success: true,
-      message: `Your collaboration request for ${data.creatorName} has been submitted to Yas Pro talent management.`,
-    };
-  } catch (error) {
-    console.error("Campaign RFP submission error:", error);
-    return {
-      success: false,
-      message: "We could not submit your collaboration request. Please try again or contact our team directly.",
-    };
-  }
-}
-
 /**
  * Synchronize registered user profile info directly into the users table
  */
@@ -424,7 +364,7 @@ export async function syncUserProfile(input: {
   name?: string;
   phone?: string;
   company?: string;
-  role?: "client" | "enterprise";
+  role?: "client";
 }): Promise<ActionResponse> {
   try {
     const session = await auth.api.getSession({
@@ -441,33 +381,12 @@ export async function syncUserProfile(input: {
     }
 
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-      const currentUser = db.query?.users
-        ? await db.query.users.findFirst({ where: eq(users.id, targetUserId) })
-        : null;
-
       const updateData: Record<string, unknown> = {
         updatedAt: new Date(),
       };
       if (name !== undefined) updateData.name = name;
       if (input.phone !== undefined) updateData.phone = input.phone.trim() || null;
       if (input.company !== undefined) updateData.company = input.company.trim() || null;
-
-      // Role change safeguards:
-      // 1. Administrators can NEVER have their role altered via client profile sync
-      if (currentUser?.role !== "admin") {
-        if (input.role === "enterprise") {
-          const companyName = input.company?.trim() || currentUser?.company?.trim();
-          if (!companyName || companyName.length < 2) {
-            return { success: false, message: "Company name (at least 2 characters) is required for Enterprise accounts." };
-          }
-          updateData.role = "enterprise";
-        } else if (input.role === "client") {
-          // Prevent accidental downgrades from enterprise without admin action
-          if (currentUser?.role !== "enterprise") {
-            updateData.role = "client";
-          }
-        }
-      }
 
       await db
         .update(users)
@@ -482,5 +401,4 @@ export async function syncUserProfile(input: {
   }
 }
 
-export { type BookingSubmissionInput, type InquirySubmissionInput, type CampaignRequestInput };
-
+export { type BookingSubmissionInput, type InquirySubmissionInput };

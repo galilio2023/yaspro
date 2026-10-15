@@ -225,13 +225,13 @@ export function BroadcastManager({ initialBroadcastInquiries = [] }: BroadcastMa
         ]}
       />
 
-      {/* Live Broadcast RFPs from Services & BookNow modal */}
+      {/* Live Broadcast Inquiries from Services & BookNow modal */}
       {activeInquiries.length > 0 && (
         <div className="p-5 rounded-3xl bg-slate-900/80 border border-brand-mauve/30 backdrop-blur-xl space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-bold text-white">
               <Radio size={16} className="text-brand-mauve" />
-              <span>Active Broadcast &amp; Outdoor Production RFPs ({activeInquiries.length})</span>
+              <span>Active Broadcast &amp; Outdoor Production Inquiries ({activeInquiries.length})</span>
             </div>
             <Link
               href="/admin/inquiries"
@@ -335,7 +335,7 @@ export function BroadcastManager({ initialBroadcastInquiries = [] }: BroadcastMa
             Custom Telemetry Dispatcher
           </h3>
           <p className="text-xs text-slate-400">
-            Publish an edge event instantly visible across all enterprise client portals.
+            Publish an edge event instantly visible across all client portals.
           </p>
 
           <form

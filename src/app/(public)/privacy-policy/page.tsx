@@ -55,7 +55,7 @@ export default function PrivacyPolicyPage() {
             <ul className="list-disc list-inside space-y-1.5 text-text-muted">
               <li>Contact details (Full name, corporate entity, email, phone number / WhatsApp).</li>
               <li>Booking parameters (Scheduled studio hours, equipment manifests, technical riders, crew specifications).</li>
-              <li>Payment verification telemetry processed through certified regional gateways (Ziina, Stripe). We do not store raw card numbers.</li>
+              <li>Payment verification telemetry processed through certified UAE payment gateway (Ziina). We do not store raw card numbers.</li>
             </ul>
           </section>
 

@@ -226,3 +226,32 @@ test('booking uses CMS IDs and rates and rejects deleted or inactive studios', a
   assert.equal((await createBooking(input)).success, false);
   assert.equal(writes.length, 0);
 });
+
+for (const role of ['client', 'enterprise', 'admin']) {
+  test(`syncUserProfile preserves the stored ${role} role when saving contact details`, async () => {
+    const stored = { id: 'signed-in-user', role };
+    const { syncUserProfile } = loadSource('src/lib/actions.ts', {
+      '@/db': { db: {
+        query: { users: { findFirst: async () => stored } },
+        update: () => ({ set: (values) => ({ where: async () => { Object.assign(stored, values); } }) }),
+      } },
+      '@/db/schema': { users: { id: 'users.id' } },
+      '@/lib/booking-payment-capability': {},
+      '@/lib/utils': {},
+      '@/features/booking/constants': {},
+      './validations': {},
+      '@/lib/rate-limit': {},
+      '@/lib/notifications': {},
+      'drizzle-orm': { eq: (column, value) => { assert.equal(value, 'signed-in-user'); return { column, value }; } },
+      'next/cache': { revalidatePath() {} },
+      'next/headers': { headers: async () => ({}) },
+      '@/lib/auth': { auth: { api: { getSession: async () => ({ user: { id: stored.id } }) } } },
+    });
+    const result = await syncUserProfile({ name: ' Updated ', phone: ' +971500000000 ', company: ' Studio ', role: 'client' });
+    assert.equal(result.success, true);
+    assert.equal(stored.role, role);
+    assert.equal(stored.name, 'Updated');
+    assert.equal(stored.phone, '+971500000000');
+    assert.equal(stored.company, 'Studio');
+  });
+}
