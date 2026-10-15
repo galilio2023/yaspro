@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { bookings, studioBlackouts } from "@/db/schema";
 import { eq, sql, or, isNull } from "drizzle-orm";
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
-import { createZiinaPaymentIntent } from "@/lib/ziina";
+import { createZiinaPaymentIntent, getBookingPaymentQuote } from "@/lib/ziina";
 import { STANDARD_TIME_SLOTS } from "./data";
 import { getBookingOffers } from "@/lib/actions/offers-packages-operations";
 import { randomUUID } from "node:crypto";
@@ -183,12 +183,16 @@ export async function submitOffersBooking(input: OffersBookingInput): Promise<Of
     if (validated.initiatePayment) {
       try {
         await issueBookingPaymentCapability(bookingId);
-        const ziinaRes = await createZiinaPaymentIntent(
-          bookingId,
-          grandTotal,
-          "full",
-          referenceCode
-        );
+        const { quote, error } = await getBookingPaymentQuote(bookingId, referenceCode);
+        const option = quote?.options.find((option) => option.type === "full");
+        const ziinaRes = quote && option
+          ? await createZiinaPaymentIntent(
+              bookingId,
+              { paymentStatus: quote.paymentStatus, amountAed: option.amountAed },
+              option.type,
+              referenceCode
+            )
+          : { success: false, error: error || "Payment option is unavailable." };
 
         if (ziinaRes.success && ziinaRes.paymentUrl) {
           paymentUrl = ziinaRes.paymentUrl;

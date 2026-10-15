@@ -67,7 +67,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
 
   const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3000);
 
-  const filter = useAdminFilter<User, "all" | "client" | "admin">({
+  const filter = useAdminFilter<User, "all" | "client" | "enterprise" | "admin">({
     data: usersList,
     initialFilter: "all",
     pageSize: 20,
@@ -85,6 +85,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
   });
 
   const totalClients = usersList.filter((u) => u.role === "client").length;
+  const totalEnterprise = usersList.filter((u) => u.role === "enterprise").length;
   const totalCorporate = usersList.filter((u) => Boolean(u.company)).length;
   const totalAdmins = usersList.filter((u) => u.role === "admin").length;
 
@@ -252,6 +253,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
         filterOptions={[
           { id: "all", label: "All Users", count: usersList.length },
           { id: "client", label: "Clients", count: totalClients },
+          { id: "enterprise", label: "Enterprise", count: totalEnterprise },
           { id: "admin", label: "Admins", count: totalAdmins },
         ]}
       />
@@ -343,6 +345,7 @@ export function UsersManager({ initialUsers }: UsersManagerProps) {
                     }`}
                   >
                     <option value="client" className="bg-slate-900 text-white">Client</option>
+                    <option value="enterprise" disabled className="bg-slate-900 text-white">Enterprise</option>
                     <option value="admin" className="bg-slate-900 text-white">System Admin</option>
                   </select>
                 </td>

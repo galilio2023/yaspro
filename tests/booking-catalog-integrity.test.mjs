@@ -243,10 +243,16 @@ test('saving an offer preserves existing restricted days and defaults absent res
   }
 });
 
-test('checkout loads platform settings when omitted, merges defaults, and respects caller overrides', async () => {
-  const effects = [];
-  const states = [];
+test('checkout displays server options, ignores caller pricing, and refreshes stale payments', async () => {
+  const effects = [], states = [], attempts = [];
   let cursor = 0, reads = 0;
+  const quote = { paymentStatus: 'unpaid', depositPercent: 25, vatRatePercent: 0, options: [
+    { type: 'deposit', amountAed: 250, targetStatus: 'deposit_paid' },
+    { type: 'full', amountAed: 1000, targetStatus: 'paid' },
+  ] };
+  const balanceQuote = { ...quote, paymentStatus: 'deposit_paid', options: [
+    { type: 'full', amountAed: 750, targetStatus: 'paid' },
+  ] };
   const load = loader({
     react: { ...React, useEffect: (effect) => effects.push(effect), useRef: () => ({ current: null }), useState: (initial) => {
       const index = cursor++;
@@ -255,29 +261,39 @@ test('checkout loads platform settings when omitted, merges defaults, and respec
     } },
     'react-dom': { createPortal: (tree) => tree },
     '@/hooks/useFocusTrap': { useFocusTrap() {} },
-    '@/lib/payment-actions': {}, '@/lib/ziina': {},
-    '@/lib/actions/platform-settings-operations': { getPlatformSettings: async () => { reads++; return { bankName: 'CMS Bank', iban: 'CMS IBAN', depositPercent: 25 }; } },
+    '@/lib/ziina': {
+      getBookingPaymentQuote: async () => { reads++; return { quote }; },
+      createZiinaPaymentIntent: async (...args) => {
+        attempts.push(args);
+        return { success: false, quote: balanceQuote, error: 'Booking payment changed.' };
+      },
+    },
     '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic: false }) },
     '@/lib/utils': { cn: (...values) => values.join(' '), formatCurrency: String },
   }, { document: { body: {} } });
   const { BookingPaymentModal } = load('src/features/booking/components/BookingPaymentModal.tsx');
-  const render = (props = {}) => {
+  const render = () => {
     cursor = 0;
-    effects.length = 0;
-    return BookingPaymentModal({ isOpen: true, totalAmount: 1000, onClose() {}, ...props });
+    return BookingPaymentModal({ isOpen: true, bookingId: 'booking', referenceCode: 'REF', totalAmount: 1,
+      paymentSettings: { depositPercent: 30 }, onClose() {} });
   };
-  const pending = render();
-  assert.equal(find(pending, (node) => node.type === 'form').length, 0);
-  assert.equal(find(pending, (node) => node.props?.role === 'status').length, 1);
+  assert.equal(find(render(), (node) => node.type === 'form').length, 0);
   const cleanup = effects[0]();
   await Promise.resolve();
   let tree = render();
-  assert.ok(find(tree, (node) => node.props?.children === '250').length > 0);
-  cleanup();
-  tree = render({ paymentSettings: { depositPercent: 30 } });
-  effects[0]();
   assert.equal(reads, 1);
-  assert.ok(find(tree, (node) => node.props?.children === '300').length > 0);
+  for (const label of ['25% Booking Deposit', 'Includes 0% UAE VAT', 'UAE VAT (0% FTA):', '250', '0']) {
+    assert.ok(find(tree, (node) => node.props?.children === label).length > 0, label);
+  }
+  await find(tree, (node) => node.type === 'form')[0].props.onSubmit({ preventDefault() {} });
+  assert.deepEqual(JSON.parse(JSON.stringify(attempts[0])), ['booking', { paymentStatus: 'unpaid', amountAed: 250 }, 'deposit', 'REF']);
+  tree = render();
+  assert.ok(find(tree, (node) => node.props?.children === 'Remaining Balance').length > 0);
+  assert.ok(find(tree, (node) => node.props?.children === '750').length > 0);
+  assert.equal(find(tree, (node) => node.props?.children === '25% Booking Deposit').length, 0);
+  await find(tree, (node) => node.type === 'form')[0].props.onSubmit({ preventDefault() {} });
+  assert.deepEqual(JSON.parse(JSON.stringify(attempts[1])), ['booking', { paymentStatus: 'deposit_paid', amountAed: 750 }, 'full', 'REF']);
+  cleanup();
 });
 
 test('public booking pages pass current catalogs into their client wizards', async () => {
@@ -413,7 +429,7 @@ test('platform settings defaults require a successful empty read and malformed I
   assert.equal(writes, 1);
 });
 
-test('checkout blocks failed settings reads and uses configured deposit and zero VAT labels and amounts', async () => {
+test('checkout blocks failed quote reads even when callers provide payment settings', async () => {
   const state = [], effects = [];
   let cursor = 0, rejectRead;
   const load = loader({
@@ -423,13 +439,13 @@ test('checkout blocks failed settings reads and uses configured deposit and zero
       return [state[index], (value) => { state[index] = value; }];
     } },
     'react-dom': { createPortal: (tree) => tree }, '@/hooks/useFocusTrap': { useFocusTrap() {} },
-    '@/lib/payment-actions': {}, '@/lib/ziina': {},
-    '@/lib/actions/platform-settings-operations': { getPlatformSettings: () => new Promise((_, reject) => { rejectRead = reject; }) },
+    '@/lib/ziina': { getBookingPaymentQuote: () => new Promise((_, reject) => { rejectRead = reject; }) },
     '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic: false }) },
     '@/lib/utils': { cn: (...values) => values.join(' '), formatCurrency: String },
   }, { document: { body: {} } });
   const { BookingPaymentModal } = load('src/features/booking/components/BookingPaymentModal.tsx');
-  const render = (props = {}) => { cursor = 0; return BookingPaymentModal({ isOpen: true, totalAmount: 1000, onClose() {}, ...props }); };
+  const render = () => { cursor = 0; return BookingPaymentModal({ isOpen: true, totalAmount: 1000,
+    paymentSettings: { depositPercent: 25 }, onClose() {} }); };
   let tree = render();
   assert.equal(find(tree, (node) => node.type === 'form').length, 0);
   effects[0]();
@@ -437,12 +453,7 @@ test('checkout blocks failed settings reads and uses configured deposit and zero
   await new Promise((resolve) => setImmediate(resolve));
   tree = render();
   assert.equal(find(tree, (node) => node.type === 'form').length, 0);
-  assert.match(find(tree, (node) => node.props?.role === 'alert')[0].props.children, /Unable to load payment settings/);
-  tree = render({ paymentSettings: { depositPercent: 25, vatRatePercent: 0 } });
-  assert.equal(find(tree, (node) => node.type === 'form').length, 1);
-  for (const label of ['25% Booking Deposit', 'Includes 0% UAE VAT', 'UAE VAT (0% FTA):', '250', '0']) {
-    assert.ok(find(tree, (node) => node.props?.children === label).length > 0, label);
-  }
+  assert.match(find(tree, (node) => node.props?.role === 'alert')[0].props.children, /Unable to load booking payment/);
 });
 
 test('podcast and blackout managers restore optimistic changes and display action errors', async () => {

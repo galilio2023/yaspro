@@ -381,21 +381,12 @@ export async function syncUserProfile(input: {
     }
 
     if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-      const currentUser = db.query?.users
-        ? await db.query.users.findFirst({ where: eq(users.id, targetUserId) })
-        : null;
-
       const updateData: Record<string, unknown> = {
         updatedAt: new Date(),
       };
       if (name !== undefined) updateData.name = name;
       if (input.phone !== undefined) updateData.phone = input.phone.trim() || null;
       if (input.company !== undefined) updateData.company = input.company.trim() || null;
-
-      // Role change safeguards: Administrators can NEVER have their role altered via client profile sync
-      if (currentUser?.role !== "admin") {
-        updateData.role = "client";
-      }
 
       await db
         .update(users)
@@ -411,4 +402,3 @@ export async function syncUserProfile(input: {
 }
 
 export { type BookingSubmissionInput, type InquirySubmissionInput };
-

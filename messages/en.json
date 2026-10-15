@@ -348,6 +348,7 @@
       "fullNameLabel": "Full Name",
       "fullNamePlaceholder": "e.g. Tariq Mansoor",
       "companyLabel": "Company / Agency",
+      "optional": "Optional",
       "companyPlaceholder": "e.g. Dubai Media Agency",
       "emailLabel": "Work Email",
       "emailPlaceholder": "name@company.com",

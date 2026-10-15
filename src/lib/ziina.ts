@@ -1,11 +1,23 @@
 "use server";
 
+import { getPlatformSettings } from "@/lib/actions/platform-settings-operations";
 import { getCurrentSession } from "@/lib/actions/shared";
 import { hasBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { db } from "@/db";
 import { bookings } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath, updateTag } from "next/cache";
+
+export interface BookingPaymentQuote {
+  paymentStatus: string;
+  depositPercent: number;
+  vatRatePercent: number;
+  options: {
+    type: "deposit" | "full";
+    amountAed: number;
+    targetStatus: "deposit_paid" | "paid";
+  }[];
+}
 
 export interface ZiinaPaymentIntentResponse {
   success: boolean;
@@ -15,74 +27,100 @@ export interface ZiinaPaymentIntentResponse {
   paymentStatus?: "deposit_paid" | "paid";
   message?: string;
   error?: string;
+  quote?: BookingPaymentQuote;
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+class BookingPaymentError extends Error {}
+
+async function loadBookingPaymentQuote(bookingId: string, referenceCode: string) {
+  if (!bookingId && !referenceCode) {
+    throw new BookingPaymentError("Booking reference is required to initiate Ziina payment.");
+  }
+  if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
+    throw new BookingPaymentError("Booking service is unavailable.");
+  }
+  const booking = await db.query.bookings.findFirst({
+    where: UUID_RE.test(bookingId)
+      ? eq(bookings.id, bookingId)
+      : eq(bookings.referenceCode, referenceCode || bookingId),
+  });
+  if (!booking) throw new BookingPaymentError("Booking not found.");
+  const authorized = booking.userId
+    ? (await getCurrentSession())?.user?.id === booking.userId
+    : await hasBookingPaymentCapability(booking.id);
+  if (!authorized) throw new BookingPaymentError("Unauthorized to pay for this booking.");
+  if (booking.status === "cancelled") throw new BookingPaymentError("This booking was cancelled.");
+  if (booking.paymentStatus === "paid") throw new BookingPaymentError("This booking is already fully paid.");
+  if (booking.paymentStatus !== "unpaid" && booking.paymentStatus !== "deposit_paid") {
+    throw new BookingPaymentError("This booking is not available for payment.");
+  }
+
+  const { depositPercent, vatRatePercent } = await getPlatformSettings();
+  const total = Math.round(Number(booking.totalAmount));
+  if (!Number.isFinite(total) || total <= 0 || !Number.isFinite(depositPercent) ||
+      depositPercent < 10 || depositPercent > 100) {
+    throw new BookingPaymentError("Invalid payment amount or deposit settings.");
+  }
+  const deposit = Math.round(total * depositPercent / 100);
+  const remaining = booking.paymentStatus === "deposit_paid" ? total - deposit : total;
+  if (remaining <= 0) throw new BookingPaymentError("No outstanding balance is available for payment.");
+  const quote: BookingPaymentQuote = {
+    paymentStatus: booking.paymentStatus,
+    depositPercent,
+    vatRatePercent,
+    options: [],
+  };
+  if (booking.paymentStatus === "unpaid" && deposit > 0 && deposit < total) {
+    quote.options.push({ type: "deposit", amountAed: deposit, targetStatus: "deposit_paid" });
+  }
+  quote.options.push({ type: "full", amountAed: remaining, targetStatus: "paid" });
+  return { booking, quote };
+}
+
+/** Returns only the authorized booking's current payment choices and amounts. */
+export async function getBookingPaymentQuote(
+  bookingId: string,
+  referenceCode: string,
+): Promise<{ quote?: BookingPaymentQuote; error?: string }> {
+  try {
+    const { quote } = await loadBookingPaymentQuote(bookingId, referenceCode);
+    return { quote };
+  } catch (error) {
+    return { error: error instanceof BookingPaymentError ? error.message : "Unable to load booking payment." };
+  }
+}
 
 /**
  * Creates a Ziina payment intent (or a simulated one outside production).
  * Ziina charges are denominated in fils (1 AED = 100 fils).
  *
  * The charge amount is ALWAYS derived server-side from the booking record:
- * the client-supplied amount is ignored so it cannot be tampered with.
+ * the displayed status and amount must still match the current quote.
  *
  * @param bookingId - UUID or reference code of the booking.
- * @param _clientAmountAed - Ignored (kept for call-site compatibility).
- * @param paymentType - "deposit" (50%) or "full" (remaining balance).
+ * @param expectedPayment - Payment status and amount displayed by the modal.
+ * @param paymentType - Configured deposit or full outstanding balance.
  * @param referenceCode - Booking reference code (e.g. YAS-ABC123).
  */
 export async function createZiinaPaymentIntent(
   bookingId: string,
-  _clientAmountAed: number,
+  expectedPayment: { paymentStatus: string; amountAed: number },
   paymentType: "deposit" | "full",
   referenceCode: string
 ): Promise<ZiinaPaymentIntentResponse> {
   try {
-    if (!bookingId && !referenceCode) {
-      return { success: false, error: "Booking reference is required to initiate Ziina payment." };
-    }
     if (paymentType !== "deposit" && paymentType !== "full") {
       return { success: false, error: "Invalid payment type." };
     }
-    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("ep-xxx")) {
-      return { success: false, error: "Booking service is unavailable." };
+    const { booking, quote } = await loadBookingPaymentQuote(bookingId, referenceCode);
+    const option = quote.options.find((option) => option.type === paymentType);
+    if (!expectedPayment || expectedPayment.paymentStatus !== quote.paymentStatus ||
+        !option || expectedPayment.amountAed !== option.amountAed) {
+      return { success: false, quote, error: "Booking payment changed. Review the updated amount and retry." };
     }
-
-    const booking = await db.query.bookings.findFirst({
-      where: UUID_RE.test(bookingId)
-        ? eq(bookings.id, bookingId)
-        : eq(bookings.referenceCode, referenceCode || bookingId),
-    });
-    if (!booking) {
-      return { success: false, error: "Booking not found." };
-    }
-    const authorized = booking.userId
-      ? (await getCurrentSession())?.user?.id === booking.userId
-      : await hasBookingPaymentCapability(booking.id);
-    if (!authorized) {
-      return { success: false, error: "Unauthorized to pay for this booking." };
-    }
-    if (booking.status === "cancelled") {
-      return { success: false, error: "This booking was cancelled." };
-    }
-    if (booking.paymentStatus === "paid") {
-      return { success: false, error: "This booking is already fully paid." };
-    }
-
-    // Server-authoritative amount (AED, whole numbers).
-    const total = Math.round(Number(booking.totalAmount));
-    const deposit = Math.round(total * 0.5);
-    let amountAed: number;
-    if (booking.paymentStatus === "deposit_paid") {
-      amountAed = total - deposit; // remaining balance
-    } else {
-      amountAed = paymentType === "deposit" ? deposit : total;
-    }
-    if (!Number.isFinite(amountAed) || amountAed <= 0) {
-      return { success: false, error: "Invalid payment amount." };
-    }
-    const targetStatus: "deposit_paid" | "paid" =
-      booking.paymentStatus !== "deposit_paid" && paymentType === "deposit" ? "deposit_paid" : "paid";
+    const { amountAed, targetStatus } = option;
 
     const ziinaApiKey = process.env.ZIINA_API_KEY;
     const isLiveKey = Boolean(ziinaApiKey && !ziinaApiKey.includes("ziina_xxx") && !ziinaApiKey.startsWith("your_"));
@@ -158,7 +196,7 @@ export async function createZiinaPaymentIntent(
     if (isSimulateEnabled) {
       const transactionId = `ZIINA_SIM_${Date.now()}_${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
-      await db
+      const updated = await db
         .update(bookings)
         .set({
           paymentStatus: targetStatus,
@@ -166,7 +204,11 @@ export async function createZiinaPaymentIntent(
           status: "confirmed" as const,
           updatedAt: new Date(),
         })
-        .where(eq(bookings.id, booking.id));
+        .where(and(eq(bookings.id, booking.id), eq(bookings.paymentStatus, booking.paymentStatus)))
+        .returning({ id: bookings.id });
+      if (updated.length === 0) {
+        return { success: false, error: "Booking payment changed. Please retry." };
+      }
 
       try {
         updateTag("studios");
@@ -194,7 +236,7 @@ export async function createZiinaPaymentIntent(
     console.error("createZiinaPaymentIntent error:", error);
     return {
       success: false,
-      error: "Ziina payment gateway error. Please retry.",
+      error: error instanceof BookingPaymentError ? error.message : "Ziina payment gateway error. Please retry.",
     };
   }
 }

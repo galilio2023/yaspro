@@ -1,10 +1,8 @@
 "use client";
 
-import { getPlatformSettings } from "@/lib/actions/platform-settings-operations";
 import { createPortal } from "react-dom";
 import React, { useState, useRef, useEffect } from "react";
 import {
-  CreditCard,
   Lock,
   AlertCircle,
   X,
@@ -13,14 +11,11 @@ import {
   Zap,
   Receipt,
 } from "lucide-react";
-import { createZiinaPaymentIntent } from "@/lib/ziina";
+import { createZiinaPaymentIntent, getBookingPaymentQuote, type BookingPaymentQuote } from "@/lib/ziina";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { formatCurrency, cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import {
-  DEFAULT_PLATFORM_SETTINGS,
-  type PlatformPaymentSettings,
-} from "@/lib/types/platform-settings";
+import type { PlatformPaymentSettings } from "@/lib/types/platform-settings";
 
 interface BookingPaymentModalProps {
   isOpen: boolean;
@@ -39,11 +34,9 @@ export function BookingPaymentModal({
   onClose,
   bookingId,
   referenceCode,
-  totalAmount,
   securityDeposit = 0,
   orderTitle,
   onPaymentSuccess,
-  paymentSettings,
 }: BookingPaymentModalProps) {
   const { isArabic } = useLanguage();
   const [paymentType, setPaymentType] = useState<"deposit" | "full">("deposit");
@@ -53,44 +46,51 @@ export function BookingPaymentModal({
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap({ isOpen, onClose, containerRef: dialogRef });
 
-  const [loadedSettings, setLoadedSettings] = useState<Partial<PlatformPaymentSettings> | null>(null);
-  const [settingsError, setSettingsError] = useState(false);
+  const [loadedQuote, setLoadedQuote] = useState<{
+    bookingId?: string;
+    referenceCode: string;
+    quote: BookingPaymentQuote;
+  } | null>(null);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
   useEffect(() => {
-    if (!isOpen || paymentSettings) return;
+    if (!isOpen) return;
     let cancelled = false;
-    getPlatformSettings().then((settings) => {
-      if (!cancelled) {
-        setLoadedSettings(settings);
-        setSettingsError(false);
+    getBookingPaymentQuote(bookingId || "", referenceCode).then((result) => {
+      if (cancelled) return;
+      if (result.quote) {
+        setLoadedQuote({ bookingId, referenceCode, quote: result.quote });
+        setQuoteError(null);
+      } else {
+        setQuoteError(result.error || "Unable to load booking payment.");
       }
     }).catch(() => {
-      if (!cancelled) setSettingsError(true);
+      if (!cancelled) setQuoteError("Unable to load booking payment.");
     });
     return () => {
       cancelled = true;
-      setLoadedSettings(null);
-      setSettingsError(false);
+      setLoadedQuote(null);
+      setQuoteError(null);
     };
-  }, [isOpen, paymentSettings]);
-  const settings = paymentSettings ?? loadedSettings;
-  const activeSettings = settings ? { ...DEFAULT_PLATFORM_SETTINGS, ...settings } : null;
+  }, [isOpen, bookingId, referenceCode]);
+  const quote = loadedQuote && loadedQuote.bookingId === bookingId && loadedQuote?.referenceCode === referenceCode
+    ? loadedQuote.quote : null;
 
   if (!isOpen) return null;
 
-  const depositPercent = activeSettings?.depositPercent ?? 50;
-  const depositMultiplier = depositPercent / 100;
-  const depositAmount = Math.round(totalAmount * depositMultiplier);
-  const chargeAmount = paymentType === "deposit" ? depositAmount : totalAmount;
+  const selectedOption = quote?.options.find((option) => option.type === paymentType) ?? quote?.options[0];
+  const chargeAmount = selectedOption?.amountAed ?? 0;
+  const depositPercent = quote?.depositPercent ?? 50;
+  const isBalancePayment = quote?.paymentStatus === "deposit_paid";
 
   // Dynamic UAE VAT calculation breakdown
-  const vatRatePercent = activeSettings?.vatRatePercent ?? 5;
+  const vatRatePercent = quote?.vatRatePercent ?? 5;
   const vatRate = 1 + vatRatePercent / 100;
   const vatAmount = Math.round((chargeAmount - chargeAmount / vatRate) * 100) / 100;
   const netAmount = Math.round((chargeAmount - vatAmount) * 100) / 100;
 
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!activeSettings) return;
+    if (!quote || !selectedOption || isProcessing) return;
 
     setIsProcessing(true);
     setErrorMsg(null);
@@ -98,8 +98,8 @@ export function BookingPaymentModal({
     try {
       const res = await createZiinaPaymentIntent(
         bookingId || "",
-        chargeAmount,
-        paymentType,
+        { paymentStatus: quote.paymentStatus, amountAed: chargeAmount },
+        selectedOption.type,
         referenceCode
       );
 
@@ -114,6 +114,9 @@ export function BookingPaymentModal({
         return;
       }
 
+      if (res.quote) {
+        setLoadedQuote({ bookingId, referenceCode, quote: res.quote });
+      }
       setErrorMsg(res.error || (isArabic ? "تم مقاطعة عملية تفويض الدفع عبر زينا" : "Ziina payment authorization was interrupted."));
     } catch (err) {
       setErrorMsg((err as Error).message || (isArabic ? "تعذر الاتصال ببوابة الدفع. يرجى المحاولة لاحقاً." : "Unable to reach payment gateway. Please retry."));
@@ -171,11 +174,11 @@ export function BookingPaymentModal({
           </div>
         )}
 
-        {!activeSettings ? (
-          <div role={settingsError ? "alert" : "status"} aria-busy={!settingsError} className="p-4 text-sm text-slate-300">
-            {settingsError
-              ? (isArabic ? "تعذر تحميل إعدادات الدفع. يرجى إغلاق النافذة والمحاولة مجدداً." : "Unable to load payment settings. Please close and reopen checkout to retry.")
-              : (isArabic ? "جاري تحميل إعدادات الدفع..." : "Loading payment settings...")}
+        {!quote ? (
+          <div role={quoteError ? "alert" : "status"} aria-busy={!quoteError} className="p-4 text-sm text-slate-300">
+            {quoteError
+              ? (isArabic ? "تعذر تحميل تفاصيل الدفع. يرجى إغلاق النافذة والمحاولة مجدداً." : quoteError)
+              : (isArabic ? "جاري تحميل تفاصيل الدفع..." : "Loading payment details...")}
           </div>
         ) : (
         <form onSubmit={handlePay} className="space-y-5 text-xs">
@@ -228,48 +231,38 @@ export function BookingPaymentModal({
             <label className="block text-slate-300 font-semibold mb-2">
               {isArabic ? "خطة الدفع" : "Payment Schedule"}
             </label>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => setPaymentType("deposit")}
-                className={cn(
-                  "p-3 rounded-2xl border text-start transition-all cursor-pointer",
-                  paymentType === "deposit"
-                    ? "bg-brand-violet/30 border-brand-mauve/50 text-white shadow-md shadow-brand-violet/20"
-                    : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white"
-                )}
-              >
-                <div className="text-[10px] font-mono uppercase text-brand-mauve">
-                  {isArabic ? `عربون حجز ${depositPercent}%` : `${depositPercent}% Booking Deposit`}
-                </div>
-                <div className="text-sm font-bold text-white mt-0.5">
-                  {formatCurrency(depositAmount)}
-                </div>
-                <div className="text-[10px] text-slate-400 mt-1">
-                  {isArabic ? "يثبت تاريخ وموعد الاستوديو" : "Locks in studio schedule"}
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setPaymentType("full")}
-                className={cn(
-                  "p-3 rounded-2xl border text-start transition-all cursor-pointer",
-                  paymentType === "full"
-                    ? "bg-brand-violet/30 border-brand-mauve/50 text-white shadow-md shadow-brand-violet/20"
-                    : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white"
-                )}
-              >
-                <div className="text-[10px] font-mono uppercase text-brand-mauve">
-                  {isArabic ? "المبلغ كاملاً 100%" : "Full Payment (100%)"}
-                </div>
-                <div className="text-sm font-bold text-white mt-0.5">
-                  {formatCurrency(totalAmount)}
-                </div>
-                <div className="text-[10px] text-slate-400 mt-1">
-                  {isArabic ? "تسوية فورية معتمدة" : "Complete order settlement"}
-                </div>
-              </button>
+            <div className={cn("grid gap-3", quote.options.length > 1 ? "grid-cols-2" : "grid-cols-1")}>
+              {quote.options.map((option) => (
+                <button
+                  key={option.type}
+                  type="button"
+                  disabled={isProcessing}
+                  aria-pressed={selectedOption?.type === option.type}
+                  onClick={() => setPaymentType(option.type)}
+                  className={cn(
+                    "p-3 rounded-2xl border text-start transition-all cursor-pointer",
+                    selectedOption?.type === option.type
+                      ? "bg-brand-violet/30 border-brand-mauve/50 text-white shadow-md shadow-brand-violet/20"
+                      : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white"
+                  )}
+                >
+                  <div className="text-[10px] font-mono uppercase text-brand-mauve">
+                    {option.type === "deposit"
+                      ? (isArabic ? `عربون حجز ${depositPercent}%` : `${depositPercent}% Booking Deposit`)
+                      : isBalancePayment
+                        ? (isArabic ? "الرصيد المتبقي" : "Remaining Balance")
+                        : (isArabic ? "المبلغ كاملاً 100%" : "Full Payment (100%)")}
+                  </div>
+                  <div className="text-sm font-bold text-white mt-0.5">
+                    {formatCurrency(option.amountAed)}
+                  </div>
+                  <div className="text-[10px] text-slate-400 mt-1">
+                    {option.type === "deposit"
+                      ? (isArabic ? "يثبت تاريخ وموعد الاستوديو" : "Locks in studio schedule")
+                      : (isArabic ? "تسوية فورية معتمدة" : "Complete order settlement")}
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
 

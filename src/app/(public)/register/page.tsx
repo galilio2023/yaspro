@@ -147,7 +147,7 @@ export default function RegisterPage() {
             <div>
               <label className="block text-slate-300 font-medium mb-1.5 text-xs sm:text-sm">
                 {t("companyLabel")}{" "}
-                <span className="text-slate-500 text-[10px] font-normal">({t("companyLabel") ? "Optional" : ""})</span>
+                <span className="text-slate-500 text-[10px] font-normal">({t("optional")})</span>
               </label>
               <div className="relative">
                 <input

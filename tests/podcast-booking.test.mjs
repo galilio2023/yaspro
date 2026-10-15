@@ -60,7 +60,11 @@ function fixture({ missingStudio, studioCapacity = 10, payment = { success: true
       },
     } },
     '@/lib/booking-payment-capability': { issueBookingPaymentCapability: async (id) => capabilities.push(id) },
-    '@/lib/ziina': { createZiinaPaymentIntent: async (...args) => { payments.push(args); return payment; } },
+    '@/lib/ziina': {
+      getBookingPaymentQuote: async () => ({ quote: { paymentStatus: 'unpaid', options: [
+        { type: 'full', amountAed: Number(writes[0].values.totalAmount) },
+      ] } }),
+      createZiinaPaymentIntent: async (...args) => { payments.push(args); return payment; } },
   });
   return { createPodcastBooking, writes, payments, capabilities, lookups, bookings, bookingSessions, get transactions() { return transactions; } };
 }
@@ -98,7 +102,7 @@ test('all sessions resolve exact studios and persist atomically, retaining one d
   assert.equal(additional.position, 2);
   assert.equal(additional.scheduledAt.toISOString(), '2026-11-21T13:30:00.000Z');
   assert.equal(f.payments.length, 1);
-  assert.equal(f.payments[0][1], 1267);
+  assert.deepEqual(JSON.parse(JSON.stringify(f.payments[0][1])), { paymentStatus: 'unpaid', amountAed: 1267 });
 });
 
 test('unresolved secondary studio prevents the entire insert; schedule errors roll back before payment', async () => {

@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { bookings, bookingSessions, studios, studioBlackouts } from "@/db/schema";
 import { eq, or, isNull } from "drizzle-orm";
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
-import { createZiinaPaymentIntent } from "@/lib/ziina";
+import { createZiinaPaymentIntent, getBookingPaymentQuote } from "@/lib/ziina";
 import { PODCAST_SERVICES, PODCAST_PROMO_CODES } from "./data";
 import { getCmsPodcastSets, getCmsPodcastAddons } from "@/lib/actions/podcast-operations";
 import type { PodcastAddon } from "./types";
@@ -246,12 +246,16 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
 
         let paymentUrl: string | undefined = undefined;
         if (initiatePayment) {
-          const ziinaRes = await createZiinaPaymentIntent(
-            bookingId,
-            grandTotal,
-            paymentType || "full",
-            referenceCode
-          );
+          const { quote, error } = await getBookingPaymentQuote(bookingId, referenceCode);
+          const option = quote?.options.find((option) => option.type === paymentType);
+          const ziinaRes = quote && option
+            ? await createZiinaPaymentIntent(
+                bookingId,
+                { paymentStatus: quote.paymentStatus, amountAed: option.amountAed },
+                option.type,
+                referenceCode
+              )
+            : { success: false, error: error || "Payment option is unavailable." };
           if (!ziinaRes.success) {
             return {
               success: false,

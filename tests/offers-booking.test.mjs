@@ -81,7 +81,11 @@ function fixture({ failInsert = false, emptyInsert = false, payment = { success:
       capabilities.push(id);
       if (failCapability) throw new Error('Capability unavailable');
     } },
-    '@/lib/ziina': { createZiinaPaymentIntent: async (...args) => {
+    '@/lib/ziina': {
+      getBookingPaymentQuote: async () => ({ quote: { paymentStatus: 'unpaid', options: [
+        { type: 'full', amountAed: Number(writes.at(-1).totalAmount) },
+      ] } }),
+      createZiinaPaymentIntent: async (...args) => {
       payments.push(args);
       if (payment instanceof Error) throw payment;
       return payment;
@@ -173,7 +177,7 @@ test('payment failures preserve the pending booking and surface paymentFailed', 
   const paid = await f.submitOffersBooking({ ...input, initiatePayment: true });
   assert.equal(paid.paymentUrl, 'https://payments.example.test/pay');
   assert.equal(paid.paymentFailed, false);
-  assert.deepEqual(f.payments[0].slice(0, 3), ['booking-1', 4410, 'full']);
+  assert.deepEqual(JSON.parse(JSON.stringify(f.payments[0].slice(0, 3))), ['booking-1', { paymentStatus: 'unpaid', amountAed: 4410 }, 'full']);
   const studio = await f.submitOffersBooking(input);
   assert.equal(studio.paymentFailed, false);
   assert.equal(f.payments.length, 1);
