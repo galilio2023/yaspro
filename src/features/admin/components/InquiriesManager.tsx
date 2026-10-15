@@ -158,7 +158,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
           : !i.isResolved;
 
       const cat = resolveInquiryCategory(i);
-      const matchesType = !type || type === "all" || cat.typeKey === type || i.inquiryType === type;
+      const matchesType = !type || type === "all" || cat.typeKey === type;
 
       return Boolean(matchesSearch && matchesStatus && matchesType);
     },
@@ -285,6 +285,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
             <option value="social_media_package">Social Media Retainers ✨</option>
             <option value="gear_rental">Cinema Gear Rentals 🎥</option>
             <option value="ob_van">OB Van Broadcast 📡</option>
+            <option value="live_broadcast">Live Broadcast</option>
             <option value="outdoor_filming">Outdoor Filming 🎬</option>
             <option value="studio_booking">Studio Booking 🏢</option>
             <option value="technical_support">Technical Support 🔧</option>

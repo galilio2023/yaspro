@@ -53,11 +53,14 @@ export async function getCmsOverviewStats() {
         ]);
 
       const totalBookedRevenue = Math.round(
-        allBookings.reduce((acc, curr) => acc + (parseFloat(curr.totalAmount) || 0), 0)
+        allBookings
+          .filter((b) => b.status !== "cancelled")
+          .reduce((acc, curr) => acc + (parseFloat(curr.totalAmount) || 0), 0)
       );
       const paidRevenue = Math.round(
         allBookings
-          .filter((b) => b.paymentStatus === "paid" || b.paymentStatus === "deposit_paid")
+          // Captured deposit amounts are not stored on bookings.
+          .filter((b) => b.paymentStatus === "paid")
           .reduce((acc, curr) => acc + (parseFloat(curr.totalAmount) || 0), 0)
       );
 

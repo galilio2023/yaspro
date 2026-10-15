@@ -3,9 +3,14 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
-const loadDependency = createRequire(import.meta.url);
 import vm from 'node:vm';
 import ts from 'typescript';
+const loadDependency = createRequire(import.meta.url);
+const NOW = Date.parse('2026-10-14T08:00:00Z');
+class FixtureDate extends Date {
+  constructor(...args) { super(...(args.length ? args : [NOW])); }
+  static now() { return NOW; }
+}
 
 function loadSource(file, mocks = {}, globals = {}) {
   const source = fs.readFileSync(path.join(import.meta.dirname, '..', file), 'utf8');
@@ -29,6 +34,7 @@ function loadSource(file, mocks = {}, globals = {}) {
     },
     console: { error() {}, log() {} },
     process: { env: { DATABASE_URL: 'postgresql://test:local@localhost/db' } },
+    Date: FixtureDate,
     ...globals,
   });
   return exports;
@@ -189,7 +195,7 @@ test('booking uses CMS IDs and rates and rejects deleted or inactive studios', a
     '@/lib/rate-limit': { getClientIdentifier: async () => 'local', checkRateLimit: () => ({ allowed: true }), checkIdempotency: () => true },
     '@/lib/notifications': { sendBookingConfirmationNotification: async () => {} },
   });
-  const input = { studioId, firstName: 'Local', lastName: 'Tester', email: 'local@example.com', scheduledAt: '2026-10-25T10:00', durationHours: 2, totalAmount: 1 };
+  const input = { studioId, firstName: 'Local', lastName: 'Tester', email: 'local@example.com', scheduledAt: new FixtureDate(NOW + 24 * 60 * 60 * 1000).toISOString(), durationHours: 2, totalAmount: 1 };
   assert.equal((await createBooking(input)).success, true);
   assert.deepEqual(lookup, { col: 'studio-id', val: studioId });
   const booking = writes.find((write) => write.table === schemas.bookings).values;

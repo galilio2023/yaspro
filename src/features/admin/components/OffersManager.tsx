@@ -34,15 +34,16 @@ import {
 
 interface OffersManagerProps {
   initialBookings?: EnrichedBooking[];
+  promoCodes: { code: string; discount: string; type: string; eligibility: string }[];
 }
 
-export function OffersManager({ initialBookings = [] }: OffersManagerProps) {
+export function OffersManager({ initialBookings = [], promoCodes }: OffersManagerProps) {
   const [activeTab, setActiveTab] = useState<"catalog" | "promos" | "bookings">("catalog");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<"all" | "bundle" | "offer">("all");
 
   const offerBookings = initialBookings.filter(
-    (b) => b.referenceCode.startsWith("YAS-OFR") || Boolean(b.packageName)
+    (b) => b.referenceCode.startsWith("YAS-OFR")
   );
 
   const filteredPackages = OFFERS_AND_BUNDLES.filter((pkg) => {
@@ -67,30 +68,6 @@ export function OffersManager({ initialBookings = [] }: OffersManagerProps) {
     OFFERS_AND_BUNDLES.reduce((acc, curr) => acc + curr.price, 0) /
       OFFERS_AND_BUNDLES.length
   );
-
-  const PROMO_CODES_DATA = [
-    {
-      code: "YAS10",
-      discount: "10% OFF",
-      type: "Site-wide Welcome Promo",
-      status: "Active",
-      eligibility: "All Production Bundles & Turnkey Sets",
-    },
-    {
-      code: "CREATOR20",
-      discount: "20% OFF",
-      type: "Creator Community Perk",
-      status: "Active",
-      eligibility: "Creator Deals & YouTube Vlogger Packages",
-    },
-    {
-      code: "VIP50",
-      discount: "50% OFF",
-      type: "Executive / VIP Client Pass",
-      status: "Active",
-      eligibility: "Full Soundstage Lockouts & Live Mixing",
-    },
-  ];
 
   return (
     <div className="space-y-6">
@@ -152,7 +129,7 @@ export function OffersManager({ initialBookings = [] }: OffersManagerProps) {
       <div className="flex items-center gap-2 border-b border-white/10 pb-3">
         {[
           { id: "catalog", label: "Package Catalog", count: OFFERS_AND_BUNDLES.length },
-          { id: "promos", label: "Promo Codes & Discounts", count: PROMO_CODES_DATA.length },
+          { id: "promos", label: "Promo Codes & Discounts", count: promoCodes.length },
           { id: "bookings", label: "Offer Bookings Log", count: offerBookings.length },
         ].map((tab) => (
           <button
@@ -313,7 +290,7 @@ export function OffersManager({ initialBookings = [] }: OffersManagerProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {PROMO_CODES_DATA.map((promo) => (
+            {promoCodes.map((promo) => (
               <div
                 key={promo.code}
                 className="p-5 rounded-2xl bg-slate-900/60 border border-white/10 space-y-3"
@@ -323,7 +300,7 @@ export function OffersManager({ initialBookings = [] }: OffersManagerProps) {
                     {promo.code}
                   </span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold uppercase">
-                    {promo.status}
+                    Active
                   </span>
                 </div>
                 <div>
@@ -389,7 +366,12 @@ export function OffersManager({ initialBookings = [] }: OffersManagerProps) {
                       )}
                     </td>
                     <td className="py-3 px-4 font-mono text-xs text-slate-300">
-                      {new Date(b.scheduledAt).toLocaleDateString()}
+                      {new Date(b.scheduledAt).toLocaleDateString("en-US", {
+                        timeZone: "Asia/Dubai",
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
                     </td>
                     <td className="py-3 px-4 font-mono font-bold text-white text-xs">
                       {formatCurrency(Number(b.totalAmount))}

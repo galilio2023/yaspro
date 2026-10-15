@@ -87,7 +87,13 @@ export async function submitOffersBooking(input: OffersBookingInput): Promise<Of
       console.warn("Could not fetch default studio from DB:", err);
     }
 
-    const contactHeader = `[Contact: ${validated.firstName} ${validated.lastName} | ${validated.email} | ${validated.phone}${validated.company ? ` | ${validated.company}` : ""}]`;
+    const contactFields = [
+      `${validated.firstName} ${validated.lastName}`,
+      validated.email,
+      validated.phone,
+      ...(validated.company ? [validated.company] : []),
+    ];
+    const contactHeader = `[Contact URI: ${contactFields.map(encodeURIComponent).join(" | ")}]`;
     const specialNotesCombined = [
       contactHeader,
       `Package: ${offer.name} (${offer.hours} hrs)`,

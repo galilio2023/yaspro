@@ -156,7 +156,7 @@ export default async function AdminDashboardPage() {
             <span>Total Gross Booked Pipeline</span>
           </div>
           <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono tracking-tight">
-            {formatCurrency(stats.totalBookedRevenue || 0)}
+            {metricsUnavailable ? "Unavailable" : formatCurrency(stats.totalBookedRevenue)}
           </div>
           <p className="text-[11px] text-slate-400">
             Across soundstage sessions, turnkey bundles, and gear orders
@@ -169,7 +169,7 @@ export default async function AdminDashboardPage() {
             <span>Settled &amp; Paid Revenue</span>
           </div>
           <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono tracking-tight">
-            {formatCurrency(stats.paidRevenue || 0)}
+            {metricsUnavailable ? "Unavailable" : formatCurrency(stats.paidRevenue)}
           </div>
           <p className="text-[11px] text-slate-400">
             Verified payments captured through Ziina Payment Intent

@@ -61,6 +61,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         (b.userPhone && b.userPhone.toLowerCase().includes(q)) ||
         (b.userCompany && b.userCompany.toLowerCase().includes(q)) ||
         (b.studioName && b.studioName.toLowerCase().includes(q)) ||
+        (b.packageName && b.packageName.toLowerCase().includes(q)) ||
         b.sessionType.toLowerCase().includes(q);
 
       const matchesStatus = status === "all" || b.status === status;

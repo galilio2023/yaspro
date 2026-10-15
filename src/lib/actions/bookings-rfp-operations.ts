@@ -63,13 +63,22 @@ export async function getCmsBookings(): Promise<EnrichedBooking[]> {
 
         const notes = r.booking.specialRequests || "";
 
-        if (!guestEmail && notes.includes("[Contact: ")) {
-          const match = notes.match(/\[Contact:\s*([^|]+)\|\s*([^|]+)\|\s*([^|\]]+)(?:\|\s*([^\]]+))?\]/);
+        if (!guestEmail && /\[Contact(?: URI)?: /.test(notes)) {
+          const match = notes.match(/\[Contact( URI)?:\s*([^|]+)\|\s*([^|]+)\|\s*([^|\]]+)(?:\|\s*([^\]]+))?\]/);
           if (match) {
-            guestName = match[1]?.trim() || guestName;
-            guestEmail = match[2]?.trim() || guestEmail;
-            guestPhone = match[3]?.trim() || guestPhone;
-            guestCompany = match[4]?.trim() || guestCompany;
+            const fields = match.slice(2).map((field) => {
+              const value = field?.trim();
+              if (!value || !match[1]) return value;
+              try {
+                return decodeURIComponent(value);
+              } catch {
+                return value;
+              }
+            });
+            guestName = fields[0] || guestName;
+            guestEmail = fields[1] || guestEmail;
+            guestPhone = fields[2] || guestPhone;
+            guestCompany = fields[3] || guestCompany;
           }
         } else if (!guestName && notes.includes("Client: ")) {
           const clientMatch = notes.match(/Client:\s*([^|]+)/);

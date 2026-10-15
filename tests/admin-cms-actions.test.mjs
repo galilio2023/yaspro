@@ -534,3 +534,29 @@ test('deleteCmsUser protects self and primary CEO accounts and safely unlinks re
   assert.equal(operations[3].op, 'delete');
 });
 
+
+
+test('revenue metrics omit cancellations from pipeline and unknown deposits from captured revenue', async () => {
+  const rows = [
+    { status: 'confirmed', paymentStatus: 'paid', totalAmount: '100.25' },
+    { status: 'pending', paymentStatus: 'deposit_paid', totalAmount: '9000.00' },
+    { status: 'pending', paymentStatus: 'unpaid', totalAmount: '20.50' },
+    { status: 'cancelled', paymentStatus: 'unpaid', totalAmount: '5000.00' },
+    { status: 'cancelled', paymentStatus: 'paid', totalAmount: '30.25' },
+    { status: 'confirmed', paymentStatus: 'paid', totalAmount: 'invalid' },
+    { status: 'pending', paymentStatus: 'unpaid', totalAmount: '12.5 AED' },
+  ];
+  const { getCmsOverviewStats } = loadSource('src/lib/actions/metrics-overview.ts', {
+    '@/db': { db: { select: () => ({ from: async (table) => table === schemaMock.bookings ? rows : [] }) } },
+    '@/db/schema': schemaMock,
+    '@/features/projects/data': { PROJECTS_DATA: [] },
+    '@/features/influencers/data': { INFLUENCERS_DATA: [] },
+    '@/features/gear/data': { GEAR_DATA: [] },
+    '@/features/booking/constants': { STUDIOS: [] },
+    './shared': { isDbAvailable: () => true, requireAdmin: async () => {} },
+  });
+  const stats = await getCmsOverviewStats();
+  assert.equal(stats.status, 'available');
+  assert.equal(stats.totalBookedRevenue, 9133);
+  assert.equal(stats.paidRevenue, 131);
+});
