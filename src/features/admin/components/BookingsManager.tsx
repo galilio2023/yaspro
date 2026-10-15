@@ -149,7 +149,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
       />
 
       {errorMessage && (
-        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center justify-between animate-in fade-in">
+        <div role="alert" className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center justify-between animate-in fade-in">
           <span>{errorMessage}</span>
           <button
             type="button"

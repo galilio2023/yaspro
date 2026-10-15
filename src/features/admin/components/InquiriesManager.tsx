@@ -226,9 +226,10 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
           </select>
         }
         actions={
-          <div className="flex items-center p-1 bg-white/[0.04] rounded-xl border border-white/10 shrink-0">
+          <div className="flex items-center p-1 bg-white/[0.04] rounded-xl border border-white/10 shrink-0" role="group" aria-label="View Mode">
             <button
               type="button"
+              aria-pressed={viewMode === "table"}
               onClick={() => setViewMode("table")}
               className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
                 viewMode === "table"
@@ -243,6 +244,7 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
             </button>
             <button
               type="button"
+              aria-pressed={viewMode === "cards"}
               onClick={() => setViewMode("cards")}
               className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
                 viewMode === "cards"
@@ -649,14 +651,19 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
                 )}
                 <button
                   type="button"
+                  disabled={updatingId === selectedInquiry.id}
                   onClick={() => handleToggleResolved(selectedInquiry)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50 ${
                     selectedInquiry.isResolved
                       ? "bg-white/5 hover:bg-white/10 text-slate-300"
                       : "btn-brand font-bold"
                   }`}
                 >
-                  {selectedInquiry.isResolved ? "Reopen Lead" : "Mark Resolved"}
+                  {updatingId === selectedInquiry.id
+                    ? "Updating..."
+                    : selectedInquiry.isResolved
+                    ? "Reopen Lead"
+                    : "Mark Resolved"}
                 </button>
               </div>
             </div>

@@ -104,7 +104,7 @@ export function AdminModal({
       initialFocusRef={initialFocusRef}
     >
       {onSubmit ? (
-        <form onSubmit={onSubmit} className="contents">
+        <form onSubmit={onSubmit} noValidate className="contents">
           {content}
         </form>
       ) : (

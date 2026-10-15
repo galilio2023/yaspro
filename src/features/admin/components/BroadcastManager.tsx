@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Radio,
   Send,
@@ -71,17 +71,45 @@ export function BroadcastManager() {
   const [summary, setSummary] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [dispatchedFeed, setDispatchedFeed] = useState<TelemetryEventItem[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("yaspro_admin_telemetry_feed");
-        if (saved) return JSON.parse(saved);
-      } catch {
-        // ignore parse error
+  const [dispatchedFeed, setDispatchedFeed] = useState<TelemetryEventItem[]>(INITIAL_DISPATCHED_FEED);
+  const isLoadedRef = useRef(false);
+
+  // Safely hydrate stored events from localStorage after mount to prevent hydration mismatch
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("yaspro_admin_telemetry_feed");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (
+          Array.isArray(parsed) &&
+          parsed.length > 0 &&
+          parsed.every(
+            (item) =>
+              item &&
+              typeof item === "object" &&
+              typeof item.id === "string" &&
+              typeof item.summary === "string"
+          )
+        ) {
+          setDispatchedFeed(parsed);
+        }
       }
+    } catch {
+      // ignore storage parse error
+    } finally {
+      isLoadedRef.current = true;
     }
-    return INITIAL_DISPATCHED_FEED;
-  });
+  }, []);
+
+  // Persist feed updates safely in an effect rather than inside the state updater
+  useEffect(() => {
+    if (!isLoadedRef.current) return;
+    try {
+      localStorage.setItem("yaspro_admin_telemetry_feed", JSON.stringify(dispatchedFeed));
+    } catch {
+      // ignore storage quota error
+    }
+  }, [dispatchedFeed]);
 
   const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3500);
 
@@ -107,22 +135,14 @@ export function BroadcastManager() {
           minute: "2-digit",
           second: "2-digit",
         });
-        setDispatchedFeed((prev) => {
-          const next = [
-            {
-              id: `ev-${Date.now()}`,
-              ...eventData,
-              timestamp: dispatchTime,
-            },
-            ...prev,
-          ].slice(0, 50);
-          try {
-            localStorage.setItem("yaspro_admin_telemetry_feed", JSON.stringify(next));
-          } catch {
-            // ignore storage quota error
-          }
-          return next;
-        });
+        setDispatchedFeed((prev) => [
+          {
+            id: `ev-${Date.now()}`,
+            ...eventData,
+            timestamp: dispatchTime,
+          },
+          ...prev,
+        ].slice(0, 50));
 
         showFeedback("Event dispatched to sovereign edge relays!");
         setSummary("");
@@ -148,7 +168,7 @@ export function BroadcastManager() {
       />
 
       {errorMessage && (
-        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center justify-between animate-in fade-in">
+        <div role="alert" className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center justify-between animate-in fade-in">
           <span>{errorMessage}</span>
           <button
             type="button"

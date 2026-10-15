@@ -37,6 +37,9 @@ export function AdminImageUploader({
     if (file.size > MAX_FILE_SIZE_BYTES) {
       const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
       setError(`File size (${sizeMb}MB) exceeds the maximum allowed limit of 25MB.`);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
       return;
     }
 

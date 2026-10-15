@@ -58,7 +58,7 @@ function StudioFormContent({
     if (!formData.hourlyRate || Number(formData.hourlyRate) <= 0) {
       newErrors.hourlyRate = "Valid hourly rate is required";
     }
-    if (formData.capacity !== undefined && formData.capacity <= 0) {
+    if (!formData.capacity || formData.capacity <= 0) {
       newErrors.capacity = "Headcount capacity must be at least 1";
     }
 
