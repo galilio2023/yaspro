@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Menu,
   X,
@@ -17,8 +18,9 @@ import {
   Radio,
   ArrowUpRight,
 } from "lucide-react";
-import { YasproEmblem } from "@/components/ui/YasproEmblem";
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import { AdminSignOutButton } from "@/components/admin/AdminSignOutButton";
+import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
@@ -38,22 +40,18 @@ interface AdminMobileNavProps {
 
 export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <>
       {/* Mobile Top Bar — hidden on md+ */}
-      <header className="md:hidden flex items-center justify-between px-4 py-3 bg-slate-900/80 backdrop-blur-xl border-b border-white/10 sticky top-0 z-40">
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="size-8 rounded-xl bg-gradient-to-tr from-brand-violet-rich via-brand-violet to-brand-violet-dark flex items-center justify-center shadow-lg shadow-purple-950/40 border border-brand-mauve/40">
-            <YasproEmblem size={16} idPrefix="mob-emblem" className="filter drop-shadow-[0_0_6px_rgba(118,80,134,0.5)]" />
-          </div>
-          <div className="flex items-center">
-            <span className="font-extrabold tracking-tight text-white group-hover:text-brand-lavender transition-colors">
-              YASPRO
-            </span>
-            <span className="ml-1 text-xs font-bold text-brand-mauve">STUDIO CMS</span>
-          </div>
-        </Link>
+      <header className="md:hidden flex items-center justify-between px-4 py-3 bg-[#0c0b10]/90 backdrop-blur-xl border-b border-white/10 sticky top-0 z-40">
+        <div className="flex items-center gap-2">
+          <BrandLogo href="/admin" />
+          <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-brand-mauve/15 text-brand-mauve border border-brand-mauve/30 shrink-0">
+            Admin
+          </span>
+        </div>
 
         <button
           onClick={() => setIsOpen(true)}
@@ -79,34 +77,23 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
           />
 
           {/* Slide-in panel */}
-          <div className="relative z-10 w-72 max-w-[85vw] h-full bg-slate-900 border-r border-white/10 flex flex-col shadow-2xl animate-in slide-in-from-left duration-200">
+          <div className="relative z-10 w-72 max-w-[85vw] h-full bg-[#0c0b10] border-r rtl:border-r-0 rtl:border-l border-white/10 flex flex-col shadow-2xl animate-in slide-in-from-left rtl:slide-in-from-right duration-200">
             {/* Panel Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
-              <Link
-                href="/"
-                className="flex items-center gap-2.5 group"
+              <div
+                className="flex items-center gap-2"
                 onClick={() => setIsOpen(false)}
               >
-                <div className="size-9 rounded-xl bg-gradient-to-tr from-brand-violet-rich via-brand-violet to-brand-violet-dark flex items-center justify-center shadow-lg shadow-purple-950/40 border border-brand-mauve/40">
-                  <YasproEmblem size={18} idPrefix="mob-panel-emblem" className="filter drop-shadow-[0_0_6px_rgba(118,80,134,0.5)]" />
-                </div>
-                <div>
-                  <div className="flex items-center">
-                    <span className="font-extrabold tracking-tight text-white group-hover:text-brand-lavender transition-colors">
-                      YASPRO
-                    </span>
-                    <span className="ml-1 text-xs font-bold text-brand-mauve">CMS</span>
-                  </div>
-                  <span className="block text-[10px] text-brand-mauve font-mono tracking-wider uppercase">
-                    Cinema Studio Core
-                  </span>
-                </div>
-              </Link>
+                <BrandLogo href="/admin" />
+                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-brand-mauve/15 text-brand-mauve border border-brand-mauve/30 shrink-0">
+                  Admin
+                </span>
+              </div>
 
               <button
                 onClick={() => setIsOpen(false)}
                 aria-label="Close navigation menu"
-                className="p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+                className="p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -116,14 +103,30 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
             <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
               {NAV_ITEMS.map((item) => {
                 const Icon = item.icon;
+                const isActive =
+                  item.href === "/admin"
+                    ? pathname === "/admin"
+                    : pathname.startsWith(item.href);
+
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.06] transition-all"
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
+                      isActive
+                        ? "bg-brand-violet/25 text-white border border-brand-mauve/30 font-semibold shadow-md shadow-brand-violet/15"
+                        : "text-slate-400 hover:text-white hover:bg-white/[0.06]"
+                    )}
                   >
-                    <Icon size={18} className="text-brand-mauve shrink-0" />
+                    <Icon
+                      size={18}
+                      className={cn(
+                        "shrink-0 transition-colors",
+                        isActive ? "text-brand-mauve" : "text-brand-mauve-soft"
+                      )}
+                    />
                     <span>{item.label}</span>
                   </Link>
                 );

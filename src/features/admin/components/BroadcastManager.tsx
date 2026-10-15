@@ -70,7 +70,18 @@ export function BroadcastManager() {
   const [level, setLevel] = useState<SeverityLevel>("info");
   const [summary, setSummary] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [dispatchedFeed, setDispatchedFeed] = useState<TelemetryEventItem[]>(INITIAL_DISPATCHED_FEED);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [dispatchedFeed, setDispatchedFeed] = useState<TelemetryEventItem[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("yaspro_admin_telemetry_feed");
+        if (saved) return JSON.parse(saved);
+      } catch {
+        // ignore parse error
+      }
+    }
+    return INITIAL_DISPATCHED_FEED;
+  });
 
   const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3500);
 
@@ -81,8 +92,9 @@ export function BroadcastManager() {
     summary: string;
   }) => {
     if (isSubmitting) return;
+    setErrorMessage(null);
     if (!eventData.summary.trim()) {
-      alert("Please provide an event description.");
+      setErrorMessage("Please provide an event description before dispatching.");
       return;
     }
 
@@ -95,22 +107,30 @@ export function BroadcastManager() {
           minute: "2-digit",
           second: "2-digit",
         });
-        setDispatchedFeed((prev) => [
-          {
-            id: `ev-${prev.length + 1}`,
-            ...eventData,
-            timestamp: dispatchTime,
-          },
-          ...prev,
-        ]);
+        setDispatchedFeed((prev) => {
+          const next = [
+            {
+              id: `ev-${Date.now()}`,
+              ...eventData,
+              timestamp: dispatchTime,
+            },
+            ...prev,
+          ].slice(0, 50);
+          try {
+            localStorage.setItem("yaspro_admin_telemetry_feed", JSON.stringify(next));
+          } catch {
+            // ignore storage quota error
+          }
+          return next;
+        });
 
         showFeedback("Event dispatched to sovereign edge relays!");
         setSummary("");
       } else {
-        alert(res.error || "Failed to dispatch event");
+        setErrorMessage(res.error || "Failed to dispatch event");
       }
     } catch (err) {
-      alert((err as Error).message || "An unexpected error occurred while dispatching event");
+      setErrorMessage((err as Error).message || "An unexpected error occurred while dispatching event");
     } finally {
       setIsSubmitting(false);
     }
@@ -126,6 +146,19 @@ export function BroadcastManager() {
         feedback={feedback}
         onDismissFeedback={clearFeedback}
       />
+
+      {errorMessage && (
+        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center justify-between animate-in fade-in">
+          <span>{errorMessage}</span>
+          <button
+            type="button"
+            onClick={() => setErrorMessage(null)}
+            className="text-rose-400 hover:text-white cursor-pointer px-2 py-0.5"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* KPI Stats */}
       <AdminStatsGrid

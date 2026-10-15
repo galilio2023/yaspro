@@ -33,6 +33,7 @@ export function AdminConfirmModal({
     <Dialog
       isOpen={isOpen}
       onClose={isSubmitting ? () => {} : onClose}
+      closeOnBackdropClick={!isSubmitting}
       maxWidth="md"
       className="p-6"
     >

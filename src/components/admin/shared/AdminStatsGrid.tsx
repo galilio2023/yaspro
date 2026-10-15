@@ -49,11 +49,11 @@ const VARIANT_STYLES: Record<
     icon: "text-emerald-400",
   },
   warning: {
-    container: "border-amber-500/20 bg-amber-950/20 backdrop-blur-xl",
-    label: "text-amber-400/80",
-    value: "text-amber-400",
-    unit: "text-amber-400/80",
-    icon: "text-amber-400",
+    container: "border-brand-mauve/40 bg-brand-violet/25 backdrop-blur-xl",
+    label: "text-brand-lavender",
+    value: "text-white",
+    unit: "text-brand-mauve",
+    icon: "text-brand-mauve",
   },
   danger: {
     container: "border-rose-500/20 bg-rose-950/20 backdrop-blur-xl",

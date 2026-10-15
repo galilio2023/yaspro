@@ -6,7 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Globe, MapPin, ShoppingBag, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { YasproEmblem } from "@/components/ui/YasproEmblem";
+import { BrandLogo } from "./BrandLogo";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { useCart } from "@/components/providers/CartProvider";
 import { useSession } from "@/lib/auth-client";
@@ -152,13 +152,8 @@ export function MobileNavDrawer({
           >
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between mb-4 px-1 pb-3 border-b border-white/10">
-                <div dir="ltr" style={{ direction: "ltr" }} className="flex items-center gap-2 font-latin">
-                  <div className="size-7 rounded-xl border border-white/20 bg-white/[0.08] flex items-center justify-center p-0.5 shadow-sm">
-                    <YasproEmblem size={18} idPrefix="drawer-logo" />
-                  </div>
-                  <span className="font-extrabold text-sm tracking-tight text-white font-display">
-                    YAS<span className="text-brand-mauve">PRO</span>
-                  </span>
+                <div onClick={onClose} className="cursor-pointer">
+                  <BrandLogo href="/" />
                 </div>
                 <button
                   ref={closeButtonRef}

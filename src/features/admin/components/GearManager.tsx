@@ -202,7 +202,7 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
             <th className="py-3 px-4">Daily Rate</th>
             <th className="py-3 px-4">Deposit</th>
             <th className="py-3 px-4">Availability</th>
-            <th className="py-3 px-4 text-right">Actions</th>
+            <th className="py-3 px-4 text-end">Actions</th>
           </tr>
         </DataTableHeader>
         <DataTableBody>
@@ -210,6 +210,7 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
             <DataTableEmpty
               colSpan={6}
               message="No equipment found matching your filter criteria."
+              onReset={filter.resetFilters}
             />
           ) : (
             filter.pagination.paginatedItems.map((g) => (
@@ -258,23 +259,25 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
                     </span>
                   )}
                 </td>
-                <td className="py-3 px-4 text-right">
+                <td className="py-3 px-4 text-end">
                   <div className="flex items-center justify-end gap-2">
                     <button
                       type="button"
                       onClick={() => crud.handleOpenEdit(g)}
-                      className="p-1.5 rounded-lg bg-brand-violet/20 hover:bg-brand-violet/35 text-brand-mauve transition-colors cursor-pointer"
+                      className="p-2 rounded-xl bg-brand-violet/20 hover:bg-brand-violet/35 text-brand-mauve transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                       title="Edit Equipment"
+                      aria-label={`Edit ${g.name}`}
                     >
-                      <Edit3 size={14} />
+                      <Edit3 size={15} />
                     </button>
                     <button
                       type="button"
                       onClick={() => crud.handleOpenDelete(g)}
-                      className="p-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 transition-colors cursor-pointer"
+                      className="p-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                       title="Delete Equipment"
+                      aria-label={`Delete ${g.name}`}
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={15} />
                     </button>
                   </div>
                 </td>

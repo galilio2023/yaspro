@@ -31,6 +31,9 @@ export function AdminInput({
   ...props
 }: AdminInputProps) {
   const inputId = id || label.toLowerCase().replace(/[^a-z0-9]/g, "-");
+  const errorId = `${inputId}-error`;
+  const helperId = `${inputId}-helper`;
+  const describedBy = error ? errorId : helper ? helperId : undefined;
 
   return (
     <div className={cn("space-y-1.5", className)}>
@@ -43,7 +46,7 @@ export function AdminInput({
 
       <div className="relative flex items-center">
         {prefixNode && (
-          <div className="absolute left-3.5 flex items-center pointer-events-none text-slate-500 text-xs">
+          <div className="absolute start-3.5 flex items-center pointer-events-none text-slate-500 text-xs">
             {prefixNode}
           </div>
         )}
@@ -51,10 +54,11 @@ export function AdminInput({
         <input
           id={inputId}
           required={required}
+          aria-invalid={Boolean(error)}
+          aria-describedby={describedBy}
           className={cn(
             "w-full rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-slate-500 text-xs py-2.5 transition-colors focus:outline-none focus:border-brand-mauve",
-            prefixNode ? "pl-9" : "px-3.5",
-            suffixNode ? "pr-12" : "px-3.5",
+            prefixNode ? "ps-9 pe-3.5" : suffixNode ? "pe-12 ps-3.5" : "px-3.5",
             error && "border-rose-500/50 focus:border-rose-500",
             props.disabled && "opacity-50 cursor-not-allowed"
           )}
@@ -62,17 +66,17 @@ export function AdminInput({
         />
 
         {suffixNode && (
-          <div className="absolute right-3.5 flex items-center pointer-events-none text-slate-400 text-xs font-mono font-medium">
+          <div className="absolute end-3.5 flex items-center pointer-events-none text-slate-400 text-xs font-mono font-medium">
             {suffixNode}
           </div>
         )}
       </div>
 
       {helper && !error && (
-        <p className="text-[11px] text-slate-500 leading-normal">{helper}</p>
+        <p id={helperId} className="text-[11px] text-slate-500 leading-normal">{helper}</p>
       )}
       {error && (
-        <p className="text-[11px] text-rose-400 font-medium leading-normal">
+        <p id={errorId} role="alert" className="text-[11px] text-rose-400 font-medium leading-normal">
           {error}
         </p>
       )}
@@ -95,6 +99,9 @@ export function AdminTextarea({
   ...props
 }: AdminTextareaProps) {
   const inputId = id || label.toLowerCase().replace(/[^a-z0-9]/g, "-");
+  const errorId = `${inputId}-error`;
+  const helperId = `${inputId}-helper`;
+  const describedBy = error ? errorId : helper ? helperId : undefined;
 
   return (
     <div className={cn("space-y-1.5", className)}>
@@ -109,6 +116,8 @@ export function AdminTextarea({
         id={inputId}
         rows={rows}
         required={required}
+        aria-invalid={Boolean(error)}
+        aria-describedby={describedBy}
         className={cn(
           "w-full rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-slate-500 text-xs p-3 transition-colors focus:outline-none focus:border-brand-mauve resize-y",
           error && "border-rose-500/50 focus:border-rose-500",
@@ -118,10 +127,10 @@ export function AdminTextarea({
       />
 
       {helper && !error && (
-        <p className="text-[11px] text-slate-500 leading-normal">{helper}</p>
+        <p id={helperId} className="text-[11px] text-slate-500 leading-normal">{helper}</p>
       )}
       {error && (
-        <p className="text-[11px] text-rose-400 font-medium leading-normal">
+        <p id={errorId} role="alert" className="text-[11px] text-rose-400 font-medium leading-normal">
           {error}
         </p>
       )}
@@ -151,6 +160,9 @@ export function AdminSelect({
   ...props
 }: AdminSelectProps) {
   const inputId = id || label.toLowerCase().replace(/[^a-z0-9]/g, "-");
+  const errorId = `${inputId}-error`;
+  const helperId = `${inputId}-helper`;
+  const describedBy = error ? errorId : helper ? helperId : undefined;
 
   return (
     <div className={cn("space-y-1.5", className)}>
@@ -165,8 +177,10 @@ export function AdminSelect({
         <select
           id={inputId}
           required={required}
+          aria-invalid={Boolean(error)}
+          aria-describedby={describedBy}
           className={cn(
-            "w-full appearance-none rounded-xl bg-slate-900 border border-white/10 text-white text-xs px-3.5 py-2.5 pr-9 transition-colors focus:outline-none focus:border-brand-mauve cursor-pointer",
+            "w-full appearance-none rounded-xl bg-slate-900 border border-white/10 text-white text-xs ps-3.5 pe-9 py-2.5 transition-colors focus:outline-none focus:border-brand-mauve cursor-pointer",
             error && "border-rose-500/50 focus:border-rose-500",
             props.disabled && "opacity-50 cursor-not-allowed"
           )}
@@ -180,15 +194,15 @@ export function AdminSelect({
         </select>
         <ChevronDown
           size={14}
-          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+          className="absolute end-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
         />
       </div>
 
       {helper && !error && (
-        <p className="text-[11px] text-slate-500 leading-normal">{helper}</p>
+        <p id={helperId} className="text-[11px] text-slate-500 leading-normal">{helper}</p>
       )}
       {error && (
-        <p className="text-[11px] text-rose-400 font-medium leading-normal">
+        <p id={errorId} role="alert" className="text-[11px] text-rose-400 font-medium leading-normal">
           {error}
         </p>
       )}
@@ -222,7 +236,7 @@ export function AdminSwitch({
         className
       )}
     >
-      <div className="pr-4">
+      <div className="pe-4">
         <span className="block text-xs font-semibold text-white">{label}</span>
         {description && (
           <span className="block text-[11px] text-slate-400 mt-0.5">
@@ -244,7 +258,7 @@ export function AdminSwitch({
         <div
           className={cn(
             "bg-white size-4 rounded-full shadow-md transform transition-transform duration-200",
-            checked ? "translate-x-5" : "translate-x-0"
+            checked ? "translate-x-5 rtl:-translate-x-5" : "translate-x-0"
           )}
         />
       </button>
@@ -322,7 +336,9 @@ export function AdminTagsInput({
             <button
               type="button"
               onClick={() => handleRemove(idx)}
-              className="text-brand-mauve-soft hover:text-white transition-colors cursor-pointer"
+              className="text-brand-mauve-soft hover:text-white transition-colors cursor-pointer p-0.5 rounded"
+              title={`Remove ${tag}`}
+              aria-label={`Remove tag ${tag}`}
             >
               <X size={12} />
             </button>

@@ -38,6 +38,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
   const [bookingList, setBookingList] = useState<EnrichedBooking[]>(initialBookings);
   const [updatingIds, setUpdatingIds] = useState<Set<string>>(new Set());
   const [callSheetBookingId, setCallSheetBookingId] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3000);
@@ -95,6 +96,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
     newStatus: "pending" | "confirmed" | "cancelled" | "completed"
   ) => {
     markUpdating(id, true);
+    setErrorMessage(null);
     try {
       const res = await updateBookingStatus(id, newStatus);
       if (res.success) {
@@ -103,10 +105,10 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         );
         showFeedback(`Booking marked as ${newStatus}`);
       } else {
-        alert(res.error || "Failed to update booking status.");
+        setErrorMessage(res.error || "Failed to update booking status.");
       }
     } catch (err) {
-      alert((err as Error).message || "An error occurred while updating status.");
+      setErrorMessage((err as Error).message || "An error occurred while updating status.");
     } finally {
       markUpdating(id, false);
     }
@@ -117,6 +119,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
     paymentStatus: "unpaid" | "deposit_paid" | "paid" | "refunded"
   ) => {
     markUpdating(id, true);
+    setErrorMessage(null);
     try {
       const res = await updateBookingPaymentStatus(id, paymentStatus);
       if (res.success) {
@@ -125,10 +128,10 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         );
         showFeedback(`Payment updated to ${paymentStatus}`);
       } else {
-        alert(res.error || "Failed to update payment status.");
+        setErrorMessage(res.error || "Failed to update payment status.");
       }
     } catch (err) {
-      alert((err as Error).message || "An error occurred while updating payment.");
+      setErrorMessage((err as Error).message || "An error occurred while updating payment.");
     } finally {
       markUpdating(id, false);
     }
@@ -144,6 +147,19 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
         feedback={feedback}
         onDismissFeedback={clearFeedback}
       />
+
+      {errorMessage && (
+        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center justify-between animate-in fade-in">
+          <span>{errorMessage}</span>
+          <button
+            type="button"
+            onClick={() => setErrorMessage(null)}
+            className="text-rose-400 hover:text-white cursor-pointer px-2 py-0.5"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* KPI Stats Grid */}
       <AdminStatsGrid
@@ -238,7 +254,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
               <th className="py-3 px-4">Scheduled Date</th>
               <th className="py-3 px-4">Status</th>
               <th className="py-3 px-4">Payment</th>
-              <th className="py-3 px-4 text-right">Actions</th>
+              <th className="py-3 px-4 text-end">Actions</th>
             </tr>
           </DataTableHeader>
           <DataTableBody>
@@ -246,6 +262,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
               <DataTableEmpty
                 colSpan={7}
                 message="No reservations found matching your criteria."
+                onReset={filter.resetFilters}
               />
             ) : (
               filter.pagination.paginatedItems.map((b) => (
@@ -299,7 +316,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                           e.target.value as "pending" | "confirmed" | "cancelled" | "completed"
                         )
                       }
-                      className="text-[11px] font-semibold px-2.5 py-1 rounded-xl bg-slate-800 border border-white/10 text-white focus:outline-none focus:border-brand-mauve cursor-pointer"
+                      className="text-[11px] font-semibold px-2.5 py-1.5 rounded-xl bg-slate-800 border border-white/10 text-white focus:outline-none focus:border-brand-mauve cursor-pointer"
                     >
                       <option value="pending">Pending</option>
                       <option value="confirmed">Confirmed</option>
@@ -317,7 +334,7 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                           e.target.value as "unpaid" | "deposit_paid" | "paid" | "refunded"
                         )
                       }
-                      className="text-[11px] font-semibold px-2.5 py-1 rounded-xl bg-slate-800 border border-white/10 text-white focus:outline-none focus:border-brand-mauve cursor-pointer"
+                      className="text-[11px] font-semibold px-2.5 py-1.5 rounded-xl bg-slate-800 border border-white/10 text-white focus:outline-none focus:border-brand-mauve cursor-pointer"
                     >
                       <option value="unpaid">Unpaid</option>
                       <option value="deposit_paid">Deposit Paid</option>
@@ -325,15 +342,16 @@ export function BookingsManager({ initialBookings }: BookingsManagerProps) {
                       <option value="refunded">Refunded</option>
                     </select>
                   </td>
-                  <td className="py-3 px-4 text-right">
+                  <td className="py-3 px-4 text-end">
                     <button
                       type="button"
                       ref={triggerRef}
                       onClick={() => setCallSheetBookingId(b.id)}
-                      className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-brand-lavender text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ml-auto"
+                      className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-brand-lavender text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ms-auto"
                       title="Generate Call Sheet"
+                      aria-label={`Generate call sheet for booking ${b.referenceCode}`}
                     >
-                      <FileText size={13} />
+                      <FileText size={14} />
                       <span>Call Sheet</span>
                     </button>
                   </td>

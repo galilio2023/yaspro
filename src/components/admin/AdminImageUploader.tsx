@@ -31,7 +31,15 @@ export function AdminImageUploader({
     onUploadingChange?.(uploading);
   };
 
+  const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024; // 25MB
+
   const handleUploadFile = async (file: File) => {
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      setError(`File size (${sizeMb}MB) exceeds the maximum allowed limit of 25MB.`);
+      return;
+    }
+
     setError(null);
     setUploadingState(true);
 
@@ -55,6 +63,9 @@ export function AdminImageUploader({
       setError((err as Error).message);
     } finally {
       setUploadingState(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
@@ -91,8 +102,12 @@ export function AdminImageUploader({
         {value && (
           <button
             type="button"
-            onClick={() => onChange("")}
-            className="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 cursor-pointer"
+            onClick={() => {
+              onChange("");
+              setError(null);
+            }}
+            className="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 cursor-pointer transition-colors"
+            aria-label="Remove uploaded asset"
           >
             <X size={12} /> Clear Asset
           </button>
@@ -109,6 +124,7 @@ export function AdminImageUploader({
                 autoPlay
                 loop
                 playsInline
+                preload="metadata"
                 className="w-full h-full object-cover"
               />
             ) : (

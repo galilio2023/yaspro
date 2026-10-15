@@ -172,7 +172,7 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
             <th className="py-3 px-4">Reach</th>
             <th className="py-3 px-4">Social Channels</th>
             <th className="py-3 px-4">Compliance</th>
-            <th className="py-3 px-4 text-right">Actions</th>
+            <th className="py-3 px-4 text-end">Actions</th>
           </tr>
         </DataTableHeader>
         <DataTableBody>
@@ -180,6 +180,7 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
             <DataTableEmpty
               colSpan={6}
               message="No creators found matching your search or territory filter."
+              onReset={filter.resetFilters}
             />
           ) : (
             filter.pagination.paginatedItems.map((c) => (
@@ -229,32 +230,35 @@ export function InfluencersManager({ initialInfluencers }: InfluencersManagerPro
                     <ShieldCheck size={13} /> Mawthooq
                   </span>
                 </td>
-                <td className="py-3 px-4 text-right">
+                <td className="py-3 px-4 text-end">
                   <div className="flex items-center justify-end gap-2">
                     <a
                       href={`/influencers/${c.slug}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+                      className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                       title="Public Profile"
+                      aria-label={`View public profile for ${c.name}`}
                     >
-                      <ExternalLink size={14} />
+                      <ExternalLink size={15} />
                     </a>
                     <button
                       type="button"
                       onClick={() => crud.handleOpenEdit(c)}
-                      className="p-1.5 rounded-lg bg-brand-violet/20 hover:bg-brand-violet/35 text-brand-mauve transition-colors cursor-pointer"
+                      className="p-2 rounded-xl bg-brand-violet/20 hover:bg-brand-violet/35 text-brand-mauve transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                       title="Edit Creator"
+                      aria-label={`Edit ${c.name}`}
                     >
-                      <Edit3 size={14} />
+                      <Edit3 size={15} />
                     </button>
                     <button
                       type="button"
                       onClick={() => crud.handleOpenDelete(c)}
-                      className="p-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 transition-colors cursor-pointer"
+                      className="p-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                       title="Delete Creator"
+                      aria-label={`Delete ${c.name}`}
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={15} />
                     </button>
                   </div>
                 </td>
