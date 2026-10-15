@@ -127,7 +127,17 @@ export const studios = pgTable("studios", {
   arabicDescription: text("arabic_description"),
   capacity: integer("capacity").notNull().default(10),
   hourlyRate: decimal("hourly_rate", { precision: 10, scale: 2 }).notNull(),
+  halfDayRate: decimal("half_day_rate", { precision: 10, scale: 2 }),
+  fullDayRate: decimal("full_day_rate", { precision: 10, scale: 2 }),
+  areaSqm: integer("area_sqm"),
+  dimensions: text("dimensions"),
+  ceilingHeight: text("ceiling_height"),
+  power: text("power"),
+  soundIsolation: text("sound_isolation"),
+  category: text("category"),
+  badge: text("badge"),
   imageUrl: text("image_url"),
+  gallery: jsonb("gallery").$type<string[]>().default([]),
   amenities: jsonb("amenities").$type<string[]>().default([]),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -219,6 +229,114 @@ export const bookingSessions = pgTable("booking_sessions", {
   index("booking_sessions_studio_schedule_idx").on(table.studioId, table.status, table.scheduledAt),
 ]);
 
+// ─── Promo Codes ──────────────────────────────────────────────────────────────
+
+export const promoCodes = pgTable("promo_codes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  code: text("code").notNull().unique(),
+  label: text("label"),
+  discountPercent: integer("discount_percent"),
+  discountAmount: decimal("discount_amount", { precision: 10, scale: 2 }),
+  eligibleOfferIds: jsonb("eligible_offer_ids").$type<string[]>(),
+  expiresAt: timestamp("expires_at"),
+  maxUses: integer("max_uses"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ─── Turnkey Offers & Bundles ─────────────────────────────────────────────────
+
+export const offers = pgTable("offers", {
+  id: text("id").primaryKey(), // slug like "5-hour-bundles", "full-day-lockout"
+  category: text("category").notNull().default("bundle"), // "bundle" | "offer"
+  name: text("name").notNull(),
+  nameAr: text("name_ar").notNull(),
+  tagline: text("tagline"),
+  taglineAr: text("tagline_ar"),
+  description: text("description"),
+  descriptionAr: text("description_ar"),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  originalPrice: decimal("original_price", { precision: 10, scale: 2 }),
+  savings: text("savings"),
+  savingsAr: text("savings_ar"),
+  hours: integer("hours").notNull().default(1),
+  badge: text("badge"),
+  badgeAr: text("badge_ar"),
+  image: text("image"),
+  features: jsonb("features").$type<string[]>().default([]),
+  featuresAr: jsonb("features_ar").$type<string[]>().default([]),
+  restrictedDays: jsonb("restricted_days").$type<number[]>(),
+  restrictionNoteEn: text("restriction_note_en"),
+  restrictionNoteAr: text("restriction_note_ar"),
+  isActive: boolean("is_active").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ─── Platform & Payment Settings ──────────────────────────────────────────────
+
+export const platformSettings = pgTable("platform_settings", {
+  key: text("key").primaryKey(), // e.g. "payment_config", "concierge_contact"
+  value: jsonb("value").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ─── Podcast Studios Catalog ──────────────────────────────────────────────────
+
+export const podcastSets = pgTable("podcast_sets", {
+  id: text("id").primaryKey(), // slug like "nature-grid", "dark-walnut"
+  name: text("name").notNull(),
+  seats: integer("seats").notNull().default(2),
+  location: text("location").notNull().default("Iris Bay - Business Bay, Dubai"),
+  image: text("image"),
+  gradient: text("gradient"),
+  description: text("description"),
+  isAvailable: boolean("is_available").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ─── Podcast Addons Catalog ───────────────────────────────────────────────────
+
+export const podcastAddons = pgTable("podcast_addons", {
+  id: text("id").primaryKey(), // slug like "standard-reel", "youtube-thumbnail"
+  title: text("title").notNull(),
+  desc: text("desc"),
+  priceNum: integer("price_num").notNull(),
+  priceDisplay: text("price_display").notNull(),
+  unit: text("unit").notNull().default("per asset"),
+  gradient: text("gradient"),
+  vimeoEmbed: text("vimeo_embed"),
+  isActive: boolean("is_active").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ─── Studio Blackouts & Maintenance Lockouts ──────────────────────────────────
+
+export const studioBlackouts = pgTable(
+  "studio_blackouts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    studioId: uuid("studio_id").references(() => studios.id, { onDelete: "cascade" }), // null means all studios / studio-wide lockout
+    podcastSetId: text("podcast_set_id"), // optional link to podcast set id
+    title: text("title").notNull(),
+    reason: text("reason"),
+    startTime: timestamp("start_time").notNull(),
+    endTime: timestamp("end_time").notNull(),
+    allDay: boolean("all_day").notNull().default(false),
+    createdById: text("created_by_id"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("studio_blackouts_time_idx").on(table.startTime, table.endTime),
+    index("studio_blackouts_studio_idx").on(table.studioId),
+  ]
+);
+
 // ─── Inquiries ────────────────────────────────────────────────────────────────
 
 export const inquiries = pgTable(
@@ -231,6 +349,7 @@ export const inquiries = pgTable(
     company: text("company"),
     inquiryType: inquiryTypeEnum("inquiry_type").notNull().default("general"),
     message: text("message").notNull(),
+    internalNotes: text("internal_notes"),
     isResolved: boolean("is_resolved").notNull().default(false),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
@@ -324,4 +443,16 @@ export type Influencer = typeof influencers.$inferSelect;
 export type NewInfluencer = typeof influencers.$inferInsert;
 export type SessionType = (typeof sessionTypeEnum.enumValues)[number];
 export type InquiryType = (typeof inquiryTypeEnum.enumValues)[number];
+export type Offer = typeof offers.$inferSelect;
+export type NewOffer = typeof offers.$inferInsert;
+export type PromoCode = typeof promoCodes.$inferSelect;
+export type NewPromoCode = typeof promoCodes.$inferInsert;
+export type PlatformSetting = typeof platformSettings.$inferSelect;
+export type NewPlatformSetting = typeof platformSettings.$inferInsert;
+export type PodcastSet = typeof podcastSets.$inferSelect;
+export type NewPodcastSet = typeof podcastSets.$inferInsert;
+export type PodcastAddonEntity = typeof podcastAddons.$inferSelect;
+export type NewPodcastAddonEntity = typeof podcastAddons.$inferInsert;
+export type StudioBlackout = typeof studioBlackouts.$inferSelect;
+export type NewStudioBlackout = typeof studioBlackouts.$inferInsert;
 

@@ -169,24 +169,27 @@ test('createBooking rejects studio double-booking when schedule overlaps', async
 test('booking uses CMS IDs and rates and rejects deleted or inactive studios', async () => {
   const studioId = '11111111-2222-3333-4444-555555555555';
   let studioRecord = { id: studioId, slug: 'custom-room', name: 'Custom Room', hourlyRate: '777.00', isActive: true };
-  const schemas = { bookingSessions: {}, studios: { id: 'studio-id', slug: 'studio-slug' }, bookings: {}, users: {} };
+  const schemas = { studioBlackouts: {}, bookingSessions: {}, studios: { id: 'studio-id', slug: 'studio-slug' }, bookings: {}, users: {} };
   const writes = [];
   const capabilities = [];
   let session = null;
-  let lookup;
+  let lookup, failBlackout = false;
   const constants = loadSource('src/features/booking/constants.ts');
   const { createBooking } = loadSource('src/lib/actions.ts', {
     '@/lib/booking-payment-capability': { issueBookingPaymentCapability: async (id) => capabilities.push(id) },
     '@/db': { db: {
       query: { studios: { findFirst: async ({ where }) => { lookup = where; return studioRecord; } } },
-      select: () => ({ from: () => ({ innerJoin: () => ({ where: async () => [] }) }) }),
+      select: () => ({ from: () => ({
+        innerJoin: () => ({ where: async () => [] }),
+        where: async () => { if (failBlackout) throw new Error('Blackout read failure'); return []; },
+      }) }),
       insert: (table) => ({ values: (values) => {
         writes.push({ table, values });
         return { onConflictDoUpdate: () => ({ returning: async () => [{ id: 'user' }] }), returning: async () => [{ id: 'booking' }] };
       } }),
     } },
     '@/db/schema': schemas,
-    'drizzle-orm': { eq: (col, val) => ({ col, val }), and() {}, inArray() {} },
+    'drizzle-orm': { eq: (col, val) => ({ col, val }), and() {}, inArray() {}, or() {}, isNull() {} },
     'next/cache': { revalidatePath() {} },
     'next/headers': { headers: async () => new Headers() }, '@/lib/auth': { auth: { api: { getSession: async () => session } } },
     '@/lib/utils': { generateBookingReference: () => 'REF' },
@@ -211,6 +214,12 @@ test('booking uses CMS IDs and rates and rejects deleted or inactive studios', a
   assert.equal(writes[0].values.userId, 'authenticated-owner');
   assert.deepEqual(capabilities, ['booking']);
   writes.length = 0;
+  failBlackout = true;
+  const unavailable = await createBooking(input);
+  assert.equal(unavailable.success, false);
+  assert.match(unavailable.message, /Unable to verify studio availability/);
+  assert.equal(writes.length, 0);
+  failBlackout = false;
   studioRecord = { ...studioRecord, isActive: false };
   assert.equal((await createBooking(input)).success, false);
   studioRecord = undefined;

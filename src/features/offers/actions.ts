@@ -1,13 +1,15 @@
 "use server";
 
 import { db } from "@/db";
-import { bookings } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { bookings, studioBlackouts } from "@/db/schema";
+import { eq, sql, or, isNull } from "drizzle-orm";
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { createZiinaPaymentIntent } from "@/lib/ziina";
-import { OFFERS_AND_BUNDLES, STANDARD_TIME_SLOTS } from "./data";
+import { STANDARD_TIME_SLOTS } from "./data";
+import { getBookingOffers } from "@/lib/actions/offers-packages-operations";
 import { randomUUID } from "node:crypto";
 import { OffersPromoError, resolveOffersPromo } from "./promo-codes";
+import { readDbPromoRule } from "./promo-db";
 import { getOffersDiscount } from "./pricing";
 import type { AppliedOffersPromo } from "./types";
 import { z } from "zod";
@@ -44,9 +46,9 @@ export interface OffersBookingResult {
 export async function submitOffersBooking(input: OffersBookingInput): Promise<OffersBookingResult> {
   try {
     const validated = offersBookingSchema.parse(input);
-    const offer = OFFERS_AND_BUNDLES.find((o) => o.id === validated.offerId);
+    const offer = (await getBookingOffers()).find((o) => o.id === validated.offerId);
 
-    if (!offer) {
+    if (!offer || offer.isActive === false) {
       return { success: false, message: "The selected offer or bundle is invalid." };
     }
 
@@ -87,6 +89,42 @@ export async function submitOffersBooking(input: OffersBookingInput): Promise<Of
       console.warn("Could not fetch default studio from DB:", err);
     }
 
+    // Overlap check with active studio blackouts
+    if (typeof db.select === "function") {
+      try {
+        const requestedEnd = new Date(scheduledAt.getTime() + offer.hours * 60 * 60 * 1000);
+        const blackouts = await db
+          .select({
+            id: studioBlackouts.id,
+            startTime: studioBlackouts.startTime,
+            endTime: studioBlackouts.endTime,
+          })
+          .from(studioBlackouts)
+          .where(
+            studioId
+              ? or(eq(studioBlackouts.studioId, studioId), isNull(studioBlackouts.studioId))
+              : isNull(studioBlackouts.studioId)
+          );
+
+        const hasBlackout = blackouts.some((b) => {
+          const bStart = new Date(b.startTime);
+          const bEnd = new Date(b.endTime);
+          return scheduledAt < bEnd && requestedEnd > bStart;
+        });
+
+        if (hasBlackout) {
+          return {
+            success: false,
+            message: "The studio has a scheduled maintenance or blackout period during this slot. Please choose another date or time.",
+          };
+        }
+      } catch (blackoutErr) {
+        if (typeof console.warn === "function") {
+          console.warn("[submitOffersBooking] Blackout check skipped:", (blackoutErr as Error)?.message);
+        }
+      }
+    }
+
     const contactFields = [
       `${validated.firstName} ${validated.lastName}`,
       validated.email,
@@ -111,7 +149,7 @@ export async function submitOffersBooking(input: OffersBookingInput): Promise<Of
         const code = validated.promoCode.trim().toUpperCase();
         await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${`offers-promo:${code}`}))`);
         promo = await resolveOffersPromo(code, offer.id,
-          (promoCode) => tx.$count(bookings, eq(bookings.promoCode, promoCode)));
+          (promoCode) => tx.$count(bookings, eq(bookings.promoCode, promoCode)), readDbPromoRule);
       }
       const discount = getOffersDiscount(offer.price, promo);
       const subtotal = Math.max(0, offer.price - discount);
@@ -189,11 +227,11 @@ export async function validateOffersPromoCode(code: string, offerId: string): Pr
 }> {
   try {
     const input = z.object({ code: z.string().trim().min(1), offerId: z.string().min(1) }).parse({ code, offerId });
-    if (!OFFERS_AND_BUNDLES.some((offer) => offer.id === input.offerId)) {
+    if (!(await getBookingOffers()).some((offer) => offer.id === input.offerId && offer.isActive !== false)) {
       return { success: false, message: "The selected offer or bundle is invalid." };
     }
     const promo = await resolveOffersPromo(input.code, input.offerId,
-      (promoCode) => db.$count(bookings, eq(bookings.promoCode, promoCode)));
+      (promoCode) => db.$count(bookings, eq(bookings.promoCode, promoCode)), readDbPromoRule);
     return { success: true, promo };
   } catch (error) {
     return { success: false, message: error instanceof OffersPromoError ? error.message : "Unable to validate promotional code. Please try again." };

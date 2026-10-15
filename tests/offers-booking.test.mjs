@@ -44,7 +44,7 @@ const input = {
   offerId: '5-hour-bundles', date: '2026-10-19', timeSlot: '9:00 AM',
   firstName: 'Test', lastName: 'Guest', email: 'guest@example.com', phone: '+971500000000',
 };
-function fixture({ failInsert = false, emptyInsert = false, payment = { success: true, paymentUrl: 'https://payments.example.test/pay' }, failCapability = false } = {}) {
+function fixture({ failInsert = false, emptyInsert = false, payment = { success: true, paymentUrl: 'https://payments.example.test/pay' }, failCapability = false, catalog } = {}) {
   const writes = [], payments = [], capabilities = [], locks = [];
   let counts = 0;
   const tx = {
@@ -73,6 +73,9 @@ function fixture({ failInsert = false, emptyInsert = false, payment = { success:
       },
     } },
     '@/db/schema': { bookings: { id: 'id', promoCode: 'promoCode' } },
+    '@/lib/actions/offers-packages-operations': {
+      getBookingOffers: async () => catalog ?? load('src/features/offers/data.ts').OFFERS_AND_BUNDLES,
+    },
     'drizzle-orm': { eq: (column, value) => ({ column, value }), sql: (parts, ...params) => ({ parts, params }) },
     '@/lib/booking-payment-capability': { issueBookingPaymentCapability: async (id) => {
       capabilities.push(id);
@@ -216,7 +219,7 @@ test('server revalidates promo eligibility, expiry, and atomic usage limits befo
   assert.equal(f.locks.at(-1).params[0], 'offers-promo:CAPPED');
 });
 
-function hookFixture(validate = async (code) => ({ success: true, promo: { code, discountPercent: 10 } })) {
+function hookFixture(validate = async (code) => ({ success: true, promo: { code, discountPercent: 10 } }), catalog) {
   const states = [];
   let cursor = 0;
   const load = sourceLoader({
@@ -237,7 +240,7 @@ function hookFixture(validate = async (code) => ({ success: true, promo: { code,
     'next/navigation': { useSearchParams: () => new URLSearchParams() },
   });
   const { useOffersBooking } = load('src/features/offers/hooks/useOffersBooking.ts');
-  return () => { cursor = 0; return useOffersBooking(); };
+  return () => { cursor = 0; return useOffersBooking(catalog); };
 }
 
 test('offer changes reset scheduling and recalculate percentage or capped fixed discounts', async () => {
@@ -358,4 +361,24 @@ test('offer contact fields round-trip separators, Unicode and percent escapes th
   assert.equal(bookings[1].userCompany, 'Old Company');
   assert.equal(bookings[2].userName, 'Bad%escape');
   assert.equal(bookings[2].userEmail, 'bad@example.com');
+});
+
+test('database packages and edits drive promo eligibility and server/client totals; paused packages are rejected', async () => {
+  const base = fixture().offers[0];
+  const catalog = [{ ...base, price: 1500 }, { ...base, id: 'cms-package', price: 2000 }, { ...base, id: 'paused', isActive: false }];
+  const f = fixture({ catalog });
+  assert.equal((await f.submitOffersBooking(input)).totalAmount, 1575);
+  assert.equal((await f.validateOffersPromoCode('YAS10', 'cms-package')).success, true);
+  assert.equal((await f.submitOffersBooking({ ...input, offerId: 'cms-package', promoCode: 'YAS10' })).totalAmount, 1890);
+  assert.equal((await f.validateOffersPromoCode('YAS10', 'paused')).success, false);
+  assert.equal((await f.submitOffersBooking({ ...input, offerId: 'paused' })).success, false);
+  const render = hookFixture(undefined, catalog);
+  assert.equal(render().breakdown.grandTotal, 1575);
+  assert.equal(render().offers.length, 2);
+  render().setSelectedOfferId('cms-package');
+  assert.equal(render().selectedOffer.id, 'cms-package');
+  assert.equal(render().breakdown.grandTotal, 2100);
+  render().setSelectedOfferId('paused');
+  assert.equal(render().selectedOffer.id, 'cms-package');
+  assert.equal(hookFixture(undefined, [])().canProceedToStep2, false);
 });

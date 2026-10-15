@@ -16,7 +16,7 @@ import {
   Building2,
   Loader2,
 } from "lucide-react";
-import type { PodcastSessionItem, PodcastBookingContact } from "../types";
+import type { PodcastSessionItem, PodcastBookingContact, PodcastStudio, PodcastAddon } from "../types";
 import { PODCAST_STUDIOS, PODCAST_SERVICES, PODCAST_ADDONS } from "../data";
 import {
   formatAED,
@@ -28,6 +28,8 @@ import {
 import { motion } from "framer-motion";
 
 export interface Step5ReviewCheckoutProps {
+  studios?: PodcastStudio[];
+  addons?: PodcastAddon[];
   sessions: PodcastSessionItem[];
   contact: PodcastBookingContact;
   onUpdateContact: (updates: Partial<PodcastBookingContact>) => void;
@@ -47,6 +49,8 @@ export interface Step5ReviewCheckoutProps {
 }
 
 export function Step5ReviewCheckout({
+  studios = PODCAST_STUDIOS,
+  addons = PODCAST_ADDONS,
   sessions,
   contact,
   onUpdateContact,
@@ -96,14 +100,14 @@ export function Step5ReviewCheckout({
 
         <div className="space-y-3">
           {sessions.map((sess, idx) => {
-            const studio = PODCAST_STUDIOS.find((s) => s.key === sess.studioKey) || PODCAST_STUDIOS[0];
+            const studio = studios.find((s) => s.key === sess.studioKey);
             const service = PODCAST_SERVICES.find((s) => s.key === sess.serviceKey) || PODCAST_SERVICES[0];
             const sessionCost = service.price * sess.durationHours;
 
             const selectedAddons = Object.entries(sess.addons || {})
               .filter(([, qty]) => qty > 0)
               .map(([k, qty]) => {
-                const ad = PODCAST_ADDONS.find((a) => a.key === k);
+                const ad = addons.find((a) => a.key === k);
                 return {
                   key: k,
                   title: ad?.title || k,
@@ -128,10 +132,10 @@ export function Step5ReviewCheckout({
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.06]">
                   <div className="flex items-center gap-3">
                     <div className="relative size-12 rounded-xl overflow-hidden bg-zinc-800 shrink-0 border border-white/10">
-                      {studio.image && (
+                      {studio?.image && (
                         <Image
-                          src={studio.image}
-                          alt={studio.name}
+                          src={studio?.image}
+                          alt={studio?.name || "Unavailable studio"}
                           fill
                           sizes="48px"
                           className="object-cover"
@@ -145,7 +149,7 @@ export function Step5ReviewCheckout({
                         </span>
                         <span className="text-zinc-600">•</span>
                         <h4 className="text-sm sm:text-base font-bold text-white">
-                          {studio.name}
+                          {studio?.name || "Unavailable studio"}
                         </h4>
                       </div>
                       <p className="text-xs text-zinc-400">

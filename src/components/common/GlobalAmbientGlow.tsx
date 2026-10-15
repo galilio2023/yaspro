@@ -1,18 +1,22 @@
+"use client";
+
 import React from "react";
+import { usePathname } from "next/navigation";
 
 /**
  * GlobalAmbientGlow
  * High-contrast luxury studio aesthetic:
  * - Deep, pitch-black obsidian canvas (#040306 / #050507) as base.
- * - Distinct, isolated pools of vibrant violet and mauve light situated in separated spatial zones:
- *   1. Upper Hero / Brand Crown
- *   2. Floating Persona Backlight
- *   3. Mid-Page Virtual Studios Anchor (Left)
- *   4. Showcase & Masterpieces Anchor (Right)
- *   5. Grounding Base Core (Bottom CTA)
- * - Tighter radial falloffs + rich black interstitial gaps give clear separation instead of a continuous wash.
+ * - Suppressed on /admin dashboard routes to provide clean, crisp, unobstructed enterprise views.
  */
 export function GlobalAmbientGlow() {
+  const pathname = usePathname();
+
+  // Completely eliminate ambient glow across all admin routes
+  if (pathname && (pathname === "/admin" || pathname.startsWith("/admin/"))) {
+    return null;
+  }
+
   return (
     <div
       aria-hidden="true"

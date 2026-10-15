@@ -20,8 +20,10 @@ import {
   Eye,
   Phone,
   Sparkles,
+  Plus,
 } from "lucide-react";
-import { updateInquiryStatus, deleteCmsInquiry } from "@/lib/actions/inquiries-leads-operations";
+import { useRouter } from "next/navigation";
+import { updateInquiryStatus, deleteCmsInquiry, updateInquiryNotes, createCmsInquiry } from "@/lib/actions/inquiries-leads-operations";
 import type { Inquiry } from "@/db/schema";
 import {
   AdminPageHeader,
@@ -30,6 +32,7 @@ import {
   AdminConfirmModal,
 } from "@/components/admin";
 import { AdminModal } from "@/components/admin/shared/AdminModal";
+import { InquiryFormModal, type InquiryFormValues } from "@/components/admin/forms/InquiryFormModal";
 import {
   DataTable,
   DataTableHeader,
@@ -43,6 +46,61 @@ import { useAdminFilter } from "../hooks/useAdminFilter";
 
 interface InquiriesManagerProps {
   initialInquiries: Inquiry[];
+}
+
+function InquiryNotesEditor({
+  inquiry,
+  onSaved,
+}: {
+  inquiry: Inquiry;
+  onSaved: (id: string, notes: string | null) => void;
+}) {
+  const [draft, setDraft] = useState(inquiry.internalNotes ?? "");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const dirty = draft.trim() !== (inquiry.internalNotes ?? "").trim();
+
+  const save = async () => {
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await updateInquiryNotes(inquiry.id, draft);
+      if (res.success) onSaved(inquiry.id, draft.trim() || null);
+      else setError(res.error || "Failed to save notes");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save notes");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div>
+      <label htmlFor={`notes-${inquiry.id}`} className="text-[10px] text-slate-500 uppercase font-mono block mb-1.5">
+        Internal Staff Notes (never shown to the client)
+      </label>
+      <textarea
+        id={`notes-${inquiry.id}`}
+        rows={3}
+        maxLength={5000}
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        placeholder="e.g. Sent proposal for AED 15,000 via WhatsApp; follow up Thursday."
+        className="w-full rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-slate-500 text-xs p-3 focus:outline-none focus:border-brand-mauve"
+      />
+      <div className="flex items-center justify-between mt-1.5">
+        <span role="alert" className="text-[11px] text-rose-400">{error}</span>
+        <button
+          type="button"
+          onClick={save}
+          disabled={!dirty || saving}
+          className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-semibold text-white disabled:opacity-40 cursor-pointer"
+        >
+          {saving ? "Saving..." : "Save Notes"}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 const INQUIRY_ICONS: Record<string, React.ReactNode> = {
@@ -127,7 +185,17 @@ export function resolveInquiryCategory(inq: Inquiry): {
 }
 
 export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
+  const router = useRouter();
   const [inquiriesList, setInquiriesList] = useState<Inquiry[]>(initialInquiries);
+  const [prevInitial, setPrevInitial] = useState(initialInquiries);
+  // Re-sync when the server re-renders with fresh data (after logging a lead).
+  if (prevInitial !== initialInquiries) {
+    setPrevInitial(initialInquiries);
+    setInquiriesList(initialInquiries);
+  }
+  const [leadFormOpen, setLeadFormOpen] = useState(false);
+  const [leadError, setLeadError] = useState<string | null>(null);
+  const [isSavingLead, setIsSavingLead] = useState(false);
   const [viewMode, setViewMode] = useState<"table" | "cards">("table");
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -186,6 +254,33 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
     setUpdatingId(null);
   };
 
+  const handleNotesSaved = (id: string, internalNotes: string | null) => {
+    setInquiriesList((prev) => prev.map((i) => (i.id === id ? { ...i, internalNotes } : i)));
+    setSelectedInquiry((prev) => (prev && prev.id === id ? { ...prev, internalNotes } : prev));
+    showFeedback("Internal notes saved");
+  };
+
+  const handleSaveLead = async (values: InquiryFormValues): Promise<boolean> => {
+    setIsSavingLead(true);
+    setLeadError(null);
+    try {
+      const res = await createCmsInquiry(values);
+      if (!res.success) {
+        setLeadError(res.error || "Failed to log lead.");
+        return false;
+      }
+      showFeedback(res.message || "Lead logged.");
+      setLeadFormOpen(false);
+      router.refresh();
+      return true;
+    } catch (err) {
+      setLeadError(err instanceof Error ? err.message : "Failed to log lead.");
+      return false;
+    } finally {
+      setIsSavingLead(false);
+    }
+  };
+
   const handleConfirmDelete = async () => {
     if (!inquiryToDelete) return;
     setIsDeleting(true);
@@ -220,6 +315,16 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
         icon={MessageSquare}
         feedback={feedback}
         onDismissFeedback={clearFeedback}
+        actions={
+          <button
+            type="button"
+            onClick={() => { setLeadError(null); setLeadFormOpen(true); }}
+            className="px-4 py-2.5 rounded-xl btn-brand text-xs flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+          >
+            <Plus size={16} />
+            <span>Log Lead</span>
+          </button>
+        }
       />
 
       {errorMessage && (
@@ -700,6 +805,11 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
                 {selectedInquiry.message}
               </div>
             </div>
+            <InquiryNotesEditor
+              key={selectedInquiry.id}
+              inquiry={selectedInquiry}
+              onSaved={handleNotesSaved}
+            />
 
             <div className="flex items-center justify-between pt-3 border-t border-white/10 flex-wrap gap-2">
               <span
@@ -747,6 +857,14 @@ export function InquiriesManager({ initialInquiries }: InquiriesManagerProps) {
           </div>
         </AdminModal>
       )}
+
+      <InquiryFormModal
+        isOpen={leadFormOpen}
+        onClose={() => setLeadFormOpen(false)}
+        onSave={handleSaveLead}
+        isSubmitting={isSavingLead}
+        error={leadError}
+      />
 
       {/* Delete Confirmation Modal */}
       {inquiryToDelete && (

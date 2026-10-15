@@ -31,7 +31,7 @@ function loadSource(file, mocks = {}, globals = {}) {
 const session = { date: '2026-11-20', timeSlot: '5:30 PM', durationHours: 2, headcount: 2,
   studioKey: 'nature-grid', serviceKey: 'recording', addons: {} };
 const input = { sessions: [session], fullName: 'Test Guest', email: 'guest@example.com', phone: '+971500000000' };
-function fixture({ missingStudio, studioCapacity = 10, payment = { success: true }, failSchedule = false } = {}) {
+function fixture({ missingStudio, studioCapacity = 10, payment = { success: true }, failSchedule = false, failBlackout = false, catalogStudios, catalogAddons } = {}) {
   const bookings = { id: 'id' }, bookingSessions = {};
   const writes = [], payments = [], capabilities = [], lookups = [];
   let transactions = 0;
@@ -40,10 +40,16 @@ function fixture({ missingStudio, studioCapacity = 10, payment = { success: true
     writes.push({ table, values });
     return { returning: async () => [{ id: 'checkout-id' }] };
   } }) };
+  const data = loadSource('src/features/podcast-booking/data.ts');
   const { createPodcastBooking } = loadSource('src/features/podcast-booking/actions.ts', {
-    '@/db/schema': { bookings, bookingSessions, studios: { slug: 'slug' } },
-    'drizzle-orm': { eq: (column, value) => ({ column, value }) },
+    '@/db/schema': { bookings, bookingSessions, studioBlackouts: {}, studios: { slug: 'slug' } },
+    '@/lib/actions/podcast-operations': {
+      getCmsPodcastSets: async () => catalogStudios ?? data.PODCAST_STUDIOS,
+      getCmsPodcastAddons: async () => catalogAddons ?? data.PODCAST_ADDONS,
+    },
+    'drizzle-orm': { eq: (column, value) => ({ column, value }), or() {}, isNull() {} },
     '@/db': { db: {
+      select: () => ({ from: () => ({ where: async () => { if (failBlackout) throw new Error('Blackout read failure'); return []; } }) }),
       query: { studios: { findFirst: async ({ where }) => {
         lookups.push(where.value);
         return where.value === missingStudio ? null : { id: `db-${where.value}`, isActive: true, capacity: studioCapacity };
@@ -111,6 +117,15 @@ test('unresolved secondary studio prevents the entire insert; schedule errors ro
   assert.equal(conflict.payments.length, 0);
 });
 
+test('podcast blackout query failure prevents reservation writes and payment', async () => {
+  const f = fixture({ failBlackout: true });
+  const response = await f.createPodcastBooking({ ...input, initiatePayment: true });
+  assert.equal(response.success, false);
+  assert.match(response.message, /Unable to verify studio availability/);
+  assert.equal(f.writes.length, 0);
+  assert.equal(f.payments.length, 0);
+});
+
 test('Dubai midnight/noon conversion and invalid-date fallback return finite instants', async () => {
   for (const [timeSlot, expected] of [['12:00 AM', '2026-11-19T20:00:00.000Z'], ['12:00 PM', '2026-11-20T08:00:00.000Z']]) {
     const f = fixture();
@@ -137,7 +152,7 @@ test('Ziina failure returns saved unpaid reservation; successful simulation need
   assert.equal((await simulated.createPodcastBooking({ ...input, initiatePayment: true })).success, true);
 });
 
-function hookFixture(response, onSubmit = () => {}) {
+function hookFixture(response, onSubmit = () => {}, studios, addons) {
   const states = [];
   let cursor = 0;
   const { usePodcastBooking } = loadSource('src/features/podcast-booking/hooks/usePodcastBooking.ts', {
@@ -148,7 +163,7 @@ function hookFixture(response, onSubmit = () => {}) {
     } },
     '../actions': { createPodcastBooking: async (input) => { onSubmit(input); return response; } },
   });
-  return () => { cursor = 0; return usePodcastBooking(); };
+  return () => { cursor = 0; return usePodcastBooking(studios, addons); };
 }
 
 test('wizard blocks capacity bypass and confirms saved reservation on payment failure without resubmitting', async () => {
@@ -372,4 +387,33 @@ test('review Edit selects its own session and errors have one display on every s
     render().setStep(step);
     assert.equal(findNodes(PodcastBookingWizard(), (node) => node.type === Banner).length, 1);
   }
+});
+
+test('CMS keys, add-on pricing, availability, and capacity govern podcast booking and client quotes', async () => {
+  const data = loadSource('src/features/podcast-booking/data.ts');
+  const catalogStudios = [{ ...data.PODCAST_STUDIOS[0], key: 'cms-studio', name: 'CMS studio', seats: 3 }];
+  const catalogAddons = [{ ...data.PODCAST_ADDONS[0], key: 'cms-addon', priceNum: 250, unit: 'per reel' }];
+  const cmsSession = { ...session, studioKey: 'cms-studio', addons: { 'cms-addon': 2 } };
+  const f = fixture({ catalogStudios, catalogAddons });
+  assert.equal((await f.createPodcastBooking({ ...input, sessions: [cmsSession] })).totalAmount, 1280);
+  assert.equal(f.lookups[0], 'cms-studio');
+  assert.match(f.writes[0].values.specialRequests, /CMS studio/);
+  const render = hookFixture({ success: true }, () => {}, catalogStudios, catalogAddons);
+  assert.equal(render().currentSession.studioKey, 'cms-studio');
+  render().updateCurrentSession(cmsSession);
+  assert.equal(render().grandTotal, 1280);
+  for (const change of [() => { catalogStudios[0].isAvailable = false; }, () => { catalogStudios[0].isAvailable = true; catalogAddons[0].isActive = false; }]) {
+    change();
+    const invalid = fixture({ catalogStudios, catalogAddons });
+    assert.equal((await invalid.createPodcastBooking({ ...input, sessions: [cmsSession] })).success, false);
+    assert.equal(invalid.transactions, 0);
+    render().setStep(4);
+    render().nextStep();
+    assert.notEqual(render().step, 5);
+  }
+  const { Step2Setup } = loadSource('src/features/podcast-booking/components/Step2Setup.tsx', { 'next/image': { default: () => null } });
+  const { Step4Addons } = loadSource('src/features/podcast-booking/components/Step4Addons.tsx', { react: { useState: (initial) => [initial, () => {}] } });
+  catalogStudios[0].isAvailable = false;
+  assert.doesNotMatch(renderToStaticMarkup(createElement(Step2Setup, { session: cmsSession, studios: catalogStudios })), /CMS studio/);
+  assert.doesNotMatch(renderToStaticMarkup(createElement(Step4Addons, { session: cmsSession, addons: catalogAddons })), /Standard Reel/);
 });

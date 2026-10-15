@@ -33,16 +33,74 @@ function fixture({ tab = 'catalog', stats = {} } = {}) {
       return { filteredData: [], pagination: { paginatedItems: [] } };
     } },
     './BookingCallSheetModal': { BookingCallSheetModal: noop },
+    '@/components/admin/forms/BookingFormModal': { BookingFormModal: noop },
+    '@/components/admin/forms/InquiryFormModal': { InquiryFormModal: noop },
+    '@/components/admin/forms/PromoCodeFormModal': { PromoCodeFormModal: noop },
+    '@/components/admin/forms/OfferFormModal': { OfferFormModal: noop },
+    '@/components/admin/forms/PodcastSetFormModal': { PodcastSetFormModal: noop },
+    '@/components/admin/forms/PodcastAddonFormModal': { PodcastAddonFormModal: noop },
+    '@/components/admin/forms/BlackoutFormModal': { BlackoutFormModal: noop },
     '@/lib/actions/bookings-rfp-operations': {},
     '@/lib/actions/inquiries-leads-operations': {},
     '@/lib/actions/broadcast-telemetry-dispatcher': {},
-    '@/features/admin': { OffersManager: noop },
+    '@/lib/actions/platform-settings-operations': {
+      getPlatformSettings: async () => ({}),
+      updatePlatformSettings: async () => ({ success: true }),
+    },
+    '@/lib/types/platform-settings': {
+      DEFAULT_PLATFORM_SETTINGS: {
+        beneficiaryName: "YAS PRO MEDIA PRODUCTION LLC",
+        bankName: "Emirates NBD — Business Bay, Dubai",
+        iban: "AE24 0260 0010 2345 6789 001",
+        swift: "EBBDAEADXXX",
+        depositPercent: 50,
+        conciergePhone: "+971 55 401 0465",
+        conciergeEmail: "operations@yaspro.ae",
+        turnaroundBufferMinutes: 30,
+        vatRatePercent: 5,
+      },
+    },
+    '@/lib/actions/podcast-operations': {
+      getCmsPodcastSets: async () => [],
+      upsertCmsPodcastSet: async () => ({ success: true }),
+      togglePodcastSetAvailability: async () => ({ success: true }),
+      deleteCmsPodcastSet: async () => ({ success: true }),
+      getCmsPodcastAddons: async () => [],
+      upsertCmsPodcastAddon: async () => ({ success: true }),
+      togglePodcastAddonStatus: async () => ({ success: true }),
+      deleteCmsPodcastAddon: async () => ({ success: true }),
+    },
+    '@/lib/actions/blackout-operations': {
+      getStudioBlackouts: async () => [],
+      createStudioBlackout: async () => ({ success: true }),
+      deleteStudioBlackout: async () => ({ success: true }),
+    },
+    '@/lib/actions/offers-promo-operations': {
+      getCmsPromoCodes: async () => [],
+      upsertCmsPromoCode: async () => ({ success: true }),
+      togglePromoCodeStatus: async () => ({ success: true }),
+      deleteCmsPromoCode: async () => ({ success: true }),
+    },
+    '@/lib/actions/offers-packages-operations': {
+      getCmsOffers: async () => [],
+      upsertCmsOffer: async () => ({ success: true }),
+      toggleOfferStatus: async () => ({ success: true }),
+      deleteCmsOffer: async () => ({ success: true }),
+    },
+    '@/features/admin': {
+      OffersManager: noop,
+      SettingsManager: noop,
+      PodcastManager: noop,
+      BlackoutManager: noop,
+    },
     '@/lib/cms-actions': { getCmsOverviewStats: async () => stats, getCmsBookings: async () => [] },
+    'next/navigation': { useRouter: () => ({ refresh: noop, push: noop }), useSearchParams: () => new URLSearchParams() },
     'next/link': { default: ({ children, ...props }) => React.createElement('a', props, children) },
     'next/image': { default: noop },
     'server-only': {},
   };
   function load(file) {
+    if (!file) return {};
     file = path.resolve(file);
     if (cache.has(file)) return cache.get(file);
     const exports = {};
@@ -56,7 +114,9 @@ function fixture({ tab = 'catalog', stats = {} } = {}) {
         if (Object.hasOwn(mocks, name)) return mocks[name];
         if (name.startsWith('.') || name.startsWith('@/')) {
           const target = name.startsWith('@/') ? path.resolve('src', name.slice(2)) : path.resolve(path.dirname(file), name);
-          return load([`${target}.ts`, `${target}.tsx`].find(fs.existsSync));
+          const candidate = [`${target}.ts`, `${target}.tsx`, path.join(target, 'index.ts'), path.join(target, 'index.tsx')].find(fs.existsSync);
+          if (candidate) return load(candidate);
+          return {};
         }
         return require(name);
       },

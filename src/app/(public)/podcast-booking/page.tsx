@@ -1,3 +1,5 @@
+import { connection } from "next/server";
+import { getCmsPodcastSets, getCmsPodcastAddons } from "@/lib/actions/podcast-operations";
 import type { Metadata } from "next";
 import { PodcastBookingWizard } from "@/features/podcast-booking/components/PodcastBookingWizard";
 import { HelpCircle } from "lucide-react";
@@ -104,7 +106,9 @@ const PODCAST_SPECS = [
   { label: "Location", value: "Iris Bay Tower, Level 18 · Dubai" },
 ];
 
-export default function PodcastBookingPage() {
+export default async function PodcastBookingPage() {
+  await connection();
+  const [studios, addons] = await Promise.all([getCmsPodcastSets(), getCmsPodcastAddons()]);
   return (
     <Section id="podcast-booking-page" aria-labelledby="podcast-booking-title" className="py-6 sm:py-12 md:py-20 bg-background">
       <JsonLd data={PODCAST_BOOKING_SCHEMA} />
@@ -125,7 +129,7 @@ export default function PodcastBookingPage() {
         />
 
         {/* Wizard */}
-        <PodcastBookingWizard />
+        <PodcastBookingWizard studios={studios} addons={addons} />
 
         {/* Studio FAQ Section */}
         <div className="max-w-4xl mx-auto mt-20 pt-16 border-t border-white/10 space-y-8">

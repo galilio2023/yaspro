@@ -5,10 +5,15 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { BookingHero } from "@/features/booking/components/ui/BookingKit";
 import { OffersBookingWizard } from "@/features/offers/components/OffersBookingWizard";
-import { HelpCircle, Sparkles, Clock, ShieldCheck, Zap } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 
-export function OffersPageClient() {
+import { OFFERS_AND_BUNDLES } from "@/features/offers/data";
+import type { OfferBundleItem } from "@/features/offers/types";
+
+export function OffersPageClient({ catalog }: { catalog?: OfferBundleItem[] }) {
   const { isArabic } = useLanguage();
+
+  const packageCount = (catalog ?? OFFERS_AND_BUNDLES).filter((item) => item.isActive !== false).length;
 
   const specs = [
     {
@@ -17,7 +22,7 @@ export function OffersPageClient() {
     },
     {
       label: isArabic ? "الباقات المتوفرة" : "Available Deals",
-      value: isArabic ? "12 باقة وعرض حصري" : "12 Curated Packages",
+      value: isArabic ? `${packageCount} باقة وعرض حصري` : `${packageCount} Curated Packages`,
     },
     {
       label: isArabic ? "بوابة الدفع" : "Payment Gateway",
@@ -89,7 +94,7 @@ export function OffersPageClient() {
         />
 
         {/* Dynamic 3-Step Wizard */}
-        <OffersBookingWizard />
+        <OffersBookingWizard catalog={catalog} />
 
         {/* ── Production FAQs ── */}
         <div className="mt-16 sm:mt-24 pt-12 border-t border-white/[0.08] max-w-4xl mx-auto">

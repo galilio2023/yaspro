@@ -3,15 +3,17 @@
 import Image from "next/image";
 import { MapPin, Users, Sparkles, Check } from "lucide-react";
 import { PODCAST_STUDIOS } from "../data";
-import { PodcastSessionItem } from "../types";
+import { PodcastSessionItem, PodcastStudio } from "../types";
 import { MetaTag, SelectableCard, StepIntro } from "@/features/booking/components/ui/BookingKit";
 
 interface Step2SetupProps {
+  studios?: PodcastStudio[];
   session: PodcastSessionItem;
   onChange: (updates: Partial<PodcastSessionItem>) => void;
 }
 
-export function Step2Setup({ session, onChange }: Step2SetupProps) {
+export function Step2Setup({ session, onChange, studios = PODCAST_STUDIOS }: Step2SetupProps) {
+  const availableStudios = studios.filter((studio) => studio.isAvailable !== false);
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <StepIntro
@@ -19,12 +21,12 @@ export function Step2Setup({ session, onChange }: Step2SetupProps) {
         total={5}
         title="Studio Setup"
         description="Browse through our acoustic spaces and pick the setup that fits your podcast format best."
-        aside={<MetaTag tone="mauve">{PODCAST_STUDIOS.length} setups</MetaTag>}
+        aside={<MetaTag tone="mauve">{availableStudios.length} setups</MetaTag>}
       />
 
       {/* 2-Column Responsive Grid (300px+ width per card to prevent text and badge wrapping) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-        {PODCAST_STUDIOS.map((studio) => {
+        {availableStudios.map((studio) => {
           const isSelected = session.studioKey === studio.key;
           const isCapacityMatch = studio.seats >= session.headcount;
 

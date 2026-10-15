@@ -37,6 +37,16 @@ export async function getCmsStudios(): Promise<Studio[]> {
     arabicDescription: null,
     capacity: 20,
     hourlyRate: s.rate.toFixed(2),
+    halfDayRate: null,
+    fullDayRate: null,
+    areaSqm: null,
+    dimensions: null,
+    ceilingHeight: null,
+    power: null,
+    soundIsolation: null,
+    category: null,
+    badge: null,
+    gallery: [],
     imageUrl: s.image || null,
     amenities: ["10Gbps Symmetrical Fiber", "Green Room", "Hair & Makeup Suite", "Sound Isolated (STC 65)"],
     isActive: true,
@@ -59,6 +69,8 @@ export async function upsertCmsStudio(
       return { success: true, message: "Studio updated in preview mode." };
     }
 
+    const money = (v?: string | null) => (v && Number(v) > 0 ? Number(v).toFixed(2) : null);
+    const text = (v?: string | null) => v?.trim() || null;
     const payload = {
       slug: data.slug,
       name: data.name,
@@ -67,7 +79,17 @@ export async function upsertCmsStudio(
       arabicDescription: data.arabicDescription || null,
       capacity: data.capacity || 20,
       hourlyRate: data.hourlyRate,
+      halfDayRate: money(data.halfDayRate),
+      fullDayRate: money(data.fullDayRate),
+      areaSqm: data.areaSqm && data.areaSqm > 0 ? data.areaSqm : null,
+      dimensions: text(data.dimensions),
+      ceilingHeight: text(data.ceilingHeight),
+      power: text(data.power),
+      soundIsolation: text(data.soundIsolation),
+      category: text(data.category),
+      badge: text(data.badge),
       imageUrl: data.imageUrl || null,
+      gallery: data.gallery || [],
       amenities: data.amenities || [],
       isActive: data.isActive ?? true,
     };

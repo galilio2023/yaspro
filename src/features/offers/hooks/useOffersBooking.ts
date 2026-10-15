@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { OFFERS_AND_BUNDLES } from "../data";
-import { AppliedOffersPromo, OffersBookingContact, OffersPricingBreakdown } from "../types";
+import { OfferBundleItem, AppliedOffersPromo, OffersBookingContact, OffersPricingBreakdown } from "../types";
 import { getOffersDiscount } from "../pricing";
 import { submitOffersBooking, validateOffersPromoCode, OffersBookingResult } from "../actions";
 
@@ -16,10 +16,12 @@ const INITIAL_CONTACT: OffersBookingContact = {
   specialRequests: "",
 };
 
-export function useOffersBooking() {
+export function useOffersBooking(catalog: OfferBundleItem[] = OFFERS_AND_BUNDLES) {
+  const offers = useMemo(() => catalog.filter((offer) => offer.isActive !== false), [catalog]);
   const searchParams = useSearchParams();
+  const pkg = searchParams?.get("package") || searchParams?.get("offer") || searchParams?.get("pkg") || searchParams?.get("id");
   const [step, setStep] = useState<number>(1);
-  const [selectedOfferId, updateSelectedOfferId] = useState<string>("5-hour-bundles");
+  const [selectedOfferId, updateSelectedOfferId] = useState<string>(offers.find((offer) => offer.id === pkg)?.id || offers[0]?.id || "");
   const [date, setDate] = useState<string>("");
   const [timeSlot, setTimeSlot] = useState<string>("");
   const [contact, setContact] = useState<OffersBookingContact>(INITIAL_CONTACT);
@@ -36,8 +38,8 @@ export function useOffersBooking() {
   const [confirmedResult, setConfirmedResult] = useState<OffersBookingResult | null>(null);
 
   const selectedOffer = useMemo(() => {
-    return OFFERS_AND_BUNDLES.find((o) => o.id === selectedOfferId) || OFFERS_AND_BUNDLES[0];
-  }, [selectedOfferId]);
+    return offers.find((o) => o.id === selectedOfferId);
+  }, [selectedOfferId, offers]);
 
   // Pricing calculations
   const breakdown: OffersPricingBreakdown = useMemo(() => {
@@ -59,21 +61,23 @@ export function useOffersBooking() {
   }, [selectedOffer, appliedPromo]);
 
   const setSelectedOfferId = useCallback((offerId: string) => {
-    if (offerId === selectedOfferId) return;
+    if (offerId === selectedOfferId || !offers.some((offer) => offer.id === offerId)) return;
     updateSelectedOfferId(offerId);
     setDate("");
     setTimeSlot("");
     promoRequest.current++;
     setAppliedPromo((promo) => promo?.eligibleOfferIds && !promo.eligibleOfferIds.includes(offerId) ? null : promo);
     setPromoError(null);
-  }, [selectedOfferId]);
+  }, [selectedOfferId, offers]);
 
-  const pkg = searchParams?.get("package") || searchParams?.get("offer") || searchParams?.get("id");
   useEffect(() => {
-    if (pkg && OFFERS_AND_BUNDLES.some((o) => o.id === pkg)) {
-      setSelectedOfferId(pkg);
-    }
-  }, [pkg, setSelectedOfferId]);
+    if (!pkg || pkg === selectedOfferId || !offers.some((offer) => offer.id === pkg)) return;
+    let cancelled = false;
+    Promise.resolve().then(() => {
+      if (!cancelled) setSelectedOfferId(pkg);
+    });
+    return () => { cancelled = true; };
+  }, [pkg, selectedOfferId, offers, setSelectedOfferId]);
 
   const applyPromo = useCallback(async (code: string) => {
     const request = ++promoRequest.current;
@@ -108,7 +112,7 @@ export function useOffersBooking() {
   }, []);
 
   // Validation checks
-  const canProceedToStep2 = Boolean(selectedOfferId);
+  const canProceedToStep2 = Boolean(selectedOffer && selectedOffer.isActive !== false);
   const canProceedToStep3 = Boolean(date && timeSlot);
 
   const nextStep = useCallback(() => {
@@ -203,6 +207,7 @@ export function useOffersBooking() {
   );
 
   return {
+    offers,
     step,
     setStep: goToStep,
     nextStep,

@@ -8,11 +8,15 @@ import {
   bookingSessions,
   users,
   studios,
+  bookingStatusEnum,
+  sessionTypeEnum,
   type Booking,
 } from "@/db/schema";
 import { eq, desc, asc, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { isDbAvailable, requireAdmin, type CmsResponse } from "./shared";
+import { isDbAvailable, isUuid, requireAdmin, type CmsResponse } from "./shared";
+import { replaceBookingNotes } from "../booking-notes";
+import { generateBookingReference } from "@/lib/utils";
 
 export interface EnrichedBooking extends Booking {
   userName?: string | null;
@@ -191,6 +195,123 @@ export async function updateBookingPaymentStatus(
     revalidatePath("/admin/bookings");
     revalidatePath("/account");
     return { success: true, message: `Payment status updated to ${paymentStatus}.` };
+  } catch (error) {
+    return { success: false, error: (error as Error).message };
+  }
+}
+
+export interface CmsBookingInput {
+  id?: string;
+  studioId?: string | null;
+  sessionType: Booking["sessionType"];
+  status?: Booking["status"];
+  scheduledAt: string;
+  durationHours: number;
+  headcount: number;
+  totalAmount: string;
+  paymentStatus?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactCompany?: string;
+  notes?: string;
+}
+
+function validateCmsBooking(input: CmsBookingInput): string | null {
+  if (!sessionTypeEnum.enumValues.includes(input.sessionType)) return "Invalid session type.";
+  if (input.status !== undefined && !bookingStatusEnum.enumValues.includes(input.status)) return "Invalid booking status.";
+  if (input.paymentStatus !== undefined && !["unpaid", "deposit_paid", "paid", "refunded"].includes(input.paymentStatus)) return "Invalid payment status.";
+  if (input.studioId != null && !isUuid(input.studioId)) return "Invalid studio id.";
+  if (!input.scheduledAt || Number.isNaN(new Date(input.scheduledAt).getTime())) return "A valid scheduled date and time is required.";
+  if (!Number.isInteger(input.durationHours) || input.durationHours < 1 || input.durationHours > 720) return "Duration must be between 1 and 720 hours.";
+  if (!Number.isInteger(input.headcount) || input.headcount < 1) return "Headcount must be at least 1.";
+  const amount = Number(input.totalAmount);
+  if (!Number.isFinite(amount) || amount < 0) return "Total amount must be a valid non-negative number.";
+  return null;
+}
+
+/**
+ * Creates a manual (walk-in / phone) booking from the admin panel.
+ * Contact details are stored in the same "[Contact: ...]" header the public flows use.
+ */
+export async function createCmsBooking(input: CmsBookingInput): Promise<CmsResponse> {
+  try {
+    await requireAdmin();
+    const invalid = validateCmsBooking(input);
+    if (invalid) return { success: false, error: invalid };
+    if (!input.contactName?.trim()) return { success: false, error: "Client name is required." };
+    if (!isDbAvailable()) return { success: true, message: "Booking created in preview mode." };
+
+    const contact = [input.contactName, input.contactEmail || "-", input.contactPhone || "-", input.contactCompany || ""]
+      .map((v) => (v ?? "").trim())
+      .join(" | ");
+    const specialRequests = `[Contact: ${contact}]${input.notes?.trim() ? ` ${input.notes.trim()}` : ""}`;
+
+    await db.insert(bookings).values({
+      referenceCode: generateBookingReference(),
+      studioId: input.studioId || null,
+      sessionType: input.sessionType,
+      status: input.status ?? "confirmed",
+      scheduledAt: new Date(input.scheduledAt),
+      durationHours: input.durationHours,
+      headcount: input.headcount,
+      totalAmount: Number(input.totalAmount).toFixed(2),
+      paymentStatus: input.paymentStatus ?? "unpaid",
+      specialRequests,
+    });
+    revalidatePath("/admin/bookings");
+    revalidatePath("/admin");
+    return { success: true, message: "Manual booking created." };
+  } catch (error) {
+    console.error("createCmsBooking error:", error);
+    return { success: false, error: "Failed to create booking." };
+  }
+}
+
+/**
+ * Edits core booking details (reschedule, studio, headcount, amount, notes).
+ * Booking-session mirrors are kept in sync by the database triggers.
+ */
+export async function updateCmsBookingDetails(id: string, input: CmsBookingInput): Promise<CmsResponse> {
+  try {
+    await requireAdmin();
+    if (!isUuid(id)) return { success: false, error: "Invalid booking id." };
+    const invalid = validateCmsBooking(input);
+    if (invalid) return { success: false, error: invalid };
+    if (isDbAvailable()) {
+      const [existing] = await db.select({ specialRequests: bookings.specialRequests }).from(bookings).where(eq(bookings.id, id)).limit(1);
+      if (!existing) return { success: false, error: "Booking not found." };
+      await db.update(bookings).set({
+        studioId: input.studioId || null,
+        sessionType: input.sessionType,
+        scheduledAt: new Date(input.scheduledAt),
+        durationHours: input.durationHours,
+        headcount: input.headcount,
+        totalAmount: Number(input.totalAmount).toFixed(2),
+        specialRequests: input.notes === undefined ? existing.specialRequests : replaceBookingNotes(existing.specialRequests, input.notes),
+        updatedAt: new Date(),
+      }).where(eq(bookings.id, id));
+    }
+    revalidatePath("/admin/bookings");
+    revalidatePath("/account");
+    return { success: true, message: "Booking details updated." };
+  } catch (error) {
+    console.error("updateCmsBookingDetails error:", error);
+    return { success: false, error: "Failed to update booking details." };
+  }
+}
+
+/** Permanently deletes a booking (sessions cascade). Intended for test/duplicate records. */
+export async function deleteCmsBooking(id: string): Promise<CmsResponse> {
+  try {
+    await requireAdmin();
+    if (!isUuid(id)) return { success: false, error: "Invalid booking id." };
+    if (isDbAvailable()) {
+      await db.delete(bookings).where(eq(bookings.id, id));
+    }
+    revalidatePath("/admin/bookings");
+    revalidatePath("/admin");
+    return { success: true, message: "Booking deleted." };
   } catch (error) {
     return { success: false, error: (error as Error).message };
   }

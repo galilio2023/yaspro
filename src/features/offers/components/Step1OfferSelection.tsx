@@ -2,29 +2,31 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import { Check, Sparkles, Clock, ShieldCheck, Tag, Info } from "lucide-react";
+import { motion } from "framer-motion";
+import { Check, Sparkles, Clock, Info } from "lucide-react";
 import { OFFERS_AND_BUNDLES } from "../data";
 import { OfferBundleItem, OfferCategory } from "../types";
-import { formatAED, studioSprings, StepIntro, Panel } from "@/features/booking/components/ui/BookingKit";
+import { formatAED, studioSprings, StepIntro } from "@/features/booking/components/ui/BookingKit";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { cn } from "@/lib/utils";
 
 interface Step1OfferSelectionProps {
+  offers?: OfferBundleItem[];
   selectedOfferId: string;
   onSelectOffer: (id: string) => void;
   onContinue: () => void;
 }
 
 export function Step1OfferSelection({
+  offers = OFFERS_AND_BUNDLES,
   selectedOfferId,
   onSelectOffer,
-  onContinue,
 }: Step1OfferSelectionProps) {
   const { isArabic } = useLanguage();
   const [filter, setFilter] = useState<OfferCategory>("all");
 
-  const filteredOffers = OFFERS_AND_BUNDLES.filter((item) => {
+  const activeOffers = offers.filter((item) => item.isActive !== false);
+  const filteredOffers = activeOffers.filter((item) => {
     if (filter === "all") return true;
     if (filter === "bundles") return item.category === "bundle";
     if (filter === "special_offers") return item.category === "offer";
@@ -36,19 +38,19 @@ export function Step1OfferSelection({
       id: "all",
       labelEn: "All Offers & Bundles",
       labelAr: "جميع العروض والباقات",
-      count: OFFERS_AND_BUNDLES.length,
+      count: activeOffers.length,
     },
     {
       id: "bundles",
       labelEn: "Production Bundles",
       labelAr: "باقات الإنتاج المتكاملة",
-      count: OFFERS_AND_BUNDLES.filter((i) => i.category === "bundle").length,
+      count: activeOffers.filter((i) => i.category === "bundle").length,
     },
     {
       id: "special_offers",
       labelEn: "Special Offers",
       labelAr: "عروض حصرية ومؤقتة",
-      count: OFFERS_AND_BUNDLES.filter((i) => i.category === "offer").length,
+      count: activeOffers.filter((i) => i.category === "offer").length,
     },
   ];
 

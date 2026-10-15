@@ -36,7 +36,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <div
       dir="ltr"
       style={{ direction: "ltr" }}
-      className="min-h-screen bg-[#070709] text-slate-100 flex flex-col md:flex-row antialiased selection:bg-brand-mauve selection:text-white"
+      className="relative z-10 min-h-screen bg-[#070709] text-slate-100 flex flex-col md:flex-row antialiased selection:bg-brand-mauve selection:text-white"
     >
       <a
         href="#admin-main"

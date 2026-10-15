@@ -6,6 +6,7 @@ import { AdminModal } from "../shared/AdminModal";
 import {
   AdminInput,
   AdminTextarea,
+  AdminSelect,
   AdminSwitch,
   AdminTagsInput,
 } from "../shared/AdminFormFields";
@@ -183,6 +184,91 @@ function StudioFormContent({
           onChange={(e) => setFormData((prev) => ({ ...prev, arabicDescription: e.target.value }))}
         />
       </div>
+
+      <fieldset className="space-y-3.5 rounded-2xl border border-white/10 p-4">
+        <legend className="px-2 text-xs font-semibold text-brand-lavender tracking-wide">
+          Technical Specs &amp; Day Rates
+        </legend>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <AdminInput
+            label="Half-Day Rate"
+            type="number"
+            step="0.01"
+            suffixNode="AED"
+            value={formData.halfDayRate ?? ""}
+            onChange={(e) => setFormData((prev) => ({ ...prev, halfDayRate: e.target.value }))}
+          />
+          <AdminInput
+            label="Full-Day Rate"
+            type="number"
+            step="0.01"
+            suffixNode="AED"
+            value={formData.fullDayRate ?? ""}
+            onChange={(e) => setFormData((prev) => ({ ...prev, fullDayRate: e.target.value }))}
+          />
+          <AdminInput
+            label="Area"
+            type="number"
+            min={1}
+            suffixNode="m²"
+            value={formData.areaSqm ?? ""}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, areaSqm: e.target.value === "" ? null : parseInt(e.target.value, 10) }))
+            }
+          />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <AdminInput
+            label="Dimensions"
+            placeholder="18m x 15m x 5.5m"
+            value={formData.dimensions ?? ""}
+            onChange={(e) => setFormData((prev) => ({ ...prev, dimensions: e.target.value }))}
+          />
+          <AdminInput
+            label="Ceiling Height"
+            placeholder="5.5m Clear Height"
+            value={formData.ceilingHeight ?? ""}
+            onChange={(e) => setFormData((prev) => ({ ...prev, ceilingHeight: e.target.value }))}
+          />
+          <AdminInput
+            label="Power"
+            placeholder="3-Phase 125A Clean Cam-Lok"
+            value={formData.power ?? ""}
+            onChange={(e) => setFormData((prev) => ({ ...prev, power: e.target.value }))}
+          />
+          <AdminInput
+            label="Sound Isolation"
+            placeholder="STC 65 Floating Box-in-Box"
+            value={formData.soundIsolation ?? ""}
+            onChange={(e) => setFormData((prev) => ({ ...prev, soundIsolation: e.target.value }))}
+          />
+          <AdminSelect
+            label="Category"
+            value={formData.category ?? ""}
+            onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
+            options={[
+              { value: "", label: "Uncategorized" },
+              { value: "virtual-production", label: "Virtual Production (XR)" },
+              { value: "podcast-broadcast", label: "Podcast & Broadcast" },
+              { value: "music-recording", label: "Music & Live Bands" },
+              { value: "photo-cyclorama", label: "Photo & Cyclorama" },
+              { value: "voiceover", label: "Voiceover & Dubbing" },
+            ]}
+          />
+          <AdminInput
+            label="Badge"
+            placeholder="270° Micro-LED Volume"
+            value={formData.badge ?? ""}
+            onChange={(e) => setFormData((prev) => ({ ...prev, badge: e.target.value }))}
+          />
+        </div>
+        <AdminTagsInput
+          label="Gallery Image URLs"
+          placeholder="Paste an image URL (e.g. /images/studios/xr-2.jpg) and press Enter..."
+          tags={(formData.gallery as string[]) || []}
+          onChange={(urls) => setFormData((prev) => ({ ...prev, gallery: urls }))}
+        />
+      </fieldset>
 
       <AdminTagsInput
         label="Soundstage Specifications & Amenities"

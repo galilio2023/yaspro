@@ -3,12 +3,13 @@
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { CalendarDays, Clock, Timer, Users, X, ShieldCheck, Sparkles, Tag } from "lucide-react";
-import type { PodcastSessionItem, PodcastStudio, PodcastService } from "../types";
+import type { PodcastSessionItem, PodcastStudio, PodcastService, PodcastAddon } from "../types";
 import { PODCAST_ADDONS } from "../data";
 import { formatAED, studioSprings } from "@/features/booking/components/ui/BookingKit";
 import { useState } from "react";
 
 export interface PodcastQuoteRailProps {
+  addons?: PodcastAddon[];
   session: PodcastSessionItem;
   studio: PodcastStudio;
   service: PodcastService;
@@ -26,6 +27,7 @@ export interface PodcastQuoteRailProps {
 }
 
 export function PodcastQuoteRail({
+  addons = PODCAST_ADDONS,
   session,
   studio,
   service,
@@ -50,7 +52,7 @@ export function PodcastQuoteRail({
   const activeAddonsList = Object.entries(session.addons || {})
     .filter(([, qty]) => qty > 0)
     .map(([key, qty]) => {
-      const addon = PODCAST_ADDONS.find((a) => a.key === key);
+      const addon = addons.find((a) => a.key === key);
       return {
         key,
         title: addon?.title || key,
