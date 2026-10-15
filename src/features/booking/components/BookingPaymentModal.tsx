@@ -64,33 +64,45 @@ export function BookingPaymentModal({
   const dialogRef = useRef<HTMLDivElement>(null);
   useFocusTrap({ isOpen, onClose, containerRef: dialogRef });
 
-  const [loadedSettings, setLoadedSettings] = useState<Partial<PlatformPaymentSettings>>({});
+  const [loadedSettings, setLoadedSettings] = useState<Partial<PlatformPaymentSettings> | null>(null);
+  const [settingsError, setSettingsError] = useState(false);
   useEffect(() => {
     if (!isOpen || paymentSettings) return;
     let cancelled = false;
     getPlatformSettings().then((settings) => {
-      if (!cancelled) setLoadedSettings(settings);
+      if (!cancelled) {
+        setLoadedSettings(settings);
+        setSettingsError(false);
+      }
     }).catch(() => {
-      if (!cancelled) setLoadedSettings({});
+      if (!cancelled) setSettingsError(true);
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      setLoadedSettings(null);
+      setSettingsError(false);
+    };
   }, [isOpen, paymentSettings]);
-  const activeSettings = { ...DEFAULT_PLATFORM_SETTINGS, ...(paymentSettings ?? loadedSettings) };
+  const settings = paymentSettings ?? loadedSettings;
+  const activeSettings = settings ? { ...DEFAULT_PLATFORM_SETTINGS, ...settings } : null;
 
   if (!isOpen) return null;
 
-  const depositMultiplier = (activeSettings.depositPercent || 50) / 100;
+  const depositPercent = activeSettings?.depositPercent ?? 50;
+  const depositMultiplier = depositPercent / 100;
   const depositAmount = Math.round(totalAmount * depositMultiplier);
   const chargeAmount = paymentType === "deposit" ? depositAmount : totalAmount;
 
   // Dynamic UAE VAT calculation breakdown
-  const vatRate = 1 + (activeSettings.vatRatePercent || 5) / 100;
+  const vatRatePercent = activeSettings?.vatRatePercent ?? 5;
+  const vatRate = 1 + vatRatePercent / 100;
   const vatAmount = Math.round((chargeAmount - chargeAmount / vatRate) * 100) / 100;
   const netAmount = Math.round((chargeAmount - vatAmount) * 100) / 100;
 
   const handleCopyIban = async () => {
+    if (!activeSettings) return;
     try {
-      await navigator.clipboard.writeText(activeSettings.iban || "AE240260001023456789001");
+      await navigator.clipboard.writeText(activeSettings.iban);
       setCopiedIban(true);
       setTimeout(() => setCopiedIban(false), 2000);
     } catch (e) {
@@ -100,6 +112,7 @@ export function BookingPaymentModal({
 
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!activeSettings) return;
     if (paymentMethod === "bank") {
       setIsProcessing(true);
       setErrorMsg(null);
@@ -223,6 +236,13 @@ export function BookingPaymentModal({
           </div>
         )}
 
+        {!activeSettings ? (
+          <div role={settingsError ? "alert" : "status"} aria-busy={!settingsError} className="p-4 text-sm text-slate-300">
+            {settingsError
+              ? (isArabic ? "تعذر تحميل إعدادات الدفع. يرجى إغلاق النافذة والمحاولة مجدداً." : "Unable to load payment settings. Please close and reopen checkout to retry.")
+              : (isArabic ? "جاري تحميل إعدادات الدفع..." : "Loading payment settings...")}
+          </div>
+        ) : (
         <form onSubmit={handlePay} className="space-y-5 text-xs">
           {/* Order Summary & VAT Breakdown Card */}
           <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2.5">
@@ -232,7 +252,7 @@ export function BookingPaymentModal({
                 {isArabic ? "ملخص الفاتورة الضريبية" : "Tax Invoice Summary"}
               </span>
               <span className="text-[9px] sm:text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 shrink-0 whitespace-nowrap">
-                {isArabic ? "شامل ضريبة القيمة المضافة 5%" : "Includes 5% UAE VAT"}
+                {isArabic ? `شامل ضريبة القيمة المضافة ${vatRatePercent}%` : `Includes ${vatRatePercent}% UAE VAT`}
               </span>
             </div>
 
@@ -242,7 +262,7 @@ export function BookingPaymentModal({
             </div>
 
             <div className="flex justify-between text-text-muted text-[11px]">
-              <span>{isArabic ? "ضريبة القيمة المضافة (5% VAT):" : "UAE VAT (5% FTA):"}</span>
+              <span>{isArabic ? `ضريبة القيمة المضافة (${vatRatePercent}% VAT):` : `UAE VAT (${vatRatePercent}% FTA):`}</span>
               <span className="font-mono text-slate-300">{formatCurrency(vatAmount)}</span>
             </div>
 
@@ -348,7 +368,7 @@ export function BookingPaymentModal({
             </div>
           </div>
 
-          {/* Option Selector: 50% Deposit vs Full */}
+          {/* Option Selector: Configured Deposit vs Full */}
           <div>
             <label className="block text-slate-300 font-semibold mb-2">
               {isArabic ? "خطة الدفع" : "Payment Schedule"}
@@ -365,7 +385,7 @@ export function BookingPaymentModal({
                 )}
               >
                 <div className="text-[10px] font-mono uppercase text-brand-mauve">
-                  {isArabic ? "عربون حجز 50%" : "50% Booking Deposit"}
+                  {isArabic ? `عربون حجز ${depositPercent}%` : `${depositPercent}% Booking Deposit`}
                 </div>
                 <div className="text-sm font-bold text-white mt-0.5">
                   {formatCurrency(depositAmount)}
@@ -594,6 +614,7 @@ export function BookingPaymentModal({
             </button>
           )}
         </form>
+        )}
       </div>
     </div>,
     document.body

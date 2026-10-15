@@ -4,12 +4,9 @@ import React, { useState } from "react";
 import {
   Settings,
   Building2,
-  Percent,
   PhoneCall,
   Save,
   CheckCircle2,
-  Clock,
-  ShieldCheck,
   CreditCard,
 } from "lucide-react";
 import {

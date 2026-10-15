@@ -147,7 +147,9 @@ export function OffersManager({
       const res = await deleteCmsOffer(offerDeleting.id);
       setOfferFeedback(res.success ? res.message || "Deleted." : res.error || "Delete failed.");
       if (res.success) {
-        setPackageList((prev) => prev.filter((item) => item.id !== offerDeleting.id));
+        setPackageList((prev) => OFFERS_AND_BUNDLES.some((item) => item.id === offerDeleting.id)
+          ? prev.map((item) => item.id === offerDeleting.id ? { ...item, isActive: false } : item)
+          : prev.filter((item) => item.id !== offerDeleting.id));
         router.refresh();
       }
     } finally {
@@ -559,9 +561,11 @@ export function OffersManager({
             isOpen={offerDeleting !== null}
             onClose={() => setOfferDeleting(null)}
             onConfirm={handleOfferDelete}
-            title="Delete package?"
-            message={`Permanently remove "${offerDeleting?.name}"? You can also Pause it instead to hide it without deleting.`}
-            confirmLabel="Delete Package"
+            title={OFFERS_AND_BUNDLES.some((item) => item.id === offerDeleting?.id) ? "Disable package?" : "Delete package?"}
+            message={OFFERS_AND_BUNDLES.some((item) => item.id === offerDeleting?.id)
+              ? `Disable "${offerDeleting?.name}"? Built-in packages stay in the catalog and can be enabled again.`
+              : `Permanently remove "${offerDeleting?.name}"? You can also Pause it instead to hide it without deleting.`}
+            confirmLabel={OFFERS_AND_BUNDLES.some((item) => item.id === offerDeleting?.id) ? "Disable Package" : "Delete Package"}
             isSubmitting={offerBusy}
           />
         </div>
@@ -713,7 +717,7 @@ export function OffersManager({
             onClose={() => setPromoEditing(null)}
             onSave={handlePromoSave}
             initialPromo={promoEditing}
-            offerOptions={OFFERS_AND_BUNDLES.map((o) => ({ id: o.id, name: o.name }))}
+            offerOptions={packageList.map((o) => ({ id: o.id, name: o.name }))}
             isSubmitting={promoBusy}
             error={promoError}
           />

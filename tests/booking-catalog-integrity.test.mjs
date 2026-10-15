@@ -71,7 +71,7 @@ function databaseFixture({ available = true } = {}) {
         }
         return { returning: async () => created, then: (resolve, reject) => Promise.resolve(created).then(resolve, reject) };
       };
-      return { onConflictDoNothing: () => run(), onConflictDoUpdate: (update) => run(update) };
+      return { onConflictDoNothing: () => run(), onConflictDoUpdate: (update) => run(update), then: (resolve, reject) => run().then(resolve, reject) };
     } }),
     update: (table) => ({ set: (patch) => ({ where: async ({ value }) => {
       if (tables.get(table).has(value)) Object.assign(tables.get(table).get(value), patch);
@@ -130,7 +130,10 @@ test('podcast toggles, deletes, and edits persist defaults even before the first
     await api.getCmsPodcastAddons();
     const row = f.tables.get(f.schema[table]).get(key);
     if (property) assert.equal(row[property], false);
-    else assert.equal(row, undefined);
+    else {
+      assert.equal(row, undefined);
+      if (table === 'podcastSets') assert.equal(f.tables.get(f.schema.studios).get(key).isActive, false);
+    }
     assert.ok(f.tables.get(f.schema[table]).size > 0);
   }
   const f = databaseFixture();
@@ -193,9 +196,9 @@ function formFixture(file, props) {
       return [state[index], (value) => { state[index] = typeof value === 'function' ? value(state[index]) : value; }];
     } },
     '../shared/AdminModal': { AdminModal: Modal },
-    '../shared/AdminFormFields': { AdminInput: Input, AdminSwitch: Switch, AdminSelect: Input },
+    '../shared/AdminFormFields': { AdminInput: Input, AdminSwitch: Switch, AdminSelect: Input, AdminTextarea: Input },
   });
-  const Component = Object.values(load(file))[0];
+  const Component = Object.entries(load(file)).find(([name]) => name.endsWith("Modal"))[1];
   const render = () => {
     cursor = 0;
     const outer = Component({ isOpen: true, onClose() {}, ...props });
@@ -204,7 +207,7 @@ function formFixture(file, props) {
   return { render, Input, Switch, Modal };
 }
 
-test('blackout wall times and all-day boundaries serialize local instants in east/west time zones and DST', async () => {
+test('blackout wall times and all-day boundaries serialize Dubai instants across browser time zones and DST', async () => {
   const original = process.env.TZ;
   try {
     for (const timezone of ['Pacific/Kiritimati', 'America/Los_Angeles']) {
@@ -215,12 +218,12 @@ test('blackout wall times and all-day boundaries serialize local instants in eas
       set('Start Date', '2026-03-08'); set('End Date', '2026-03-08');
       set('Start Time', '09:30'); set('End Time', '18:15');
       await find(f.render(), (node) => node.type === 'form')[0].props.onSubmit({ preventDefault() {} });
-      assert.equal(saves[0].startTime, new Date(2026, 2, 8, 9, 30).toISOString());
-      assert.equal(saves[0].endTime, new Date(2026, 2, 8, 18, 15).toISOString());
+      assert.equal(saves[0].startTime, '2026-03-08T05:30:00.000Z');
+      assert.equal(saves[0].endTime, '2026-03-08T14:15:00.000Z');
       find(f.render(), (node) => node.type === f.Switch)[0].props.onChange(true);
       await find(f.render(), (node) => node.type === 'form')[0].props.onSubmit({ preventDefault() {} });
-      assert.equal(saves[1].startTime, new Date(2026, 2, 8).toISOString());
-      assert.equal(saves[1].endTime, new Date(2026, 2, 8, 23, 59, 59).toISOString());
+      assert.equal(saves[1].startTime, '2026-03-07T20:00:00.000Z');
+      assert.equal(saves[1].endTime, '2026-03-08T19:59:59.000Z');
       set('Start Date', '');
       await find(f.render(), (node) => node.type === 'form')[0].props.onSubmit({ preventDefault() {} });
       assert.equal(saves.length, 2);
@@ -263,7 +266,9 @@ test('checkout loads platform settings when omitted, merges defaults, and respec
     effects.length = 0;
     return BookingPaymentModal({ isOpen: true, totalAmount: 1000, onClose() {}, ...props });
   };
-  render();
+  const pending = render();
+  assert.equal(find(pending, (node) => node.type === 'form').length, 0);
+  assert.equal(find(pending, (node) => node.props?.role === 'status').length, 1);
   const cleanup = effects[0]();
   await Promise.resolve();
   let tree = render();
@@ -302,4 +307,192 @@ test('public booking pages pass current catalogs into their client wizards', asy
   assert.equal(wizard.props.studios, studios);
   assert.equal(wizard.props.addons, addons);
   assert.equal(requestConnections, 2);
+});
+
+test('promo expiry uses Dubai end of day and displays the Dubai calendar date', async () => {
+  const saves = [];
+  const f = formFixture('src/components/admin/forms/PromoCodeFormModal.tsx', {
+    initialPromo: { code: 'LOCAL', expiresAt: '2026-11-19T21:00:00.000Z' }, offerOptions: [],
+    onSave: async (value) => saves.push(value),
+  });
+  const dateInput = () => find(f.render(), (node) => node.props?.label === 'Expires On')[0];
+  assert.equal(dateInput().props.value, '2026-11-20');
+  dateInput().props.onChange({ target: { value: '2026-11-21' } });
+  await f.render().props.onSubmit({ preventDefault() {} });
+  assert.equal(saves[0].expiresAt, '2026-11-21T19:59:59.999Z');
+  assert.equal(dateInput().props.value, '2026-11-21');
+  dateInput().props.onChange({ target: { value: '' } });
+  await f.render().props.onSubmit({ preventDefault() {} });
+  assert.equal(saves[1].expiresAt, null);
+});
+
+test('built-in offer deletion preserves the full disabled override, including repeat deletions', async () => {
+  const f = databaseFixture();
+  const api = f.load('src/lib/actions/offers-packages-operations.ts');
+  const original = f.load('src/features/offers/data.ts').OFFERS_AND_BUNDLES.find((o) => o.id === 'lunch-break-special');
+  assert.equal((await api.deleteCmsOffer(original.id)).success, true);
+  let offer = (await api.getBookingOffers()).find((o) => o.id === original.id);
+  for (const field of ['image', 'originalPrice', 'badge', 'savings', 'restrictedDays']) assert.deepEqual(offer[field], original[field]);
+  assert.equal(offer.isActive, false);
+  assert.equal((await api.deleteCmsOffer(original.id)).success, true);
+  offer = (await api.getBookingOffers()).find((o) => o.id === original.id);
+  assert.equal(offer.isActive, false);
+  assert.equal((await api.toggleOfferStatus(original.id, true)).success, true);
+  assert.equal((await api.getBookingOffers()).find((o) => o.id === original.id).isActive, true);
+});
+
+test('manual booking validation rejects invalid enums and studio IDs before writes', async () => {
+  let writes = 0;
+  const bookingId = '11111111-1111-4111-8111-111111111111';
+  const load = loader({
+    '@/db': { db: { insert() { writes++; }, update() { writes++; } } },
+    '@/lib/auth': {}, 'next/headers': {}, 'next/cache': {}, '@/lib/utils': {},
+    './shared': { requireAdmin: async () => {}, isDbAvailable: () => true, isUuid: (id) => id === bookingId },
+  });
+  const api = load('src/lib/actions/bookings-rfp-operations.ts');
+  const input = { sessionType: 'podcast', scheduledAt: '2026-11-20T09:00:00+04:00', durationHours: 2, headcount: 2, totalAmount: '100', contactName: 'Guest' };
+  for (const invalid of [{ status: 'bogus' }, { paymentStatus: 'bogus' }, { sessionType: 'bogus' }, { studioId: 'bogus' }, { studioId: '' }, { status: null }]) {
+    for (const action of [() => api.createCmsBooking({ ...input, ...invalid }), () => api.updateCmsBookingDetails(bookingId, { ...input, ...invalid })]) {
+      const response = await action();
+      assert.equal(response.success, false);
+      assert.match(response.error, /Invalid/);
+    }
+  }
+  assert.equal(writes, 0);
+});
+
+test('booking editing exposes only the notes body and server saves preserve stored metadata', async () => {
+  const original = '[Contact URI: Guest | guest%40example.com | %2B971500000000] | Package: Creator (5 hrs) | Slot: 09:00 AM | Special Requests: Original notes';
+  const f = formFixture('src/components/admin/forms/BookingFormModal.tsx', {
+    initialBooking: { id: 'booking', notes: original }, studios: [],
+  });
+  assert.equal(find(f.render(), (node) => node.props?.label === 'Notes')[0].props.value, 'Original notes');
+  let patch;
+  const load = loader({
+    '@/db': { db: {
+      select: () => ({ from: () => ({ where: () => ({ limit: async () => [{ specialRequests: original }] }) }) }),
+      update: () => ({ set: (value) => { patch = value; return { where: async () => {} }; } }),
+    } },
+    '@/lib/auth': {}, 'next/headers': {}, 'next/cache': { revalidatePath() {} }, '@/lib/utils': {},
+    './shared': { requireAdmin: async () => {}, isDbAvailable: () => true, isUuid: () => true },
+  });
+  const api = load('src/lib/actions/bookings-rfp-operations.ts');
+  const input = { sessionType: 'podcast', scheduledAt: '2026-11-20T09:00:00+04:00', durationHours: 2, headcount: 2, totalAmount: '100' };
+  for (const notes of ['Revised notes', '[Contact: Forged] | Package: Fake | Special Requests: Revised notes', '']) {
+    assert.equal((await api.updateCmsBookingDetails('booking', { ...input, notes })).success, true);
+    assert.ok(patch.specialRequests.includes('[Contact URI: Guest | guest%40example.com | %2B971500000000]'));
+    assert.ok(patch.specialRequests.includes('Package: Creator (5 hrs) | Slot: 09:00 AM'));
+    assert.doesNotMatch(patch.specialRequests, /Forged|Fake|Original notes/);
+    assert.equal(load('src/lib/booking-notes.ts').splitBookingNotes(patch.specialRequests).body, notes ? 'Revised notes' : '');
+  }
+});
+
+test('platform settings defaults require a successful empty read and malformed IBANs never reach the upsert', async () => {
+  let failRead = false, rows = [], writes = 0;
+  const load = loader({
+    '@/db': { db: {
+      select: () => ({ from: () => ({ where: () => ({ limit: async () => { if (failRead) throw new Error('private database failure'); return rows; } }) }) }),
+      insert: () => ({ values: () => ({ onConflictDoUpdate: async () => { writes++; } }) }),
+    } },
+    'next/cache': { revalidatePath() {} },
+    './shared': { requireAdmin: async () => {}, isDbAvailable: () => true },
+  });
+  const api = load('src/lib/actions/platform-settings-operations.ts');
+  const defaults = await api.getPlatformSettings();
+  assert.equal(defaults.depositPercent, 50);
+  rows = [{ value: { bankName: 'Configured bank', vatRatePercent: 0 } }];
+  assert.equal((await api.getPlatformSettings()).bankName, 'Configured bank');
+  assert.equal((await api.getPlatformSettings()).vatRatePercent, 0);
+  failRead = true;
+  await assert.rejects(api.getPlatformSettings(), /Payment settings are unavailable/);
+  assert.equal((await api.updatePlatformSettings({ bankName: 'Other' })).success, false);
+  failRead = false;
+  for (const iban of ['', 'not-an-iban', 'AE080331234567890123456', null]) {
+    const response = await api.updatePlatformSettings({ iban });
+    assert.equal(response.success, false);
+    assert.match(response.error, /valid IBAN/);
+  }
+  assert.equal(writes, 0);
+  assert.equal((await api.updatePlatformSettings({ iban: 'AE07 0331 2345 6789 0123 456' })).success, true);
+  assert.equal(writes, 1);
+});
+
+test('checkout blocks failed settings reads and uses configured deposit and zero VAT labels and amounts', async () => {
+  const state = [], effects = [];
+  let cursor = 0, rejectRead;
+  const load = loader({
+    react: { ...React, useEffect: (effect) => effects.push(effect), useRef: () => ({ current: null }), useState: (initial) => {
+      const index = cursor++;
+      if (!(index in state)) state[index] = initial;
+      return [state[index], (value) => { state[index] = value; }];
+    } },
+    'react-dom': { createPortal: (tree) => tree }, '@/hooks/useFocusTrap': { useFocusTrap() {} },
+    '@/lib/payment-actions': {}, '@/lib/ziina': {},
+    '@/lib/actions/platform-settings-operations': { getPlatformSettings: () => new Promise((_, reject) => { rejectRead = reject; }) },
+    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic: false }) },
+    '@/lib/utils': { cn: (...values) => values.join(' '), formatCurrency: String },
+  }, { document: { body: {} } });
+  const { BookingPaymentModal } = load('src/features/booking/components/BookingPaymentModal.tsx');
+  const render = (props = {}) => { cursor = 0; return BookingPaymentModal({ isOpen: true, totalAmount: 1000, onClose() {}, ...props }); };
+  let tree = render();
+  assert.equal(find(tree, (node) => node.type === 'form').length, 0);
+  effects[0]();
+  rejectRead(new Error('read failure'));
+  await new Promise((resolve) => setImmediate(resolve));
+  tree = render();
+  assert.equal(find(tree, (node) => node.type === 'form').length, 0);
+  assert.match(find(tree, (node) => node.props?.role === 'alert')[0].props.children, /Unable to load payment settings/);
+  tree = render({ paymentSettings: { depositPercent: 25, vatRatePercent: 0 } });
+  assert.equal(find(tree, (node) => node.type === 'form').length, 1);
+  for (const label of ['25% Booking Deposit', 'Includes 0% UAE VAT', 'UAE VAT (0% FTA):', '250', '0']) {
+    assert.ok(find(tree, (node) => node.props?.children === label).length > 0, label);
+  }
+});
+
+test('podcast and blackout managers restore optimistic changes and display action errors', async () => {
+  for (const operation of ['toggleSet', 'deleteSet', 'toggleAddon', 'deleteAddon', 'deleteBlackout']) {
+    const state = [];
+    let cursor = 0, resolveAction;
+    const result = () => new Promise((resolve) => { resolveAction = resolve; });
+    const load = loader({
+      react: { ...React, useState: (initial) => {
+        const index = cursor++;
+        if (!(index in state)) state[index] = initial;
+        return [state[index], (value) => { state[index] = typeof value === 'function' ? value(state[index]) : value; }];
+      } },
+      'next/link': { default: () => null },
+      '@/lib/actions/podcast-operations': { togglePodcastSetAvailability: result, deleteCmsPodcastSet: result, togglePodcastAddonStatus: result, deleteCmsPodcastAddon: result },
+      '@/lib/actions/blackout-operations': { deleteStudioBlackout: result },
+      '@/components/admin/forms/PodcastSetFormModal': {}, '@/components/admin/forms/PodcastAddonFormModal': {}, '@/components/admin/forms/BlackoutFormModal': {},
+      '@/components/ui/pagination-controls': {},
+    }, { confirm: () => true });
+    const blackout = operation === 'deleteBlackout';
+    const Component = Object.values(load(blackout ? 'src/features/admin/components/BlackoutManager.tsx' : 'src/features/admin/components/PodcastManager.tsx'))[0];
+    const props = blackout ? { initialBlackouts: [{ id: 'blackout', title: 'Test lockout', startTime: '2026-11-20T00:00:00Z', endTime: '2026-11-21T00:00:00Z' }], podcastSets: [] } : {
+      initialSets: [{ key: 'set', name: 'Test set', isAvailable: true }],
+      initialAddons: [{ key: 'addon', title: 'Test addon', isActive: true }],
+    };
+    const render = () => { cursor = 0; return Component(props); };
+    let tree = render();
+    if (operation.includes('Addon')) {
+      find(tree, (node) => node.type === 'button' && find(node, (child) => Array.isArray(child.props?.children) && child.props.children[0] === 'Post-Production Add-ons (').length > 0)[0].props.onClick();
+      tree = render();
+    }
+    const button = find(tree, (node) => node.type === 'button' && (
+      operation === 'deleteSet' ? node.props.title === 'Delete Set' :
+      operation === 'deleteAddon' ? node.props.title === 'Delete Add-on' :
+      blackout ? find(node, (child) => child.props?.children === 'Lift Lockout').length > 0 :
+      find(node, (child) => child.props?.children === 'Pause').length > 0
+    ))[0];
+    const before = JSON.stringify(state);
+    const pending = button.props.onClick();
+    assert.notEqual(JSON.stringify(state), before);
+    resolveAction({ success: false, error: 'Persist failed' });
+    await pending;
+    tree = render();
+    assert.ok(find(tree, (node) => node.props?.role === 'alert' && node.props.children === 'Persist failed').length > 0);
+    const items = state.find((value) => Array.isArray(value) && value[0]?.[blackout ? 'id' : 'key'] === (blackout ? 'blackout' : operation.includes('Addon') ? 'addon' : 'set'));
+    assert.equal(items.length, 1);
+    if (operation.startsWith('toggle')) assert.equal(items[0][operation === 'toggleSet' ? 'isAvailable' : 'isActive'], true);
+  }
 });

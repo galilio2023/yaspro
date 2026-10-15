@@ -7,10 +7,13 @@ import { BookingHero } from "@/features/booking/components/ui/BookingKit";
 import { OffersBookingWizard } from "@/features/offers/components/OffersBookingWizard";
 import { HelpCircle } from "lucide-react";
 
+import { OFFERS_AND_BUNDLES } from "@/features/offers/data";
 import type { OfferBundleItem } from "@/features/offers/types";
 
 export function OffersPageClient({ catalog }: { catalog?: OfferBundleItem[] }) {
   const { isArabic } = useLanguage();
+
+  const packageCount = (catalog ?? OFFERS_AND_BUNDLES).filter((item) => item.isActive !== false).length;
 
   const specs = [
     {
@@ -19,7 +22,7 @@ export function OffersPageClient({ catalog }: { catalog?: OfferBundleItem[] }) {
     },
     {
       label: isArabic ? "الباقات المتوفرة" : "Available Deals",
-      value: isArabic ? "12 باقة وعرض حصري" : "12 Curated Packages",
+      value: isArabic ? `${packageCount} باقة وعرض حصري` : `${packageCount} Curated Packages`,
     },
     {
       label: isArabic ? "بوابة الدفع" : "Payment Gateway",

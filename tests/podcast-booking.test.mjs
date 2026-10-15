@@ -31,7 +31,7 @@ function loadSource(file, mocks = {}, globals = {}) {
 const session = { date: '2026-11-20', timeSlot: '5:30 PM', durationHours: 2, headcount: 2,
   studioKey: 'nature-grid', serviceKey: 'recording', addons: {} };
 const input = { sessions: [session], fullName: 'Test Guest', email: 'guest@example.com', phone: '+971500000000' };
-function fixture({ missingStudio, studioCapacity = 10, payment = { success: true }, failSchedule = false, catalogStudios, catalogAddons } = {}) {
+function fixture({ missingStudio, studioCapacity = 10, payment = { success: true }, failSchedule = false, failBlackout = false, catalogStudios, catalogAddons } = {}) {
   const bookings = { id: 'id' }, bookingSessions = {};
   const writes = [], payments = [], capabilities = [], lookups = [];
   let transactions = 0;
@@ -42,13 +42,14 @@ function fixture({ missingStudio, studioCapacity = 10, payment = { success: true
   } }) };
   const data = loadSource('src/features/podcast-booking/data.ts');
   const { createPodcastBooking } = loadSource('src/features/podcast-booking/actions.ts', {
-    '@/db/schema': { bookings, bookingSessions, studios: { slug: 'slug' } },
+    '@/db/schema': { bookings, bookingSessions, studioBlackouts: {}, studios: { slug: 'slug' } },
     '@/lib/actions/podcast-operations': {
       getCmsPodcastSets: async () => catalogStudios ?? data.PODCAST_STUDIOS,
       getCmsPodcastAddons: async () => catalogAddons ?? data.PODCAST_ADDONS,
     },
-    'drizzle-orm': { eq: (column, value) => ({ column, value }) },
+    'drizzle-orm': { eq: (column, value) => ({ column, value }), or() {}, isNull() {} },
     '@/db': { db: {
+      select: () => ({ from: () => ({ where: async () => { if (failBlackout) throw new Error('Blackout read failure'); return []; } }) }),
       query: { studios: { findFirst: async ({ where }) => {
         lookups.push(where.value);
         return where.value === missingStudio ? null : { id: `db-${where.value}`, isActive: true, capacity: studioCapacity };
@@ -114,6 +115,15 @@ test('unresolved secondary studio prevents the entire insert; schedule errors ro
   assert.equal((await conflict.createPodcastBooking({ ...input, sessions, initiatePayment: true })).success, false);
   assert.equal(conflict.writes.length, 0);
   assert.equal(conflict.payments.length, 0);
+});
+
+test('podcast blackout query failure prevents reservation writes and payment', async () => {
+  const f = fixture({ failBlackout: true });
+  const response = await f.createPodcastBooking({ ...input, initiatePayment: true });
+  assert.equal(response.success, false);
+  assert.match(response.message, /Unable to verify studio availability/);
+  assert.equal(f.writes.length, 0);
+  assert.equal(f.payments.length, 0);
 });
 
 test('Dubai midnight/noon conversion and invalid-date fallback return finite instants', async () => {

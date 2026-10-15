@@ -11,7 +11,6 @@ import {
   XCircle,
   Users,
   Film,
-  Sparkles,
   ExternalLink,
   Layers,
   Sliders,
@@ -35,6 +34,7 @@ interface PodcastManagerProps {
 }
 
 export function PodcastManager({ initialSets, initialAddons }: PodcastManagerProps) {
+  const [actionError, setActionError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"sets" | "addons">("sets");
   const [sets, setSets] = useState<PodcastStudio[]>(initialSets);
   const [addons, setAddons] = useState<(PodcastAddon & { isActive?: boolean })[]>(initialAddons);
@@ -124,13 +124,35 @@ export function PodcastManager({ initialSets, initialAddons }: PodcastManagerPro
     setSets((prev) =>
       prev.map((s) => (s.key === item.key ? { ...s, isAvailable: nextVal } : s))
     );
-    await togglePodcastSetAvailability(item.key, nextVal);
+    setActionError(null);
+    try {
+      const res = await togglePodcastSetAvailability(item.key, nextVal);
+      if (!res.success) throw new Error(res.error || "Failed to update set.");
+    } catch (err) {
+      setSets((prev) => prev.map((s) => s.key === item.key ? { ...s, isAvailable: item.isAvailable } : s));
+      setActionError(err instanceof Error ? err.message : "Failed to update set.");
+    }
   };
 
   const handleDeleteSet = async (key: string) => {
     if (!confirm(`Are you sure you want to delete set "${key}"?`)) return;
+    const index = sets.findIndex((s) => s.key === key);
+    const removed = sets[index];
+    if (!removed) return;
+    setActionError(null);
     setSets((prev) => prev.filter((s) => s.key !== key));
-    await deleteCmsPodcastSet(key);
+    try {
+      const res = await deleteCmsPodcastSet(key);
+      if (!res.success) throw new Error(res.error || "Failed to delete set.");
+    } catch (err) {
+      setSets((prev) => {
+        if (prev.some((s) => s.key === key)) return prev;
+        const restored = [...prev];
+        restored.splice(index, 0, removed);
+        return restored;
+      });
+      setActionError(err instanceof Error ? err.message : "Failed to delete set.");
+    }
   };
 
   // ─── Addon Handlers ───────────────────────────────────────────────────────
@@ -189,17 +211,40 @@ export function PodcastManager({ initialSets, initialAddons }: PodcastManagerPro
     setAddons((prev) =>
       prev.map((a) => (a.key === item.key ? { ...a, isActive: nextVal } : a))
     );
-    await togglePodcastAddonStatus(item.key, nextVal);
+    setActionError(null);
+    try {
+      const res = await togglePodcastAddonStatus(item.key, nextVal);
+      if (!res.success) throw new Error(res.error || "Failed to update addon.");
+    } catch (err) {
+      setAddons((prev) => prev.map((a) => a.key === item.key ? { ...a, isActive: item.isActive } : a));
+      setActionError(err instanceof Error ? err.message : "Failed to update addon.");
+    }
   };
 
   const handleDeleteAddon = async (key: string) => {
     if (!confirm(`Are you sure you want to delete add-on "${key}"?`)) return;
+    const index = addons.findIndex((a) => a.key === key);
+    const removed = addons[index];
+    if (!removed) return;
+    setActionError(null);
     setAddons((prev) => prev.filter((a) => a.key !== key));
-    await deleteCmsPodcastAddon(key);
+    try {
+      const res = await deleteCmsPodcastAddon(key);
+      if (!res.success) throw new Error(res.error || "Failed to delete addon.");
+    } catch (err) {
+      setAddons((prev) => {
+        if (prev.some((a) => a.key === key)) return prev;
+        const restored = [...prev];
+        restored.splice(index, 0, removed);
+        return restored;
+      });
+      setActionError(err instanceof Error ? err.message : "Failed to delete addon.");
+    }
   };
 
   return (
     <div className="space-y-6">
+      {actionError && <div role="alert" className="text-xs text-rose-400">{actionError}</div>}
       {/* Top Banner & Tab Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/10">
         <div className="flex items-center gap-3">

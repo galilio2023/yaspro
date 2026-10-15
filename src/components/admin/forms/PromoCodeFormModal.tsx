@@ -21,7 +21,12 @@ export function PromoCodeFormModal(props: PromoCodeFormModalProps) {
 }
 
 function toDateInput(value?: string | null) {
-  return value ? value.slice(0, 10) : "";
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Asia/Dubai", year: "numeric", month: "2-digit", day: "2-digit",
+  }).format(date);
 }
 
 function PromoFormContent({ isOpen, onClose, onSave, initialPromo, offerOptions, isSubmitting = false, error }: PromoCodeFormModalProps) {
@@ -117,7 +122,7 @@ function PromoFormContent({ isOpen, onClose, onSave, initialPromo, offerOptions,
           type="date"
           helper="Leave empty for no expiry"
           value={toDateInput(form.expiresAt)}
-          onChange={(e) => setForm((p) => ({ ...p, expiresAt: e.target.value || null }))}
+          onChange={(e) => setForm((p) => ({ ...p, expiresAt: e.target.value ? new Date(`${e.target.value}T23:59:59.999+04:00`).toISOString() : null }))}
         />
         <AdminInput
           label="Max Redemptions"

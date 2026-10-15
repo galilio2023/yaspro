@@ -182,10 +182,10 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
               };
             }
           } catch (blackoutErr) {
-            // Gracefully continue if blackout table is not yet migrated
             if (typeof console.warn === "function") {
-              console.warn("[createBooking] Blackout check skipped:", (blackoutErr as Error)?.message);
+              console.warn("[createBooking] Blackout check failed:", (blackoutErr as Error)?.message);
             }
+            return { success: false, message: "Unable to verify studio availability. Please try again later." };
           }
         }
       }

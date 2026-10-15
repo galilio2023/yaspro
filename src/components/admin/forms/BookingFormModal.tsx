@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { AdminModal } from "../shared/AdminModal";
 import { AdminInput, AdminTextarea, AdminSelect } from "../shared/AdminFormFields";
+import { splitBookingNotes } from "@/lib/booking-notes";
 import type { CmsBookingInput } from "@/lib/actions/bookings-rfp-operations";
 
 const SESSION_TYPES = [
@@ -64,7 +65,7 @@ function BookingFormContent({ isOpen, onClose, onSave, initialBooking, studios, 
     contactEmail: initialBooking?.contactEmail || "",
     contactPhone: initialBooking?.contactPhone || "",
     contactCompany: initialBooking?.contactCompany || "",
-    notes: initialBooking?.notes || "",
+    notes: isEdit ? splitBookingNotes(initialBooking?.notes).body : initialBooking?.notes || "",
   });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -156,7 +157,7 @@ function BookingFormContent({ isOpen, onClose, onSave, initialBooking, studios, 
       </div>
 
       <AdminTextarea
-        label={isEdit ? "Booking Notes (includes contact header — edit carefully)" : "Notes"}
+        label="Notes"
         rows={isEdit ? 5 : 3}
         value={form.notes}
         onChange={set("notes")}

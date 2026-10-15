@@ -190,7 +190,10 @@ export async function deleteCmsPodcastSet(id: string): Promise<CmsResponse<void>
 
     await ensurePodcastCatalog();
 
-    await db.delete(podcastSets).where(eq(podcastSets.id, id));
+    await db.transaction(async (tx) => {
+      await tx.update(studios).set({ isActive: false }).where(eq(studios.slug, id));
+      await tx.delete(podcastSets).where(eq(podcastSets.id, id));
+    });
     revalidatePath("/admin/podcast");
     revalidatePath("/podcast-production");
     revalidatePath("/podcast-booking");

@@ -8,11 +8,14 @@ import {
   bookingSessions,
   users,
   studios,
+  bookingStatusEnum,
+  sessionTypeEnum,
   type Booking,
 } from "@/db/schema";
 import { eq, desc, asc, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { isDbAvailable, isUuid, requireAdmin, type CmsResponse } from "./shared";
+import { replaceBookingNotes } from "../booking-notes";
 import { generateBookingReference } from "@/lib/utils";
 
 export interface EnrichedBooking extends Booking {
@@ -215,6 +218,10 @@ export interface CmsBookingInput {
 }
 
 function validateCmsBooking(input: CmsBookingInput): string | null {
+  if (!sessionTypeEnum.enumValues.includes(input.sessionType)) return "Invalid session type.";
+  if (input.status !== undefined && !bookingStatusEnum.enumValues.includes(input.status)) return "Invalid booking status.";
+  if (input.paymentStatus !== undefined && !["unpaid", "deposit_paid", "paid", "refunded"].includes(input.paymentStatus)) return "Invalid payment status.";
+  if (input.studioId != null && !isUuid(input.studioId)) return "Invalid studio id.";
   if (!input.scheduledAt || Number.isNaN(new Date(input.scheduledAt).getTime())) return "A valid scheduled date and time is required.";
   if (!Number.isInteger(input.durationHours) || input.durationHours < 1 || input.durationHours > 720) return "Duration must be between 1 and 720 hours.";
   if (!Number.isInteger(input.headcount) || input.headcount < 1) return "Headcount must be at least 1.";
@@ -256,7 +263,8 @@ export async function createCmsBooking(input: CmsBookingInput): Promise<CmsRespo
     revalidatePath("/admin");
     return { success: true, message: "Manual booking created." };
   } catch (error) {
-    return { success: false, error: (error as Error).message };
+    console.error("createCmsBooking error:", error);
+    return { success: false, error: "Failed to create booking." };
   }
 }
 
@@ -271,6 +279,8 @@ export async function updateCmsBookingDetails(id: string, input: CmsBookingInput
     const invalid = validateCmsBooking(input);
     if (invalid) return { success: false, error: invalid };
     if (isDbAvailable()) {
+      const [existing] = await db.select({ specialRequests: bookings.specialRequests }).from(bookings).where(eq(bookings.id, id)).limit(1);
+      if (!existing) return { success: false, error: "Booking not found." };
       await db.update(bookings).set({
         studioId: input.studioId || null,
         sessionType: input.sessionType,
@@ -278,7 +288,7 @@ export async function updateCmsBookingDetails(id: string, input: CmsBookingInput
         durationHours: input.durationHours,
         headcount: input.headcount,
         totalAmount: Number(input.totalAmount).toFixed(2),
-        specialRequests: input.notes ?? null,
+        specialRequests: input.notes === undefined ? existing.specialRequests : replaceBookingNotes(existing.specialRequests, input.notes),
         updatedAt: new Date(),
       }).where(eq(bookings.id, id));
     }
@@ -286,7 +296,8 @@ export async function updateCmsBookingDetails(id: string, input: CmsBookingInput
     revalidatePath("/account");
     return { success: true, message: "Booking details updated." };
   } catch (error) {
-    return { success: false, error: (error as Error).message };
+    console.error("updateCmsBookingDetails error:", error);
+    return { success: false, error: "Failed to update booking details." };
   }
 }
 

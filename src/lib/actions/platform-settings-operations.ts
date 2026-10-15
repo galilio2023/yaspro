@@ -2,6 +2,7 @@
 
 import { db } from "@/db";
 import { platformSettings } from "@/db/schema";
+import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { isDbAvailable, requireAdmin, type CmsResponse } from "./shared";
@@ -13,10 +14,10 @@ import {
 
 export type { PlatformPaymentSettings };
 
-/** Retrieves active platform settings with built-in fallbacks */
+/** Uses defaults only when a successful read finds no configured settings. */
 export async function getPlatformSettings(): Promise<PlatformPaymentSettings> {
   if (!isDbAvailable()) {
-    return DEFAULT_PLATFORM_SETTINGS;
+    throw new Error("Payment settings are unavailable. Please try again later.");
   }
 
   try {
@@ -32,24 +33,9 @@ export async function getPlatformSettings(): Promise<PlatformPaymentSettings> {
         ...(row[0].value as Partial<PlatformPaymentSettings>),
       };
     }
-  } catch (err: unknown) {
-    const errorMsg = (err as Error)?.message || "";
-    // If the table doesn't exist yet on the remote database, lazily ensure it exists
-    if (errorMsg.includes('relation "platform_settings" does not exist')) {
-      try {
-        await db.execute(
-          `CREATE TABLE IF NOT EXISTS "platform_settings" (
-            "key" text PRIMARY KEY NOT NULL,
-            "value" jsonb NOT NULL,
-            "updated_at" timestamp DEFAULT now() NOT NULL
-          );`
-        );
-      } catch (createErr) {
-        console.warn("[platform-settings] Auto-migration skipped:", (createErr as Error)?.message);
-      }
-    } else {
-      console.warn("[platform-settings] Database read error, using defaults:", errorMsg);
-    }
+  } catch (err) {
+    console.error("[platform-settings] Database read failed:", err);
+    throw new Error("Payment settings are unavailable. Please try again later.");
   }
 
   return DEFAULT_PLATFORM_SETTINGS;
@@ -63,6 +49,10 @@ export async function updatePlatformSettings(
 
   if (!isDbAvailable()) {
     return { success: false, error: "Database is not configured." };
+  }
+
+  if (input.iban !== undefined && (typeof input.iban !== "string" || !z.iban().safeParse(input.iban.replace(/\s/g, "").toUpperCase()).success)) {
+    return { success: false, error: "Enter a valid IBAN." };
   }
 
   try {

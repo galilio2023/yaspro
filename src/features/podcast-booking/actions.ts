@@ -185,8 +185,9 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
             }
           } catch (blackoutErr) {
             if (typeof console.warn === "function") {
-              console.warn("[createPodcastBooking] Blackout check skipped:", (blackoutErr as Error)?.message);
+              console.warn("[createPodcastBooking] Blackout check failed:", (blackoutErr as Error)?.message);
             }
+            return { success: false, message: "Unable to verify studio availability. Please try again later." };
           }
         }
 

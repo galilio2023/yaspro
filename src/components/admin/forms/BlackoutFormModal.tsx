@@ -71,12 +71,8 @@ function BlackoutFormContent({
     if (!startDate) errors.startDate = "Start date is required";
     if (!endDate) errors.endDate = "End date is required";
 
-    const [startYear, startMonth, startDay] = startDate.split("-").map(Number);
-    const [endYear, endMonth, endDay] = endDate.split("-").map(Number);
-    const [startHour, startMinute] = (allDay ? "00:00" : startTime || "00:00").split(":").map(Number);
-    const [endHour, endMinute] = (allDay ? "23:59" : endTime || "23:59").split(":").map(Number);
-    const startD = new Date(startYear, startMonth - 1, startDay, startHour, startMinute);
-    const endD = new Date(endYear, endMonth - 1, endDay, endHour, endMinute, allDay ? 59 : 0);
+    const startD = new Date(`${startDate}T${allDay ? "00:00" : startTime || "00:00"}:00+04:00`);
+    const endD = new Date(`${endDate}T${allDay ? "23:59" : endTime || "23:59"}:${allDay ? "59" : "00"}+04:00`);
 
     if (isNaN(startD.getTime()) || isNaN(endD.getTime()) || startD >= endD) {
       errors.range = "End time must be strictly after start time";

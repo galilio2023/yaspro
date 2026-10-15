@@ -5,9 +5,7 @@ import {
   CalendarOff,
   Plus,
   Trash2,
-  AlertCircle,
   Clock,
-  Building,
   CheckCircle,
 } from "lucide-react";
 import type { StudioBlackoutItem } from "@/lib/actions/blackout-operations";
@@ -32,6 +30,7 @@ export function BlackoutManager({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalError, setModalError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const [page, setPage] = useState(0);
   const pageSize = 6;
@@ -87,8 +86,23 @@ export function BlackoutManager({
 
   const handleDeleteBlackout = async (id: string) => {
     if (!confirm("Are you sure you want to lift this studio lockout?")) return;
+    const index = blackouts.findIndex((b) => b.id === id);
+    const removed = blackouts[index];
+    if (!removed) return;
+    setDeleteError(null);
     setBlackouts((prev) => prev.filter((b) => b.id !== id));
-    await deleteStudioBlackout(id);
+    try {
+      const res = await deleteStudioBlackout(id);
+      if (!res.success) throw new Error(res.error || "Failed to lift lockout.");
+    } catch (err) {
+      setBlackouts((prev) => {
+        if (prev.some((b) => b.id === id)) return prev;
+        const restored = [...prev];
+        restored.splice(index, 0, removed);
+        return restored;
+      });
+      setDeleteError(err instanceof Error ? err.message : "Failed to lift lockout.");
+    }
   };
 
   return (
@@ -117,6 +131,8 @@ export function BlackoutManager({
           <span>New Lockout Window</span>
         </button>
       </div>
+
+      {deleteError && <div role="alert" className="text-xs text-rose-400">{deleteError}</div>}
 
       {/* List */}
       {blackouts.length === 0 ? (

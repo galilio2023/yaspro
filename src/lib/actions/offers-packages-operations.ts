@@ -271,34 +271,12 @@ export async function deleteCmsOffer(id: string): Promise<CmsResponse> {
     return { success: false, error: "Database connection is not configured." };
   }
 
-  try {
-    const existing = await db.select().from(offers).where(eq(offers.id, id)).limit(1);
+  if (OFFERS_AND_BUNDLES.some((item) => item.id === id)) {
+    return toggleOfferStatus(id, false);
+  }
 
-    if (existing.length > 0) {
-      await db.delete(offers).where(eq(offers.id, id));
-    } else {
-      // If it was a static package, insert it as disabled so it no longer shows
-      const staticItem = OFFERS_AND_BUNDLES.find((o) => o.id === id);
-      if (staticItem) {
-        await db.insert(offers).values({
-          id: staticItem.id,
-          category: staticItem.category,
-          name: staticItem.name,
-          nameAr: staticItem.nameAr,
-          tagline: staticItem.tagline,
-          taglineAr: staticItem.taglineAr,
-          description: staticItem.description,
-          descriptionAr: staticItem.descriptionAr,
-          price: staticItem.price.toFixed(2),
-          hours: staticItem.hours,
-          features: staticItem.features,
-          featuresAr: staticItem.featuresAr,
-          isActive: false,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        });
-      }
-    }
+  try {
+    await db.delete(offers).where(eq(offers.id, id));
 
     revalidatePath("/admin/offers");
     revalidatePath("/offers");
