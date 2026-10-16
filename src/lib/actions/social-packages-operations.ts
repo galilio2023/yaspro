@@ -63,6 +63,21 @@ export async function getCmsSocialPackages(): Promise<SocialMediaPackage[]> {
   }
 }
 
+async function loadSocialPackagesStrict(): Promise<SocialMediaPackage[]> {
+  if (!isDbAvailable()) throw new Error("Database is not connected.");
+  const [row] = await db
+    .select()
+    .from(platformSettings)
+    .where(eq(platformSettings.key, SOCIAL_PACKAGES_KEY))
+    .limit(1);
+  if (!row) return cloneDefaultPackages();
+  if (!Array.isArray(row.value)) throw new Error("Saved social media packages catalog is invalid.");
+  return (row.value as SocialMediaPackage[]).map((pkg) => ({
+    ...pkg,
+    isActive: pkg.isActive !== false,
+  }));
+}
+
 async function saveSocialPackagesToDb(list: SocialMediaPackage[]): Promise<void> {
   if (!isDbAvailable()) {
     throw new Error("Database is not connected.");
@@ -132,7 +147,7 @@ export async function upsertCmsSocialPackage(
       return { success: false, error: "Package ID and English name are required." };
     }
 
-    const current = await getCmsSocialPackages();
+    const current = await loadSocialPackagesStrict();
     const item: SocialMediaPackage = {
       id,
       nameEn,
@@ -184,7 +199,7 @@ export async function toggleSocialPackageStatus(
   try {
     await requireAdmin();
 
-    const current = await getCmsSocialPackages();
+    const current = await loadSocialPackagesStrict();
     const idx = current.findIndex((p) => p.id === id);
     if (idx < 0) return { success: false, error: "Social media package not found." };
     current[idx] = { ...current[idx], isActive };
@@ -202,7 +217,7 @@ export async function deleteCmsSocialPackage(
   try {
     await requireAdmin();
 
-    const current = await getCmsSocialPackages();
+    const current = await loadSocialPackagesStrict();
     const next = current.filter((p) => p.id !== id);
     if (next.length === 0) {
       return { success: false, error: "At least one social media package must remain in the catalog." };

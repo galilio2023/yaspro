@@ -76,7 +76,7 @@ export interface BroadcastManagerProps {
 
 export function BroadcastManager({
   initialBroadcastInquiries = [],
-  initialTelemetryFeed = [],
+  initialTelemetryFeed,
 }: BroadcastManagerProps) {
   const activeInquiries = initialBroadcastInquiries.filter((inq) => !inq.isResolved);
   const [source, setSource] = useState("OB-VAN MERCEDES 01");
@@ -86,7 +86,7 @@ export function BroadcastManager({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [dispatchedFeed, setDispatchedFeed] = useState<TelemetryEventItem[]>(() => {
-    if (Array.isArray(initialTelemetryFeed) && initialTelemetryFeed.length > 0) {
+    if (Array.isArray(initialTelemetryFeed)) {
       return initialTelemetryFeed;
     }
     if (typeof window === "undefined") return INITIAL_DISPATCHED_FEED;

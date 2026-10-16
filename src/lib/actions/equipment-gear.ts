@@ -12,7 +12,7 @@ import {
   bookings,
   type Equipment,
 } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 import { revalidatePath, updateTag } from "next/cache";
 import { GEAR_DATA } from "@/features/gear/data";
 import { slugify, generateBookingReference } from "@/lib/utils";
@@ -383,7 +383,13 @@ export async function createGearBookingOrder(
     if (isDbAvailable()) {
       const atomicResult = await serializeGearBookingOrder(async () => {
         const executeCheckAndInsert = async (tx: typeof db) => {
-          if (input.startDate && typeof tx.query?.bookings?.findMany === "function") {
+          // Transaction-scoped locks coordinate orders across server instances.
+          // Sort canonical IDs so multi-item orders always acquire locks in the same order.
+          for (const equipmentId of [...new Set(resolvedItems.map((item) => item.id))].sort()) {
+            await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${`gear:${equipmentId}`}, 0))`);
+          }
+
+          if (input.startDate) {
             const endDateStr = input.returnDate || addCalendarDays(input.startDate, input.durationDays);
             const reqStartDate = new Date(`${input.startDate}T00:00:00+04:00`);
             const reqEndDate = new Date(`${endDateStr}T23:59:59+04:00`);
@@ -459,10 +465,7 @@ export async function createGearBookingOrder(
           return { newBooking, referenceCode };
         };
 
-        if (typeof db.transaction === "function") {
-          return await db.transaction(async (tx) => executeCheckAndInsert(tx as unknown as typeof db));
-        }
-        return await executeCheckAndInsert(db);
+        return await db.transaction(async (tx) => executeCheckAndInsert(tx as unknown as typeof db));
       });
 
       if ("conflictError" in atomicResult) {

@@ -77,6 +77,23 @@ export async function getStudioWizardCatalog(): Promise<StudioWizardCatalog> {
   return defaults;
 }
 
+// Mutations must never save fallback data after a failed or invalid read.
+async function loadStudioWizardCatalogStrict(): Promise<StudioWizardCatalog> {
+  const [row] = await db
+    .select()
+    .from(platformSettings)
+    .where(eq(platformSettings.key, CATALOG_KEY))
+    .limit(1);
+  if (!row) return getDefaultCatalog();
+
+  const saved = row.value as Partial<StudioWizardCatalog> | null;
+  if (!saved || !Array.isArray(saved.sessionTypes) || !Array.isArray(saved.crewEquipment)
+    || !Array.isArray(saved.props) || !Array.isArray(saved.addons)) {
+    throw new Error("Saved studio wizard catalog is invalid.");
+  }
+  return saved as StudioWizardCatalog;
+}
+
 async function saveStudioWizardCatalog(catalog: StudioWizardCatalog): Promise<void> {
   await db
     .insert(platformSettings)
@@ -168,7 +185,7 @@ export async function upsertStudioSessionType(
     }
     const { id: cleanId, title: cleanTitle, description, price, imageUrl } = parsed.data;
 
-    const current = await getStudioWizardCatalog();
+    const current = await loadStudioWizardCatalogStrict();
     const normalized: SessionTypeItem = {
       id: cleanId,
       title: cleanTitle,
@@ -201,7 +218,7 @@ export async function deleteStudioSessionType(
     if (!isDbAvailable()) {
       return { success: false, error: "Database is not connected." };
     }
-    const current = await getStudioWizardCatalog();
+    const current = await loadStudioWizardCatalogStrict();
     if (current.sessionTypes.length <= 1) {
       return { success: false, error: "At least one session format must remain active." };
     }
@@ -235,7 +252,7 @@ export async function upsertStudioCrewItem(
     }
     const { id: cleanId, title: cleanTitle, description, price, priceType, category, imageUrl } = parsed.data;
 
-    const current = await getStudioWizardCatalog();
+    const current = await loadStudioWizardCatalogStrict();
     const normalized: CrewEquipmentItem = {
       id: cleanId,
       title: cleanTitle,
@@ -270,7 +287,7 @@ export async function deleteStudioCrewItem(
     if (!isDbAvailable()) {
       return { success: false, error: "Database is not connected." };
     }
-    const current = await getStudioWizardCatalog();
+    const current = await loadStudioWizardCatalogStrict();
     const updated: StudioWizardCatalog = {
       ...current,
       crewEquipment: current.crewEquipment.filter((c) => c.id !== id),
@@ -301,7 +318,7 @@ export async function upsertStudioPropItem(
     }
     const { id: cleanId, title: cleanTitle, price, priceType, category, imageUrl } = parsed.data;
 
-    const current = await getStudioWizardCatalog();
+    const current = await loadStudioWizardCatalogStrict();
     const normalized: PropItem = {
       id: cleanId,
       title: cleanTitle,
@@ -335,7 +352,7 @@ export async function deleteStudioPropItem(
     if (!isDbAvailable()) {
       return { success: false, error: "Database is not connected." };
     }
-    const current = await getStudioWizardCatalog();
+    const current = await loadStudioWizardCatalogStrict();
     const updated: StudioWizardCatalog = {
       ...current,
       props: current.props.filter((p) => p.id !== id),
@@ -366,7 +383,7 @@ export async function upsertStudioAddonItem(
     }
     const { id: cleanId, title: cleanTitle, description, price, priceType, imageUrl } = parsed.data;
 
-    const current = await getStudioWizardCatalog();
+    const current = await loadStudioWizardCatalogStrict();
     const normalized: AddonItem = {
       id: cleanId,
       title: cleanTitle,
@@ -400,7 +417,7 @@ export async function deleteStudioAddonItem(
     if (!isDbAvailable()) {
       return { success: false, error: "Database is not connected." };
     }
-    const current = await getStudioWizardCatalog();
+    const current = await loadStudioWizardCatalogStrict();
     const updated: StudioWizardCatalog = {
       ...current,
       addons: current.addons.filter((a) => a.id !== id),

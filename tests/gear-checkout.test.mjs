@@ -61,7 +61,7 @@ test('cart storage handles removal, malformed JSON, invalid dates and delivery w
   }
 });
 
-function orderFixture(session = null) {
+function orderFixture(session = null, sharedDb) {
   const equipment = {};
   const bookings = {};
   const writes = [];
@@ -71,7 +71,9 @@ function orderFixture(session = null) {
   const { createGearBookingOrder } = loadSource('src/lib/actions/equipment-gear.ts', {
     '../rate-limit': limits,
     '@/lib/booking-payment-capability': { issueBookingPaymentCapability: async (id) => capabilities.push(id) },
-    '@/db': { db: {
+    '@/db': { db: sharedDb ?? {
+      execute: async () => {},
+      transaction: async function(callback) { return callback(this); },
       select: () => ({ from: (table) => {
         assert.equal(table, equipment);
         reads++;
@@ -81,10 +83,10 @@ function orderFixture(session = null) {
         assert.equal(table, bookings, 'guest requests must never create users');
         return { values: (row) => { writes.push(row); return { returning: async () => [{ id: 'booking-id', ...row }] }; } };
       },
-      query: { users: { findFirst: () => assert.fail('guest requests must never look up users by email') } },
+      query: { bookings: { findMany: async () => [] }, users: { findFirst: () => assert.fail('guest requests must never look up users by email') } },
     } },
     '@/db/schema': { equipment, bookings },
-    'drizzle-orm': { eq: () => ({}), desc: () => ({}) },
+    'drizzle-orm': { eq: () => ({}), desc: () => ({}), sql: require('drizzle-orm').sql },
     'next/cache': { revalidatePath() {} },
     '@/features/gear/data': { GEAR_DATA: [item] },
     '@/lib/utils': { generateBookingReference: () => 'GEAR-TEST' },
@@ -192,4 +194,72 @@ test('orders reject inconsistent schedules before equipment reads or writes', as
     assert.match(fixture.writes[0].propsNotes, /2026-10-31 to 2026-11-03 \(3d\)/);
     assert.equal(fixture.writes[0].durationHours, 72);
   }
+});
+
+test('separate server instances lock canonical equipment IDs before availability reads and writes', async () => {
+  const { PgDialect } = require('drizzle-orm/pg-core');
+  const dialect = new PgDialect();
+  const locks = new Map(), persisted = [], events = [];
+  let transactions = 0;
+  const sharedDb = {
+    select: () => ({ from: () => ({ where: () => ({ limit: async () => [{ ...item, id: 'canonical-id', slug: 'camera' }] }) }) }),
+    transaction: async (callback) => {
+      const index = ++transactions, held = [], pending = [];
+      const tx = {
+        execute: async (statement) => {
+          const query = dialect.sqlToQuery(statement);
+          assert.match(query.sql, /^select pg_advisory_xact_lock\(hashtextextended\(\$1, 0\)\)$/);
+          const [key] = query.params;
+          const previous = locks.get(key) ?? Promise.resolve();
+          let release;
+          const waiting = new Promise((resolve) => { release = resolve; });
+          locks.set(key, previous.then(() => waiting));
+          await previous;
+          held.push(key);
+          pending.push(release);
+          events.push(`${index}:lock`);
+        },
+        query: { bookings: { findMany: async () => {
+          assert.deepEqual(held, ['gear:canonical-id']);
+          events.push(`${index}:read`);
+          await Promise.resolve();
+          return persisted;
+        } } },
+        insert: () => ({ values: (row) => {
+          assert.deepEqual(held, ['gear:canonical-id']);
+          events.push(`${index}:insert`);
+          persisted.push(row);
+          return { returning: async () => [{ id: 'booking-id', ...row }] };
+        } }),
+      };
+      try { return await callback(tx); }
+      finally { for (const release of pending) release(); }
+    },
+  };
+  // Each fixture evaluates the action module anew, giving it an independent in-process queue.
+  const first = orderFixture(null, sharedDb), second = orderFixture(null, sharedDb);
+  const results = await Promise.all([
+    first.submit({ gearIds: ['camera'], startDate: '2027-01-01' }),
+    second.submit({ gearIds: ['canonical-id'], startDate: '2027-01-01' }),
+  ]);
+  assert.equal(transactions, 2);
+  assert.equal(results.filter((result) => result.success).length, 1);
+  assert.match(results.find((result) => !result.success).error, /already reserved/);
+  assert.equal(persisted.length, 1);
+  assert.deepEqual(events, ['1:lock', '1:read', '1:insert', '2:lock', '2:read']);
+});
+
+test('gear lock acquisition failure prevents availability reads and inserts', async () => {
+  let reads = 0, writes = 0;
+  const f = orderFixture(null, {
+    select: () => ({ from: () => ({ where: () => ({ limit: async () => [item] }) }) }),
+    transaction: async (callback) => callback({
+      execute: async () => { throw new Error('Synthetic lock failure'); },
+      query: { bookings: { findMany: async () => { reads++; return []; } } },
+      insert: () => { writes++; throw new Error('Unexpected insert'); },
+    }),
+  });
+  assert.equal((await f.submit({ startDate: '2027-01-01' })).success, false);
+  assert.equal(reads, 0);
+  assert.equal(writes, 0);
 });

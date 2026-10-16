@@ -29,15 +29,19 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
     })
       .then((res) => {
         if (!cancelled && res) {
-          setUnavailableSlots(res.unavailableSlots || []);
+          const nextUnavailable = res.unavailableSlots || [];
+          setUnavailableSlots(nextUnavailable);
           setBlackoutReason(res.blackoutReason);
+          if (session.timeSlot && nextUnavailable.includes(session.timeSlot)) {
+            onChange({ timeSlot: "" });
+          }
         }
       })
       .catch(() => {});
     return () => {
       cancelled = true;
     };
-  }, [session.date, session.durationHours, session.studioKey]);
+  }, [session.date, session.durationHours, session.studioKey, session.timeSlot, onChange]);
 
   // Generate dates for the next 14 days
   const upcomingDates = useMemo(() => {

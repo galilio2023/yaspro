@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/db";
+import { z } from "zod";
 import { podcastSets, podcastAddons, studios, platformSettings, type PodcastSet, type PodcastAddonEntity } from "@/db/schema";
 import { PODCAST_STUDIOS, PODCAST_ADDONS, PODCAST_SERVICES } from "@/features/podcast-booking/data";
 import type { PodcastStudio, PodcastAddon, PodcastService } from "@/features/podcast-booking/types";
@@ -419,6 +420,26 @@ export async function getCmsPodcastServices(): Promise<PodcastService[]> {
   return defaults;
 }
 
+async function loadPodcastServicesCatalogStrict(): Promise<PodcastService[]> {
+  const [row] = await db
+    .select()
+    .from(platformSettings)
+    .where(eq(platformSettings.key, PODCAST_SERVICES_KEY))
+    .limit(1);
+  if (!row) return PODCAST_SERVICES.map((s) => ({ ...s, isActive: s.isActive ?? true }));
+  if (!Array.isArray(row.value)) throw new Error("Saved podcast services catalog is invalid.");
+  return (row.value as PodcastService[]).map((s) => ({ ...s, isActive: s.isActive ?? true }));
+}
+
+const podcastServiceInputSchema = z.object({
+  key: z.string().trim().min(1).transform((key) => key.toLowerCase().replace(/[^a-z0-9_-]/g, "-")),
+  title: z.string().trim().min(1),
+  price: z.preprocess(
+    (value) => typeof value === "string" && value.trim() ? Number(value) : value,
+    z.number().finite().nonnegative()
+  ),
+});
+
 async function savePodcastServicesCatalog(services: PodcastService[]): Promise<void> {
   await db
     .insert(platformSettings)
@@ -458,18 +479,19 @@ export async function upsertCmsPodcastService(data: {
       return { success: false, error: "Database not connected." };
     }
 
-    const cleanKey = data.key.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "-");
-    if (!cleanKey || !data.title.trim() || Number(data.price) < 0) {
+    const parsed = podcastServiceInputSchema.safeParse(data);
+    if (!parsed.success) {
       return { success: false, error: "Valid tier key, title, and price are required." };
     }
 
-    const current = await getCmsPodcastServices();
+    const current = await loadPodcastServicesCatalogStrict();
+    const { key: cleanKey, title: cleanTitle, price } = parsed.data;
     const existing = current.find((s) => s.key === cleanKey);
     const normalized: PodcastService = {
       key: cleanKey,
-      title: data.title.trim(),
+      title: cleanTitle,
       sub: data.sub?.trim() || "",
-      price: Math.max(0, Math.round(Number(data.price))),
+      price: Math.round(price),
       badge: data.badge?.trim() || existing?.badge || "Studio Tier",
       best: data.best ?? existing?.best ?? false,
       isActive: data.isActive ?? existing?.isActive ?? true,
@@ -506,7 +528,7 @@ export async function togglePodcastServiceStatus(
       return { success: false, error: "Database not connected." };
     }
 
-    const current = await getCmsPodcastServices();
+    const current = await loadPodcastServicesCatalogStrict();
     const updated = current.map((s) => (s.key === key ? { ...s, isActive } : s));
     await savePodcastServicesCatalog(updated);
     return { success: true, data: updated };
@@ -524,7 +546,7 @@ export async function deleteCmsPodcastService(
       return { success: false, error: "Database not connected." };
     }
 
-    const current = await getCmsPodcastServices();
+    const current = await loadPodcastServicesCatalogStrict();
     if (current.length <= 1) {
       return { success: false, error: "At least one production tier must remain active." };
     }

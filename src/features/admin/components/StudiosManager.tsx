@@ -199,10 +199,15 @@ export function StudiosManager({
   };
 
   const handleDeleteSessionType = async (id: string) => {
+    if (!confirm(`Are you sure you want to delete session format "${id}"?`)) return;
     setErrorMessage(null);
-    const res = await deleteStudioSessionType(id);
-    if (res.success) applyCatalogUpdate(res.data, res.message);
-    else setErrorMessage(res.error || "Failed to delete session format.");
+    try {
+      const res = await deleteStudioSessionType(id);
+      if (res.success) applyCatalogUpdate(res.data, res.message);
+      else setErrorMessage(res.error || "Failed to delete session format.");
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Failed to delete session format.");
+    }
   };
 
   const handleSaveCrewItem = async (e: React.FormEvent) => {
@@ -226,10 +231,15 @@ export function StudiosManager({
   };
 
   const handleDeleteCrewItem = async (id: string) => {
+    if (!confirm(`Are you sure you want to delete crew item "${id}"?`)) return;
     setErrorMessage(null);
-    const res = await deleteStudioCrewItem(id);
-    if (res.success) applyCatalogUpdate(res.data, res.message);
-    else setErrorMessage(res.error || "Failed to delete crew item.");
+    try {
+      const res = await deleteStudioCrewItem(id);
+      if (res.success) applyCatalogUpdate(res.data, res.message);
+      else setErrorMessage(res.error || "Failed to delete crew item.");
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Failed to delete crew item.");
+    }
   };
 
   const handleSavePropItem = async (e: React.FormEvent) => {
@@ -253,10 +263,15 @@ export function StudiosManager({
   };
 
   const handleDeletePropItem = async (id: string) => {
+    if (!confirm(`Are you sure you want to delete prop item "${id}"?`)) return;
     setErrorMessage(null);
-    const res = await deleteStudioPropItem(id);
-    if (res.success) applyCatalogUpdate(res.data, res.message);
-    else setErrorMessage(res.error || "Failed to delete prop item.");
+    try {
+      const res = await deleteStudioPropItem(id);
+      if (res.success) applyCatalogUpdate(res.data, res.message);
+      else setErrorMessage(res.error || "Failed to delete prop item.");
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Failed to delete prop item.");
+    }
   };
 
   const handleSaveAddonItem = async (e: React.FormEvent) => {
@@ -280,10 +295,15 @@ export function StudiosManager({
   };
 
   const handleDeleteAddonItem = async (id: string) => {
+    if (!confirm(`Are you sure you want to delete add-on "${id}"?`)) return;
     setErrorMessage(null);
-    const res = await deleteStudioAddonItem(id);
-    if (res.success) applyCatalogUpdate(res.data, res.message);
-    else setErrorMessage(res.error || "Failed to delete add-on.");
+    try {
+      const res = await deleteStudioAddonItem(id);
+      if (res.success) applyCatalogUpdate(res.data, res.message);
+      else setErrorMessage(res.error || "Failed to delete add-on.");
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Failed to delete add-on.");
+    }
   };
 
   return (

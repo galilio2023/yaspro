@@ -20,7 +20,7 @@ function loader(mocks = {}, globals = {}) {
       compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX },
     });
     vm.runInNewContext(outputText, {
-      exports, Date, console: { error() {}, warn() {} }, process: { env: {} },
+      exports, Date, Error, console: { error() {}, warn() {} }, process: { env: {} },
       require: (name) => {
         if (Object.hasOwn(mocks, name)) return mocks[name];
         if (name === 'server-only') return {};
@@ -94,7 +94,7 @@ function databaseFixture({ available = true } = {}) {
     'next/cache': { revalidatePath() {} },
     './shared': { isDbAvailable: () => available, requireAdmin: async () => {} },
   });
-  return { load, schema, tables, get seedTransactions() { return seedTransactions; } };
+  return { load, schema, tables, db, get seedTransactions() { return seedTransactions; } };
 }
 
 test('podcast first reads seed both tables once without overwriting existing CMS data', async () => {
@@ -632,3 +632,214 @@ test('broadcast telemetry feed persists and dispatches in platform_settings', as
   assert.equal(feedAfter[0].type, 'GENLOCK_SYNC');
 });
 
+
+test('catalog mutations fail without writes on read errors or invalid saved values; public readers still fall back', async () => {
+  const f = databaseFixture();
+  const settings = f.tables.get(f.schema.platformSettings);
+  settings.set('unrelated', { key: 'unrelated', value: ['preserve'] });
+  const wizard = f.load('src/lib/actions/studio-wizard-catalog-operations.ts');
+  const podcast = f.load('src/lib/actions/podcast-operations.ts');
+  const social = f.load('src/lib/actions/social-packages-operations.ts');
+  const operations = [
+    () => wizard.upsertStudioSessionType({ id: 'new', title: 'New', price: 1 }),
+    () => wizard.deleteStudioSessionType('video'),
+    () => wizard.upsertStudioCrewItem({ id: 'new', title: 'New', price: 1 }),
+    () => wizard.deleteStudioCrewItem('crew'),
+    () => wizard.upsertStudioPropItem({ id: 'new', title: 'New', price: 1 }),
+    () => wizard.deleteStudioPropItem('prop'),
+    () => wizard.upsertStudioAddonItem({ id: 'new', title: 'New', price: 1 }),
+    () => wizard.deleteStudioAddonItem('addon'),
+    () => podcast.upsertCmsPodcastService({ key: 'new', title: 'New', price: 1 }),
+    () => podcast.togglePodcastServiceStatus('recording', false),
+    () => podcast.deleteCmsPodcastService('recording'),
+    () => social.upsertCmsSocialPackage({ id: 'new', nameEn: 'New' }),
+    () => social.toggleSocialPackageStatus('starter', false),
+    () => social.deleteCmsSocialPackage('starter'),
+  ];
+  const originalSelect = f.db.select;
+  for (const brokenRead of [true, false]) {
+    if (brokenRead) f.db.select = () => { throw new Error('Synthetic read failure'); };
+    else {
+      f.db.select = originalSelect;
+      for (const key of ['studio_wizard_catalog', 'podcast_services_catalog', 'social_media_packages_catalog']) {
+        settings.set(key, { key, value: null });
+      }
+    }
+    const before = JSON.stringify([...settings]);
+    for (const operation of operations) {
+      const result = await operation();
+      assert.equal(result.success, false);
+      assert.match(result.error, brokenRead ? /Synthetic read failure/ : /catalog is invalid/);
+      assert.equal(JSON.stringify([...settings]), before);
+    }
+    assert.ok((await wizard.getStudioWizardCatalog()).sessionTypes.length > 0);
+    assert.ok((await podcast.getCmsPodcastServices()).length > 0);
+    assert.ok((await social.getCmsSocialPackages()).length > 0);
+  }
+});
+
+test('strict catalog mutations respect saved empty arrays instead of resurrecting defaults', async () => {
+  const f = databaseFixture();
+  const settings = f.tables.get(f.schema.platformSettings);
+  settings.set('podcast_services_catalog', { key: 'podcast_services_catalog', value: [] });
+  const podcast = f.load('src/lib/actions/podcast-operations.ts');
+  assert.equal((await podcast.upsertCmsPodcastService({ key: 'new', title: 'New', price: 0 })).success, true);
+  assert.equal(settings.get('podcast_services_catalog').value.length, 1);
+  settings.set('social_media_packages_catalog', { key: 'social_media_packages_catalog', value: [] });
+  const social = f.load('src/lib/actions/social-packages-operations.ts');
+  assert.equal((await social.upsertCmsSocialPackage({ id: 'new', nameEn: 'New' })).success, true);
+  assert.equal(settings.get('social_media_packages_catalog').value.length, 1);
+});
+
+test('podcast tier input rejects missing text and non-finite or negative prices without changing the catalog', async () => {
+  const f = databaseFixture();
+  const { upsertCmsPodcastService } = f.load('src/lib/actions/podcast-operations.ts');
+  for (const change of [
+    { key: undefined }, { key: null }, { key: 123 }, { key: ' ' },
+    { title: undefined }, { title: null }, { title: {} }, { title: ' ' },
+    ...[NaN, Infinity, -Infinity, -1, 'invalid', '', ' ', undefined, null, true].map((price) => ({ price })),
+  ]) {
+    const result = await upsertCmsPodcastService({ key: 'new', title: 'New', price: 100, ...change });
+    assert.equal(result.success, false);
+    assert.equal(result.error, 'Valid tier key, title, and price are required.');
+    assert.equal(f.tables.get(f.schema.platformSettings).size, 0);
+  }
+  const result = await upsertCmsPodcastService({ key: ' New Tier ', title: ' New ', price: 0 });
+  assert.equal(result.success, true);
+  assert.equal(result.data.at(-1).key, 'new-tier');
+  assert.equal(result.data.at(-1).title, 'New');
+  assert.equal(result.data.at(-1).price, 0);
+});
+
+test('social package JSON-LD follows active CMS names, descriptions, prices, and custom quotes', async () => {
+  let packages = [
+    { id: 'cms', nameEn: 'CMS package', taglineEn: 'Updated description', monthlyPrice: 4321 },
+    { id: 'paused', nameEn: 'Paused', monthlyPrice: 1, isActive: false },
+    { id: 'custom', nameEn: 'Custom', taglineEn: 'Contact sales', monthlyPrice: null },
+  ];
+  const Grid = () => null;
+  const load = loader({
+    'next-intl/server': {},
+    '@/lib/actions/social-packages-operations': { getCmsSocialPackages: async () => packages },
+    '@/features/social-media-packages/components/PackagesGrid': { PackagesGrid: Grid },
+    ...Object.fromEntries(['SocialMediaPackagesHero', 'SocialMediaDeliverablesShowcase', 'PackageComparisonTable', 'PackageFaqSection'].map((name) => [
+      `@/features/social-media-packages/components/${name}`, { [name]: () => null },
+    ])),
+  });
+  const Page = load('src/app/(public)/social-media-packages/page.tsx').default;
+  let tree = await Page();
+  const getSchema = (tree) => find(tree, (node) => node.props?.data?.hasOfferCatalog)[0].props.data;
+  let schema = getSchema(tree);
+  assert.equal(find(tree, (node) => node.type === Grid)[0].props.packages, packages);
+  assert.equal(schema.priceRange, 'AED 4321 - AED 4321 / month');
+  const offers = schema.hasOfferCatalog.itemListElement;
+  assert.equal(offers.length, 2);
+  assert.equal(offers[0].price, '4321');
+  assert.equal(offers[0].priceCurrency, 'AED');
+  assert.equal(offers[0].itemOffered.name, 'CMS package');
+  assert.equal(offers[0].itemOffered.description, 'Updated description');
+  assert.equal('price' in offers[1], false);
+  for (const next of [[packages[2]], [], [{ ...packages[0], isActive: false }]]) {
+    packages = next;
+    schema = getSchema(await Page());
+    assert.equal(schema.priceRange, undefined);
+  }
+});
+
+function hookState() {
+  const state = [], effects = [];
+  let cursor = 0;
+  return {
+    state, effects, reset: () => { cursor = 0; },
+    react: { ...React,
+      useEffect: (effect) => effects.push(effect),
+      useRef: (current) => ({ current }),
+      useMemo: (calculate) => calculate(),
+      useState: (initial) => {
+        const index = cursor++;
+        if (!(index in state)) state[index] = typeof initial === 'function' ? initial() : initial;
+        return [state[index], (value) => { state[index] = typeof value === 'function' ? value(state[index]) : value; }];
+      },
+    },
+  };
+}
+
+test('server telemetry including an empty array overrides stale local storage; omitted feed restores it', () => {
+  for (const feed of [undefined, [], [{ id: 'server', summary: 'Authoritative' }]]) {
+    const hooks = hookState();
+    let storageReads = 0;
+    const saved = [{ id: 'stale', summary: 'Stale' }];
+    const load = loader({
+      react: hooks.react,
+      '@/components/admin': {},
+      '@/lib/actions/broadcast-telemetry-dispatcher': {},
+      '@/hooks/useFeedbackAlert': { useFeedbackAlert: () => ({}) },
+      './InquiriesManager': { resolveInquiryCategory: () => 'general' },
+    }, { window: {}, localStorage: { getItem: () => { storageReads++; return JSON.stringify(saved); } } });
+    load('src/features/admin/components/BroadcastManager.tsx').BroadcastManager({ initialTelemetryFeed: feed });
+    assert.equal(storageReads, feed === undefined ? 1 : 0);
+    assert.deepEqual(JSON.parse(JSON.stringify(hooks.state.find(Array.isArray))), feed ?? saved);
+  }
+});
+
+test('podcast availability clears a selected unavailable slot, retains free slots, and ignores cancelled requests', async () => {
+  for (const mode of ['unavailable', 'free', 'cancelled']) {
+    const hooks = hookState(), updates = [];
+    let resolve;
+    const load = loader({
+      react: hooks.react,
+      '@/lib/actions/availability-operations': { getStudioSlotAvailability: () => new Promise((done) => { resolve = done; }) },
+    });
+    const { Step1DateTime } = load('src/features/podcast-booking/components/Step1DateTime.tsx');
+    Step1DateTime({ session: { date: '2027-01-01', durationHours: 1, studioKey: 'studio', timeSlot: '5:30 PM' }, onChange: (value) => updates.push(value) });
+    const cleanup = hooks.effects[0]();
+    if (mode === 'cancelled') cleanup();
+    resolve({ unavailableSlots: mode === 'free' ? ['6:00 PM'] : ['5:30 PM'] });
+    await Promise.resolve();
+    assert.deepEqual(JSON.parse(JSON.stringify(updates)), mode === 'unavailable' ? [{ timeSlot: '' }] : []);
+  }
+});
+
+test('every studio subcatalog delete confirms first, catches throws, and preserves result feedback', async () => {
+  for (const [tab, action] of [
+    ['sessions', 'deleteStudioSessionType'], ['crew', 'deleteStudioCrewItem'],
+    ['props', 'deleteStudioPropItem'], ['addons', 'deleteStudioAddonItem'],
+  ]) {
+    for (const mode of ['cancel', 'throw', 'failure', 'success']) {
+      const hooks = hookState(), feedback = [], calls = [];
+      hooks.react.default = hooks.react;
+      const initial = { id: 'first', title: 'First', price: 10 };
+      const catalog = { sessionTypes: [initial, { ...initial, id: 'second' }], crewEquipment: [initial], props: [initial], addons: [initial] };
+      const updated = { ...catalog, crewEquipment: [], props: [], addons: [], sessionTypes: [catalog.sessionTypes[1]] };
+      let confirmations = 0;
+      const load = loader({
+        react: hooks.react,
+        '@/components/admin': {},
+        '@/lib/actions/studios-soundstages-operations': {},
+        '@/lib/actions/studio-wizard-catalog-operations': { [action]: async (id) => {
+          assert.equal(confirmations, 1);
+          calls.push(id);
+          if (mode === 'throw') throw new Error('Synthetic delete error');
+          return mode === 'failure' ? { success: false, error: 'Delete denied' } : { success: true, data: updated, message: 'Removed' };
+        } },
+        '../hooks/useAdminCrud': { useAdminCrud: () => ({ items: [], showFeedback: (message) => feedback.push(message) }) },
+        '../hooks/useAdminFilter': { useAdminFilter: () => ({ filteredData: [], pagination: { paginatedItems: [], totalItems: 0 } }) },
+      }, { confirm: () => { confirmations++; return mode !== 'cancel'; } });
+      const { StudiosManager } = load('src/features/admin/components/StudiosManager.tsx');
+      const render = () => { hooks.reset(); return StudiosManager({ initialStudios: [], initialWizardCatalog: catalog }); };
+      render();
+      hooks.state[0] = tab;
+      const button = find(render(), (node) => node.type === 'button' && node.props.title?.startsWith('Delete'))[0];
+      assert.ok(button, tab);
+      await button.props.onClick();
+      assert.deepEqual(calls, mode === 'cancel' ? [] : ['first']);
+      const alerts = find(render(), (node) => node.props?.role === 'alert');
+      if (mode === 'throw' || mode === 'failure') {
+        assert.equal(alerts.length, 1);
+        assert.equal(alerts[0].props.children[0].props.children, mode === 'throw' ? 'Synthetic delete error' : 'Delete denied');
+      } else assert.equal(alerts.length, 0);
+      assert.deepEqual(feedback, mode === 'success' ? ['Removed'] : []);
+      if (mode === 'success') assert.deepEqual(hooks.state.slice(1, 5), [updated.sessionTypes, [], [], []]);
+    }
+  }
+});
