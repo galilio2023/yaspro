@@ -22,6 +22,9 @@ function loadSource(file, mocks = {}, globals = {}) {
     exports,
     require: (name) => {
       if (Object.hasOwn(mocks, name)) return mocks[name];
+      if (name === '@/lib/actions/platform-settings-operations') {
+        return { getPlatformSettings: async () => ({ studioBufferMinutes: 0 }) };
+      }
       if (name.startsWith('.')) {
         const target = path.resolve(import.meta.dirname, '..', path.dirname(file), name);
         const jsonPath = target.endsWith('.json') ? target : target + '.json';

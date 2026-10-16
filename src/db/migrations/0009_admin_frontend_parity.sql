@@ -21,4 +21,8 @@ CREATE TABLE IF NOT EXISTS "promo_codes" (
 	"is_active" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "promo_codes_code_unique" UNIQUE("code")
-);
+);--> statement-breakpoint
+ALTER TABLE "promo_codes" ADD COLUMN IF NOT EXISTS "label" text;--> statement-breakpoint
+ALTER TABLE "promo_codes" ADD COLUMN IF NOT EXISTS "discount_percent" integer;--> statement-breakpoint
+ALTER TABLE "promo_codes" ADD COLUMN IF NOT EXISTS "discount_amount" numeric(10, 2);--> statement-breakpoint
+ALTER TABLE "promo_codes" ADD COLUMN IF NOT EXISTS "eligible_offer_ids" jsonb;
