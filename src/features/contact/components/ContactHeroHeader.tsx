@@ -1,6 +1,5 @@
 "use client";
 
-import { MessageSquare } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 

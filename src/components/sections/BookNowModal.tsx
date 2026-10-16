@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowLeft, ArrowRight, CheckCircle2, AlertCircle, PhoneCall, Loader2, Sparkles } from "lucide-react";
+import { X, ArrowLeft, ArrowRight, CheckCircle2, AlertCircle, PhoneCall, Loader2 } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { studioSprings, tactilePress } from "@/lib/studio-motion";
 import { useFocusTrap } from "@/hooks/useFocusTrap";

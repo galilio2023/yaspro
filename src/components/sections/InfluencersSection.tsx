@@ -7,7 +7,7 @@ import { InfluencerCard } from "@/features/influencers/components/InfluencerCard
 import { SectionHeader } from "@/components/ui/section-header";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
-import { Users, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export default function InfluencersSection() {

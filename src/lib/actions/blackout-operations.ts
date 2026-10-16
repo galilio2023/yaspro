@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { studioBlackouts, type StudioBlackout } from "@/db/schema";
-import { eq, and, gte, lte, or } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { isDbAvailable, requireAdmin, type CmsResponse } from "./shared";
 

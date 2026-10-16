@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Video, Zap, Palette, CalendarCheck, Sparkles } from "lucide-react";
+import { Video, Zap, Palette, CalendarCheck } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function SocialMediaDeliverablesShowcase() {

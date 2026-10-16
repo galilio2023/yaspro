@@ -60,10 +60,10 @@ export function BookingConfirmation({
             }`}
           >
             {paymentStatus === "deposit_paid"
-              ? "50% DEPOSIT PAID ONLINE"
+              ? "DEPOSIT PAID ONLINE"
               : paymentStatus === "paid"
               ? "PAID IN FULL"
-              : "PENDING · 50% DEPOSIT DUE"}
+              : "PENDING · ONLINE PAYMENT DUE"}
           </span>
           {transactionRef && (
             <span className="text-[10px] font-mono text-slate-400">
@@ -80,7 +80,7 @@ export function BookingConfirmation({
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-11 sm:h-12 px-5 sm:px-6 rounded-xl sm:rounded-2xl btn-brand text-xs font-bold transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
             >
               <CreditCard size={15} />
-              <span>Pay 50% Deposit Online</span>
+              <span>Proceed to Secure Payment</span>
             </button>
           ) : (
             <div className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-11 sm:h-12 px-4 sm:px-5 rounded-xl sm:rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">

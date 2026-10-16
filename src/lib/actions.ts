@@ -19,6 +19,7 @@ import {
 
 import type { StudioItem } from "@/features/booking/types";
 import { STUDIOS, calculateBookingPrice } from "@/features/booking/constants";
+import { getPlatformSettings } from "@/lib/actions/platform-settings-operations";
 
 /**
  * Recalculate price server-side based on canonical pricing rules
@@ -134,18 +135,30 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
           b.createdAt instanceof Date &&
           Date.now() - b.createdAt.getTime() > HOLD_TTL_MS;
 
-        // Check if any existing active booking overlaps with [requestedStart, requestedEnd]
+        // Fetch platform settings for turnaround buffer
+        let turnaroundBufferMs = 0;
+        try {
+          const settings = await getPlatformSettings();
+          if (settings.turnaroundBufferMinutes && settings.turnaroundBufferMinutes > 0) {
+            turnaroundBufferMs = settings.turnaroundBufferMinutes * 60 * 1000;
+          }
+        } catch {
+          // Fall back gracefully if settings table is read during bootstrapping
+        }
+
+        // Check if any existing active booking overlaps with [requestedStart, requestedEnd] including buffer
         const hasConflict = existingBookings.some((b) => {
           if (isStaleHold(b)) return false;
           const bookedStart = new Date(b.scheduledAt);
-          const bookedEnd = new Date(bookedStart.getTime() + b.durationHours * 60 * 60 * 1000);
-          return requestedStart < bookedEnd && requestedEnd > bookedStart;
+          const bookedEndWithBuffer = new Date(bookedStart.getTime() + b.durationHours * 60 * 60 * 1000 + turnaroundBufferMs);
+          const requestedEndWithBuffer = new Date(requestedEnd.getTime() + turnaroundBufferMs);
+          return requestedStart < bookedEndWithBuffer && requestedEndWithBuffer > bookedStart;
         });
 
         if (hasConflict) {
           return {
             success: false,
-            message: `This soundstage (${studioRecord.name || selectedSlug}) is already reserved during your selected time window. Please select an alternate time slot or choose another studio.`,
+            message: `This soundstage (${studioRecord.name || selectedSlug}) is already reserved during your selected time window (or is within the required stage reset turnaround buffer). Please select an alternate time slot or choose another studio.`,
           };
         }
 

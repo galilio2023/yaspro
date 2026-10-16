@@ -8,13 +8,11 @@ import {
   ChevronRight,
   Info,
   Check,
-  AlertCircle,
 } from "lucide-react";
 import { OfferBundleItem } from "../types";
 import { STANDARD_TIME_SLOTS } from "../data";
-import { StepIntro, Panel, studioSprings } from "@/features/booking/components/ui/BookingKit";
+import { StepIntro } from "@/features/booking/components/ui/BookingKit";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface Step2ScheduleProps {

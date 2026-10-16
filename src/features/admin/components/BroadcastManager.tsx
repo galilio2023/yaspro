@@ -67,7 +67,7 @@ const PRESET_EVENTS = [
 import type { Inquiry } from "@/db/schema";
 import Link from "next/link";
 import { resolveInquiryCategory } from "./InquiriesManager";
-import { MessageSquare, ExternalLink, ArrowRight, Sparkles } from "lucide-react";
+import { ExternalLink, ArrowRight } from "lucide-react";
 
 export interface BroadcastManagerProps {
   initialBroadcastInquiries?: Inquiry[];
@@ -81,11 +81,8 @@ export function BroadcastManager({ initialBroadcastInquiries = [] }: BroadcastMa
   const [summary, setSummary] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [dispatchedFeed, setDispatchedFeed] = useState<TelemetryEventItem[]>(INITIAL_DISPATCHED_FEED);
-  const isLoadedRef = useRef(false);
-
-  // Safely hydrate stored events from localStorage after mount to prevent hydration mismatch
-  useEffect(() => {
+  const [dispatchedFeed, setDispatchedFeed] = useState<TelemetryEventItem[]>(() => {
+    if (typeof window === "undefined") return INITIAL_DISPATCHED_FEED;
     try {
       const saved = localStorage.getItem("yaspro_admin_telemetry_feed");
       if (saved) {
@@ -101,14 +98,18 @@ export function BroadcastManager({ initialBroadcastInquiries = [] }: BroadcastMa
               typeof item.summary === "string"
           )
         ) {
-          setDispatchedFeed(parsed);
+          return parsed;
         }
       }
     } catch {
       // ignore storage parse error
-    } finally {
-      isLoadedRef.current = true;
     }
+    return INITIAL_DISPATCHED_FEED;
+  });
+  const isLoadedRef = useRef(false);
+
+  useEffect(() => {
+    isLoadedRef.current = true;
   }, []);
 
   // Persist feed updates safely in an effect rather than inside the state updater
