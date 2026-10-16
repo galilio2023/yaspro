@@ -470,9 +470,9 @@ export async function upsertCmsPodcastService(data: {
       title: data.title.trim(),
       sub: data.sub?.trim() || "",
       price: Math.max(0, Math.round(Number(data.price))),
-      badge: data.badge?.trim() || "Studio Tier",
-      best: Boolean(data.best),
-      isActive: data.isActive ?? true,
+      badge: data.badge?.trim() || existing?.badge || "Studio Tier",
+      best: data.best ?? existing?.best ?? false,
+      isActive: data.isActive ?? existing?.isActive ?? true,
       highlights: Array.isArray(data.highlights)
         ? data.highlights.map((h) => h.trim()).filter(Boolean)
         : existing?.highlights || [],

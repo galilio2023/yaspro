@@ -18,6 +18,14 @@ import { GEAR_DATA } from "@/features/gear/data";
 import { slugify, generateBookingReference } from "@/lib/utils";
 import { isUuid, isDbAvailable, requireAdmin, getCurrentSession, type CmsResponse } from "./shared";
 
+let gearBookingOrderQueue: Promise<unknown> = Promise.resolve();
+
+function serializeGearBookingOrder<T>(fn: () => Promise<T>): Promise<T> {
+  const next = gearBookingOrderQueue.then(fn, fn);
+  gearBookingOrderQueue = next.catch(() => {});
+  return next;
+}
+
 
 export interface PaginatedEquipmentParams {
   page?: number;
@@ -364,39 +372,6 @@ export async function createGearBookingOrder(
       if (startMs < Date.now() - 24 * 60 * 60 * 1000) {
         return { success: false, error: "Please select a rental start date in the future." };
       }
-
-      if (isDbAvailable() && typeof db.query?.bookings?.findMany === "function") {
-        const endDateStr = input.returnDate || addCalendarDays(input.startDate, input.durationDays);
-        const reqStart = new Date(`${input.startDate}T00:00:00+04:00`).getTime();
-        const reqEnd = new Date(`${endDateStr}T23:59:59+04:00`).getTime();
-        const existingBookings = await db.query.bookings.findMany();
-        const bookedCountByKey = new Map<string, number>();
-
-        for (const bk of existingBookings) {
-          if (bk.status === "cancelled" || !Array.isArray(bk.equipmentIds) || bk.equipmentIds.length === 0) continue;
-          const bkStart = new Date(bk.scheduledAt).getTime();
-          const bkDays = Math.max(1, Math.ceil(Number(bk.durationHours || 24) / 24));
-          const bkEnd = bkStart + bkDays * 86_400_000;
-          if (reqStart < bkEnd && reqEnd > bkStart) {
-            for (const eqId of bk.equipmentIds) {
-              bookedCountByKey.set(eqId, (bookedCountByKey.get(eqId) || 0) + 1);
-            }
-          }
-        }
-
-        for (const resolved of resolvedItems) {
-          const alreadyBooked = Math.max(
-            bookedCountByKey.get(resolved.id) || 0,
-            bookedCountByKey.get(resolved.slug) || 0
-          );
-          if (alreadyBooked >= resolved.totalQuantity) {
-            return {
-              success: false,
-              error: `Equipment item "${resolved.name}" is already reserved for the selected dates (${input.startDate} to ${endDateStr}).`,
-            };
-          }
-        }
-      }
     }
 
     const { grandTotal } = calculateGearCartTotals(pricedItems, { totalDays: input.durationDays }, input.deliveryMethod);
@@ -406,35 +381,95 @@ export async function createGearBookingOrder(
     const finalUserId = session?.user?.id ?? null;
 
     if (isDbAvailable()) {
-      // 3. Insert into bookings
-      const referenceCode = generateBookingReference();
-      const scheduledAtDate = input.startDate ? new Date(input.startDate) : new Date();
-      const returnDateStr = input.returnDate || (input.startDate ? addCalendarDays(input.startDate, input.durationDays) : null);
-      const scheduleSummary = input.startDate
-        ? ` | Shoot Schedule: ${input.startDate} to ${returnDateStr} (${input.durationDays}d)`
-        : ` | Duration: ${input.durationDays}d`;
+      const atomicResult = await serializeGearBookingOrder(async () => {
+        const executeCheckAndInsert = async (tx: typeof db) => {
+          if (input.startDate && typeof tx.query?.bookings?.findMany === "function") {
+            const endDateStr = input.returnDate || addCalendarDays(input.startDate, input.durationDays);
+            const reqStartDate = new Date(`${input.startDate}T00:00:00+04:00`);
+            const reqEndDate = new Date(`${endDateStr}T23:59:59+04:00`);
+            const reqStart = reqStartDate.getTime();
+            const reqEnd = reqEndDate.getTime();
+            const minScheduledDate = new Date(reqStart - 365 * 86_400_000);
 
-      const [newBooking] = await db
-        .insert(bookings)
-        .values({
-          referenceCode,
-          userId: finalUserId,
-          studioId: null, // Standalone gear rental
-          sessionType: "commercial",
-          scheduledAt: scheduledAtDate,
-          durationHours: input.durationDays * 24,
-          headcount: 1,
-          equipmentIds: input.gearIds,
-          propsNotes: `Gear Delivery: ${input.deliveryMethod}${scheduleSummary}`,
-          specialRequests: finalUserId
-            ? input.notes || null
-            : `[Contact: ${input.customerName} | ${input.email} | ${input.phone}${input.company ? ` | ${input.company}` : ""}]${input.notes ? ` — ${input.notes}` : ""}`,
-          totalAmount: grandTotal.toFixed(2),
-          currency: "AED",
-          status: "pending",
-          paymentStatus: "unpaid",
-        })
-        .returning();
+            const existingBookings = await tx.query.bookings.findMany({
+              where: (b, { and: andOp, ne: neOp, lte: lteOp, gte: gteOp }) =>
+                andOp(
+                  neOp(b.status, "cancelled"),
+                  lteOp(b.scheduledAt, reqEndDate),
+                  gteOp(b.scheduledAt, minScheduledDate)
+                ),
+            });
+            const bookedCountByKey = new Map<string, number>();
+
+            for (const bk of existingBookings) {
+              if (bk.status === "cancelled" || !Array.isArray(bk.equipmentIds) || bk.equipmentIds.length === 0) continue;
+              const bkStart = new Date(bk.scheduledAt).getTime();
+              const bkDays = Math.max(1, Math.ceil(Number(bk.durationHours || 24) / 24));
+              const bkEnd = bkStart + bkDays * 86_400_000;
+              if (reqStart < bkEnd && reqEnd > bkStart) {
+                for (const eqId of bk.equipmentIds) {
+                  bookedCountByKey.set(eqId, (bookedCountByKey.get(eqId) || 0) + 1);
+                }
+              }
+            }
+
+            for (const resolved of resolvedItems) {
+              const alreadyBooked = Math.max(
+                bookedCountByKey.get(resolved.id) || 0,
+                bookedCountByKey.get(resolved.slug) || 0
+              );
+              if (alreadyBooked >= resolved.totalQuantity) {
+                return {
+                  conflictError: `Equipment item "${resolved.name}" is already reserved for the selected dates (${input.startDate} to ${endDateStr}).`,
+                };
+              }
+            }
+          }
+
+          // 3. Insert into bookings
+          const referenceCode = generateBookingReference();
+          const scheduledAtDate = input.startDate ? new Date(input.startDate) : new Date();
+          const returnDateStr = input.returnDate || (input.startDate ? addCalendarDays(input.startDate, input.durationDays) : null);
+          const scheduleSummary = input.startDate
+            ? ` | Shoot Schedule: ${input.startDate} to ${returnDateStr} (${input.durationDays}d)`
+            : ` | Duration: ${input.durationDays}d`;
+
+          const [newBooking] = await tx
+            .insert(bookings)
+            .values({
+              referenceCode,
+              userId: finalUserId,
+              studioId: null, // Standalone gear rental
+              sessionType: "commercial",
+              scheduledAt: scheduledAtDate,
+              durationHours: input.durationDays * 24,
+              headcount: 1,
+              equipmentIds: input.gearIds,
+              propsNotes: `Gear Delivery: ${input.deliveryMethod}${scheduleSummary}`,
+              specialRequests: finalUserId
+                ? input.notes || null
+                : `[Contact: ${input.customerName} | ${input.email} | ${input.phone}${input.company ? ` | ${input.company}` : ""}]${input.notes ? ` — ${input.notes}` : ""}`,
+              totalAmount: grandTotal.toFixed(2),
+              currency: "AED",
+              status: "pending",
+              paymentStatus: "unpaid",
+            })
+            .returning();
+
+          return { newBooking, referenceCode };
+        };
+
+        if (typeof db.transaction === "function") {
+          return await db.transaction(async (tx) => executeCheckAndInsert(tx as unknown as typeof db));
+        }
+        return await executeCheckAndInsert(db);
+      });
+
+      if ("conflictError" in atomicResult) {
+        return { success: false, error: atomicResult.conflictError };
+      }
+
+      const { newBooking, referenceCode } = atomicResult;
 
       if (!finalUserId && newBooking?.id) {
         await issueBookingPaymentCapability(newBooking.id);
@@ -442,12 +477,14 @@ export async function createGearBookingOrder(
       revalidatePath("/account");
       revalidatePath("/admin/bookings");
 
+      const resolvedRefCode: string = newBooking?.referenceCode || referenceCode || generateBookingReference();
+
       return {
         success: true,
         message: "Gear rental booking created successfully.",
         data: {
           bookingId: newBooking?.id || `gear_${Date.now()}`,
-          referenceCode: newBooking?.referenceCode || referenceCode,
+          referenceCode: resolvedRefCode,
           totalAmount: grandTotal,
           currency: "AED",
         },

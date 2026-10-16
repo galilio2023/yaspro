@@ -64,7 +64,9 @@ export async function getCmsSocialPackages(): Promise<SocialMediaPackage[]> {
 }
 
 async function saveSocialPackagesToDb(list: SocialMediaPackage[]): Promise<void> {
-  if (!isDbAvailable()) return;
+  if (!isDbAvailable()) {
+    throw new Error("Database is not connected.");
+  }
 
   await db
     .insert(platformSettings)
@@ -117,19 +119,19 @@ export interface UpsertSocialPackageInput {
 export async function upsertCmsSocialPackage(
   input: UpsertSocialPackageInput
 ): Promise<{ success: boolean; error?: string; item?: SocialMediaPackage }> {
-  await requireAdmin();
-
-  const id = normalizeSlug(input.id || input.nameEn);
-  const nameEn = (input.nameEn || "").trim();
-  const nameAr = (input.nameAr || input.nameEn || "").trim();
-  const taglineEn = (input.taglineEn || "").trim();
-  const taglineAr = (input.taglineAr || input.taglineEn || "").trim();
-
-  if (!id || !nameEn) {
-    return { success: false, error: "Package ID and English name are required." };
-  }
-
   try {
+    await requireAdmin();
+
+    const id = normalizeSlug(input.id || input.nameEn);
+    const nameEn = (input.nameEn || "").trim();
+    const nameAr = (input.nameAr || input.nameEn || "").trim();
+    const taglineEn = (input.taglineEn || "").trim();
+    const taglineAr = (input.taglineAr || input.taglineEn || "").trim();
+
+    if (!id || !nameEn) {
+      return { success: false, error: "Package ID and English name are required." };
+    }
+
     const current = await getCmsSocialPackages();
     const item: SocialMediaPackage = {
       id,
@@ -179,9 +181,9 @@ export async function toggleSocialPackageStatus(
   id: string,
   isActive: boolean
 ): Promise<{ success: boolean; error?: string }> {
-  await requireAdmin();
-
   try {
+    await requireAdmin();
+
     const current = await getCmsSocialPackages();
     const idx = current.findIndex((p) => p.id === id);
     if (idx < 0) return { success: false, error: "Social media package not found." };
@@ -197,9 +199,9 @@ export async function toggleSocialPackageStatus(
 export async function deleteCmsSocialPackage(
   id: string
 ): Promise<{ success: boolean; error?: string }> {
-  await requireAdmin();
-
   try {
+    await requireAdmin();
+
     const current = await getCmsSocialPackages();
     const next = current.filter((p) => p.id !== id);
     if (next.length === 0) {

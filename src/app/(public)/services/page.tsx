@@ -43,19 +43,19 @@ export const metadata: Metadata = {
 
 export default async function ServicesPage() {
   const [studiosList, podcastSets, equipmentList, offersList, socialPackages] = await Promise.all([
-    getCmsStudios().catch(() => []),
-    getCmsPodcastSets().catch(() => []),
-    getCachedEquipment().catch(() => []),
-    getBookingOffers().catch(() => []),
-    getCmsSocialPackages().catch(() => []),
+    getCmsStudios().catch(() => null),
+    getCmsPodcastSets().catch(() => null),
+    getCachedEquipment().catch(() => null),
+    getBookingOffers().catch(() => null),
+    getCmsSocialPackages().catch(() => null),
   ]);
 
   const liveCounts: ServicesLiveCounts = {
-    studiosCount: studiosList.filter((s) => s.isActive !== false).length || 3,
-    podcastSetsCount: podcastSets.filter((p) => p.isAvailable !== false).length || 4,
-    gearCount: equipmentList.filter((g) => g.isAvailable !== false).length || 42,
-    offersCount: offersList.filter((o) => o.isActive !== false).length || 6,
-    socialPackagesCount: socialPackages.filter((s) => s.isActive !== false).length || 4,
+    studiosCount: studiosList ? studiosList.filter((s) => s.isActive !== false).length : 3,
+    podcastSetsCount: podcastSets ? podcastSets.filter((p) => p.isAvailable !== false).length : 4,
+    gearCount: equipmentList ? equipmentList.filter((g) => g.isAvailable !== false).length : 42,
+    offersCount: offersList ? offersList.filter((o) => o.isActive !== false).length : 6,
+    socialPackagesCount: socialPackages ? socialPackages.filter((s) => s.isActive !== false).length : 4,
   };
 
   return <ServicesPageClient liveCounts={liveCounts} />;

@@ -294,9 +294,9 @@ export function calculateBookingPrice(
 ): BookingPricingBreakdown {
   const duration = Math.max(1, input.durationHours ?? 1);
   const sessionTypesList = catalog?.sessionTypes?.length ? catalog.sessionTypes : SESSION_TYPES;
-  const crewList = catalog?.crewEquipment?.length ? catalog.crewEquipment : CREW_EQUIPMENT_ITEMS;
-  const propsList = catalog?.props?.length ? catalog.props : PROPS_ITEMS;
-  const addonsList = catalog?.addons?.length ? catalog.addons : ADDONS_ITEMS;
+  const crewList = catalog?.crewEquipment ?? CREW_EQUIPMENT_ITEMS;
+  const propsList = catalog?.props ?? PROPS_ITEMS;
+  const addonsList = catalog?.addons ?? ADDONS_ITEMS;
 
   // 1. Session type cost (resolved by sessionTypeId, id, or enum/title)
   const targetSessionId = input.sessionTypeId || input.sessionType;

@@ -66,9 +66,9 @@ export function useBookingWizard(cmsStudios: StudioItem[], wizardCatalog?: Studi
   // Merge CMS studios with canonical studios
   const studios = cmsStudios && cmsStudios.length > 0 ? cmsStudios : (STUDIOS as StudioItem[]);
   const sessionTypesList = wizardCatalog?.sessionTypes?.length ? wizardCatalog.sessionTypes : SESSION_TYPES;
-  const crewEquipmentList = wizardCatalog?.crewEquipment?.length ? wizardCatalog.crewEquipment : CREW_EQUIPMENT_ITEMS;
-  const propsList = wizardCatalog?.props?.length ? wizardCatalog.props : PROPS_ITEMS;
-  const addonsList = wizardCatalog?.addons?.length ? wizardCatalog.addons : ADDONS_ITEMS;
+  const crewEquipmentList = wizardCatalog?.crewEquipment ?? CREW_EQUIPMENT_ITEMS;
+  const propsList = wizardCatalog?.props ?? PROPS_ITEMS;
+  const addonsList = wizardCatalog?.addons ?? ADDONS_ITEMS;
 
   const searchParams = useSearchParams();
   const [step, setStep] = useState(1);
@@ -120,6 +120,10 @@ export function useBookingWizard(cmsStudios: StudioItem[], wizardCatalog?: Studi
     const todayISO = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
     if (state.date < todayISO) {
       setErrorMessage("Please select today or a future session reservation date.");
+      return false;
+    }
+    if (!state.time) {
+      setErrorMessage("Please select an available call time before continuing.");
       return false;
     }
     return true;
@@ -214,7 +218,8 @@ export function useBookingWizard(cmsStudios: StudioItem[], wizardCatalog?: Studi
         phone: state.phone.trim(),
         company: state.company?.trim(),
         studioId: studio?.id || "100",
-        sessionType: (sessionTypeObj?.id === "98" ? "photography" : sessionTypeObj?.id === "100" ? "podcast" : "video_production"),
+        sessionType: (sessionTypeObj?.id === "98" || sessionTypeObj?.id === "photography" ? "photography" : sessionTypeObj?.id === "100" || sessionTypeObj?.id === "podcast" ? "podcast" : "video_production"),
+        sessionTypeId: state.sessionType || sessionTypeObj?.id,
         scheduledAt: `${state.date}T${formattedTime}`,
         durationHours: state.durationHours,
         headcount: state.headcount,

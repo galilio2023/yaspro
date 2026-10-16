@@ -1,6 +1,6 @@
 "use server";
 
-import { eq, ne, or } from "drizzle-orm";
+import { and, eq, gt, lt, ne, or } from "drizzle-orm";
 import { db } from "@/db";
 import {
   bookings,
@@ -113,6 +113,7 @@ export async function getStudioSlotAvailability(
 
     const busyWindows: Array<{ start: number; end: number; reason?: string }> = [];
     const bufferMs = turnaroundBufferMinutes * 60 * 1000;
+    const lookbackStart = new Date(dayStart.getTime() - 24 * 3600_000 - bufferMs);
 
     // 1. Check Studio Blackouts
     if (typeof db.select === "function") {
@@ -124,7 +125,13 @@ export async function getStudioSlotAvailability(
           startTime: studioBlackouts.startTime,
           endTime: studioBlackouts.endTime,
         })
-        .from(studioBlackouts);
+        .from(studioBlackouts)
+        .where(
+          and(
+            lt(studioBlackouts.startTime, dayEnd),
+            gt(studioBlackouts.endTime, dayStart)
+          )
+        );
 
       for (const b of blackouts) {
         const appliesToStudio =
@@ -151,10 +158,16 @@ export async function getStudioSlotAvailability(
           status: bookings.status,
         })
         .from(bookings)
-        .where(ne(bookings.status, "cancelled"));
+        .where(
+          and(
+            ne(bookings.status, "cancelled"),
+            lt(bookings.scheduledAt, dayEnd),
+            gt(bookings.scheduledAt, lookbackStart)
+          )
+        );
 
       for (const bk of activeBookings) {
-        if (resolvedStudioUuid && bk.studioId && bk.studioId !== resolvedStudioUuid) {
+        if (!bk.studioId || !resolvedStudioUuid || bk.studioId !== resolvedStudioUuid) {
           continue;
         }
         const bkStart = new Date(bk.scheduledAt).getTime();
@@ -171,10 +184,16 @@ export async function getStudioSlotAvailability(
           scheduledAt: bookingSessions.scheduledAt,
           durationHours: bookingSessions.durationHours,
         })
-        .from(bookingSessions);
+        .from(bookingSessions)
+        .where(
+          and(
+            lt(bookingSessions.scheduledAt, dayEnd),
+            gt(bookingSessions.scheduledAt, lookbackStart)
+          )
+        );
 
       for (const s of sessions) {
-        if (resolvedStudioUuid && s.studioId && s.studioId !== resolvedStudioUuid) {
+        if (!s.studioId || !resolvedStudioUuid || s.studioId !== resolvedStudioUuid) {
           continue;
         }
         const sStart = new Date(s.scheduledAt).getTime();
@@ -248,8 +267,11 @@ export async function getUnavailableEquipmentIdsForRange(
       const stockBySlug = new Map<string, number>();
       for (const item of allGear) {
         idToSlug.set(item.id, item.slug);
-        stockBySlug.set(item.slug, 1);
-        stockBySlug.set(item.id, 1);
+        const qty = Number(
+          ("totalQuantity" in item ? (item as Record<string, unknown>).totalQuantity : undefined) ?? 1
+        );
+        stockBySlug.set(item.slug, qty);
+        stockBySlug.set(item.id, qty);
       }
 
       for (const bk of activeBookings) {

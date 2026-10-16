@@ -19,28 +19,25 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
   const [unavailableSlots, setUnavailableSlots] = useState<string[]>([]);
   const [blackoutReason, setBlackoutReason] = useState<string | undefined>(undefined);
 
-  if (typeof useEffect === "function") {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      if (!session.date || typeof getStudioSlotAvailability !== "function") return;
-      let cancelled = false;
-      getStudioSlotAvailability({
-        date: session.date,
-        durationHours: session.durationHours,
-        podcastSetId: session.studioKey,
+  useEffect(() => {
+    if (!session.date || typeof getStudioSlotAvailability !== "function") return;
+    let cancelled = false;
+    getStudioSlotAvailability({
+      date: session.date,
+      durationHours: session.durationHours,
+      podcastSetId: session.studioKey,
+    })
+      .then((res) => {
+        if (!cancelled && res) {
+          setUnavailableSlots(res.unavailableSlots || []);
+          setBlackoutReason(res.blackoutReason);
+        }
       })
-        .then((res) => {
-          if (!cancelled && res) {
-            setUnavailableSlots(res.unavailableSlots || []);
-            setBlackoutReason(res.blackoutReason);
-          }
-        })
-        .catch(() => {});
-      return () => {
-        cancelled = true;
-      };
-    }, [session.date, session.durationHours, session.studioKey]);
-  }
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [session.date, session.durationHours, session.studioKey]);
 
   // Generate dates for the next 14 days
   const upcomingDates = useMemo(() => {

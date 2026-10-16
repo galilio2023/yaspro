@@ -97,6 +97,58 @@ async function saveStudioWizardCatalog(catalog: StudioWizardCatalog): Promise<vo
   revalidatePath("/studio-booking");
 }
 
+// ─── Zod Validation Schemas ───────────────────────────────────────────────────
+
+import { z } from "zod";
+
+const finiteNonNegativePrice = (fieldLabel: string) =>
+  z.preprocess(
+    (val) =>
+      val === "" || val === null || val === undefined || typeof val === "boolean"
+        ? Number.NaN
+        : Number(val),
+    z
+      .number({ message: `${fieldLabel} must be a valid finite number.` })
+      .finite(`${fieldLabel} must be a finite number.`)
+      .nonnegative(`${fieldLabel} cannot be negative.`)
+  );
+
+const studioSessionTypeInputSchema = z.object({
+  id: z.string({ message: "Session ID is required." }).trim().min(1, "Session ID is required."),
+  title: z.string({ message: "Session title is required." }).trim().min(1, "Session title is required."),
+  description: z.string().optional().default(""),
+  price: finiteNonNegativePrice("Session price"),
+  imageUrl: z.string().optional().default(""),
+});
+
+const studioCrewItemInputSchema = z.object({
+  id: z.string({ message: "Crew/Equipment ID is required." }).trim().min(1, "Crew/Equipment ID is required."),
+  title: z.string({ message: "Crew/Equipment title is required." }).trim().min(1, "Crew/Equipment title is required."),
+  description: z.string().optional().default(""),
+  price: finiteNonNegativePrice("Crew/Equipment rate"),
+  priceType: z.enum(["hourly", "flat"]).optional().default("hourly"),
+  category: z.enum(["crew", "equipment"]).optional().default("crew"),
+  imageUrl: z.string().optional().default(""),
+});
+
+const studioPropItemInputSchema = z.object({
+  id: z.string({ message: "Prop ID is required." }).trim().min(1, "Prop ID is required."),
+  title: z.string({ message: "Prop title is required." }).trim().min(1, "Prop title is required."),
+  price: finiteNonNegativePrice("Prop rate"),
+  priceType: z.enum(["hourly", "flat"]).optional().default("flat"),
+  category: z.string().optional().default("Furniture"),
+  imageUrl: z.string().optional().default(""),
+});
+
+const studioAddonItemInputSchema = z.object({
+  id: z.string({ message: "Add-on ID is required." }).trim().min(1, "Add-on ID is required."),
+  title: z.string({ message: "Add-on title is required." }).trim().min(1, "Add-on title is required."),
+  description: z.string().optional().default(""),
+  price: finiteNonNegativePrice("Add-on rate"),
+  priceType: z.enum(["hourly", "flat"]).optional().default("flat"),
+  imageUrl: z.string().optional().default(""),
+});
+
 // ─── Session Types (Step 2) ───────────────────────────────────────────────────
 
 export async function upsertStudioSessionType(
@@ -107,19 +159,22 @@ export async function upsertStudioSessionType(
     if (!isDbAvailable()) {
       return { success: false, error: "Database is not connected." };
     }
-    const cleanId = item.id.trim();
-    const cleanTitle = item.title.trim();
-    if (!cleanId || !cleanTitle || Number(item.price) < 0) {
-      return { success: false, error: "Valid session ID, title, and price are required." };
+    const parsed = studioSessionTypeInputSchema.safeParse(item);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: parsed.error.issues[0]?.message || "Valid session ID, title, and price are required.",
+      };
     }
+    const { id: cleanId, title: cleanTitle, description, price, imageUrl } = parsed.data;
 
     const current = await getStudioWizardCatalog();
     const normalized: SessionTypeItem = {
       id: cleanId,
       title: cleanTitle,
-      description: item.description?.trim() || "",
-      price: Number(item.price),
-      imageUrl: item.imageUrl?.trim() || "/images/studios/nature-grid.jpg",
+      description: description.trim(),
+      price,
+      imageUrl: imageUrl.trim() || "/images/studios/nature-grid.jpg",
     };
 
     const idx = current.sessionTypes.findIndex((s) => s.id === cleanId);
@@ -171,21 +226,24 @@ export async function upsertStudioCrewItem(
     if (!isDbAvailable()) {
       return { success: false, error: "Database is not connected." };
     }
-    const cleanId = item.id.trim();
-    const cleanTitle = item.title.trim();
-    if (!cleanId || !cleanTitle || Number(item.price) < 0) {
-      return { success: false, error: "Valid crew item ID, title, and rate are required." };
+    const parsed = studioCrewItemInputSchema.safeParse(item);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: parsed.error.issues[0]?.message || "Valid crew item ID, title, and rate are required.",
+      };
     }
+    const { id: cleanId, title: cleanTitle, description, price, priceType, category, imageUrl } = parsed.data;
 
     const current = await getStudioWizardCatalog();
     const normalized: CrewEquipmentItem = {
       id: cleanId,
       title: cleanTitle,
-      description: item.description?.trim() || "",
-      price: Number(item.price),
-      priceType: item.priceType === "flat" ? "flat" : "hourly",
-      category: item.category === "equipment" ? "equipment" : "crew",
-      imageUrl: item.imageUrl?.trim() || "/images/studios/nature-grid.jpg",
+      description: description.trim(),
+      price,
+      priceType,
+      category,
+      imageUrl: imageUrl.trim() || "/images/studios/nature-grid.jpg",
     };
 
     const idx = current.crewEquipment.findIndex((c) => c.id === cleanId);
@@ -234,20 +292,23 @@ export async function upsertStudioPropItem(
     if (!isDbAvailable()) {
       return { success: false, error: "Database is not connected." };
     }
-    const cleanId = item.id.trim();
-    const cleanTitle = item.title.trim();
-    if (!cleanId || !cleanTitle || Number(item.price) < 0) {
-      return { success: false, error: "Valid prop ID, title, and rate are required." };
+    const parsed = studioPropItemInputSchema.safeParse(item);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: parsed.error.issues[0]?.message || "Valid prop ID, title, and rate are required.",
+      };
     }
+    const { id: cleanId, title: cleanTitle, price, priceType, category, imageUrl } = parsed.data;
 
     const current = await getStudioWizardCatalog();
     const normalized: PropItem = {
       id: cleanId,
       title: cleanTitle,
-      price: Number(item.price),
-      priceType: item.priceType === "hourly" ? "hourly" : "flat",
-      category: item.category?.trim() || "Furniture",
-      imageUrl: item.imageUrl?.trim() || "/images/studios/nature-grid.jpg",
+      price,
+      priceType,
+      category: category.trim() || "Furniture",
+      imageUrl: imageUrl.trim() || "/images/studios/nature-grid.jpg",
     };
 
     const idx = current.props.findIndex((p) => p.id === cleanId);
@@ -296,20 +357,23 @@ export async function upsertStudioAddonItem(
     if (!isDbAvailable()) {
       return { success: false, error: "Database is not connected." };
     }
-    const cleanId = item.id.trim();
-    const cleanTitle = item.title.trim();
-    if (!cleanId || !cleanTitle || Number(item.price) < 0) {
-      return { success: false, error: "Valid add-on ID, title, and rate are required." };
+    const parsed = studioAddonItemInputSchema.safeParse(item);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: parsed.error.issues[0]?.message || "Valid add-on ID, title, and rate are required.",
+      };
     }
+    const { id: cleanId, title: cleanTitle, description, price, priceType, imageUrl } = parsed.data;
 
     const current = await getStudioWizardCatalog();
     const normalized: AddonItem = {
       id: cleanId,
       title: cleanTitle,
-      description: item.description?.trim() || "",
-      price: Number(item.price),
-      priceType: item.priceType === "hourly" ? "hourly" : "flat",
-      imageUrl: item.imageUrl?.trim() || "/images/studios/nature-grid.jpg",
+      description: description.trim(),
+      price,
+      priceType,
+      imageUrl: imageUrl.trim() || "/images/studios/nature-grid.jpg",
     };
 
     const idx = current.addons.findIndex((a) => a.id === cleanId);

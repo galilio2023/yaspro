@@ -59,31 +59,41 @@ export function StepDatetime({ state, update }: WizardStepProps) {
 
   const duration = state.durationHours || 1;
   const currentPeople = state.headcount || 2;
-  const selectedTime = state.time || "10:00 AM";
+  const selectedTime = state.time;
   const selectedDateStr = state.date;
 
-  if (typeof useEffect === "function") {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      if (!selectedDateStr || typeof getStudioSlotAvailability !== "function") return;
-      let cancelled = false;
-      getStudioSlotAvailability({
-        date: selectedDateStr,
-        durationHours: duration,
-        studioId: state.studioId || undefined,
-      })
-        .then((res) => {
-          if (!cancelled && res) {
-            setUnavailableSlots(res.unavailableSlots || []);
-            setBlackoutReason(res.blackoutReason);
+  useEffect(() => {
+    if (!selectedDateStr || typeof getStudioSlotAvailability !== "function") {
+      setUnavailableSlots([]);
+      setBlackoutReason(undefined);
+      return;
+    }
+    let cancelled = false;
+    getStudioSlotAvailability({
+      date: selectedDateStr,
+      durationHours: duration,
+      studioId: state.studioId || undefined,
+    })
+      .then((res) => {
+        if (!cancelled && res) {
+          const nextUnavailable = res.unavailableSlots || [];
+          setUnavailableSlots(nextUnavailable);
+          setBlackoutReason(res.blackoutReason);
+          if (state.time && nextUnavailable.includes(state.time)) {
+            update({ time: "" });
           }
-        })
-        .catch(() => {});
-      return () => {
-        cancelled = true;
-      };
-    }, [selectedDateStr, duration, state.studioId]);
-  }
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setUnavailableSlots([]);
+          setBlackoutReason(undefined);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedDateStr, duration, state.studioId, state.time]);
 
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();

@@ -873,11 +873,10 @@ export function PodcastManager({ initialSets, initialAddons, initialServices = [
               <div>
                 <label className="block text-[11px] font-bold text-slate-400 mb-1">Unit</label>
                 <input
-                  required
-                  value={serviceForm.priceUnit}
-                  onChange={(e) => setServiceForm((f) => ({ ...f, priceUnit: e.target.value }))}
-                  placeholder="hour"
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                  readOnly
+                  disabled
+                  value="per hour"
+                  className="w-full rounded-xl bg-white/[0.03] border border-white/10 px-3 py-2 text-xs text-slate-400 cursor-not-allowed"
                 />
               </div>
               <div>

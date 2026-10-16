@@ -25,27 +25,42 @@ export interface TelemetryEventItem {
   timestamp: string;
 }
 
+let telemetryDispatchQueue: Promise<unknown> = Promise.resolve();
+
+function serializeTelemetryDispatch<T>(fn: () => Promise<T>): Promise<T> {
+  const next = telemetryDispatchQueue.then(fn, fn);
+  telemetryDispatchQueue = next.catch(() => {});
+  return next;
+}
+
+async function readTelemetryFeedStrict(client: typeof db = db): Promise<TelemetryEventItem[]> {
+  let raw: unknown;
+  if (typeof client.select === "function") {
+    const [row] = await client
+      .select()
+      .from(platformSettings)
+      .where(eq(platformSettings.key, TELEMETRY_FEED_KEY))
+      .limit(1);
+    raw = row?.value;
+  } else if (client.query?.platformSettings?.findFirst) {
+    const row = await client.query.platformSettings.findFirst({
+      where: eq(platformSettings.key, TELEMETRY_FEED_KEY),
+    });
+    raw = row?.value;
+  } else {
+    throw new Error("Telemetry storage reader is unavailable.");
+  }
+  if (Array.isArray(raw)) {
+    return raw as TelemetryEventItem[];
+  }
+  return [];
+}
+
 export async function getTelemetryFeed(): Promise<TelemetryEventItem[]> {
+  await requireAdmin();
   if (!isDbAvailable() || !platformSettings) return [];
   try {
-    let raw: unknown;
-    if (typeof db.select === "function") {
-      const [row] = await db
-        .select()
-        .from(platformSettings)
-        .where(eq(platformSettings.key, TELEMETRY_FEED_KEY))
-        .limit(1);
-      raw = row?.value;
-    } else if (db.query?.platformSettings?.findFirst) {
-      const row = await db.query.platformSettings.findFirst({
-        where: eq(platformSettings.key, TELEMETRY_FEED_KEY),
-      });
-      raw = row?.value;
-    }
-    if (Array.isArray(raw)) {
-      return raw as TelemetryEventItem[];
-    }
-    return [];
+    return await readTelemetryFeedStrict();
   } catch (error) {
     if (typeof console.warn === "function") {
       console.warn("[getTelemetryFeed] Fallback:", (error as Error)?.message);
@@ -70,11 +85,18 @@ export async function dispatchTelemetryEvent(event: {
     await requireAdmin();
     const nowLabel = new Date().toLocaleTimeString();
 
-    if (isDbAvailable() && typeof db.insert === "function" && platformSettings) {
-      try {
-        const existing = await getTelemetryFeed();
+    if (!isDbAvailable() || typeof db.insert !== "function" || !platformSettings) {
+      return {
+        success: false,
+        error: "Database is not connected. Unable to persist broadcast telemetry event.",
+      };
+    }
+
+    await serializeTelemetryDispatch(async () => {
+      const performUpdate = async (tx: typeof db) => {
+        const existing = await readTelemetryFeedStrict(tx);
         const nextEntry: TelemetryEventItem = {
-          id: `tel_${Date.now().toString(36)}`,
+          id: `tel_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`,
           source: event.source.trim() || "OB-VAN MERCEDES 01",
           type: event.type,
           level: event.level,
@@ -82,7 +104,7 @@ export async function dispatchTelemetryEvent(event: {
           timestamp: nowLabel,
         };
         const updated = [nextEntry, ...existing].slice(0, 50);
-        await db
+        await tx
           .insert(platformSettings)
           .values({
             key: TELEMETRY_FEED_KEY,
@@ -96,12 +118,16 @@ export async function dispatchTelemetryEvent(event: {
               updatedAt: new Date(),
             },
           });
-      } catch (dbErr) {
-        if (typeof console.warn === "function") {
-          console.warn("[dispatchTelemetryEvent] DB persist warning:", (dbErr as Error)?.message);
-        }
+      };
+
+      if (typeof db.transaction === "function") {
+        await db.transaction(async (tx) => {
+          await performUpdate(tx as unknown as typeof db);
+        });
+      } else {
+        await performUpdate(db);
       }
-    }
+    });
 
     revalidatePath("/enterprise/portal");
     revalidatePath("/admin/broadcast");
@@ -110,6 +136,6 @@ export async function dispatchTelemetryEvent(event: {
       message: `Event [${event.source} - ${event.type}] broadcasted to sovereign relay network at ${nowLabel}.`,
     };
   } catch (error) {
-    return { success: false, error: (error as Error).message };
+    return { success: false, error: (error as Error).message || "Failed to persist broadcast telemetry event." };
   }
 }

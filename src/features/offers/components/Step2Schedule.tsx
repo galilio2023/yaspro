@@ -62,11 +62,16 @@ export function Step2Schedule({
     getStudioSlotAvailability({
       date: selectedDate,
       durationHours: offer.hours || 2,
+      studioId: offer.studioId,
     })
       .then((res) => {
         if (cancelled) return;
-        setUnavailableSlots(res.unavailableSlots || []);
+        const nextUnavailable = res.unavailableSlots || [];
+        setUnavailableSlots(nextUnavailable);
         setBlackoutReason(res.blackoutReason);
+        if (selectedTimeSlot && nextUnavailable.includes(selectedTimeSlot)) {
+          onTimeSlotChange("");
+        }
       })
       .catch(() => {
         if (!cancelled) {
@@ -77,7 +82,7 @@ export function Step2Schedule({
     return () => {
       cancelled = true;
     };
-  }, [selectedDate, offer.hours]);
+  }, [selectedDate, offer.hours, offer.studioId, selectedTimeSlot, onTimeSlotChange]);
 
   const [currentCalendarDate, setCurrentCalendarDate] = useState<Date>(() => {
     if (selectedDate) {

@@ -239,11 +239,15 @@ test('accessories URL and category card select the same counted items, with cart
   let categoryParam = null, cursor = 0;
   const state = [];
   const { GearExplorer } = loadSource('src/features/gear/components/GearExplorer.tsx', {
-    react: { useMemo: (fn) => fn(), useState: (initial) => {
-      const index = cursor++;
-      if (!(index in state)) state[index] = initial;
-      return [state[index], (value) => { state[index] = value; }];
-    } },
+    react: {
+      useMemo: (fn) => fn(),
+      useEffect: () => {},
+      useState: (initial) => {
+        const index = cursor++;
+        if (!(index in state)) state[index] = initial;
+        return [state[index], (value) => { state[index] = value; }];
+      },
+    },
     'next/navigation': { useSearchParams: () => new URLSearchParams(categoryParam ? `category=${categoryParam}` : '') },
     '@/components/animations/MotionWrappers': { FadeUp: Stub, StaggerContainer: Stub, StaggerItem: Stub },
     '@/components/ui/empty-state': { EmptyState: Stub }, '@/components/ui/button': { Button: Stub },

@@ -465,8 +465,8 @@ export function ServicesPageClient({ liveCounts }: { liveCounts?: ServicesLiveCo
                             ? `${liveCounts.socialPackagesCount} باقات شهرية`
                             : `${liveCounts.socialPackagesCount} Retainer Tiers`
                           : isArabic
-                          ? "متاح للحجز"
-                          : "Ready for Dispatch"}
+                          ? "طلب التحقق من التوفر"
+                          : "Request Availability"}
                       </span>
                     )}
                   </div>

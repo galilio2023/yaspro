@@ -69,29 +69,27 @@ export function GearExplorer({
   const [showAllUnfiltered, setShowAllUnfiltered] = useState<boolean>(false);
   const [unavailableIds, setUnavailableIds] = useState<string[]>([]);
 
-  if (typeof useEffect === "function") {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      if (
-        typeof checkRangeAvailability !== "function" ||
-        !dateRange?.pickupDate ||
-        !dateRange?.returnDate
-      ) {
-        return;
-      }
-      let cancelled = false;
-      checkRangeAvailability(dateRange.pickupDate, dateRange.returnDate)
-        .then((res) => {
-          if (!cancelled && res && Array.isArray(res.unavailableIds)) {
-            setUnavailableIds(res.unavailableIds);
-          }
-        })
-        .catch(() => {});
-      return () => {
-        cancelled = true;
-      };
-    }, [checkRangeAvailability, dateRange?.pickupDate, dateRange?.returnDate]);
-  }
+  useEffect(() => {
+    if (
+      typeof checkRangeAvailability !== "function" ||
+      !dateRange?.pickupDate ||
+      !dateRange?.returnDate
+    ) {
+      setUnavailableIds([]);
+      return;
+    }
+    let cancelled = false;
+    checkRangeAvailability(dateRange.pickupDate, dateRange.returnDate)
+      .then((res) => {
+        if (!cancelled && res && Array.isArray(res.unavailableIds)) {
+          setUnavailableIds(res.unavailableIds);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [checkRangeAvailability, dateRange?.pickupDate, dateRange?.returnDate]);
 
   const categoryCounts = useMemo(() => {
     return {

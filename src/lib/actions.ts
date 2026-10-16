@@ -18,7 +18,15 @@ import {
 } from "./validations";
 
 import type { StudioItem } from "@/features/booking/types";
-import { STUDIOS, calculateBookingPrice, type StudioWizardCatalogOverride } from "@/features/booking/constants";
+import {
+  STUDIOS,
+  SESSION_TYPES,
+  CREW_EQUIPMENT_ITEMS,
+  PROPS_ITEMS,
+  ADDONS_ITEMS,
+  calculateBookingPrice,
+  type StudioWizardCatalogOverride,
+} from "@/features/booking/constants";
 import { getPlatformSettings } from "@/lib/actions/platform-settings-operations";
 
 /**
@@ -30,7 +38,14 @@ function calculateServerPrice(
   wizardCatalog?: StudioWizardCatalogOverride
 ): number {
   if (typeof calculateBookingPrice === "function") {
-    return calculateBookingPrice(data, selectedStudio, wizardCatalog).total;
+    return calculateBookingPrice(
+      {
+        ...data,
+        sessionTypeId: data.sessionTypeId || data.sessionType,
+      },
+      selectedStudio,
+      wizardCatalog
+    ).total;
   }
   const studio = selectedStudio || (STUDIOS || []).find((s) => s.id === data.studioId) || (STUDIOS || [])[0];
   const studioRate = studio ? studio.rate : 800;
@@ -102,10 +117,66 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
           if (catalogRow?.value && typeof catalogRow.value === "object") {
             wizardCatalog = catalogRow.value as StudioWizardCatalogOverride;
           }
-        } catch {
-          // Ignore and fall back to static catalog
+        } catch (catalogErr) {
+          if (typeof console.warn === "function") {
+            console.warn("[createBooking] Wizard catalog lookup failed:", (catalogErr as Error)?.message);
+          }
+          return {
+            success: false,
+            message: "Unable to verify current studio catalog pricing. Please try again in a moment.",
+          };
         }
       }
+
+      const activeSessionTypes = wizardCatalog?.sessionTypes?.length
+        ? wizardCatalog.sessionTypes
+        : (SESSION_TYPES || []);
+      const activeCrewList = wizardCatalog?.crewEquipment ?? (CREW_EQUIPMENT_ITEMS || []);
+      const activePropsList = wizardCatalog?.props ?? (PROPS_ITEMS || []);
+      const activeAddonsList = wizardCatalog?.addons ?? (ADDONS_ITEMS || []);
+
+      if (data.sessionTypeId && activeSessionTypes.length > 0) {
+        const matchedSession = activeSessionTypes.find(
+          (s) => s.id === data.sessionTypeId || s.title?.toLowerCase() === data.sessionTypeId?.toLowerCase()
+        );
+        if (!matchedSession) {
+          return {
+            success: false,
+            message: "The selected session format is no longer available. Please refresh the form and update your selection.",
+          };
+        }
+      }
+
+      if (data.selectedCrewEquipmentIds?.length) {
+        const validCrewIds = new Set(activeCrewList.map((c) => c.id));
+        if (data.selectedCrewEquipmentIds.some((id) => !validCrewIds.has(id))) {
+          return {
+            success: false,
+            message: "One or more selected crew or equipment items are no longer available. Please update your selection.",
+          };
+        }
+      }
+
+      if (data.selectedPropIds?.length) {
+        const validPropIds = new Set(activePropsList.map((p) => p.id));
+        if (data.selectedPropIds.some((id) => !validPropIds.has(id))) {
+          return {
+            success: false,
+            message: "One or more selected studio props are no longer available. Please update your selection.",
+          };
+        }
+      }
+
+      if (data.selectedAddonIds?.length) {
+        const validAddonIds = new Set(activeAddonsList.map((a) => a.id));
+        if (data.selectedAddonIds.some((id) => !validAddonIds.has(id))) {
+          return {
+            success: false,
+            message: "One or more selected post-production add-ons are no longer available. Please update your selection.",
+          };
+        }
+      }
+
       const calculatedTotal = calculateServerPrice(
         data,
         {
