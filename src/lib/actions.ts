@@ -142,8 +142,11 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
           if (settings.turnaroundBufferMinutes && settings.turnaroundBufferMinutes > 0) {
             turnaroundBufferMs = settings.turnaroundBufferMinutes * 60 * 1000;
           }
-        } catch {
-          // Fall back gracefully if settings table is read during bootstrapping
+        } catch (settingsErr) {
+          if (typeof console.warn === "function") {
+            console.warn("[createBooking] Platform settings check failed:", (settingsErr as Error)?.message);
+          }
+          return { success: false, message: "Unable to verify studio availability. Please try again later." };
         }
 
         // Check if any existing active booking overlaps with [requestedStart, requestedEnd] including buffer

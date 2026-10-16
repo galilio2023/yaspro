@@ -440,7 +440,7 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {PROPS_ITEMS.slice(0, 18).map((prop) => (
+            {PROPS_ITEMS.map((prop) => (
               <div key={prop.id} className="p-3 rounded-2xl bg-slate-900/60 border border-white/10 space-y-2 text-center">
                 <div className="relative aspect-square rounded-xl overflow-hidden bg-slate-950 border border-white/5">
                   <Image src={prop.imageUrl} alt={prop.title} fill className="object-contain p-2" />
