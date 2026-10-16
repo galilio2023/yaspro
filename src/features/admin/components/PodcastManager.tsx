@@ -287,10 +287,10 @@ export function PodcastManager({ initialSets, initialAddons, initialServices = [
     setServiceForm({
       id: item.key,
       title: item.title,
-      subtitle: item.subtitle,
+      subtitle: item.sub || "",
       price: item.price,
-      priceUnit: item.priceUnit,
-      featuresText: item.features.join("\n"),
+      priceUnit: "hour",
+      featuresText: (item.highlights || []).join("\n"),
       badge: item.badge || "",
       isActive: item.isActive !== false,
     });
@@ -302,30 +302,21 @@ export function PodcastManager({ initialSets, initialAddons, initialServices = [
     setIsSavingService(true);
     setServiceModalError(null);
     try {
-      const features = serviceForm.featuresText
+      const highlights = serviceForm.featuresText
         .split("\n")
         .map((f) => f.trim())
         .filter(Boolean);
       const res = await upsertCmsPodcastService({
-        id: serviceForm.id,
+        key: serviceForm.id,
         title: serviceForm.title,
-        subtitle: serviceForm.subtitle,
+        sub: serviceForm.subtitle,
         price: Number(serviceForm.price),
-        priceUnit: serviceForm.priceUnit,
-        features,
+        highlights,
         badge: serviceForm.badge.trim() || undefined,
         isActive: serviceForm.isActive,
       });
-      if (res.success && res.item) {
-        setServices((prev) => {
-          const idx = prev.findIndex((s) => s.key === res.item!.key);
-          if (idx >= 0) {
-            const next = [...prev];
-            next[idx] = res.item!;
-            return next;
-          }
-          return [...prev, res.item!];
-        });
+      if (res.success && res.data) {
+        setServices(res.data);
         setIsServiceModalOpen(false);
       } else {
         setServiceModalError(res.error || "Failed to save production tier.");
@@ -596,7 +587,7 @@ export function PodcastManager({ initialSets, initialAddons, initialServices = [
 
                   <div className="flex items-baseline gap-2">
                     <span className="text-lg font-bold text-white">AED {service.price}</span>
-                    <span className="text-[11px] text-text-muted">/ {service.priceUnit}</span>
+                    <span className="text-[11px] text-text-muted">/ hour</span>
                     {service.badge && (
                       <span className="px-2 py-0.5 rounded-md bg-brand-violet/20 text-brand-mauve text-[10px] font-bold">
                         {service.badge}
@@ -604,11 +595,11 @@ export function PodcastManager({ initialSets, initialAddons, initialServices = [
                     )}
                   </div>
 
-                  <p className="text-xs text-slate-300 leading-relaxed">{service.subtitle}</p>
+                  <p className="text-xs text-slate-300 leading-relaxed">{service.sub}</p>
 
-                  {service.features?.length > 0 && (
+                  {service.highlights && service.highlights.length > 0 && (
                     <ul className="space-y-1 text-[11px] text-slate-400">
-                      {service.features.map((feat, idx) => (
+                      {service.highlights.map((feat, idx) => (
                         <li key={idx} className="flex items-center gap-1.5">
                           <span className="w-1 h-1 rounded-full bg-brand-mauve" />
                           <span>{feat}</span>

@@ -71,7 +71,6 @@ async function saveSocialPackagesToDb(list: SocialMediaPackage[]): Promise<void>
     .values({
       key: SOCIAL_PACKAGES_KEY,
       value: list,
-      description: "Turnkey Social Media Production Packages catalog (Monthly & Annual retainers)",
       updatedAt: new Date(),
     })
     .onConflictDoUpdate({

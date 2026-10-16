@@ -70,7 +70,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
       getStudioSlotAvailability({
         date: selectedDateStr,
         durationHours: duration,
-        studioId: state.studio || undefined,
+        studioId: state.studioId || undefined,
       })
         .then((res) => {
           if (!cancelled && res) {
@@ -82,7 +82,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
       return () => {
         cancelled = true;
       };
-    }, [selectedDateStr, duration, state.studio]);
+    }, [selectedDateStr, duration, state.studioId]);
   }
 
   const currentYear = currentDate.getFullYear();

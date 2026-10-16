@@ -1,11 +1,10 @@
 "use server";
 
-import { eq, ne, or, isNull } from "drizzle-orm";
+import { eq, ne, or } from "drizzle-orm";
 import { db } from "@/db";
 import {
   bookings,
   bookingSessions,
-  bookingEquipment,
   studios,
   studioBlackouts,
   equipment,
@@ -240,27 +239,24 @@ export async function getUnavailableEquipmentIdsForRange(
     const bookedQuantities: Record<string, number> = {};
 
     if (typeof db.select === "function") {
-      const [allGear, activeBookings, linkedItems] = await Promise.all([
+      const [allGear, activeBookings] = await Promise.all([
         db.select().from(equipment),
         db.select().from(bookings).where(ne(bookings.status, "cancelled")),
-        db.select().from(bookingEquipment),
       ]);
 
       const idToSlug = new Map<string, string>();
       const stockBySlug = new Map<string, number>();
       for (const item of allGear) {
         idToSlug.set(item.id, item.slug);
-        stockBySlug.set(item.slug, Number(item.totalQuantity ?? 1));
-        stockBySlug.set(item.id, Number(item.totalQuantity ?? 1));
+        stockBySlug.set(item.slug, 1);
+        stockBySlug.set(item.id, 1);
       }
 
-      const overlappingBookingIds = new Set<string>();
       for (const bk of activeBookings) {
         const bkStart = new Date(bk.scheduledAt).getTime();
         const rentalDays = Math.max(1, Math.ceil(Number(bk.durationHours || 24) / 24));
         const bkEnd = bkStart + rentalDays * 86_400_000;
         if (reqStart < bkEnd && reqEnd > bkStart) {
-          overlappingBookingIds.add(bk.id);
           if (Array.isArray(bk.equipmentIds)) {
             for (const eqId of bk.equipmentIds) {
               bookedQuantities[eqId] = (bookedQuantities[eqId] || 0) + 1;
@@ -270,16 +266,6 @@ export async function getUnavailableEquipmentIdsForRange(
               }
             }
           }
-        }
-      }
-
-      for (const link of linkedItems) {
-        if (!overlappingBookingIds.has(link.bookingId)) continue;
-        const qty = Math.max(1, Number(link.quantity || 1));
-        bookedQuantities[link.equipmentId] = (bookedQuantities[link.equipmentId] || 0) + qty;
-        const slug = idToSlug.get(link.equipmentId);
-        if (slug) {
-          bookedQuantities[slug] = (bookedQuantities[slug] || 0) + qty;
         }
       }
 
@@ -296,7 +282,9 @@ export async function getUnavailableEquipmentIdsForRange(
 
     return { unavailableIds: [], bookedQuantities: {} };
   } catch (error) {
-    console.warn("[getUnavailableEquipmentIdsForRange] Fallback:", (error as Error)?.message);
+    if (typeof console.warn === "function") {
+      console.warn("[getUnavailableEquipmentIdsForRange] Fallback:", (error as Error)?.message);
+    }
     return { unavailableIds: [], bookedQuantities: {} };
   }
 }

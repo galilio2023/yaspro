@@ -87,7 +87,6 @@ export async function dispatchTelemetryEvent(event: {
           .values({
             key: TELEMETRY_FEED_KEY,
             value: updated,
-            description: "Broadcast & OB-Van sovereign telemetry feed log",
             updatedAt: new Date(),
           })
           .onConflictDoUpdate({

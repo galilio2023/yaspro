@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { ServicesPageClient, type ServicesLiveCounts } from "./ServicesPageClient";
 import { SITE_URL } from "@/lib/constants";
 import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
-import { getCmsStudios } from "@/lib/actions/studios-operations";
+import { getCmsStudios } from "@/lib/cms-actions";
 import { getCmsPodcastSets } from "@/lib/actions/podcast-operations";
 import { getCachedEquipment } from "@/lib/cached-queries";
 import { getBookingOffers } from "@/lib/actions/offers-packages-operations";
