@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import { SectionHeader } from "@/components/ui/section-header";
-import { FileCheck, Shield, AlertTriangle, Scale } from "lucide-react";
+import { Shield, AlertTriangle, Scale } from "lucide-react";
 import { BackButton } from "@/components/ui/back-button";
 
 import { SITE_URL } from "@/lib/constants";

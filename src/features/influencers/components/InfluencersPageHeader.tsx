@@ -1,7 +1,6 @@
 "use client";
 
 import { SectionHeader } from "@/components/ui/section-header";
-import { Users } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function InfluencersPageHeader() {

@@ -11,6 +11,8 @@ import {
   DollarSign,
   Activity,
   Wrench,
+  Camera,
+  Sparkles,
 } from "lucide-react";
 import {
   upsertCmsStudio,
@@ -29,12 +31,14 @@ import {
 import { useAdminCrud } from "../hooks/useAdminCrud";
 import { useAdminFilter } from "../hooks/useAdminFilter";
 import { PaginationControls } from "@/components/ui/pagination-controls";
+import { CREW_EQUIPMENT_ITEMS, PROPS_ITEMS, ADDONS_ITEMS } from "@/features/booking/constants";
 
 interface StudiosManagerProps {
   initialStudios: Studio[];
 }
 
 export function StudiosManager({ initialStudios }: StudiosManagerProps) {
+  const [activeTab, setActiveTab] = React.useState<"stages" | "crew" | "props" | "addons">("stages");
   const crud = useAdminCrud<Studio>({
     initialData: initialStudios,
     upsertAction: upsertCmsStudio,
@@ -173,19 +177,76 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
         ]}
       />
 
-      {/* Filter & Search Bar */}
-      <AdminFilterBar
-        searchQuery={filter.searchQuery}
-        onSearchChange={filter.setSearchQuery}
-        searchPlaceholder="Search soundstages by name, slug, amenities or specs..."
-        filterValue={filter.filterValue}
-        onFilterChange={filter.setFilterValue}
-        filterOptions={[
-          { id: "all", label: "All Stages", count: crud.items.length },
-          { id: "active", label: "Active", count: activeCount },
-          { id: "maintenance", label: "Maintenance", count: maintenanceCount },
-        ]}
-      />
+      {/* Navigation Tabs for Soundstages and Wizard Sub-Steps */}
+      <div className="flex gap-2 border-b border-white/10 pb-2">
+        <button
+          type="button"
+          onClick={() => setActiveTab("stages")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            activeTab === "stages"
+              ? "bg-brand-violet/30 border border-brand-mauve/40 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <Layers className="w-4 h-4 text-brand-mauve" />
+          <span>Soundstages ({crud.items.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("crew")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            activeTab === "crew"
+              ? "bg-brand-violet/30 border border-brand-mauve/40 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <Users className="w-4 h-4 text-brand-mauve" />
+          <span>Stage Crew & Operators ({CREW_EQUIPMENT_ITEMS.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("props")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            activeTab === "props"
+              ? "bg-brand-violet/30 border border-brand-mauve/40 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <Camera className="w-4 h-4 text-brand-mauve" />
+          <span>Props & Decor Vault ({PROPS_ITEMS.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("addons")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            activeTab === "addons"
+              ? "bg-brand-violet/30 border border-brand-mauve/40 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <Sparkles className="w-4 h-4 text-brand-mauve" />
+          <span>Post-Production Add-ons ({ADDONS_ITEMS.length})</span>
+        </button>
+      </div>
+
+      {activeTab === "stages" && (
+        <>
+          {/* Filter & Search Bar */}
+          <AdminFilterBar
+            searchQuery={filter.searchQuery}
+            onSearchChange={filter.setSearchQuery}
+            searchPlaceholder="Search soundstages by name, slug, amenities or specs..."
+            filterValue={filter.filterValue}
+            onFilterChange={filter.setFilterValue}
+            filterOptions={[
+              { id: "all", label: "All Stages", count: crud.items.length },
+              { id: "active", label: "Active", count: activeCount },
+              { id: "maintenance", label: "Maintenance", count: maintenanceCount },
+            ]}
+          />
 
       {/* Soundstages Grid */}
       {filter.filteredData.length === 0 ? (
@@ -334,6 +395,95 @@ export function StudiosManager({ initialStudios }: StudiosManagerProps) {
         onNext={filter.pagination.nextPage}
         variant="card"
       />
+      </>
+      )}
+
+      {/* Crew & Operators Tab */}
+      {activeTab === "crew" && (
+        <div className="space-y-4">
+          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-white">Stage Crew & Specialized Technical Operators</h3>
+              <p className="text-xs text-slate-400">Add-on crew members available during Step 4 of the Studio Booking Wizard.</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {CREW_EQUIPMENT_ITEMS.map((item) => (
+              <div key={item.id} className="p-4 rounded-2xl bg-slate-900/60 border border-white/10 space-y-3">
+                <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-950 border border-white/5">
+                  <Image src={item.imageUrl} alt={item.title} fill className="object-cover" />
+                  <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-brand-violet/80 text-white border border-brand-mauve/40 uppercase">
+                    {item.priceType}
+                  </span>
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">{item.title}</h4>
+                  <p className="text-[11px] text-slate-400 line-clamp-2 mt-1">{item.description}</p>
+                </div>
+                <div className="pt-2 border-t border-white/5 flex items-center justify-between">
+                  <span className="text-[10px] text-slate-500 uppercase font-mono">Rate</span>
+                  <span className="text-xs font-mono font-bold text-brand-mauve">{formatCurrency(item.price)} {item.priceType === "hourly" ? "/hr" : ""}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Props Vault Tab */}
+      {activeTab === "props" && (
+        <div className="space-y-4">
+          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-white">Physical Props & Scenic Decor Vault</h3>
+              <p className="text-xs text-slate-400">Scenic props and furniture items selectable during Step 5 of the Studio Booking Wizard.</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {PROPS_ITEMS.map((prop) => (
+              <div key={prop.id} className="p-3 rounded-2xl bg-slate-900/60 border border-white/10 space-y-2 text-center">
+                <div className="relative aspect-square rounded-xl overflow-hidden bg-slate-950 border border-white/5">
+                  <Image src={prop.imageUrl} alt={prop.title} fill className="object-contain p-2" />
+                </div>
+                <h4 className="text-[11px] font-bold text-white truncate">{prop.title}</h4>
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="text-slate-500 font-mono">{prop.category}</span>
+                  <span className="font-mono font-bold text-brand-mauve">{formatCurrency(prop.price)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Post-Production Add-ons Tab */}
+      {activeTab === "addons" && (
+        <div className="space-y-4">
+          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-white">Post-Production & Engineering Add-ons</h3>
+              <p className="text-xs text-slate-400">Finishing services selectable during Step 6 of the Studio Booking Wizard.</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {ADDONS_ITEMS.map((addon) => (
+              <div key={addon.id} className="p-4 rounded-2xl bg-slate-900/60 border border-white/10 space-y-3">
+                <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-950 border border-white/5">
+                  <Image src={addon.imageUrl} alt={addon.title} fill className="object-cover" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">{addon.title}</h4>
+                  <p className="text-[11px] text-slate-400 mt-1">{addon.description}</p>
+                </div>
+                <div className="pt-2 border-t border-white/5 flex items-center justify-between">
+                  <span className="text-[10px] text-slate-500 uppercase font-mono">Service Fee</span>
+                  <span className="text-xs font-mono font-bold text-brand-mauve">{formatCurrency(addon.price)} {addon.priceType === "hourly" ? "/hr" : ""}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Form Modal */}
       <StudioFormModal

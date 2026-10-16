@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Award, Play, Film, Sparkles, Tv, Eye, ArrowUpRight, Clapperboard } from "lucide-react";
+import { ArrowRight, Play, Film, Sparkles, Tv, Eye, ArrowUpRight, Clapperboard } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";

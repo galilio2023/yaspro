@@ -17,8 +17,10 @@ import {
   Plus,
   Edit3,
   Trash2,
+  Share2,
 } from "lucide-react";
 import { OFFERS_AND_BUNDLES } from "@/features/offers/data";
+import { SOCIAL_MEDIA_PACKAGES } from "@/features/social-media-packages/data/packages";
 import type { OfferBundleItem } from "@/features/offers/types";
 import type { EnrichedBooking } from "@/lib/actions/bookings-rfp-operations";
 import {
@@ -82,7 +84,7 @@ export function OffersManager({
     setPackageList(initialOffers);
   }
 
-  const [activeTab, setActiveTab] = useState<"catalog" | "promos" | "bookings">("catalog");
+  const [activeTab, setActiveTab] = useState<"catalog" | "social" | "promos" | "bookings">("catalog");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<"all" | "bundle" | "offer">("all");
 
@@ -300,7 +302,8 @@ export function OffersManager({
       {/* Navigation Tabs */}
       <div className="flex items-center gap-2 border-b border-white/10 pb-3">
         {[
-          { id: "catalog", label: "Package Catalog", count: packageList.length },
+          { id: "catalog", label: "Production Bundles", count: packageList.length },
+          { id: "social", label: "Social Media Retainers", count: SOCIAL_MEDIA_PACKAGES.length },
           { id: "promos", label: "Promo Codes & Discounts", count: promoCodes.length },
           { id: "bookings", label: "Offer Bookings Log", count: offerBookings.length },
         ].map((tab) => (
@@ -568,6 +571,83 @@ export function OffersManager({
             confirmLabel={OFFERS_AND_BUNDLES.some((item) => item.id === offerDeleting?.id) ? "Disable Package" : "Delete Package"}
             isSubmitting={offerBusy}
           />
+        </div>
+      )}
+
+      {/* TAB: Social Media Retainers */}
+      {activeTab === "social" && (
+        <div className="space-y-5">
+          <div className="p-5 rounded-2xl bg-brand-violet/15 border border-brand-mauve/20 backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Share2 size={16} className="text-brand-mauve" />
+                <span>Monthly & Annual Social Media Production Retainers</span>
+              </h3>
+              <p className="text-xs text-slate-400 mt-1 max-w-2xl leading-relaxed">
+                Ongoing content packages including monthly 4K reels, editorial carousel posts, studio filming days, and story graphics. Requests submitted by clients route directly into the Inquiries Desk.
+              </p>
+            </div>
+            <Link
+              href="/social-media-packages"
+              target="_blank"
+              className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 flex items-center justify-center gap-2 transition-colors shrink-0"
+            >
+              <span>View Public Page</span>
+              <ExternalLink size={13} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {SOCIAL_MEDIA_PACKAGES.map((pkg) => (
+              <div
+                key={pkg.id}
+                className="p-5 rounded-3xl bg-slate-900/60 border border-white/10 backdrop-blur-xl space-y-4 hover:border-brand-mauve/40 transition-all flex flex-col justify-between"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-brand-violet/30 text-brand-mauve border border-brand-mauve/30">
+                      {pkg.specsHighlights.filming}
+                    </span>
+                    {pkg.isPopular && (
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        Popular
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="text-base font-bold text-white">{pkg.nameEn}</h4>
+                    <p className="text-xs text-brand-lavender/80 font-arabic mt-0.5" dir="rtl">{pkg.nameAr}</p>
+                    <p className="text-xs text-slate-400 mt-1 line-clamp-2">{pkg.taglineEn}</p>
+                  </div>
+
+                  <div className="p-3 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5 text-xs">
+                    <div className="flex justify-between text-slate-300">
+                      <span>Monthly Retainer:</span>
+                      <span className="font-mono font-bold text-white">{pkg.monthlyPrice ? formatCurrency(pkg.monthlyPrice) : "Custom"}</span>
+                    </div>
+                    <div className="flex justify-between text-brand-mauve">
+                      <span>Annual (-20%):</span>
+                      <span className="font-mono font-bold">{pkg.yearlyPricePerMonth ? `${formatCurrency(pkg.yearlyPricePerMonth)}/mo` : "Custom"}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5 pt-1">
+                    <span className="text-[10px] uppercase font-mono text-slate-500 font-bold block">Deliverables Snapshot</span>
+                    <div className="grid grid-cols-3 gap-1.5 text-center text-[10px] font-mono">
+                      <div className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-300">{pkg.specsHighlights.reels}</div>
+                      <div className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-300">{pkg.specsHighlights.posts}</div>
+                      <div className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-300">{pkg.specsHighlights.stories}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+                  <span className="text-[10px] text-slate-500 font-mono">Action Type</span>
+                  <span className="font-mono font-bold text-slate-300 uppercase">{pkg.ctaType}</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
