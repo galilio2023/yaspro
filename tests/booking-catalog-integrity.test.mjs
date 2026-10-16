@@ -24,6 +24,10 @@ function loader(mocks = {}, globals = {}) {
       require: (name) => {
         if (Object.hasOwn(mocks, name)) return mocks[name];
         if (name === 'server-only') return {};
+        if (name.endsWith('.json')) {
+          const parsed = JSON.parse(fs.readFileSync(path.resolve(path.dirname(file), name), 'utf8'));
+          return { default: parsed, ...parsed };
+        }
         if (name.startsWith('@/')) return load(`src/${name.slice(2)}.ts`);
         if (name.startsWith('.')) return load(path.resolve(path.dirname(file), `${name}.ts`));
         return require(name);
@@ -503,3 +507,128 @@ test('podcast and blackout managers restore optimistic changes and display actio
     if (operation.startsWith('toggle')) assert.equal(items[0][operation === 'toggleSet' ? 'isAvailable' : 'isActive'], true);
   }
 });
+
+test('studio wizard catalog CRUD persists in platform_settings and calculateBookingPrice honors custom catalog overrides', async () => {
+  const f = databaseFixture();
+  const catalogApi = f.load('src/lib/actions/studio-wizard-catalog-operations.ts');
+  const initial = await catalogApi.getStudioWizardCatalog();
+  assert.ok(initial.sessionTypes.length > 0);
+  assert.ok(initial.props.length > 0);
+  assert.ok(initial.addons.length > 0);
+
+  await catalogApi.upsertStudioSessionType({
+    id: 'podcast',
+    title: 'Custom Podcast',
+    description: 'Custom desc',
+    price: 1500,
+    imageUrl: '/images/studios/nature-grid.jpg',
+  });
+  await catalogApi.upsertStudioPropItem({
+    id: 'rgb-tubes',
+    title: 'Custom RGB Tubes',
+    category: 'Decor',
+    price: 500,
+    priceType: 'flat',
+    imageUrl: '/images/studios/nature-grid.jpg',
+  });
+  await catalogApi.upsertStudioAddonItem({
+    id: 'full-edit',
+    title: 'Custom Full Edit',
+    description: 'Full edit',
+    price: 3000,
+    priceType: 'flat',
+    imageUrl: '/images/studios/nature-grid.jpg',
+  });
+
+  const updated = await catalogApi.getStudioWizardCatalog();
+  assert.equal(updated.sessionTypes.find((s) => s.id === 'podcast').price, 1500);
+  assert.equal(updated.props.find((p) => p.id === 'rgb-tubes').price, 500);
+  assert.equal(updated.addons.find((o) => o.id === 'full-edit').price, 3000);
+
+  const constants = f.load('src/features/booking/constants.ts');
+  const pricing = constants.calculateBookingPrice(
+    {
+      durationHours: 2,
+      sessionTypeId: 'podcast',
+      selectedPropIds: ['rgb-tubes'],
+      selectedAddonIds: ['full-edit'],
+    },
+    undefined,
+    updated
+  );
+  // Session (1500 * 2 hrs = 3000) + prop (500) + addon (3000)
+  assert.equal(pricing.sessionCost, 3000);
+  assert.equal(pricing.propsCost, 500);
+  assert.equal(pricing.addonsCost, 3000);
+});
+
+test('podcast services catalog CRUD and social media packages catalog CRUD persist in platform_settings', async () => {
+  const f = databaseFixture();
+  const podcastApi = f.load('src/lib/actions/podcast-operations.ts');
+  const services = await podcastApi.getCmsPodcastServices();
+  assert.equal(services.length, 3);
+
+  assert.equal(
+    (
+      await podcastApi.upsertCmsPodcastService({
+        key: 'recording-editing',
+        title: 'Custom Edit Tier',
+        sub: 'Custom sub',
+        price: 2100,
+        badge: 'VIP',
+        best: true,
+        isActive: true,
+        highlights: ['4K Master'],
+      })
+    ).success,
+    true
+  );
+  const updatedServices = await podcastApi.getCmsPodcastServices();
+  assert.equal(updatedServices.find((s) => s.key === 'recording-editing').price, 2100);
+  assert.equal((await podcastApi.togglePodcastServiceStatus('recording', false)).success, true);
+  assert.equal((await podcastApi.getCmsPodcastServices()).find((s) => s.key === 'recording').isActive, false);
+
+  const socialApi = f.load('src/lib/actions/social-packages-operations.ts');
+  const socialPkgs = await socialApi.getCmsSocialPackages();
+  assert.equal(socialPkgs.length, 4);
+  assert.equal(
+    (
+      await socialApi.upsertCmsSocialPackage({
+        id: 'growth',
+        nameEn: 'Growth Custom',
+        nameAr: 'نمو مخصص',
+        taglineEn: 'Tag',
+        taglineAr: 'شعار',
+        monthlyPrice: 19500,
+        yearlyPricePerMonth: 16500,
+        isPopular: true,
+        isActive: true,
+        specsHighlights: { reels: '12', posts: '15', stories: '30', filming: '2 Days' },
+        features: [{ labelEn: '12 Reels', labelAr: '12 ريلز', included: true }],
+      })
+    ).success,
+    true
+  );
+  assert.equal((await socialApi.getCmsSocialPackages()).find((p) => p.id === 'growth').monthlyPrice, 19500);
+  assert.equal((await socialApi.toggleSocialPackageStatus('starter', false)).success, true);
+  assert.equal((await socialApi.getCmsSocialPackages()).find((p) => p.id === 'starter').isActive, false);
+});
+
+test('broadcast telemetry feed persists and dispatches in platform_settings', async () => {
+  const f = databaseFixture();
+  const broadcastApi = f.load('src/lib/actions/broadcast-telemetry-dispatcher.ts');
+  const initialFeed = await broadcastApi.getTelemetryFeed();
+  assert.equal(initialFeed.length, 0);
+
+  const dispatched = await broadcastApi.dispatchTelemetryEvent({
+    source: 'OB-VAN MERCEDES 01',
+    type: 'GENLOCK_SYNC',
+    level: 'success',
+    summary: 'SMPTE Genlock synchronized across all 4K cameras',
+  });
+  assert.equal(dispatched.success, true);
+  const feedAfter = await broadcastApi.getTelemetryFeed();
+  assert.equal(feedAfter.length, 1);
+  assert.equal(feedAfter[0].type, 'GENLOCK_SYNC');
+});
+

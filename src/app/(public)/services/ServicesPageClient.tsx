@@ -172,7 +172,15 @@ const SERVICES_CATALOG: ServiceCardData[] = [
   },
 ];
 
-export function ServicesPageClient() {
+export interface ServicesLiveCounts {
+  studiosCount: number;
+  podcastSetsCount: number;
+  gearCount: number;
+  offersCount: number;
+  socialPackagesCount: number;
+}
+
+export function ServicesPageClient({ liveCounts }: { liveCounts?: ServicesLiveCounts } = {}) {
   const { isArabic } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<ServiceCategoryFilter>("all");
 
@@ -429,11 +437,38 @@ export function ServicesPageClient() {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c11] via-[#0c0c11]/30 to-transparent pointer-events-none" />
 
                   {/* Production Metadata Badge */}
-                  <div className="absolute top-3.5 start-3.5 z-10">
+                  <div className="absolute top-3.5 start-3.5 z-10 flex items-center gap-2 flex-wrap">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium tracking-wide bg-black/65 backdrop-blur-md border border-white/10 text-zinc-200">
                       <span className="w-1.5 h-1.5 rounded-full bg-brand-mauve shrink-0" />
                       <span>{isArabic ? service.badgeAr : service.badgeEn}</span>
                     </span>
+                    {liveCounts && (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-brand-violet/40 backdrop-blur-md border border-brand-mauve/35 text-brand-lavender">
+                        {service.id === "studio-booking"
+                          ? isArabic
+                            ? `${liveCounts.studiosCount} استوديوهات نشطة`
+                            : `${liveCounts.studiosCount} Active Stages`
+                          : service.id === "podcast-booking"
+                          ? isArabic
+                            ? `${liveCounts.podcastSetsCount} ديكورات بودكاست`
+                            : `${liveCounts.podcastSetsCount} Live Sets`
+                          : service.id === "gear-rental"
+                          ? isArabic
+                            ? `${liveCounts.gearCount} معدة جاهزة`
+                            : `${liveCounts.gearCount} Units in Vault`
+                          : service.id === "offers-bundles"
+                          ? isArabic
+                            ? `${liveCounts.offersCount} عروض فعالة`
+                            : `${liveCounts.offersCount} Active Bundles`
+                          : service.id === "social-media-packages"
+                          ? isArabic
+                            ? `${liveCounts.socialPackagesCount} باقات شهرية`
+                            : `${liveCounts.socialPackagesCount} Retainer Tiers`
+                          : isArabic
+                          ? "متاح للحجز"
+                          : "Ready for Dispatch"}
+                      </span>
+                    )}
                   </div>
                 </div>
 

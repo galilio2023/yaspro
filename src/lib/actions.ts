@@ -2,7 +2,7 @@
 
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { db } from "@/db";
-import { bookings, bookingSessions, inquiries, users, studios, studioBlackouts, type SessionType, type InquiryType } from "@/db/schema";
+import { bookings, bookingSessions, inquiries, users, studios, studioBlackouts, platformSettings, type SessionType, type InquiryType } from "@/db/schema";
 import { generateBookingReference } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -18,15 +18,19 @@ import {
 } from "./validations";
 
 import type { StudioItem } from "@/features/booking/types";
-import { STUDIOS, calculateBookingPrice } from "@/features/booking/constants";
+import { STUDIOS, calculateBookingPrice, type StudioWizardCatalogOverride } from "@/features/booking/constants";
 import { getPlatformSettings } from "@/lib/actions/platform-settings-operations";
 
 /**
- * Recalculate price server-side based on canonical pricing rules
+ * Recalculate price server-side based on canonical pricing rules and CMS wizard overrides
  */
-function calculateServerPrice(data: BookingSubmissionInput, selectedStudio?: StudioItem): number {
+function calculateServerPrice(
+  data: BookingSubmissionInput,
+  selectedStudio?: StudioItem,
+  wizardCatalog?: StudioWizardCatalogOverride
+): number {
   if (typeof calculateBookingPrice === "function") {
-    return calculateBookingPrice(data, selectedStudio).total;
+    return calculateBookingPrice(data, selectedStudio, wizardCatalog).total;
   }
   const studio = selectedStudio || (STUDIOS || []).find((s) => s.id === data.studioId) || (STUDIOS || [])[0];
   const studioRate = studio ? studio.rate : 800;
@@ -89,13 +93,30 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
       if (!studioRecord || studioRecord.isActive === false) {
         return { success: false, message: "This studio is no longer available. Please select another studio." };
       }
-      const calculatedTotal = calculateServerPrice(data, {
-        id: studioRecord.id,
-        slug: studioRecord.slug,
-        name: studioRecord.name,
-        desc: studioRecord.description || "",
-        rate: Number(studioRecord.hourlyRate),
-      });
+      let wizardCatalog: StudioWizardCatalogOverride | undefined;
+      if (typeof db.query?.platformSettings?.findFirst === "function") {
+        try {
+          const catalogRow = await db.query.platformSettings.findFirst({
+            where: eq(platformSettings.key, "studio_wizard_catalog"),
+          });
+          if (catalogRow?.value && typeof catalogRow.value === "object") {
+            wizardCatalog = catalogRow.value as StudioWizardCatalogOverride;
+          }
+        } catch {
+          // Ignore and fall back to static catalog
+        }
+      }
+      const calculatedTotal = calculateServerPrice(
+        data,
+        {
+          id: studioRecord.id,
+          slug: studioRecord.slug,
+          name: studioRecord.name,
+          desc: studioRecord.description || "",
+          rate: Number(studioRecord.hourlyRate),
+        },
+        wizardCatalog
+      );
 
       // 4. Overlap & Conflict Check: Prevent double-booking for the same studio stage
       if (studioRecord?.id) {

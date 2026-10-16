@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Check, Zap, ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-react";
 import { PODCAST_SERVICES } from "../data";
-import { PodcastSessionItem } from "../types";
+import { PodcastSessionItem, PodcastService } from "../types";
 import { formatAED, MetaTag, SelectableCard, StepIntro, TogglePill, studioSprings } from "@/features/booking/components/ui/BookingKit";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 interface Step3ServiceProps {
   session: PodcastSessionItem;
   onChange: (updates: Partial<PodcastSessionItem>) => void;
+  services?: PodcastService[];
 }
 
 const COMPARISON_MATRIX = [
@@ -27,8 +28,9 @@ const COMPARISON_MATRIX = [
   { feature: "Secure Cloud Storage Archive", raw: "None", live: "None", edit: "14 Days" },
 ];
 
-export function Step3Service({ session, onChange }: Step3ServiceProps) {
+export function Step3Service({ session, onChange, services = PODCAST_SERVICES }: Step3ServiceProps) {
   const [showMatrix, setShowMatrix] = useState(false);
+  const activeServices = services.filter((s) => s.isActive !== false);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -37,12 +39,12 @@ export function Step3Service({ session, onChange }: Step3ServiceProps) {
         total={5}
         title="Production Tier"
         description="Choose your post-production workflow: raw ISO camera capture, instant live-switched program feed, or full master episode post-production."
-        aside={<MetaTag tone="mauve">3 tiers</MetaTag>}
+        aside={<MetaTag tone="mauve">{activeServices.length} tiers</MetaTag>}
       />
 
       {/* Spacious, Non-Clamping Horizontal Tier Cards (Full-width rows to prevent any text wrapping) */}
       <div className="space-y-3.5">
-        {PODCAST_SERVICES.map((service) => {
+        {activeServices.map((service) => {
           const isSelected = session.serviceKey === service.key;
           const isBest = service.best;
           const highlights = service.highlights || [];

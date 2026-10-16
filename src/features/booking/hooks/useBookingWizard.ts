@@ -17,12 +17,18 @@ import {
   PROPS_ITEMS,
   ADDONS_ITEMS,
   calculateBookingPrice,
+  type StudioWizardCatalogOverride,
 } from "../constants";
 
-function getInitialBookingState(searchParams: ReturnType<typeof useSearchParams>, studios: StudioItem[]) {
+function getInitialBookingState(
+  searchParams: ReturnType<typeof useSearchParams>,
+  studios: StudioItem[],
+  sessionTypes: readonly { id: string }[] = SESSION_TYPES
+) {
   const fallbackStudioId = studios[0]?.id || "100";
   const initialState = {
     ...INITIAL_BOOKING_STATE,
+    sessionType: sessionTypes[0]?.id || INITIAL_BOOKING_STATE.sessionType,
     studioId: fallbackStudioId,
   };
 
@@ -40,7 +46,7 @@ function getInitialBookingState(searchParams: ReturnType<typeof useSearchParams>
   if (matchedStudio) {
     updates.studioId = matchedStudio.id;
   }
-  if (sessionTypeParam && SESSION_TYPES.some((s) => s.id === sessionTypeParam)) {
+  if (sessionTypeParam && sessionTypes.some((s) => s.id === sessionTypeParam)) {
     updates.sessionType = sessionTypeParam;
   }
   if (hoursParam) {
@@ -56,12 +62,17 @@ function getInitialBookingState(searchParams: ReturnType<typeof useSearchParams>
   };
 }
 
-export function useBookingWizard(cmsStudios: StudioItem[]) {
+export function useBookingWizard(cmsStudios: StudioItem[], wizardCatalog?: StudioWizardCatalogOverride) {
   // Merge CMS studios with canonical studios
   const studios = cmsStudios && cmsStudios.length > 0 ? cmsStudios : (STUDIOS as StudioItem[]);
+  const sessionTypesList = wizardCatalog?.sessionTypes?.length ? wizardCatalog.sessionTypes : SESSION_TYPES;
+  const crewEquipmentList = wizardCatalog?.crewEquipment?.length ? wizardCatalog.crewEquipment : CREW_EQUIPMENT_ITEMS;
+  const propsList = wizardCatalog?.props?.length ? wizardCatalog.props : PROPS_ITEMS;
+  const addonsList = wizardCatalog?.addons?.length ? wizardCatalog.addons : ADDONS_ITEMS;
+
   const searchParams = useSearchParams();
   const [step, setStep] = useState(1);
-  const [state, setState] = useState<BookingState>(() => getInitialBookingState(searchParams, studios).state);
+  const [state, setState] = useState<BookingState>(() => getInitialBookingState(searchParams, studios, sessionTypesList).state);
   const [isAiConfigured, setIsAiConfigured] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
@@ -75,18 +86,18 @@ export function useBookingWizard(cmsStudios: StudioItem[]) {
   };
 
   const studio = studios.find((s) => s.id === state.studioId) || studios[0];
-  const sessionTypeObj = SESSION_TYPES.find((s) => s.id === state.sessionType) || SESSION_TYPES[0];
+  const sessionTypeObj = sessionTypesList.find((s) => s.id === state.sessionType) || sessionTypesList[0];
 
   const selectedCrewItems: CrewEquipmentItem[] = (state.selectedCrewEquipmentIds || [])
-    .map((id) => CREW_EQUIPMENT_ITEMS.find((c) => c.id === id))
+    .map((id) => crewEquipmentList.find((c) => c.id === id))
     .filter(Boolean) as CrewEquipmentItem[];
 
   const selectedPropItems: PropItem[] = (state.selectedPropIds || [])
-    .map((id) => PROPS_ITEMS.find((p) => p.id === id))
+    .map((id) => propsList.find((p) => p.id === id))
     .filter(Boolean) as PropItem[];
 
   const selectedAddonItems: AddonItem[] = (state.selectedAddonIds || [])
-    .map((id) => ADDONS_ITEMS.find((a) => a.id === id))
+    .map((id) => addonsList.find((a) => a.id === id))
     .filter(Boolean) as AddonItem[];
 
   const breakdown = calculateBookingPrice({
@@ -96,7 +107,7 @@ export function useBookingWizard(cmsStudios: StudioItem[]) {
     selectedPropIds: state.selectedPropIds,
     selectedAddonIds: state.selectedAddonIds,
     promoCode: state.promoCode,
-  }, studio);
+  }, studio, wizardCatalog);
 
   const { total } = breakdown;
 

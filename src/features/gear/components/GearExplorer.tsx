@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrappers";
@@ -17,10 +17,15 @@ import { useCart } from "@/components/providers/CartProvider";
 
 export interface GearExplorerProps {
   initialGear?: readonly GearItem[];
+  checkRangeAvailability?: (
+    pickupDate: string,
+    returnDate: string
+  ) => Promise<{ unavailableIds: string[]; bookedQuantities: Record<string, number> }>;
 }
 
 export function GearExplorer({
   initialGear = GEAR_DATA,
+  checkRangeAvailability,
 }: GearExplorerProps) {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("category") as GearCategory | null;
@@ -62,6 +67,31 @@ export function GearExplorer({
 
   const [visibleCount, setVisibleCount] = useState<number>(12);
   const [showAllUnfiltered, setShowAllUnfiltered] = useState<boolean>(false);
+  const [unavailableIds, setUnavailableIds] = useState<string[]>([]);
+
+  if (typeof useEffect === "function") {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+      if (
+        typeof checkRangeAvailability !== "function" ||
+        !dateRange?.pickupDate ||
+        !dateRange?.returnDate
+      ) {
+        return;
+      }
+      let cancelled = false;
+      checkRangeAvailability(dateRange.pickupDate, dateRange.returnDate)
+        .then((res) => {
+          if (!cancelled && res && Array.isArray(res.unavailableIds)) {
+            setUnavailableIds(res.unavailableIds);
+          }
+        })
+        .catch(() => {});
+      return () => {
+        cancelled = true;
+      };
+    }, [checkRangeAvailability, dateRange?.pickupDate, dateRange?.returnDate]);
+  }
 
   const categoryCounts = useMemo(() => {
     return {
@@ -75,10 +105,15 @@ export function GearExplorer({
   }, [initialGear]);
 
   const filteredGear = useMemo(() => {
-    return selectedCategory === "all"
-      ? initialGear
-      : initialGear.filter((g) => g.category === selectedCategory);
-  }, [selectedCategory, initialGear]);
+    const base =
+      selectedCategory === "all"
+        ? initialGear
+        : initialGear.filter((g) => g.category === selectedCategory);
+    if (!unavailableIds.length) return base;
+    return base.map((g) =>
+      unavailableIds.includes(g.id) ? { ...g, isAvailable: false } : g
+    );
+  }, [selectedCategory, initialGear, unavailableIds]);
 
   // Reset pagination when category changes
   const handleCategoryChange = (cat: GearCategory) => {
@@ -94,6 +129,7 @@ export function GearExplorer({
   }, [filteredGear, visibleCount]);
 
   const toggleCart = (id: string) => {
+    if (unavailableIds.includes(id)) return;
     const item = initialGear.find((g) => g.id === id) || GEAR_DATA.find((g) => g.id === id);
     if (item) toggleItem(item);
   };

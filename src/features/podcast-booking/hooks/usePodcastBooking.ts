@@ -3,7 +3,7 @@
 import { getLocalCalendarDate } from "@/features/gear/lib/rental-schedule";
 
 import { useState, useMemo } from "react";
-import { PodcastSessionItem, PodcastBookingContact, PodcastBookingStep, PodcastStudio, PodcastAddon } from "../types";
+import { PodcastSessionItem, PodcastBookingContact, PodcastBookingStep, PodcastStudio, PodcastAddon, PodcastService } from "../types";
 import { PODCAST_STUDIOS, PODCAST_SERVICES, PODCAST_ADDONS, PODCAST_PROMO_CODES, TIME_SLOTS } from "../data";
 import { createPodcastBooking, PodcastBookingResult } from "../actions";
 
@@ -13,7 +13,9 @@ function getTomorrowDateString(): string {
   return getLocalCalendarDate(tomorrow);
 }
 
-function createDefaultSession(index = 1, studios: PodcastStudio[] = PODCAST_STUDIOS): PodcastSessionItem {
+function createDefaultSession(index = 1, studios: PodcastStudio[] = PODCAST_STUDIOS, services: PodcastService[] = PODCAST_SERVICES): PodcastSessionItem {
+  const activeServices = services.filter((s) => s.isActive !== false);
+  const defaultService = activeServices.find((s) => s.key === "recording-pro-edit") || activeServices[0] || services[0];
   return {
     id: `session-${Date.now()}-${index}`,
     date: getTomorrowDateString(),
@@ -21,15 +23,19 @@ function createDefaultSession(index = 1, studios: PodcastStudio[] = PODCAST_STUD
     durationHours: 1,
     headcount: 2,
     studioKey: studios.find((studio) => studio.isAvailable !== false)?.key || "",
-    serviceKey: "recording-pro-edit",
+    serviceKey: defaultService?.key || "recording-pro-edit",
     addons: {},
     notes: "",
   };
 }
 
-export function usePodcastBooking(studios: PodcastStudio[] = PODCAST_STUDIOS, addons: PodcastAddon[] = PODCAST_ADDONS) {
+export function usePodcastBooking(
+  studios: PodcastStudio[] = PODCAST_STUDIOS,
+  addons: PodcastAddon[] = PODCAST_ADDONS,
+  services: PodcastService[] = PODCAST_SERVICES
+) {
   const [step, setStep] = useState<PodcastBookingStep>(1);
-  const [sessions, setSessions] = useState<PodcastSessionItem[]>([createDefaultSession(1, studios)]);
+  const [sessions, setSessions] = useState<PodcastSessionItem[]>([createDefaultSession(1, studios, services)]);
   const [activeSessionIndex, setActiveSessionIndex] = useState(0);
 
   const [contact, setContact] = useState<PodcastBookingContact>({
@@ -54,12 +60,12 @@ export function usePodcastBooking(studios: PodcastStudio[] = PODCAST_STUDIOS, ad
   }, [currentSession?.studioKey, studios]);
 
   const currentService = useMemo(() => {
-    return PODCAST_SERVICES.find((s) => s.key === currentSession?.serviceKey) || PODCAST_SERVICES[0];
-  }, [currentSession?.serviceKey]);
+    return services.find((s) => s.key === currentSession?.serviceKey) || services[0] || PODCAST_SERVICES[0];
+  }, [currentSession?.serviceKey, services]);
 
   // Price for a single session
   const getSessionPrice = (session: PodcastSessionItem) => {
-    const svc = PODCAST_SERVICES.find((s) => s.key === session.serviceKey) || PODCAST_SERVICES[0];
+    const svc = services.find((s) => s.key === session.serviceKey) || services[0] || PODCAST_SERVICES[0];
     const duration = Math.max(1, session.durationHours || 1);
     const serviceCost = svc.price * duration;
 
@@ -132,7 +138,7 @@ export function usePodcastBooking(studios: PodcastStudio[] = PODCAST_STUDIOS, ad
 
   // Multi-session
   const addNewSession = () => {
-    const newSess = createDefaultSession(sessions.length + 1, studios);
+    const newSess = createDefaultSession(sessions.length + 1, studios, services);
     setSessions((prev) => [...prev, newSess]);
     setActiveSessionIndex(sessions.length);
     setStep(1);
@@ -297,6 +303,7 @@ export function usePodcastBooking(studios: PodcastStudio[] = PODCAST_STUDIOS, ad
   return {
     studios,
     addons,
+    services,
     step,
     setStep,
     nextStep,

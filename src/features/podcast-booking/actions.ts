@@ -6,8 +6,8 @@ import { eq, or, isNull } from "drizzle-orm";
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { createZiinaPaymentIntent, getBookingPaymentQuote } from "@/lib/ziina";
 import { PODCAST_SERVICES, PODCAST_PROMO_CODES } from "./data";
-import { getCmsPodcastSets, getCmsPodcastAddons } from "@/lib/actions/podcast-operations";
-import type { PodcastAddon } from "./types";
+import { getCmsPodcastSets, getCmsPodcastAddons, getCmsPodcastServices } from "@/lib/actions/podcast-operations";
+import type { PodcastAddon, PodcastService } from "./types";
 import { z } from "zod";
 
 const podcastSessionSchema = z.object({
@@ -17,7 +17,7 @@ const podcastSessionSchema = z.object({
   durationHours: z.number().int().min(1).max(12).default(1),
   headcount: z.number().int().min(1).max(10).default(2),
   studioKey: z.string().min(1, "Invalid studio"),
-  serviceKey: z.string().refine((key) => PODCAST_SERVICES.some((service) => service.key === key), "Invalid service package"),
+  serviceKey: z.string().min(1, "Invalid service package"),
   addons: z.record(z.string(), z.number().int().min(0)).default({}),
   notes: z.string().optional(),
 });
@@ -45,9 +45,13 @@ export interface PodcastBookingResult {
   paymentFailed?: boolean;
 }
 
-function calculateSessionPrice(session: z.infer<typeof podcastSessionSchema>, addons: PodcastAddon[]): number {
-  const service = PODCAST_SERVICES.find((s) => s.key === session.serviceKey)!;
-  const serviceRate = service.price;
+function calculateSessionPrice(
+  session: z.infer<typeof podcastSessionSchema>,
+  addons: PodcastAddon[],
+  services: PodcastService[] = PODCAST_SERVICES
+): number {
+  const service = services.find((s) => s.key === session.serviceKey) ?? PODCAST_SERVICES.find((s) => s.key === session.serviceKey);
+  const serviceRate = service?.price ?? 0;
   const duration = Math.max(1, session.durationHours);
   const serviceCost = serviceRate * duration;
 
@@ -73,7 +77,11 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
 
   const { sessions: sessionList, fullName, email, phone, specialRequests, promoCode, initiatePayment, paymentType } = parsed.data;
 
-  const [catalogStudios, catalogAddons] = await Promise.all([getCmsPodcastSets(), getCmsPodcastAddons()]);
+  const [catalogStudios, catalogAddons, catalogServices] = await Promise.all([
+    getCmsPodcastSets(),
+    getCmsPodcastAddons(),
+    typeof getCmsPodcastServices === "function" ? getCmsPodcastServices() : Promise.resolve(PODCAST_SERVICES),
+  ]);
   for (const session of sessionList) {
     const studio = catalogStudios.find((item) => item.key === session.studioKey);
     if (!studio || studio.isAvailable === false) {
@@ -81,6 +89,10 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
     }
     if (studio.seats < session.headcount) {
       return { success: false, message: "The selected studio cannot fit all guests." };
+    }
+    const service = catalogServices.find((item) => item.key === session.serviceKey);
+    if (!service || service.isActive === false) {
+      return { success: false, message: "Invalid service package" };
     }
     for (const [key, quantity] of Object.entries(session.addons)) {
       const addon = catalogAddons.find((item) => item.key === key);
@@ -96,7 +108,7 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
   // 1. Calculate server-verified total price
   let subtotal = 0;
   for (const s of sessionList) {
-    subtotal += calculateSessionPrice(s, catalogAddons);
+    subtotal += calculateSessionPrice(s, catalogAddons, catalogServices);
   }
 
   let discount = 0;
@@ -203,7 +215,7 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
       // Build structured notes for admin & client transparency
       const sessionsSummary = sessionList
         .map((s, idx) => {
-          const svc = PODCAST_SERVICES.find((srv) => srv.key === s.serviceKey)?.title || s.serviceKey;
+          const svc = catalogServices.find((srv) => srv.key === s.serviceKey)?.title || PODCAST_SERVICES.find((srv) => srv.key === s.serviceKey)?.title || s.serviceKey;
           const st = catalogStudios.find((std) => std.key === s.studioKey)?.name || s.studioKey;
           const addonsList = Object.entries(s.addons)
             .filter(([, qty]) => qty > 0)

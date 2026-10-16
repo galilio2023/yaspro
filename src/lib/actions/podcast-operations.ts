@@ -1,9 +1,9 @@
 "use server";
 
 import { db } from "@/db";
-import { podcastSets, podcastAddons, studios, type PodcastSet, type PodcastAddonEntity } from "@/db/schema";
+import { podcastSets, podcastAddons, studios, platformSettings, type PodcastSet, type PodcastAddonEntity } from "@/db/schema";
 import { PODCAST_STUDIOS, PODCAST_ADDONS, PODCAST_SERVICES } from "@/features/podcast-booking/data";
-import type { PodcastStudio, PodcastAddon } from "@/features/podcast-booking/types";
+import type { PodcastStudio, PodcastAddon, PodcastService } from "@/features/podcast-booking/types";
 import { eq, asc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { ensurePodcastCatalog } from "@/lib/podcast-catalog";
@@ -383,5 +383,156 @@ export async function deleteCmsPodcastAddon(id: string): Promise<CmsResponse<voi
     return { success: true };
   } catch (err) {
     return { success: false, error: (err as Error).message };
+  }
+}
+
+// ─── Podcast Production Tiers Operations (Step 3) ─────────────────────────────
+
+const PODCAST_SERVICES_KEY = "podcast_services_catalog";
+
+/**
+ * Returns all podcast production tiers (Step 3) from DB, falling back to static PODCAST_SERVICES.
+ */
+export async function getCmsPodcastServices(): Promise<PodcastService[]> {
+  const defaults = PODCAST_SERVICES.map((s) => ({ ...s, isActive: s.isActive ?? true }));
+  if (!isDbAvailable()) {
+    return defaults;
+  }
+
+  try {
+    const rows = await db
+      .select()
+      .from(platformSettings)
+      .where(eq(platformSettings.key, PODCAST_SERVICES_KEY))
+      .limit(1);
+
+    if (rows.length > 0 && Array.isArray(rows[0].value) && rows[0].value.length > 0) {
+      return (rows[0].value as PodcastService[]).map((s) => ({
+        ...s,
+        isActive: s.isActive ?? true,
+      }));
+    }
+  } catch (err) {
+    console.warn("[podcast-operations] Falling back to static podcast services:", (err as Error)?.message);
+  }
+
+  return defaults;
+}
+
+async function savePodcastServicesCatalog(services: PodcastService[]): Promise<void> {
+  await db
+    .insert(platformSettings)
+    .values({
+      key: PODCAST_SERVICES_KEY,
+      value: services,
+      updatedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: platformSettings.key,
+      set: {
+        value: services,
+        updatedAt: new Date(),
+      },
+    });
+
+  revalidatePath("/admin/podcast");
+  revalidatePath("/podcast-booking");
+}
+
+/**
+ * Create or update a podcast production tier (Step 3).
+ */
+export async function upsertCmsPodcastService(data: {
+  key: string;
+  title: string;
+  sub: string;
+  price: number;
+  badge?: string;
+  best?: boolean;
+  isActive?: boolean;
+  highlights?: string[];
+}): Promise<CmsResponse<PodcastService[]>> {
+  try {
+    await requireAdmin();
+    if (!isDbAvailable()) {
+      return { success: false, error: "Database not connected." };
+    }
+
+    const cleanKey = data.key.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "-");
+    if (!cleanKey || !data.title.trim() || Number(data.price) < 0) {
+      return { success: false, error: "Valid tier key, title, and price are required." };
+    }
+
+    const current = await getCmsPodcastServices();
+    const existing = current.find((s) => s.key === cleanKey);
+    const normalized: PodcastService = {
+      key: cleanKey,
+      title: data.title.trim(),
+      sub: data.sub?.trim() || "",
+      price: Math.max(0, Math.round(Number(data.price))),
+      badge: data.badge?.trim() || "Studio Tier",
+      best: Boolean(data.best),
+      isActive: data.isActive ?? true,
+      highlights: Array.isArray(data.highlights)
+        ? data.highlights.map((h) => h.trim()).filter(Boolean)
+        : existing?.highlights || [],
+      features: existing?.features || [],
+      after: existing?.after || [],
+      note: existing?.note,
+    };
+
+    const idx = current.findIndex((s) => s.key === cleanKey);
+    const updated = [...current];
+    if (idx >= 0) {
+      updated[idx] = normalized;
+    } else {
+      updated.push(normalized);
+    }
+
+    await savePodcastServicesCatalog(updated);
+    return { success: true, data: updated, message: `Production tier "${normalized.title}" saved.` };
+  } catch (err) {
+    return { success: false, error: (err as Error).message || "Failed to save production tier." };
+  }
+}
+
+export async function togglePodcastServiceStatus(
+  key: string,
+  isActive: boolean
+): Promise<CmsResponse<PodcastService[]>> {
+  try {
+    await requireAdmin();
+    if (!isDbAvailable()) {
+      return { success: false, error: "Database not connected." };
+    }
+
+    const current = await getCmsPodcastServices();
+    const updated = current.map((s) => (s.key === key ? { ...s, isActive } : s));
+    await savePodcastServicesCatalog(updated);
+    return { success: true, data: updated };
+  } catch (err) {
+    return { success: false, error: (err as Error).message || "Failed to update tier status." };
+  }
+}
+
+export async function deleteCmsPodcastService(
+  key: string
+): Promise<CmsResponse<PodcastService[]>> {
+  try {
+    await requireAdmin();
+    if (!isDbAvailable()) {
+      return { success: false, error: "Database not connected." };
+    }
+
+    const current = await getCmsPodcastServices();
+    if (current.length <= 1) {
+      return { success: false, error: "At least one production tier must remain active." };
+    }
+
+    const updated = current.filter((s) => s.key !== key);
+    await savePodcastServicesCatalog(updated);
+    return { success: true, data: updated };
+  } catch (err) {
+    return { success: false, error: (err as Error).message || "Failed to delete production tier." };
   }
 }

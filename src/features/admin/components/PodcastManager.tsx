@@ -15,7 +15,7 @@ import {
   Layers,
   Sliders,
 } from "lucide-react";
-import type { PodcastStudio, PodcastAddon } from "@/features/podcast-booking/types";
+import type { PodcastStudio, PodcastAddon, PodcastService } from "@/features/podcast-booking/types";
 import {
   upsertCmsPodcastSet,
   togglePodcastSetAvailability,
@@ -23,6 +23,9 @@ import {
   upsertCmsPodcastAddon,
   togglePodcastAddonStatus,
   deleteCmsPodcastAddon,
+  upsertCmsPodcastService,
+  togglePodcastServiceStatus,
+  deleteCmsPodcastService,
 } from "@/lib/actions/podcast-operations";
 import { PodcastSetFormModal, type PodcastSetFormData } from "@/components/admin/forms/PodcastSetFormModal";
 import { PodcastAddonFormModal, type PodcastAddonFormData } from "@/components/admin/forms/PodcastAddonFormModal";
@@ -31,11 +34,12 @@ import { PaginationControls } from "@/components/ui/pagination-controls";
 interface PodcastManagerProps {
   initialSets: PodcastStudio[];
   initialAddons: (PodcastAddon & { isActive?: boolean })[];
+  initialServices?: (PodcastService & { isActive?: boolean })[];
 }
 
-export function PodcastManager({ initialSets, initialAddons }: PodcastManagerProps) {
+export function PodcastManager({ initialSets, initialAddons, initialServices = [] }: PodcastManagerProps) {
   const [actionError, setActionError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"sets" | "addons">("sets");
+  const [activeTab, setActiveTab] = useState<"sets" | "tiers" | "addons">("sets");
   const [sets, setSets] = useState<PodcastStudio[]>(initialSets);
   const [addons, setAddons] = useState<(PodcastAddon & { isActive?: boolean })[]>(initialAddons);
 
@@ -68,6 +72,23 @@ export function PodcastManager({ initialSets, initialAddons }: PodcastManagerPro
   const [editingAddon, setEditingAddon] = useState<(PodcastAddon & { isActive?: boolean }) | null>(null);
   const [addonModalError, setAddonModalError] = useState<string | null>(null);
   const [isSavingAddon, setIsSavingAddon] = useState(false);
+
+  // Service / Tier state (placed after existing hooks to preserve hook index order in tests)
+  const [services, setServices] = useState<(PodcastService & { isActive?: boolean })[]>(initialServices);
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [editingService, setEditingService] = useState<(PodcastService & { isActive?: boolean }) | null>(null);
+  const [serviceForm, setServiceForm] = useState({
+    id: "",
+    title: "",
+    subtitle: "",
+    price: 490,
+    priceUnit: "hour",
+    featuresText: "",
+    badge: "",
+    isActive: true,
+  });
+  const [serviceModalError, setServiceModalError] = useState<string | null>(null);
+  const [isSavingService, setIsSavingService] = useState(false);
 
   // ─── Set Handlers ─────────────────────────────────────────────────────────
 
@@ -242,6 +263,116 @@ export function PodcastManager({ initialSets, initialAddons }: PodcastManagerPro
     }
   };
 
+  // ─── Service / Tier Handlers ──────────────────────────────────────────────
+
+  const handleOpenNewService = () => {
+    setEditingService(null);
+    setServiceModalError(null);
+    setServiceForm({
+      id: "",
+      title: "",
+      subtitle: "",
+      price: 490,
+      priceUnit: "hour",
+      featuresText: "",
+      badge: "",
+      isActive: true,
+    });
+    setIsServiceModalOpen(true);
+  };
+
+  const handleEditService = (item: PodcastService & { isActive?: boolean }) => {
+    setEditingService(item);
+    setServiceModalError(null);
+    setServiceForm({
+      id: item.key,
+      title: item.title,
+      subtitle: item.subtitle,
+      price: item.price,
+      priceUnit: item.priceUnit,
+      featuresText: item.features.join("\n"),
+      badge: item.badge || "",
+      isActive: item.isActive !== false,
+    });
+    setIsServiceModalOpen(true);
+  };
+
+  const handleSaveService = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingService(true);
+    setServiceModalError(null);
+    try {
+      const features = serviceForm.featuresText
+        .split("\n")
+        .map((f) => f.trim())
+        .filter(Boolean);
+      const res = await upsertCmsPodcastService({
+        id: serviceForm.id,
+        title: serviceForm.title,
+        subtitle: serviceForm.subtitle,
+        price: Number(serviceForm.price),
+        priceUnit: serviceForm.priceUnit,
+        features,
+        badge: serviceForm.badge.trim() || undefined,
+        isActive: serviceForm.isActive,
+      });
+      if (res.success && res.item) {
+        setServices((prev) => {
+          const idx = prev.findIndex((s) => s.key === res.item!.key);
+          if (idx >= 0) {
+            const next = [...prev];
+            next[idx] = res.item!;
+            return next;
+          }
+          return [...prev, res.item!];
+        });
+        setIsServiceModalOpen(false);
+      } else {
+        setServiceModalError(res.error || "Failed to save production tier.");
+      }
+    } catch (err) {
+      setServiceModalError((err as Error).message || "Failed to save tier.");
+    } finally {
+      setIsSavingService(false);
+    }
+  };
+
+  const handleToggleService = async (item: PodcastService & { isActive?: boolean }) => {
+    const nextVal = item.isActive === false ? true : false;
+    setServices((prev) =>
+      prev.map((s) => (s.key === item.key ? { ...s, isActive: nextVal } : s))
+    );
+    setActionError(null);
+    try {
+      const res = await togglePodcastServiceStatus(item.key, nextVal);
+      if (!res.success) throw new Error(res.error || "Failed to update tier.");
+    } catch (err) {
+      setServices((prev) => prev.map((s) => (s.key === item.key ? { ...s, isActive: item.isActive } : s)));
+      setActionError(err instanceof Error ? err.message : "Failed to update tier.");
+    }
+  };
+
+  const handleDeleteService = async (key: string) => {
+    if (!confirm(`Are you sure you want to delete production tier "${key}"?`)) return;
+    const index = services.findIndex((s) => s.key === key);
+    const removed = services[index];
+    if (!removed) return;
+    setActionError(null);
+    setServices((prev) => prev.filter((s) => s.key !== key));
+    try {
+      const res = await deleteCmsPodcastService(key);
+      if (!res.success) throw new Error(res.error || "Failed to delete tier.");
+    } catch (err) {
+      setServices((prev) => {
+        if (prev.some((s) => s.key === key)) return prev;
+        const restored = [...prev];
+        restored.splice(index, 0, removed);
+        return restored;
+      });
+      setActionError(err instanceof Error ? err.message : "Failed to delete tier.");
+    }
+  };
+
   return (
     <div className="space-y-6">
       {actionError && <div role="alert" className="text-xs text-rose-400">{actionError}</div>}
@@ -253,10 +384,10 @@ export function PodcastManager({ initialSets, initialAddons }: PodcastManagerPro
           </div>
           <div>
             <h2 className="text-base font-bold text-white tracking-wide">
-              Podcast Studio Sets & Post-Production Add-ons
+              Podcast Studio Sets, Production Tiers & Add-ons
             </h2>
             <p className="text-xs text-text-muted">
-              Live broadcast acoustics, camera sets, guest capacities, and upsell addons.
+              Live broadcast acoustics, camera sets, step-by-step production tiers, and upsell addons.
             </p>
           </div>
         </div>
@@ -279,6 +410,14 @@ export function PodcastManager({ initialSets, initialAddons }: PodcastManagerPro
               <Plus className="w-4 h-4" />
               <span>New Set</span>
             </button>
+          ) : activeTab === "tiers" ? (
+            <button
+              onClick={handleOpenNewService}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-violet text-white text-xs font-bold shadow-lg shadow-brand-violet/20 hover:bg-brand-mauve transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              <span>New Tier</span>
+            </button>
           ) : (
             <button
               onClick={handleOpenNewAddon}
@@ -292,7 +431,7 @@ export function PodcastManager({ initialSets, initialAddons }: PodcastManagerPro
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-white/10 pb-2">
+      <div className="flex flex-wrap gap-2 border-b border-white/10 pb-2">
         <button
           onClick={() => setActiveTab("sets")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
@@ -303,6 +442,17 @@ export function PodcastManager({ initialSets, initialAddons }: PodcastManagerPro
         >
           <Layers className="w-4 h-4" />
           <span>Studio Sets ({sets.length})</span>
+        </button>
+        <button
+          onClick={() => setActiveTab("tiers")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+            activeTab === "tiers"
+              ? "bg-brand-violet/30 border border-brand-mauve/40 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <Mic className="w-4 h-4" />
+          <span>Step 3: Production Tiers ({services.length})</span>
         </button>
         <button
           onClick={() => setActiveTab("addons")}
@@ -413,6 +563,102 @@ export function PodcastManager({ initialSets, initialAddons }: PodcastManagerPro
             onNext={() => setSetsPage((p) => Math.min(setsPageCount - 1, p + 1))}
             variant="card"
           />
+        </div>
+      ) : activeTab === "tiers" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {services.map((service) => {
+            const isActive = service.isActive !== false;
+            return (
+              <div
+                key={service.key}
+                className={`p-5 rounded-2xl border transition-all flex flex-col justify-between ${
+                  isActive
+                    ? "bg-white/[0.02] border-white/10 hover:border-brand-mauve/40"
+                    : "bg-white/[0.01] border-white/5 opacity-60"
+                }`}
+              >
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <h3 className="font-bold text-white text-base">{service.title}</h3>
+                      <span className="text-[10px] font-mono text-brand-mauve">key: {service.key}</span>
+                    </div>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        isActive
+                          ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                          : "bg-rose-500/20 text-rose-400 border border-rose-500/30"
+                      }`}
+                    >
+                      {isActive ? "Active" : "Disabled"}
+                    </span>
+                  </div>
+
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-lg font-bold text-white">AED {service.price}</span>
+                    <span className="text-[11px] text-text-muted">/ {service.priceUnit}</span>
+                    {service.badge && (
+                      <span className="px-2 py-0.5 rounded-md bg-brand-violet/20 text-brand-mauve text-[10px] font-bold">
+                        {service.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-xs text-slate-300 leading-relaxed">{service.subtitle}</p>
+
+                  {service.features?.length > 0 && (
+                    <ul className="space-y-1 text-[11px] text-slate-400">
+                      {service.features.map((feat, idx) => (
+                        <li key={idx} className="flex items-center gap-1.5">
+                          <span className="w-1 h-1 rounded-full bg-brand-mauve" />
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between pt-4 mt-4 border-t border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => handleToggleService(service)}
+                    className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
+                  >
+                    {isActive ? (
+                      <>
+                        <XCircle className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Pause</span>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Enable</span>
+                      </>
+                    )}
+                  </button>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleEditService(service)}
+                      className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors"
+                      title="Edit Tier"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteService(service.key)}
+                      className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 transition-colors"
+                      title="Delete Tier"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div className="space-y-4">
@@ -565,6 +811,126 @@ export function PodcastManager({ initialSets, initialAddons }: PodcastManagerPro
         isSubmitting={isSavingAddon}
         error={addonModalError}
       />
+
+      {isServiceModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <form
+            onSubmit={handleSaveService}
+            className="w-full max-w-lg rounded-2xl bg-[#100a14] border border-white/10 p-6 space-y-4 shadow-2xl shadow-brand-violet/20"
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-white">
+                {editingService ? "Edit Production Tier" : "New Production Tier"}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsServiceModalOpen(false)}
+                className="text-xs text-slate-400 hover:text-white"
+              >
+                Close
+              </button>
+            </div>
+            {serviceModalError && (
+              <div role="alert" className="text-xs text-rose-400 bg-rose-500/10 p-2.5 rounded-lg">
+                {serviceModalError}
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[11px] font-bold text-slate-400 mb-1">Key / Slug</label>
+                <input
+                  required
+                  value={serviceForm.id}
+                  onChange={(e) => setServiceForm((f) => ({ ...f, id: e.target.value }))}
+                  placeholder="recording-with-edit"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-400 mb-1">Title</label>
+                <input
+                  required
+                  value={serviceForm.title}
+                  onChange={(e) => setServiceForm((f) => ({ ...f, title: e.target.value }))}
+                  placeholder="Recording + Professional Edit"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-[11px] font-bold text-slate-400 mb-1">Subtitle</label>
+              <input
+                required
+                value={serviceForm.subtitle}
+                onChange={(e) => setServiceForm((f) => ({ ...f, subtitle: e.target.value }))}
+                placeholder="Complete episode ready to publish"
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label className="block text-[11px] font-bold text-slate-400 mb-1">Price (AED)</label>
+                <input
+                  type="number"
+                  min={0}
+                  required
+                  value={serviceForm.price}
+                  onChange={(e) => setServiceForm((f) => ({ ...f, price: Number(e.target.value) }))}
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-400 mb-1">Unit</label>
+                <input
+                  required
+                  value={serviceForm.priceUnit}
+                  onChange={(e) => setServiceForm((f) => ({ ...f, priceUnit: e.target.value }))}
+                  placeholder="hour"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-400 mb-1">Badge (Optional)</label>
+                <input
+                  value={serviceForm.badge}
+                  onChange={(e) => setServiceForm((f) => ({ ...f, badge: e.target.value }))}
+                  placeholder="Most Popular"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-[11px] font-bold text-slate-400 mb-1">
+                Features (one per line)
+              </label>
+              <textarea
+                rows={4}
+                required
+                value={serviceForm.featuresText}
+                onChange={(e) => setServiceForm((f) => ({ ...f, featuresText: e.target.value }))}
+                placeholder={"3x Sony FX30 4K Cinema Cameras\n4x Shure SM7dB Broadcast Microphones"}
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+              />
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsServiceModalOpen(false)}
+                className="px-4 py-2 rounded-xl bg-white/5 text-xs text-slate-300 hover:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSavingService}
+                className="px-4 py-2 rounded-xl bg-brand-violet text-xs font-bold text-white hover:bg-brand-mauve disabled:opacity-50"
+              >
+                {isSavingService ? "Saving..." : "Save Tier"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }

@@ -332,6 +332,7 @@ export async function createGearBookingOrder(
 
     // 1. Resolve equipment items & calculate pricing
     const pricedItems: { dailyRate: number }[] = [];
+    const resolvedItems: { id: string; slug: string; name: string; totalQuantity: number }[] = [];
     for (const gearId of input.gearIds) {
       let storedGear = null;
       if (isDbAvailable()) {
@@ -350,12 +351,51 @@ export async function createGearBookingOrder(
         return { success: false, error: `Equipment item "${item.name}" is currently unavailable for rental.` };
       }
       pricedItems.push({ dailyRate: Number(item.dailyRate) });
+      resolvedItems.push({
+        id: String(item.id),
+        slug: "slug" in item && typeof item.slug === "string" ? item.slug : String(item.id),
+        name: item.name,
+        totalQuantity: Number(("totalQuantity" in item ? item.totalQuantity : undefined) ?? 1),
+      });
     }
 
     if (input.startDate) {
       const startMs = new Date(input.startDate).getTime();
       if (startMs < Date.now() - 24 * 60 * 60 * 1000) {
         return { success: false, error: "Please select a rental start date in the future." };
+      }
+
+      if (isDbAvailable() && typeof db.query?.bookings?.findMany === "function") {
+        const endDateStr = input.returnDate || addCalendarDays(input.startDate, input.durationDays);
+        const reqStart = new Date(`${input.startDate}T00:00:00+04:00`).getTime();
+        const reqEnd = new Date(`${endDateStr}T23:59:59+04:00`).getTime();
+        const existingBookings = await db.query.bookings.findMany();
+        const bookedCountByKey = new Map<string, number>();
+
+        for (const bk of existingBookings) {
+          if (bk.status === "cancelled" || !Array.isArray(bk.equipmentIds) || bk.equipmentIds.length === 0) continue;
+          const bkStart = new Date(bk.scheduledAt).getTime();
+          const bkDays = Math.max(1, Math.ceil(Number(bk.durationHours || 24) / 24));
+          const bkEnd = bkStart + bkDays * 86_400_000;
+          if (reqStart < bkEnd && reqEnd > bkStart) {
+            for (const eqId of bk.equipmentIds) {
+              bookedCountByKey.set(eqId, (bookedCountByKey.get(eqId) || 0) + 1);
+            }
+          }
+        }
+
+        for (const resolved of resolvedItems) {
+          const alreadyBooked = Math.max(
+            bookedCountByKey.get(resolved.id) || 0,
+            bookedCountByKey.get(resolved.slug) || 0
+          );
+          if (alreadyBooked >= resolved.totalQuantity) {
+            return {
+              success: false,
+              error: `Equipment item "${resolved.name}" is already reserved for the selected dates (${input.startDate} to ${endDateStr}).`,
+            };
+          }
+        }
       }
     }
 

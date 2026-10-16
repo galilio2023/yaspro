@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { PodcastStudio, PodcastAddon } from "../types";
+import type { PodcastStudio, PodcastAddon, PodcastService } from "../types";
 import { usePodcastBooking } from "../hooks/usePodcastBooking";
 import { Step1DateTime } from "./Step1DateTime";
 import { Step2Setup } from "./Step2Setup";
@@ -28,10 +28,19 @@ const stepVariants: Variants = {
   exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -28 : 28, transition: { duration: 0.14, ease: "easeIn" } }),
 };
 
-export function PodcastBookingWizard({ studios: catalogStudios, addons: catalogAddons }: { studios?: PodcastStudio[]; addons?: PodcastAddon[] } = {}) {
+export function PodcastBookingWizard({
+  studios: catalogStudios,
+  addons: catalogAddons,
+  services: catalogServices,
+}: {
+  studios?: PodcastStudio[];
+  addons?: PodcastAddon[];
+  services?: PodcastService[];
+} = {}) {
   const {
     studios,
     addons,
+    services,
     step,
     setStep,
     nextStep,
@@ -62,7 +71,7 @@ export function PodcastBookingWizard({ studios: catalogStudios, addons: catalogA
     applyPromo,
     removePromo,
     submitBooking,
-  } = usePodcastBooking(catalogStudios, catalogAddons);
+  } = usePodcastBooking(catalogStudios, catalogAddons, catalogServices);
 
   const [direction, setDirection] = useState(1);
 
@@ -217,6 +226,7 @@ export function PodcastBookingWizard({ studios: catalogStudios, addons: catalogA
                   <Step3Service
                     session={currentSession}
                     onChange={updateCurrentSession}
+                    services={services}
                   />
                 )}
                 {step === 4 && (
@@ -231,6 +241,7 @@ export function PodcastBookingWizard({ studios: catalogStudios, addons: catalogA
                   <Step5ReviewCheckout
                     studios={studios}
                     addons={addons}
+                    services={services}
                     sessions={sessions}
                     contact={contact}
                     onUpdateContact={(up) => setContact((prev) => ({ ...prev, ...up }))}

@@ -11,6 +11,7 @@ import { PackageFaqSection } from "@/features/social-media-packages/components/P
 
 import { SITE_URL } from "@/lib/constants";
 import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
+import { getCmsSocialPackages } from "@/lib/actions/social-packages-operations";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -125,7 +126,8 @@ const SOCIAL_MEDIA_PACKAGES_SCHEMA = {
   },
 };
 
-export default function SocialMediaPackagesPage() {
+export default async function SocialMediaPackagesPage() {
+  const socialPackages = await getCmsSocialPackages();
   return (
     <Section
       id="social-media-packages-page"
@@ -138,7 +140,7 @@ export default function SocialMediaPackagesPage() {
         <SocialMediaPackagesHero />
 
         {/* Pricing Grid & Modal */}
-        <PackagesGrid />
+        <PackagesGrid packages={socialPackages} />
 
         {/* Deliverables & Studio Advantage */}
         <SocialMediaDeliverablesShowcase />

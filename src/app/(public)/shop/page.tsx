@@ -11,6 +11,7 @@ import { JsonLd, YAS_PRO_ORGANIZATION_SCHEMA } from "@/components/seo/JsonLd";
 
 import { SITE_URL } from "@/lib/constants";
 import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
+import { getUnavailableEquipmentIdsForRange } from "@/lib/actions/availability-operations";
 
 export const revalidate = 3600;
 
@@ -114,7 +115,10 @@ export default async function ShopPage() {
       <JsonLd data={GEAR_CATALOG_SCHEMA} />
       <Container>
         <Suspense fallback={<div className="min-h-[400px]" />}>
-          <GearExplorer initialGear={initialGear} />
+          <GearExplorer
+            initialGear={initialGear}
+            checkRangeAvailability={getUnavailableEquipmentIdsForRange}
+          />
         </Suspense>
       </Container>
     </Section>

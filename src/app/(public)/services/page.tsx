@@ -1,7 +1,12 @@
 import { Metadata } from "next";
-import { ServicesPageClient } from "./ServicesPageClient";
+import { ServicesPageClient, type ServicesLiveCounts } from "./ServicesPageClient";
 import { SITE_URL } from "@/lib/constants";
 import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
+import { getCmsStudios } from "@/lib/actions/studios-operations";
+import { getCmsPodcastSets } from "@/lib/actions/podcast-operations";
+import { getCachedEquipment } from "@/lib/cached-queries";
+import { getBookingOffers } from "@/lib/actions/offers-packages-operations";
+import { getCmsSocialPackages } from "@/lib/actions/social-packages-operations";
 
 export const revalidate = 3600;
 
@@ -36,6 +41,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ServicesPage() {
-  return <ServicesPageClient />;
+export default async function ServicesPage() {
+  const [studiosList, podcastSets, equipmentList, offersList, socialPackages] = await Promise.all([
+    getCmsStudios().catch(() => []),
+    getCmsPodcastSets().catch(() => []),
+    getCachedEquipment().catch(() => []),
+    getBookingOffers().catch(() => []),
+    getCmsSocialPackages().catch(() => []),
+  ]);
+
+  const liveCounts: ServicesLiveCounts = {
+    studiosCount: studiosList.filter((s) => s.isActive !== false).length || 3,
+    podcastSetsCount: podcastSets.filter((p) => p.isAvailable !== false).length || 4,
+    gearCount: equipmentList.filter((g) => g.isAvailable !== false).length || 42,
+    offersCount: offersList.filter((o) => o.isActive !== false).length || 6,
+    socialPackagesCount: socialPackages.filter((s) => s.isActive !== false).length || 4,
+  };
+
+  return <ServicesPageClient liveCounts={liveCounts} />;
 }

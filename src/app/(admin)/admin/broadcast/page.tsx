@@ -1,5 +1,6 @@
 import React from "react";
 import { getCmsInquiries } from "@/lib/cms-actions";
+import { getTelemetryFeed } from "@/lib/actions/broadcast-telemetry-dispatcher";
 import { BroadcastManager } from "@/features/admin";
 
 export const metadata = {
@@ -8,7 +9,10 @@ export const metadata = {
 };
 
 export default async function AdminBroadcastPage() {
-  const allInquiries = await getCmsInquiries();
+  const [allInquiries, initialTelemetryFeed] = await Promise.all([
+    getCmsInquiries(),
+    typeof getTelemetryFeed === "function" ? getTelemetryFeed().catch(() => []) : Promise.resolve([]),
+  ]);
   const broadcastInquiries = allInquiries.filter(
     (i) =>
       i.inquiryType === "ob_van" ||
@@ -18,5 +22,10 @@ export default async function AdminBroadcastPage() {
       i.message?.includes("[Outdoor Filming")
   );
 
-  return <BroadcastManager initialBroadcastInquiries={broadcastInquiries} />;
+  return (
+    <BroadcastManager
+      initialBroadcastInquiries={broadcastInquiries}
+      initialTelemetryFeed={initialTelemetryFeed}
+    />
+  );
 }

@@ -88,7 +88,11 @@ function BookingWizardLoading() {
 }
 
 export default async function StudioBookingPage() {
-  const cmsStudios = await getCachedStudios();
+  const { getStudioWizardCatalog } = await import("@/lib/actions/studio-wizard-catalog-operations");
+  const [cmsStudios, wizardCatalog] = await Promise.all([
+    getCachedStudios(),
+    getStudioWizardCatalog(),
+  ]);
   const studios = cmsStudios.filter((studio) => studio.isActive).map((studio) => ({
     id: studio.id,
     slug: studio.slug,
@@ -105,7 +109,7 @@ export default async function StudioBookingPage() {
         <StudioBookingPageHeader />
 
         <Suspense fallback={<BookingWizardLoading />}>
-          <BookingWizard studios={studios} />
+          <BookingWizard studios={studios} wizardCatalog={wizardCatalog} />
         </Suspense>
       </Container>
     </Section>

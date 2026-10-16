@@ -71,9 +71,13 @@ import { ExternalLink, ArrowRight } from "lucide-react";
 
 export interface BroadcastManagerProps {
   initialBroadcastInquiries?: Inquiry[];
+  initialTelemetryFeed?: TelemetryEventItem[];
 }
 
-export function BroadcastManager({ initialBroadcastInquiries = [] }: BroadcastManagerProps) {
+export function BroadcastManager({
+  initialBroadcastInquiries = [],
+  initialTelemetryFeed = [],
+}: BroadcastManagerProps) {
   const activeInquiries = initialBroadcastInquiries.filter((inq) => !inq.isResolved);
   const [source, setSource] = useState("OB-VAN MERCEDES 01");
   const [type, setType] = useState<TelemetryType>("OB_VAN_GPS");
@@ -82,6 +86,9 @@ export function BroadcastManager({ initialBroadcastInquiries = [] }: BroadcastMa
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [dispatchedFeed, setDispatchedFeed] = useState<TelemetryEventItem[]>(() => {
+    if (Array.isArray(initialTelemetryFeed) && initialTelemetryFeed.length > 0) {
+      return initialTelemetryFeed;
+    }
     if (typeof window === "undefined") return INITIAL_DISPATCHED_FEED;
     try {
       const saved = localStorage.getItem("yaspro_admin_telemetry_feed");

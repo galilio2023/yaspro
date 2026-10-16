@@ -20,7 +20,7 @@ import {
   Share2,
 } from "lucide-react";
 import { OFFERS_AND_BUNDLES } from "@/features/offers/data";
-import { SOCIAL_MEDIA_PACKAGES } from "@/features/social-media-packages/data/packages";
+import { SOCIAL_MEDIA_PACKAGES, type SocialMediaPackage } from "@/features/social-media-packages/data/packages";
 import type { OfferBundleItem } from "@/features/offers/types";
 import type { EnrichedBooking } from "@/lib/actions/bookings-rfp-operations";
 import {
@@ -34,6 +34,9 @@ import {
   upsertCmsOffer,
   toggleOfferStatus,
   deleteCmsOffer,
+  upsertCmsSocialPackage,
+  toggleSocialPackageStatus,
+  deleteCmsSocialPackage,
   type CmsOfferInput,
   type CmsOfferItem,
 } from "@/lib/actions/offers-packages-operations";
@@ -66,12 +69,14 @@ interface OffersManagerProps {
   initialBookings?: EnrichedBooking[];
   promoCodes: OffersManagerPromoItem[];
   initialOffers?: (OfferBundleItem | CmsOfferItem)[];
+  initialSocialPackages?: SocialMediaPackage[];
 }
 
 export function OffersManager({
   initialBookings = [],
   promoCodes,
   initialOffers,
+  initialSocialPackages,
 }: OffersManagerProps) {
   const router = useRouter();
   const promoList = promoCodes;
@@ -103,6 +108,35 @@ export function OffersManager({
   const [offerFeedback, setOfferFeedback] = useState<string | null>(null);
 
   const [now] = useState(() => Date.now());
+
+  // Social Media Packages state
+  const [socialPackages, setSocialPackages] = useState<SocialMediaPackage[]>(
+    initialSocialPackages && initialSocialPackages.length > 0
+      ? initialSocialPackages
+      : SOCIAL_MEDIA_PACKAGES
+  );
+  const [isSocialModalOpen, setIsSocialModalOpen] = useState(false);
+  const [editingSocialPkg, setEditingSocialPkg] = useState<SocialMediaPackage | null>(null);
+  const [socialForm, setSocialForm] = useState({
+    id: "",
+    nameEn: "",
+    nameAr: "",
+    taglineEn: "",
+    taglineAr: "",
+    monthlyPrice: "3000",
+    yearlyPricePerMonth: "2400",
+    isPopular: false,
+    isActive: true,
+    ctaType: "purchase" as "purchase" | "contact",
+    reels: "2 Reels",
+    posts: "6 Posts",
+    stories: "10 Stories",
+    filming: "1/2 Day (4h)",
+    featuresText: "",
+  });
+  const [socialBusy, setSocialBusy] = useState(false);
+  const [socialError, setSocialError] = useState<string | null>(null);
+  const [socialFeedback, setSocialFeedback] = useState<string | null>(null);
 
   const handleOfferSave = async (offer: CmsOfferInput): Promise<boolean> => {
     setOfferBusy(true);
@@ -303,7 +337,7 @@ export function OffersManager({
       <div className="flex items-center gap-2 border-b border-white/10 pb-3">
         {[
           { id: "catalog", label: "Production Bundles", count: packageList.length },
-          { id: "social", label: "Social Media Retainers", count: SOCIAL_MEDIA_PACKAGES.length },
+          { id: "social", label: "Social Media Retainers", count: socialPackages.length },
           { id: "promos", label: "Promo Codes & Discounts", count: promoCodes.length },
           { id: "bookings", label: "Offer Bookings Log", count: offerBookings.length },
         ].map((tab) => (
@@ -584,70 +618,447 @@ export function OffersManager({
                 <span>Monthly & Annual Social Media Production Retainers</span>
               </h3>
               <p className="text-xs text-slate-400 mt-1 max-w-2xl leading-relaxed">
-                Ongoing content packages including monthly 4K reels, editorial carousel posts, studio filming days, and story graphics. Requests submitted by clients route directly into the Inquiries Desk.
+                Ongoing content packages including monthly 4K reels, editorial carousel posts, studio filming days, and story graphics. Changes sync directly to /social-media-packages.
               </p>
             </div>
-            <Link
-              href="/social-media-packages"
-              target="_blank"
-              className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 flex items-center justify-center gap-2 transition-colors shrink-0"
-            >
-              <span>View Public Page</span>
-              <ExternalLink size={13} />
-            </Link>
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                href="/social-media-packages"
+                target="_blank"
+                className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 flex items-center justify-center gap-2 transition-colors"
+              >
+                <span>View Public Page</span>
+                <ExternalLink size={13} />
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingSocialPkg(null);
+                  setSocialError(null);
+                  setSocialForm({
+                    id: "",
+                    nameEn: "",
+                    nameAr: "",
+                    taglineEn: "",
+                    taglineAr: "",
+                    monthlyPrice: "3000",
+                    yearlyPricePerMonth: "2400",
+                    isPopular: false,
+                    isActive: true,
+                    ctaType: "purchase",
+                    reels: "4 Reels",
+                    posts: "12 Posts",
+                    stories: "20 Stories",
+                    filming: "1 Full Day (8h)",
+                    featuresText: "",
+                  });
+                  setIsSocialModalOpen(true);
+                }}
+                className="px-4 py-2.5 rounded-xl btn-brand text-xs flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Plus size={15} />
+                <span>New Social Package</span>
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {SOCIAL_MEDIA_PACKAGES.map((pkg) => (
-              <div
-                key={pkg.id}
-                className="p-5 rounded-3xl bg-slate-900/60 border border-white/10 backdrop-blur-xl space-y-4 hover:border-brand-mauve/40 transition-all flex flex-col justify-between"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-brand-violet/30 text-brand-mauve border border-brand-mauve/30">
-                      {pkg.specsHighlights.filming}
-                    </span>
-                    {pkg.isPopular && (
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        Popular
+          {socialFeedback && (
+            <div role="status" className="p-3 rounded-xl bg-brand-violet/15 border border-brand-mauve/20 text-xs text-brand-lavender">
+              {socialFeedback}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {socialPackages.map((pkg) => {
+              const isActive = pkg.isActive !== false;
+              return (
+                <div
+                  key={pkg.id}
+                  className={`p-5 rounded-3xl border backdrop-blur-xl space-y-4 transition-all flex flex-col justify-between ${
+                    isActive
+                      ? "bg-slate-900/60 border-white/10 hover:border-brand-mauve/40"
+                      : "bg-slate-900/30 border-white/5 opacity-60"
+                  }`}
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-brand-violet/30 text-brand-mauve border border-brand-mauve/30">
+                        {pkg.specsHighlights.filming}
                       </span>
-                    )}
+                      <div className="flex items-center gap-1.5">
+                        {pkg.isPopular && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-brand-violet/40 text-brand-lavender border border-brand-mauve/30">
+                            Popular
+                          </span>
+                        )}
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                            isActive
+                              ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                              : "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                          }`}
+                        >
+                          {isActive ? "Active" : "Paused"}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-white">{pkg.nameEn}</h4>
+                      <p className="text-xs text-brand-lavender/80 font-arabic mt-0.5" dir="rtl">{pkg.nameAr}</p>
+                      <p className="text-xs text-slate-400 mt-1 line-clamp-2">{pkg.taglineEn}</p>
+                    </div>
+
+                    <div className="p-3 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5 text-xs">
+                      <div className="flex justify-between text-slate-300">
+                        <span>Monthly Retainer:</span>
+                        <span className="font-mono font-bold text-white">{pkg.monthlyPrice ? formatCurrency(pkg.monthlyPrice) : "Custom"}</span>
+                      </div>
+                      <div className="flex justify-between text-brand-mauve">
+                        <span>Annual (-20%):</span>
+                        <span className="font-mono font-bold">{pkg.yearlyPricePerMonth ? `${formatCurrency(pkg.yearlyPricePerMonth)}/mo` : "Custom"}</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5 pt-1">
+                      <span className="text-[10px] uppercase font-mono text-slate-500 font-bold block">Deliverables Snapshot</span>
+                      <div className="grid grid-cols-3 gap-1.5 text-center text-[10px] font-mono">
+                        <div className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-300">{pkg.specsHighlights.reels}</div>
+                        <div className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-300">{pkg.specsHighlights.posts}</div>
+                        <div className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-300">{pkg.specsHighlights.stories}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-2 text-xs">
+                    <button
+                      type="button"
+                      disabled={socialBusy}
+                      onClick={async () => {
+                        setSocialBusy(true);
+                        const nextVal = !isActive;
+                        try {
+                          const res = await toggleSocialPackageStatus(pkg.id, nextVal);
+                          if (res.success) {
+                            setSocialPackages((prev) =>
+                              prev.map((item) => (item.id === pkg.id ? { ...item, isActive: nextVal } : item))
+                            );
+                            setSocialFeedback(nextVal ? "Social package enabled." : "Social package paused.");
+                            router.refresh();
+                          } else {
+                            setSocialFeedback(res.error || "Failed to update package.");
+                          }
+                        } finally {
+                          setSocialBusy(false);
+                        }
+                      }}
+                      className="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-200 cursor-pointer transition-colors"
+                    >
+                      {isActive ? "Pause" : "Enable"}
+                    </button>
+
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingSocialPkg(pkg);
+                          setSocialError(null);
+                          setSocialForm({
+                            id: pkg.id,
+                            nameEn: pkg.nameEn,
+                            nameAr: pkg.nameAr,
+                            taglineEn: pkg.taglineEn,
+                            taglineAr: pkg.taglineAr,
+                            monthlyPrice: pkg.monthlyPrice !== null ? String(pkg.monthlyPrice) : "",
+                            yearlyPricePerMonth: pkg.yearlyPricePerMonth !== null ? String(pkg.yearlyPricePerMonth) : "",
+                            isPopular: Boolean(pkg.isPopular),
+                            isActive: pkg.isActive !== false,
+                            ctaType: pkg.ctaType,
+                            reels: pkg.specsHighlights.reels,
+                            posts: pkg.specsHighlights.posts,
+                            stories: pkg.specsHighlights.stories,
+                            filming: pkg.specsHighlights.filming,
+                            featuresText: pkg.features.map((f) => `${f.labelEn} | ${f.labelAr}`).join("\n"),
+                          });
+                          setIsSocialModalOpen(true);
+                        }}
+                        className="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-200 flex items-center gap-1 cursor-pointer transition-colors"
+                      >
+                        <Edit3 size={12} />
+                        <span>Edit</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={socialBusy}
+                        onClick={async () => {
+                          if (!confirm(`Delete social media package "${pkg.nameEn}"?`)) return;
+                          setSocialBusy(true);
+                          try {
+                            const res = await deleteCmsSocialPackage(pkg.id);
+                            if (res.success) {
+                              setSocialPackages((prev) => prev.filter((item) => item.id !== pkg.id));
+                              setSocialFeedback("Social package deleted.");
+                              router.refresh();
+                            } else {
+                              setSocialFeedback(res.error || "Failed to delete package.");
+                            }
+                          } finally {
+                            setSocialBusy(false);
+                          }
+                        }}
+                        className="p-1.5 rounded-xl text-rose-400 hover:bg-rose-500/10 cursor-pointer transition-colors"
+                        title="Delete social package"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {isSocialModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setSocialBusy(true);
+                  setSocialError(null);
+                  try {
+                    const features = socialForm.featuresText
+                      .split("\n")
+                      .map((line) => line.trim())
+                      .filter(Boolean)
+                      .map((line) => {
+                        const [en, ar] = line.split("|").map((s) => s.trim());
+                        return { labelEn: en || line, labelAr: ar || en || line };
+                      });
+                    const res = await upsertCmsSocialPackage({
+                      id: socialForm.id || socialForm.nameEn,
+                      nameEn: socialForm.nameEn,
+                      nameAr: socialForm.nameAr || socialForm.nameEn,
+                      taglineEn: socialForm.taglineEn,
+                      taglineAr: socialForm.taglineAr || socialForm.taglineEn,
+                      monthlyPrice: socialForm.monthlyPrice.trim() ? Number(socialForm.monthlyPrice) : null,
+                      yearlyPricePerMonth: socialForm.yearlyPricePerMonth.trim()
+                        ? Number(socialForm.yearlyPricePerMonth)
+                        : null,
+                      isPopular: socialForm.isPopular,
+                      isActive: socialForm.isActive,
+                      ctaType: socialForm.ctaType,
+                      specsHighlights: {
+                        reels: socialForm.reels,
+                        posts: socialForm.posts,
+                        stories: socialForm.stories,
+                        filming: socialForm.filming,
+                      },
+                      features,
+                    });
+                    if (res.success && res.item) {
+                      setSocialPackages((prev) => {
+                        const idx = prev.findIndex((p) => p.id === res.item!.id);
+                        if (idx >= 0) {
+                          const next = [...prev];
+                          next[idx] = res.item!;
+                          return next;
+                        }
+                        return [...prev, res.item!];
+                      });
+                      setSocialFeedback("Social media package saved.");
+                      setIsSocialModalOpen(false);
+                      router.refresh();
+                    } else {
+                      setSocialError(res.error || "Failed to save package.");
+                    }
+                  } finally {
+                    setSocialBusy(false);
+                  }
+                }}
+                className="w-full max-w-xl rounded-2xl bg-[#100a14] border border-white/10 p-6 space-y-4 shadow-2xl shadow-brand-violet/20 max-h-[90vh] overflow-y-auto"
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-bold text-white">
+                    {editingSocialPkg ? "Edit Social Media Package" : "New Social Media Package"}
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setIsSocialModalOpen(false)}
+                    className="text-xs text-slate-400 hover:text-white"
+                  >
+                    Close
+                  </button>
+                </div>
+
+                {socialError && (
+                  <div role="alert" className="text-xs text-rose-400 bg-rose-500/10 p-2.5 rounded-lg">
+                    {socialError}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">ID / Slug</label>
+                    <input
+                      required
+                      value={socialForm.id}
+                      onChange={(e) => setSocialForm((f) => ({ ...f, id: e.target.value }))}
+                      placeholder="growth"
+                      className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                    />
                   </div>
                   <div>
-                    <h4 className="text-base font-bold text-white">{pkg.nameEn}</h4>
-                    <p className="text-xs text-brand-lavender/80 font-arabic mt-0.5" dir="rtl">{pkg.nameAr}</p>
-                    <p className="text-xs text-slate-400 mt-1 line-clamp-2">{pkg.taglineEn}</p>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">Name (EN)</label>
+                    <input
+                      required
+                      value={socialForm.nameEn}
+                      onChange={(e) => setSocialForm((f) => ({ ...f, nameEn: e.target.value }))}
+                      placeholder="Growth"
+                      className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                    />
                   </div>
-
-                  <div className="p-3 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5 text-xs">
-                    <div className="flex justify-between text-slate-300">
-                      <span>Monthly Retainer:</span>
-                      <span className="font-mono font-bold text-white">{pkg.monthlyPrice ? formatCurrency(pkg.monthlyPrice) : "Custom"}</span>
-                    </div>
-                    <div className="flex justify-between text-brand-mauve">
-                      <span>Annual (-20%):</span>
-                      <span className="font-mono font-bold">{pkg.yearlyPricePerMonth ? `${formatCurrency(pkg.yearlyPricePerMonth)}/mo` : "Custom"}</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5 pt-1">
-                    <span className="text-[10px] uppercase font-mono text-slate-500 font-bold block">Deliverables Snapshot</span>
-                    <div className="grid grid-cols-3 gap-1.5 text-center text-[10px] font-mono">
-                      <div className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-300">{pkg.specsHighlights.reels}</div>
-                      <div className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-300">{pkg.specsHighlights.posts}</div>
-                      <div className="p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-300">{pkg.specsHighlights.stories}</div>
-                    </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">Name (AR)</label>
+                    <input
+                      value={socialForm.nameAr}
+                      onChange={(e) => setSocialForm((f) => ({ ...f, nameAr: e.target.value }))}
+                      placeholder="باقة النمو"
+                      className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                    />
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-                  <span className="text-[10px] text-slate-500 font-mono">Action Type</span>
-                  <span className="font-mono font-bold text-slate-300 uppercase">{pkg.ctaType}</span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">Tagline (EN)</label>
+                    <input
+                      required
+                      value={socialForm.taglineEn}
+                      onChange={(e) => setSocialForm((f) => ({ ...f, taglineEn: e.target.value }))}
+                      className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">Tagline (AR)</label>
+                    <input
+                      value={socialForm.taglineAr}
+                      onChange={(e) => setSocialForm((f) => ({ ...f, taglineAr: e.target.value }))}
+                      className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">Monthly AED (empty=Custom)</label>
+                    <input
+                      type="number"
+                      value={socialForm.monthlyPrice}
+                      onChange={(e) => setSocialForm((f) => ({ ...f, monthlyPrice: e.target.value }))}
+                      placeholder="6500"
+                      className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">Annual/Mo AED</label>
+                    <input
+                      type="number"
+                      value={socialForm.yearlyPricePerMonth}
+                      onChange={(e) => setSocialForm((f) => ({ ...f, yearlyPricePerMonth: e.target.value }))}
+                      placeholder="5200"
+                      className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-400 mb-1">CTA Action</label>
+                    <select
+                      value={socialForm.ctaType}
+                      onChange={(e) => setSocialForm((f) => ({ ...f, ctaType: e.target.value as "purchase" | "contact" }))}
+                      className="w-full rounded-xl bg-[#100a14] border border-white/10 px-3 py-2 text-xs text-white"
+                    >
+                      <option value="purchase">Purchase Plan</option>
+                      <option value="contact">Contact Sales</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-4 gap-2">
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 mb-1">Reels Spec</label>
+                    <input
+                      value={socialForm.reels}
+                      onChange={(e) => setSocialForm((f) => ({ ...f, reels: e.target.value }))}
+                      className="w-full rounded-xl bg-white/5 border border-white/10 px-2.5 py-1.5 text-xs text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 mb-1">Posts Spec</label>
+                    <input
+                      value={socialForm.posts}
+                      onChange={(e) => setSocialForm((f) => ({ ...f, posts: e.target.value }))}
+                      className="w-full rounded-xl bg-white/5 border border-white/10 px-2.5 py-1.5 text-xs text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 mb-1">Stories Spec</label>
+                    <input
+                      value={socialForm.stories}
+                      onChange={(e) => setSocialForm((f) => ({ ...f, stories: e.target.value }))}
+                      className="w-full rounded-xl bg-white/5 border border-white/10 px-2.5 py-1.5 text-xs text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 mb-1">Filming Spec</label>
+                    <input
+                      value={socialForm.filming}
+                      onChange={(e) => setSocialForm((f) => ({ ...f, filming: e.target.value }))}
+                      className="w-full rounded-xl bg-white/5 border border-white/10 px-2.5 py-1.5 text-xs text-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-400 mb-1">
+                    Features (one per line: English | Arabic)
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={socialForm.featuresText}
+                    onChange={(e) => setSocialForm((f) => ({ ...f, featuresText: e.target.value }))}
+                    placeholder="Videos: 4 Reels (15-45 sec) | فيديوهات: 4 ريلز احترافية"
+                    className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={socialForm.isPopular}
+                      onChange={(e) => setSocialForm((f) => ({ ...f, isPopular: e.target.checked }))}
+                    />
+                    <span>Highlight as Popular Tier</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsSocialModalOpen(false)}
+                      className="px-4 py-2 rounded-xl bg-white/5 text-xs text-slate-300 hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={socialBusy}
+                      className="px-4 py-2 rounded-xl bg-brand-violet text-xs font-bold text-white hover:bg-brand-mauve disabled:opacity-50"
+                    >
+                      {socialBusy ? "Saving..." : "Save Package"}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       )}
 

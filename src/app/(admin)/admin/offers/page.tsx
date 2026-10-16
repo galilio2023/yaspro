@@ -5,7 +5,7 @@ import { OFFERS_PROMO_CODES } from "@/features/offers/promo-codes";
 import { OFFERS_AND_BUNDLES } from "@/features/offers/data";
 import { formatCurrency } from "@/lib/utils";
 import { getCmsPromoCodes, type CmsPromoCode } from "@/lib/actions/offers-promo-operations";
-import { getCmsOffers } from "@/lib/actions/offers-packages-operations";
+import { getCmsOffers, getCmsSocialPackages } from "@/lib/actions/offers-packages-operations";
 
 const PROMO_DESCRIPTIONS: Record<string, string> = {
   YAS10: "Site-wide Welcome Promo",
@@ -19,10 +19,11 @@ export const metadata = {
 };
 
 export default async function AdminOffersPage() {
-  const [initialBookings, dbPromos, initialOffers] = await Promise.all([
+  const [initialBookings, dbPromos, initialOffers, initialSocialPackages] = await Promise.all([
     getCmsBookings(),
     getCmsPromoCodes().catch(() => [] as CmsPromoCode[]),
     getCmsOffers().catch(() => []),
+    typeof getCmsSocialPackages === "function" ? getCmsSocialPackages().catch(() => []) : Promise.resolve([]),
   ]);
 
   const promoMap = new Map<string, OffersManagerPromoItem>();
@@ -81,6 +82,7 @@ export default async function AdminOffersPage() {
       initialBookings={initialBookings}
       promoCodes={promoCodes}
       initialOffers={initialOffers}
+      initialSocialPackages={initialSocialPackages}
     />
   );
 }

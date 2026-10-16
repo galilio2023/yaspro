@@ -1,10 +1,14 @@
 "use client";
 
-import type { WizardStepProps } from "../../types";
+import type { WizardStepProps, SessionTypeItem } from "../../types";
 import { SESSION_TYPES } from "../../constants";
 import { CardMedia, MetaTag, PriceLine, SelectableCard, StepIntro } from "../ui/BookingKit";
 
-export function StepSessionType({ state, update }: WizardStepProps) {
+export function StepSessionType({
+  state,
+  update,
+  sessionTypes = SESSION_TYPES,
+}: WizardStepProps & { sessionTypes?: readonly SessionTypeItem[] }) {
   return (
     <div>
       <StepIntro
@@ -12,11 +16,11 @@ export function StepSessionType({ state, update }: WizardStepProps) {
         total={7}
         title="Session Type"
         description="Tell us what you're producing — the hourly rate includes the studio space."
-        aside={<MetaTag>{SESSION_TYPES.length} formats</MetaTag>}
+        aside={<MetaTag>{sessionTypes.length} formats</MetaTag>}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {SESSION_TYPES.map((s, i) => {
+        {sessionTypes.map((s, i) => {
           const isSelected = state.sessionType === s.id;
 
           return (

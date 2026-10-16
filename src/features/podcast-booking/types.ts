@@ -20,6 +20,7 @@ export interface PodcastService {
   sub: string;
   price: number;
   best?: boolean;
+  isActive?: boolean;
   features: PodcastServiceFeature[];
   after: PodcastServiceFeature[];
   note?: string;
