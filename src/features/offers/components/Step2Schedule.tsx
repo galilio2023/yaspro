@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   CalendarDays,
   Clock,
@@ -8,11 +8,13 @@ import {
   ChevronRight,
   Info,
   Check,
+  Lock,
 } from "lucide-react";
 import { OfferBundleItem } from "../types";
 import { STANDARD_TIME_SLOTS } from "../data";
 import { StepIntro } from "@/features/booking/components/ui/BookingKit";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { getStudioSlotAvailability } from "@/lib/actions/availability-operations";
 import { cn } from "@/lib/utils";
 
 interface Step2ScheduleProps {
@@ -47,6 +49,40 @@ export function Step2Schedule({
   onTimeSlotChange,
 }: Step2ScheduleProps) {
   const { isArabic } = useLanguage();
+  const [unavailableSlots, setUnavailableSlots] = useState<string[]>([]);
+  const [blackoutReason, setBlackoutReason] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!selectedDate) {
+      setUnavailableSlots([]);
+      setBlackoutReason(undefined);
+      return;
+    }
+    getStudioSlotAvailability({
+      date: selectedDate,
+      durationHours: offer.hours || 2,
+      studioId: offer.studioId,
+    })
+      .then((res) => {
+        if (cancelled) return;
+        const nextUnavailable = res.unavailableSlots || [];
+        setUnavailableSlots(nextUnavailable);
+        setBlackoutReason(res.blackoutReason);
+        if (selectedTimeSlot && nextUnavailable.includes(selectedTimeSlot)) {
+          onTimeSlotChange("");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setUnavailableSlots([]);
+          setBlackoutReason(undefined);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedDate, offer.hours, offer.studioId, selectedTimeSlot, onTimeSlotChange]);
 
   const [currentCalendarDate, setCurrentCalendarDate] = useState<Date>(() => {
     if (selectedDate) {
@@ -238,23 +274,40 @@ export function Step2Schedule({
               </span>
             </div>
 
+            {blackoutReason && (
+              <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-[11px] text-rose-300 flex items-center gap-2">
+                <Lock size={13} className="shrink-0" />
+                <span>
+                  {isArabic ? `إغلاق استوديو: ${blackoutReason}` : `Blackout window: ${blackoutReason}`}
+                </span>
+              </div>
+            )}
+
             {/* Time Slot Chips */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2">
               {availableSlots.map((slot) => {
                 const isSelected = selectedTimeSlot === slot;
+                const isBooked = unavailableSlots.includes(slot);
                 return (
                   <button
                     key={slot}
                     type="button"
-                    onClick={() => onTimeSlotChange(slot)}
+                    disabled={isBooked}
+                    onClick={() => !isBooked && onTimeSlotChange(slot)}
                     className={cn(
-                      "py-2.5 px-3 rounded-xl font-mono text-xs font-semibold transition-all duration-150 flex items-center justify-center gap-1.5 border cursor-pointer",
-                      isSelected
-                        ? "bg-brand-violet border-brand-mauve text-white font-bold shadow-md shadow-brand-violet/20"
-                        : "bg-white/[0.03] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:text-white"
+                      "py-2.5 px-3 rounded-xl font-mono text-xs font-semibold transition-all duration-150 flex items-center justify-center gap-1.5 border",
+                      isBooked
+                        ? "bg-white/[0.01] border-white/[0.04] text-zinc-600 line-through cursor-not-allowed opacity-50"
+                        : isSelected
+                          ? "bg-brand-violet border-brand-mauve text-white font-bold shadow-md shadow-brand-violet/20 cursor-pointer"
+                          : "bg-white/[0.03] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:text-white cursor-pointer"
                     )}
                   >
-                    {isSelected && <Check size={12} strokeWidth={3} />}
+                    {isBooked ? (
+                      <Lock size={11} className="text-zinc-600" />
+                    ) : (
+                      isSelected && <Check size={12} strokeWidth={3} />
+                    )}
                     <span>{slot}</span>
                   </button>
                 );

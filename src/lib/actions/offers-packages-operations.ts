@@ -7,6 +7,15 @@ import { revalidatePath } from "next/cache";
 import { OFFERS_AND_BUNDLES } from "@/features/offers/data";
 import type { OfferBundleItem } from "@/features/offers/types";
 import { isDbAvailable, requireAdmin, type CmsResponse } from "./shared";
+import {
+  getCmsSocialPackages as _getCmsSocialPackages,
+  upsertCmsSocialPackage as _upsertCmsSocialPackage,
+  toggleSocialPackageStatus as _toggleSocialPackageStatus,
+  deleteCmsSocialPackage as _deleteCmsSocialPackage,
+  type UpsertSocialPackageInput,
+} from "./social-packages-operations";
+
+export type { UpsertSocialPackageInput };
 
 export interface CmsOfferItem extends OfferBundleItem {
   source: "database" | "static";
@@ -286,4 +295,20 @@ export async function deleteCmsOffer(id: string): Promise<CmsResponse> {
     console.error("deleteCmsOffer error:", err);
     return { success: false, error: "Failed to delete package." };
   }
+}
+
+export async function getCmsSocialPackages() {
+  return _getCmsSocialPackages();
+}
+
+export async function upsertCmsSocialPackage(input: UpsertSocialPackageInput) {
+  return _upsertCmsSocialPackage(input);
+}
+
+export async function toggleSocialPackageStatus(id: string, isActive: boolean) {
+  return _toggleSocialPackageStatus(id, isActive);
+}
+
+export async function deleteCmsSocialPackage(id: string) {
+  return _deleteCmsSocialPackage(id);
 }

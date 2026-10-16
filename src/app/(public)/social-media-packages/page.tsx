@@ -11,6 +11,7 @@ import { PackageFaqSection } from "@/features/social-media-packages/components/P
 
 import { SITE_URL } from "@/lib/constants";
 import { SHARED_OPEN_GRAPH } from "@/lib/metadata";
+import { getCmsSocialPackages } from "@/lib/actions/social-packages-operations";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -78,67 +79,48 @@ const SOCIAL_MEDIA_PACKAGES_SCHEMA = {
     addressLocality: "Dubai",
     addressCountry: "AE",
   },
-  priceRange: "AED 2,400 - AED 10,500 / month",
-  hasOfferCatalog: {
-    "@type": "OfferCatalog",
-    name: "Turnkey Social Media Production Packages",
-    itemListElement: [
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Starter Social Media Package",
-          description: "2x 4K Reels, 6x Carousel/HQ Photos, 10x Stories, 1 Half Day Filming Session.",
-        },
-        priceCurrency: "AED",
-        price: "2400",
-      },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Growth Social Media Package",
-          description: "4x 4K Reels, 12x Carousel/HQ Photos, 20x Stories, 1 Motion Outro, 1 Full Day Filming, Moderator, 1 Strategy Call.",
-        },
-        priceCurrency: "AED",
-        price: "5200",
-      },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Premium Social Media Package",
-          description: "8x 4K Reels, 16x Carousel/HQ Photos, 30x Stories, 2 Motion Intro+Outro, Full Identity Graphics Kit, 2 Full Days Filming, Moderator, Dedicated Account Manager, Weekly Strategy Calls.",
-        },
-        priceCurrency: "AED",
-        price: "8400",
-      },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: "Enterprise Custom Social Media Production",
-          description: "Custom solutions for large businesses with advanced requirements, dedicated soundstage support, and scalable infrastructure.",
-        },
-      },
-    ],
-  },
 };
 
-export default function SocialMediaPackagesPage() {
+export default async function SocialMediaPackagesPage() {
+  const socialPackages = await getCmsSocialPackages();
+  const activePackages = socialPackages.filter((pkg) => pkg.isActive !== false);
+  const prices = activePackages
+    .map((pkg) => pkg.monthlyPrice)
+    .filter((price): price is number => price !== null && Number.isFinite(price));
+  const schema = {
+    ...SOCIAL_MEDIA_PACKAGES_SCHEMA,
+    priceRange: prices.length > 0
+      ? `AED ${Math.min(...prices)} - AED ${Math.max(...prices)} / month`
+      : undefined,
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Turnkey Social Media Production Packages",
+      itemListElement: activePackages.map((pkg) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: pkg.nameEn,
+          description: pkg.taglineEn,
+        },
+        ...(pkg.monthlyPrice !== null && Number.isFinite(pkg.monthlyPrice)
+          ? { priceCurrency: "AED", price: String(pkg.monthlyPrice) }
+          : {}),
+      })),
+    },
+  };
   return (
     <Section
       id="social-media-packages-page"
       aria-labelledby="social-media-packages-title"
       className="py-10 md:py-16 bg-background relative"
     >
-      <JsonLd data={SOCIAL_MEDIA_PACKAGES_SCHEMA} />
+      <JsonLd data={schema} />
       <Container>
         {/* Hero Section */}
         <SocialMediaPackagesHero />
 
         {/* Pricing Grid & Modal */}
-        <PackagesGrid />
+        <PackagesGrid packages={socialPackages} />
 
         {/* Deliverables & Studio Advantage */}
         <SocialMediaDeliverablesShowcase />

@@ -17,6 +17,7 @@ export const bookingSubmissionSchema = z
       "commercial",
       "music_video",
     ]),
+    sessionTypeId: z.string().trim().min(1).max(120).optional(),
     scheduledAt: z.string().min(1, "Scheduled date and time required"),
     durationHours: z.number().int().min(1).max(24).default(2),
     headcount: z.number().int().min(1).max(100).default(2),

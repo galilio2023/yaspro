@@ -2,7 +2,7 @@
 
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { db } from "@/db";
-import { bookings, bookingSessions, inquiries, users, studios, studioBlackouts, type SessionType, type InquiryType } from "@/db/schema";
+import { bookings, bookingSessions, inquiries, users, studios, studioBlackouts, platformSettings, type SessionType, type InquiryType } from "@/db/schema";
 import { generateBookingReference } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -18,15 +18,34 @@ import {
 } from "./validations";
 
 import type { StudioItem } from "@/features/booking/types";
-import { STUDIOS, calculateBookingPrice } from "@/features/booking/constants";
+import {
+  STUDIOS,
+  SESSION_TYPES,
+  CREW_EQUIPMENT_ITEMS,
+  PROPS_ITEMS,
+  ADDONS_ITEMS,
+  calculateBookingPrice,
+  type StudioWizardCatalogOverride,
+} from "@/features/booking/constants";
 import { getPlatformSettings } from "@/lib/actions/platform-settings-operations";
 
 /**
- * Recalculate price server-side based on canonical pricing rules
+ * Recalculate price server-side based on canonical pricing rules and CMS wizard overrides
  */
-function calculateServerPrice(data: BookingSubmissionInput, selectedStudio?: StudioItem): number {
+function calculateServerPrice(
+  data: BookingSubmissionInput,
+  selectedStudio?: StudioItem,
+  wizardCatalog?: StudioWizardCatalogOverride
+): number {
   if (typeof calculateBookingPrice === "function") {
-    return calculateBookingPrice(data, selectedStudio).total;
+    return calculateBookingPrice(
+      {
+        ...data,
+        sessionTypeId: data.sessionTypeId || data.sessionType,
+      },
+      selectedStudio,
+      wizardCatalog
+    ).total;
   }
   const studio = selectedStudio || (STUDIOS || []).find((s) => s.id === data.studioId) || (STUDIOS || [])[0];
   const studioRate = studio ? studio.rate : 800;
@@ -89,13 +108,86 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
       if (!studioRecord || studioRecord.isActive === false) {
         return { success: false, message: "This studio is no longer available. Please select another studio." };
       }
-      const calculatedTotal = calculateServerPrice(data, {
-        id: studioRecord.id,
-        slug: studioRecord.slug,
-        name: studioRecord.name,
-        desc: studioRecord.description || "",
-        rate: Number(studioRecord.hourlyRate),
-      });
+      let wizardCatalog: StudioWizardCatalogOverride | undefined;
+      if (typeof db.query?.platformSettings?.findFirst === "function") {
+        try {
+          const catalogRow = await db.query.platformSettings.findFirst({
+            where: eq(platformSettings.key, "studio_wizard_catalog"),
+          });
+          if (catalogRow?.value && typeof catalogRow.value === "object") {
+            wizardCatalog = catalogRow.value as StudioWizardCatalogOverride;
+          }
+        } catch (catalogErr) {
+          if (typeof console.warn === "function") {
+            console.warn("[createBooking] Wizard catalog lookup failed:", (catalogErr as Error)?.message);
+          }
+          return {
+            success: false,
+            message: "Unable to verify current studio catalog pricing. Please try again in a moment.",
+          };
+        }
+      }
+
+      const activeSessionTypes = wizardCatalog?.sessionTypes?.length
+        ? wizardCatalog.sessionTypes
+        : (SESSION_TYPES || []);
+      const activeCrewList = wizardCatalog?.crewEquipment ?? (CREW_EQUIPMENT_ITEMS || []);
+      const activePropsList = wizardCatalog?.props ?? (PROPS_ITEMS || []);
+      const activeAddonsList = wizardCatalog?.addons ?? (ADDONS_ITEMS || []);
+
+      if (data.sessionTypeId && activeSessionTypes.length > 0) {
+        const matchedSession = activeSessionTypes.find(
+          (s) => s.id === data.sessionTypeId || s.title?.toLowerCase() === data.sessionTypeId?.toLowerCase()
+        );
+        if (!matchedSession) {
+          return {
+            success: false,
+            message: "The selected session format is no longer available. Please refresh the form and update your selection.",
+          };
+        }
+      }
+
+      if (data.selectedCrewEquipmentIds?.length) {
+        const validCrewIds = new Set(activeCrewList.map((c) => c.id));
+        if (data.selectedCrewEquipmentIds.some((id) => !validCrewIds.has(id))) {
+          return {
+            success: false,
+            message: "One or more selected crew or equipment items are no longer available. Please update your selection.",
+          };
+        }
+      }
+
+      if (data.selectedPropIds?.length) {
+        const validPropIds = new Set(activePropsList.map((p) => p.id));
+        if (data.selectedPropIds.some((id) => !validPropIds.has(id))) {
+          return {
+            success: false,
+            message: "One or more selected studio props are no longer available. Please update your selection.",
+          };
+        }
+      }
+
+      if (data.selectedAddonIds?.length) {
+        const validAddonIds = new Set(activeAddonsList.map((a) => a.id));
+        if (data.selectedAddonIds.some((id) => !validAddonIds.has(id))) {
+          return {
+            success: false,
+            message: "One or more selected post-production add-ons are no longer available. Please update your selection.",
+          };
+        }
+      }
+
+      const calculatedTotal = calculateServerPrice(
+        data,
+        {
+          id: studioRecord.id,
+          slug: studioRecord.slug,
+          name: studioRecord.name,
+          desc: studioRecord.description || "",
+          rate: Number(studioRecord.hourlyRate),
+        },
+        wizardCatalog
+      );
 
       // 4. Overlap & Conflict Check: Prevent double-booking for the same studio stage
       if (studioRecord?.id) {

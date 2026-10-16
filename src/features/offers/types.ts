@@ -29,6 +29,7 @@ export interface OfferBundleItem {
   };
   restrictionNoteEn?: string;
   restrictionNoteAr?: string;
+  studioId?: string;
   isActive?: boolean;
 }
 

@@ -280,24 +280,36 @@ export interface BookingPricingBreakdown {
  * tax = subtotal * 0.08 (8%)
  * total = subtotal + tax
  */
+export interface StudioWizardCatalogOverride {
+  sessionTypes?: readonly SessionTypeItem[];
+  crewEquipment?: readonly CrewEquipmentItem[];
+  props?: readonly PropItem[];
+  addons?: readonly AddonItem[];
+}
+
 export function calculateBookingPrice(
   input: BookingPricingInput,
-  _selectedStudio?: StudioItem
+  _selectedStudio?: StudioItem,
+  catalog?: StudioWizardCatalogOverride
 ): BookingPricingBreakdown {
   const duration = Math.max(1, input.durationHours ?? 1);
+  const sessionTypesList = catalog?.sessionTypes?.length ? catalog.sessionTypes : SESSION_TYPES;
+  const crewList = catalog?.crewEquipment ?? CREW_EQUIPMENT_ITEMS;
+  const propsList = catalog?.props ?? PROPS_ITEMS;
+  const addonsList = catalog?.addons ?? ADDONS_ITEMS;
 
   // 1. Session type cost (resolved by sessionTypeId, id, or enum/title)
   const targetSessionId = input.sessionTypeId || input.sessionType;
   const sessionItem =
-    SESSION_TYPES.find((s) => s.id === targetSessionId || s.title?.toLowerCase() === targetSessionId?.toLowerCase()) ||
-    SESSION_TYPES[0];
+    sessionTypesList.find((s) => s.id === targetSessionId || s.title?.toLowerCase() === targetSessionId?.toLowerCase()) ||
+    sessionTypesList[0];
   const sessionCost = sessionItem ? sessionItem.price * duration : 0;
 
   // 2. Crew & Equipment cost
   let crewCost = 0;
   if (input.selectedCrewEquipmentIds && input.selectedCrewEquipmentIds.length > 0) {
     for (const id of input.selectedCrewEquipmentIds) {
-      const item = CREW_EQUIPMENT_ITEMS.find((c) => c.id === id);
+      const item = crewList.find((c) => c.id === id);
       if (item) {
         crewCost += item.priceType === "hourly" ? item.price * duration : item.price;
       }
@@ -310,7 +322,7 @@ export function calculateBookingPrice(
   let propsCost = 0;
   if (input.selectedPropIds && input.selectedPropIds.length > 0) {
     for (const id of input.selectedPropIds) {
-      const prop = PROPS_ITEMS.find((p) => p.id === id);
+      const prop = propsList.find((p) => p.id === id);
       if (prop) {
         propsCost += prop.priceType === "hourly" ? prop.price * duration : prop.price;
       }
@@ -321,7 +333,7 @@ export function calculateBookingPrice(
   let addonsCost = 0;
   if (input.selectedAddonIds && input.selectedAddonIds.length > 0) {
     for (const id of input.selectedAddonIds) {
-      const addon = ADDONS_ITEMS.find((a) => a.id === id);
+      const addon = addonsList.find((a) => a.id === id);
       if (addon) {
         addonsCost += addon.priceType === "hourly" ? addon.price * duration : addon.price;
       }

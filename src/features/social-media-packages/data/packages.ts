@@ -5,7 +5,7 @@ export interface PackageFeature {
 }
 
 export interface SocialMediaPackage {
-  id: "starter" | "growth" | "premium" | "enterprise";
+  id: string;
   nameEn: string;
   nameAr: string;
   taglineEn: string;
@@ -13,6 +13,7 @@ export interface SocialMediaPackage {
   monthlyPrice: number | null; // null for custom
   yearlyPricePerMonth: number | null; // 20% discount
   isPopular?: boolean;
+  isActive?: boolean;
   ctaTextEn: string;
   ctaTextAr: string;
   ctaType: "purchase" | "contact";

@@ -1,5 +1,5 @@
 import { connection } from "next/server";
-import { getCmsPodcastSets, getCmsPodcastAddons } from "@/lib/actions/podcast-operations";
+import { getCmsPodcastSets, getCmsPodcastAddons, getCmsPodcastServices } from "@/lib/actions/podcast-operations";
 import type { Metadata } from "next";
 import { PodcastBookingWizard } from "@/features/podcast-booking/components/PodcastBookingWizard";
 import { HelpCircle } from "lucide-react";
@@ -108,7 +108,11 @@ const PODCAST_SPECS = [
 
 export default async function PodcastBookingPage() {
   await connection();
-  const [studios, addons] = await Promise.all([getCmsPodcastSets(), getCmsPodcastAddons()]);
+  const [studios, addons, services] = await Promise.all([
+    getCmsPodcastSets(),
+    getCmsPodcastAddons(),
+    typeof getCmsPodcastServices === "function" ? getCmsPodcastServices() : Promise.resolve(undefined),
+  ]);
   return (
     <Section id="podcast-booking-page" aria-labelledby="podcast-booking-title" className="py-6 sm:py-12 md:py-20 bg-background">
       <JsonLd data={PODCAST_BOOKING_SCHEMA} />
@@ -129,7 +133,7 @@ export default async function PodcastBookingPage() {
         />
 
         {/* Wizard */}
-        <PodcastBookingWizard studios={studios} addons={addons} />
+        <PodcastBookingWizard studios={studios} addons={addons} services={services} />
 
         {/* Studio FAQ Section */}
         <div className="max-w-4xl mx-auto mt-20 pt-16 border-t border-white/10 space-y-8">

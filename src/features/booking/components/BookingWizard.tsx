@@ -4,7 +4,7 @@ import type { StudioItem } from "../types";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { WIZARD_STEPS } from "../constants";
+import { WIZARD_STEPS, type StudioWizardCatalogOverride } from "../constants";
 import { useBookingWizard } from "../hooks/useBookingWizard";
 import { BookingConfirmation } from "./BookingConfirmation";
 import { StudioQuoteRail } from "./StudioQuoteRail";
@@ -30,7 +30,13 @@ const stepVariants: Variants = {
   exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -28 : 28, transition: { duration: 0.14, ease: "easeIn" } }),
 };
 
-export function BookingWizard({ studios }: { studios: StudioItem[] }) {
+export function BookingWizard({
+  studios,
+  wizardCatalog,
+}: {
+  studios: StudioItem[];
+  wizardCatalog?: StudioWizardCatalogOverride;
+}) {
   const {
     step,
     setStep,
@@ -55,7 +61,7 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
     bookingId,
     errorMessage,
     handleSubmit,
-  } = useBookingWizard(studios);
+  } = useBookingWizard(studios, wizardCatalog);
 
   const [direction, setDirection] = useState(1);
   const totalSteps = WIZARD_STEPS.length;
@@ -147,11 +153,11 @@ export function BookingWizard({ studios }: { studios: StudioItem[] }) {
                 exit="exit"
               >
                 {step === 1 && <StepDatetime state={state} update={update} />}
-                {step === 2 && <StepSessionType state={state} update={update} />}
+                {step === 2 && <StepSessionType state={state} update={update} sessionTypes={wizardCatalog?.sessionTypes} />}
                 {step === 3 && <StepStudio state={state} update={update} studios={wizardStudios} />}
-                {step === 4 && <StepCrewEquipment state={state} update={update} />}
-                {step === 5 && <StepProps state={state} update={update} />}
-                {step === 6 && <StepPostProduction state={state} update={update} />}
+                {step === 4 && <StepCrewEquipment state={state} update={update} crewEquipment={wizardCatalog?.crewEquipment} />}
+                {step === 5 && <StepProps state={state} update={update} propsList={wizardCatalog?.props} />}
+                {step === 6 && <StepPostProduction state={state} update={update} addons={wizardCatalog?.addons} />}
                 {step === 7 && (
                   <StepContact
                     state={state}

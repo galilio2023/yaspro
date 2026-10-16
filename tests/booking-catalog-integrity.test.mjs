@@ -20,10 +20,14 @@ function loader(mocks = {}, globals = {}) {
       compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX },
     });
     vm.runInNewContext(outputText, {
-      exports, Date, console: { error() {}, warn() {} }, process: { env: {} },
+      exports, Date, Error, console: { error() {}, warn() {} }, process: { env: {} },
       require: (name) => {
         if (Object.hasOwn(mocks, name)) return mocks[name];
         if (name === 'server-only') return {};
+        if (name.endsWith('.json')) {
+          const parsed = JSON.parse(fs.readFileSync(path.resolve(path.dirname(file), name), 'utf8'));
+          return { default: parsed, ...parsed };
+        }
         if (name.startsWith('@/')) return load(`src/${name.slice(2)}.ts`);
         if (name.startsWith('.')) return load(path.resolve(path.dirname(file), `${name}.ts`));
         return require(name);
@@ -90,7 +94,7 @@ function databaseFixture({ available = true } = {}) {
     'next/cache': { revalidatePath() {} },
     './shared': { isDbAvailable: () => available, requireAdmin: async () => {} },
   });
-  return { load, schema, tables, get seedTransactions() { return seedTransactions; } };
+  return { load, schema, tables, db, get seedTransactions() { return seedTransactions; } };
 }
 
 test('podcast first reads seed both tables once without overwriting existing CMS data', async () => {
@@ -501,5 +505,341 @@ test('podcast and blackout managers restore optimistic changes and display actio
     const items = state.find((value) => Array.isArray(value) && value[0]?.[blackout ? 'id' : 'key'] === (blackout ? 'blackout' : operation.includes('Addon') ? 'addon' : 'set'));
     assert.equal(items.length, 1);
     if (operation.startsWith('toggle')) assert.equal(items[0][operation === 'toggleSet' ? 'isAvailable' : 'isActive'], true);
+  }
+});
+
+test('studio wizard catalog CRUD persists in platform_settings and calculateBookingPrice honors custom catalog overrides', async () => {
+  const f = databaseFixture();
+  const catalogApi = f.load('src/lib/actions/studio-wizard-catalog-operations.ts');
+  const initial = await catalogApi.getStudioWizardCatalog();
+  assert.ok(initial.sessionTypes.length > 0);
+  assert.ok(initial.props.length > 0);
+  assert.ok(initial.addons.length > 0);
+
+  await catalogApi.upsertStudioSessionType({
+    id: 'podcast',
+    title: 'Custom Podcast',
+    description: 'Custom desc',
+    price: 1500,
+    imageUrl: '/images/studios/nature-grid.jpg',
+  });
+  await catalogApi.upsertStudioPropItem({
+    id: 'rgb-tubes',
+    title: 'Custom RGB Tubes',
+    category: 'Decor',
+    price: 500,
+    priceType: 'flat',
+    imageUrl: '/images/studios/nature-grid.jpg',
+  });
+  await catalogApi.upsertStudioAddonItem({
+    id: 'full-edit',
+    title: 'Custom Full Edit',
+    description: 'Full edit',
+    price: 3000,
+    priceType: 'flat',
+    imageUrl: '/images/studios/nature-grid.jpg',
+  });
+
+  const updated = await catalogApi.getStudioWizardCatalog();
+  assert.equal(updated.sessionTypes.find((s) => s.id === 'podcast').price, 1500);
+  assert.equal(updated.props.find((p) => p.id === 'rgb-tubes').price, 500);
+  assert.equal(updated.addons.find((o) => o.id === 'full-edit').price, 3000);
+
+  const constants = f.load('src/features/booking/constants.ts');
+  const pricing = constants.calculateBookingPrice(
+    {
+      durationHours: 2,
+      sessionTypeId: 'podcast',
+      selectedPropIds: ['rgb-tubes'],
+      selectedAddonIds: ['full-edit'],
+    },
+    undefined,
+    updated
+  );
+  // Session (1500 * 2 hrs = 3000) + prop (500) + addon (3000)
+  assert.equal(pricing.sessionCost, 3000);
+  assert.equal(pricing.propsCost, 500);
+  assert.equal(pricing.addonsCost, 3000);
+});
+
+test('podcast services catalog CRUD and social media packages catalog CRUD persist in platform_settings', async () => {
+  const f = databaseFixture();
+  const podcastApi = f.load('src/lib/actions/podcast-operations.ts');
+  const services = await podcastApi.getCmsPodcastServices();
+  assert.equal(services.length, 3);
+
+  assert.equal(
+    (
+      await podcastApi.upsertCmsPodcastService({
+        key: 'recording-editing',
+        title: 'Custom Edit Tier',
+        sub: 'Custom sub',
+        price: 2100,
+        badge: 'VIP',
+        best: true,
+        isActive: true,
+        highlights: ['4K Master'],
+      })
+    ).success,
+    true
+  );
+  const updatedServices = await podcastApi.getCmsPodcastServices();
+  assert.equal(updatedServices.find((s) => s.key === 'recording-editing').price, 2100);
+  assert.equal((await podcastApi.togglePodcastServiceStatus('recording', false)).success, true);
+  assert.equal((await podcastApi.getCmsPodcastServices()).find((s) => s.key === 'recording').isActive, false);
+
+  const socialApi = f.load('src/lib/actions/social-packages-operations.ts');
+  const socialPkgs = await socialApi.getCmsSocialPackages();
+  assert.equal(socialPkgs.length, 4);
+  assert.equal(
+    (
+      await socialApi.upsertCmsSocialPackage({
+        id: 'growth',
+        nameEn: 'Growth Custom',
+        nameAr: 'نمو مخصص',
+        taglineEn: 'Tag',
+        taglineAr: 'شعار',
+        monthlyPrice: 19500,
+        yearlyPricePerMonth: 16500,
+        isPopular: true,
+        isActive: true,
+        specsHighlights: { reels: '12', posts: '15', stories: '30', filming: '2 Days' },
+        features: [{ labelEn: '12 Reels', labelAr: '12 ريلز', included: true }],
+      })
+    ).success,
+    true
+  );
+  assert.equal((await socialApi.getCmsSocialPackages()).find((p) => p.id === 'growth').monthlyPrice, 19500);
+  assert.equal((await socialApi.toggleSocialPackageStatus('starter', false)).success, true);
+  assert.equal((await socialApi.getCmsSocialPackages()).find((p) => p.id === 'starter').isActive, false);
+});
+
+test('broadcast telemetry feed persists and dispatches in platform_settings', async () => {
+  const f = databaseFixture();
+  const broadcastApi = f.load('src/lib/actions/broadcast-telemetry-dispatcher.ts');
+  const initialFeed = await broadcastApi.getTelemetryFeed();
+  assert.equal(initialFeed.length, 0);
+
+  const dispatched = await broadcastApi.dispatchTelemetryEvent({
+    source: 'OB-VAN MERCEDES 01',
+    type: 'GENLOCK_SYNC',
+    level: 'success',
+    summary: 'SMPTE Genlock synchronized across all 4K cameras',
+  });
+  assert.equal(dispatched.success, true);
+  const feedAfter = await broadcastApi.getTelemetryFeed();
+  assert.equal(feedAfter.length, 1);
+  assert.equal(feedAfter[0].type, 'GENLOCK_SYNC');
+});
+
+
+test('catalog mutations fail without writes on read errors or invalid saved values; public readers still fall back', async () => {
+  const f = databaseFixture();
+  const settings = f.tables.get(f.schema.platformSettings);
+  settings.set('unrelated', { key: 'unrelated', value: ['preserve'] });
+  const wizard = f.load('src/lib/actions/studio-wizard-catalog-operations.ts');
+  const podcast = f.load('src/lib/actions/podcast-operations.ts');
+  const social = f.load('src/lib/actions/social-packages-operations.ts');
+  const operations = [
+    () => wizard.upsertStudioSessionType({ id: 'new', title: 'New', price: 1 }),
+    () => wizard.deleteStudioSessionType('video'),
+    () => wizard.upsertStudioCrewItem({ id: 'new', title: 'New', price: 1 }),
+    () => wizard.deleteStudioCrewItem('crew'),
+    () => wizard.upsertStudioPropItem({ id: 'new', title: 'New', price: 1 }),
+    () => wizard.deleteStudioPropItem('prop'),
+    () => wizard.upsertStudioAddonItem({ id: 'new', title: 'New', price: 1 }),
+    () => wizard.deleteStudioAddonItem('addon'),
+    () => podcast.upsertCmsPodcastService({ key: 'new', title: 'New', price: 1 }),
+    () => podcast.togglePodcastServiceStatus('recording', false),
+    () => podcast.deleteCmsPodcastService('recording'),
+    () => social.upsertCmsSocialPackage({ id: 'new', nameEn: 'New' }),
+    () => social.toggleSocialPackageStatus('starter', false),
+    () => social.deleteCmsSocialPackage('starter'),
+  ];
+  const originalSelect = f.db.select;
+  for (const brokenRead of [true, false]) {
+    if (brokenRead) f.db.select = () => { throw new Error('Synthetic read failure'); };
+    else {
+      f.db.select = originalSelect;
+      for (const key of ['studio_wizard_catalog', 'podcast_services_catalog', 'social_media_packages_catalog']) {
+        settings.set(key, { key, value: null });
+      }
+    }
+    const before = JSON.stringify([...settings]);
+    for (const operation of operations) {
+      const result = await operation();
+      assert.equal(result.success, false);
+      assert.match(result.error, brokenRead ? /Synthetic read failure/ : /catalog is invalid/);
+      assert.equal(JSON.stringify([...settings]), before);
+    }
+    assert.ok((await wizard.getStudioWizardCatalog()).sessionTypes.length > 0);
+    assert.ok((await podcast.getCmsPodcastServices()).length > 0);
+    assert.ok((await social.getCmsSocialPackages()).length > 0);
+  }
+});
+
+test('strict catalog mutations respect saved empty arrays instead of resurrecting defaults', async () => {
+  const f = databaseFixture();
+  const settings = f.tables.get(f.schema.platformSettings);
+  settings.set('podcast_services_catalog', { key: 'podcast_services_catalog', value: [] });
+  const podcast = f.load('src/lib/actions/podcast-operations.ts');
+  assert.equal((await podcast.upsertCmsPodcastService({ key: 'new', title: 'New', price: 0 })).success, true);
+  assert.equal(settings.get('podcast_services_catalog').value.length, 1);
+  settings.set('social_media_packages_catalog', { key: 'social_media_packages_catalog', value: [] });
+  const social = f.load('src/lib/actions/social-packages-operations.ts');
+  assert.equal((await social.upsertCmsSocialPackage({ id: 'new', nameEn: 'New' })).success, true);
+  assert.equal(settings.get('social_media_packages_catalog').value.length, 1);
+});
+
+test('podcast tier input rejects missing text and non-finite or negative prices without changing the catalog', async () => {
+  const f = databaseFixture();
+  const { upsertCmsPodcastService } = f.load('src/lib/actions/podcast-operations.ts');
+  for (const change of [
+    { key: undefined }, { key: null }, { key: 123 }, { key: ' ' },
+    { title: undefined }, { title: null }, { title: {} }, { title: ' ' },
+    ...[NaN, Infinity, -Infinity, -1, 'invalid', '', ' ', undefined, null, true].map((price) => ({ price })),
+  ]) {
+    const result = await upsertCmsPodcastService({ key: 'new', title: 'New', price: 100, ...change });
+    assert.equal(result.success, false);
+    assert.equal(result.error, 'Valid tier key, title, and price are required.');
+    assert.equal(f.tables.get(f.schema.platformSettings).size, 0);
+  }
+  const result = await upsertCmsPodcastService({ key: ' New Tier ', title: ' New ', price: 0 });
+  assert.equal(result.success, true);
+  assert.equal(result.data.at(-1).key, 'new-tier');
+  assert.equal(result.data.at(-1).title, 'New');
+  assert.equal(result.data.at(-1).price, 0);
+});
+
+test('social package JSON-LD follows active CMS names, descriptions, prices, and custom quotes', async () => {
+  let packages = [
+    { id: 'cms', nameEn: 'CMS package', taglineEn: 'Updated description', monthlyPrice: 4321 },
+    { id: 'paused', nameEn: 'Paused', monthlyPrice: 1, isActive: false },
+    { id: 'custom', nameEn: 'Custom', taglineEn: 'Contact sales', monthlyPrice: null },
+  ];
+  const Grid = () => null;
+  const load = loader({
+    'next-intl/server': {},
+    '@/lib/actions/social-packages-operations': { getCmsSocialPackages: async () => packages },
+    '@/features/social-media-packages/components/PackagesGrid': { PackagesGrid: Grid },
+    ...Object.fromEntries(['SocialMediaPackagesHero', 'SocialMediaDeliverablesShowcase', 'PackageComparisonTable', 'PackageFaqSection'].map((name) => [
+      `@/features/social-media-packages/components/${name}`, { [name]: () => null },
+    ])),
+  });
+  const Page = load('src/app/(public)/social-media-packages/page.tsx').default;
+  let tree = await Page();
+  const getSchema = (tree) => find(tree, (node) => node.props?.data?.hasOfferCatalog)[0].props.data;
+  let schema = getSchema(tree);
+  assert.equal(find(tree, (node) => node.type === Grid)[0].props.packages, packages);
+  assert.equal(schema.priceRange, 'AED 4321 - AED 4321 / month');
+  const offers = schema.hasOfferCatalog.itemListElement;
+  assert.equal(offers.length, 2);
+  assert.equal(offers[0].price, '4321');
+  assert.equal(offers[0].priceCurrency, 'AED');
+  assert.equal(offers[0].itemOffered.name, 'CMS package');
+  assert.equal(offers[0].itemOffered.description, 'Updated description');
+  assert.equal('price' in offers[1], false);
+  for (const next of [[packages[2]], [], [{ ...packages[0], isActive: false }]]) {
+    packages = next;
+    schema = getSchema(await Page());
+    assert.equal(schema.priceRange, undefined);
+  }
+});
+
+function hookState() {
+  const state = [], effects = [];
+  let cursor = 0;
+  return {
+    state, effects, reset: () => { cursor = 0; },
+    react: { ...React,
+      useEffect: (effect) => effects.push(effect),
+      useRef: (current) => ({ current }),
+      useMemo: (calculate) => calculate(),
+      useState: (initial) => {
+        const index = cursor++;
+        if (!(index in state)) state[index] = typeof initial === 'function' ? initial() : initial;
+        return [state[index], (value) => { state[index] = typeof value === 'function' ? value(state[index]) : value; }];
+      },
+    },
+  };
+}
+
+test('server telemetry including an empty array overrides stale local storage; omitted feed restores it', () => {
+  for (const feed of [undefined, [], [{ id: 'server', summary: 'Authoritative' }]]) {
+    const hooks = hookState();
+    let storageReads = 0;
+    const saved = [{ id: 'stale', summary: 'Stale' }];
+    const load = loader({
+      react: hooks.react,
+      '@/components/admin': {},
+      '@/lib/actions/broadcast-telemetry-dispatcher': {},
+      '@/hooks/useFeedbackAlert': { useFeedbackAlert: () => ({}) },
+      './InquiriesManager': { resolveInquiryCategory: () => 'general' },
+    }, { window: {}, localStorage: { getItem: () => { storageReads++; return JSON.stringify(saved); } } });
+    load('src/features/admin/components/BroadcastManager.tsx').BroadcastManager({ initialTelemetryFeed: feed });
+    assert.equal(storageReads, feed === undefined ? 1 : 0);
+    assert.deepEqual(JSON.parse(JSON.stringify(hooks.state.find(Array.isArray))), feed ?? saved);
+  }
+});
+
+test('podcast availability clears a selected unavailable slot, retains free slots, and ignores cancelled requests', async () => {
+  for (const mode of ['unavailable', 'free', 'cancelled']) {
+    const hooks = hookState(), updates = [];
+    let resolve;
+    const load = loader({
+      react: hooks.react,
+      '@/lib/actions/availability-operations': { getStudioSlotAvailability: () => new Promise((done) => { resolve = done; }) },
+    });
+    const { Step1DateTime } = load('src/features/podcast-booking/components/Step1DateTime.tsx');
+    Step1DateTime({ session: { date: '2027-01-01', durationHours: 1, studioKey: 'studio', timeSlot: '5:30 PM' }, onChange: (value) => updates.push(value) });
+    const cleanup = hooks.effects[0]();
+    if (mode === 'cancelled') cleanup();
+    resolve({ unavailableSlots: mode === 'free' ? ['6:00 PM'] : ['5:30 PM'] });
+    await Promise.resolve();
+    assert.deepEqual(JSON.parse(JSON.stringify(updates)), mode === 'unavailable' ? [{ timeSlot: '' }] : []);
+  }
+});
+
+test('every studio subcatalog delete confirms first, catches throws, and preserves result feedback', async () => {
+  for (const [tab, action] of [
+    ['sessions', 'deleteStudioSessionType'], ['crew', 'deleteStudioCrewItem'],
+    ['props', 'deleteStudioPropItem'], ['addons', 'deleteStudioAddonItem'],
+  ]) {
+    for (const mode of ['cancel', 'throw', 'failure', 'success']) {
+      const hooks = hookState(), feedback = [], calls = [];
+      hooks.react.default = hooks.react;
+      const initial = { id: 'first', title: 'First', price: 10 };
+      const catalog = { sessionTypes: [initial, { ...initial, id: 'second' }], crewEquipment: [initial], props: [initial], addons: [initial] };
+      const updated = { ...catalog, crewEquipment: [], props: [], addons: [], sessionTypes: [catalog.sessionTypes[1]] };
+      let confirmations = 0;
+      const load = loader({
+        react: hooks.react,
+        '@/components/admin': {},
+        '@/lib/actions/studios-soundstages-operations': {},
+        '@/lib/actions/studio-wizard-catalog-operations': { [action]: async (id) => {
+          assert.equal(confirmations, 1);
+          calls.push(id);
+          if (mode === 'throw') throw new Error('Synthetic delete error');
+          return mode === 'failure' ? { success: false, error: 'Delete denied' } : { success: true, data: updated, message: 'Removed' };
+        } },
+        '../hooks/useAdminCrud': { useAdminCrud: () => ({ items: [], showFeedback: (message) => feedback.push(message) }) },
+        '../hooks/useAdminFilter': { useAdminFilter: () => ({ filteredData: [], pagination: { paginatedItems: [], totalItems: 0 } }) },
+      }, { confirm: () => { confirmations++; return mode !== 'cancel'; } });
+      const { StudiosManager } = load('src/features/admin/components/StudiosManager.tsx');
+      const render = () => { hooks.reset(); return StudiosManager({ initialStudios: [], initialWizardCatalog: catalog }); };
+      render();
+      hooks.state[0] = tab;
+      const button = find(render(), (node) => node.type === 'button' && node.props.title?.startsWith('Delete'))[0];
+      assert.ok(button, tab);
+      await button.props.onClick();
+      assert.deepEqual(calls, mode === 'cancel' ? [] : ['first']);
+      const alerts = find(render(), (node) => node.props?.role === 'alert');
+      if (mode === 'throw' || mode === 'failure') {
+        assert.equal(alerts.length, 1);
+        assert.equal(alerts[0].props.children[0].props.children, mode === 'throw' ? 'Synthetic delete error' : 'Delete denied');
+      } else assert.equal(alerts.length, 0);
+      assert.deepEqual(feedback, mode === 'success' ? ['Removed'] : []);
+      if (mode === 'success') assert.deepEqual(hooks.state.slice(1, 5), [updated.sessionTypes, [], [], []]);
+    }
   }
 });

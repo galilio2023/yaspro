@@ -16,7 +16,7 @@ import {
   Building2,
   Loader2,
 } from "lucide-react";
-import type { PodcastSessionItem, PodcastBookingContact, PodcastStudio, PodcastAddon } from "../types";
+import type { PodcastSessionItem, PodcastBookingContact, PodcastStudio, PodcastAddon, PodcastService } from "../types";
 import { PODCAST_STUDIOS, PODCAST_SERVICES, PODCAST_ADDONS } from "../data";
 import {
   formatAED,
@@ -30,6 +30,7 @@ import { motion } from "framer-motion";
 export interface Step5ReviewCheckoutProps {
   studios?: PodcastStudio[];
   addons?: PodcastAddon[];
+  services?: PodcastService[];
   sessions: PodcastSessionItem[];
   contact: PodcastBookingContact;
   onUpdateContact: (updates: Partial<PodcastBookingContact>) => void;
@@ -51,6 +52,7 @@ export interface Step5ReviewCheckoutProps {
 export function Step5ReviewCheckout({
   studios = PODCAST_STUDIOS,
   addons = PODCAST_ADDONS,
+  services = PODCAST_SERVICES,
   sessions,
   contact,
   onUpdateContact,
@@ -101,7 +103,7 @@ export function Step5ReviewCheckout({
         <div className="space-y-3">
           {sessions.map((sess, idx) => {
             const studio = studios.find((s) => s.key === sess.studioKey);
-            const service = PODCAST_SERVICES.find((s) => s.key === sess.serviceKey) || PODCAST_SERVICES[0];
+            const service = services.find((s) => s.key === sess.serviceKey) || PODCAST_SERVICES.find((s) => s.key === sess.serviceKey) || services[0] || PODCAST_SERVICES[0];
             const sessionCost = service.price * sess.durationHours;
 
             const selectedAddons = Object.entries(sess.addons || {})

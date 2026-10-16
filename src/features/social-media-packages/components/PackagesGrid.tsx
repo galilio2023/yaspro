@@ -6,10 +6,18 @@ import { PackageCard } from "./PackageCard";
 import { BillingToggle } from "./BillingToggle";
 import { PackageOrderModal } from "./PackageOrderModal";
 
-export function PackagesGrid() {
+interface PackagesGridProps {
+  packages?: SocialMediaPackage[];
+}
+
+export function PackagesGrid({ packages }: PackagesGridProps = {}) {
   const [billingInterval, setBillingInterval] = useState<"monthly" | "yearly">("yearly");
   const [activePackage, setActivePackage] = useState<SocialMediaPackage | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const visiblePackages = (packages && packages.length > 0 ? packages : SOCIAL_MEDIA_PACKAGES).filter(
+    (pkg) => pkg.isActive !== false
+  );
 
   const handleSelectPackage = (pkg: SocialMediaPackage) => {
     setActivePackage(pkg);
@@ -31,7 +39,7 @@ export function PackagesGrid() {
 
       {/* 4 Tier Pricing Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-6 items-stretch">
-        {SOCIAL_MEDIA_PACKAGES.map((pkg) => (
+        {visiblePackages.map((pkg) => (
           <PackageCard
             key={pkg.id}
             pkg={pkg}

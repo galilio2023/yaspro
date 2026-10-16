@@ -16,7 +16,7 @@ function loadSource(file, mocks = {}, globals = {}) {
   });
   const exports = {};
   vm.runInNewContext(outputText, {
-    exports, console: { error() {} }, Date,
+    exports, console: { error() {} }, Date, Error,
     require: (name) => {
       if (Object.hasOwn(mocks, name)) return mocks[name];
       if (name.startsWith('.')) return loadSource(path.resolve(path.dirname(file), `${name}.ts`), mocks, globals);
@@ -31,12 +31,12 @@ function loadSource(file, mocks = {}, globals = {}) {
 const session = { date: '2026-11-20', timeSlot: '5:30 PM', durationHours: 2, headcount: 2,
   studioKey: 'nature-grid', serviceKey: 'recording', addons: {} };
 const input = { sessions: [session], fullName: 'Test Guest', email: 'guest@example.com', phone: '+971500000000' };
-function fixture({ missingStudio, studioCapacity = 10, payment = { success: true }, failSchedule = false, failBlackout = false, catalogStudios, catalogAddons } = {}) {
+function fixture({ missingStudio, studioCapacity = 10, payment = { success: true }, failSchedule = false, failPrimary = false, failBlackout = false, catalogStudios, catalogAddons } = {}) {
   const bookings = { id: 'id' }, bookingSessions = {};
   const writes = [], payments = [], capabilities = [], lookups = [];
   let transactions = 0;
   const tx = { insert: (table) => ({ values: (values) => {
-    if (table === bookingSessions && failSchedule) throw new Error('Schedule conflict');
+    if ((table === bookingSessions && failSchedule) || (table === bookings && failPrimary)) throw new Error('no_overlapping_booking_sessions');
     writes.push({ table, values });
     return { returning: async () => [{ id: 'checkout-id' }] };
   } }) };
@@ -239,11 +239,15 @@ test('accessories URL and category card select the same counted items, with cart
   let categoryParam = null, cursor = 0;
   const state = [];
   const { GearExplorer } = loadSource('src/features/gear/components/GearExplorer.tsx', {
-    react: { useMemo: (fn) => fn(), useState: (initial) => {
-      const index = cursor++;
-      if (!(index in state)) state[index] = initial;
-      return [state[index], (value) => { state[index] = value; }];
-    } },
+    react: {
+      useMemo: (fn) => fn(),
+      useEffect: () => {},
+      useState: (initial) => {
+        const index = cursor++;
+        if (!(index in state)) state[index] = initial;
+        return [state[index], (value) => { state[index] = value; }];
+      },
+    },
     'next/navigation': { useSearchParams: () => new URLSearchParams(categoryParam ? `category=${categoryParam}` : '') },
     '@/components/animations/MotionWrappers': { FadeUp: Stub, StaggerContainer: Stub, StaggerItem: Stub },
     '@/components/ui/empty-state': { EmptyState: Stub }, '@/components/ui/button': { Button: Stub },
@@ -420,4 +424,15 @@ test('CMS keys, add-on pricing, availability, and capacity govern podcast bookin
   catalogStudios[0].isAvailable = false;
   assert.doesNotMatch(renderToStaticMarkup(createElement(Step2Setup, { session: cmsSession, studios: catalogStudios })), /CMS studio/);
   assert.doesNotMatch(renderToStaticMarkup(createElement(Step4Addons, { session: cmsSession, addons: catalogAddons })), /Standard Reel/);
+});
+
+// The database exclusion constraint also applies to the first session via bookings_sync_schedule.
+test('primary-session database overlap rejection returns failure without payment or capability', async () => {
+  const f = fixture({ failPrimary: true });
+  const result = await f.createPodcastBooking({ ...input, initiatePayment: true });
+  assert.equal(result.success, false);
+  assert.match(result.message, /no_overlapping_booking_sessions/);
+  assert.equal(f.writes.length, 0);
+  assert.equal(f.payments.length, 0);
+  assert.equal(f.capabilities.length, 0);
 });

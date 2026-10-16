@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Check, Zap, ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-react";
 import { PODCAST_SERVICES } from "../data";
-import { PodcastSessionItem } from "../types";
+import { PodcastSessionItem, PodcastService } from "../types";
 import { formatAED, MetaTag, SelectableCard, StepIntro, TogglePill, studioSprings } from "@/features/booking/components/ui/BookingKit";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 interface Step3ServiceProps {
   session: PodcastSessionItem;
   onChange: (updates: Partial<PodcastSessionItem>) => void;
+  services?: PodcastService[];
 }
 
 const COMPARISON_MATRIX = [
@@ -27,8 +28,18 @@ const COMPARISON_MATRIX = [
   { feature: "Secure Cloud Storage Archive", raw: "None", live: "None", edit: "14 Days" },
 ];
 
-export function Step3Service({ session, onChange }: Step3ServiceProps) {
+const TIER_MATRIX_COLUMN: Record<string, "raw" | "live" | "edit"> = {
+  recording: "raw",
+  "recording-live-mix": "live",
+  "recording-pro-edit": "edit",
+  "recording-editing": "edit",
+};
+
+export function Step3Service({ session, onChange, services = PODCAST_SERVICES }: Step3ServiceProps) {
   const [showMatrix, setShowMatrix] = useState(false);
+  const activeServices = services.filter((s) => s.isActive !== false);
+  const canShowMatrix =
+    activeServices.length > 0 && activeServices.every((s) => s.key in TIER_MATRIX_COLUMN);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -37,12 +48,12 @@ export function Step3Service({ session, onChange }: Step3ServiceProps) {
         total={5}
         title="Production Tier"
         description="Choose your post-production workflow: raw ISO camera capture, instant live-switched program feed, or full master episode post-production."
-        aside={<MetaTag tone="mauve">3 tiers</MetaTag>}
+        aside={<MetaTag tone="mauve">{activeServices.length} tiers</MetaTag>}
       />
 
       {/* Spacious, Non-Clamping Horizontal Tier Cards (Full-width rows to prevent any text wrapping) */}
       <div className="space-y-3.5">
-        {PODCAST_SERVICES.map((service) => {
+        {activeServices.map((service) => {
           const isSelected = session.serviceKey === service.key;
           const isBest = service.best;
           const highlights = service.highlights || [];
@@ -122,89 +133,102 @@ export function Step3Service({ session, onChange }: Step3ServiceProps) {
       </div>
 
       {/* Optional Granular Comparison Matrix Accordion */}
-      <div className="pt-2">
-        <button
-          type="button"
-          onClick={() => setShowMatrix((prev) => !prev)}
-          className="w-full p-4 rounded-2xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.08] flex items-center justify-between text-xs text-zinc-300 transition cursor-pointer group"
-        >
-          <div className="flex items-center gap-2 font-mono uppercase tracking-wider font-semibold text-zinc-300 group-hover:text-white">
-            <SlidersHorizontal size={14} className="text-brand-mauve" />
-            <span>Compare Full Technical Specs Matrix (Side-by-Side)</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-zinc-400 group-hover:text-white font-mono text-[11px]">
-            <span>{showMatrix ? "Hide Matrix" : "View Details"}</span>
-            {showMatrix ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          </div>
-        </button>
+      {canShowMatrix && (
+        <div className="pt-2">
+          <button
+            type="button"
+            onClick={() => setShowMatrix((prev) => !prev)}
+            className="w-full p-4 rounded-2xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.08] flex items-center justify-between text-xs text-zinc-300 transition cursor-pointer group"
+          >
+            <div className="flex items-center gap-2 font-mono uppercase tracking-wider font-semibold text-zinc-300 group-hover:text-white">
+              <SlidersHorizontal size={14} className="text-brand-mauve" />
+              <span>Compare Full Technical Specs Matrix (Side-by-Side)</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-zinc-400 group-hover:text-white font-mono text-[11px]">
+              <span>{showMatrix ? "Hide Matrix" : "View Details"}</span>
+              {showMatrix ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            </div>
+          </button>
 
-        <AnimatePresence>
-          {showMatrix && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={studioSprings.snappy}
-              className="overflow-hidden"
-            >
-              <div className="mt-3 p-4 sm:p-5 rounded-2xl bg-[#0c0c10] border border-white/[0.08] overflow-x-auto">
-                <table className="w-full text-left text-xs min-w-[540px]">
-                  <thead>
-                    <tr className="border-b border-white/[0.08] text-[11px] font-mono uppercase tracking-wider text-zinc-400">
-                      <th className="py-2.5 pr-4 font-bold">Studio Capability</th>
-                      <th className="py-2.5 px-3 text-center">Recording Only (AED 390)</th>
-                      <th className="py-2.5 px-3 text-center">Live Mix (AED 490)</th>
-                      <th className="py-2.5 pl-3 text-center text-brand-mauve font-bold">Pro Edit (AED 890)</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/[0.04]">
-                    {COMPARISON_MATRIX.map((row, idx) => (
-                      <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
-                        <td className="py-2.5 pr-4 text-zinc-300 font-medium">
-                          {row.feature}
-                        </td>
-                        <td className="py-2.5 px-3 text-center">
-                          {typeof row.raw === "boolean" ? (
-                            row.raw ? (
-                              <Check size={14} className="text-emerald-400 mx-auto" />
-                            ) : (
-                              <span className="text-zinc-600">—</span>
-                            )
-                          ) : (
-                            <span className="font-mono text-[11px] text-zinc-400">{row.raw}</span>
-                          )}
-                        </td>
-                        <td className="py-2.5 px-3 text-center">
-                          {typeof row.live === "boolean" ? (
-                            row.live ? (
-                              <Check size={14} className="text-emerald-400 mx-auto" />
-                            ) : (
-                              <span className="text-zinc-600">—</span>
-                            )
-                          ) : (
-                            <span className="font-mono text-[11px] text-zinc-400">{row.live}</span>
-                          )}
-                        </td>
-                        <td className="py-2.5 pl-3 text-center bg-brand-violet/[0.06]">
-                          {typeof row.edit === "boolean" ? (
-                            row.edit ? (
-                              <Check size={14} className="text-brand-mauve mx-auto font-bold" />
-                            ) : (
-                              <span className="text-zinc-600">—</span>
-                            )
-                          ) : (
-                            <span className="font-mono text-[11px] text-brand-mauve font-bold">{row.edit}</span>
-                          )}
-                        </td>
+          <AnimatePresence>
+            {showMatrix && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={studioSprings.snappy}
+                className="overflow-hidden"
+              >
+                <div className="mt-3 p-4 sm:p-5 rounded-2xl bg-[#0c0c10] border border-white/[0.08] overflow-x-auto">
+                  <table className="w-full text-left text-xs min-w-[540px]">
+                    <thead>
+                      <tr className="border-b border-white/[0.08] text-[11px] font-mono uppercase tracking-wider text-zinc-400">
+                        <th className="py-2.5 pr-4 font-bold">Studio Capability</th>
+                        {activeServices.map((service) => (
+                          <th
+                            key={service.key}
+                            className={cn(
+                              "py-2.5 px-3 text-center",
+                              service.best && "text-brand-mauve font-bold"
+                            )}
+                          >
+                            {service.title} ({formatAED(service.price)})
+                          </th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+                    </thead>
+                    <tbody className="divide-y divide-white/[0.04]">
+                      {COMPARISON_MATRIX.map((row, idx) => (
+                        <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
+                          <td className="py-2.5 pr-4 text-zinc-300 font-medium">
+                            {row.feature}
+                          </td>
+                          {activeServices.map((service) => {
+                            const colKey = TIER_MATRIX_COLUMN[service.key];
+                            const cellValue = row[colKey];
+                            return (
+                              <td
+                                key={service.key}
+                                className={cn(
+                                  "py-2.5 px-3 text-center",
+                                  service.best && "bg-brand-violet/[0.06]"
+                                )}
+                              >
+                                {typeof cellValue === "boolean" ? (
+                                  cellValue ? (
+                                    <Check
+                                      size={14}
+                                      className={cn(
+                                        "mx-auto",
+                                        service.best ? "text-brand-mauve font-bold" : "text-emerald-400"
+                                      )}
+                                    />
+                                  ) : (
+                                    <span className="text-zinc-600">—</span>
+                                  )
+                                ) : (
+                                  <span
+                                    className={cn(
+                                      "font-mono text-[11px]",
+                                      service.best ? "text-brand-mauve font-bold" : "text-zinc-400"
+                                    )}
+                                  >
+                                    {cellValue}
+                                  </span>
+                                )}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 }

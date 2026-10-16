@@ -49,6 +49,7 @@ const schemaMock = {
   studios: tableMock,
   sessions: tableMock,
   accounts: tableMock,
+  platformSettings: tableMock,
 };
 
 test('updateInquiryStatus updates resolved state with database mock', async () => {
@@ -122,7 +123,12 @@ test('updateBookingPaymentStatus updates paymentStatus and reference code', asyn
 
 test('dispatchTelemetryEvent returns success acknowledgment', async () => {
   const { dispatchTelemetryEvent } = loadSource('src/lib/cms-actions.ts', {
-    '@/db': { db: {} },
+    '@/db': {
+      db: {
+        select: () => ({ from: () => ({ where: () => ({ limit: async () => [] }) }) }),
+        insert: () => ({ values: () => ({ onConflictDoUpdate: async () => [] }) }),
+      },
+    },
     '@/db/schema': schemaMock,
     'drizzle-orm': { eq: () => {}, desc: () => {} },
     'next/cache': { revalidatePath: () => {} },

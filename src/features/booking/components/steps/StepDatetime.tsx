@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import type { WizardStepProps } from "../../types";
 import { CalendarDays, ChevronLeft, ChevronRight, Clock, Users, Timer } from "lucide-react";
 import { ChoiceChip, Counter, Panel, StepIntro } from "../ui/BookingKit";
+import { getStudioSlotAvailability } from "@/lib/actions/availability-operations";
 import { cn } from "@/lib/utils";
 
 const TIME_SLOTS = [
@@ -53,10 +54,46 @@ export function StepDatetime({ state, update }: WizardStepProps) {
     return new Date();
   });
 
+  const [unavailableSlots, setUnavailableSlots] = useState<string[]>([]);
+  const [blackoutReason, setBlackoutReason] = useState<string | undefined>(undefined);
+
   const duration = state.durationHours || 1;
   const currentPeople = state.headcount || 2;
-  const selectedTime = state.time || "10:00 AM";
+  const selectedTime = state.time;
   const selectedDateStr = state.date;
+
+  useEffect(() => {
+    if (!selectedDateStr || typeof getStudioSlotAvailability !== "function") {
+      setUnavailableSlots([]);
+      setBlackoutReason(undefined);
+      return;
+    }
+    let cancelled = false;
+    getStudioSlotAvailability({
+      date: selectedDateStr,
+      durationHours: duration,
+      studioId: state.studioId || undefined,
+    })
+      .then((res) => {
+        if (!cancelled && res) {
+          const nextUnavailable = res.unavailableSlots || [];
+          setUnavailableSlots(nextUnavailable);
+          setBlackoutReason(res.blackoutReason);
+          if (state.time && nextUnavailable.includes(state.time)) {
+            update({ time: "" });
+          }
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setUnavailableSlots([]);
+          setBlackoutReason(undefined);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedDateStr, duration, state.studioId, state.time]);
 
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
@@ -228,17 +265,26 @@ export function StepDatetime({ state, update }: WizardStepProps) {
 
           {/* Time */}
           <Panel icon={Clock} title="Call time" description="Studio hours 9 AM – 8 PM">
+            {blackoutReason && (
+              <div className="mb-2.5 px-3 py-2 rounded-xl bg-rose-500/10 border border-rose-500/25 text-[11px] text-rose-300">
+                Schedule Notice: {blackoutReason}
+              </div>
+            )}
             <div className="grid grid-cols-4 sm:grid-cols-4 xl:grid-cols-3 gap-1.5">
-              {TIME_SLOTS.map((slot) => (
-                <ChoiceChip
-                  key={slot}
-                  selected={selectedTime === slot}
-                  onClick={() => update({ time: slot })}
-                  className="text-[10px] sm:text-[11px] min-h-[36px] sm:min-h-[40px] px-1"
-                >
-                  {slot}
-                </ChoiceChip>
-              ))}
+              {TIME_SLOTS.map((slot) => {
+                const isBooked = unavailableSlots.includes(slot);
+                return (
+                  <ChoiceChip
+                    key={slot}
+                    selected={selectedTime === slot}
+                    disabled={isBooked}
+                    onClick={() => !isBooked && update({ time: slot })}
+                    className="text-[10px] sm:text-[11px] min-h-[36px] sm:min-h-[40px] px-1"
+                  >
+                    {isBooked ? `${slot} · Booked` : slot}
+                  </ChoiceChip>
+                );
+              })}
             </div>
           </Panel>
         </div>
