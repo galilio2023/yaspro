@@ -13,6 +13,7 @@ import {
   Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface NavbarUserMenuProps {
   user: {
@@ -23,6 +24,7 @@ interface NavbarUserMenuProps {
 }
 
 export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
+  const { t, isArabic } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -69,7 +71,7 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
         )}
         aria-expanded={isOpen}
         aria-haspopup="true"
-        aria-label="User navigation menu"
+        aria-label={t("nav.openAccountMenuAria")}
       >
         <span className="size-1.5 rounded-full bg-emerald-400" />
         <span className="max-w-[100px] truncate">{firstName}</span>
@@ -80,7 +82,7 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-56 rounded-2xl bg-slate-900/95 border border-white/15 backdrop-blur-2xl shadow-2xl p-2 z-50 animate-scale-in text-xs">
+        <div className="absolute end-0 mt-2 w-56 rounded-2xl bg-slate-900/95 border border-white/15 backdrop-blur-2xl shadow-2xl p-2 z-50 animate-scale-in text-xs">
           {/* User Info Header */}
           <div className="px-3 py-2 border-b border-white/10 mb-1">
             <div className="font-semibold text-white truncate">{user.name}</div>
@@ -99,7 +101,7 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
                 )}
               >
                 <Shield size={9} />
-                {role} account
+                {role === "admin" ? t("nav.adminBadge") : role} {t("nav.account")}
               </span>
             </div>
           </div>
@@ -113,7 +115,7 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
                 className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
               >
                 <LayoutDashboard size={14} className="text-brand-mauve-soft" />
-                <span>Admin CMS</span>
+                <span>{t("nav.adminCms")}</span>
               </Link>
             )}
 
@@ -123,7 +125,7 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
               className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
             >
               <LayoutDashboard size={14} className="text-brand-mauve-soft" />
-              <span>My Account</span>
+              <span>{t("nav.myAccount")}</span>
             </Link>
 
             <Link
@@ -132,7 +134,7 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
               className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
             >
               <CalendarCheck size={14} className="text-brand-mauve-soft" />
-              <span>My Bookings</span>
+              <span>{t("nav.myBookings")}</span>
             </Link>
 
             <Link
@@ -141,7 +143,7 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
               className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
             >
               <Settings size={14} className="text-slate-400" />
-              <span>Account Details</span>
+              <span>{t("nav.accountDetails")}</span>
             </Link>
           </div>
 
@@ -153,7 +155,7 @@ export function NavbarUserMenu({ user }: NavbarUserMenuProps) {
               className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors cursor-pointer text-start"
             >
               <LogOut size={14} className="shrink-0" />
-              <span>Sign Out</span>
+              <span>{t("nav.signOut")}</span>
             </button>
           </div>
         </div>

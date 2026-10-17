@@ -19,6 +19,10 @@ function loadSource(file, mocks = {}, globals = {}) {
     exports, console: { error() {} }, Date, Error,
     require: (name) => {
       if (Object.hasOwn(mocks, name)) return mocks[name];
+      if (name.endsWith('.json')) {
+        const parsed = JSON.parse(fs.readFileSync(path.resolve(path.dirname(file), name), 'utf8'));
+        return { default: parsed, ...parsed };
+      }
       if (name.startsWith('.')) return loadSource(path.resolve(path.dirname(file), `${name}.ts`), mocks, globals);
       if (name.startsWith('@/')) return loadSource(`src/${name.slice(2)}.ts`, mocks, globals);
       return require(name);
@@ -257,7 +261,23 @@ test('accessories URL and category card select the same counted items, with cart
     './GearCard': { GearCard: Card }, './RentalDateSelector': { RentalDateSelector: Stub },
     './ProductsCategoriesGrid': { ProductsCategoriesGrid: Grid },
     '@/lib/utils': { formatCurrency: String },
-    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic: false }) },
+    '@/components/providers/LanguageProvider': {
+      useLanguage: () => {
+        const dict = JSON.parse(fs.readFileSync('messages/en.json', 'utf8'));
+        return {
+          language: 'en',
+          isArabic: false,
+          direction: 'ltr',
+          dir: 'ltr',
+          setLanguage() {},
+          t: (key, params) => {
+            const val = key.split('.').reduce((acc, part) => acc?.[part], dict);
+            if (typeof val !== 'string') return key;
+            return params ? val.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`)) : val;
+          },
+        };
+      },
+    },
     '@/components/providers/CartProvider': { useCart: () => ({ isInCart: () => false }) },
   });
   const render = () => { cursor = 0; return GearExplorer({ initialGear: gearData.GEAR_DATA }); };

@@ -1,14 +1,18 @@
+"use client";
+
 import { Award, CheckCircle } from "lucide-react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export interface ProjectDeliverablesProps {
   deliverables?: readonly string[];
 }
 
 export function ProjectDeliverables({ deliverables }: ProjectDeliverablesProps) {
+  const { t } = useLanguage();
   const items = deliverables || [
-    "Official 4K Broadcast Film",
-    "Social Multi-Platform Cutdowns",
-    "Color Master Package",
+    t("projects.defaultDeliverable1"),
+    t("projects.defaultDeliverable2"),
+    t("projects.defaultDeliverable3"),
   ];
 
   return (
@@ -17,7 +21,7 @@ export function ProjectDeliverables({ deliverables }: ProjectDeliverablesProps) 
         <div className="size-8 rounded-xl bg-brand-mauve/10 border border-brand-mauve/30 flex items-center justify-center text-brand-mauve shrink-0">
           <Award size={16} />
         </div>
-        <span>Project Deliverables</span>
+        <span>{t("projects.deliverablesTitle")}</span>
       </h2>
       <div className="overflow-x-auto">
         <ul className="space-y-3 min-w-full">

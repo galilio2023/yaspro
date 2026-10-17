@@ -1,8 +1,11 @@
+"use client";
+
 import Image from "next/image";
 import { CheckCircle2, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import { InfluencerSocialList } from "./InfluencerSocialList";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import type { InfluencerItem } from "../types";
 
 export interface InfluencerProfileCardProps {
@@ -10,11 +13,13 @@ export interface InfluencerProfileCardProps {
 }
 
 export function InfluencerProfileCard({ creator }: InfluencerProfileCardProps) {
+  const { t, isArabic } = useLanguage();
   const initials = creator.name
     .split(" ")
     .map((n) => n[0])
     .join("")
     .slice(0, 2);
+  const role = isArabic && creator.arabicRole ? creator.arabicRole : creator.role;
 
   return (
     <>
@@ -48,7 +53,7 @@ export function InfluencerProfileCard({ creator }: InfluencerProfileCardProps) {
               </Badge>
               <Badge variant="default" className="text-xs font-bold gap-1.5 shadow-sm shadow-black/20">
                 <Users size={12} className="text-brand-mauve" />
-                <span>{creator.totalFollowers} Reach</span>
+                <span>{t("influencers.reach", { count: creator.totalFollowers })}</span>
               </Badge>
             </div>
 
@@ -57,7 +62,7 @@ export function InfluencerProfileCard({ creator }: InfluencerProfileCardProps) {
             </h1>
 
             <p className="text-sm text-brand-mauve font-semibold mt-1">
-              {creator.role}
+              {role}
             </p>
           </div>
         </div>

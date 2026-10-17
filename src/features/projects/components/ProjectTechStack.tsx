@@ -1,14 +1,18 @@
+"use client";
+
 import { Video } from "lucide-react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export interface ProjectTechStackProps {
   techStack?: readonly string[];
 }
 
 export function ProjectTechStack({ techStack }: ProjectTechStackProps) {
+  const { t } = useLanguage();
   const items = techStack || [
-    "Cinema Camera Chain",
-    "Dedicated Acoustic Foley Mixing",
-    "Custom Color Pipeline",
+    t("projects.defaultTech1"),
+    t("projects.defaultTech2"),
+    t("projects.defaultTech3"),
   ];
 
   return (
@@ -17,7 +21,7 @@ export function ProjectTechStack({ techStack }: ProjectTechStackProps) {
         <div className="size-8 rounded-xl bg-brand-mauve/10 border border-brand-mauve/30 flex items-center justify-center text-brand-mauve shrink-0">
           <Video size={16} />
         </div>
-        <span>Production &amp; Tech Stack</span>
+        <span>{t("projects.techStackTitle")}</span>
       </h2>
       <div className="flex flex-wrap gap-2">
         {items.map((tech) => (

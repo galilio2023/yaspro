@@ -113,20 +113,13 @@ export default async function InfluencerDetailPage({
       <div className="absolute top-10 sm:top-20 right-4 sm:right-1/4 size-72 sm:size-[500px] lg:size-[600px] bg-brand-mauve/20 sm:bg-brand-mauve/10 rounded-full blur-[60px] sm:blur-[120px] lg:blur-[160px] pointer-events-none" />
 
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <BackButton href="/influencers" label="Back to Influencer Hub" />
+        <BackButton href="/influencers" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* Profile Card & Quick Actions (5 cols) */}
           <div className="lg:col-span-5 flex flex-col gap-6 lg:sticky lg:top-28">
             <InfluencerProfileCard creator={creator} />
-            <ProductionCtaCard
-              title="Produce your next show at Yas Pro"
-              description="Book our creator soundstages, podcast suites, or request outside broadcast units for your next viral moment."
-              primaryText="Book Studio Session"
-              primaryHref="/studio-booking"
-              secondaryText="Contact Team"
-              secondaryHref="/contact"
-            />
+            <ProductionCtaCard variant="influencers" />
           </div>
 
           {/* Bio & Highlights & Demographics (7 cols) */}

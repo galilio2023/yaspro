@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ShoppingBag } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, isActiveRoute } from "@/lib/utils";
 import { BrandLogo } from "./BrandLogo";
 import { MobileNavDrawer, NavLinkItem } from "./MobileNavDrawer";
 import { NavbarUserMenu } from "./NavbarUserMenu";
@@ -58,7 +58,7 @@ export default function Navbar() {
     >
       <nav
         className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-        aria-label="Main navigation"
+        aria-label={t("nav.mainNavAria")}
       >
         <div className="flex items-center justify-between h-14 sm:h-16 lg:h-18">
 
@@ -68,10 +68,7 @@ export default function Navbar() {
           {/* ── Center: Desktop Nav Links ── */}
           <ul className="hidden lg:flex items-center gap-0.5 xl:gap-1" role="list">
             {NAV_LINKS.map((link) => {
-              const isActive =
-                link.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(link.href);
+              const isActive = isActiveRoute(pathname, link.href);
               return (
                 <li key={link.href}>
                   <Link
@@ -98,8 +95,8 @@ export default function Navbar() {
               onClick={openCart}
               type="button"
               className="hidden lg:flex relative p-2 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white transition-all cursor-pointer items-center justify-center"
-              title={language === "ar" ? "سلة استئجار المعدات" : "Cinema Gear Cart"}
-              aria-label="View Cinema Gear Cart"
+              title={t("nav.gearCart")}
+              aria-label={t("nav.viewGearCartAria")}
             >
               <ShoppingBag size={14} className="text-zinc-300" />
               {totalCount > 0 && (
@@ -114,7 +111,7 @@ export default function Navbar() {
               onClick={toggleLanguage}
               type="button"
               className="hidden lg:inline-flex text-[11px] font-semibold text-zinc-300 hover:text-white px-2.5 py-1.5 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all cursor-pointer font-latin"
-              aria-label="Switch language"
+              aria-label={t("nav.switchLanguageAria")}
             >
               {language === "en" ? "العربية" : "EN"}
             </button>
@@ -140,7 +137,7 @@ export default function Navbar() {
               type="button"
               onClick={() => setIsOpen(!isOpen)}
               className="lg:hidden p-2.5 rounded-full border border-white/10 text-white bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
-              aria-label="Toggle navigation menu"
+              aria-label={t("nav.toggleMenuAria")}
               aria-expanded={isOpen}
             >
               {isOpen ? <X size={18} /> : <Menu size={18} />}

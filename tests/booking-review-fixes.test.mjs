@@ -52,8 +52,22 @@ function nodes(tree) {
   return [tree, ...nodes(tree.props?.children)];
 }
 const stub = () => null;
+const enMessages = JSON.parse(fs.readFileSync('messages/en.json', 'utf8'));
 const uiMocks = {
-  '@/components/providers/LanguageProvider': { useLanguage: () => ({ t: (key) => key, isArabic: false }) },
+  '@/components/providers/LanguageProvider': {
+    useLanguage: () => ({
+      language: 'en',
+      isArabic: false,
+      direction: 'ltr',
+      dir: 'ltr',
+      setLanguage() {},
+      t: (key, params) => {
+        const val = key.split('.').reduce((acc, part) => acc?.[part], enMessages);
+        if (typeof val !== 'string') return key;
+        return params ? val.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`)) : val;
+      },
+    }),
+  },
   '@/components/animations/MotionWrappers': { StaggerContainer: stub, StaggerItem: stub, FadeUp: stub },
   '@/components/admin/shared/AdminModal': { AdminModal: stub },
   '../shared/AdminModal': { AdminModal: stub },

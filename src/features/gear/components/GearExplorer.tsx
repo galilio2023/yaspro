@@ -52,7 +52,7 @@ export function GearExplorer({
     setDateRange,
   } = useCart();
 
-  const { isArabic } = useLanguage();
+  const { t, isArabic, dir } = useLanguage();
 
   const categoriesWithOptions: CategoryOption<GearCategory>[] = useMemo(() => {
     return GEAR_CATEGORIES.map((cat) => ({
@@ -133,7 +133,7 @@ export function GearExplorer({
   };
 
   return (
-    <div className="w-full">
+    <div dir={dir} className="w-full text-start">
       {/* When browsing all: Show JUST the title section with the 6 cards */}
       {selectedCategory === "all" && !showAllUnfiltered ? (
         <div className="w-full py-4 sm:py-8">
@@ -156,19 +156,19 @@ export function GearExplorer({
                 }}
                 className="px-4 py-2 rounded-xl bg-brand-violet/20 hover:bg-brand-violet/30 text-brand-mauve border border-brand-mauve/30 font-bold text-xs transition flex items-center gap-2 cursor-pointer shadow-sm shadow-brand-violet/20 group"
               >
-                <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
-                <span>{isArabic ? "الرجوع لكافة الفئات" : "Back to All Categories"}</span>
+                <ArrowLeft size={15} className="group-hover:-translate-x-0.5 rtl:rotate-180 rtl:group-hover:translate-x-0.5 transition-transform" />
+                <span>{t("shop.explorer.backToAllCategories")}</span>
               </button>
 
               <div className="h-5 w-px bg-white/10 hidden sm:block" />
 
               <div className="flex items-center gap-2">
-                <span className="text-xs text-text-muted">{isArabic ? "الفئة:" : "Category:"}</span>
+                <span className="text-xs text-text-muted">{t("shop.explorer.category")}</span>
                 <span className="font-bold text-white uppercase text-base sm:text-lg tracking-wide">
-                  {categoriesWithOptions.find((c) => c.id === selectedCategory)?.label || (isArabic ? "جميع المعدات" : "All Equipment")}
+                  {categoriesWithOptions.find((c) => c.id === selectedCategory)?.label || t("shop.explorer.allEquipment")}
                 </span>
                 <span className="font-mono text-xs px-2.5 py-0.5 rounded-full bg-brand-mauve/15 text-brand-mauve border border-brand-mauve/30 font-semibold">
-                  {filteredGear.length} {isArabic ? "معدة" : "units"}
+                  {t("shop.explorer.unitsCount", { count: filteredGear.length })}
                 </span>
               </div>
             </div>
@@ -185,12 +185,15 @@ export function GearExplorer({
           {filteredGear.length > 0 && (
             <div className="flex items-center justify-between py-2 text-xs text-text-muted font-mono border-b border-white/5">
               <span>
-                {isArabic
-                  ? `معاينة ${displayedGear.length} من أصل ${filteredGear.length} قطعة ومعدة سينمائية`
-                  : `Showing ${displayedGear.length} of ${filteredGear.length} calibrated cinema units`}
+                {t("shop.explorer.showingUnits", {
+                  displayed: displayedGear.length,
+                  total: filteredGear.length,
+                })}
               </span>
               <span className="hidden sm:inline text-brand-mauve font-semibold">
-                {Math.round((displayedGear.length / filteredGear.length) * 100)}% Loaded
+                {t("shop.explorer.loaded", {
+                  percent: Math.round((displayedGear.length / filteredGear.length) * 100),
+                })}
               </span>
             </div>
           )}
@@ -219,25 +222,21 @@ export function GearExplorer({
                     className="px-8 py-3.5 rounded-full border border-brand-mauve/40 bg-brand-violet/20 hover:bg-brand-violet/35 text-brand-mauve hover:text-brand-lavender text-xs font-bold transition-all shadow-lg shadow-brand-violet/25 cursor-pointer flex items-center gap-2"
                   >
                     <span>
-                      {isArabic
-                        ? `عرض المزيد (+12 من أصل ${filteredGear.length - visibleCount} متبقية)`
-                        : `Load More Cinema Gear (+12 of ${filteredGear.length - visibleCount} remaining)`}
+                      {t("shop.explorer.loadMore", {
+                        remaining: filteredGear.length - visibleCount,
+                      })}
                     </span>
                   </button>
                   <span className="text-[11px] font-mono text-text-muted">
-                    {isArabic ? "تحميل تقدمي سريع للأداء العالي" : "Fast progressive loading for optimum performance"}
+                    {t("shop.explorer.progressiveLoading")}
                   </span>
                 </div>
               )}
             </>
           ) : (
             <EmptyState
-              title={isArabic ? "لا توجد معدات متوفرة حالياً" : "No Equipment Found"}
-              description={
-                isArabic
-                  ? "لا توجد عناصر متاحة حالياً في هذه الفئة. يرجى مراجعة الكتالوج الكامل أو التواصل معنا لتوفير طلب خاص."
-                  : "There are currently no items available in this category. Check back soon or view all rental gear."
-              }
+              title={t("shop.explorer.emptyTitle")}
+              description={t("shop.explorer.emptyDesc")}
               action={
                 <Button
                   variant="outline"
@@ -248,7 +247,7 @@ export function GearExplorer({
                   }}
                   className="rounded-xl cursor-pointer"
                 >
-                  {isArabic ? "الرجوع للفئات" : "Back to Categories"}
+                  {t("shop.explorer.backToCategories")}
                 </Button>
               }
             />

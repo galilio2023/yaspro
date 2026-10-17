@@ -49,9 +49,13 @@ export interface BookingState {
 export interface SessionTypeItem {
   id: string;
   title: string;
+  titleAr?: string;
   label?: string;
+  labelAr?: string;
   description: string;
+  descriptionAr?: string;
   desc?: string;
+  descAr?: string;
   price: number;
   imageUrl: string;
   image?: string;
@@ -62,22 +66,28 @@ export interface StudioItem {
   id: string;
   slug?: string;
   name: string;
+  arabicName?: string;
   desc: string;
   description?: string;
+  arabicDescription?: string;
   rate: number;
   capacity?: number;
   location?: string;
+  arabicLocation?: string;
   image?: string;
   imageUrl?: string;
   galleryImages?: string[];
   features?: string[];
+  arabicFeatures?: string[];
   isActive?: boolean;
 }
 
 export interface CrewEquipmentItem {
   id: string;
   title: string;
+  titleAr?: string;
   description: string;
+  descriptionAr?: string;
   price: number;
   priceType: "hourly" | "flat";
   category: "crew" | "equipment";
@@ -87,16 +97,20 @@ export interface CrewEquipmentItem {
 export interface PropItem {
   id: string;
   title: string;
+  titleAr?: string;
   price: number;
   priceType: "hourly" | "flat";
   category: string;
+  categoryAr?: string;
   imageUrl: string;
 }
 
 export interface AddonItem {
   id: string;
   title: string;
+  titleAr?: string;
   description: string;
+  descriptionAr?: string;
   price: number;
   priceType: "hourly" | "flat";
   imageUrl: string;
@@ -105,13 +119,16 @@ export interface AddonItem {
 export interface StudioGearPackage {
   id: string;
   name: string;
+  arabicName?: string;
   rate: number;
   description: string;
+  arabicDescription?: string;
 }
 
 export interface WizardStepItem {
   id: number;
   label: string;
+  labelAr?: string;
   icon?: LucideIcon;
 }
 

@@ -14,15 +14,21 @@ export interface ProjectItem {
   arabicTitle?: string;
   category: ProjectCategory;
   categoryLabel: string;
+  categoryLabelAr?: string;
   client: string;
+  arabicClient?: string;
   description: string;
   arabicDescription?: string;
   tag: string;
+  arabicTag?: string;
   views: string;
+  arabicViews?: string;
   image?: string;
   vimeoId?: string;
   videoUrl?: string;
   year?: string;
   deliverables?: string[];
+  arabicDeliverables?: string[];
   techStack?: string[];
+  arabicTechStack?: string[];
 }

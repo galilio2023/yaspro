@@ -3,6 +3,7 @@
 import { getLocalCalendarDate } from "@/features/gear/lib/rental-schedule";
 
 import { useState, useMemo } from "react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import { PodcastSessionItem, PodcastBookingContact, PodcastBookingStep, PodcastStudio, PodcastAddon, PodcastService } from "../types";
 import { PODCAST_STUDIOS, PODCAST_SERVICES, PODCAST_ADDONS, TIME_SLOTS } from "../data";
 import { createPodcastBooking, resolvePodcastPromoRule, PodcastBookingResult } from "../actions";
@@ -34,6 +35,7 @@ export function usePodcastBooking(
   addons: PodcastAddon[] = PODCAST_ADDONS,
   services: PodcastService[] = PODCAST_SERVICES
 ) {
+  const { t } = useLanguage();
   const [step, setStep] = useState<PodcastBookingStep>(1);
   const [sessions, setSessions] = useState<PodcastSessionItem[]>([createDefaultSession(1, studios, services)]);
   const [activeSessionIndex, setActiveSessionIndex] = useState(0);
@@ -160,20 +162,20 @@ export function usePodcastBooking(
       let invalidStep: PodcastBookingStep = 1;
 
       if (!session.date) {
-        message = "Please select a session date.";
+        message = t("podcastBooking.validation.selectDate");
       } else if (!session.timeSlot) {
-        message = "Please select a recording time slot.";
+        message = t("podcastBooking.validation.selectTime");
       } else if (!studio || studio.isAvailable === false) {
-        message = "Please select your preferred podcast studio setup.";
+        message = t("podcastBooking.validation.selectStudio");
         invalidStep = 2;
       } else if (studio.seats < session.headcount) {
-        message = "Please select a studio with enough seats for your guests.";
+        message = t("podcastBooking.validation.notEnoughSeats");
         invalidStep = 2;
       }
 
       if (!message && Object.entries(session.addons).some(([key, qty]) =>
         qty > 0 && !addons.some((addon) => addon.key === key && addon.isActive !== false))) {
-        message = "The selected add-on is unavailable. Please update your add-ons.";
+        message = t("podcastBooking.validation.addonUnavailable");
         invalidStep = 4;
       }
 
@@ -192,28 +194,28 @@ export function usePodcastBooking(
     setErrorMessage(null);
     if (step === 1) {
       if (!currentSession.date) {
-        setErrorMessage("Please select a session date.");
+        setErrorMessage(t("podcastBooking.validation.selectDate"));
         return;
       }
       if (!currentSession.timeSlot) {
-        setErrorMessage("Please select a recording time slot.");
+        setErrorMessage(t("podcastBooking.validation.selectTime"));
         return;
       }
       setStep(2);
     } else if (step === 2) {
       const studio = studios.find((item) => item.key === currentSession.studioKey);
       if (!studio || studio.isAvailable === false) {
-        setErrorMessage("Please select your preferred podcast studio setup.");
+        setErrorMessage(t("podcastBooking.validation.selectStudio"));
         return;
       }
       if (studio.seats < currentSession.headcount) {
-        setErrorMessage("Please select a studio with enough seats for your guests.");
+        setErrorMessage(t("podcastBooking.validation.notEnoughSeats"));
         return;
       }
       setStep(3);
     } else if (step === 3) {
       if (!currentSession.serviceKey) {
-        setErrorMessage("Please select a recording service package.");
+        setErrorMessage(t("podcastBooking.validation.selectService"));
         return;
       }
       setStep(4);
@@ -232,20 +234,20 @@ export function usePodcastBooking(
     setPromoError(null);
     const trimmed = code.trim().toUpperCase();
     if (!trimmed) {
-      setPromoError("Please enter a promo code.");
+      setPromoError(t("podcastBooking.validation.enterPromo"));
       return;
     }
     try {
       const rule = await resolvePodcastPromoRule(trimmed);
       if (!rule) {
-        setPromoError("Invalid or expired promo code.");
+        setPromoError(t("podcastBooking.validation.invalidPromo"));
         return;
       }
       setDbPromoRules((prev) => ({ ...prev, [trimmed]: { percent: rule.percent, flat: rule.flat } }));
       setAppliedPromo(trimmed);
       setContact((prev) => ({ ...prev, promoCode: trimmed }));
     } catch {
-      setPromoError("Invalid or expired promo code.");
+      setPromoError(t("podcastBooking.validation.invalidPromo"));
     }
   };
 
@@ -261,19 +263,19 @@ export function usePodcastBooking(
     if (!validateSessions()) return;
 
     if (!contact.fullName.trim()) {
-      setErrorMessage("Full name is required.");
+      setErrorMessage(t("podcastBooking.validation.fullNameRequired"));
       return;
     }
     if (!contact.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email.trim())) {
-      setErrorMessage("A valid email address is required.");
+      setErrorMessage(t("podcastBooking.validation.validEmailRequired"));
       return;
     }
     if (!contact.phone.trim()) {
-      setErrorMessage("A phone or WhatsApp contact number is required.");
+      setErrorMessage(t("podcastBooking.validation.phoneRequired"));
       return;
     }
     if (!isAgreedToTerms) {
-      setErrorMessage("Please review and agree to the Terms and Conditions.");
+      setErrorMessage(t("podcastBooking.validation.termsRequired"));
       return;
     }
 
@@ -291,7 +293,7 @@ export function usePodcastBooking(
       });
 
       if (!res.success && !res.paymentFailed) {
-        throw new Error(res.message || "Failed to process booking reservation.");
+        throw new Error(res.message || t("podcastBooking.validation.failedReservation"));
       }
 
       setConfirmedResult(res);
@@ -301,7 +303,7 @@ export function usePodcastBooking(
       }
     } catch (err) {
       console.error(err);
-      setErrorMessage(err instanceof Error ? err.message : "Unable to complete booking. Please try again.");
+      setErrorMessage(err instanceof Error ? err.message : t("podcastBooking.validation.unableToComplete"));
     } finally {
       setIsSubmitting(false);
     }

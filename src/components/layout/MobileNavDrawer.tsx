@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Globe, MapPin, ShoppingBag, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, isActiveRoute } from "@/lib/utils";
 import { BrandLogo } from "./BrandLogo";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { useCart } from "@/components/providers/CartProvider";
@@ -139,7 +139,7 @@ export function MobileNavDrawer({
             ref={panelRef}
             role="dialog"
             aria-modal="true"
-            aria-label="Navigation Menu"
+            aria-label={t("nav.mobileMenuAria")}
             initial={{ opacity: 0, x: isArabic ? "-100%" : "100%" }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: isArabic ? "-100%" : "100%" }}
@@ -159,7 +159,7 @@ export function MobileNavDrawer({
                   ref={closeButtonRef}
                   type="button"
                   onClick={onClose}
-                  aria-label="Close menu"
+                  aria-label={t("nav.closeMenuAria")}
                   className="p-1.5 rounded-lg text-text-muted hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve/40"
                 >
                   <X size={18} />
@@ -167,14 +167,11 @@ export function MobileNavDrawer({
               </div>
 
               <p className="px-4 text-[10px] uppercase tracking-widest text-text-ghost font-mono mb-1 text-start">
-                {isArabic ? "التنقل" : "Navigate"}
+                {t("nav.navigate")}
               </p>
 
               {navLinks.map((link) => {
-                const isActive =
-                  link.href === "/"
-                    ? pathname === "/"
-                    : pathname.startsWith(link.href);
+                const isActive = isActiveRoute(pathname, link.href);
 
                 return (
                   <Link
@@ -220,7 +217,7 @@ export function MobileNavDrawer({
                       </span>
                     )}
                   </div>
-                  <span>{isArabic ? "سلة المعدات" : "Gear Cart"}</span>
+                  <span>{t("nav.gearCart")}</span>
                 </button>
 
                 <button
@@ -251,7 +248,7 @@ export function MobileNavDrawer({
                 onClick={onClose}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-bold hover:bg-emerald-500/20 transition-all"
               >
-                💬 {t("nav.whatsApp")} Hotline
+                💬 {t("nav.whatsApp")}
               </a>
 
               {/* Portal / Sign In */}
@@ -288,9 +285,9 @@ export function MobileNavDrawer({
               <div className="flex items-center justify-between text-[11px] text-text-ghost px-1 pt-1">
                 <span className="flex items-center gap-1">
                   <MapPin size={11} className="text-brand-lavender" />
-                  {isArabic ? "دبي · القاهرة · عَمّان" : "Dubai · Cairo · Amman"}
+                  {t("nav.hubsLine")}
                 </span>
-                <span className="text-brand-lavender font-latin" dir="ltr">400M+ Network</span>
+                <span className="text-brand-lavender font-latin" dir="ltr">{t("nav.networkReach")}</span>
               </div>
             </div>
           </motion.div>

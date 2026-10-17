@@ -73,9 +73,22 @@ export default async function ShopPage() {
         : g.category === "accessories"
         ? "Camera Accessory"
         : "Production Audio",
+    categoryLabelAr:
+      g.category === "cameras"
+        ? "كاميرا سينمائية"
+        : g.category === "bundles"
+        ? "باقة متكاملة"
+        : g.category === "lighting"
+        ? "إضاءة سينمائية"
+        : g.category === "lenses"
+        ? "عدسة سينمائية"
+        : g.category === "accessories"
+        ? "ملحقات تصوير"
+        : "صوتيات احترافية",
     dailyRate: Number(g.dailyRate),
     securityDeposit: Number(g.securityDeposit || 0),
     specs: g.specs || [],
+    arabicSpecs: g.arabicSpecs || undefined,
     description: g.description || "",
     arabicDescription: g.arabicDescription || undefined,
     isPopular: g.isPopular,

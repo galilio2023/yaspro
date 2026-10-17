@@ -8,14 +8,17 @@ export interface GearItem {
   arabicName?: string;
   category: GearCategory;
   categoryLabel: string;
+  categoryLabelAr?: string;
   dailyRate: number;
   specs: string[];
+  arabicSpecs?: string[];
   description: string;
   arabicDescription?: string;
   isPopular?: boolean;
   image?: string;
   isKit?: boolean;
   includedInKit?: string[];
+  arabicIncludedInKit?: string[];
   securityDeposit?: number; // Refundable deposit in AED
   isAvailable?: boolean;
 }

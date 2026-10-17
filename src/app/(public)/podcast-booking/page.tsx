@@ -99,12 +99,8 @@ const PODCAST_BOOKING_SCHEMA = {
   },
 };
 
-const PODCAST_SPECS = [
-  { label: "Capture", value: "3x 4K Sony Cinema Cameras" },
-  { label: "Audio", value: "Shure SM7B Vocal Suite + RØDECaster" },
-  { label: "Acoustics", value: "Class A Isolated Soundstage" },
-  { label: "Location", value: "Iris Bay Tower, Level 18 · Dubai" },
-];
+import { PodcastBookingPageHeader } from "@/features/podcast-booking/components/PodcastBookingPageHeader";
+import { PodcastBookingFaq } from "@/features/podcast-booking/components/PodcastBookingFaq";
 
 export default async function PodcastBookingPage() {
   await connection();
@@ -118,64 +114,15 @@ export default async function PodcastBookingPage() {
       <JsonLd data={PODCAST_BOOKING_SCHEMA} />
       <Container>
         {/* Cinematic Booking Hero */}
-        <BookingHero
-          headingId="podcast-booking-title"
-          eyebrow="Acoustic Pods · 4K Multi-Cam · Level 18"
-          title="Podcast Studio"
-          accent="Booking"
-          description="Record your show in acoustically engineered suites with 4K cinema cameras, broadcast Shure mics, an on-site engineer, and rapid post-production."
-          specs={PODCAST_SPECS}
-          crossLink={{
-            href: "/studio-booking",
-            label: "Need a film soundstage or virtual XR volume instead?",
-            cta: "View Full Soundstages",
-          }}
-        />
+        <PodcastBookingPageHeader />
 
         {/* Wizard */}
         <PodcastBookingWizard studios={studios} addons={addons} services={services} />
 
         {/* Studio FAQ Section */}
-        <div className="max-w-4xl mx-auto mt-20 pt-16 border-t border-white/10 space-y-8">
-          <div className="text-center space-y-2">
-            <div className="size-10 rounded-2xl bg-brand-mauve/10 border border-brand-mauve/20 text-brand-mauve flex items-center justify-center mx-auto shadow-sm shadow-brand-violet/20">
-              <HelpCircle size={20} />
-            </div>
-            <h2 className="text-2xl font-bold text-white tracking-tight">Frequently Asked Questions</h2>
-            <p className="text-xs text-zinc-400">Everything you need to know about recording at Yas Pro</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-            <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2">
-              <h3 className="font-bold text-white text-sm">How early should I arrive?</h3>
-              <p className="text-zinc-400 leading-relaxed">
-                We recommend arriving 15 minutes before your scheduled start time so our engineer can mic you up, test audio levels, and frame your camera shots.
-              </p>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2">
-              <h3 className="font-bold text-white text-sm">How do I get my recorded files?</h3>
-              <p className="text-zinc-400 leading-relaxed">
-                If you choose Recording Only or Live Mix, bring a high-speed SSD USB-C drive for instant transfer. For Professional Edit packages, masters are delivered via private cloud download within 3-5 business days.
-              </p>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2">
-              <h3 className="font-bold text-white text-sm">Can I bring remote guests via Zoom or Riverside?</h3>
-              <p className="text-zinc-400 leading-relaxed">
-                Yes! Our switcher and mixer are fully patched to feed remote callers directly into our studio monitors and recording tracks with zero latency.
-              </p>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2">
-              <h3 className="font-bold text-white text-sm">What payment methods are accepted?</h3>
-              <p className="text-zinc-400 leading-relaxed">
-                We accept Apple Pay, Google Pay, Visa, Mastercard through secure Ziina checkout, or direct payment at our reception desk.
-              </p>
-            </div>
-          </div>
-        </div>
+        <PodcastBookingFaq />
       </Container>
     </Section>
   );
 }
+

@@ -150,7 +150,7 @@ export function PortfolioSection({ limit = 9, initialProjects }: PortfolioSectio
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/90 border border-brand-mauve/40 text-[10px] font-mono font-bold tracking-wider text-brand-lavender uppercase">
                       <Sparkles size={11} className="text-brand-lavender" />
-                      <span>{isArabic ? "العرض الرئيسي المميز" : "Spotlight Premiere"}</span>
+                      <span>{t("projects.spotlightPremiere")}</span>
                     </span>
 
                     <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/85 border border-white/10 text-[9px] font-mono text-zinc-300" dir="ltr">
@@ -181,7 +181,7 @@ export function PortfolioSection({ limit = 9, initialProjects }: PortfolioSectio
                         </div>
                       </div>
                       <span className="px-3 py-1 rounded-full bg-black/90 border border-white/10 text-[10px] sm:text-xs font-mono font-semibold tracking-wider text-zinc-200 group-hover/playbtn:text-brand-lavender transition-colors">
-                        {isArabic ? "مشاهدة الفيلم • 4K UHD" : "WATCH FILM • 4K UHD"}
+                        {t("projects.watchFilm")}
                       </span>
                     </button>
                   </div>
@@ -235,7 +235,7 @@ export function PortfolioSection({ limit = 9, initialProjects }: PortfolioSectio
                   {/* Studio Tech & Deliverables Pills */}
                   <div className="mb-6">
                     <span className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-2">
-                      {isArabic ? "مواصفات الإنتاج والتسليم:" : "Production & Deliverables:"}
+                      {t("projects.productionSpecs")}
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {spotlightProject.deliverables?.map((item) => (
@@ -260,14 +260,14 @@ export function PortfolioSection({ limit = 9, initialProjects }: PortfolioSectio
                         className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full btn-brand text-xs font-bold active:scale-[0.98] transition-all cursor-pointer"
                       >
                         <Play size={13} className="fill-current" />
-                        <span>{isArabic ? "مشاهدة الماستر السينمائي" : "Watch Master Reel"}</span>
+                        <span>{t("projects.watchMasterReel")}</span>
                       </button>
 
                       <Link
                         href={`/projects/${spotlightProject.slug}`}
                         className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 text-zinc-300 font-semibold text-xs hover:bg-white/10 hover:text-white transition-all"
                       >
-                        <span>{isArabic ? "تفاصيل المشروع" : "Project Dossier"}</span>
+                        <span>{t("projects.projectDossier")}</span>
                         <ArrowUpRight size={13} className="rtl:rotate-90 rtl:scale-x-[-1]" />
                       </Link>
                     </>
@@ -276,7 +276,7 @@ export function PortfolioSection({ limit = 9, initialProjects }: PortfolioSectio
                       href={`/projects/${spotlightProject.slug}`}
                       className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full btn-brand text-xs font-bold active:scale-[0.98] transition-all"
                     >
-                      <span>{isArabic ? "استعراض تفاصيل المشروع" : "Explore Project Dossier"}</span>
+                      <span>{t("projects.exploreProjectDossier")}</span>
                       <ArrowUpRight size={13} className="rtl:rotate-90 rtl:scale-x-[-1]" />
                     </Link>
                   )}
@@ -292,11 +292,11 @@ export function PortfolioSection({ limit = 9, initialProjects }: PortfolioSectio
             <div className="flex items-center gap-2">
               <Clapperboard size={16} className="text-brand-lavender" />
               <h3 className="text-sm font-mono uppercase tracking-wider text-zinc-300 font-semibold">
-                {isArabic ? "استكشف أعمالنا في هذا التصنيف" : "Selected Repertoire Grid"}
+                {t("projects.selectedRepertoire")}
               </h3>
             </div>
             <span className="text-xs font-mono text-zinc-500">
-              {filteredProjects.length} {isArabic ? "أعمال معتمدة" : "Masterpieces"}
+              {t("projects.masterpiecesCount", { count: filteredProjects.length })}
             </span>
           </div>
 
@@ -323,7 +323,7 @@ export function PortfolioSection({ limit = 9, initialProjects }: PortfolioSectio
             className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full border border-white/15 bg-zinc-900/90 text-zinc-200 hover:btn-brand hover:border-transparent transition-all text-xs font-bold shadow-xl shadow-black/60 active:scale-[0.98]"
           >
             <span>
-              {t("portfolio.viewAll")} ({PROJECTS_DATA.length}+ {isArabic ? "عمل سينمائي" : "Cinema Works"})
+              {t("portfolio.viewAll")} ({t("projects.cinemaWorks", { count: PROJECTS_DATA.length })})
             </span>
             <ArrowRight size={14} className="rtl:rotate-180 shrink-0 transition-transform" />
           </Link>

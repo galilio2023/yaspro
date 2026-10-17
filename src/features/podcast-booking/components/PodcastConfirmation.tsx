@@ -2,6 +2,7 @@
 
 import { CheckCircle2, AlertCircle, MessageCircle, ArrowRight } from "lucide-react";
 import { PodcastBookingResult } from "../actions";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface PodcastConfirmationProps {
   result: PodcastBookingResult;
@@ -9,10 +10,11 @@ interface PodcastConfirmationProps {
 }
 
 export function PodcastConfirmation({ result, onBookAnother }: PodcastConfirmationProps) {
+  const { t, isArabic } = useLanguage();
   const paymentFailed = result.paymentFailed === true;
   const reference = result.referenceCode || "POD-CONFIRMED";
   const whatsappUrl = `https://wa.me/971501234567?text=${encodeURIComponent(
-    `Hello Yas Pro Concierge, I just booked podcast session ${reference}. Could you confirm the details?`
+    t("podcastBooking.confirmation.whatsappText", { reference })
   )}`;
 
   return (
@@ -23,15 +25,15 @@ export function PodcastConfirmation({ result, onBookAnother }: PodcastConfirmati
 
       <div className="space-y-2">
         <span className={`text-xs font-bold uppercase tracking-wider ${paymentFailed ? "text-brand-mauve" : "text-emerald-400"}`}>
-          {paymentFailed ? "Reservation saved · Unpaid" : "Booking Confirmed"}
+          {paymentFailed ? t("podcastBooking.confirmation.unpaidBadge") : t("podcastBooking.confirmation.confirmedBadge")}
         </span>
         <h2 className="text-xl sm:text-3xl font-extrabold text-white">
-          {paymentFailed ? "Your reservation is awaiting payment" : "Your Podcast Session is Booked!"}
+          {paymentFailed ? t("podcastBooking.confirmation.unpaidTitle") : t("podcastBooking.confirmation.confirmedTitle")}
         </h2>
         <p className="text-xs sm:text-sm text-text-muted max-w-md mx-auto">
           {paymentFailed
-            ? "Your sessions have been reserved, but payment could not be started. Contact the concierge with your booking reference to arrange payment."
-            : "We have reserved the studio stage at Iris Bay, Business Bay, Dubai."}
+            ? t("podcastBooking.confirmation.unpaidDesc")
+            : t("podcastBooking.confirmation.confirmedDesc")}
         </p>
       </div>
 
@@ -42,7 +44,7 @@ export function PodcastConfirmation({ result, onBookAnother }: PodcastConfirmati
       {/* Booking Reference Pill */}
       <div className="p-4 rounded-2xl bg-brand-violet/10 border border-brand-mauve/30 max-w-sm mx-auto shadow-sm shadow-brand-violet/20">
         <span className="text-[11px] uppercase tracking-wider text-text-muted block font-semibold mb-1">
-          Booking Reference
+          {t("podcastBooking.confirmation.bookingRef")}
         </span>
         <span className="text-xl font-mono font-extrabold text-brand-mauve tracking-wider">
           {reference}
@@ -50,19 +52,19 @@ export function PodcastConfirmation({ result, onBookAnother }: PodcastConfirmati
       </div>
 
       {/* Instructions & Next steps */}
-      <div className="text-left p-5 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3 text-xs text-text-muted">
+      <div className="text-start p-5 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3 text-xs text-text-muted">
         <h4 className="font-bold text-white uppercase tracking-wider text-[11px]">
-          Session Arrival Checklist:
+          {t("podcastBooking.confirmation.arrivalChecklist")}
         </h4>
         <ul className="space-y-2 list-disc list-inside">
           <li>
-            <strong className="text-white">Location:</strong> Iris Bay Tower, Business Bay, Dubai (Level 18).
+            <strong className="text-white">{t("podcastBooking.confirmation.locTitle")}</strong> {t("podcastBooking.confirmation.locVal")}
           </li>
           <li>
-            <strong className="text-white">Arrival:</strong> Please arrive 15 minutes before your scheduled start time.
+            <strong className="text-white">{t("podcastBooking.confirmation.arrTitle")}</strong> {t("podcastBooking.confirmation.arrVal")}
           </li>
           <li>
-            <strong className="text-white">Storage:</strong> If not ordering Yas Pro full episode edit, remember your SSD drive.
+            <strong className="text-white">{t("podcastBooking.confirmation.storageTitle")}</strong> {t("podcastBooking.confirmation.storageVal")}
           </li>
         </ul>
       </div>
@@ -76,7 +78,7 @@ export function PodcastConfirmation({ result, onBookAnother }: PodcastConfirmati
           className="w-full sm:w-auto h-11 sm:h-12 px-5 sm:px-6 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30"
         >
           <MessageCircle size={15} />
-          Chat with Studio Concierge
+          {t("podcastBooking.confirmation.chatConcierge")}
         </a>
 
         <button
@@ -84,8 +86,8 @@ export function PodcastConfirmation({ result, onBookAnother }: PodcastConfirmati
           onClick={onBookAnother}
           className="w-full sm:w-auto h-11 sm:h-12 px-5 sm:px-6 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2"
         >
-          Book Another Session
-          <ArrowRight size={14} />
+          {t("podcastBooking.confirmation.bookAnother")}
+          <ArrowRight size={14} className={isArabic ? "rotate-180" : ""} />
         </button>
       </div>
     </div>

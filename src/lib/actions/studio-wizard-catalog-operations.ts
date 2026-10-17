@@ -55,18 +55,53 @@ export async function getStudioWizardCatalog(): Promise<StudioWizardCatalog> {
 
     if (rows.length > 0 && rows[0].value && typeof rows[0].value === "object") {
       const saved = rows[0].value as Partial<StudioWizardCatalog>;
+      const sessionTypeDefaults = new Map(defaults.sessionTypes.map((item) => [item.id, item]));
+      const crewDefaults = new Map(defaults.crewEquipment.map((item) => [item.id, item]));
+      const propDefaults = new Map(defaults.props.map((item) => [item.id, item]));
+      const addonDefaults = new Map(defaults.addons.map((item) => [item.id, item]));
+
       return {
         sessionTypes: Array.isArray(saved.sessionTypes) && saved.sessionTypes.length > 0
-          ? saved.sessionTypes
+          ? saved.sessionTypes.map((item) => {
+              const fallback = sessionTypeDefaults.get(item.id);
+              return {
+                ...item,
+                titleAr: item.titleAr || fallback?.titleAr,
+                labelAr: item.labelAr || item.titleAr || fallback?.labelAr || fallback?.titleAr,
+                descriptionAr: item.descriptionAr || fallback?.descriptionAr,
+                descAr: item.descAr || item.descriptionAr || fallback?.descAr || fallback?.descriptionAr,
+              };
+            })
           : defaults.sessionTypes,
         crewEquipment: Array.isArray(saved.crewEquipment)
-          ? saved.crewEquipment
+          ? saved.crewEquipment.map((item) => {
+              const fallback = crewDefaults.get(item.id);
+              return {
+                ...item,
+                titleAr: item.titleAr || fallback?.titleAr,
+                descriptionAr: item.descriptionAr || fallback?.descriptionAr,
+              };
+            })
           : defaults.crewEquipment,
         props: Array.isArray(saved.props)
-          ? saved.props
+          ? saved.props.map((item) => {
+              const fallback = propDefaults.get(item.id);
+              return {
+                ...item,
+                titleAr: item.titleAr || fallback?.titleAr,
+                categoryAr: item.categoryAr || fallback?.categoryAr,
+              };
+            })
           : defaults.props,
         addons: Array.isArray(saved.addons)
-          ? saved.addons
+          ? saved.addons.map((item) => {
+              const fallback = addonDefaults.get(item.id);
+              return {
+                ...item,
+                titleAr: item.titleAr || fallback?.titleAr,
+                descriptionAr: item.descriptionAr || fallback?.descriptionAr,
+              };
+            })
           : defaults.addons,
       };
     }
@@ -133,7 +168,9 @@ const finiteNonNegativePrice = (fieldLabel: string) =>
 const studioSessionTypeInputSchema = z.object({
   id: z.string({ message: "Session ID is required." }).trim().min(1, "Session ID is required."),
   title: z.string({ message: "Session title is required." }).trim().min(1, "Session title is required."),
+  titleAr: z.string().optional().default(""),
   description: z.string().optional().default(""),
+  descriptionAr: z.string().optional().default(""),
   price: finiteNonNegativePrice("Session price"),
   imageUrl: z.string().optional().default(""),
 });
@@ -141,7 +178,9 @@ const studioSessionTypeInputSchema = z.object({
 const studioCrewItemInputSchema = z.object({
   id: z.string({ message: "Crew/Equipment ID is required." }).trim().min(1, "Crew/Equipment ID is required."),
   title: z.string({ message: "Crew/Equipment title is required." }).trim().min(1, "Crew/Equipment title is required."),
+  titleAr: z.string().optional().default(""),
   description: z.string().optional().default(""),
+  descriptionAr: z.string().optional().default(""),
   price: finiteNonNegativePrice("Crew/Equipment rate"),
   priceType: z.enum(["hourly", "flat"]).optional().default("hourly"),
   category: z.enum(["crew", "equipment"]).optional().default("crew"),
@@ -151,16 +190,20 @@ const studioCrewItemInputSchema = z.object({
 const studioPropItemInputSchema = z.object({
   id: z.string({ message: "Prop ID is required." }).trim().min(1, "Prop ID is required."),
   title: z.string({ message: "Prop title is required." }).trim().min(1, "Prop title is required."),
+  titleAr: z.string().optional().default(""),
   price: finiteNonNegativePrice("Prop rate"),
   priceType: z.enum(["hourly", "flat"]).optional().default("flat"),
   category: z.string().optional().default("Furniture"),
+  categoryAr: z.string().optional().default(""),
   imageUrl: z.string().optional().default(""),
 });
 
 const studioAddonItemInputSchema = z.object({
   id: z.string({ message: "Add-on ID is required." }).trim().min(1, "Add-on ID is required."),
   title: z.string({ message: "Add-on title is required." }).trim().min(1, "Add-on title is required."),
+  titleAr: z.string().optional().default(""),
   description: z.string().optional().default(""),
+  descriptionAr: z.string().optional().default(""),
   price: finiteNonNegativePrice("Add-on rate"),
   priceType: z.enum(["hourly", "flat"]).optional().default("flat"),
   imageUrl: z.string().optional().default(""),
@@ -183,13 +226,20 @@ export async function upsertStudioSessionType(
         error: parsed.error.issues[0]?.message || "Valid session ID, title, and price are required.",
       };
     }
-    const { id: cleanId, title: cleanTitle, description, price, imageUrl } = parsed.data;
+    const { id: cleanId, title: cleanTitle, titleAr, description, descriptionAr, price, imageUrl } = parsed.data;
 
     const current = await loadStudioWizardCatalogStrict();
+    const existing = current.sessionTypes.find((s) => s.id === cleanId);
     const normalized: SessionTypeItem = {
       id: cleanId,
       title: cleanTitle,
+      titleAr: titleAr.trim() || existing?.titleAr,
+      label: cleanTitle,
+      labelAr: titleAr.trim() || existing?.labelAr || existing?.titleAr,
       description: description.trim(),
+      descriptionAr: descriptionAr.trim() || existing?.descriptionAr,
+      desc: description.trim(),
+      descAr: descriptionAr.trim() || existing?.descAr || existing?.descriptionAr,
       price,
       imageUrl: imageUrl.trim() || "/images/studios/nature-grid.jpg",
     };
@@ -250,13 +300,16 @@ export async function upsertStudioCrewItem(
         error: parsed.error.issues[0]?.message || "Valid crew item ID, title, and rate are required.",
       };
     }
-    const { id: cleanId, title: cleanTitle, description, price, priceType, category, imageUrl } = parsed.data;
+    const { id: cleanId, title: cleanTitle, titleAr, description, descriptionAr, price, priceType, category, imageUrl } = parsed.data;
 
     const current = await loadStudioWizardCatalogStrict();
+    const existing = current.crewEquipment.find((c) => c.id === cleanId);
     const normalized: CrewEquipmentItem = {
       id: cleanId,
       title: cleanTitle,
+      titleAr: titleAr.trim() || existing?.titleAr,
       description: description.trim(),
+      descriptionAr: descriptionAr.trim() || existing?.descriptionAr,
       price,
       priceType,
       category,
@@ -316,15 +369,18 @@ export async function upsertStudioPropItem(
         error: parsed.error.issues[0]?.message || "Valid prop ID, title, and rate are required.",
       };
     }
-    const { id: cleanId, title: cleanTitle, price, priceType, category, imageUrl } = parsed.data;
+    const { id: cleanId, title: cleanTitle, titleAr, price, priceType, category, categoryAr, imageUrl } = parsed.data;
 
     const current = await loadStudioWizardCatalogStrict();
+    const existing = current.props.find((p) => p.id === cleanId);
     const normalized: PropItem = {
       id: cleanId,
       title: cleanTitle,
+      titleAr: titleAr.trim() || existing?.titleAr,
       price,
       priceType,
       category: category.trim() || "Furniture",
+      categoryAr: categoryAr.trim() || existing?.categoryAr,
       imageUrl: imageUrl.trim() || "/images/studios/nature-grid.jpg",
     };
 
@@ -381,13 +437,16 @@ export async function upsertStudioAddonItem(
         error: parsed.error.issues[0]?.message || "Valid add-on ID, title, and rate are required.",
       };
     }
-    const { id: cleanId, title: cleanTitle, description, price, priceType, imageUrl } = parsed.data;
+    const { id: cleanId, title: cleanTitle, titleAr, description, descriptionAr, price, priceType, imageUrl } = parsed.data;
 
     const current = await loadStudioWizardCatalogStrict();
+    const existing = current.addons.find((a) => a.id === cleanId);
     const normalized: AddonItem = {
       id: cleanId,
       title: cleanTitle,
+      titleAr: titleAr.trim() || existing?.titleAr,
       description: description.trim(),
+      descriptionAr: descriptionAr.trim() || existing?.descriptionAr,
       price,
       priceType,
       imageUrl: imageUrl.trim() || "/images/studios/nature-grid.jpg",

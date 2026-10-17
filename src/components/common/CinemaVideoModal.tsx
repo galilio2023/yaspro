@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Film, X, ExternalLink, Play, Sparkles, CheckCircle2, ShieldCheck } from "lucide-react";
 import { lockScroll, unlockScroll } from "@/hooks/useScrollLock";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 const emptySubscribe = () => () => {};
 
@@ -86,6 +87,7 @@ export function CinemaVideoModal({
   subtitle,
   client,
 }: CinemaVideoModalProps) {
+  const { t, dir } = useLanguage();
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   const parsed = parseVideoSource(vimeoId, videoUrl);
@@ -125,6 +127,7 @@ export function CinemaVideoModal({
       role="dialog"
       aria-modal="true"
       aria-label={title}
+      dir={dir}
       className="fixed inset-0 z-[9999] flex items-center justify-center p-0 sm:p-6 md:p-8 bg-black/95 backdrop-blur-2xl transition-opacity duration-300 select-none animate-in fade-in"
       onClick={onClose}
     >
@@ -135,7 +138,7 @@ export function CinemaVideoModal({
       >
         {/* Header Bar */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-white/10 bg-black/80 backdrop-blur-md">
-          <div className="flex items-center gap-3 min-w-0 pr-3">
+          <div className="flex items-center gap-3 min-w-0 pr-3 rtl:pr-0 rtl:pl-3">
             <div className="size-8 sm:size-9 rounded-xl bg-brand-violet/25 border border-brand-mauve/40 flex items-center justify-center text-brand-lavender shrink-0">
               <Film size={16} />
             </div>
@@ -144,7 +147,7 @@ export function CinemaVideoModal({
                 {title} {subtitle ? `— ${subtitle}` : ""}
               </h4>
               <p className="text-[10px] sm:text-[11px] text-text-muted font-mono truncate">
-                {client ? `Client: ${client} • ` : ""}Official Yas Pro Cinema Master
+                {client ? `Client: ${client} • ` : ""}{t("common.cinemaMaster")}
               </p>
             </div>
           </div>
@@ -153,7 +156,7 @@ export function CinemaVideoModal({
             <button
               type="button"
               onClick={onClose}
-              aria-label="Close video"
+              aria-label={t("common.close")}
               className="size-9 sm:size-9 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer shrink-0 border border-white/10"
             >
               <X size={18} />
@@ -219,7 +222,7 @@ export function CinemaVideoModal({
                 </span>
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
                   <ShieldCheck size={12} />
-                  <span>High Bitrate Cinema Stream</span>
+                  <span>{t("common.cinemaStream")}</span>
                 </span>
               </div>
 
@@ -229,17 +232,17 @@ export function CinemaVideoModal({
                   type="button"
                   onClick={handleLaunchVideo}
                   className="group relative cursor-pointer flex items-center justify-center size-20 sm:size-24 rounded-full bg-gradient-to-tr from-brand-violet to-brand-violet-rich text-white border border-brand-mauve/40 shadow-[0_0_50px_rgba(84,37,104,0.6)] hover:shadow-[0_0_70px_rgba(118,80,134,0.7)] hover:scale-110 active:scale-95 transition-all duration-300"
-                  aria-label="Play video master"
+                  aria-label={t("common.launchReel")}
                 >
 
-                  <Play size={32} className="fill-current translate-x-0.5 text-white transition-transform group-hover:scale-110" />
+                  <Play size={32} className="fill-current translate-x-0.5 rtl:-translate-x-0.5 text-white transition-transform group-hover:scale-110" />
                 </button>
 
                 <h3 className="text-xl sm:text-2xl font-bold text-white font-display mt-6 tracking-tight">
-                  Launch Master Reel
+                  {t("common.launchReel")}
                 </h3>
                 <p className="text-xs sm:text-sm text-text-muted max-w-md mt-2">
-                  Plays instantly in full uncompressed cinema quality without third-party iframe buffering or CAPTCHA restrictions.
+                  {t("common.cinemaDesc")}
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 mt-4 sm:mt-6 w-full max-w-xs sm:max-w-none">
@@ -248,15 +251,15 @@ export function CinemaVideoModal({
                     onClick={handleLaunchVideo}
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full btn-brand text-xs font-bold shadow-lg transition-transform hover:scale-105 cursor-pointer min-h-[44px] sm:min-h-0"
                   >
-                    <span>Open 4K Player</span>
-                    <ExternalLink size={13} />
+                    <span>{t("common.open4kPlayer")}</span>
+                    <ExternalLink size={13} className="rtl:rotate-180" />
                   </button>
                   <button
                     type="button"
                     onClick={onClose}
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white/80 text-xs font-medium border border-white/10 transition-colors cursor-pointer min-h-[44px] sm:min-h-0"
                   >
-                    <span>Dismiss</span>
+                    <span>{t("common.dismiss")}</span>
                   </button>
                 </div>
               </div>
@@ -265,7 +268,7 @@ export function CinemaVideoModal({
               <div className="flex items-center justify-center sm:justify-between gap-4 text-[11px] font-mono text-white/50 border-t border-white/10 pt-3 z-10">
                 <span className="hidden sm:inline-flex items-center gap-1.5">
                   <CheckCircle2 size={12} className="text-brand-lavender" />
-                  Zero Stalling & Guaranteed Delivery
+                  {t("common.cinemaGuarantee")}
                 </span>
                 <span>YAS PRO MEDIA PRODUCTIONS</span>
                 <span className="hidden sm:inline">DOLBY ATMOS · 24FPS CINEMA</span>

@@ -38,7 +38,7 @@ export function BookingPaymentModal({
   orderTitle,
   onPaymentSuccess,
 }: BookingPaymentModalProps) {
-  const { isArabic } = useLanguage();
+  const { isArabic, t, direction } = useLanguage();
   const [paymentType, setPaymentType] = useState<"deposit" | "full">("deposit");
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -117,9 +117,9 @@ export function BookingPaymentModal({
       if (res.quote) {
         setLoadedQuote({ bookingId, referenceCode, quote: res.quote });
       }
-      setErrorMsg(res.error || (isArabic ? "تم مقاطعة عملية تفويض الدفع عبر زينا" : "Ziina payment authorization was interrupted."));
+      setErrorMsg(res.error || t("studioBooking.paymentModal.authInterrupted"));
     } catch (err) {
-      setErrorMsg((err as Error).message || (isArabic ? "تعذر الاتصال ببوابة الدفع. يرجى المحاولة لاحقاً." : "Unable to reach payment gateway. Please retry."));
+      setErrorMsg((err as Error).message || t("studioBooking.paymentModal.gatewayUnreachable"));
     } finally {
       setIsProcessing(false);
     }
@@ -129,9 +129,10 @@ export function BookingPaymentModal({
     <div className="fixed inset-0 z-[60] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto overscroll-contain">
       <div
         ref={dialogRef}
+        dir={direction}
         role="dialog"
         aria-modal="true"
-        aria-label="Secure UAE Checkout via Ziina"
+        aria-label={t("studioBooking.paymentModal.dialogAria")}
         tabIndex={-1}
         className="relative w-full max-w-lg my-auto rounded-3xl bg-[#090a0f] border border-white/10 shadow-2xl p-4 sm:p-8 text-start animate-fade-up max-h-[92vh] overflow-y-auto overscroll-contain"
       >
@@ -143,7 +144,7 @@ export function BookingPaymentModal({
             </div>
             <div>
               <h3 className="font-bold text-white text-base sm:text-lg font-display">
-                {isArabic ? "بوابة الدفع الآمنة (Ziina)" : "Secure UAE Checkout"}
+                {t("studioBooking.paymentModal.title")}
               </h3>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="text-[10px] font-mono text-brand-mauve font-semibold" dir="ltr">
@@ -161,7 +162,7 @@ export function BookingPaymentModal({
             type="button"
             onClick={onClose}
             className="size-8 rounded-full bg-white/5 hover:bg-white/15 text-slate-400 hover:text-white transition-colors flex items-center justify-center cursor-pointer"
-            aria-label="Close"
+            aria-label={t("studioBooking.paymentModal.closeAria")}
           >
             <X size={16} />
           </button>
@@ -177,8 +178,8 @@ export function BookingPaymentModal({
         {!quote ? (
           <div role={quoteError ? "alert" : "status"} aria-busy={!quoteError} className="p-4 text-sm text-slate-300">
             {quoteError
-              ? (isArabic ? "تعذر تحميل تفاصيل الدفع. يرجى إغلاق النافذة والمحاولة مجدداً." : quoteError)
-              : (isArabic ? "جاري تحميل تفاصيل الدفع..." : "Loading payment details...")}
+              ? (isArabic ? t("studioBooking.paymentModal.loadError") : quoteError)
+              : t("studioBooking.paymentModal.loadingDetails")}
           </div>
         ) : (
         <form onSubmit={handlePay} className="space-y-5 text-xs">
@@ -187,39 +188,37 @@ export function BookingPaymentModal({
             <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs font-semibold text-white pb-2 border-b border-white/5">
               <span className="flex items-center gap-1.5 shrink-0">
                 <Receipt size={14} className="text-brand-mauve" />
-                {isArabic ? "ملخص الفاتورة الضريبية" : "Tax Invoice Summary"}
+                {t("studioBooking.paymentModal.taxInvoiceSummary")}
               </span>
               <span className="text-[9px] sm:text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 shrink-0 whitespace-nowrap">
-                {isArabic ? `شامل ضريبة القيمة المضافة ${vatRatePercent}%` : `Includes ${vatRatePercent}% UAE VAT`}
+                {t("studioBooking.paymentModal.includesVat", { rate: vatRatePercent })}
               </span>
             </div>
 
             <div className="flex justify-between text-text-muted text-[11px]">
-              <span>{isArabic ? "المبلغ الصافي قبل الضريبة:" : "Net Amount before VAT:"}</span>
+              <span>{t("studioBooking.paymentModal.netAmountBeforeVat")}</span>
               <span className="font-mono text-slate-300">{formatCurrency(netAmount)}</span>
             </div>
 
             <div className="flex justify-between text-text-muted text-[11px]">
-              <span>{isArabic ? `ضريبة القيمة المضافة (${vatRatePercent}% VAT):` : `UAE VAT (${vatRatePercent}% FTA):`}</span>
+              <span>{t("studioBooking.paymentModal.uaeVatLabel", { rate: vatRatePercent })}</span>
               <span className="font-mono text-slate-300">{formatCurrency(vatAmount)}</span>
             </div>
 
             {securityDeposit > 0 && (
               <div className="flex flex-col gap-0.5 pt-1 border-t border-white/5 text-[11px]">
                 <div className="flex justify-between text-brand-mauve-soft">
-                  <span>{isArabic ? "تأمين المعدات المسترد (يُحصّل منفصلاً عند الاستلام):" : "Refundable Security Deposit (Billed Separately):"}</span>
+                  <span>{t("studioBooking.paymentModal.securityDepositLabel")}</span>
                   <span className="font-mono font-bold">{formatCurrency(securityDeposit)}</span>
                 </div>
                 <span className="text-[10px] text-text-muted">
-                  {isArabic
-                    ? "* يُحصّل مبلغ التأمين بشكل مستقل عند الاستلام، ولا يدخل ضمن إجمالي المستحق الآن أدناه."
-                    : "* Collected separately upon check-in; not included in Total Payable Now below."}
+                  {t("studioBooking.paymentModal.securityDepositNote")}
                 </span>
               </div>
             )}
 
             <div className="flex justify-between items-baseline pt-2 border-t border-white/10 text-white font-bold text-sm">
-              <span>{isArabic ? "الإجمالي المستحق الآن:" : "Total Payable Now:"}</span>
+              <span>{t("studioBooking.paymentModal.totalPayableNow")}</span>
               <span className="text-brand-mauve font-mono text-base font-extrabold">
                 {formatCurrency(chargeAmount)}
               </span>
@@ -229,7 +228,7 @@ export function BookingPaymentModal({
           {/* Option Selector: Configured Deposit vs Full */}
           <div>
             <label className="block text-slate-300 font-semibold mb-2">
-              {isArabic ? "خطة الدفع" : "Payment Schedule"}
+              {t("studioBooking.paymentModal.paymentSchedule")}
             </label>
             <div className={cn("grid gap-3", quote.options.length > 1 ? "grid-cols-2" : "grid-cols-1")}>
               {quote.options.map((option) => (
@@ -248,18 +247,18 @@ export function BookingPaymentModal({
                 >
                   <div className="text-[10px] font-mono uppercase text-brand-mauve">
                     {option.type === "deposit"
-                      ? (isArabic ? `عربون حجز ${depositPercent}%` : `${depositPercent}% Booking Deposit`)
+                      ? t("studioBooking.paymentModal.bookingDeposit", { percent: depositPercent })
                       : isBalancePayment
-                        ? (isArabic ? "الرصيد المتبقي" : "Remaining Balance")
-                        : (isArabic ? "المبلغ كاملاً 100%" : "Full Payment (100%)")}
+                        ? t("studioBooking.paymentModal.remainingBalance")
+                        : t("studioBooking.paymentModal.fullPayment")}
                   </div>
                   <div className="text-sm font-bold text-white mt-0.5">
                     {formatCurrency(option.amountAed)}
                   </div>
                   <div className="text-[10px] text-slate-400 mt-1">
                     {option.type === "deposit"
-                      ? (isArabic ? "يثبت تاريخ وموعد الاستوديو" : "Locks in studio schedule")
-                      : (isArabic ? "تسوية فورية معتمدة" : "Complete order settlement")}
+                      ? t("studioBooking.paymentModal.locksSchedule")
+                      : t("studioBooking.paymentModal.completeSettlement")}
                   </div>
                 </button>
               ))}
@@ -271,7 +270,7 @@ export function BookingPaymentModal({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
               <div className="flex items-center gap-2 text-brand-mauve-soft font-semibold text-xs">
                 <Smartphone size={15} className="shrink-0" />
-                <span>{isArabic ? "مرخص من مصرف الإمارات المركزي (Ziina)" : "Central Bank of the UAE Regulated (Ziina)"}</span>
+                <span>{t("studioBooking.paymentModal.regulatedBadge")}</span>
               </div>
               {/* Apple Pay & Card Badges */}
               <div className="flex items-center gap-1.5 shrink-0" dir="ltr">
@@ -291,20 +290,14 @@ export function BookingPaymentModal({
             </div>
 
             <p className="text-[11px] text-slate-300 leading-relaxed">
-              {isArabic
-                ? "ادفع بأمان وسرعة فائقة عبر منصة Ziina الإماراتية الرسمية باستخدام Apple Pay أو Google Pay أو أي بطاقة بنكية. يتم تأكيد الحجز وإشعار الإدارة والعميل فوراً."
-                : "Pay instantly and securely via Ziina UAE using Apple Pay, Google Pay, or any GCC/International credit or debit card. Your booking is confirmed immediately."}
+              {t("studioBooking.paymentModal.gatewayDescription")}
             </p>
           </div>
 
           {/* Security & Regulatory Notice */}
           <div className="flex items-center gap-2 text-[11px] text-slate-400 py-1">
             <Lock size={13} className="text-emerald-400 shrink-0" />
-            <span>
-              {isArabic
-                ? "تشفير TLS 256-bit عالي الأمان عبر بوابة Ziina السيادية المعتمدة في دولة الإمارات"
-                : "256-bit TLS encrypted via Ziina UAE sovereign payment rails"}
-            </span>
+            <span>{t("studioBooking.paymentModal.securityNotice")}</span>
           </div>
 
           {/* Pay Button */}
@@ -316,15 +309,13 @@ export function BookingPaymentModal({
             {isProcessing ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
-                <span>{isArabic ? "جاري التوجيه إلى Ziina..." : "Redirecting to Ziina..."}</span>
+                <span>{t("studioBooking.paymentModal.redirecting")}</span>
               </>
             ) : (
               <>
                 <Zap size={16} className="fill-white text-white" />
                 <span>
-                  {isArabic
-                    ? `دفع ${formatCurrency(chargeAmount)} عبر Ziina و Apple Pay`
-                    : `Pay ${formatCurrency(chargeAmount)} with Ziina · Apple Pay`}
+                  {t("studioBooking.paymentModal.payButton", { amount: formatCurrency(chargeAmount) })}
                 </span>
               </>
             )}

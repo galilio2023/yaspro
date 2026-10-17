@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface ProductionCtaCardProps {
   title?: string;
@@ -8,31 +11,40 @@ interface ProductionCtaCardProps {
   primaryHref?: string;
   secondaryText?: string;
   secondaryHref?: string;
+  variant?: "projects" | "influencers";
 }
 
 export function ProductionCtaCard({
-  title = "Want a production of similar caliber?",
-  description = "Book our 4K soundstages or schedule a production consultation with our creative directors.",
-  primaryText = "Book Studio Session",
+  title,
+  description,
+  primaryText,
   primaryHref = "/studio-booking",
-  secondaryText = "Contact Team",
+  secondaryText,
   secondaryHref = "/contact",
+  variant = "projects",
 }: ProductionCtaCardProps) {
+  const { t } = useLanguage();
+
+  const finalTitle = title ?? (variant === "influencers" ? t("influencers.ctaTitle") : t("projects.ctaTitle"));
+  const finalDescription = description ?? (variant === "influencers" ? t("influencers.ctaDescription") : t("projects.ctaDescription"));
+  const finalPrimaryText = primaryText ?? (variant === "influencers" ? t("influencers.ctaBook") : t("projects.ctaBook"));
+  const finalSecondaryText = secondaryText ?? (variant === "influencers" ? t("influencers.ctaContact") : t("projects.ctaContact"));
+
   return (
     <div className="rounded-3xl border border-brand-mauve/30 bg-white/[0.03] backdrop-blur-xl p-6 sm:p-8 relative overflow-hidden shadow-xl shadow-purple-950/20">
       <div className="absolute inset-0 bg-gradient-to-r from-brand-violet/20 via-transparent to-brand-purple/20 pointer-events-none" />
       <h3 className="text-lg font-bold mb-2 text-white font-display">
-        {title}
+        {finalTitle}
       </h3>
       <p className="text-text-secondary text-xs sm:text-sm mb-6 leading-relaxed">
-        {description}
+        {finalDescription}
       </p>
       <div className="flex flex-col sm:flex-row gap-3">
         <Button asChild variant="brand" size="default" className="flex-1 rounded-xl text-xs font-semibold">
-          <Link href={primaryHref}>{primaryText}</Link>
+          <Link href={primaryHref}>{finalPrimaryText}</Link>
         </Button>
         <Button asChild variant="outline" size="default" className="flex-1 rounded-xl text-xs font-semibold">
-          <Link href={secondaryHref}>{secondaryText}</Link>
+          <Link href={secondaryHref}>{finalSecondaryText}</Link>
         </Button>
       </div>
     </div>

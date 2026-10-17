@@ -107,7 +107,7 @@ export default async function ProjectDetailPage({
       <div className="absolute top-10 sm:top-20 right-4 sm:right-1/4 size-72 sm:size-[500px] lg:size-[600px] bg-brand-mauve/20 sm:bg-brand-mauve/10 rounded-full blur-[60px] sm:blur-[120px] lg:blur-[160px] pointer-events-none" />
 
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <BackButton href="/projects" label="Back to Projects" />
+        <BackButton href="/projects" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* Main Stage (7 cols) */}
@@ -120,14 +120,7 @@ export default async function ProjectDetailPage({
           <div className="lg:col-span-5 flex flex-col gap-6 lg:sticky lg:top-28">
             <ProjectDeliverables deliverables={project.deliverables} />
             <ProjectTechStack techStack={project.techStack} />
-            <ProductionCtaCard
-              title="Want a production of similar caliber?"
-              description="Book our 4K soundstages or schedule a production consultation with our creative directors."
-              primaryText="Book Studio"
-              primaryHref="/studio-booking"
-              secondaryText="Contact Team"
-              secondaryHref="/contact"
-            />
+            <ProductionCtaCard />
           </div>
         </div>
       </div>

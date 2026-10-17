@@ -25,21 +25,29 @@ import {
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { AdminSignOutButton } from "@/components/admin/AdminSignOutButton";
 import { cn } from "@/lib/utils";
+import { useLanguage, AppTranslationKey } from "@/components/providers/LanguageProvider";
 
-const NAV_ITEMS = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/offers", label: "Offers & Bundles", icon: Sparkles },
-  { href: "/admin/podcast", label: "Podcast Sets & Addons", icon: Mic },
-  { href: "/admin/blackouts", label: "Studio Blackouts", icon: CalendarOff },
-  { href: "/admin/users", label: "Users & Accounts", icon: UserCheck },
-  { href: "/admin/inquiries", label: "Inquiries & Leads", icon: MessageSquare },
-  { href: "/admin/studios", label: "Soundstages & Rates", icon: Layers },
-  { href: "/admin/bookings", label: "Studio Bookings", icon: CalendarCheck },
-  { href: "/admin/broadcast", label: "Broadcast & OB Van", icon: Radio },
-  { href: "/admin/gear", label: "Gear & Equipment", icon: Camera },
-  { href: "/admin/projects", label: "Projects CMS", icon: Film },
-  { href: "/admin/influencers", label: "Creators CMS", icon: Users },
-  { href: "/admin/settings", label: "Settings & Config", icon: Settings },
+interface AdminNavItem {
+  href: string;
+  key: AppTranslationKey;
+  label: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+}
+
+const NAV_ITEMS: readonly AdminNavItem[] = [
+  { href: "/admin", key: "admin.overview", label: "Overview", icon: LayoutDashboard },
+  { href: "/admin/offers", key: "admin.offers", label: "Offers & Bundles", icon: Sparkles },
+  { href: "/admin/podcast", key: "admin.podcast", label: "Podcast Sets & Addons", icon: Mic },
+  { href: "/admin/blackouts", key: "admin.blackouts", label: "Studio Blackouts", icon: CalendarOff },
+  { href: "/admin/users", key: "admin.users", label: "Users & Accounts", icon: UserCheck },
+  { href: "/admin/inquiries", key: "admin.inquiries", label: "Inquiries & Leads", icon: MessageSquare },
+  { href: "/admin/studios", key: "admin.studios", label: "Soundstages & Rates", icon: Layers },
+  { href: "/admin/bookings", key: "admin.bookings", label: "Studio Bookings", icon: CalendarCheck },
+  { href: "/admin/broadcast", key: "admin.broadcast", label: "Broadcast & OB Van", icon: Radio },
+  { href: "/admin/gear", key: "admin.gear", label: "Gear & Equipment", icon: Camera },
+  { href: "/admin/projects", key: "admin.projects", label: "Projects CMS", icon: Film },
+  { href: "/admin/influencers", key: "admin.creators", label: "Creators CMS", icon: Users },
+  { href: "/admin/settings", key: "admin.settings", label: "Settings & Config", icon: Settings },
 ];
 
 interface AdminMobileNavProps {
@@ -49,6 +57,7 @@ interface AdminMobileNavProps {
 export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   return (
     <>
@@ -57,7 +66,7 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
         <div className="flex items-center gap-2">
           <BrandLogo href="/admin" />
           <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-brand-mauve/15 text-brand-mauve border border-brand-mauve/30 shrink-0">
-            Admin
+            {t("admin.badge")}
           </span>
         </div>
 
@@ -94,7 +103,7 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
               >
                 <BrandLogo href="/admin" />
                 <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-brand-mauve/15 text-brand-mauve border border-brand-mauve/30 shrink-0">
-                  Admin
+                  {t("admin.badge")}
                 </span>
               </div>
 
@@ -135,7 +144,7 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
                         isActive ? "text-brand-mauve" : "text-brand-mauve-soft"
                       )}
                     />
-                    <span>{item.label}</span>
+                    <span>{t(item.key)}</span>
                   </Link>
                 );
               })}
@@ -146,10 +155,10 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
               <div className="p-3 rounded-xl bg-brand-violet/20 border border-brand-mauve/30 text-xs">
                 <div className="flex items-center gap-2 text-brand-lavender font-medium">
                   <Database size={14} className="text-brand-mauve" />
-                  <span>Production Database</span>
+                  <span>{t("admin.database")}</span>
                 </div>
                 <p className="text-[11px] text-slate-400 mt-1">
-                  Connected to Studio Engine with automated cloud sync.
+                  {t("admin.databaseDesc")}
                 </p>
               </div>
 
@@ -167,7 +176,7 @@ export function AdminMobileNav({ adminName }: AdminMobileNavProps) {
                   className="flex items-center gap-1 text-brand-mauve hover:text-brand-lavender shrink-0"
                   onClick={() => setIsOpen(false)}
                 >
-                  Public Site <ArrowUpRight size={12} className="rtl:scale-x-[-1]" />
+                  {t("admin.publicSite")} <ArrowUpRight size={12} className="rtl:scale-x-[-1]" />
                 </Link>
               </div>
 
