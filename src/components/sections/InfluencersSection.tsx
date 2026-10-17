@@ -9,10 +9,19 @@ import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import type { InfluencerItem } from "@/features/influencers/types";
 
-export default function InfluencersSection() {
+interface InfluencersSectionProps {
+  initialInfluencers?: InfluencerItem[];
+}
+
+export default function InfluencersSection({ initialInfluencers }: InfluencersSectionProps = {}) {
   const { t, isArabic } = useLanguage();
-  const featuredInfluencers = INFLUENCERS_DATA.slice(0, 8);
+  const sourceInfluencers =
+    initialInfluencers ?? INFLUENCERS_DATA;
+  const featuredInfluencers = sourceInfluencers.slice(0, 8);
+
+  if (sourceInfluencers.length === 0) return null;
 
   return (
     <Section

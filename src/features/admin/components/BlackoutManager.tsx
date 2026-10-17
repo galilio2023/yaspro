@@ -20,11 +20,13 @@ import { PaginationControls } from "@/components/ui/pagination-controls";
 interface BlackoutManagerProps {
   initialBlackouts: StudioBlackoutItem[];
   podcastSets: PodcastStudio[];
+  studios?: { id: string; name: string }[];
 }
 
 export function BlackoutManager({
   initialBlackouts,
   podcastSets,
+  studios = [],
 }: BlackoutManagerProps) {
   const [blackouts, setBlackouts] = useState<StudioBlackoutItem[]>(initialBlackouts);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -154,6 +156,9 @@ export function BlackoutManager({
               const setName = b.podcastSetId
                 ? podcastSets.find((s) => s.key === b.podcastSetId)?.name || b.podcastSetId
                 : null;
+              const studioName = b.studioId
+                ? studios.find((s) => s.id === b.studioId)?.name || b.studioId
+                : null;
 
               return (
                 <div
@@ -165,7 +170,7 @@ export function BlackoutManager({
                       <div>
                         <h3 className="font-bold text-white text-base">{b.title}</h3>
                         <span className="text-[10px] font-mono text-brand-mauve">
-                          {setName ? `Set: ${setName}` : "Studio-Wide Lockout"}
+                          {setName ? `Set: ${setName}` : studioName ? `Stage: ${studioName}` : "Studio-Wide Lockout"}
                         </span>
                       </div>
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
@@ -239,6 +244,7 @@ export function BlackoutManager({
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveBlackout}
         podcastSetsList={podcastSets}
+        studiosList={studios}
         isSubmitting={isSaving}
         error={modalError}
       />

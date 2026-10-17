@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/db";
-import { bookings, bookingSessions, studios, studioBlackouts } from "@/db/schema";
-import { eq, or, isNull } from "drizzle-orm";
+import { bookings, bookingSessions, studios, studioBlackouts, promoCodes } from "@/db/schema";
+import { eq, or, isNull, sql } from "drizzle-orm";
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { createZiinaPaymentIntent, getBookingPaymentQuote } from "@/lib/ziina";
 import { PODCAST_SERVICES, PODCAST_PROMO_CODES } from "./data";
@@ -43,6 +43,56 @@ export interface PodcastBookingResult {
   totalAmount?: number;
   paymentUrl?: string;
   paymentFailed?: boolean;
+}
+
+export async function resolvePodcastPromoRule(
+  rawCode: string
+): Promise<{ code: string; percent?: number; flat?: number; label?: string } | null> {
+  const code = rawCode.trim().toUpperCase();
+  if (!code) return null;
+
+  if (
+    process.env.DATABASE_URL &&
+    !process.env.DATABASE_URL.includes("ep-xxx") &&
+    promoCodes &&
+    typeof db.select === "function"
+  ) {
+    try {
+      const rows = await db.select().from(promoCodes).where(sql`lower(${promoCodes.code}) = ${code.toLowerCase()}`);
+      const row = Array.isArray(rows) ? rows[0] : undefined;
+      if (row) {
+        if (row.isActive === false || row.eligibleOfferIds?.length) return null;
+        if (row.expiresAt && new Date(row.expiresAt).getTime() <= Date.now()) return null;
+        if (row.maxUses != null && typeof db.$count === "function") {
+          const used = await db.$count(bookings, eq(bookings.promoCode, code));
+          if (used >= row.maxUses) return null;
+        }
+        return {
+          code,
+          percent: row.discountPercent ?? undefined,
+          flat: row.discountAmount ? Number(row.discountAmount) : undefined,
+          label: row.label ?? `${code} Applied`,
+        };
+      }
+    } catch {
+      // Fall back to static PODCAST_PROMO_CODES
+    }
+  }
+
+  const staticRule = PODCAST_PROMO_CODES[code];
+  if (staticRule) {
+    return {
+      code,
+      percent: staticRule.percent,
+      flat: staticRule.flat,
+      label: staticRule.percent
+        ? `${staticRule.percent}% Discount Applied`
+        : staticRule.flat
+          ? `AED ${staticRule.flat} Discount Applied`
+          : `${code} Applied`,
+    };
+  }
+  return null;
 }
 
 function calculateSessionPrice(
@@ -112,15 +162,17 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
   }
 
   let discount = 0;
+  let resolvedPromoCode: string | undefined = undefined;
   if (promoCode) {
-    const code = promoCode.trim().toUpperCase();
-    const rule = PODCAST_PROMO_CODES[code];
-    if (rule) {
-      if (rule.percent) {
-        discount = Math.round((subtotal * rule.percent) / 100);
-      } else if (rule.flat) {
-        discount = Math.min(subtotal, rule.flat);
-      }
+    const rule = await resolvePodcastPromoRule(promoCode);
+    if (!rule) {
+      return { success: false, message: "Invalid or expired promo code. Please review your booking." };
+    }
+    resolvedPromoCode = rule.code;
+    if (rule.percent) {
+      discount = Math.round((subtotal * rule.percent) / 100);
+    } else if (rule.flat) {
+      discount = Math.min(subtotal, rule.flat);
     }
   }
 
@@ -240,6 +292,7 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
           totalAmount: grandTotal.toFixed(2),
           currency: "AED",
           paymentStatus: "unpaid",
+          promoCode: resolvedPromoCode ?? null,
           specialRequests: fullNotes,
         }).returning({ id: bookings.id });
         if (!inserted) throw new Error("Failed to save booking.");

@@ -31,8 +31,8 @@ function loadSource(file, mocks = {}, globals = {}) {
 const session = { date: '2026-11-20', timeSlot: '5:30 PM', durationHours: 2, headcount: 2,
   studioKey: 'nature-grid', serviceKey: 'recording', addons: {} };
 const input = { sessions: [session], fullName: 'Test Guest', email: 'guest@example.com', phone: '+971500000000' };
-function fixture({ missingStudio, studioCapacity = 10, payment = { success: true }, failSchedule = false, failPrimary = false, failBlackout = false, catalogStudios, catalogAddons } = {}) {
-  const bookings = { id: 'id' }, bookingSessions = {};
+function fixture({ missingStudio, studioCapacity = 10, payment = { success: true }, failSchedule = false, failPrimary = false, failBlackout = false, catalogStudios, catalogAddons, promoRow, used = 0 } = {}) {
+  const bookings = { id: 'id', promoCode: 'promoCode' }, bookingSessions = {}, promoCodes = { code: 'code' };
   const writes = [], payments = [], capabilities = [], lookups = [];
   let transactions = 0;
   const tx = { insert: (table) => ({ values: (values) => {
@@ -42,14 +42,15 @@ function fixture({ missingStudio, studioCapacity = 10, payment = { success: true
   } }) };
   const data = loadSource('src/features/podcast-booking/data.ts');
   const { createPodcastBooking } = loadSource('src/features/podcast-booking/actions.ts', {
-    '@/db/schema': { bookings, bookingSessions, studioBlackouts: {}, studios: { slug: 'slug' } },
+    '@/db/schema': { bookings, bookingSessions, promoCodes, studioBlackouts: {}, studios: { slug: 'slug' } },
     '@/lib/actions/podcast-operations': {
       getCmsPodcastSets: async () => catalogStudios ?? data.PODCAST_STUDIOS,
       getCmsPodcastAddons: async () => catalogAddons ?? data.PODCAST_ADDONS,
     },
-    'drizzle-orm': { eq: (column, value) => ({ column, value }), or() {}, isNull() {} },
+    'drizzle-orm': { ...require('drizzle-orm'), eq: (column, value) => ({ column, value }), or() {}, isNull() {} },
     '@/db': { db: {
-      select: () => ({ from: () => ({ where: async () => { if (failBlackout) throw new Error('Blackout read failure'); return []; } }) }),
+      $count: async () => used,
+      select: () => ({ from: (table) => ({ where: async () => { if (table === promoCodes) return promoRow ? [promoRow] : []; if (failBlackout) throw new Error('Blackout read failure'); return []; } }) }),
       query: { studios: { findFirst: async ({ where }) => {
         lookups.push(where.value);
         return where.value === missingStudio ? null : { id: `db-${where.value}`, isActive: true, capacity: studioCapacity };
@@ -95,6 +96,7 @@ test('all sessions resolve exact studios and persist atomically, retaining one d
   assert.equal(f.writes.length, 2);
   const checkout = f.writes[0].values;
   assert.equal(checkout.totalAmount, '1267.00');
+  assert.equal(checkout.promoCode, 'YAS10');
   assert.equal(checkout.scheduledAt.toISOString(), '2026-11-20T13:30:00.000Z');
   const additional = f.writes[1].values[0];
   assert.equal(additional.bookingId, 'checkout-id');
@@ -156,7 +158,7 @@ test('Ziina failure returns saved unpaid reservation; successful simulation need
   assert.equal((await simulated.createPodcastBooking({ ...input, initiatePayment: true })).success, true);
 });
 
-function hookFixture(response, onSubmit = () => {}, studios, addons) {
+function hookFixture(response, onSubmit = () => {}, studios, addons, resolvePromo = async () => null) {
   const states = [];
   let cursor = 0;
   const { usePodcastBooking } = loadSource('src/features/podcast-booking/hooks/usePodcastBooking.ts', {
@@ -165,7 +167,7 @@ function hookFixture(response, onSubmit = () => {}, studios, addons) {
       if (!(index in states)) states[index] = initial;
       return [states[index], (value) => { states[index] = typeof value === 'function' ? value(states[index]) : value; }];
     } },
-    '../actions': { createPodcastBooking: async (input) => { onSubmit(input); return response; } },
+    '../actions': { resolvePodcastPromoRule: resolvePromo, createPodcastBooking: async (input) => { onSubmit(input); return response; } },
   });
   return () => { cursor = 0; return usePodcastBooking(studios, addons); };
 }
@@ -435,4 +437,48 @@ test('primary-session database overlap rejection returns failure without payment
   assert.equal(f.writes.length, 0);
   assert.equal(f.payments.length, 0);
   assert.equal(f.capabilities.length, 0);
+});
+
+
+for (const promoRow of [
+  { code: 'YAS10', isActive: false },
+  { code: 'YAS10', isActive: true, expiresAt: new Date('2000-01-01') },
+  { code: 'YAS10', isActive: true, eligibleOfferIds: ['offer-only'] },
+  { code: 'YAS10', isActive: true, maxUses: 1 },
+]) {
+  test(`podcast rejects blocked database promo before saving: ${JSON.stringify(promoRow)}`, async () => {
+    const f = fixture({ promoRow, used: 1 });
+    const result = await f.createPodcastBooking({ ...input, promoCode: 'YAS10' });
+    assert.equal(result.success, false);
+    assert.match(result.message, /promo code/);
+    assert.equal(f.writes.length, 0);
+  });
+}
+
+test('podcast records an unrestricted database promo and rejects an unknown supplied code', async () => {
+  const f = fixture({ promoRow: { code: 'YAS10', isActive: true, eligibleOfferIds: [], discountPercent: 30 } });
+  const result = await f.createPodcastBooking({ ...input, promoCode: ' yas10 ' });
+  assert.equal(result.success, true);
+  assert.equal(f.writes[0].values.promoCode, 'YAS10');
+  assert.equal(Number(f.writes[0].values.totalAmount), 546);
+  const unknown = fixture();
+  assert.equal((await unknown.createPodcastBooking({ ...input, promoCode: 'UNKNOWN' })).success, false);
+  assert.equal(unknown.writes.length, 0);
+});
+
+test('podcast hook resolves static and database codes and displays the resolved discount', async () => {
+  const calls = [];
+  const render = hookFixture({}, () => {}, undefined, undefined, async (code) => {
+    calls.push(code);
+    return code === 'YAS10' ? { code, percent: 30 } : null;
+  });
+  await render().applyPromo(' yas10 ');
+  assert.deepEqual(calls, ['YAS10']);
+  assert.equal(render().appliedPromo, 'YAS10');
+  assert.equal(render().promoDiscount, Math.round(render().subtotalAllSessions * 0.3));
+  render().removePromo();
+  await render().applyPromo('DBONLY');
+  assert.deepEqual(calls, ['YAS10', 'DBONLY']);
+  assert.equal(render().appliedPromo, null);
+  assert.match(render().promoError, /Invalid or expired/);
 });

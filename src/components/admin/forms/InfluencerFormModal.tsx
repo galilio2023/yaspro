@@ -147,7 +147,7 @@ function InfluencerFormContent({
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3.5">
         <AdminSelect
           label="Nationality"
           options={COUNTRY_OPTIONS}
@@ -160,10 +160,78 @@ function InfluencerFormContent({
           onChange={(e) => setFormData((prev) => ({ ...prev, flag: e.target.value }))}
         />
         <AdminInput
-          label="Total Audience"
+          label="Total Audience (Display)"
           placeholder="e.g. 25M+"
           value={formData.totalFollowers || ""}
           onChange={(e) => setFormData((prev) => ({ ...prev, totalFollowers: e.target.value }))}
+        />
+        <AdminInput
+          label="Raw Followers (Millions)"
+          type="number"
+          min={1}
+          step={1}
+          suffixNode="M"
+          value={String(formData.rawFollowers ?? 10)}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              rawFollowers: Math.max(1, Number(e.target.value) || 1),
+            }))
+          }
+        />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+        <AdminInput
+          label="Avg Engagement Rate"
+          placeholder="e.g. 6.4%"
+          value={
+            ((formData.demographics as Record<string, unknown> | undefined)?.engagementRate as string) ||
+            ""
+          }
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              demographics: {
+                ...((prev.demographics as Record<string, unknown>) || {}),
+                engagementRate: e.target.value,
+              },
+            }))
+          }
+        />
+        <AdminInput
+          label="Monthly Impressions"
+          placeholder="e.g. 45M+"
+          value={
+            ((formData.demographics as Record<string, unknown> | undefined)?.monthlyImpressions as string) ||
+            ""
+          }
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              demographics: {
+                ...((prev.demographics as Record<string, unknown>) || {}),
+                monthlyImpressions: e.target.value,
+              },
+            }))
+          }
+        />
+        <AdminInput
+          label="Primary Age Group"
+          placeholder="e.g. 18-34"
+          value={
+            ((formData.demographics as Record<string, unknown> | undefined)?.primaryAgeGroup as string) ||
+            ""
+          }
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              demographics: {
+                ...((prev.demographics as Record<string, unknown>) || {}),
+                primaryAgeGroup: e.target.value,
+              },
+            }))
+          }
         />
       </div>
 

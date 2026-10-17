@@ -50,31 +50,39 @@ export const metadata: Metadata = {
 export default async function ProjectsPage() {
   const cmsProjects = await getCachedProjects();
 
-  const projectsToDisplay: ProjectItem[] = cmsProjects.map((p) => ({
-    id: p.id,
-    slug: p.slug,
-    title: p.title,
-    arabicTitle: p.arabicTitle || undefined,
-    category: (p.category === "government" || p.category === "commercial" || p.category === "shows"
-      ? p.category
-      : "commercial") as ProjectCategory,
-    categoryLabel:
-      p.category === "government"
-        ? "Government"
-        : p.category === "shows"
-        ? "Live Shows & Events"
-        : "Commercial",
-    client: p.client || "",
-    description: p.description || "",
-    tag: p.tag || "Production",
-    views: p.views || "10M+ Views",
-    year: p.year || "2024",
-    image: p.coverImageUrl || "/images/projects/flag-day.jpg",
-    vimeoId: p.videoUrl ? p.videoUrl.split("/").pop() : undefined,
-    videoUrl: p.videoUrl || undefined,
-    deliverables: p.deliverables || [],
-    techStack: p.techStack || [],
-  }));
+  const CATEGORY_LABELS: Record<string, string> = {
+    government: "Government",
+    commercial: "Commercial",
+    shows: "Live Shows & Events",
+    documentary: "Documentary Film",
+    event: "Live Broadcast & Event",
+    influencer: "Creator Campaign",
+  };
+
+  const projectsToDisplay: ProjectItem[] = cmsProjects.map((p) => {
+    const validCat = (
+      p.category && p.category in CATEGORY_LABELS ? p.category : "commercial"
+    ) as ProjectCategory;
+    return {
+      id: p.id,
+      slug: p.slug,
+      title: p.title,
+      arabicTitle: p.arabicTitle || undefined,
+      category: validCat,
+      categoryLabel: CATEGORY_LABELS[validCat] || "Commercial",
+      client: p.client || "",
+      description: p.description || "",
+      arabicDescription: p.arabicDescription || undefined,
+      tag: p.tag || "Production",
+      views: p.views || "10M+ Views",
+      year: p.year || "2024",
+      image: p.coverImageUrl || "/images/projects/flag-day.jpg",
+      vimeoId: p.videoUrl ? p.videoUrl.split("/").pop() : undefined,
+      videoUrl: p.videoUrl || undefined,
+      deliverables: p.deliverables || [],
+      techStack: p.techStack || [],
+    };
+  });
 
   const initialProjects = projectsToDisplay.length > 0 ? projectsToDisplay : PROJECTS_DATA;
 

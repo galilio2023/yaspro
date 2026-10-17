@@ -54,6 +54,8 @@ export function GearManager({ initialEquipment }: GearManagerProps) {
       imageUrl: "/images/gear/arri-alexa-mini-lf.jpg",
       isPopular: false,
       isKit: false,
+      totalQuantity: 1,
+      includedInKit: [],
       isAvailable: true,
     },
   });

@@ -1,4 +1,11 @@
-export type ProjectCategory = "all" | "government" | "commercial" | "shows";
+export type ProjectCategory =
+  | "all"
+  | "government"
+  | "commercial"
+  | "shows"
+  | "documentary"
+  | "event"
+  | "influencer";
 
 export interface ProjectItem {
   id: string;
@@ -9,6 +16,7 @@ export interface ProjectItem {
   categoryLabel: string;
   client: string;
   description: string;
+  arabicDescription?: string;
   tag: string;
   views: string;
   image?: string;

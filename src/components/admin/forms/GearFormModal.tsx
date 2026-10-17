@@ -60,6 +60,8 @@ function GearFormContent({
     isAvailable: initialGear?.isAvailable ?? true,
     isPopular: initialGear?.isPopular ?? false,
     isKit: initialGear?.isKit ?? false,
+    totalQuantity: initialGear?.totalQuantity ?? 1,
+    includedInKit: Array.isArray(initialGear?.includedInKit) ? initialGear.includedInKit : [],
     specs: Array.isArray(initialGear?.specs) ? initialGear.specs : [],
   }));
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -158,7 +160,7 @@ function GearFormContent({
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
         <AdminInput
           label="Daily Rental Rate"
           type="number"
@@ -179,6 +181,20 @@ function GearFormContent({
           suffixNode="AED"
           value={formData.securityDeposit || "0.00"}
           onChange={(e) => setFormData((prev) => ({ ...prev, securityDeposit: e.target.value }))}
+        />
+        <AdminInput
+          label="Total Fleet Units"
+          type="number"
+          min={1}
+          step={1}
+          suffixNode="Units"
+          value={String(formData.totalQuantity ?? 1)}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              totalQuantity: Math.max(1, Number(e.target.value) || 1),
+            }))
+          }
         />
       </div>
 
@@ -216,6 +232,15 @@ function GearFormContent({
         tags={(formData.specs as string[]) || []}
         onChange={(specs) => setFormData((prev) => ({ ...prev, specs }))}
       />
+
+      {formData.isKit && (
+        <AdminTagsInput
+          label="Included Kit Items (Slugs or Asset Names)"
+          placeholder="Add kit component (e.g. arri-signature-primes, v-mount-battery-kit)..."
+          tags={(formData.includedInKit as string[]) || []}
+          onChange={(includedInKit) => setFormData((prev) => ({ ...prev, includedInKit }))}
+        />
+      )}
 
       <div className="space-y-2 pt-1">
         <AdminSwitch

@@ -1,6 +1,9 @@
 import React from "react";
 import { getCmsInquiries } from "@/lib/cms-actions";
-import { getTelemetryFeed } from "@/lib/actions/broadcast-telemetry-dispatcher";
+import {
+  getTelemetryFeed,
+  getBroadcastFleetStatus,
+} from "@/lib/actions/broadcast-telemetry-dispatcher";
 import { BroadcastManager } from "@/features/admin";
 
 export const metadata = {
@@ -9,9 +12,12 @@ export const metadata = {
 };
 
 export default async function AdminBroadcastPage() {
-  const [allInquiries, initialTelemetryFeed] = await Promise.all([
+  const [allInquiries, initialTelemetryFeed, initialFleetStatus] = await Promise.all([
     getCmsInquiries(),
     typeof getTelemetryFeed === "function" ? getTelemetryFeed().catch(() => []) : Promise.resolve([]),
+    typeof getBroadcastFleetStatus === "function"
+      ? getBroadcastFleetStatus().catch(() => undefined)
+      : Promise.resolve(undefined),
   ]);
   const broadcastInquiries = allInquiries.filter(
     (i) =>
@@ -26,6 +32,7 @@ export default async function AdminBroadcastPage() {
     <BroadcastManager
       initialBroadcastInquiries={broadcastInquiries}
       initialTelemetryFeed={initialTelemetryFeed}
+      initialFleetStatus={initialFleetStatus}
     />
   );
 }

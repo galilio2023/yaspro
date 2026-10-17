@@ -4,8 +4,8 @@ import { getLocalCalendarDate } from "@/features/gear/lib/rental-schedule";
 
 import { useState, useMemo } from "react";
 import { PodcastSessionItem, PodcastBookingContact, PodcastBookingStep, PodcastStudio, PodcastAddon, PodcastService } from "../types";
-import { PODCAST_STUDIOS, PODCAST_SERVICES, PODCAST_ADDONS, PODCAST_PROMO_CODES, TIME_SLOTS } from "../data";
-import { createPodcastBooking, PodcastBookingResult } from "../actions";
+import { PODCAST_STUDIOS, PODCAST_SERVICES, PODCAST_ADDONS, TIME_SLOTS } from "../data";
+import { createPodcastBooking, resolvePodcastPromoRule, PodcastBookingResult } from "../actions";
 
 function getTomorrowDateString(): string {
   const tomorrow = new Date();
@@ -52,6 +52,7 @@ export function usePodcastBooking(
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [confirmedResult, setConfirmedResult] = useState<PodcastBookingResult | null>(null);
+  const [dbPromoRules, setDbPromoRules] = useState<Record<string, { percent?: number; flat?: number }>>({});
 
   const currentSession = sessions[activeSessionIndex] || sessions[0];
 
@@ -93,7 +94,7 @@ export function usePodcastBooking(
 
   const promoDiscount = useMemo(() => {
     if (!appliedPromo) return 0;
-    const rule = PODCAST_PROMO_CODES[appliedPromo];
+    const rule = dbPromoRules[appliedPromo];
     if (!rule) return 0;
     if (rule.percent) {
       return Math.round((subtotalAllSessions * rule.percent) / 100);
@@ -102,7 +103,7 @@ export function usePodcastBooking(
       return Math.min(subtotalAllSessions, rule.flat);
     }
     return 0;
-  }, [appliedPromo, subtotalAllSessions]);
+  }, [appliedPromo, subtotalAllSessions, dbPromoRules]);
 
   const grandTotal = Math.max(0, subtotalAllSessions - promoDiscount);
 
@@ -227,17 +228,23 @@ export function usePodcastBooking(
     setStep((s) => (s > 1 ? ((s - 1) as PodcastBookingStep) : 1));
   };
 
-  const applyPromo = (code: string) => {
+  const applyPromo = async (code: string) => {
     setPromoError(null);
     const trimmed = code.trim().toUpperCase();
     if (!trimmed) {
       setPromoError("Please enter a promo code.");
       return;
     }
-    if (PODCAST_PROMO_CODES[trimmed]) {
+    try {
+      const rule = await resolvePodcastPromoRule(trimmed);
+      if (!rule) {
+        setPromoError("Invalid or expired promo code.");
+        return;
+      }
+      setDbPromoRules((prev) => ({ ...prev, [trimmed]: { percent: rule.percent, flat: rule.flat } }));
       setAppliedPromo(trimmed);
       setContact((prev) => ({ ...prev, promoCode: trimmed }));
-    } else {
+    } catch {
       setPromoError("Invalid or expired promo code.");
     }
   };

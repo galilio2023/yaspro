@@ -57,7 +57,12 @@ async function loadBookingPaymentQuote(bookingId: string, referenceCode: string)
     throw new BookingPaymentError("This booking is not available for payment.");
   }
 
-  const { depositPercent, vatRatePercent } = await getPlatformSettings();
+  const settings = await getPlatformSettings();
+  const { vatRatePercent } = settings;
+  // A balance payment must retain the deposit terms already paid by this booking.
+  const depositPercent = booking.paymentStatus === "deposit_paid"
+    ? booking.paymentIntent?.depositPercent ?? settings.depositPercent
+    : settings.depositPercent;
   const total = Math.round(Number(booking.totalAmount));
   if (!Number.isFinite(total) || total <= 0 || !Number.isFinite(depositPercent) ||
       depositPercent < 10 || depositPercent > 100) {
@@ -121,6 +126,7 @@ export async function createZiinaPaymentIntent(
       return { success: false, quote, error: "Booking payment changed. Review the updated amount and retry." };
     }
     const { amountAed, targetStatus } = option;
+    const paymentIntent = { amountFils: amountAed * 100, depositPercent: quote.depositPercent, targetStatus };
 
     const ziinaApiKey = process.env.ZIINA_API_KEY;
     const isLiveKey = Boolean(ziinaApiKey && !ziinaApiKey.includes("ziina_xxx") && !ziinaApiKey.startsWith("your_"));
@@ -172,7 +178,7 @@ export async function createZiinaPaymentIntent(
         // Persist the intent id so the webhook can match the payment back to this booking.
         const updated = await db
           .update(bookings)
-          .set({ paymentReference: String(data.id), updatedAt: new Date() })
+          .set({ paymentReference: String(data.id), paymentIntent, updatedAt: new Date() })
           .where(and(eq(bookings.id, booking.id), eq(bookings.paymentStatus, booking.paymentStatus)))
           .returning({ id: bookings.id });
         if (updated.length === 0) {
@@ -201,6 +207,7 @@ export async function createZiinaPaymentIntent(
         .set({
           paymentStatus: targetStatus,
           paymentReference: transactionId,
+          paymentIntent,
           status: "confirmed" as const,
           updatedAt: new Date(),
         })

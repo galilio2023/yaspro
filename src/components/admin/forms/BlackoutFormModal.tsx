@@ -31,6 +31,7 @@ export interface BlackoutFormModalProps {
     allDay?: boolean;
   }) => Promise<boolean | void>;
   podcastSetsList?: { key: string; name: string }[];
+  studiosList?: { id: string; name: string }[];
   isSubmitting?: boolean;
   error?: string | null;
 }
@@ -45,6 +46,7 @@ function BlackoutFormContent({
   onClose,
   onSave,
   podcastSetsList = [],
+  studiosList = [],
   isSubmitting = false,
   error,
 }: BlackoutFormModalProps) {
@@ -54,8 +56,9 @@ function BlackoutFormContent({
 
   const [title, setTitle] = useState("Private VIP Session / Maintenance");
   const [reason, setReason] = useState("Acoustic calibration & VIP private production lockout");
-  const [targetType, setTargetType] = useState<"all" | "podcast">("all");
+  const [targetType, setTargetType] = useState<"all" | "podcast" | "studio">("all");
   const [selectedPodcastSet, setSelectedPodcastSet] = useState("");
+  const [selectedStudioId, setSelectedStudioId] = useState("");
   const [startDate, setStartDate] = useState(tomorrowStr);
   const [startTime, setStartTime] = useState("09:00");
   const [endDate, setEndDate] = useState(tomorrowStr);
@@ -70,6 +73,9 @@ function BlackoutFormContent({
     if (!title.trim()) errors.title = "Lockout title is required";
     if (!startDate) errors.startDate = "Start date is required";
     if (!endDate) errors.endDate = "End date is required";
+    if (targetType === "studio" && !studiosList.some((studio) => studio.id === selectedStudioId)) {
+      errors.studioId = "Select a soundstage for this lockout";
+    }
 
     const startD = new Date(`${startDate}T${allDay ? "00:00" : startTime || "00:00"}:00+04:00`);
     const endD = new Date(`${endDate}T${allDay ? "23:59" : endTime || "23:59"}:${allDay ? "59" : "00"}+04:00`);
@@ -87,7 +93,7 @@ function BlackoutFormContent({
       title: title.trim(),
       reason: reason.trim() || undefined,
       podcastSetId: targetType === "podcast" && selectedPodcastSet ? selectedPodcastSet : null,
-      studioId: null,
+      studioId: targetType === "studio" && selectedStudioId ? selectedStudioId : null,
       startTime: startD.toISOString(),
       endTime: endD.toISOString(),
       allDay,
@@ -137,7 +143,7 @@ function BlackoutFormContent({
           <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
             Lockout Scope
           </label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
               onClick={() => setTargetType("all")}
@@ -148,6 +154,18 @@ function BlackoutFormContent({
               }`}
             >
               Studio-Wide (All Sets)
+            </button>
+            <button
+              type="button"
+              onClick={() => setTargetType("studio")}
+              disabled={studiosList.length === 0}
+              className={`disabled:opacity-50 disabled:cursor-not-allowed p-3 rounded-xl border text-xs font-bold text-center transition-all ${
+                targetType === "studio"
+                  ? "bg-brand-violet/20 border-brand-mauve text-white"
+                  : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white"
+              }`}
+            >
+              Specific Soundstage
             </button>
             <button
               type="button"
@@ -162,6 +180,22 @@ function BlackoutFormContent({
             </button>
           </div>
         </div>
+
+        {targetType === "studio" && studiosList.length > 0 && (
+          <AdminSelect
+            label="Select Soundstage"
+            value={selectedStudioId}
+            onChange={(e) => {
+              setSelectedStudioId(e.target.value);
+              setFieldErrors((prev) => ({ ...prev, studioId: "" }));
+            }}
+            error={fieldErrors.studioId}
+            options={[
+              { label: "Choose a soundstage...", value: "" },
+              ...studiosList.map((s) => ({ label: s.name, value: s.id })),
+            ]}
+          />
+        )}
 
         {targetType === "podcast" && podcastSetsList.length > 0 && (
           <AdminSelect

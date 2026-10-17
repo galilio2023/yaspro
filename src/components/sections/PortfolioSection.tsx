@@ -19,22 +19,28 @@ import { studioSprings } from "@/lib/studio-motion";
 
 interface PortfolioSectionProps {
   limit?: number;
+  initialProjects?: ProjectItem[];
 }
 
-export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
+export function PortfolioSection({ limit = 9, initialProjects }: PortfolioSectionProps) {
   const { t, isArabic } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<ProjectCategory>("all");
   const [selectedVideoProject, setSelectedVideoProject] = useState<ProjectItem | null>(null);
   const [selectedSpotlightId, setSelectedSpotlightId] = useState<string | null>(null);
 
+  const sourceProjects = useMemo(
+    () => initialProjects ?? PROJECTS_DATA,
+    [initialProjects]
+  );
+
   // Filter projects by active category
   const filteredProjects = useMemo(() => {
     const list =
       activeCategory === "all"
-        ? PROJECTS_DATA
-        : PROJECTS_DATA.filter((p) => p.category === activeCategory);
+        ? sourceProjects
+        : sourceProjects.filter((p) => p.category === activeCategory);
     return list.slice(0, limit);
-  }, [activeCategory, limit]);
+  }, [activeCategory, limit, sourceProjects]);
 
   // Derive active spotlight project (defaults to first filtered project, or user selection)
   const spotlightProject = useMemo(() => {
@@ -42,8 +48,8 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
       const found = filteredProjects.find((p) => p.id === selectedSpotlightId);
       if (found) return found;
     }
-    return filteredProjects[0] || PROJECTS_DATA[0];
-  }, [selectedSpotlightId, filteredProjects]);
+    return filteredProjects[0] || sourceProjects[0] || PROJECTS_DATA[0];
+  }, [selectedSpotlightId, filteredProjects, sourceProjects]);
 
   // Extract camera/optics sensor metadata
   const spotlightOptics = useMemo(() => {
@@ -57,6 +63,8 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
   }, [spotlightProject]);
 
   const hasSpotlightVideo = Boolean(spotlightProject?.vimeoId || spotlightProject?.videoUrl);
+
+  if (initialProjects?.length === 0) return null;
 
   return (
     <Section
@@ -219,7 +227,9 @@ export function PortfolioSection({ limit = 9 }: PortfolioSectionProps) {
 
                   {/* Logline / Description */}
                   <p className="text-zinc-300 text-sm leading-relaxed mb-6">
-                    {spotlightProject.description}
+                    {isArabic && spotlightProject.arabicDescription
+                      ? spotlightProject.arabicDescription
+                      : spotlightProject.description}
                   </p>
 
                   {/* Studio Tech & Deliverables Pills */}

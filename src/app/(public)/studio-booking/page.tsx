@@ -1,3 +1,4 @@
+import { getStudioPromoRules } from "@/lib/queries/studio-promo-rules";
 import { getCachedStudios } from "@/lib/cached-queries";
 import { Suspense } from "react";
 import type { Metadata } from "next";
@@ -89,17 +90,24 @@ function BookingWizardLoading() {
 
 export default async function StudioBookingPage() {
   const { getStudioWizardCatalog } = await import("@/lib/actions/studio-wizard-catalog-operations");
-  const [cmsStudios, wizardCatalog] = await Promise.all([
+  const [cmsStudios, wizardCatalog, promoRules] = await Promise.all([
     getCachedStudios(),
     getStudioWizardCatalog(),
+    getStudioPromoRules(),
   ]);
+
   const studios = cmsStudios.filter((studio) => studio.isActive).map((studio) => ({
     id: studio.id,
     slug: studio.slug,
     name: studio.name,
     desc: studio.description || "",
+    description: studio.description || "",
     rate: Number(studio.hourlyRate),
+    capacity: studio.capacity,
+    features: studio.amenities && studio.amenities.length > 0 ? studio.amenities : undefined,
+    galleryImages: studio.gallery && studio.gallery.length > 0 ? studio.gallery : undefined,
     image: studio.imageUrl || undefined,
+    imageUrl: studio.imageUrl || undefined,
     isActive: studio.isActive,
   }));
   return (
@@ -109,7 +117,7 @@ export default async function StudioBookingPage() {
         <StudioBookingPageHeader />
 
         <Suspense fallback={<BookingWizardLoading />}>
-          <BookingWizard studios={studios} wizardCatalog={wizardCatalog} />
+          <BookingWizard studios={studios} wizardCatalog={{ ...wizardCatalog, promoRules }} />
         </Suspense>
       </Container>
     </Section>

@@ -2,12 +2,12 @@
 
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { db } from "@/db";
-import { bookings, bookingSessions, inquiries, users, studios, studioBlackouts, platformSettings, type SessionType, type InquiryType } from "@/db/schema";
+import { bookings, bookingSessions, inquiries, users, studios, studioBlackouts, platformSettings, promoCodes, type SessionType, type InquiryType } from "@/db/schema";
 import { generateBookingReference } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import { eq, and, inArray, or, isNull } from "drizzle-orm";
+import { eq, and, inArray, or, isNull, sql } from "drizzle-orm";
 import { checkRateLimit, checkIdempotency, getClientIdentifier } from "@/lib/rate-limit";
 import { sendBookingConfirmationNotification, sendInquiryNotification } from "@/lib/notifications";
 import {
@@ -125,6 +125,32 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
             success: false,
             message: "Unable to verify current studio catalog pricing. Please try again in a moment.",
           };
+        }
+      }
+
+      if (data.promoCode && promoCodes && typeof db.query?.promoCodes?.findFirst === "function") {
+        try {
+          const cleanCode = data.promoCode.trim().toUpperCase();
+          const promoRow = await db.query.promoCodes.findFirst({
+            where: sql`lower(${promoCodes.code}) = ${cleanCode.toLowerCase()}`,
+          });
+          if (promoRow) {
+            const allowed = promoRow.isActive !== false &&
+              (!promoRow.expiresAt || new Date(promoRow.expiresAt).getTime() > Date.now()) &&
+              !promoRow.eligibleOfferIds?.length;
+            wizardCatalog = {
+              ...(wizardCatalog || {}),
+              promoRules: {
+                ...(wizardCatalog?.promoRules || {}),
+                [cleanCode]: allowed ? {
+                  discountPercent: promoRow.discountPercent ?? undefined,
+                  discountFlat: promoRow.discountAmount ? Number(promoRow.discountAmount) : undefined,
+                } : null,
+              },
+            };
+          }
+        } catch {
+          // Fallback to static PROMO_CODES
         }
       }
 

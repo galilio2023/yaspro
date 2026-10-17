@@ -85,6 +85,8 @@ export function PodcastManager({ initialSets, initialAddons, initialServices = [
     priceUnit: "hour",
     featuresText: "",
     badge: "",
+    best: false,
+    note: "",
     isActive: true,
   });
   const [serviceModalError, setServiceModalError] = useState<string | null>(null);
@@ -276,6 +278,8 @@ export function PodcastManager({ initialSets, initialAddons, initialServices = [
       priceUnit: "hour",
       featuresText: "",
       badge: "",
+      best: false,
+      note: "",
       isActive: true,
     });
     setIsServiceModalOpen(true);
@@ -292,6 +296,8 @@ export function PodcastManager({ initialSets, initialAddons, initialServices = [
       priceUnit: "hour",
       featuresText: (item.highlights || []).join("\n"),
       badge: item.badge || "",
+      best: Boolean(item.best),
+      note: item.note || "",
       isActive: item.isActive !== false,
     });
     setIsServiceModalOpen(true);
@@ -313,6 +319,8 @@ export function PodcastManager({ initialSets, initialAddons, initialServices = [
         price: Number(serviceForm.price),
         highlights,
         badge: serviceForm.badge.trim() || undefined,
+        best: serviceForm.best,
+        note: serviceForm.note.trim() || undefined,
         isActive: serviceForm.isActive,
       });
       if (res.success && res.data) {
@@ -385,7 +393,7 @@ export function PodcastManager({ initialSets, initialAddons, initialServices = [
 
         <div className="flex items-center gap-2">
           <Link
-            href="/podcast-production"
+            href="/podcast-booking"
             target="_blank"
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-300 text-xs font-semibold hover:text-white hover:border-white/20 transition-colors"
           >
@@ -891,7 +899,7 @@ export function PodcastManager({ initialSets, initialAddons, initialServices = [
             </div>
             <div>
               <label className="block text-[11px] font-bold text-slate-400 mb-1">
-                Features (one per line)
+                Features / Highlights (one per line)
               </label>
               <textarea
                 rows={4}
@@ -901,6 +909,28 @@ export function PodcastManager({ initialSets, initialAddons, initialServices = [
                 placeholder={"3x Sony FX30 4K Cinema Cameras\n4x Shure SM7dB Broadcast Microphones"}
                 className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
               />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+              <div>
+                <label className="block text-[11px] font-bold text-slate-400 mb-1">
+                  Deliverables / Archive Note (Optional)
+                </label>
+                <input
+                  value={serviceForm.note}
+                  onChange={(e) => setServiceForm((f) => ({ ...f, note: e.target.value }))}
+                  placeholder="Cloud link delivered within 48h"
+                  className="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-xs text-white"
+                />
+              </div>
+              <label className="flex items-center gap-2 pt-4 cursor-pointer text-xs text-slate-300">
+                <input
+                  type="checkbox"
+                  checked={serviceForm.best}
+                  onChange={(e) => setServiceForm((f) => ({ ...f, best: e.target.checked }))}
+                  className="rounded border-white/20 bg-white/5 text-brand-violet focus:ring-brand-mauve"
+                />
+                <span>Highlight as Most Popular Tier</span>
+              </label>
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <button

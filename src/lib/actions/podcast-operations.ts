@@ -470,6 +470,7 @@ export async function upsertCmsPodcastService(data: {
   price: number;
   badge?: string;
   best?: boolean;
+  note?: string;
   isActive?: boolean;
   highlights?: string[];
 }): Promise<CmsResponse<PodcastService[]>> {
@@ -500,7 +501,7 @@ export async function upsertCmsPodcastService(data: {
         : existing?.highlights || [],
       features: existing?.features || [],
       after: existing?.after || [],
-      note: existing?.note,
+      note: data.note !== undefined ? (data.note.trim() || undefined) : existing?.note,
     };
 
     const idx = current.findIndex((s) => s.key === cleanKey);

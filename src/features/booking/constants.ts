@@ -285,6 +285,7 @@ export interface StudioWizardCatalogOverride {
   crewEquipment?: readonly CrewEquipmentItem[];
   props?: readonly PropItem[];
   addons?: readonly AddonItem[];
+  promoRules?: Record<string, { discountPercent?: number; discountFlat?: number } | null>;
 }
 
 export function calculateBookingPrice(
@@ -361,7 +362,9 @@ export function calculateBookingPrice(
   let discount = 0;
   if (input.promoCode) {
     const code = input.promoCode.trim().toUpperCase();
-    const rule = PROMO_CODES[code];
+    const rule = catalog?.promoRules && Object.hasOwn(catalog.promoRules, code)
+      ? catalog.promoRules[code]
+      : PROMO_CODES[code];
     if (rule) {
       if (rule.discountPercent) {
         discount = Math.round((subtotal * rule.discountPercent) / 100);
