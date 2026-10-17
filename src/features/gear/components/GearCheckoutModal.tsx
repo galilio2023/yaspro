@@ -44,7 +44,7 @@ export function GearCheckoutModal({
   totalDeposit,
   onOrderCompleted,
 }: GearCheckoutModalProps) {
-  const { isArabic } = useLanguage();
+  const { t, isArabic } = useLanguage();
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -91,11 +91,7 @@ export function GearCheckoutModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName || !email || !phone) {
-      setErrorMessage(
-        isArabic
-          ? "يرجى إدخال الاسم ورقم الهاتف والبريد الإلكتروني"
-          : "Please provide your Name, Email, and Phone Number."
-      );
+      setErrorMessage(t("shop.checkout.requiredFields"));
       return;
     }
 
@@ -125,19 +121,10 @@ export function GearCheckoutModal({
         // Automatically open the Ziina payment modal
         setIsPaymentModalOpen(true);
       } else {
-        setErrorMessage(
-          res.error ||
-            (isArabic
-              ? "حدث خطأ أثناء معالجة حجز المعدات، يرجى المحاولة مرة أخرى."
-              : "Failed to process equipment reservation. Please retry.")
-        );
+        setErrorMessage(res.error || t("shop.checkout.errorProcess"));
       }
     } catch {
-      setErrorMessage(
-        isArabic
-          ? "تعذر الاتصال بالخادم، يرجى المحاولة لاحقاً."
-          : "Network error contacting server. Please retry."
-      );
+      setErrorMessage(t("shop.checkout.errorNetwork"));
     } finally {
       setIsSubmitting(false);
     }
@@ -168,16 +155,10 @@ export function GearCheckoutModal({
               <div>
                 <h2 className="text-lg font-bold text-white font-display flex items-center gap-2">
                   <Sparkles size={18} className="text-brand-mauve" />
-                  <span>
-                    {isArabic
-                      ? "إتمام حجز وتأجير معدات التصوير"
-                      : "Complete Cinema Gear Rental"}
-                  </span>
+                  <span>{t("shop.checkout.title")}</span>
                 </h2>
                 <p className="text-xs text-text-muted mt-0.5">
-                  {isArabic
-                    ? "تسجيل الحجز في نظام الإنتاج مع ربط حسابك وخيارات الدفع الفوري"
-                    : "Official dispatch order linked to your client profile with instant online payment"}
+                  {t("shop.checkout.subtitle")}
                 </p>
               </div>
 
@@ -185,7 +166,7 @@ export function GearCheckoutModal({
                 type="button"
                 onClick={handleClose}
                 className="size-8 rounded-full border border-white/10 bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-colors cursor-pointer"
-                aria-label="Close"
+                aria-label={t("shop.checkout.close")}
               >
                 <X size={16} />
               </button>
@@ -200,19 +181,15 @@ export function GearCheckoutModal({
                     <CheckCircle2 size={36} />
                   </div>
                   <h3 className="text-2xl font-bold text-white font-display">
-                    {isArabic
-                      ? "تم تأكيد طلب حجز المعدات بنجاح!"
-                      : "Equipment Rental Confirmed!"}
+                    {t("shop.checkout.confirmedTitle")}
                   </h3>
                   <p className="text-sm text-text-secondary max-w-lg mx-auto leading-relaxed">
-                    {isArabic
-                      ? "تم تسجيل حجزك رسميًا في لوحة تحكم حسابك وربطه بمركز التوزيع الرئيسي. يمكنك إتمام الدفع الإلكتروني الآن أو المتابعة من لوحة تحكمك."
-                      : "Your rental reservation has been officially recorded and linked to your Client Portal. You can complete your deposit/full payment online via Ziina."}
+                    {t("shop.checkout.confirmedDesc")}
                   </p>
 
                   <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 inline-block text-center font-mono">
                     <span className="text-xs text-text-muted block">
-                      {isArabic ? "كود الحجز المرجعي:" : "Booking Reference Code:"}
+                      {t("shop.checkout.refCode")}
                     </span>
                     <span className="text-xl font-bold text-brand-mauve tracking-wider">
                       {createdBooking.referenceCode}
@@ -226,11 +203,7 @@ export function GearCheckoutModal({
                       className="w-full sm:w-auto px-6 py-3 rounded-xl btn-brand text-xs font-bold flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <CreditCard size={15} />
-                      <span>
-                        {isArabic
-                          ? "الدفع الإلكتروني عبر Ziina (بطاقة / Apple Pay)"
-                          : "Pay Online via Ziina (Apple Pay / Card)"}
-                      </span>
+                      <span>{t("shop.checkout.payOnline")}</span>
                     </button>
 
                     <button
@@ -241,9 +214,7 @@ export function GearCheckoutModal({
                       }}
                       className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-medium transition-colors cursor-pointer"
                     >
-                      {isArabic
-                        ? "عرض الحجز في حسابي"
-                        : "View in My Account"}
+                      {t("shop.checkout.viewInAccount")}
                     </button>
                   </div>
                 </div>
@@ -254,11 +225,7 @@ export function GearCheckoutModal({
                   <div className="lg:col-span-7 space-y-4">
                     <div className="flex items-center gap-2 text-sm font-bold text-white border-b border-white/10 pb-2">
                       <Building2 size={16} className="text-brand-mauve" />
-                      <span>
-                        {isArabic
-                          ? "بيانات المستأجر والإنتاج"
-                          : "Production & Client Information"}
-                      </span>
+                      <span>{t("shop.checkout.clientInfo")}</span>
                     </div>
 
                     {errorMessage && (
@@ -270,7 +237,7 @@ export function GearCheckoutModal({
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                       <div>
                         <label className="block text-xs text-text-secondary mb-1">
-                          {isArabic ? "الاسم الكامل *" : "Full Name *"}
+                          {t("shop.checkout.fullName")}
                         </label>
                         <input
                           type="text"
@@ -284,7 +251,7 @@ export function GearCheckoutModal({
 
                       <div>
                         <label className="block text-xs text-text-secondary mb-1">
-                          {isArabic ? "البريد الإلكتروني *" : "Email Address *"}
+                          {t("shop.checkout.email")}
                         </label>
                         <input
                           type="email"
@@ -300,7 +267,7 @@ export function GearCheckoutModal({
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                       <div>
                         <label className="block text-xs text-text-secondary mb-1">
-                          {isArabic ? "رقم الهاتف / واتساب *" : "Phone / WhatsApp *"}
+                          {t("shop.checkout.phone")}
                         </label>
                         <input
                           type="tel"
@@ -314,7 +281,7 @@ export function GearCheckoutModal({
 
                       <div>
                         <label className="block text-xs text-text-secondary mb-1">
-                          {isArabic ? "الشركة / جهة الإنتاج" : "Company / Production House"}
+                          {t("shop.checkout.company")}
                         </label>
                         <input
                           type="text"
@@ -328,17 +295,13 @@ export function GearCheckoutModal({
 
                     <div>
                       <label className="block text-xs text-text-secondary mb-1">
-                        {isArabic ? "ملاحظات إضافية أو ملحقات خاصة" : "Special Requests or Calibration Notes"}
+                        {t("shop.checkout.specialRequests")}
                       </label>
                       <textarea
                         rows={2}
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
-                        placeholder={
-                          isArabic
-                            ? "مثال: يرجى توفير محول بطاريات إضافي وعدسة 50mm معايرة..."
-                            : "e.g. Lens mount preference (PL/LPL), wireless transmitter pairing..."
-                        }
+                        placeholder={t("shop.checkout.notesPlaceholder")}
                         className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-brand-mauve focus:outline-none text-white text-base sm:text-xs resize-none"
                       />
                     </div>
@@ -346,11 +309,7 @@ export function GearCheckoutModal({
                     {session?.user && (
                       <div className="p-3 rounded-xl bg-brand-violet/20 border border-brand-mauve/30 flex items-center gap-2 text-xs text-brand-mauve-soft">
                         <Lock size={14} className="text-brand-mauve shrink-0" />
-                        <span>
-                          {isArabic
-                            ? "سيتم ربط هذا الحجز تلقائيًا بحسابك المسجل."
-                            : "This booking will be automatically linked to your signed-in account."}
-                        </span>
+                        <span>{t("shop.checkout.linkedAccountNotice")}</span>
                       </div>
                     )}
                   </div>
@@ -360,10 +319,10 @@ export function GearCheckoutModal({
                     <div>
                       <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
                         <span className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                          {isArabic ? "ملخص باقة المعدات" : "Kit Summary"} ({items.length})
+                          {t("shop.checkout.kitSummary")} ({items.length})
                         </span>
                         <span className="text-xs text-brand-mauve font-mono">
-                          {dateRange.totalDays} {isArabic ? "أيام" : "Days"}
+                          {dateRange.totalDays} {t("shop.checkout.days")}
                         </span>
                       </div>
 
@@ -403,14 +362,14 @@ export function GearCheckoutModal({
                       {/* Pricing Specs */}
                       <div className="space-y-1.5 text-xs border-t border-white/10 pt-3">
                         <div className="flex items-center justify-between text-text-muted">
-                          <span>{isArabic ? "مدة التأجير:" : "Shoot Dates:"}</span>
+                          <span>{t("shop.checkout.shootDates")}</span>
                           <span className="font-mono text-white">
                             {dateRange.pickupDate} → {dateRange.returnDate}
                           </span>
                         </div>
 
                         <div className="flex items-center justify-between text-text-muted">
-                          <span>{isArabic ? "طريقة التسليم:" : "Dispatch Method:"}</span>
+                          <span>{t("shop.checkout.dispatchMethod")}</span>
                           <span className="text-white capitalize">
                             {deliveryMethod.replace(/_/g, " ")}
                           </span>
@@ -418,7 +377,7 @@ export function GearCheckoutModal({
 
                         {totalDeposit > 0 && (
                           <div className="flex items-center justify-between text-text-muted">
-                            <span>{isArabic ? "مبلغ التأمين المسترد:" : "Security Deposit:"}</span>
+                            <span>{t("shop.checkout.securityDeposit")}</span>
                             <span className="font-mono text-brand-mauve-soft">
                               {formatCurrency(totalDeposit)}
                             </span>
@@ -426,7 +385,7 @@ export function GearCheckoutModal({
                         )}
 
                         <div className="flex items-center justify-between pt-2 border-t border-white/10 text-sm font-bold">
-                          <span className="text-white">{isArabic ? "إجمالي الحجز:" : "Grand Total:"}</span>
+                          <span className="text-white">{t("shop.checkout.grandTotal")}</span>
                           <span className="text-brand-mauve font-mono text-base">
                             {formatCurrency(grandTotal)}
                           </span>
@@ -443,19 +402,11 @@ export function GearCheckoutModal({
                         {isSubmitting ? (
                           <>
                             <Loader2 size={15} className="animate-spin" />
-                            <span>
-                              {isArabic
-                                ? "جاري تسجيل الحجز وتجهيز الدفع..."
-                                : "Booking equipment..."}
-                            </span>
+                            <span>{t("shop.checkout.submitting")}</span>
                           </>
                         ) : (
                           <>
-                            <span>
-                              {isArabic
-                                ? "تأكيد الحجز والانتقال للدفع"
-                                : "Confirm & Proceed to Payment"}
-                            </span>
+                            <span>{t("shop.checkout.confirmProceed")}</span>
                             <ArrowRight size={14} className="rtl:rotate-180" />
                           </>
                         )}
@@ -479,7 +430,7 @@ export function GearCheckoutModal({
           referenceCode={createdBooking.referenceCode}
           totalAmount={createdBooking.totalAmount}
           securityDeposit={totalDeposit}
-          orderTitle={isArabic ? "طلب تأجير باقة معدات" : "Cinema Gear Package"}
+          orderTitle={t("shop.checkout.orderTitle")}
           onPaymentSuccess={handlePaymentSuccess}
         />
       )}

@@ -47,7 +47,7 @@ export function GearCartDrawer({
   onAddItem,
   onClearCart,
 }: GearCartDrawerProps) {
-  const { isArabic } = useLanguage();
+  const { t, isArabic, dir } = useLanguage();
   const cartContext = useCart();
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
@@ -127,7 +127,8 @@ export function GearCartDrawer({
       {/* Floating Bottom Bar: Centered on desktop, elevated on mobile */}
       {effectiveItems.length > 0 && <aside
         aria-label="Rental selection summary"
-        className="fixed bottom-4 inset-x-3 sm:bottom-6 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[640px] max-w-2xl z-40 animate-fade-up"
+        dir={dir}
+        className="fixed bottom-4 inset-x-3 sm:bottom-6 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[640px] max-w-2xl z-40 animate-fade-up text-start"
       >
         <div className="rounded-2xl border border-brand-mauve/40 bg-black/95 backdrop-blur-2xl p-4 sm:p-5 shadow-2xl shadow-black/80 flex items-center justify-between gap-4">
           <button
@@ -147,30 +148,18 @@ export function GearCartDrawer({
               <p className="text-white font-bold text-sm flex items-center gap-2">
                 <span>
                   {effectiveItems.length}{" "}
-                  {isArabic
-                    ? effectiveItems.length === 1
-                      ? "معدة محددة"
-                      : "معدات محددة"
-                    : effectiveItems.length === 1
-                    ? "Item Selected"
-                    : "Items Selected"}
+                  {effectiveItems.length === 1
+                    ? t("shop.cart.itemSelected")
+                    : t("shop.cart.itemsSelected")}
                 </span>
                 <span className="text-[11px] text-brand-mauve font-normal hover:underline">
-                  {isOpen
-                    ? isArabic
-                      ? "إغلاق التفاصيل"
-                      : "Close details"
-                    : isArabic
-                    ? "مراجعة الباقة"
-                    : "Review Kit"}
+                  {isOpen ? t("shop.cart.closeDetails") : t("shop.cart.reviewKit")}
                 </span>
               </p>
               <div className="flex items-center gap-2 text-xs text-text-muted">
                 <span>
-                  {effectiveDateRange.totalDays} {isArabic ? "أيام" : "Days"} (
-                  {isArabic
-                    ? `${effectiveDateRange.billingMultiplier} أيام فوترة`
-                    : `${effectiveDateRange.billingMultiplier} billed`}
+                  {effectiveDateRange.totalDays} {t("shop.cart.days")} (
+                  {t("shop.cart.billedDays", { days: effectiveDateRange.billingMultiplier })}
                   )
                 </span>
                 <span>•</span>
@@ -190,7 +179,7 @@ export function GearCartDrawer({
               }}
               className="hidden sm:inline-flex px-4 py-2.5 rounded-xl text-xs font-semibold text-text-secondary bg-white/5 hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve"
             >
-              {isOpen ? (isArabic ? "إخفاء" : "Hide") : isArabic ? "التفاصيل" : "Details"}
+              {isOpen ? t("shop.cart.hide") : t("shop.cart.details")}
             </button>
 
             <button
@@ -198,7 +187,7 @@ export function GearCartDrawer({
               onClick={() => setIsCheckoutOpen(true)}
               className="px-5 py-2.5 rounded-xl font-bold text-xs btn-brand flex items-center gap-2 whitespace-nowrap cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve"
             >
-              <span>{isArabic ? "حجز المعدات" : "Reserve Gear"}</span>
+              <span>{t("shop.cart.reserveGear")}</span>
               <ArrowRight size={14} className="rtl:rotate-180" />
             </button>
           </div>
@@ -231,21 +220,13 @@ export function GearCartDrawer({
                 <div>
                   <h3 id="rental-cart-title" className="text-white font-bold text-base font-display">
                     {effectiveItems.length === 0
-                      ? isArabic
-                        ? "سلة استئجار المعدات"
-                        : "Cinema Gear Cart"
-                      : isArabic
-                      ? "تفاصيل باقة استئجار المعدات"
-                      : "Rental Package Breakdown"}
+                      ? t("shop.cart.cartEmptyTitle")
+                      : t("shop.cart.cartFullTitle")}
                   </h3>
                   <p className="text-xs text-text-muted">
                     {effectiveItems.length === 0
-                      ? isArabic
-                        ? "مركز إنتاج دبي • مستودع المعدات"
-                        : "Dubai Production Hub • Gear Vault"
-                      : isArabic
-                      ? "مركز إنتاج دبي • تقدير فوري للتكلفة"
-                      : "Dubai Production Hub • Instant Quote Estimate"}
+                      ? t("shop.cart.cartEmptySubtitle")
+                      : t("shop.cart.cartFullSubtitle")}
                   </p>
                 </div>
               </div>
@@ -255,7 +236,7 @@ export function GearCartDrawer({
                 type="button"
                 onClick={handleClose}
                 className="size-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-text-muted hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve shrink-0"
-                aria-label={isArabic ? "إغلاق السلة" : "Close cart"}
+                aria-label={t("shop.cart.closeCart")}
               >
                 <X size={16} />
               </button>
@@ -267,19 +248,17 @@ export function GearCartDrawer({
                   <ShoppingBag size={32} />
                 </div>
                 <h4 className="text-white font-bold text-base mb-1.5 font-display">
-                  {isArabic ? "سلة المعدات فارغة" : "Your Cinema Gear Cart is Empty"}
+                  {t("shop.cart.emptyNoticeTitle")}
                 </h4>
                 <p className="text-xs text-text-muted max-w-[280px] mb-6 leading-relaxed">
-                  {isArabic
-                    ? "تصفح مستودع كاميرات السينما والعدسات والإضاءة وأضف المعدات لحجزها فوراً لمشروعك القادم."
-                    : "Explore our Dubai cinema cameras, anamorphic lenses, lighting packages, and sound stages to build your rental kit."}
+                  {t("shop.cart.emptyNoticeDesc")}
                 </p>
                 <a
                   href="/shop"
                   onClick={handleClose}
                   className="px-5 py-2.5 rounded-xl font-bold text-xs btn-brand flex items-center gap-2 cursor-pointer"
                 >
-                  <span>{isArabic ? "استكشاف كتالوج المعدات" : "Explore Gear Catalog"}</span>
+                  <span>{t("shop.cart.exploreCatalog")}</span>
                   <ArrowRight size={14} className="rtl:rotate-180" />
                 </a>
               </div>
@@ -288,9 +267,7 @@ export function GearCartDrawer({
             {/* Scrollable Item List */}
             <div className="flex-1 overflow-y-auto py-4 space-y-3">
               <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">
-                {isArabic
-                  ? `المعدات المحددة (${effectiveItems.length})`
-                  : `Selected Equipment (${effectiveItems.length})`}
+                {t("shop.cart.selectedEquipment", { count: effectiveItems.length })}
               </p>
 
               {effectiveItems.map((item) => {
@@ -319,12 +296,12 @@ export function GearCartDrawer({
                           </span>
                           {item.isKit && (
                             <Badge variant="gold" className="text-[9px] px-1.5 py-0 shrink-0">
-                              {isArabic ? "باقة" : "Kit"}
+                              {t("shop.cart.kitBadge")}
                             </Badge>
                           )}
                         </div>
                         <span className="text-[11px] text-text-muted">
-                          {formatCurrency(item.dailyRate)} {isArabic ? "/ يوم" : "/ day"}
+                          {formatCurrency(item.dailyRate)} {t("shop.cart.perDaySuffix")}
                         </span>
                       </div>
                     </div>
@@ -337,7 +314,7 @@ export function GearCartDrawer({
                         type="button"
                         onClick={() => handleRemove(item.id)}
                         className="text-text-muted hover:text-red-400 transition-colors p-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 rounded-lg"
-                        aria-label={`Remove ${itemName}`}
+                        aria-label={t("shop.cart.removeAria", { name: itemName })}
                       >
                         <Trash2 size={14} />
                       </button>
@@ -352,7 +329,7 @@ export function GearCartDrawer({
                   <div className="flex items-center gap-2 mb-2">
                     <Sparkles size={14} className="text-brand-mauve animate-pulse shrink-0" />
                     <span className="text-xs font-bold text-white font-display">
-                      {isArabic ? "المساعد الذكي: معدات موصى بها مع باقتك" : "Smart Production Assistant: Recommended Essentials"}
+                      {t("shop.cart.smartAssistantTitle")}
                     </span>
                   </div>
                   <div className="space-y-2">
@@ -369,11 +346,9 @@ export function GearCartDrawer({
                                 {recName}
                               </span>
                               <Badge variant={rec.badge === "Essential" ? "gold" : "default"} className="text-[8px] px-1.5 py-0 shrink-0">
-                                {isArabic
-                                  ? rec.badge === "Essential"
-                                    ? "ضروري"
-                                    : "موصى به"
-                                  : rec.badge}
+                                {rec.badge === "Essential"
+                                  ? t("shop.cart.essential")
+                                  : t("shop.cart.recommended")}
                               </Badge>
                             </div>
                             <p className="text-[10px] text-text-muted line-clamp-1 mt-0.5">
@@ -382,7 +357,7 @@ export function GearCartDrawer({
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             <span className="text-[11px] font-mono text-brand-mauve font-bold">
-                              +{formatCurrency(rec.recommendedItem.dailyRate)}{isArabic ? "/يوم" : "/d"}
+                              +{formatCurrency(rec.recommendedItem.dailyRate)}{t("shop.cart.perDaySuffix")}
                             </span>
                             <button
                               type="button"
@@ -390,7 +365,7 @@ export function GearCartDrawer({
                               className="px-2.5 py-1 rounded-lg btn-brand text-[10px] font-bold flex items-center gap-1 transition-all cursor-pointer shadow-sm"
                             >
                               <Plus size={11} />
-                              <span>{isArabic ? "إضافة" : "Add"}</span>
+                              <span>{t("shop.cart.add")}</span>
                             </button>
                           </div>
                         </div>
@@ -403,7 +378,7 @@ export function GearCartDrawer({
               {/* Delivery Method Options */}
               <div className="pt-4">
                 <label className="block text-xs font-semibold uppercase tracking-wider text-text-muted mb-2">
-                  {isArabic ? "طريقة الاستلام والتوصيل في الإمارات" : "Delivery & Fulfillment in UAE"}
+                  {t("shop.cart.deliveryTitle")}
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <button
@@ -416,8 +391,8 @@ export function GearCartDrawer({
                     }`}
                   >
                     <Building2 size={16} className="text-brand-mauve mb-1.5" />
-                    <div className="text-xs font-bold">{isArabic ? "إلى استوديو Yas" : "To Yas Studio"}</div>
-                    <div className="text-[10px] text-text-muted">{isArabic ? "مجاناً مع حجز الاستوديو" : "Free with Soundstage"}</div>
+                    <div className="text-xs font-bold">{t("shop.cart.deliveryStudio")}</div>
+                    <div className="text-[10px] text-text-muted">{t("shop.cart.deliveryStudioDesc")}</div>
                   </button>
 
                   <button
@@ -430,8 +405,8 @@ export function GearCartDrawer({
                     }`}
                   >
                     <Truck size={16} className="text-brand-mauve mb-1.5" />
-                    <div className="text-xs font-bold">{isArabic ? "توصيل دبي" : "Dubai Courier"}</div>
-                    <div className="text-[10px] text-text-muted">{isArabic ? "+250 درهم توصيل" : "+250 AED Delivery"}</div>
+                    <div className="text-xs font-bold">{t("shop.cart.deliveryCourier")}</div>
+                    <div className="text-[10px] text-text-muted">{t("shop.cart.deliveryCourierDesc")}</div>
                   </button>
 
                   <button
@@ -444,8 +419,8 @@ export function GearCartDrawer({
                     }`}
                   >
                     <ShieldCheck size={16} className="text-brand-mauve mb-1.5" />
-                    <div className="text-xs font-bold">{isArabic ? "استلام من المقر" : "Hub Pickup"}</div>
-                    <div className="text-[10px] text-text-muted">{isArabic ? "الخليج التجاري مجاناً" : "Business Bay Free"}</div>
+                    <div className="text-xs font-bold">{t("shop.cart.deliveryHub")}</div>
+                    <div className="text-[10px] text-text-muted">{t("shop.cart.deliveryHubDesc")}</div>
                   </button>
                 </div>
               </div>
@@ -462,7 +437,7 @@ export function GearCartDrawer({
                       {effectiveDateRange.pickupDate} → {effectiveDateRange.returnDate}
                     </span>
                     <span className="text-[10px] text-zinc-400 font-mono">
-                      ({effectiveDateRange.totalDays} {isArabic ? "أيام" : "d"})
+                      ({effectiveDateRange.totalDays} {t("shop.cart.daysShort")})
                     </span>
                   </div>
 
@@ -472,7 +447,7 @@ export function GearCartDrawer({
                     className="text-[11px] font-semibold text-brand-mauve hover:text-brand-mauve-soft flex items-center gap-1 cursor-pointer shrink-0 transition-colors"
                     aria-expanded={isEditingSchedule}
                   >
-                    <span>{isEditingSchedule ? (isArabic ? "إخفاء" : "Done") : (isArabic ? "تعديل التواريخ" : "Change Dates")}</span>
+                    <span>{isEditingSchedule ? t("shop.cart.done") : t("shop.cart.changeDates")}</span>
                     {isEditingSchedule ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                   </button>
                 </div>
@@ -491,7 +466,7 @@ export function GearCartDrawer({
                             : "bg-white/5 text-zinc-300 hover:bg-white/10"
                         }`}
                       >
-                        {isArabic ? "يوم واحد" : "1 Day"}
+                        {t("shop.schedule.oneDay")}
                       </button>
                       <button
                         type="button"
@@ -502,7 +477,7 @@ export function GearCartDrawer({
                             : "bg-white/5 text-zinc-300 hover:bg-white/10"
                         }`}
                       >
-                        {isArabic ? "عطلة (3 أيام)" : "Weekend (3d)"}
+                        {t("shop.schedule.weekend")}
                       </button>
                       <button
                         type="button"
@@ -513,7 +488,7 @@ export function GearCartDrawer({
                             : "bg-white/5 text-zinc-300 hover:bg-white/10"
                         }`}
                       >
-                        {isArabic ? "أسبوع (7 أيام)" : "Weekly (7d)"}
+                        {t("shop.schedule.oneWeek")}
                       </button>
                     </div>
 
@@ -521,7 +496,7 @@ export function GearCartDrawer({
                     <div className="grid grid-cols-2 gap-2 pt-0.5">
                       <div>
                         <label className="block text-[9px] font-mono uppercase tracking-wider text-zinc-400 mb-1">
-                          {isArabic ? "تاريخ الاستلام" : "Pickup Date"}
+                          {t("shop.schedule.pickupDate")}
                         </label>
                         <input
                           type="date"
@@ -533,7 +508,7 @@ export function GearCartDrawer({
                       </div>
                       <div>
                         <label className="block text-[9px] font-mono uppercase tracking-wider text-zinc-400 mb-1">
-                          {isArabic ? "تاريخ الإرجاع" : "Return Date"}
+                          {t("shop.schedule.returnDate")}
                         </label>
                         <input
                           type="date"
@@ -550,28 +525,24 @@ export function GearCartDrawer({
                 {/* Tier Discount Status */}
                 <div className="flex items-center justify-between text-[11px] pt-0.5">
                   <span className="text-zinc-400">
-                    {isArabic ? "مستوى الخصم المطبق:" : "Tier Applied:"}
+                    {t("shop.cart.tierApplied")}
                   </span>
                   <span className="text-brand-mauve font-semibold font-mono">
                     {effectiveDateRange.discountPercentage > 0
-                      ? isArabic
-                        ? `خصم ${effectiveDateRange.discountPercentage}%`
-                        : `${effectiveDateRange.discountPercentage}% Discount Applied`
-                      : isArabic
-                      ? "السعر اليومي القياسي"
-                      : "Standard Daily Rate"}
+                      ? t("shop.cart.discountApplied", { percent: effectiveDateRange.discountPercentage })
+                      : t("shop.cart.standardDailyRate")}
                   </span>
                 </div>
               </div>
 
               <div className="flex items-center justify-between text-xs text-text-secondary">
-                <span>{isArabic ? "مبلغ التأمين المسترد (معلق):" : "Refundable Deposit (Hold):"}</span>
+                <span>{t("shop.cart.depositHold")}</span>
                 <span className="text-text-muted font-mono">{formatCurrency(totalDeposit)}</span>
               </div>
 
               <div className="flex items-center justify-between pt-2 border-t border-white/5">
                 <div>
-                  <span className="text-xs text-text-muted block">{isArabic ? "إجمالي رسوم الإيجار:" : "Total Rental Fee:"}</span>
+                  <span className="text-xs text-text-muted block">{t("shop.cart.totalRentalFee")}</span>
                   <span className="text-xl font-extrabold text-white font-display">
                     {formatCurrency(grandTotal)}
                   </span>
@@ -585,7 +556,7 @@ export function GearCartDrawer({
                   }}
                   className="px-6 py-3 rounded-xl font-bold text-xs btn-brand flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-mauve shadow-lg shadow-brand-violet/25 shrink-0 cursor-pointer"
                 >
-                  <span>{isArabic ? "تأكيد طلب الحجز" : "Submit Reservation"}</span>
+                  <span>{t("shop.cart.submitReservation")}</span>
                   <ArrowRight size={14} className="rtl:rotate-180" />
                 </button>
               </div>

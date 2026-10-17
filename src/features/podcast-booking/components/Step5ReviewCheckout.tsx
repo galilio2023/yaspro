@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import Image from "next/image";
 import {
@@ -16,6 +14,7 @@ import {
   Building2,
   Loader2,
 } from "lucide-react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import type { PodcastSessionItem, PodcastBookingContact, PodcastStudio, PodcastAddon, PodcastService } from "../types";
 import { PODCAST_STUDIOS, PODCAST_SERVICES, PODCAST_ADDONS } from "../data";
 import {
@@ -70,16 +69,19 @@ export function Step5ReviewCheckout({
   onSubmit,
   onEditSession,
 }: Step5ReviewCheckoutProps) {
+  const { t, isArabic } = useLanguage();
   const [promoInput, setPromoInput] = useState("");
+
+  const sessionsWord = sessions.length === 1 ? t("podcastBooking.sessions.sessionSingle") : t("podcastBooking.sessions.sessionPlural");
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
       <StepIntro
         index={5}
         total={5}
-        title="Review & Complete Booking"
-        description="Verify your session specifications, enter client contact details, and secure your studio reservation."
-        aside={<MetaTag tone="mauve">{sessions.length} {sessions.length === 1 ? "Session" : "Sessions"}</MetaTag>}
+        title={t("podcastBooking.step5.introTitle")}
+        description={t("podcastBooking.step5.introDesc")}
+        aside={<MetaTag tone="mauve">{t("podcastBooking.step5.sessionsCount", { count: sessions.length, sessions: sessionsWord })}</MetaTag>}
       />
 
       {errorMessage && (
@@ -93,38 +95,41 @@ export function Step5ReviewCheckout({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="font-mono text-xs tracking-[0.18em] uppercase text-zinc-400 font-bold">
-            Studio Reservations
+            {t("podcastBooking.step5.studioReservations")}
           </h3>
           <span className="text-xs text-zinc-500 font-mono">
-            Iris Bay Dubai · Level 18
+            {t("podcastBooking.step5.irisLocation")}
           </span>
         </div>
 
         <div className="space-y-3">
           {sessions.map((sess, idx) => {
             const studio = studios.find((s) => s.key === sess.studioKey);
+            const studioName = (isArabic && studio?.arabicName) ? studio.arabicName : (studio?.name || "Unavailable studio");
             const service = services.find((s) => s.key === sess.serviceKey) || PODCAST_SERVICES.find((s) => s.key === sess.serviceKey) || services[0] || PODCAST_SERVICES[0];
+            const serviceTitle = (isArabic && service.titleAr) ? service.titleAr : service.title;
             const sessionCost = service.price * sess.durationHours;
 
             const selectedAddons = Object.entries(sess.addons || {})
               .filter(([, qty]) => qty > 0)
               .map(([k, qty]) => {
                 const ad = addons.find((a) => a.key === k);
+                const addonTitle = (isArabic && ad?.titleAr) ? ad.titleAr : (ad?.title || k);
                 return {
                   key: k,
-                  title: ad?.title || k,
+                  title: addonTitle,
                   qty,
                   cost: (ad?.priceNum || 0) * qty,
                 };
               });
 
             const formattedDate = sess.date
-              ? new Date(`${sess.date}T00:00:00`).toLocaleDateString("en-US", {
+              ? new Date(`${sess.date}T00:00:00`).toLocaleDateString(isArabic ? "ar-EG" : "en-US", {
                   weekday: "short",
                   month: "short",
                   day: "numeric",
                 })
-              : "Date pending";
+              : t("podcastBooking.step5.datePending");
 
             return (
               <div
@@ -137,7 +142,7 @@ export function Step5ReviewCheckout({
                       {studio?.image && (
                         <Image
                           src={studio?.image}
-                          alt={studio?.name || "Unavailable studio"}
+                          alt={studioName}
                           fill
                           sizes="48px"
                           className="object-cover"
@@ -147,15 +152,15 @@ export function Step5ReviewCheckout({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-mono font-bold text-brand-mauve uppercase tracking-wider">
-                          Session {idx + 1}
+                          {t("podcastBooking.sessions.session", { number: idx + 1 })}
                         </span>
                         <span className="text-zinc-600">•</span>
                         <h4 className="text-sm sm:text-base font-bold text-white">
-                          {studio?.name || "Unavailable studio"}
+                          {studioName}
                         </h4>
                       </div>
                       <p className="text-xs text-zinc-400">
-                        {service.title} ({sess.durationHours}h)
+                        {serviceTitle} ({sess.durationHours}h)
                       </p>
                     </div>
                   </div>
@@ -169,7 +174,7 @@ export function Step5ReviewCheckout({
                       onClick={() => onEditSession(idx)}
                       className="px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 flex items-center gap-1 transition cursor-pointer"
                     >
-                      <Edit3 size={11} /> Edit
+                      <Edit3 size={11} />{` ${t("podcastBooking.step5.edit")}`}
                     </button>
                   </div>
                 </div>
@@ -186,7 +191,7 @@ export function Step5ReviewCheckout({
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Mic2 size={13} className="text-brand-mauve shrink-0" />
-                    <span className="truncate">{sess.headcount} Guests / Mics</span>
+                    <span className="truncate">{t("podcastBooking.step5.guestsMics", { count: sess.headcount })}</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-zinc-400 font-mono text-[11px]">
                     <Sparkles size={13} className="text-brand-mauve shrink-0" />
@@ -198,7 +203,7 @@ export function Step5ReviewCheckout({
                 {selectedAddons.length > 0 && (
                   <div className="mt-3 pt-2.5 border-t border-white/[0.04] flex flex-wrap items-center gap-1.5">
                     <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 mr-1">
-                      Add-ons:
+                      {t("podcastBooking.step5.addonsLabel")}
                     </span>
                     {selectedAddons.map((addon) => (
                       <span
@@ -219,20 +224,20 @@ export function Step5ReviewCheckout({
       {/* 2. Client Information Form */}
       <Panel
         icon={User}
-        title="Primary Contact Information"
-        description="We will send your studio booking confirmation, calendar invite, and master video links here."
+        title={t("podcastBooking.step5.contactTitle")}
+        description={t("podcastBooking.step5.contactDesc")}
       >
         <div className="space-y-4">
           <div>
             <label className="text-xs font-semibold text-zinc-300 block mb-1.5">
-              Full Name or Production Lead *
+              {t("podcastBooking.step5.fullNameLabel")}
             </label>
             <input
               type="text"
               required
               value={contact.fullName}
               onChange={(e) => onUpdateContact({ fullName: e.target.value })}
-              placeholder="e.g. Sarah Jenkins"
+              placeholder={t("podcastBooking.step5.fullNamePlaceholder")}
               className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-brand-mauve transition-colors"
             />
           </div>
@@ -240,27 +245,27 @@ export function Step5ReviewCheckout({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-zinc-300 block mb-1.5">
-                Email Address *
+                {t("podcastBooking.step5.emailLabel")}
               </label>
               <input
                 type="email"
                 required
                 value={contact.email}
                 onChange={(e) => onUpdateContact({ email: e.target.value })}
-                placeholder="sarah@agency.ae"
+                placeholder={t("podcastBooking.step5.emailPlaceholder")}
                 className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-brand-mauve transition-colors"
               />
             </div>
             <div>
               <label className="text-xs font-semibold text-zinc-300 block mb-1.5">
-                Phone / WhatsApp Number *
+                {t("podcastBooking.step5.phoneLabel")}
               </label>
               <input
                 type="tel"
                 required
                 value={contact.phone}
                 onChange={(e) => onUpdateContact({ phone: e.target.value })}
-                placeholder="+971 50 123 4567"
+                placeholder={t("podcastBooking.step5.phonePlaceholder")}
                 className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-brand-mauve transition-colors"
               />
             </div>
@@ -268,13 +273,13 @@ export function Step5ReviewCheckout({
 
           <div>
             <label className="text-xs font-semibold text-zinc-300 block mb-1.5">
-              Special Requests or Studio Notes (Optional)
+              {t("podcastBooking.step5.specialRequestsLabel")}
             </label>
             <textarea
               rows={2}
               value={contact.specialRequests || ""}
               onChange={(e) => onUpdateContact({ specialRequests: e.target.value })}
-              placeholder="Tell our studio sound engineer about remote guests (Zoom/Riverside), backdrop preferences, or branding requirements..."
+              placeholder={t("podcastBooking.step5.specialRequestsPlaceholder")}
               className="w-full px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-brand-mauve transition-colors resize-none"
             />
           </div>
@@ -284,14 +289,14 @@ export function Step5ReviewCheckout({
       {/* 3. Promo Code Section */}
       <Panel
         icon={Tag}
-        title="Voucher or Promo Code"
-        description="Have a partner or promotional voucher code? Apply it to your total below."
+        title={t("podcastBooking.step5.promoTitle")}
+        description={t("podcastBooking.step5.promoDesc")}
       >
         {appliedPromo ? (
           <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center justify-between font-semibold">
             <div className="flex items-center gap-2">
               <Tag size={14} />
-              <span>Promo code {appliedPromo} applied!</span>
+              <span>{t("podcastBooking.step5.promoApplied", { code: appliedPromo })}</span>
             </div>
             <div className="flex items-center gap-3">
               <span className="font-bold">−{formatAED(promoDiscount)}</span>
@@ -300,7 +305,7 @@ export function Step5ReviewCheckout({
                 onClick={onRemovePromo}
                 className="text-xs text-rose-400 hover:underline cursor-pointer"
               >
-                Remove
+                {t("podcastBooking.step5.remove")}
               </button>
             </div>
           </div>
@@ -311,7 +316,7 @@ export function Step5ReviewCheckout({
                 type="text"
                 value={promoInput}
                 onChange={(e) => setPromoInput(e.target.value)}
-                placeholder="Try YAS10 or PODCAST20"
+                placeholder={t("podcastBooking.step5.promoPlaceholder")}
                 className="flex-1 px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-white text-xs font-mono uppercase placeholder:text-zinc-600 focus:outline-none focus:border-brand-mauve"
               />
               <button
@@ -322,7 +327,7 @@ export function Step5ReviewCheckout({
                 }}
                 className="px-4 py-2.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-brand-violet hover:text-white text-white transition cursor-pointer shrink-0"
               >
-                Apply Code
+                {t("podcastBooking.step5.applyCode")}
               </button>
             </div>
             {promoError && (
@@ -337,10 +342,10 @@ export function Step5ReviewCheckout({
         <AlertCircle size={18} className="text-brand-mauve shrink-0 mt-0.5" />
         <div className="space-y-1">
           <h5 className="font-bold text-white text-xs">
-            Important Raw Footage Transfer Notice
+            {t("podcastBooking.step5.noticeTitle")}
           </h5>
           <p className="text-zinc-300">
-            If you are not choosing our full Master Episode editing package, please remember to bring a high-speed external hard drive (USB-C SSD) to transfer your raw 4K camera files and multi-track Shure audio stems immediately after wrapping.
+            {t("podcastBooking.step5.noticeDesc")}
           </p>
         </div>
       </div>
@@ -355,7 +360,7 @@ export function Step5ReviewCheckout({
             className="mt-1 size-4 rounded border-white/20 bg-white/5 text-brand-mauve focus:ring-brand-mauve cursor-pointer"
           />
           <span className="text-xs text-zinc-400 leading-relaxed group-hover:text-zinc-200 transition">
-            I agree to the Yas Pro Studio Terms & Conditions, studio cancellation policy, and file transfer guidelines. I understand session times are dedicated and require prompt arrival.
+            {t("podcastBooking.step5.termsText")}
           </span>
         </label>
       </div>
@@ -364,32 +369,32 @@ export function Step5ReviewCheckout({
       <div className="p-4 sm:p-5 rounded-2xl bg-[#0e0e13] border border-white/[0.08] space-y-3.5 shadow-xl">
         <div className="space-y-2 pb-3.5 border-b border-white/[0.08]">
           <div className="flex justify-between text-xs text-zinc-400">
-            <span>Subtotal ({sessions.length} {sessions.length === 1 ? "Session" : "Sessions"}):</span>
+            <span>{t("podcastBooking.step5.subtotalLabel", { count: sessions.length, sessions: sessionsWord })}</span>
             <span className="tabular-nums text-zinc-200">{formatAED(subtotal)}</span>
           </div>
           {promoDiscount > 0 && (
             <div className="flex justify-between text-xs text-emerald-400 font-medium">
-              <span>Promo Discount ({appliedPromo}):</span>
+              <span>{t("podcastBooking.step5.promoDiscountLabel", { code: appliedPromo || "" })}</span>
               <span className="tabular-nums">−{formatAED(promoDiscount)}</span>
             </div>
           )}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-2 border-t border-white/[0.04]">
             <div>
               <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-zinc-500 font-bold block">
-                Total Due
+                {t("podcastBooking.step5.totalDue")}
               </span>
               <div className="flex items-baseline gap-2">
                 <span className="text-xl sm:text-2xl font-black text-brand-mauve tracking-tight tabular-nums">
                   {formatAED(grandTotal)}
                 </span>
                 <span className="text-[10px] text-zinc-500 font-mono">
-                  VAT 0% included
+                  {t("podcastBooking.step5.vatIncluded")}
                 </span>
               </div>
             </div>
             <span className="text-[11px] text-zinc-400 font-mono flex items-center gap-1.5">
               <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Apple Pay · Card · Studio Desk</span>
+              <span>{t("podcastBooking.step5.paymentMethods")}</span>
             </span>
           </div>
         </div>
@@ -409,12 +414,12 @@ export function Step5ReviewCheckout({
             {isSubmitting ? (
               <span className="flex items-center gap-1.5">
                 <Loader2 size={15} className="animate-spin shrink-0" />
-                <span>Processing...</span>
+                <span>{t("podcastBooking.step5.processing")}</span>
               </span>
             ) : (
               <>
                 <CreditCard size={15} className="shrink-0" />
-                <span className="truncate">Pay Online · {formatAED(grandTotal)}</span>
+                <span className="truncate">{t("podcastBooking.step5.payOnline", { total: formatAED(grandTotal) })}</span>
               </>
             )}
           </motion.button>
@@ -427,13 +432,13 @@ export function Step5ReviewCheckout({
             className="h-10 sm:h-12 px-3 sm:px-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-200 hover:text-white font-semibold text-xs sm:text-sm transition border border-white/10 hover:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer min-w-0"
           >
             <Building2 size={15} className="text-zinc-400 shrink-0" />
-            <span className="truncate">Pay at Studio Desk</span>
+            <span className="truncate">{t("podcastBooking.step5.payAtDesk")}</span>
           </button>
         </div>
 
         <div className="flex items-center justify-center gap-1.5 text-[11px] text-zinc-500 pt-0.5">
           <Lock size={12} className="text-emerald-400 shrink-0" />
-          <span>Encrypted checkout via Ziina • UAE Central Bank regulated</span>
+          <span>{t("podcastBooking.step5.secureCheckout")}</span>
         </div>
       </div>
     </div>

@@ -1,7 +1,6 @@
-"use client";
-
 import { useState } from "react";
 import { Plus, Minus, Play, X, Check, Film } from "lucide-react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import { PODCAST_ADDONS } from "../data";
 import { PodcastSessionItem, PodcastAddon } from "../types";
 import { MetaTag, StepIntro } from "@/features/booking/components/ui/BookingKit";
@@ -14,6 +13,7 @@ interface Step4AddonsProps {
 }
 
 export function Step4Addons({ session, onSetQuantity, onToggle, addons = PODCAST_ADDONS }: Step4AddonsProps) {
+  const { t, isArabic } = useLanguage();
   const [activeVideoModal, setActiveVideoModal] = useState<PodcastAddon | null>(null);
 
   const totalAddonsCount = Object.values(session.addons || {}).reduce((acc, qty) => acc + (qty > 0 ? 1 : 0), 0);
@@ -23,15 +23,19 @@ export function Step4Addons({ session, onSetQuantity, onToggle, addons = PODCAST
       <StepIntro
         index={4}
         total={5}
-        title="Add-ons & Viral Edits"
-        description="Accelerate your social reach with viral reels, clickable YouTube thumbnails, 4K multi-cam switches, and express delivery."
-        aside={<MetaTag tone={totalAddonsCount > 0 ? "mauve" : "neutral"}>{totalAddonsCount} added</MetaTag>}
+        title={t("podcastBooking.step4.introTitle")}
+        description={t("podcastBooking.step4.introDesc")}
+        aside={<MetaTag tone={totalAddonsCount > 0 ? "mauve" : "neutral"}>{t("podcastBooking.step4.addedCount", { count: totalAddonsCount })}</MetaTag>}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
         {addons.filter((addon) => addon.isActive !== false).map((addon) => {
           const qty = session.addons?.[addon.key] || 0;
           const isAdded = qty > 0;
+          const title = (isArabic && addon.titleAr) ? addon.titleAr : addon.title;
+          const desc = (isArabic && addon.descAr) ? addon.descAr : addon.desc;
+          const priceDisplay = (isArabic && addon.priceDisplayAr) ? addon.priceDisplayAr : addon.priceDisplay;
+          const unit = (isArabic && addon.unitAr) ? addon.unitAr : addon.unit;
 
           return (
             <div
@@ -46,14 +50,14 @@ export function Step4Addons({ session, onSetQuantity, onToggle, addons = PODCAST
                 {/* Header row */}
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="text-base font-bold text-white leading-snug">
-                    {addon.title}
+                    {title}
                   </h3>
                   {addon.vimeoEmbed && (
                     <button
                       type="button"
                       onClick={() => setActiveVideoModal(addon)}
                       className="size-7 rounded-lg bg-white/10 hover:bg-brand-violet hover:text-white text-white/80 flex items-center justify-center transition shrink-0 cursor-pointer"
-                      title="Watch Sample Video"
+                      title={t("podcastBooking.step4.sampleVideo")}
                     >
                       <Play size={13} className="ml-0.5" />
                     </button>
@@ -61,7 +65,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle, addons = PODCAST
                 </div>
 
                 <p className="text-xs text-zinc-400 leading-relaxed line-clamp-3">
-                  {addon.desc}
+                  {desc}
                 </p>
               </div>
 
@@ -69,10 +73,10 @@ export function Step4Addons({ session, onSetQuantity, onToggle, addons = PODCAST
               <div className="pt-4 mt-4 border-t border-white/[0.06] flex items-center justify-between">
                 <div>
                   <span className="text-base font-black text-white tabular-nums">
-                    {addon.priceDisplay}
+                    {priceDisplay}
                   </span>
                   <span className="text-[11px] text-zinc-500 block font-mono">
-                    {addon.unit}
+                    {unit}
                   </span>
                 </div>
 
@@ -85,7 +89,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle, addons = PODCAST
                           type="button"
                           onClick={() => onSetQuantity(addon.key, qty - 1)}
                           className="size-7 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
-                          aria-label={`Decrease quantity for ${addon.title}`}
+                          aria-label={t("podcastBooking.step4.decreaseAddon", { title })}
                         >
                           <Minus size={12} />
                         </button>
@@ -96,7 +100,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle, addons = PODCAST
                           type="button"
                           onClick={() => onSetQuantity(addon.key, qty + 1)}
                           className="size-7 rounded-lg bg-brand-violet hover:bg-brand-mauve text-white font-bold flex items-center justify-center transition cursor-pointer"
-                          aria-label={`Increase quantity for ${addon.title}`}
+                          aria-label={t("podcastBooking.step4.increaseAddon", { title })}
                         >
                           <Plus size={12} />
                         </button>
@@ -107,7 +111,7 @@ export function Step4Addons({ session, onSetQuantity, onToggle, addons = PODCAST
                         onClick={() => onSetQuantity(addon.key, 1)}
                         className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-brand-violet hover:text-white text-white transition flex items-center gap-1 cursor-pointer"
                       >
-                        <Plus size={12} /> Add
+                        <Plus size={12} /> {t("podcastBooking.step4.add")}
                       </button>
                     )}
                   </div>
@@ -124,11 +128,11 @@ export function Step4Addons({ session, onSetQuantity, onToggle, addons = PODCAST
                   >
                     {isAdded ? (
                       <>
-                        <Check size={12} strokeWidth={2.5} /> Added
+                        <Check size={12} strokeWidth={2.5} /> {t("podcastBooking.step4.added")}
                       </>
                     ) : (
                       <>
-                        <Plus size={12} /> Add
+                        <Plus size={12} /> {t("podcastBooking.step4.add")}
                       </>
                     )}
                   </button>
@@ -153,7 +157,9 @@ export function Step4Addons({ session, onSetQuantity, onToggle, addons = PODCAST
               <div className="flex items-center gap-2">
                 <Film size={16} className="text-brand-mauve" />
                 <h4 className="text-sm font-bold text-white">
-                  Sample: {activeVideoModal.title}
+                  {t("podcastBooking.step4.sampleModalTitle", {
+                    title: (isArabic && activeVideoModal.titleAr) ? activeVideoModal.titleAr : activeVideoModal.title,
+                  })}
                 </h4>
               </div>
               <button
@@ -176,13 +182,13 @@ export function Step4Addons({ session, onSetQuantity, onToggle, addons = PODCAST
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-xs text-zinc-500">
-                  No preview available
+                  {t("podcastBooking.step4.noPreview")}
                 </div>
               )}
             </div>
 
             <p className="mt-3 text-xs text-zinc-400">
-              {activeVideoModal.desc}
+              {(isArabic && activeVideoModal.descAr) ? activeVideoModal.descAr : activeVideoModal.desc}
             </p>
           </div>
         </div>

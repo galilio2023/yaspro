@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { generateBookingReference } from "@/lib/utils";
 import { createBooking } from "@/lib/actions";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import {
   BookingState,
   StudioItem,
@@ -63,6 +64,7 @@ function getInitialBookingState(
 }
 
 export function useBookingWizard(cmsStudios: StudioItem[], wizardCatalog?: StudioWizardCatalogOverride) {
+  const { t } = useLanguage();
   // Merge CMS studios with canonical studios
   const studios = cmsStudios && cmsStudios.length > 0 ? cmsStudios : (STUDIOS as StudioItem[]);
   const sessionTypesList = wizardCatalog?.sessionTypes?.length ? wizardCatalog.sessionTypes : SESSION_TYPES;
@@ -113,17 +115,17 @@ export function useBookingWizard(cmsStudios: StudioItem[], wizardCatalog?: Studi
 
   const validateDate = () => {
     if (!state.date) {
-      setErrorMessage("Please select a session reservation date before continuing.");
+      setErrorMessage(t("studioBooking.validation.selectDate"));
       return false;
     }
     const now = new Date();
     const todayISO = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
     if (state.date < todayISO) {
-      setErrorMessage("Please select today or a future session reservation date.");
+      setErrorMessage(t("studioBooking.validation.selectFutureDate"));
       return false;
     }
     if (!state.time) {
-      setErrorMessage("Please select an available call time before continuing.");
+      setErrorMessage(t("studioBooking.validation.selectCallTime"));
       return false;
     }
     return true;
@@ -133,11 +135,11 @@ export function useBookingWizard(cmsStudios: StudioItem[], wizardCatalog?: Studi
     setErrorMessage(null);
     if (step === 1 && !validateDate()) return;
     if (step === 2 && !state.sessionType) {
-      setErrorMessage("Please choose a session type before continuing.");
+      setErrorMessage(t("studioBooking.validation.selectSessionType"));
       return;
     }
     if (step === 3 && !studio) {
-      setErrorMessage("Please select a studio before continuing.");
+      setErrorMessage(t("studioBooking.validation.selectStudio"));
       return;
     }
     setStep((s) => Math.min(7, s + 1));
@@ -176,20 +178,20 @@ export function useBookingWizard(cmsStudios: StudioItem[], wizardCatalog?: Studi
 
     // Validate required contact credentials
     if (!state.firstName.trim()) {
-      setErrorMessage("Please enter your first name.");
+      setErrorMessage(t("studioBooking.validation.enterFirstName"));
       return;
     }
     if (!state.lastName.trim()) {
-      setErrorMessage("Please enter your last name.");
+      setErrorMessage(t("studioBooking.validation.enterLastName"));
       return;
     }
     const trimmedEmail = state.email.trim();
     if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
-      setErrorMessage("Please enter a valid contact email address.");
+      setErrorMessage(t("studioBooking.validation.enterValidEmail"));
       return;
     }
     if (!state.phone.trim()) {
-      setErrorMessage("Please provide a contact phone or WhatsApp number.");
+      setErrorMessage(t("studioBooking.validation.enterPhone"));
       return;
     }
 
@@ -243,7 +245,7 @@ export function useBookingWizard(cmsStudios: StudioItem[], wizardCatalog?: Studi
       });
 
       if (res && "success" in res && res.success === false) {
-        throw new Error((res as { message?: string }).message || "Booking reservation failed.");
+        throw new Error((res as { message?: string }).message || t("studioBooking.validation.bookingFailed"));
       }
 
       setReferenceCode(res.referenceCode || generateBookingReference());
@@ -256,7 +258,7 @@ export function useBookingWizard(cmsStudios: StudioItem[], wizardCatalog?: Studi
       setErrorMessage(
         e instanceof Error
           ? e.message
-          : "Unable to process booking at this time. Please retry or contact our Dubai Concierge on WhatsApp."
+          : t("studioBooking.validation.unableToProcess")
       );
     } finally {
       setIsSubmitting(false);

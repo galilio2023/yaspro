@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { Clock, Calendar, Check, Mic2 } from "lucide-react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import { TIME_SLOTS } from "../data";
 import { PodcastSessionItem } from "../types";
 import { Counter, Panel, StepIntro, studioSprings } from "@/features/booking/components/ui/BookingKit";
@@ -16,6 +17,7 @@ interface Step1DateTimeProps {
 }
 
 export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
+  const { t, isArabic } = useLanguage();
   const [unavailableSlots, setUnavailableSlots] = useState<string[]>([]);
   const [blackoutReason, setBlackoutReason] = useState<string | undefined>(undefined);
 
@@ -47,25 +49,26 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
   const upcomingDates = useMemo(() => {
     const list = [];
     const today = new Date();
+    const dateLocale = isArabic ? "ar-EG" : "en-US";
     for (let i = 1; i <= 14; i++) {
       const d = new Date(today);
       d.setDate(today.getDate() + i);
       const iso = getLocalCalendarDate(d);
-      const dayName = d.toLocaleDateString("en-US", { weekday: "short" });
-      const monthName = d.toLocaleDateString("en-US", { month: "short" });
+      const dayName = d.toLocaleDateString(dateLocale, { weekday: "short" });
+      const monthName = d.toLocaleDateString(dateLocale, { month: "short" });
       const dayNum = d.getDate();
       list.push({ iso, dayName, monthName, dayNum });
     }
     return list;
-  }, []);
+  }, [isArabic]);
 
   return (
     <div className="space-y-5 sm:space-y-6 animate-in fade-in duration-300">
       <StepIntro
         index={1}
         total={5}
-        title="Schedule & Format"
-        description="Choose your guest count, session length, and preferred recording schedule."
+        title={t("podcastBooking.step1.introTitle")}
+        description={t("podcastBooking.step1.introDesc")}
       />
 
       {/* 1. Compact, Tactile Headcount Selector */}
@@ -76,16 +79,16 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
         {/* Compact Microphone Badge */}
         <div className="relative size-12 sm:size-14 rounded-2xl bg-brand-mauve/10 border border-brand-mauve/30 flex items-center justify-center text-brand-lavender shadow-[0_0_30px_rgba(84,37,104,0.35)]">
           <Mic2 size={24} className="stroke-[1.75]" />
-          <span className="absolute -top-1 -right-1 size-3 rounded-full bg-red-500 animate-pulse border-2 border-[#0e0e13]" title="Live on Air" />
+          <span className="absolute -top-1 -right-1 size-3 rounded-full bg-red-500 animate-pulse border-2 border-[#0e0e13]" title={t("podcastBooking.step1.liveOnAir")} />
         </div>
 
         {/* Heading */}
         <div className="space-y-1 max-w-sm">
           <h3 className="text-base sm:text-xl font-bold text-white tracking-tight">
-            How many guests will be recording?
+            {t("podcastBooking.step1.guestQuestion")}
           </h3>
           <p className="text-xs text-zinc-400">
-            Select seats & Shure SM7B broadcast microphones
+            {t("podcastBooking.step1.guestSub")}
           </p>
         </div>
 
@@ -110,7 +113,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
               >
                 <span>{count}</span>
                 <span className={cn("text-[9px] font-mono uppercase tracking-wider font-semibold", isSelected ? "text-brand-lavender font-bold" : "text-zinc-500")}>
-                  {count === 1 ? "mic" : "mics"}
+                  {count === 1 ? t("podcastBooking.step1.mic") : t("podcastBooking.step1.mics")}
                 </span>
               </motion.button>
             );
@@ -128,10 +131,10 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
             </div>
             <div>
               <h3 className="text-sm sm:text-base font-semibold text-white leading-tight">
-                Session Duration
+                {t("podcastBooking.step1.durationTitle")}
               </h3>
               <p className="text-xs text-zinc-400 mt-0.5">
-                On-site sound engineer & 4K multi-cam capture included
+                {t("podcastBooking.step1.durationSub")}
               </p>
             </div>
           </div>
@@ -162,8 +165,8 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
               max={8}
               onChange={(v) => onChange({ durationHours: v })}
               format={(v) => `${v}h`}
-              decLabel="Decrease session duration"
-              incLabel="Increase session duration"
+              decLabel={t("podcastBooking.step1.decreaseDuration")}
+              incLabel={t("podcastBooking.step1.increaseDuration")}
             />
           </div>
         </div>
@@ -172,8 +175,8 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
       {/* 3. Date Selection */}
       <Panel
         icon={Calendar}
-        title="Session Date"
-        description="Iris Bay Studio availability · Level 18"
+        title={t("podcastBooking.step1.dateTitle")}
+        description={t("podcastBooking.step1.dateSub")}
       >
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-2">
           {upcomingDates.map((item) => {
@@ -210,8 +213,8 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
       {/* 4. Time Slot Selection */}
       <Panel
         icon={Clock}
-        title="Start Time"
-        description="Engineered recording slots"
+        title={t("podcastBooking.step1.timeTitle")}
+        description={t("podcastBooking.step1.timeSub")}
         aside={
           session.timeSlot ? (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 text-xs font-semibold whitespace-nowrap shrink-0">
@@ -222,7 +225,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
       >
         {blackoutReason && (
           <div className="mb-2.5 px-3 py-2 rounded-xl bg-rose-500/10 border border-rose-500/25 text-[11px] text-rose-300">
-            Schedule Notice: {blackoutReason}
+            {t("podcastBooking.step1.scheduleNotice", { reason: blackoutReason })}
           </div>
         )}
         <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-4 xl:grid-cols-6 gap-1.5 sm:gap-2">
@@ -244,7 +247,7 @@ export function Step1DateTime({ session, onChange }: Step1DateTimeProps) {
                     : "bg-white/[0.02] text-zinc-300 border-white/[0.08] hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
                 )}
               >
-                {isBooked ? `${time} · Booked` : time}
+                {isBooked ? `${time} · ${t("podcastBooking.step1.booked")}` : time}
               </motion.button>
             );
           })}

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { AlertCircle, RotateCcw } from "lucide-react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export default function ErrorBoundary({
   error,
@@ -11,6 +12,8 @@ export default function ErrorBoundary({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { t } = useLanguage();
+
   useEffect(() => {
     console.error("Runtime application error:", error);
   }, [error]);
@@ -22,10 +25,10 @@ export default function ErrorBoundary({
           <AlertCircle size={28} />
         </div>
         <h2 className="text-xl font-bold text-white mb-2 font-display">
-          Something went wrong
+          {t("errors.boundary.title")}
         </h2>
         <p className="text-text-secondary text-sm mb-6 leading-relaxed">
-          An unexpected error occurred during rendering. You can try refreshing the view.
+          {t("errors.boundary.description")}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3">
@@ -34,13 +37,13 @@ export default function ErrorBoundary({
             onClick={() => reset()}
             className="flex-1 inline-flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-white bg-white/10 hover:bg-white/20 transition-all text-xs cursor-pointer"
           >
-            <RotateCcw size={14} /> Try Again
+            <RotateCcw size={14} /> {t("errors.boundary.tryAgain")}
           </button>
           <Link
             href="/"
             className="flex-1 inline-flex items-center justify-center py-3 rounded-xl font-bold text-xs btn-brand"
           >
-            Back Home
+            {t("errors.boundary.backHome")}
           </Link>
         </div>
       </div>

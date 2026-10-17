@@ -12,8 +12,8 @@ interface BackButtonProps {
 }
 
 export function BackButton({ href, label, className }: BackButtonProps) {
-  const { isArabic } = useLanguage();
-  const displayLabel = label || (isArabic ? "رجوع" : "Back");
+  const { t } = useLanguage();
+  const displayLabel = label || t("common.back");
 
   return (
     <Link

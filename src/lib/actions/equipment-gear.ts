@@ -73,6 +73,7 @@ async function getFullEquipmentCatalog(): Promise<Equipment[]> {
       securityDeposit: (g.securityDeposit || 0).toFixed(2),
       imageUrl: g.image || null,
       specs: g.specs || [],
+      arabicSpecs: g.arabicSpecs || [],
       isPopular: !!g.isPopular,
       isKit: !!g.isKit,
       includedInKit: g.includedInKit || [],

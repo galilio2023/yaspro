@@ -1,19 +1,29 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, startTransition, useContext, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import enMessages from "../../../messages/en.json";
 import arMessages from "../../../messages/ar.json";
 
 export type Language = "en" | "ar";
 
-interface LanguageContextType {
+type NestedKeyOf<ObjectType extends object> = {
+  [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends Record<string, unknown>
+    ? `${Key}.${NestedKeyOf<ObjectType[Key]>}`
+    : `${Key}`;
+}[keyof ObjectType & (string | number)];
+
+export type AppTranslationKey = NestedKeyOf<typeof enMessages>;
+export type TranslationParams = Record<string, string | number>;
+
+export interface LanguageContextType {
   language: Language;
   isArabic: boolean;
   direction: "ltr" | "rtl";
+  dir: "ltr" | "rtl";
   setLanguage: (lang: Language) => void;
   toggleLanguage: () => void;
-  t: (key: string) => string;
+  t: (key: AppTranslationKey | (string & {}), params?: TranslationParams) => string;
 }
 
 const MESSAGES: Record<Language, Record<string, unknown>> = {
@@ -34,6 +44,27 @@ function getNestedValue(obj: Record<string, unknown>, path: string): string | un
   return typeof current === "string" ? current : undefined;
 }
 
+function interpolateParams(template: string, params?: TranslationParams): string {
+  if (!params) return template;
+  return template.replace(/\{(\w+)\}/g, (match, token: string) => {
+    return Object.prototype.hasOwnProperty.call(params, token)
+      ? String(params[token])
+      : match;
+  });
+}
+
+export function translateMessage(
+  lang: Language,
+  key: string,
+  params?: TranslationParams
+): string {
+  const val = getNestedValue(MESSAGES[lang] ?? MESSAGES.en, key);
+  if (val !== undefined) return interpolateParams(val, params);
+  const fallback = getNestedValue(MESSAGES.en, key);
+  if (fallback !== undefined) return interpolateParams(fallback, params);
+  return interpolateParams(key, params);
+}
+
 /**
  * Synchronize document attributes, localStorage, and next-intl cookies.
  */
@@ -48,7 +79,20 @@ function syncLocaleStorage(lang: Language) {
   } catch {}
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const DEFAULT_LANGUAGE_CONTEXT: LanguageContextType = {
+  language: "en",
+  isArabic: false,
+  direction: "ltr",
+  dir: "ltr",
+  setLanguage: () => {},
+  toggleLanguage: () => {},
+  t: (key, params) => translateMessage("en", key, params),
+};
+
+const LanguageContext =
+  typeof createContext === "function"
+    ? createContext<LanguageContextType | undefined>(undefined)
+    : (null as unknown as React.Context<LanguageContextType | undefined>);
 
 export function LanguageProvider({
   children,
@@ -95,39 +139,60 @@ export function LanguageProvider({
     try {
       const saved = localStorage.getItem("yaspro_lang") as Language;
       if ((saved === "ar" || saved === "en") && saved !== userLang) {
-        // Only override if the server gave us "en" as a fallback (no cookie set),
-        // indicated by initialLocale being the default. This prevents stale Arabic
-        // from a previous session persisting on a fresh EN page load.
         const hasCookie = document.cookie.includes("NEXT_LOCALE=");
         if (!hasCookie) {
           // eslint-disable-next-line react-hooks/set-state-in-effect
           setUserLang(saved);
           syncLocaleStorage(saved);
+          startTransition(() => {
+            router.refresh();
+          });
           return;
         }
       }
     } catch {}
 
     syncLocaleStorage(language);
-  }, [routeLang, userLang, language]);
+  }, [routeLang, userLang, language, router]);
 
   const setLanguage = (newLang: Language) => {
     setUserLang(newLang);
     syncLocaleStorage(newLang);
 
-    if (!pathname) return;
+    if (!pathname) {
+      startTransition(() => {
+        router.refresh();
+      });
+      return;
+    }
+
+    const search = typeof window !== "undefined" ? window.location.search : "";
 
     if (newLang === "ar") {
       if (!pathname.startsWith("/ar")) {
         const stripped = pathname.replace(/^\/en(\/|$)/, "/") || "/";
         const target = stripped === "/" ? "/ar" : `/ar${stripped}`;
-        router.push(target);
+        startTransition(() => {
+          router.push(`${target}${search}`);
+          router.refresh();
+        });
+      } else {
+        startTransition(() => {
+          router.refresh();
+        });
       }
     } else {
       if (!pathname.startsWith("/en")) {
         const stripped = pathname.replace(/^\/ar(\/|$)/, "/") || "/";
         const target = stripped === "/" ? "/en" : `/en${stripped}`;
-        router.push(target);
+        startTransition(() => {
+          router.push(`${target}${search}`);
+          router.refresh();
+        });
+      } else {
+        startTransition(() => {
+          router.refresh();
+        });
       }
     }
   };
@@ -136,12 +201,8 @@ export function LanguageProvider({
     setLanguage(language === "en" ? "ar" : "en");
   };
 
-  const t = (key: string): string => {
-    const val = getNestedValue(MESSAGES[language], key);
-    if (val !== undefined) return val;
-    const fallback = getNestedValue(MESSAGES.en, key);
-    if (fallback !== undefined) return fallback;
-    return key;
+  const t = (key: AppTranslationKey | (string & {}), params?: TranslationParams): string => {
+    return translateMessage(language, key, params);
   };
 
   const isArabic = language === "ar";
@@ -149,17 +210,32 @@ export function LanguageProvider({
 
   return (
     <LanguageContext.Provider
-      value={{ language, isArabic, direction, setLanguage, toggleLanguage, t }}
+      value={{
+        language,
+        isArabic,
+        direction,
+        dir: direction,
+        setLanguage,
+        toggleLanguage,
+        t,
+      }}
     >
       {children}
     </LanguageContext.Provider>
   );
 }
 
-export function useLanguage() {
-  const context = useContext(LanguageContext);
-  if (!context) {
-    throw new Error("useLanguage must be used within a LanguageProvider");
+export function useLanguage(): LanguageContextType {
+  try {
+    if (!LanguageContext || typeof useContext !== "function") {
+      return DEFAULT_LANGUAGE_CONTEXT;
+    }
+    const context = useContext(LanguageContext);
+    if (!context) {
+      return DEFAULT_LANGUAGE_CONTEXT;
+    }
+    return context;
+  } catch {
+    return DEFAULT_LANGUAGE_CONTEXT;
   }
-  return context;
 }

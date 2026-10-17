@@ -1,6 +1,7 @@
 import { Globe, Sparkles, BarChart2 } from "lucide-react";
 import { CreatorDemographics } from "../types";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface InfluencerAudienceCardProps {
   demographics?: CreatorDemographics;
@@ -8,6 +9,8 @@ interface InfluencerAudienceCardProps {
 }
 
 export function InfluencerAudienceCard({ demographics, creatorName }: InfluencerAudienceCardProps) {
+  const { t } = useLanguage();
+
   if (!demographics) return null;
 
   return (
@@ -19,17 +22,17 @@ export function InfluencerAudienceCard({ demographics, creatorName }: Influencer
           </div>
           <div>
             <h3 className="text-lg font-bold text-white font-display">
-              Audience Demographics &amp; GCC Reach
+              {t("influencers.demographicsTitle")}
             </h3>
             <p className="text-xs text-text-muted">
-              Verified analytical engagement metrics for {creatorName}
+              {t("influencers.demographicsSubtitle", { name: creatorName })}
             </p>
           </div>
         </div>
 
         <Badge variant="gold" className="text-xs font-semibold gap-1.5 hidden sm:inline-flex">
           <Sparkles size={12} />
-          <span>Verified Roster</span>
+          <span>{t("influencers.verifiedRoster")}</span>
         </Badge>
       </div>
 
@@ -37,7 +40,7 @@ export function InfluencerAudienceCard({ demographics, creatorName }: Influencer
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
           <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider block mb-1">
-            Monthly Views
+            {t("influencers.monthlyViews")}
           </span>
           <span className="text-xl font-extrabold text-white font-display">
             {demographics.monthlyImpressions}
@@ -46,7 +49,7 @@ export function InfluencerAudienceCard({ demographics, creatorName }: Influencer
 
         <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
           <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider block mb-1">
-            Engagement
+            {t("influencers.engagement")}
           </span>
           <span className="text-xl font-extrabold text-brand-mauve font-display">
             {demographics.engagementRate}
@@ -55,7 +58,7 @@ export function InfluencerAudienceCard({ demographics, creatorName }: Influencer
 
         <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
           <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider block mb-1">
-            Core Age
+            {t("influencers.coreAge")}
           </span>
           <span className="text-sm font-bold text-white font-display">
             {demographics.primaryAgeGroup}
@@ -64,11 +67,11 @@ export function InfluencerAudienceCard({ demographics, creatorName }: Influencer
 
         <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
           <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider block mb-1">
-            Gender Split
+            {t("influencers.genderSplit")}
           </span>
           <span className="text-xs font-bold text-white">
-            <span className="text-brand-mauve">{demographics.genderSplit.male}% M</span> /{" "}
-            <span className="text-stone-300">{demographics.genderSplit.female}% F</span>
+            <span className="text-brand-mauve">{t("influencers.genderMale", { percent: demographics.genderSplit.male })}</span> /{" "}
+            <span className="text-stone-300">{t("influencers.genderFemale", { percent: demographics.genderSplit.female })}</span>
           </span>
         </div>
       </div>
@@ -77,7 +80,7 @@ export function InfluencerAudienceCard({ demographics, creatorName }: Influencer
       <div>
         <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-1.5">
           <Globe size={13} className="text-brand-mauve" />
-          <span>Primary Geographic Distribution (GCC &amp; MENA)</span>
+          <span>{t("influencers.geoDistribution")}</span>
         </h4>
 
         <div className="space-y-3">

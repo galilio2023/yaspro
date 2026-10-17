@@ -1,7 +1,6 @@
-"use client";
-
 import { useState } from "react";
 import { Check, Zap, ChevronDown, ChevronUp, SlidersHorizontal } from "lucide-react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import { PODCAST_SERVICES } from "../data";
 import { PodcastSessionItem, PodcastService } from "../types";
 import { formatAED, MetaTag, SelectableCard, StepIntro, TogglePill, studioSprings } from "@/features/booking/components/ui/BookingKit";
@@ -14,18 +13,18 @@ interface Step3ServiceProps {
   services?: PodcastService[];
 }
 
-const COMPARISON_MATRIX = [
-  { feature: "3x 4K Sony Cinema Cameras & Framing", raw: true, live: true, edit: true },
-  { feature: "Shure SM7B Broadcast Vocal Suite (Up to 5 mics)", raw: true, live: true, edit: true },
-  { feature: "Dedicated On-Site Audio Engineer & Live Levels", raw: true, live: true, edit: true },
-  { feature: "Raw 4K Camera ISO Recordings & Multi-Track Stems", raw: true, live: true, edit: true },
-  { feature: "Live-Switched Multi-Cam Program Feed", raw: false, live: true, edit: true },
-  { feature: "Master Video Editing & Audio Mastering", raw: false, live: false, edit: true },
-  { feature: "Color Grading & Vocal Enhancement", raw: false, live: false, edit: true },
-  { feature: "Motion Logo, Lower Thirds & Intro Integration", raw: false, live: false, edit: true },
-  { feature: "Included Revision Rounds", raw: "None", live: "None", edit: "2 Rounds" },
-  { feature: "Delivery Method", raw: "USB-C SSD", live: "USB-C SSD", edit: "Cloud & SSD" },
-  { feature: "Secure Cloud Storage Archive", raw: "None", live: "None", edit: "14 Days" },
+const TIER_MATRIX_KEYS = [
+  { key: "rawISOs", raw: true, live: true, edit: true },
+  { key: "shureSuite", raw: true, live: true, edit: true },
+  { key: "soundEngineer", raw: true, live: true, edit: true },
+  { key: "cameraISOs", raw: true, live: true, edit: true },
+  { key: "liveFeed", raw: false, live: true, edit: true },
+  { key: "masterEditing", raw: false, live: false, edit: true },
+  { key: "colorGrading", raw: false, live: false, edit: true },
+  { key: "motionLogo", raw: false, live: false, edit: true },
+  { key: "revisionRounds", raw: "valNone", live: "valNone", edit: "valRevisions" },
+  { key: "deliveryMethod", raw: "valUsb", live: "valUsb", edit: "valCloudAndSsd" },
+  { key: "cloudArchive", raw: "valNone", live: "valNone", edit: "valCloudDays" },
 ];
 
 const TIER_MATRIX_COLUMN: Record<string, "raw" | "live" | "edit"> = {
@@ -36,6 +35,7 @@ const TIER_MATRIX_COLUMN: Record<string, "raw" | "live" | "edit"> = {
 };
 
 export function Step3Service({ session, onChange, services = PODCAST_SERVICES }: Step3ServiceProps) {
+  const { t, isArabic } = useLanguage();
   const [showMatrix, setShowMatrix] = useState(false);
   const activeServices = services.filter((s) => s.isActive !== false);
   const matrixServices = activeServices.filter((service) => Object.hasOwn(TIER_MATRIX_COLUMN, service.key));
@@ -46,9 +46,9 @@ export function Step3Service({ session, onChange, services = PODCAST_SERVICES }:
       <StepIntro
         index={3}
         total={5}
-        title="Production Tier"
-        description="Choose your post-production workflow: raw ISO camera capture, instant live-switched program feed, or full master episode post-production."
-        aside={<MetaTag tone="mauve">{activeServices.length} tiers</MetaTag>}
+        title={t("podcastBooking.step3.introTitle")}
+        description={t("podcastBooking.step3.introDesc")}
+        aside={<MetaTag tone="mauve">{t("podcastBooking.step3.tiersCount", { count: activeServices.length })}</MetaTag>}
       />
 
       {/* Spacious, Non-Clamping Horizontal Tier Cards (Full-width rows to prevent any text wrapping) */}
@@ -56,7 +56,12 @@ export function Step3Service({ session, onChange, services = PODCAST_SERVICES }:
         {activeServices.map((service) => {
           const isSelected = session.serviceKey === service.key;
           const isBest = service.best;
-          const highlights = service.highlights || [];
+          const title = (isArabic && service.titleAr) ? service.titleAr : service.title;
+          const sub = (isArabic && service.subAr) ? service.subAr : service.sub;
+          const badge = (isArabic && service.badgeAr) ? service.badgeAr : (service.badge || (isBest ? "Most Popular" : "Studio Tier"));
+          const highlights = (isArabic && service.highlightsAr && service.highlightsAr.length > 0)
+            ? service.highlightsAr
+            : (service.highlights || []);
 
           return (
             <SelectableCard
@@ -78,20 +83,20 @@ export function Step3Service({ session, onChange, services = PODCAST_SERVICES }:
                       {isBest ? (
                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-brand-violet/40 text-brand-lavender border border-brand-mauve/30 text-[10px] font-mono tracking-wider uppercase font-bold shadow-sm shadow-brand-violet/40 whitespace-nowrap shrink-0">
                           <Zap size={11} className="fill-brand-lavender text-brand-lavender" />
-                          {service.badge || "Most Popular"}
+                          {badge}
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/10 text-zinc-400 text-[10px] font-mono tracking-wider uppercase font-semibold whitespace-nowrap shrink-0">
-                          {service.badge || "Studio Tier"}
+                          {badge}
                         </span>
                       )}
                     </div>
 
                     <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                      {service.title}
+                      {title}
                     </h3>
                     <p className="text-xs text-zinc-400 leading-relaxed">
-                      {service.sub}
+                      {sub}
                     </p>
                   </div>
 
@@ -116,14 +121,14 @@ export function Step3Service({ session, onChange, services = PODCAST_SERVICES }:
                       {formatAED(service.price)}
                     </span>
                     <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block">
-                      per hour
+                      {t("podcastBooking.step3.perHour")}
                     </span>
                   </div>
 
                   <TogglePill
                     selected={isSelected}
-                    addLabel="Select Tier"
-                    addedLabel="Selected"
+                    addLabel={t("podcastBooking.step3.selectTier")}
+                    addedLabel={t("podcastBooking.step3.tierSelected")}
                   />
                 </div>
               </div>
@@ -142,10 +147,10 @@ export function Step3Service({ session, onChange, services = PODCAST_SERVICES }:
           >
             <div className="flex items-center gap-2 font-mono uppercase tracking-wider font-semibold text-zinc-300 group-hover:text-white">
               <SlidersHorizontal size={14} className="text-brand-mauve" />
-              <span>Compare Full Technical Specs Matrix (Side-by-Side)</span>
+              <span>{t("podcastBooking.step3.matrixToggle")}</span>
             </div>
             <div className="flex items-center gap-1.5 text-zinc-400 group-hover:text-white font-mono text-[11px]">
-              <span>{showMatrix ? "Hide Matrix" : "View Details"}</span>
+              <span>{showMatrix ? t("podcastBooking.step3.matrixHide") : t("podcastBooking.step3.matrixView")}</span>
               {showMatrix ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </div>
           </button>
@@ -160,10 +165,10 @@ export function Step3Service({ session, onChange, services = PODCAST_SERVICES }:
                 className="overflow-hidden"
               >
                 <div className="mt-3 p-4 sm:p-5 rounded-2xl bg-[#0c0c10] border border-white/[0.08] overflow-x-auto">
-                  <table className="w-full text-left text-xs min-w-[540px]">
+                  <table className="w-full text-start text-xs min-w-[540px]">
                     <thead>
                       <tr className="border-b border-white/[0.08] text-[11px] font-mono uppercase tracking-wider text-zinc-400">
-                        <th className="py-2.5 pr-4 font-bold">Studio Capability</th>
+                        <th className="py-2.5 pe-4 font-bold text-start">{t("podcastBooking.step3.matrixCapability")}</th>
                         {matrixServices.map((service) => (
                           <th
                             key={service.key}
@@ -172,16 +177,16 @@ export function Step3Service({ session, onChange, services = PODCAST_SERVICES }:
                               service.best && "text-brand-mauve font-bold"
                             )}
                           >
-                            {service.title} ({formatAED(service.price)})
+                            {(isArabic && service.titleAr) ? service.titleAr : service.title} ({formatAED(service.price)})
                           </th>
                         ))}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.04]">
-                      {COMPARISON_MATRIX.map((row, idx) => (
+                      {TIER_MATRIX_KEYS.map((row, idx) => (
                         <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
-                          <td className="py-2.5 pr-4 text-zinc-300 font-medium">
-                            {row.feature}
+                          <td className="py-2.5 pe-4 text-zinc-300 font-medium text-start">
+                            {t(`podcastBooking.step3.matrixRows.${row.key}` as any)}
                           </td>
                           {matrixServices.map((service) => {
                             const colKey = TIER_MATRIX_COLUMN[service.key];
@@ -213,7 +218,7 @@ export function Step3Service({ session, onChange, services = PODCAST_SERVICES }:
                                       service.best ? "text-brand-mauve font-bold" : "text-zinc-400"
                                     )}
                                   >
-                                    {cellValue}
+                                    {t(`podcastBooking.step3.matrixRows.${cellValue}` as any)}
                                   </span>
                                 )}
                               </td>

@@ -10,8 +10,10 @@ export interface ProjectOverviewProps {
 }
 
 export function ProjectOverview({ project }: ProjectOverviewProps) {
-  const { isArabic } = useLanguage();
+  const { t, isArabic } = useLanguage();
   const title = isArabic && project.arabicTitle ? project.arabicTitle : project.title;
+  const description = isArabic && project.arabicDescription ? project.arabicDescription : project.description;
+  const categoryLabel = isArabic && project.categoryLabelAr ? project.categoryLabelAr : project.categoryLabel;
 
   return (
     <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-8 lg:p-10 shadow-2xl shadow-black/20">
@@ -19,13 +21,13 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
         <div className="lg:col-span-12">
           <div className="flex flex-wrap items-center gap-3 mb-3">
             <Badge variant="gold" className="text-xs font-semibold">
-              {project.categoryLabel}
+              {categoryLabel}
             </Badge>
             {project.client && (
               <div className="flex items-center gap-1.5 text-xs text-brand-mauve-soft font-medium">
                 <ShieldCheck size={14} className="text-brand-mauve shrink-0" />
                 <span>
-                  {isArabic ? `تم التنفيذ لصالح ${project.client}` : `Commissioned by ${project.client}`}
+                  {t("projects.commissionedBy", { client: project.client })}
                 </span>
               </div>
             )}
@@ -36,7 +38,7 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
           </h1>
 
           <p className="text-text-secondary text-base sm:text-lg leading-relaxed">
-            {project.description}
+            {description}
           </p>
         </div>
       </div>

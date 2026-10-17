@@ -27,16 +27,23 @@ export async function getCmsPodcastSets(): Promise<PodcastStudio[]> {
       .from(podcastSets)
       .orderBy(asc(podcastSets.sortOrder), asc(podcastSets.name));
 
-    return rows.map((r) => ({
-      key: r.id,
-      name: r.name,
-      seats: r.seats,
-      location: r.location,
-      image: r.image || "/images/studios/nature-grid.jpg",
-      gradient: r.gradient || "linear-gradient(135deg,#3a2a1a 0%,#5a4a3a 100%)",
-      description: r.description || "",
-      isAvailable: r.isAvailable,
-    }));
+    return rows.map((r) => {
+      const def = PODCAST_STUDIOS.find((s) => s.key === r.id);
+      const rowAny = r as Record<string, unknown>;
+      return {
+        key: r.id,
+        name: r.name,
+        arabicName: (typeof rowAny.arabicName === "string" && rowAny.arabicName) || def?.arabicName,
+        seats: r.seats,
+        location: r.location,
+        arabicLocation: (typeof rowAny.arabicLocation === "string" && rowAny.arabicLocation) || def?.arabicLocation,
+        image: r.image || "/images/studios/nature-grid.jpg",
+        gradient: r.gradient || "linear-gradient(135deg,#3a2a1a 0%,#5a4a3a 100%)",
+        description: r.description || "",
+        arabicDescription: (typeof rowAny.arabicDescription === "string" && rowAny.arabicDescription) || def?.arabicDescription,
+        isAvailable: r.isAvailable,
+      };
+    });
   } catch (err: unknown) {
     const msg = (err as Error)?.message || "";
     if (msg.includes('relation "podcast_sets" does not exist')) {
@@ -221,17 +228,25 @@ export async function getCmsPodcastAddons(): Promise<PodcastAddon[]> {
       .from(podcastAddons)
       .orderBy(asc(podcastAddons.sortOrder), asc(podcastAddons.title));
 
-    return rows.map((r) => ({
-      key: r.id,
-      title: r.title,
-      desc: r.desc || "",
-      priceNum: r.priceNum,
-      priceDisplay: r.priceDisplay,
-      unit: r.unit,
-      gradient: r.gradient || "linear-gradient(135deg,#2a1a3a 0%,#4a3a5a 100%)",
-      vimeoEmbed: r.vimeoEmbed || undefined,
-      isActive: r.isActive,
-    }));
+    return rows.map((r) => {
+      const def = PODCAST_ADDONS.find((a) => a.key === r.id);
+      const rowAny = r as Record<string, unknown>;
+      return {
+        key: r.id,
+        title: r.title,
+        titleAr: (typeof rowAny.titleAr === "string" && rowAny.titleAr) || def?.titleAr,
+        desc: r.desc || "",
+        descAr: (typeof rowAny.descAr === "string" && rowAny.descAr) || def?.descAr,
+        priceNum: r.priceNum,
+        priceDisplay: r.priceDisplay,
+        priceDisplayAr: (typeof rowAny.priceDisplayAr === "string" && rowAny.priceDisplayAr) || def?.priceDisplayAr,
+        unit: r.unit,
+        unitAr: (typeof rowAny.unitAr === "string" && rowAny.unitAr) || def?.unitAr,
+        gradient: r.gradient || "linear-gradient(135deg,#2a1a3a 0%,#4a3a5a 100%)",
+        vimeoEmbed: r.vimeoEmbed || undefined,
+        isActive: r.isActive,
+      };
+    });
   } catch (err: unknown) {
     const msg = (err as Error)?.message || "";
     if (msg.includes('relation "podcast_addons" does not exist')) {
@@ -268,10 +283,14 @@ export async function getCmsPodcastAddons(): Promise<PodcastAddon[]> {
 export async function upsertCmsPodcastAddon(data: {
   id: string;
   title: string;
+  titleAr?: string;
   desc?: string;
+  descAr?: string;
   priceNum: number;
   priceDisplay?: string;
+  priceDisplayAr?: string;
   unit?: string;
+  unitAr?: string;
   gradient?: string;
   vimeoEmbed?: string;
   isActive?: boolean;
@@ -408,10 +427,14 @@ export async function getCmsPodcastServices(): Promise<PodcastService[]> {
       .limit(1);
 
     if (rows.length > 0 && Array.isArray(rows[0].value) && rows[0].value.length > 0) {
-      return (rows[0].value as PodcastService[]).map((s) => ({
-        ...s,
-        isActive: s.isActive ?? true,
-      }));
+      return (rows[0].value as PodcastService[]).map((s) => {
+        const def = PODCAST_SERVICES.find((d) => d.key === s.key);
+        return {
+          ...(def || {}),
+          ...s,
+          isActive: s.isActive ?? true,
+        };
+      });
     }
   } catch (err) {
     console.warn("[podcast-operations] Falling back to static podcast services:", (err as Error)?.message);
@@ -428,7 +451,10 @@ async function loadPodcastServicesCatalogStrict(): Promise<PodcastService[]> {
     .limit(1);
   if (!row) return PODCAST_SERVICES.map((s) => ({ ...s, isActive: s.isActive ?? true }));
   if (!Array.isArray(row.value)) throw new Error("Saved podcast services catalog is invalid.");
-  return (row.value as PodcastService[]).map((s) => ({ ...s, isActive: s.isActive ?? true }));
+  return (row.value as PodcastService[]).map((s) => {
+    const def = PODCAST_SERVICES.find((d) => d.key === s.key);
+    return { ...(def || {}), ...s, isActive: s.isActive ?? true };
+  });
 }
 
 const podcastServiceInputSchema = z.object({
@@ -466,13 +492,18 @@ async function savePodcastServicesCatalog(services: PodcastService[]): Promise<v
 export async function upsertCmsPodcastService(data: {
   key: string;
   title: string;
+  titleAr?: string;
   sub: string;
+  subAr?: string;
   price: number;
   badge?: string;
+  badgeAr?: string;
   best?: boolean;
   note?: string;
+  noteAr?: string;
   isActive?: boolean;
   highlights?: string[];
+  highlightsAr?: string[];
 }): Promise<CmsResponse<PodcastService[]>> {
   try {
     await requireAdmin();
@@ -491,17 +522,24 @@ export async function upsertCmsPodcastService(data: {
     const normalized: PodcastService = {
       key: cleanKey,
       title: cleanTitle,
+      titleAr: data.titleAr?.trim() || existing?.titleAr,
       sub: data.sub?.trim() || "",
+      subAr: data.subAr?.trim() || existing?.subAr,
       price: Math.round(price),
       badge: data.badge?.trim() || existing?.badge || "Studio Tier",
+      badgeAr: data.badgeAr?.trim() || existing?.badgeAr,
       best: data.best ?? existing?.best ?? false,
       isActive: data.isActive ?? existing?.isActive ?? true,
       highlights: Array.isArray(data.highlights)
         ? data.highlights.map((h) => h.trim()).filter(Boolean)
         : existing?.highlights || [],
+      highlightsAr: Array.isArray(data.highlightsAr)
+        ? data.highlightsAr.map((h) => h.trim()).filter(Boolean)
+        : existing?.highlightsAr,
       features: existing?.features || [],
       after: existing?.after || [],
       note: data.note !== undefined ? (data.note.trim() || undefined) : existing?.note,
+      noteAr: data.noteAr !== undefined ? (data.noteAr.trim() || undefined) : existing?.noteAr,
     };
 
     const idx = current.findIndex((s) => s.key === cleanKey);

@@ -46,9 +46,11 @@ export async function getCmsStudios(): Promise<Studio[]> {
     soundIsolation: null,
     category: null,
     badge: null,
+    arabicBadge: null,
     gallery: [],
     imageUrl: s.image || null,
     amenities: ["10Gbps Symmetrical Fiber", "Green Room", "Hair & Makeup Suite", "Sound Isolated (STC 65)"],
+    arabicAmenities: ["ألياف ضوئية متماثلة 10 جيجابت", "غرفة استراحة VIP", "جناح ميك آب وتجهيز", "عزل صوتي فائق (STC 65)"],
     isActive: true,
     createdAt: new Date(),
   }));

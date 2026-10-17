@@ -66,13 +66,13 @@ export const INITIAL_BOOKING_STATE: BookingState = {
 
 // 7 Steps matching yasproductions.com/studio-booking/ and screenshots
 export const WIZARD_STEPS: readonly WizardStepItem[] = [
-  { id: 1, label: "Date & Time", icon: Calendar },
-  { id: 2, label: "Session Type", icon: Camera },
-  { id: 3, label: "Choose Studio", icon: Video },
-  { id: 4, label: "Crew & Equipment", icon: Users },
-  { id: 5, label: "Props", icon: Layers },
-  { id: 6, label: "Post Production", icon: Sparkles },
-  { id: 7, label: "Payment", icon: CreditCard },
+  { id: 1, label: "Date & Time", labelAr: "التاريخ والوقت", icon: Calendar },
+  { id: 2, label: "Session Type", labelAr: "نوع الجلسة", icon: Camera },
+  { id: 3, label: "Choose Studio", labelAr: "اختيار الاستوديو", icon: Video },
+  { id: 4, label: "Crew & Equipment", labelAr: "الطاقم والمعدات", icon: Users },
+  { id: 5, label: "Props", labelAr: "الديكورات والإكسسوارات", icon: Layers },
+  { id: 6, label: "Post Production", labelAr: "ما بعد الإنتاج", icon: Sparkles },
+  { id: 7, label: "Payment", labelAr: "الدفع والتأكيد", icon: CreditCard },
 ];
 
 export const SESSION_TYPES: readonly SessionTypeItem[] = catalogData.sessionTypes as SessionTypeItem[];
@@ -91,32 +91,42 @@ export const STUDIO_GEAR_PACKAGES: readonly StudioGearPackage[] = [
   {
     id: "none",
     name: "Bring My Own Equipment",
+    arabicName: "إحضار معداتي الخاصة",
     rate: 0,
     description: "Use the soundstage with your own camera & lighting gear.",
+    arabicDescription: "استخدام مساحة الاستوديو مع كاميراتك ومعدات الإضاءة الخاصة بك.",
   },
   {
     id: "sony-multicam",
     name: "Sony FX6 3-Cam 4K Studio Package",
+    arabicName: "باقة استوديو 4K بثلاث كاميرات Sony FX6",
     rate: 1200,
     description: "3x Sony FX6 4K bodies, G-Master zooms, wireless director monitor & switcher.",
+    arabicDescription: "3 كاميرات Sony FX6 4K، عدسات G-Master، شاشة مخرج لاسلكية وجهاز سويتشر.",
   },
   {
     id: "lighting-grid",
     name: "Full Aputure Studio Lighting Grid",
+    arabicName: "شبكة إضاءة استوديو Aputure متكاملة",
     rate: 800,
     description: "Ceiling motorized grid with RGBWW color-tunable fixtures and light domes.",
+    arabicDescription: "شبكة سقفية متحركة بوحدات إضاءة RGBWW قابلة للتحكم اللوني وموزعات إضاءة.",
   },
   {
     id: "podcast-mics",
     name: "4-Person Shure SM7B Acoustic Mic Suite",
+    arabicName: "منظومة ميكروفونات Shure SM7B لأربعة أشخاص",
     rate: 500,
     description: "Broadcast vocal mics with RØDECaster Pro II & live sound mastering console.",
+    arabicDescription: "ميكروفونات إذاعية احترافية مع وحدة RØDECaster Pro II ومزج صوتي مباشر.",
   },
   {
     id: "arri-commercial",
     name: "ARRI Alexa Mini LF Cinema Package",
+    arabicName: "باقة السينما ARRI Alexa Mini LF",
     rate: 3500,
     description: "Pre-calibrated A-camera with Cooke cinema primes and wireless focus control.",
+    arabicDescription: "كاميرا سينمائية رئيسية معايرة مع عدسات Cooke السينمائية وتحكم لاسلكي بالتركيز.",
   },
 ];
 

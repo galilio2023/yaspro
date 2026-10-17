@@ -78,7 +78,7 @@ const OFFER_CATEGORIES_PREVIEW: OfferCategoryPreviewItem[] = [
 ];
 
 export function OffersPreviewSection() {
-  const { isArabic } = useLanguage();
+  const { t, isArabic } = useLanguage();
 
   return (
     <Section
@@ -105,7 +105,7 @@ export function OffersPreviewSection() {
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500" />
               </span>
               <span>
-                {isArabic ? "عروض وباقات استوديو حصرية" : "EXCLUSIVE STUDIO PACKAGES"}
+                {t("offersPreview.badge")}
               </span>
             </div>
 
@@ -113,7 +113,7 @@ export function OffersPreviewSection() {
               id="offers-preview-title"
               className="text-base sm:text-xl font-bold text-white tracking-tight font-display rtl:font-arabic"
             >
-              {isArabic ? "باقات وعروض الإنتاج السينمائي" : "Offers & Production Packages"}
+              {t("offersPreview.title")}
             </h2>
           </div>
 
@@ -122,7 +122,7 @@ export function OffersPreviewSection() {
             href="/offers"
             className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-300 hover:text-white transition-colors cursor-pointer shrink-0"
           >
-            <span>{isArabic ? "عرض كافة الباقات (12)" : "View all packages (12)"}</span>
+            <span>{t("offersPreview.viewAll", { count: 12 })}</span>
             <ArrowRight
               size={13}
               className={`text-brand-mauve shrink-0 ${isArabic ? "rotate-180" : ""}`}
@@ -157,7 +157,7 @@ export function OffersPreviewSection() {
                 </div>
 
                 <span className="absolute bottom-2 end-2 font-mono text-[9px] uppercase text-zinc-300 bg-black/75 px-1.5 py-0.5 rounded border border-white/10 backdrop-blur-md">
-                  {isArabic ? "حجز مباشر" : "Instant Book"}
+                  {t("offersPreview.instantBook")}
                 </span>
               </div>
 
@@ -182,7 +182,7 @@ export function OffersPreviewSection() {
                     href={`/offers?package=${item.targetPackageId}`}
                     className="inline-flex items-center gap-1 px-3 py-1 rounded-full font-semibold text-xs text-white bg-white/10 hover:bg-brand-mauve hover:text-black border border-white/10 hover:border-brand-mauve transition-all duration-150 cursor-pointer whitespace-nowrap active:scale-95"
                   >
-                    <span>{isArabic ? "احجز" : "Book"}</span>
+                    <span>{t("offersPreview.book")}</span>
                     <ChevronRight
                       size={12}
                       className={`shrink-0 ${isArabic ? "rotate-180" : ""}`}

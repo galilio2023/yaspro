@@ -9,6 +9,8 @@ import { useBookingWizard } from "../hooks/useBookingWizard";
 import { BookingConfirmation } from "./BookingConfirmation";
 import { StudioQuoteRail } from "./StudioQuoteRail";
 import { BookingStepper, ErrorBanner, formatAED, studioSprings } from "./ui/BookingKit";
+import { useLanguage } from "@/components/providers/LanguageProvider";
+import { cn } from "@/lib/utils";
 
 import { StepDatetime } from "./steps/StepDatetime";
 import { StepSessionType } from "./steps/StepSessionType";
@@ -17,12 +19,6 @@ import { StepCrewEquipment } from "./steps/StepCrewEquipment";
 import { StepProps } from "./steps/StepProps";
 import { StepPostProduction } from "./steps/StepPostProduction";
 import { StepContact } from "./steps/StepContact";
-
-const STEPPER_STEPS = WIZARD_STEPS.map((s) => ({
-  id: s.id,
-  label: s.label,
-  shortLabel: s.label.split(" ")[0].replace("&", "").trim() || s.label,
-}));
 
 const stepVariants: Variants = {
   enter: (dir: number) => ({ opacity: 0, x: dir > 0 ? 28 : -28 }),
@@ -37,6 +33,7 @@ export function BookingWizard({
   studios: StudioItem[];
   wizardCatalog?: StudioWizardCatalogOverride;
 }) {
+  const { t, isArabic, direction: uiDirection } = useLanguage();
   const {
     step,
     setStep,
@@ -63,10 +60,20 @@ export function BookingWizard({
     handleSubmit,
   } = useBookingWizard(studios, wizardCatalog);
 
+  const stepperSteps = [
+    { id: 1, label: t("studioBooking.steps.step1"), shortLabel: t("studioBooking.steps.step1Short") },
+    { id: 2, label: t("studioBooking.steps.step2"), shortLabel: t("studioBooking.steps.step2Short") },
+    { id: 3, label: t("studioBooking.steps.step3"), shortLabel: t("studioBooking.steps.step3Short") },
+    { id: 4, label: t("studioBooking.steps.step4"), shortLabel: t("studioBooking.steps.step4Short") },
+    { id: 5, label: t("studioBooking.steps.step5"), shortLabel: t("studioBooking.steps.step5Short") },
+    { id: 6, label: t("studioBooking.steps.step6"), shortLabel: t("studioBooking.steps.step6Short") },
+    { id: 7, label: t("studioBooking.steps.step7"), shortLabel: t("studioBooking.steps.step7Short") },
+  ];
+
   const [direction, setDirection] = useState(1);
   const totalSteps = WIZARD_STEPS.length;
   const isLastStep = step === totalSteps;
-  const nextLabel = WIZARD_STEPS.find((s) => s.id === step + 1)?.label;
+  const nextLabel = stepperSteps.find((s) => s.id === step + 1)?.label;
 
   // Lift floating action buttons above the sticky mobile action bar
   useEffect(() => {
@@ -84,7 +91,7 @@ export function BookingWizard({
 
   if (confirmed) {
     return (
-      <div className="w-full max-w-xl mx-auto py-8">
+      <div className="w-full max-w-xl mx-auto py-8" dir={uiDirection}>
         <BookingConfirmation referenceCode={referenceCode} email={state.email} bookingId={bookingId} totalAmount={total} />
       </div>
     );
@@ -123,10 +130,10 @@ export function BookingWizard({
   };
 
   return (
-    <div id="studio-booking-wizard" className="w-full max-w-6xl mx-auto scroll-mt-28">
+    <div id="studio-booking-wizard" dir={uiDirection} className="w-full max-w-6xl mx-auto scroll-mt-28">
       <div className="mb-6 sm:mb-8">
         <BookingStepper
-          steps={STEPPER_STEPS}
+          steps={stepperSteps}
           current={step}
           onStepClick={handleStepClick}
           canJumpTo={(id) => id < step}
@@ -181,7 +188,7 @@ export function BookingWizard({
 
           {/* Action bar — sticky on mobile, inline on desktop */}
           <div
-            dir="ltr"
+            dir={uiDirection}
             className="sticky bottom-2 sm:bottom-3 z-30 mt-3 sm:mt-4 lg:static lg:mt-5 rounded-xl sm:rounded-2xl border border-white/[0.1] lg:border-transparent bg-[#0b0b0f]/95 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none p-2 sm:p-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:pb-0 lg:p-0 shadow-2xl lg:shadow-none flex items-center gap-2 sm:gap-3"
           >
             {step > 1 && (
@@ -190,19 +197,23 @@ export function BookingWizard({
                 onClick={handlePrevStep}
                 whileTap={{ scale: 0.96 }}
                 transition={studioSprings.snappy}
-                aria-label="Back"
+                aria-label={t("studioBooking.actions.back")}
                 className="h-9 sm:h-11 px-2.5 sm:px-3.5 rounded-lg sm:rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/20 text-zinc-200 text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 cursor-pointer transition-colors shrink-0"
               >
-                <ArrowLeft size={14} className="sm:size-[15px]" />
-                <span className="hidden sm:inline">Back</span>
+                <ArrowLeft size={14} className={cn("sm:size-[15px]", isArabic && "-scale-x-100")} />
+                <span className="hidden sm:inline">{t("studioBooking.actions.back")}</span>
               </motion.button>
             )}
 
             {/* Mobile running total — hidden on last step since StepContact has its own submit button with total */}
             {!isLastStep && (
               <div className="lg:hidden min-w-0 flex-1">
-                <span className="block font-mono text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-zinc-500">Total</span>
-                <span className="block text-xs sm:text-base font-bold text-brand-mauve tabular-nums truncate">{formatAED(breakdown.total, 2)}</span>
+                <span className="block font-mono text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-zinc-500">
+                  {t("studioBooking.actions.total")}
+                </span>
+                <span className="block text-xs sm:text-base font-bold text-brand-mauve tabular-nums truncate">
+                  {formatAED(breakdown.total, 2)}
+                </span>
               </div>
             )}
 
@@ -216,10 +227,13 @@ export function BookingWizard({
                 className="lg:ms-auto h-9 sm:h-11 px-3 sm:px-5 rounded-lg sm:rounded-xl btn-brand text-xs sm:text-sm flex items-center gap-1 sm:gap-2 cursor-pointer transition-colors shrink-0"
               >
                 <span>
-                  <span className="sm:hidden">Continue</span>
-                  <span className="hidden sm:inline">Continue{nextLabel ? ` · ${nextLabel}` : ""}</span>
+                  <span className="sm:hidden">{t("studioBooking.actions.continue")}</span>
+                  <span className="hidden sm:inline">
+                    {t("studioBooking.actions.continue")}
+                    {nextLabel ? ` · ${nextLabel}` : ""}
+                  </span>
                 </span>
-                <ArrowRight size={14} className="sm:size-[15px]" />
+                <ArrowRight size={14} className={cn("sm:size-[15px]", isArabic && "-scale-x-100")} />
               </motion.button>
             )}
           </div>

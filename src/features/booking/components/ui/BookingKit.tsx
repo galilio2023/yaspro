@@ -13,6 +13,7 @@ import Link from "next/link";
 import { motion, type HTMLMotionProps } from "framer-motion";
 import { AlertCircle, ArrowUpRight, Check, Minus, Plus, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export const studioSprings = {
   snappy: { type: "spring", stiffness: 450, damping: 28 },
@@ -53,6 +54,8 @@ export function BookingHero({
   specs: BookingHeroSpec[];
   crossLink?: { href: string; label: string; cta: string };
 }) {
+  const { t, isArabic } = useLanguage();
+
   return (
     <header className="mb-6 sm:mb-14 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 lg:gap-12 items-end">
       <div className="lg:col-span-7 space-y-3 sm:space-y-5">
@@ -87,7 +90,13 @@ export function BookingHero({
             <span>{crossLink.label}</span>
             <span className="inline-flex items-center gap-1 font-semibold text-brand-mauve group-hover:text-brand-mauve-soft">
               {crossLink.cta}
-              <ArrowUpRight size={13} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              <ArrowUpRight
+                size={13}
+                className={cn(
+                  "transition-transform group-hover:-translate-y-0.5",
+                  isArabic ? "-scale-x-100 group-hover:-translate-x-0.5" : "group-hover:translate-x-0.5"
+                )}
+              />
             </span>
           </Link>
         )}
@@ -96,8 +105,12 @@ export function BookingHero({
       {/* Spec sheet: 2x2 micro-grid on mobile, vertical list on desktop */}
       <dl className="lg:col-span-5 rounded-2xl border border-white/[0.08] bg-white/[0.015] overflow-hidden">
         <div className="px-3.5 sm:px-5 py-2 sm:py-3 flex items-center justify-between bg-white/[0.02] border-b border-white/[0.06]">
-          <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-zinc-500">Production Sheet</span>
-          <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-brand-mauve/90">Iris Bay · DXB</span>
+          <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-zinc-500">
+            {t("studioBooking.hero.productionSheet")}
+          </span>
+          <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-brand-mauve/90">
+            {t("studioBooking.hero.locationBadge")}
+          </span>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-1 gap-px bg-white/[0.06] lg:bg-transparent lg:divide-y lg:divide-white/[0.06]">
           {specs.map((spec) => (
@@ -134,7 +147,7 @@ export function BookingStepper({
   current,
   onStepClick,
   canJumpTo = () => true,
-  ariaLabel = "Booking steps",
+  ariaLabel,
 }: {
   steps: readonly BookingStep[];
   current: number;
@@ -142,16 +155,17 @@ export function BookingStepper({
   canJumpTo?: (id: number) => boolean;
   ariaLabel?: string;
 }) {
+  const { t, direction } = useLanguage();
   const active = steps.find((s) => s.id === current);
   const progress = steps.length > 1 ? ((current - 1) / (steps.length - 1)) * 100 : 100;
   const edgeInset = 100 / (steps.length * 2);
 
   return (
-    <nav aria-label={ariaLabel} dir="ltr" className="w-full">
+    <nav aria-label={ariaLabel || t("studioBooking.kit.bookingStepsAria")} dir={direction} className="w-full">
       {/* Compact header (mobile) */}
       <div className="flex items-baseline justify-between mb-3 sm:hidden">
         <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-brand-mauve">
-          Step {pad2(current)} / {pad2(steps.length)}
+          {t("studioBooking.kit.stepProgress", { current: pad2(current), total: pad2(steps.length) })}
         </span>
         <span className="text-sm font-semibold text-white">{active?.label}</span>
       </div>
@@ -176,7 +190,7 @@ export function BookingStepper({
         <motion.div
           aria-hidden
           className="absolute top-4 h-px bg-brand-mauve/80"
-          style={{ left: `${edgeInset}%` }}
+          style={{ insetInlineStart: `${edgeInset}%` }}
           initial={false}
           animate={{ width: `${(100 - edgeInset * 2) * (progress / 100)}%` }}
           transition={studioSprings.cinematic}
@@ -244,11 +258,13 @@ export function StepIntro({
   description?: string;
   aside?: React.ReactNode;
 }) {
+  const { t } = useLanguage();
+
   return (
     <div className="pb-3.5 sm:pb-5 mb-4 sm:mb-6 border-b border-white/[0.06]">
       <div className="flex items-center justify-between gap-2 mb-1 sm:mb-1.5">
         <span className="block font-mono text-[10px] tracking-[0.22em] uppercase text-brand-mauve">
-          Step {pad2(index)} — {pad2(total)}
+          {t("studioBooking.kit.stepIntro", { index: pad2(index), total: pad2(total) })}
         </span>
         {aside && <div className="shrink-0 sm:hidden">{aside}</div>}
       </div>
@@ -408,8 +424,8 @@ export function PriceLine({
 /** Non-interactive visual pill for toggle cards (the whole card is the button). */
 export function TogglePill({
   selected,
-  addLabel = "Add",
-  addedLabel = "Added",
+  addLabel,
+  addedLabel,
   className,
 }: {
   selected: boolean;
@@ -417,6 +433,10 @@ export function TogglePill({
   addedLabel?: string;
   className?: string;
 }) {
+  const { t } = useLanguage();
+  const resolvedAdd = addLabel ?? t("studioBooking.kit.add");
+  const resolvedAdded = addedLabel ?? t("studioBooking.kit.added");
+
   return (
     <span
       className={cn(
@@ -426,7 +446,7 @@ export function TogglePill({
       )}
     >
       {selected ? <Check size={11} strokeWidth={3} /> : <Plus size={11} />}
-      {selected ? addedLabel : addLabel}
+      {selected ? resolvedAdded : resolvedAdd}
     </span>
   );
 }
@@ -478,8 +498,8 @@ export function Counter({
   max,
   onChange,
   format = (v) => String(v),
-  decLabel = "Decrease",
-  incLabel = "Increase",
+  decLabel,
+  incLabel,
 }: {
   value: number;
   min: number;
@@ -489,11 +509,15 @@ export function Counter({
   decLabel?: string;
   incLabel?: string;
 }) {
+  const { t } = useLanguage();
+  const resolvedDec = decLabel ?? t("studioBooking.kit.decrease");
+  const resolvedInc = incLabel ?? t("studioBooking.kit.increase");
+
   return (
     <div dir="ltr" className="inline-flex items-center rounded-xl border border-white/10 bg-black/30 p-0.5 sm:p-1">
       <button
         type="button"
-        aria-label={decLabel}
+        aria-label={resolvedDec}
         disabled={value <= min}
         onClick={() => onChange(Math.max(min, value - 1))}
         className="size-8 sm:size-9 rounded-lg flex items-center justify-center text-zinc-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"
@@ -511,7 +535,7 @@ export function Counter({
       </motion.span>
       <button
         type="button"
-        aria-label={incLabel}
+        aria-label={resolvedInc}
         disabled={value >= max}
         onClick={() => onChange(Math.min(max, value + 1))}
         className="size-8 sm:size-9 rounded-lg flex items-center justify-center text-zinc-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer disabled:cursor-not-allowed"

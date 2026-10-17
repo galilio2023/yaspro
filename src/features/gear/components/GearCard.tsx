@@ -28,16 +28,18 @@ export function GearCard({
   actionLabel,
   action,
 }: GearCardProps) {
-  const { isArabic } = useLanguage();
+  const { t, isArabic } = useLanguage();
   const isCompact = variant === "compact";
 
   const displayName = isArabic && item.arabicName ? item.arabicName : item.name;
   const displayDescription = isArabic && item.arabicDescription ? item.arabicDescription : item.description;
+  const displayCategoryLabel = isArabic && item.categoryLabelAr ? item.categoryLabelAr : item.categoryLabel;
+  const activeSpecs = isArabic && item.arabicSpecs && item.arabicSpecs.length > 0 ? item.arabicSpecs : item.specs;
 
-  const resolvedActionLabel = actionLabel || (isArabic ? "حجز المعدة" : "Reserve");
+  const resolvedActionLabel = actionLabel || t("shop.card.reserve");
 
   return (
-    <article className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 sm:p-5 flex flex-col justify-between h-full group relative hover:border-brand-mauve/40 hover:bg-white/[0.05] hover:shadow-2xl hover:shadow-brand-violet/25 transition-all duration-300 shadow-xl shadow-black/20 overflow-hidden">
+    <article className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 sm:p-5 flex flex-col justify-between h-full group relative hover:border-brand-mauve/40 hover:bg-white/[0.05] hover:shadow-2xl hover:shadow-brand-violet/25 transition-all duration-300 shadow-xl shadow-black/20 overflow-hidden text-start">
       <div>
         {/* Product Visual Stage */}
         <div className="relative w-full aspect-[16/9] mb-4 sm:mb-5 rounded-2xl overflow-hidden bg-black/50 border border-white/10 group-hover:border-brand-mauve/30 transition-all duration-300">
@@ -71,7 +73,7 @@ export function GearCard({
               variant="secondary"
               className="text-[10px] font-normal backdrop-blur-md bg-black/70 border-white/15 text-white/90 shrink-0"
             >
-              {item.categoryLabel}
+              {displayCategoryLabel}
             </Badge>
 
             {item.isPopular && (
@@ -79,7 +81,7 @@ export function GearCard({
                 variant="gold"
                 className="text-[9.5px] font-bold uppercase tracking-wider backdrop-blur-md shrink-0"
               >
-                {isArabic ? "الأكثر طلباً" : "Popular"}
+                {t("shop.card.popular")}
               </Badge>
             )}
           </div>
@@ -92,7 +94,7 @@ export function GearCard({
                 className="text-[9.5px] font-bold uppercase tracking-wider gap-1 backdrop-blur-md bg-black/70 border-brand-mauve/40 text-brand-mauve shrink-0"
               >
                 <Box size={10} />
-                <span>{isArabic ? "باقة متكاملة" : "Turnkey Kit"}</span>
+                <span>{t("shop.card.turnkeyKit")}</span>
               </Badge>
             ) : <div />}
 
@@ -121,7 +123,7 @@ export function GearCard({
         {item.isKit && item.includedInKit && !isCompact && (
           <div className="mb-5 p-3 rounded-2xl bg-white/[0.02] border border-white/5">
             <span className="text-[10px] uppercase font-mono font-semibold text-brand-mauve block mb-2">
-              {isArabic ? "محتويات الباقة تشمل:" : "Package Includes:"}
+              {t("shop.card.packageIncludes")}
             </span>
             <ul className="space-y-1.5">
               {item.includedInKit.slice(0, 3).map((inc) => (
@@ -132,7 +134,7 @@ export function GearCard({
               ))}
               {item.includedInKit.length > 3 && (
                 <li className="text-[10px] text-text-muted italic pt-0.5">
-                  + {item.includedInKit.length - 3} {isArabic ? "ملحقات إضافية احترافية" : "more professional accessories"}
+                  {t("shop.card.moreAccessories", { count: item.includedInKit.length - 3 })}
                 </li>
               )}
             </ul>
@@ -142,7 +144,7 @@ export function GearCard({
         {/* Specs List (only in default full variant when not a kit) */}
         {!isCompact && !item.isKit && (
           <ul className="space-y-2 mb-6">
-            {item.specs.map((spec) => (
+            {activeSpecs.map((spec) => (
               <li key={spec} className="text-xs text-text-muted flex items-center gap-2">
                 <CheckCircle2 size={13} className="text-brand-mauve shrink-0" />
                 <span>{spec}</span>
@@ -164,12 +166,12 @@ export function GearCard({
             {formatCurrency(item.dailyRate)}
           </div>
           <div className="text-[10px] text-text-muted font-mono flex items-center gap-1.5">
-            <span>{isArabic ? "يومياً / د.إ" : "per day / AED"}</span>
+            <span>{t("shop.card.perDay")}</span>
             {item.securityDeposit && (
               <>
                 <span>•</span>
                 <span className="text-text-ghost">
-                  {isArabic ? `تأمين ${formatCurrency(item.securityDeposit)}` : `Dep. ${formatCurrency(item.securityDeposit)}`}
+                  {t("shop.card.deposit", { amount: formatCurrency(item.securityDeposit) })}
                 </span>
               </>
             )}

@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export default function NotFound() {
+  const { t } = useLanguage();
+
   return (
     <div className="flex-1 w-full py-20 flex items-center justify-center px-4 relative overflow-hidden bg-background">
       {/* Background glow */}
@@ -9,20 +14,20 @@ export default function NotFound() {
 
       <div className="rounded-3xl border border-white/10 bg-[#0f0e15] backdrop-blur-xl p-10 max-w-md w-full text-center relative z-10 shadow-2xl">
         <div className="text-6xl font-black gradient-text-gold mb-4 font-display">
-          404
+          {t("errors.notFound.code")}
         </div>
         <h1 className="text-2xl font-bold text-white mb-2 font-display">
-          Page Not Found
+          {t("errors.notFound.title")}
         </h1>
         <p className="text-text-secondary text-sm mb-8 leading-relaxed">
-          The production or studio page you are looking for does not exist or has been moved.
+          {t("errors.notFound.description")}
         </p>
 
         <Link
           href="/"
           className="btn-brand inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-full font-bold text-sm"
         >
-          <ArrowLeft size={16} className="rtl:rotate-180" /> Return to Homepage
+          <ArrowLeft size={16} className="rtl:rotate-180" /> {t("errors.notFound.returnHome")}
         </Link>
       </div>
     </div>

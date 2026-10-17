@@ -3,10 +3,9 @@
 import { Calendar, Sparkles, Tag } from "lucide-react";
 import { RentalDateRange } from "../types";
 import { calculateRentalMultiplier } from "../lib/cart-pricing";
-
 import { addCalendarDays, getLocalCalendarDate, normalizeRentalDateRange } from "../lib/rental-schedule";
-
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface RentalDateSelectorProps {
   dateRange: RentalDateRange;
@@ -14,6 +13,7 @@ interface RentalDateSelectorProps {
 }
 
 export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorProps) {
+  const { t, isArabic, dir } = useLanguage();
   const todayStr = getLocalCalendarDate();
 
   const handleDateChange = (pickup: string, returnDateStr: string) => {
@@ -26,24 +26,24 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
     handleDateChange(pickup, addCalendarDays(pickup, days));
   };
 
-  const { discountLabel, discountPct } = calculateRentalMultiplier(dateRange.totalDays);
+  const { discountLabel, discountLabelAr, discountPct } = calculateRentalMultiplier(dateRange.totalDays);
 
   return (
-    <div className="w-full rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-4 sm:p-5 mb-8">
+    <div dir={dir} className="w-full rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md p-4 sm:p-5 mb-8 text-start">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/5">
         <div className="flex items-center gap-2.5">
-          <div className="size-9 rounded-xl bg-brand-mauve/10 border border-brand-mauve/30 flex items-center justify-center text-brand-mauve">
+          <div className="size-9 rounded-xl bg-brand-mauve/10 border border-brand-mauve/30 flex items-center justify-center text-brand-mauve shrink-0">
             <Calendar size={18} />
           </div>
           <div>
-            <h3 className="text-white text-sm font-bold flex items-center gap-2">
-              <span>Rental Schedule &amp; Production Dates</span>
+            <h3 className="text-white text-sm font-bold flex items-center gap-2 flex-wrap">
+              <span>{t("shop.schedule.title")}</span>
               <span className="text-[10px] text-text-muted font-normal uppercase tracking-wider font-mono">
-                Your local calendar dates
+                {t("shop.schedule.localDates")}
               </span>
             </h3>
             <p className="text-xs text-text-secondary">
-              Select shoot dates to automatically calculate multi-day commercial discounts.
+              {t("shop.schedule.description")}
             </p>
           </div>
         </div>
@@ -59,7 +59,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
                 : "bg-white/5 text-text-secondary hover:text-white hover:bg-white/10"
             }`}
           >
-            1 Day
+            {t("shop.schedule.oneDay")}
           </button>
           <button
             type="button"
@@ -70,7 +70,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
                 : "bg-white/5 text-text-secondary hover:text-white hover:bg-white/10"
             }`}
           >
-            Weekend (3 Days)
+            {t("shop.schedule.weekend")}
           </button>
           <button
             type="button"
@@ -81,7 +81,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
                 : "bg-white/5 text-text-secondary hover:text-white hover:bg-white/10"
             }`}
           >
-            1 Week (7 Days)
+            {t("shop.schedule.oneWeek")}
           </button>
         </div>
       </div>
@@ -93,7 +93,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
             htmlFor="pickup-date-input"
             className="block text-[11px] font-semibold uppercase tracking-wider text-text-muted mb-1.5"
           >
-            Pickup / Delivery Date
+            {t("shop.schedule.pickupDate")}
           </label>
           <input
             id="pickup-date-input"
@@ -111,7 +111,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
             htmlFor="return-date-input"
             className="block text-[11px] font-semibold uppercase tracking-wider text-text-muted mb-1.5"
           >
-            Return Date
+            {t("shop.schedule.returnDate")}
           </label>
           <input
             id="return-date-input"
@@ -127,13 +127,13 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
         <div className="flex flex-col justify-center sm:col-span-2 lg:col-span-1 pt-1 sm:pt-0">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs text-text-secondary font-medium">
-              Shoot Duration:
+              {t("shop.schedule.shootDuration")}
             </span>
-            <span className="text-sm font-bold text-white font-mono">
-              {dateRange.totalDays} {dateRange.totalDays === 1 ? "Day" : "Days"}
+            <span className="text-sm font-bold text-white font-mono" dir="ltr">
+              {dateRange.totalDays} {dateRange.totalDays === 1 ? t("shop.schedule.day") : t("shop.schedule.days")}
               {dateRange.billingMultiplier !== dateRange.totalDays && (
-                <span className="text-xs text-brand-mauve font-normal ml-1">
-                  (Billed as {dateRange.billingMultiplier} days)
+                <span className="text-xs text-brand-mauve font-normal ms-1">
+                  {t("shop.schedule.billedAs", { days: dateRange.billingMultiplier })}
                 </span>
               )}
             </span>
@@ -145,7 +145,7 @@ export function RentalDateSelector({ dateRange, onChange }: RentalDateSelectorPr
               className="text-[11px] gap-1.5 w-full justify-center py-1 font-semibold"
             >
               {discountPct > 0 ? <Sparkles size={12} /> : <Tag size={12} />}
-              <span>{discountLabel}</span>
+              <span>{isArabic ? discountLabelAr : discountLabel}</span>
             </Badge>
           </div>
         </div>

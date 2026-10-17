@@ -287,8 +287,22 @@ test('promo validation responses cannot restore a removed promo or apply it to a
 });
 
 function uiFixture(isArabic) {
+  const dict = JSON.parse(fs.readFileSync(isArabic ? 'messages/ar.json' : 'messages/en.json', 'utf8'));
   return sourceLoader({
-    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic }) },
+    '@/components/providers/LanguageProvider': {
+      useLanguage: () => ({
+        language: isArabic ? 'ar' : 'en',
+        isArabic,
+        direction: isArabic ? 'rtl' : 'ltr',
+        dir: isArabic ? 'rtl' : 'ltr',
+        setLanguage() {},
+        t: (key, params) => {
+          const val = key.split('.').reduce((acc, part) => acc?.[part], dict);
+          if (typeof val !== 'string') return key;
+          return params ? val.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`)) : val;
+        },
+      }),
+    },
     '@/features/booking/components/ui/BookingKit': {
       formatAED: (amount) => `AED ${amount}`, studioSprings: { cinematic: {} },
       Panel: ({ children }) => createElement('section', null, children),

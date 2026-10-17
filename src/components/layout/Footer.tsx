@@ -149,12 +149,10 @@ export default function Footer() {
               <span dir="ltr">[REC ● 4 SOUNDSTAGES ONLINE · 24/7 BROADCAST READY]</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight font-display">
-              {isArabic ? "أين تلتقي التكنولوجيا بالإنتاج السينمائي" : "Where Cinematic Craft Meets AI Media Infrastructure"}
+              {t("footer.prefooterHeadline")}
             </h2>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              {isArabic
-                ? "من استوديوهات دبي في الخليج التجاري وعربات البث المباشر المتنقلة إلى شبكة المبدعين في الشرق الأوسط."
-                : "Flagship soundstages, OB-VAN live broadcast fleets, high-tier gear rental, and premier creator talent across UAE, Egypt, and Jordan."}
+              {t("footer.prefooterDesc")}
             </p>
           </div>
 
@@ -163,13 +161,13 @@ export default function Footer() {
               href="/studio-booking"
               className="px-5 py-2.5 rounded-full bg-white/[0.08] hover:bg-white/[0.15] text-white border border-white/20 hover:border-brand-mauve/50 font-bold text-xs uppercase tracking-wider transition-all backdrop-blur-md"
             >
-              {isArabic ? "حجز استوديو تصوير" : "Book Soundstage"}
+              {t("footer.bookSoundstage")}
             </Link>
             <Link
               href="/social-media-packages"
               className="px-5 py-2.5 rounded-full btn-brand text-xs uppercase tracking-wider"
             >
-              {isArabic ? "باقات السوشيال ميديا" : "Social Media Plans"}
+              {t("footer.socialMediaPlans")}
             </Link>
             <a
               href="https://wa.me/971554010465"
@@ -213,7 +211,7 @@ export default function Footer() {
               </div>
               <div>
                 <span className="block text-[11px] font-bold text-zinc-200">
-                  {isArabic ? "ترخيص إعلامي معتمد وتوثيق رسمي" : "Mawthooq Certified Media Network"}
+                  {t("footer.mawthooqCertified")}
                 </span>
                 <span className="block text-[10px] text-zinc-500 font-mono">
                   UAE · SAUDI ARABIA · EGYPT · JORDAN
@@ -313,7 +311,7 @@ export default function Footer() {
                         rel="noopener noreferrer"
                         className="text-zinc-400 hover:text-brand-mauve-soft transition-colors shrink-0 inline-flex items-center gap-0.5 text-[10px] font-medium group/link"
                       >
-                        <span>{isArabic ? "الخريطة" : "Map"}</span>
+                        <span>{t("footer.map")}</span>
                         <ArrowUpRight size={10} className="text-zinc-500 group-hover/link:text-brand-mauve-soft group-hover/link:translate-x-0.5 rtl:group-hover/link:-translate-x-0.5 group-hover/link:-translate-y-0.5 rtl:scale-x-[-1] transition-transform" />
                       </a>
                     </div>

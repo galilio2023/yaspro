@@ -8,6 +8,25 @@ import ts from 'typescript';
 import * as React from 'react';
 
 const require = createRequire(import.meta.url);
+const enMessages = JSON.parse(fs.readFileSync('messages/en.json', 'utf8'));
+const arMessages = JSON.parse(fs.readFileSync('messages/ar.json', 'utf8'));
+function mockLanguageProvider(isArabic = false) {
+  const dict = isArabic ? arMessages : enMessages;
+  return {
+    useLanguage: () => ({
+      language: isArabic ? 'ar' : 'en',
+      isArabic,
+      direction: isArabic ? 'rtl' : 'ltr',
+      dir: isArabic ? 'rtl' : 'ltr',
+      setLanguage() {},
+      t: (key, params) => {
+        const val = key.split('.').reduce((acc, part) => acc?.[part], dict);
+        if (typeof val !== 'string') return key;
+        return params ? val.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`)) : val;
+      },
+    }),
+  };
+}
 function loader(mocks = {}, globals = {}) {
   const cache = new Map();
   function load(file) {
@@ -272,7 +291,7 @@ test('checkout displays server options, ignores caller pricing, and refreshes st
         return { success: false, quote: balanceQuote, error: 'Booking payment changed.' };
       },
     },
-    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic: false }) },
+    '@/components/providers/LanguageProvider': mockLanguageProvider(false),
     '@/lib/utils': { cn: (...values) => values.join(' '), formatCurrency: String },
   }, { document: { body: {} } });
   const { BookingPaymentModal } = load('src/features/booking/components/BookingPaymentModal.tsx');
@@ -444,7 +463,7 @@ test('checkout blocks failed quote reads even when callers provide payment setti
     } },
     'react-dom': { createPortal: (tree) => tree }, '@/hooks/useFocusTrap': { useFocusTrap() {} },
     '@/lib/ziina': { getBookingPaymentQuote: () => new Promise((_, reject) => { rejectRead = reject; }) },
-    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic: false }) },
+    '@/components/providers/LanguageProvider': mockLanguageProvider(false),
     '@/lib/utils': { cn: (...values) => values.join(' '), formatCurrency: String },
   }, { document: { body: {} } });
   const { BookingPaymentModal } = load('src/features/booking/components/BookingPaymentModal.tsx');

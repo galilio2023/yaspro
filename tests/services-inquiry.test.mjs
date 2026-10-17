@@ -37,7 +37,23 @@ function fixture(submitInquiry = async () => ({ success: true }), isArabic = fal
     'next/image': { default: 'img' },
     'next/link': { default: 'a' },
     'framer-motion': { motion: { article: 'article', div: 'div' }, AnimatePresence: 'presence' },
-    '@/components/providers/LanguageProvider': { useLanguage: () => ({ isArabic }) },
+    '@/components/providers/LanguageProvider': {
+      useLanguage: () => {
+        const dict = JSON.parse(fs.readFileSync(isArabic ? 'messages/ar.json' : 'messages/en.json', 'utf8'));
+        return {
+          language: isArabic ? 'ar' : 'en',
+          isArabic,
+          direction: isArabic ? 'rtl' : 'ltr',
+          dir: isArabic ? 'rtl' : 'ltr',
+          setLanguage() {},
+          t: (key, params) => {
+            const val = key.split('.').reduce((acc, part) => acc?.[part], dict);
+            if (typeof val !== 'string') return key;
+            return params ? val.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`)) : val;
+          },
+        };
+      },
+    },
     '@/lib/studio-motion': { studioSprings: { cinematic: {} } },
     '@/lib/actions': { submitInquiry },
     '@/hooks/useFocusTrap': { useFocusTrap: (options) => { trap = options; } },

@@ -53,7 +53,7 @@ export function AccountDashboard({
 }: AccountDashboardProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isArabic } = useLanguage();
+  const { t, isArabic, dir } = useLanguage();
 
   const tabQuery = searchParams.get("tab");
   const [userSelectedTab, setUserSelectedTab] = useState<"bookings" | "profile" | null>(null);
@@ -87,22 +87,14 @@ export function AccountDashboard({
     try {
       const res = await signOut();
       if (res?.error) {
-        setSignOutError(
-          isArabic
-            ? "فشل تسجيل الخروج. يرجى المحاولة مرة أخرى."
-            : "Sign out failed. Please try again."
-        );
+        setSignOutError(t("portal.dashboard.signOutFailed"));
         setIsSigningOut(false);
         return;
       }
       router.push("/login");
       router.refresh();
     } catch {
-      setSignOutError(
-        isArabic
-          ? "حدث خطأ أثناء تسجيل الخروج. يرجى المحاولة مرة أخرى."
-          : "An unexpected error occurred during sign out. Please try again."
-      );
+      setSignOutError(t("portal.dashboard.signOutError"));
       setIsSigningOut(false);
     }
   };
@@ -123,20 +115,20 @@ export function AccountDashboard({
     if (res.success) {
       setFeedback({
         type: "success",
-        msg: isArabic ? "تم تحديث الملف الشخصي بنجاح." : "Profile updated successfully.",
+        msg: t("portal.dashboard.profileUpdated"),
       });
       setIsEditing(false);
       router.refresh();
     } else {
       setFeedback({
         type: "error",
-        msg: res.message || (isArabic ? "تعذر حفظ التغييرات." : "Failed to update profile."),
+        msg: res.message || t("portal.dashboard.profileUpdateFailed"),
       });
     }
   };
 
   return (
-    <div className="w-full min-h-screen py-10 sm:py-16">
+    <div dir={dir} className="w-full min-h-screen py-10 sm:py-16 text-start">
       <Container>
         {/* Header Banner */}
         <div className="relative rounded-3xl bg-slate-900/60 border border-white/10 p-6 sm:p-8 backdrop-blur-xl mb-8 overflow-hidden shadow-2xl">
@@ -177,7 +169,7 @@ export function AccountDashboard({
                   className="px-4 py-2 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 text-xs font-bold transition-all flex items-center gap-1.5"
                 >
                   <LayoutDashboard size={14} />
-                  <span>{isArabic ? "لوحة الإدارة" : "Admin Panel"}</span>
+                  <span>{t("portal.dashboard.adminPanel")}</span>
                 </Link>
               )}
 
@@ -192,7 +184,7 @@ export function AccountDashboard({
                 ) : (
                   <LogOut size={14} />
                 )}
-                <span>{isArabic ? "تسجيل الخروج" : "Sign Out"}</span>
+                <span>{t("portal.dashboard.signOut")}</span>
               </button>
             </div>
           </div>
@@ -218,7 +210,7 @@ export function AccountDashboard({
             )}
           >
             <CalendarCheck size={15} />
-            <span>{isArabic ? "حجوزاتي وطلباتي" : "My Bookings & Rentals"}</span>
+            <span>{t("portal.dashboard.myBookingsTab")}</span>
             <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-white">
               {bookings.length}
             </span>
@@ -235,7 +227,7 @@ export function AccountDashboard({
             )}
           >
             <UserIcon size={15} />
-            <span>{isArabic ? "بيانات الحساب" : "Account Details"}</span>
+            <span>{t("portal.dashboard.accountDetailsTab")}</span>
           </button>
         </div>
 
@@ -246,12 +238,10 @@ export function AccountDashboard({
               <div className="rounded-3xl bg-slate-900/40 border border-white/10 p-10 sm:p-16 text-center backdrop-blur-xl">
                 <CalendarCheck size={48} className="mx-auto text-slate-500 mb-4" />
                 <h3 className="text-lg font-bold text-white mb-2 font-display">
-                  {isArabic ? "لا توجد حجوزات حالية" : "No active bookings or rentals"}
+                  {t("portal.dashboard.noBookingsTitle")}
                 </h3>
                 <p className="text-xs text-text-muted max-w-md mx-auto mb-6">
-                  {isArabic
-                    ? "لم تقم بحجز استوديو أو طلب معدات بعد. تصفح استوديوهاتنا أو متجر المعدات لبدء مشروعك القادم."
-                    : "You haven't reserved a soundstage or requested cinema gear yet. Explore our facilities or gear shop to start your next production."}
+                  {t("portal.dashboard.noBookingsDesc")}
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3">
                   <Link
@@ -259,14 +249,14 @@ export function AccountDashboard({
                     className="px-5 py-2.5 rounded-xl btn-brand text-xs font-bold transition-all inline-flex items-center gap-2"
                   >
                     <Video size={14} />
-                    <span>{isArabic ? "حجز استوديو" : "Book Studio"}</span>
+                    <span>{t("portal.dashboard.bookStudio")}</span>
                   </Link>
                   <Link
                     href="/shop"
                     className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/10 transition-all inline-flex items-center gap-2"
                   >
                     <Camera size={14} />
-                    <span>{isArabic ? "تأجير معدات" : "Rent Gear"}</span>
+                    <span>{t("portal.dashboard.rentGear")}</span>
                   </Link>
                 </div>
               </div>
@@ -287,12 +277,10 @@ export function AccountDashboard({
               <div className="flex items-center justify-between pb-6 border-b border-white/10 mb-6">
                 <div>
                   <h2 className="text-base font-bold text-white font-display">
-                    {isArabic ? "تفاصيل الحساب والتواصل" : "Account & Contact Details"}
+                    {t("portal.dashboard.accountContactTitle")}
                   </h2>
                   <p className="text-xs text-text-muted mt-0.5">
-                    {isArabic
-                      ? "تُستخدم هذه البيانات للتأكيد على حجوزات الاستوديو والمعدات."
-                      : "Used for reservation confirmations, call sheets, and gear delivery."}
+                    {t("portal.dashboard.accountContactDesc")}
                   </p>
                 </div>
 
@@ -303,7 +291,7 @@ export function AccountDashboard({
                     className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
                   >
                     <Pencil size={13} />
-                    <span>{isArabic ? "تعديل" : "Edit"}</span>
+                    <span>{t("portal.dashboard.edit")}</span>
                   </button>
                 ) : (
                   <button
@@ -318,7 +306,7 @@ export function AccountDashboard({
                     className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
                   >
                     <XIcon size={13} />
-                    <span>{isArabic ? "إلغاء" : "Cancel"}</span>
+                    <span>{t("portal.dashboard.cancel")}</span>
                   </button>
                 )}
               </div>
@@ -345,7 +333,7 @@ export function AccountDashboard({
                 {/* Full Name */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {isArabic ? "الاسم الكامل" : "Full Name"}
+                    {t("portal.dashboard.fullName")}
                   </label>
                   <input
                     type="text"
@@ -360,7 +348,7 @@ export function AccountDashboard({
                 {/* Email (Read-only) */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {isArabic ? "البريد الإلكتروني (أساسي)" : "Primary Email"}
+                    {t("portal.dashboard.primaryEmail")}
                   </label>
                   <div className="relative">
                     <input
@@ -369,17 +357,17 @@ export function AccountDashboard({
                       disabled
                       className="w-full bg-slate-950/40 border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-400 cursor-not-allowed opacity-75"
                     />
-                    <Mail size={14} className="absolute right-3.5 rtl:right-auto rtl:left-3.5 top-3 text-slate-500 pointer-events-none" />
+                    <Mail size={14} className="absolute end-3.5 top-3 text-slate-500 pointer-events-none" />
                   </div>
                   <p className="text-[11px] text-text-muted mt-1">
-                    {isArabic ? "لتغيير البريد يرجى مراجعة إدارة ياس برو." : "To change your email address, contact Yas Pro studio administration."}
+                    {t("portal.dashboard.emailChangeNotice")}
                   </p>
                 </div>
 
                 {/* Phone */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {isArabic ? "رقم الهاتف / واتساب" : "Phone / WhatsApp"}
+                    {t("portal.dashboard.phoneWhatsApp")}
                   </label>
                   <div className="relative">
                     <input
@@ -390,14 +378,14 @@ export function AccountDashboard({
                       placeholder="+971 50 123 4567"
                       className="w-full bg-slate-950/80 border border-white/15 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-purple-500 disabled:opacity-60 transition-all"
                     />
-                    <Phone size={14} className="absolute right-3.5 rtl:right-auto rtl:left-3.5 top-3 text-slate-500 pointer-events-none" />
+                    <Phone size={14} className="absolute end-3.5 top-3 text-slate-500 pointer-events-none" />
                   </div>
                 </div>
 
                 {/* Company / Agency */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    {isArabic ? "الشركة أو جهة الإنتاج" : "Company or Production Agency"}
+                    {t("portal.dashboard.companyAgency")}
                   </label>
                   <div className="relative">
                     <input
@@ -408,7 +396,7 @@ export function AccountDashboard({
                       placeholder="e.g. Media Agency LLC"
                       className="w-full bg-slate-950/80 border border-white/15 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder:text-text-muted focus:outline-none focus:border-purple-500 disabled:opacity-60 transition-all"
                     />
-                    <Building size={14} className="absolute right-3.5 rtl:right-auto rtl:left-3.5 top-3 text-slate-500 pointer-events-none" />
+                    <Building size={14} className="absolute end-3.5 top-3 text-slate-500 pointer-events-none" />
                   </div>
                 </div>
 
@@ -422,12 +410,12 @@ export function AccountDashboard({
                       {isSaving ? (
                         <>
                           <Loader2 size={14} className="animate-spin" />
-                          <span>{isArabic ? "جاري الحفظ..." : "Saving..."}</span>
+                          <span>{t("portal.dashboard.saving")}</span>
                         </>
                       ) : (
                         <>
                           <Save size={14} />
-                          <span>{isArabic ? "حفظ التغييرات" : "Save Changes"}</span>
+                          <span>{t("portal.dashboard.saveChanges")}</span>
                         </>
                       )}
                     </button>

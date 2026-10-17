@@ -1,7 +1,6 @@
-"use client";
-
 import Image from "next/image";
 import { MapPin, Users, Sparkles, Check } from "lucide-react";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import { PODCAST_STUDIOS } from "../data";
 import { PodcastSessionItem, PodcastStudio } from "../types";
 import { MetaTag, SelectableCard, StepIntro } from "@/features/booking/components/ui/BookingKit";
@@ -13,15 +12,16 @@ interface Step2SetupProps {
 }
 
 export function Step2Setup({ session, onChange, studios = PODCAST_STUDIOS }: Step2SetupProps) {
+  const { t, isArabic } = useLanguage();
   const availableStudios = studios.filter((studio) => studio.isAvailable !== false);
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <StepIntro
         index={2}
         total={5}
-        title="Studio Setup"
-        description="Browse through our acoustic spaces and pick the setup that fits your podcast format best."
-        aside={<MetaTag tone="mauve">{availableStudios.length} setups</MetaTag>}
+        title={t("podcastBooking.step2.introTitle")}
+        description={t("podcastBooking.step2.introDesc")}
+        aside={<MetaTag tone="mauve">{t("podcastBooking.step2.setupsCount", { count: availableStudios.length })}</MetaTag>}
       />
 
       {/* 2-Column Responsive Grid (300px+ width per card to prevent text and badge wrapping) */}
@@ -29,6 +29,9 @@ export function Step2Setup({ session, onChange, studios = PODCAST_STUDIOS }: Ste
         {availableStudios.map((studio) => {
           const isSelected = session.studioKey === studio.key;
           const isCapacityMatch = studio.seats >= session.headcount;
+          const studioName = (isArabic && studio.arabicName) ? studio.arabicName : studio.name;
+          const studioDesc = (isArabic && studio.arabicDescription) ? studio.arabicDescription : studio.description;
+          const studioLocation = (isArabic && studio.arabicLocation) ? studio.arabicLocation : studio.location;
 
           return (
             <SelectableCard
@@ -42,7 +45,7 @@ export function Step2Setup({ session, onChange, studios = PODCAST_STUDIOS }: Ste
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-black/40">
                   <Image
                     src={studio.image}
-                    alt={studio.name}
+                    alt={studioName}
                     fill
                     sizes="(max-width: 640px) 100vw, 50vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -54,14 +57,17 @@ export function Step2Setup({ session, onChange, studios = PODCAST_STUDIOS }: Ste
                   <div className="absolute top-3 start-3">
                     <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-black/70 backdrop-blur-md text-white border border-white/10 flex items-center gap-1.5 font-mono whitespace-nowrap shrink-0">
                       <Users size={12} className="text-brand-mauve" />
-                      {studio.seats} {studio.seats === 1 ? "seat" : "seats"}
+                      {t("podcastBooking.step2.seats", {
+                        count: studio.seats,
+                        seats: studio.seats === 1 ? t("podcastBooking.step2.seatSingle") : t("podcastBooking.step2.seatPlural"),
+                      })}
                     </span>
                   </div>
 
                   {/* Location badge at bottom of photo */}
                   <div className="absolute bottom-2.5 start-3 end-3 flex items-center gap-1 text-[11px] text-zinc-300">
                     <MapPin size={11} className="text-brand-mauve shrink-0" />
-                    <span className="truncate">{studio.location}</span>
+                    <span className="truncate">{studioLocation}</span>
                   </div>
                 </div>
 
@@ -69,12 +75,12 @@ export function Step2Setup({ session, onChange, studios = PODCAST_STUDIOS }: Ste
                 <div className="p-3.5 sm:p-5 space-y-1 sm:space-y-1.5">
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-brand-mauve transition-colors truncate">
-                      {studio.name}
+                      {studioName}
                     </h3>
                   </div>
 
                   <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">
-                    {studio.description}
+                    {studioDesc}
                   </p>
                 </div>
               </div>
@@ -89,12 +95,12 @@ export function Step2Setup({ session, onChange, studios = PODCAST_STUDIOS }: Ste
                 <span className="text-[11px] font-medium font-mono text-zinc-400 whitespace-nowrap shrink-0">
                   {isSelected ? (
                     <span className="text-brand-mauve font-bold flex items-center gap-1 whitespace-nowrap">
-                      <Check size={12} strokeWidth={2.5} /> Selected
+                      <Check size={12} strokeWidth={2.5} /> {t("podcastBooking.step2.selected")}
                     </span>
                   ) : !isCapacityMatch ? (
-                    <span className="text-brand-lavender/80 whitespace-nowrap">Needs {session.headcount} seats</span>
+                    <span className="text-brand-lavender/80 whitespace-nowrap">{t("podcastBooking.step2.needsSeats", { count: session.headcount })}</span>
                   ) : (
-                    <span className="whitespace-nowrap">Available</span>
+                    <span className="whitespace-nowrap">{t("podcastBooking.step2.available")}</span>
                   )}
                 </span>
               </div>

@@ -39,9 +39,15 @@ export function calculateRentalMultiplier(totalDays: number): {
   multiplier: number;
   discountPct: number;
   discountLabel: string;
+  discountLabelAr: string;
 } {
   if (totalDays <= 1) {
-    return { multiplier: 1, discountPct: 0, discountLabel: "Standard Daily Rate" };
+    return {
+      multiplier: 1,
+      discountPct: 0,
+      discountLabel: "Standard Daily Rate",
+      discountLabelAr: "السعر اليومي القياسي",
+    };
   }
   if (totalDays === 2 || totalDays === 3) {
     // 2-3 Days: Weekend shoot discount (3 days for the price of 2)
@@ -51,6 +57,7 @@ export function calculateRentalMultiplier(totalDays: number): {
       multiplier,
       discountPct,
       discountLabel: totalDays === 3 ? "Weekend Deal: 1 Day Free (33% OFF)" : "2-Day Production Rate",
+      discountLabelAr: totalDays === 3 ? "عرض عطلة الأسبوع: يوم مجاني (خصم 33%)" : "سعر إنتاج لمدة يومين",
     };
   }
   if (totalDays >= 4 && totalDays < 7) {
@@ -60,6 +67,7 @@ export function calculateRentalMultiplier(totalDays: number): {
       multiplier,
       discountPct,
       discountLabel: `Multi-Day Production: 1 Day Free (${discountPct}% OFF)`,
+      discountLabelAr: `إنتاج متعدد الأيام: يوم مجاني (خصم ${discountPct}%)`,
     };
   }
   // 7+ Days: Weekly rate (7 days billed as 4 days)
@@ -71,5 +79,6 @@ export function calculateRentalMultiplier(totalDays: number): {
     multiplier,
     discountPct,
     discountLabel: `Weekly Tier: 3 Days Free per Week (${discountPct}% OFF)`,
+    discountLabelAr: `الباقة الأسبوعية: 3 أيام مجاناً لكل أسبوع (خصم ${discountPct}%)`,
   };
 }

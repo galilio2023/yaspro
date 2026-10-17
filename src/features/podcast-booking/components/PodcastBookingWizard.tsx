@@ -1,5 +1,4 @@
-"use client";
-
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import { useEffect, useState } from "react";
 import type { PodcastStudio, PodcastAddon, PodcastService } from "../types";
 import { usePodcastBooking } from "../hooks/usePodcastBooking";
@@ -13,14 +12,6 @@ import { PodcastConfirmation } from "./PodcastConfirmation";
 import { Plus, ArrowLeft, ArrowRight, Trash2 } from "lucide-react";
 import { BookingStepper, ErrorBanner, formatAED, studioSprings } from "@/features/booking/components/ui/BookingKit";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-
-const STEPPER_STEPS = [
-  { id: 1, label: "Schedule & Time", shortLabel: "Schedule" },
-  { id: 2, label: "Studio Setup", shortLabel: "Studio" },
-  { id: 3, label: "Production Tier", shortLabel: "Tier" },
-  { id: 4, label: "Add-ons & Edits", shortLabel: "Add-ons" },
-  { id: 5, label: "Review & Checkout", shortLabel: "Review" },
-] as const;
 
 const stepVariants: Variants = {
   enter: (dir: number) => ({ opacity: 0, x: dir > 0 ? 28 : -28 }),
@@ -37,6 +28,8 @@ export function PodcastBookingWizard({
   addons?: PodcastAddon[];
   services?: PodcastService[];
 } = {}) {
+  const { t, isArabic, dir } = useLanguage();
+
   const {
     studios,
     addons,
@@ -73,7 +66,7 @@ export function PodcastBookingWizard({
     submitBooking,
   } = usePodcastBooking(catalogStudios, catalogAddons, catalogServices);
 
-  const [direction, setDirection] = useState(1);
+  const [slideDirection, setSlideDirection] = useState(1);
 
   // Elevate floating actions so they do not overlap this wizard's sticky mobile action bar
   useEffect(() => {
@@ -92,7 +85,7 @@ export function PodcastBookingWizard({
   };
 
   const handleNextStep = () => {
-    setDirection(1);
+    setSlideDirection(1);
     const before = step;
     nextStep();
     if (before !== step) scrollToTop();
@@ -100,16 +93,24 @@ export function PodcastBookingWizard({
   };
 
   const handlePrevStep = () => {
-    setDirection(-1);
+    setSlideDirection(-1);
     prevStep();
     requestAnimationFrame(scrollToTop);
   };
 
   const handleStepClick = (newStep: number) => {
-    setDirection(newStep > step ? 1 : -1);
+    setSlideDirection(newStep > step ? 1 : -1);
     setStep(newStep as 1 | 2 | 3 | 4 | 5);
     requestAnimationFrame(scrollToTop);
   };
+
+  const steps = [
+    { id: 1, label: t("podcastBooking.stepper.step1"), shortLabel: t("podcastBooking.stepper.step1Short") },
+    { id: 2, label: t("podcastBooking.stepper.step2"), shortLabel: t("podcastBooking.stepper.step2Short") },
+    { id: 3, label: t("podcastBooking.stepper.step3"), shortLabel: t("podcastBooking.stepper.step3Short") },
+    { id: 4, label: t("podcastBooking.stepper.step4"), shortLabel: t("podcastBooking.stepper.step4Short") },
+    { id: 5, label: t("podcastBooking.stepper.step5"), shortLabel: t("podcastBooking.stepper.step5Short") },
+  ] as const;
 
   if (confirmedResult) {
     return (
@@ -123,10 +124,10 @@ export function PodcastBookingWizard({
   }
 
   const isLastStep = step === 5;
-  const nextStepLabel = STEPPER_STEPS.find((s) => s.id === step + 1)?.shortLabel ?? "Next";
+  const nextStepLabel = steps.find((s) => s.id === step + 1)?.shortLabel ?? t("podcastBooking.actions.continue");
 
   return (
-    <div id="podcast-booking-wizard" className="w-full max-w-6xl mx-auto scroll-mt-28 space-y-6 sm:space-y-8">
+    <div id="podcast-booking-wizard" className="w-full max-w-6xl mx-auto scroll-mt-28 space-y-6 sm:space-y-8" dir={dir}>
       {/* 1. Multi-Session Tabs Bar (Clean, subtle session tabs) */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-[#0e0e13] border border-white/[0.08]">
         <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
@@ -146,15 +147,15 @@ export function PodcastBookingWizard({
                   onClick={() => setActiveSessionIndex(idx)}
                   className="px-3.5 py-1.5 text-xs font-bold font-mono uppercase tracking-wider min-h-[36px] cursor-pointer whitespace-nowrap"
                 >
-                  Session {idx + 1}
+                  {t("podcastBooking.sessions.session", { number: idx + 1 })}
                 </button>
                 {sessions.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeSession(idx)}
                     className="pe-2.5 ps-0.5 py-1.5 opacity-70 hover:opacity-100 transition cursor-pointer"
-                    title="Remove Session"
-                    aria-label={`Remove session ${idx + 1}`}
+                    title={t("podcastBooking.sessions.removeSessionTitle")}
+                    aria-label={t("podcastBooking.sessions.removeSessionAria", { number: idx + 1 })}
                   >
                     <Trash2 size={12} />
                   </button>
@@ -168,21 +169,21 @@ export function PodcastBookingWizard({
             onClick={addNewSession}
             className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/[0.03] hover:bg-white/[0.08] text-zinc-400 hover:text-white transition flex items-center gap-1.5 border border-dashed border-white/20 shrink-0 min-h-[36px] cursor-pointer"
           >
-            <Plus size={13} /> Add Session
+            <Plus size={13} /> {t("podcastBooking.sessions.addSession")}
           </button>
         </div>
 
         <div className="hidden sm:flex items-center gap-2 text-xs text-zinc-400 font-mono whitespace-nowrap shrink-0">
-          <span>Studio Engine:</span>
+          <span>{t("podcastBooking.sessions.studioEngine")}</span>
           <span className="inline-block size-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-zinc-200 font-medium">Iris Bay Dubai · Level 18</span>
+          <span className="text-zinc-200 font-medium">{t("podcastBooking.sessions.studioLocation")}</span>
         </div>
       </div>
 
       {/* 2. Unified 5-Step Stepper */}
       <div className="p-3 sm:p-5 rounded-2xl bg-[#0b0b0f] border border-white/[0.08]">
         <BookingStepper
-          steps={STEPPER_STEPS}
+          steps={steps}
           current={step}
           onStepClick={handleStepClick}
           canJumpTo={(num) => num < step}
@@ -200,10 +201,10 @@ export function PodcastBookingWizard({
               </div>
             )}
 
-            <AnimatePresence mode="wait" custom={direction} initial={false}>
+            <AnimatePresence mode="wait" custom={slideDirection} initial={false}>
               <motion.div
                 key={step}
-                custom={direction}
+                custom={slideDirection}
                 variants={stepVariants}
                 initial="enter"
                 animate="center"
@@ -259,7 +260,7 @@ export function PodcastBookingWizard({
                     onSubmit={submitBooking}
                     onEditSession={(idx) => {
                       setActiveSessionIndex(idx);
-                      setDirection(-1);
+                      setSlideDirection(-1);
                       setStep(1);
                       requestAnimationFrame(scrollToTop);
                     }}
@@ -271,7 +272,7 @@ export function PodcastBookingWizard({
 
           {/* Action bar — sticky on mobile, inline on desktop */}
           <div
-            dir="ltr"
+            dir={dir}
             className="sticky bottom-2 sm:bottom-3 z-30 mt-3 sm:mt-4 lg:static lg:mt-5 rounded-xl sm:rounded-2xl border border-white/[0.1] lg:border-transparent bg-[#0b0b0f]/95 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none p-2 sm:p-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:pb-0 lg:p-0 shadow-2xl lg:shadow-none flex items-center gap-2 sm:gap-3"
           >
             {step > 1 && (
@@ -280,11 +281,11 @@ export function PodcastBookingWizard({
                 onClick={handlePrevStep}
                 whileTap={{ scale: 0.96 }}
                 transition={studioSprings.snappy}
-                aria-label="Back"
+                aria-label={t("podcastBooking.actions.back")}
                 className="h-9 sm:h-11 px-2.5 sm:px-3.5 rounded-lg sm:rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/20 text-zinc-200 text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 cursor-pointer transition-colors shrink-0"
               >
-                <ArrowLeft size={14} className="sm:size-[15px]" />
-                <span className="hidden sm:inline">Back</span>
+                {isArabic ? <ArrowRight size={14} className="sm:size-[15px]" /> : <ArrowLeft size={14} className="sm:size-[15px]" />}
+                <span className="hidden sm:inline">{t("podcastBooking.actions.back")}</span>
               </motion.button>
             )}
 
@@ -292,7 +293,10 @@ export function PodcastBookingWizard({
             {!isLastStep && (
               <div className="lg:hidden min-w-0 flex-1">
                 <span className="block font-mono text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-zinc-500">
-                  Total ({sessions.length} {sessions.length === 1 ? "Session" : "Sessions"})
+                  {t("podcastBooking.sessions.totalMobile", {
+                    count: sessions.length,
+                    sessions: sessions.length === 1 ? t("podcastBooking.sessions.sessionSingle") : t("podcastBooking.sessions.sessionPlural"),
+                  })}
                 </span>
                 <span className="block text-xs sm:text-base font-bold text-brand-mauve tabular-nums truncate">
                   {formatAED(grandTotal)}
@@ -310,10 +314,10 @@ export function PodcastBookingWizard({
                 className="lg:ms-auto h-9 sm:h-11 px-3 sm:px-5 rounded-lg sm:rounded-xl btn-brand text-xs sm:text-sm font-bold flex items-center gap-1 sm:gap-2 cursor-pointer shrink-0"
               >
                 <span>
-                  <span className="sm:hidden">Continue</span>
-                  <span className="hidden sm:inline">Continue · {nextStepLabel}</span>
+                  <span className="sm:hidden">{t("podcastBooking.actions.continue")}</span>
+                  <span className="hidden sm:inline">{t("podcastBooking.actions.continueWithStep", { step: nextStepLabel })}</span>
                 </span>
-                <ArrowRight size={14} className="sm:size-[15px]" />
+                {isArabic ? <ArrowLeft size={14} className="sm:size-[15px]" /> : <ArrowRight size={14} className="sm:size-[15px]" />}
               </motion.button>
             )}
           </div>

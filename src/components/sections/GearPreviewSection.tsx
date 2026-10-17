@@ -68,7 +68,7 @@ const GEAR_CATEGORIES_PREVIEW: GearCategoryPreviewItem[] = [
 ];
 
 export function GearPreviewSection() {
-  const { isArabic } = useLanguage();
+  const { t, isArabic } = useLanguage();
 
   return (
     <Section
@@ -95,7 +95,7 @@ export function GearPreviewSection() {
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-mauve" />
               </span>
               <span>
-                {isArabic ? "تأجير معدات التصوير والسينما" : "CINEMA RENTAL FLEET · DUBAI"}
+                {t("gearPreview.badge")}
               </span>
             </div>
 
@@ -103,7 +103,7 @@ export function GearPreviewSection() {
               id="gear-preview-title"
               className="text-base sm:text-xl font-bold text-white tracking-tight font-display rtl:font-arabic"
             >
-              {isArabic ? "أقسام ومعدات التصوير السينمائي" : "Cinema Equipment Categories"}
+              {t("gearPreview.title")}
             </h2>
           </div>
 
@@ -112,7 +112,7 @@ export function GearPreviewSection() {
             href="/shop"
             className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-300 hover:text-white transition-colors cursor-pointer shrink-0"
           >
-            <span>{isArabic ? "عرض كافة المعدات (20+)" : "View all gear (20+)"}</span>
+            <span>{t("gearPreview.viewAll", { count: 20 })}</span>
             <ArrowRight
               size={13}
               className={`text-brand-mauve shrink-0 ${isArabic ? "rotate-180" : ""}`}
@@ -147,7 +147,7 @@ export function GearPreviewSection() {
                 </div>
 
                 <span className="absolute bottom-2 end-2 font-mono text-[9px] uppercase text-zinc-300 bg-black/75 px-1.5 py-0.5 rounded border border-white/10 backdrop-blur-md">
-                  {isArabic ? "متاح فوري" : "In Stock"}
+                  {t("gearPreview.instantReserve")}
                 </span>
               </div>
 
@@ -172,7 +172,7 @@ export function GearPreviewSection() {
                     href={`/shop?category=${item.categorySlug}`}
                     className="inline-flex items-center gap-1 px-3 py-1 rounded-full font-semibold text-xs text-white bg-white/10 hover:bg-brand-mauve hover:text-black border border-white/10 hover:border-brand-mauve transition-all duration-150 cursor-pointer whitespace-nowrap active:scale-95"
                   >
-                    <span>{isArabic ? "استكشف" : "Explore"}</span>
+                    <span>{t("gearPreview.reserve")}</span>
                     <ChevronRight
                       size={12}
                       className={`shrink-0 ${isArabic ? "rotate-180" : ""}`}

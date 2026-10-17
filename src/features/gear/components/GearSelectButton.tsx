@@ -17,7 +17,7 @@ export function GearSelectButton({
   onToggle,
   className,
 }: GearSelectButtonProps) {
-  const { isArabic } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <button
@@ -34,12 +34,12 @@ export function GearSelectButton({
       {inCart ? (
         <>
           <Check size={14} className="shrink-0" />
-          <span>{isArabic ? "تم الاختيار" : "Selected"}</span>
+          <span>{t("shop.card.selected")}</span>
         </>
       ) : (
         <>
           <Plus size={14} className="shrink-0" />
-          <span>{isArabic ? "حجز المعدة" : "Reserve Item"}</span>
+          <span>{t("shop.card.reserveItem")}</span>
         </>
       )}
     </button>

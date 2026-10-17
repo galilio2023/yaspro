@@ -6,6 +6,7 @@ import { Film, Play, Sparkles } from "lucide-react";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import { Badge } from "@/components/ui/badge";
 import { CinemaVideoModal } from "@/components/common/CinemaVideoModal";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import type { ProjectItem } from "../types";
 
 export interface ProjectHeroStageProps {
@@ -13,7 +14,10 @@ export interface ProjectHeroStageProps {
 }
 
 export function ProjectHeroStage({ project }: ProjectHeroStageProps) {
+  const { t, isArabic } = useLanguage();
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const projectTitle = isArabic && project.arabicTitle ? project.arabicTitle : project.title;
+  const projectCategory = isArabic && project.categoryLabelAr ? project.categoryLabelAr : project.categoryLabel;
 
   return (
     <>
@@ -27,7 +31,7 @@ export function ProjectHeroStage({ project }: ProjectHeroStageProps) {
         {project.image ? (
           <Image
             src={project.image}
-            alt={project.title}
+            alt={projectTitle}
             fill
             priority
             sizes="(max-width: 1024px) 100vw, 800px"
@@ -46,7 +50,7 @@ export function ProjectHeroStage({ project }: ProjectHeroStageProps) {
         <div className="absolute top-3 sm:top-4 inset-x-3 sm:inset-x-5 flex items-center justify-between z-10 pointer-events-none">
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Badge variant="default" className="text-[10px] sm:text-xs font-semibold backdrop-blur-md">
-              {project.categoryLabel}
+              {projectCategory}
             </Badge>
             <Badge variant="secondary" className="text-[10px] sm:text-xs backdrop-blur-md">
               {project.tag}
@@ -65,14 +69,14 @@ export function ProjectHeroStage({ project }: ProjectHeroStageProps) {
             <Play size={20} className="fill-current translate-x-0.5 text-white" />
           </div>
           <span className="mt-2 sm:mt-3 text-[10px] sm:text-xs uppercase tracking-widest text-white/90 font-mono drop-shadow-md">
-            Watch Production Master
+            {t("projects.watchProductionMaster")}
           </span>
         </div>
 
         {/* Bottom Bar Info */}
         <div className="absolute bottom-3 sm:bottom-4 inset-x-3 sm:inset-x-5 flex items-center justify-between text-[10px] sm:text-xs font-mono text-white/80 z-10 pointer-events-none">
-          <span className="line-clamp-1">CLIENT: {project.client.toUpperCase()}</span>
-          <span className="hidden sm:inline">4K CINEMA MASTER · DOLBY ATMOS</span>
+          <span className="line-clamp-1">{t("projects.clientLabel", { client: project.client.toUpperCase() })}</span>
+          <span className="hidden sm:inline">{t("projects.specsBadge")}</span>
         </div>
       </div>
 
@@ -83,7 +87,8 @@ export function ProjectHeroStage({ project }: ProjectHeroStageProps) {
         vimeoId={project.vimeoId}
         videoUrl={project.videoUrl}
         posterImage={project.image}
-        title={project.title}
+        title={projectTitle}
+        subtitle={isArabic ? project.title : project.arabicTitle}
         client={project.client}
       />
     </>

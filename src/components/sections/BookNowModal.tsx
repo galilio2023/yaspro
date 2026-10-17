@@ -103,7 +103,7 @@ const VISUAL_CARDS: VisualBookingCard[] = [
 
 export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
-  const { isArabic } = useLanguage();
+  const { t, isArabic } = useLanguage();
   const [selectedInquiry, setSelectedInquiry] = useState<{
     id: string;
     type: "ob_van" | "outdoor_filming";
@@ -138,8 +138,8 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
     setInquiryType(card.inquiryService);
     setSubject(
       card.inquiryService === "ob_van"
-        ? (isArabic ? "طلب استشارة وحجز عربة بث مباشر (OB VAN)" : "OB VAN Live Broadcast Consultation & Quote")
-        : (isArabic ? "طلب استشارة وتصوير ميداني (Outdoor Filming)" : "Outdoor Filming Consultation & Quote")
+        ? t("bookNowModal.subjectObVan")
+        : t("bookNowModal.subjectOutdoor")
     );
     setSubmitError(null);
     setIsSubmitted(false);
@@ -183,11 +183,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
       : message.trim();
 
     if (fullMessage.length < 10) {
-      setSubmitError(
-        isArabic
-          ? "يرجى كتابة تفاصيل متطلباتك بحد أدنى 10 أحرف."
-          : "Please describe your project requirements in at least 10 characters."
-      );
+      setSubmitError(t("bookNowModal.errorMinChars"));
       setIsSubmitting(false);
       return;
     }
@@ -202,16 +198,12 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
       });
 
       if (res && !res.success) {
-        setSubmitError(res.message || (isArabic ? "تعذر إرسال الطلب، يرجى المحاولة ثانية." : "Failed to send inquiry. Please try again."));
+        setSubmitError(res.message || t("bookNowModal.errorFailed"));
       } else {
         setIsSubmitted(true);
       }
     } catch {
-      setSubmitError(
-        isArabic
-          ? "حدث خطأ أثناء الإرسال. يرجى المحاولة ثانية أو الاتصال بنا مباشرة."
-          : "An unexpected error occurred. Please try again or reach out to our concierge directly."
-      );
+      setSubmitError(t("bookNowModal.errorUnexpected"));
     } finally {
       setIsSubmitting(false);
     }
@@ -266,7 +258,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                 <button
                   type="button"
                   onClick={handleBackToGrid}
-                  aria-label={isArabic ? "رجوع" : "Back"}
+                  aria-label={t("bookNowModal.backAria")}
                   className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                 >
                   {isArabic ? <ArrowRight size={18} /> : <ArrowLeft size={18} />}
@@ -281,8 +273,8 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                 }`}
               >
                 {selectedInquiry
-                  ? (isArabic ? "أرسل لنا رسالة" : "SEND US A MESSAGE")
-                  : (isArabic ? "اختر نوع الخدمة أو الحجز" : "Select Production Service")}
+                  ? t("bookNowModal.titleMessage")
+                  : t("bookNowModal.titleSelect")}
               </h2>
             </div>
 
@@ -290,7 +282,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
             <button
               type="button"
               onClick={handleModalClose}
-              aria-label={isArabic ? "إغلاق" : "Close"}
+              aria-label={t("bookNowModal.closeAria")}
               className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
             >
               <X size={18} />
@@ -333,7 +325,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                       {card.isFeatured && (
                         <div className="absolute top-2 start-2 sm:top-3 sm:start-3 z-10">
                           <span className="inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wide uppercase bg-brand-violet/40 text-brand-lavender border border-brand-mauve/30 backdrop-blur-md shadow-md">
-                            <span>{isArabic ? "باقات التوفير" : "Best Value"}</span>
+                            <span>{t("bookNowModal.bestValue")}</span>
                           </span>
                         </div>
                       )}
@@ -343,8 +335,8 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                         <div className="absolute top-2 end-2 sm:top-3 sm:end-3 z-10">
                           <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-medium tracking-wide bg-brand-violet/30 text-brand-mauve-soft border border-brand-mauve/30 backdrop-blur-md">
                             <PhoneCall size={10} className="sm:size-[11px]" />
-                            <span className="hidden xs:inline">{isArabic ? "طلب اتصال" : "Callback"}</span>
-                            <span className="inline xs:hidden">{isArabic ? "اتصال" : "Call"}</span>
+                            <span className="hidden xs:inline">{t("bookNowModal.callback")}</span>
+                            <span className="inline xs:hidden">{t("bookNowModal.call")}</span>
                           </span>
                         </div>
                       )}
@@ -404,28 +396,24 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                       <CheckCircle2 size={36} />
                     </div>
                     <h3 className="text-xl font-bold text-white mb-2 font-display">
-                      {isArabic ? "تم استلام طلبك بنجاح" : "Message Received Successfully"}
+                      {t("bookNowModal.submittedTitle")}
                     </h3>
                     <p className="text-zinc-400 text-sm max-w-md mx-auto mb-6 leading-relaxed">
-                      {isArabic
-                        ? "سيتواصل معك فريق الإنتاج التنفيذي في ياس برو هاتفياً في أقرب وقت لمناقشة التفاصيل وتقديم العرض المناسب."
-                        : "Our executive production team at Yas Pro will review your requirements and call you shortly to discuss full details and pricing."}
+                      {t("bookNowModal.submittedDesc")}
                     </p>
                     <button
                       type="button"
                       onClick={handleModalClose}
                       className="px-6 py-2.5 rounded-full btn-brand text-sm cursor-pointer"
                     >
-                      {isArabic ? "إغلاق" : "Close"}
+                      {t("bookNowModal.close")}
                     </button>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Subtitle / Service tag */}
                     <p className="text-xs text-zinc-400">
-                      {isArabic
-                        ? "سجل بياناتك وسيطلبك فريق المبيعات والإنتاج لتحديد التجهيزات والمواعيد المناسبة."
-                        : "Submit your requirements below and our sales & production team will call you to arrange complete specifications and dates."}
+                      {t("bookNowModal.formSubtitle")}
                     </p>
 
                     {submitError && (
@@ -439,21 +427,21 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div>
                         <label className="block text-xs font-medium text-zinc-400 mb-1.5">
-                          {isArabic ? "الاسم" : "Name"} <span className="text-brand-mauve">*</span>
+                          {t("bookNowModal.name")} <span className="text-brand-mauve">*</span>
                         </label>
                         <input
                           type="text"
                           required
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          placeholder={isArabic ? "اسمك الكريم" : "Your full name"}
+                          placeholder={t("bookNowModal.namePlaceholder")}
                           className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
                         />
                       </div>
 
                       <div>
                         <label className="block text-xs font-medium text-zinc-400 mb-1.5">
-                          {isArabic ? "البريد الإلكتروني" : "Email"} <span className="text-brand-mauve">*</span>
+                          {t("bookNowModal.email")} <span className="text-brand-mauve">*</span>
                         </label>
                         <input
                           type="email"
@@ -470,7 +458,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div>
                         <label className="block text-xs font-medium text-zinc-400 mb-1.5">
-                          {isArabic ? "نوع الطلب" : "Inquiry Type"}
+                          {t("bookNowModal.inquiryType")}
                         </label>
                         <select
                           value={inquiryType}
@@ -479,30 +467,30 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                             setInquiryType(val);
                             setSubject(
                               val === "ob_van"
-                                ? (isArabic ? "طلب استشارة وحجز عربة بث مباشر (OB VAN)" : "OB VAN Live Broadcast Consultation & Quote")
-                                : (isArabic ? "طلب استشارة وتصوير ميداني (Outdoor Filming)" : "Outdoor Filming Consultation & Quote")
+                                ? t("bookNowModal.subjectObVan")
+                                : t("bookNowModal.subjectOutdoor")
                             );
                           }}
                           className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white focus:outline-none focus:border-white transition-colors cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
                         >
                           <option value="ob_van">
-                            {isArabic ? "عربات البث المباشر (OB VAN)" : "OB VAN Live Broadcast"}
+                            {t("bookNowModal.obVanOption")}
                           </option>
                           <option value="outdoor_filming">
-                            {isArabic ? "التصوير الميداني (Outdoor Filming)" : "Outdoor Filming"}
+                            {t("bookNowModal.outdoorFilmingOption")}
                           </option>
                         </select>
                       </div>
 
                       <div>
                         <label className="block text-xs font-medium text-zinc-400 mb-1.5">
-                          {isArabic ? "الموضوع" : "Subject"}
+                          {t("bookNowModal.subject")}
                         </label>
                         <input
                           type="text"
                           value={subject}
                           onChange={(e) => setSubject(e.target.value)}
-                          placeholder={isArabic ? "موضوع الطلب" : "Subject of inquiry"}
+                          placeholder={t("bookNowModal.subjectPlaceholder")}
                           className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors"
                         />
                       </div>
@@ -511,7 +499,7 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                     {/* Phone Number (Crucial for sales team to call) */}
                     <div>
                       <label className="block text-xs font-medium text-zinc-400 mb-1.5">
-                        {isArabic ? "رقم الهاتف للاتصال" : "Phone Number (for Callback)"} <span className="text-brand-mauve">*</span>
+                        {t("bookNowModal.phone")} <span className="text-brand-mauve">*</span>
                       </label>
                       <input
                         type="tel"
@@ -527,18 +515,14 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                     {/* Message / Details */}
                     <div>
                       <label className="block text-xs font-medium text-zinc-400 mb-1.5">
-                        {isArabic ? "تفاصيل الطلب والاحتياجات" : "Message / What you need"} <span className="text-brand-mauve">*</span>
+                        {t("bookNowModal.message")} <span className="text-brand-mauve">*</span>
                       </label>
                       <textarea
                         required
                         rows={4}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        placeholder={
-                          isArabic
-                            ? "اكتب تفاصيل التغطية أو التصوير، التاريخ المقترح، موقع العمل، وأي متطلبات فنية خاصة..."
-                            : "Provide details on production dates, location, multi-camera needs, or any specific broadcast requirements..."
-                        }
+                        placeholder={t("bookNowModal.messagePlaceholder")}
                         className="w-full bg-transparent border-b border-zinc-700 pb-2 text-base sm:text-sm min-h-[44px] text-white placeholder-zinc-600 focus:outline-none focus:border-white transition-colors resize-none"
                       />
                     </div>
@@ -553,11 +537,11 @@ export function BookNowModal({ isOpen, onClose }: BookNowModalProps) {
                         {isSubmitting ? (
                           <>
                             <Loader2 size={16} className="animate-spin" />
-                            <span>{isArabic ? "جارٍ الإرسال..." : "Sending..."}</span>
+                            <span>{t("bookNowModal.sending")}</span>
                           </>
                         ) : (
                           <>
-                            <span>{isArabic ? "تواصل معنا" : "Let's Talk"}</span>
+                            <span>{t("bookNowModal.submit")}</span>
                             <span className="text-base leading-none">↗</span>
                           </>
                         )}
