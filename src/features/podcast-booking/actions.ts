@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { bookings, bookingSessions, studios, studioBlackouts, promoCodes } from "@/db/schema";
-import { eq, or, isNull } from "drizzle-orm";
+import { eq, or, isNull, sql } from "drizzle-orm";
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { createZiinaPaymentIntent, getBookingPaymentQuote } from "@/lib/ziina";
 import { PODCAST_SERVICES, PODCAST_PROMO_CODES } from "./data";
@@ -58,10 +58,10 @@ export async function resolvePodcastPromoRule(
     typeof db.select === "function"
   ) {
     try {
-      const rows = await db.select().from(promoCodes).where(eq(promoCodes.code, code));
+      const rows = await db.select().from(promoCodes).where(sql`lower(${promoCodes.code}) = ${code.toLowerCase()}`);
       const row = Array.isArray(rows) ? rows[0] : undefined;
       if (row) {
-        if (row.isActive === false) return null;
+        if (row.isActive === false || row.eligibleOfferIds?.length) return null;
         if (row.expiresAt && new Date(row.expiresAt).getTime() <= Date.now()) return null;
         if (row.maxUses != null && typeof db.$count === "function") {
           const used = await db.$count(bookings, eq(bookings.promoCode, code));
@@ -165,13 +165,14 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
   let resolvedPromoCode: string | undefined = undefined;
   if (promoCode) {
     const rule = await resolvePodcastPromoRule(promoCode);
-    if (rule) {
-      resolvedPromoCode = rule.code;
-      if (rule.percent) {
-        discount = Math.round((subtotal * rule.percent) / 100);
-      } else if (rule.flat) {
-        discount = Math.min(subtotal, rule.flat);
-      }
+    if (!rule) {
+      return { success: false, message: "Invalid or expired promo code. Please review your booking." };
+    }
+    resolvedPromoCode = rule.code;
+    if (rule.percent) {
+      discount = Math.round((subtotal * rule.percent) / 100);
+    } else if (rule.flat) {
+      discount = Math.min(subtotal, rule.flat);
     }
   }
 
@@ -291,6 +292,7 @@ export async function createPodcastBooking(rawInput: unknown): Promise<PodcastBo
           totalAmount: grandTotal.toFixed(2),
           currency: "AED",
           paymentStatus: "unpaid",
+          promoCode: resolvedPromoCode ?? null,
           specialRequests: fullNotes,
         }).returning({ id: bookings.id });
         if (!inserted) throw new Error("Failed to save booking.");

@@ -73,6 +73,9 @@ function BlackoutFormContent({
     if (!title.trim()) errors.title = "Lockout title is required";
     if (!startDate) errors.startDate = "Start date is required";
     if (!endDate) errors.endDate = "End date is required";
+    if (targetType === "studio" && !studiosList.some((studio) => studio.id === selectedStudioId)) {
+      errors.studioId = "Select a soundstage for this lockout";
+    }
 
     const startD = new Date(`${startDate}T${allDay ? "00:00" : startTime || "00:00"}:00+04:00`);
     const endD = new Date(`${endDate}T${allDay ? "23:59" : endTime || "23:59"}:${allDay ? "59" : "00"}+04:00`);
@@ -155,7 +158,8 @@ function BlackoutFormContent({
             <button
               type="button"
               onClick={() => setTargetType("studio")}
-              className={`p-3 rounded-xl border text-xs font-bold text-center transition-all ${
+              disabled={studiosList.length === 0}
+              className={`disabled:opacity-50 disabled:cursor-not-allowed p-3 rounded-xl border text-xs font-bold text-center transition-all ${
                 targetType === "studio"
                   ? "bg-brand-violet/20 border-brand-mauve text-white"
                   : "bg-white/[0.02] border-white/10 text-slate-400 hover:text-white"
@@ -181,7 +185,11 @@ function BlackoutFormContent({
           <AdminSelect
             label="Select Soundstage"
             value={selectedStudioId}
-            onChange={(e) => setSelectedStudioId(e.target.value)}
+            onChange={(e) => {
+              setSelectedStudioId(e.target.value);
+              setFieldErrors((prev) => ({ ...prev, studioId: "" }));
+            }}
+            error={fieldErrors.studioId}
             options={[
               { label: "Choose a soundstage...", value: "" },
               ...studiosList.map((s) => ({ label: s.name, value: s.id })),

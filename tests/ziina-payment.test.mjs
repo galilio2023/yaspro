@@ -136,10 +136,10 @@ for (const [depositPercent, status, type, expectedAmount, expectedStatus] of [
   [100, 'unpaid', 'full', 2400, 'paid'],
 ]) {
   test(`server quote and provider agree: ${depositPercent}% ${status} ${type}`, async () => {
-    let payload;
+    let payload, storedIntent;
     const db = {
       query: { bookings: { findFirst: async () => booking({ paymentStatus: status }) } },
-      update: () => ({ set: () => ({ where: () => ({ returning: async () => [{ id: 'booking' }] }) }) }),
+      update: () => ({ set: (data) => { storedIntent = data.paymentIntent; return { where: () => ({ returning: async () => [{ id: 'booking' }] }) }; } }),
     };
     const api = loadSource('src/lib/ziina.ts', {
       ...mocksFor(db),
@@ -162,6 +162,9 @@ for (const [depositPercent, status, type, expectedAmount, expectedStatus] of [
     }, type, 'YAS-BK-777');
     assert.equal(result.success, true);
     assert.equal(payload.amount, expectedAmount * 100);
+    assert.deepEqual(JSON.parse(JSON.stringify(storedIntent)), {
+      amountFils: expectedAmount * 100, depositPercent, targetStatus: expectedStatus,
+    });
     assert.equal(payload.metadata.paymentType, expectedStatus);
   });
 }
@@ -200,4 +203,16 @@ test('quote and intent fail closed if settings cannot be loaded', async () => {
   assert.equal((await api.getBookingPaymentQuote('YAS-BK-777', 'YAS-BK-777')).quote, undefined);
   const result = await api.createZiinaPaymentIntent('YAS-BK-777', { paymentStatus: 'unpaid', amountAed: 1200 }, 'deposit', 'YAS-BK-777');
   assert.equal(result.success, false);
+});
+
+
+test('balance quote retains the original deposit percentage after settings change', async () => {
+  const db = { query: { bookings: { findFirst: async () => booking({
+    paymentStatus: 'deposit_paid',
+    paymentIntent: { depositPercent: 25, amountFils: 60000, targetStatus: 'deposit_paid' },
+  }) } } };
+  const api = loadSource('src/lib/ziina.ts', mocksFor(db));
+  const { quote } = await api.getBookingPaymentQuote('YAS-BK-777', 'YAS-BK-777');
+  assert.equal(quote.depositPercent, 25);
+  assert.equal(quote.options[0].amountAed, 1800);
 });

@@ -58,6 +58,11 @@ export function StepDatetime({ state, update }: WizardStepProps) {
   const [blackoutReason, setBlackoutReason] = useState<string | undefined>(undefined);
 
   const duration = state.durationHours || 1;
+  const changeDuration = (durationHours: number) => {
+    const slotIndex = TIME_SLOTS.indexOf(state.time);
+    const exceedsWindow = slotIndex >= 0 && 9 + slotIndex + durationHours > 21;
+    update({ durationHours, ...(exceedsWindow ? { time: "" } : {}) });
+  };
   const currentPeople = state.headcount || 2;
   const selectedTime = state.time;
   const selectedDateStr = state.date;
@@ -220,7 +225,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
                   <button
                     key={h}
                     type="button"
-                    onClick={() => update({ durationHours: h })}
+                    onClick={() => changeDuration(h)}
                     className={cn(
                       "px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer",
                       duration === h
@@ -237,7 +242,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
                 value={duration}
                 min={1}
                 max={12}
-                onChange={(v) => update({ durationHours: v })}
+                onChange={changeDuration}
                 format={(v) => `${v}h`}
                 decLabel="Decrease duration"
                 incLabel="Increase duration"

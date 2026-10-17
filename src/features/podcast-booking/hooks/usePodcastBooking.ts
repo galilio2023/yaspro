@@ -4,7 +4,7 @@ import { getLocalCalendarDate } from "@/features/gear/lib/rental-schedule";
 
 import { useState, useMemo } from "react";
 import { PodcastSessionItem, PodcastBookingContact, PodcastBookingStep, PodcastStudio, PodcastAddon, PodcastService } from "../types";
-import { PODCAST_STUDIOS, PODCAST_SERVICES, PODCAST_ADDONS, PODCAST_PROMO_CODES, TIME_SLOTS } from "../data";
+import { PODCAST_STUDIOS, PODCAST_SERVICES, PODCAST_ADDONS, TIME_SLOTS } from "../data";
 import { createPodcastBooking, resolvePodcastPromoRule, PodcastBookingResult } from "../actions";
 
 function getTomorrowDateString(): string {
@@ -94,7 +94,7 @@ export function usePodcastBooking(
 
   const promoDiscount = useMemo(() => {
     if (!appliedPromo) return 0;
-    const rule = dbPromoRules[appliedPromo] || PODCAST_PROMO_CODES[appliedPromo];
+    const rule = dbPromoRules[appliedPromo];
     if (!rule) return 0;
     if (rule.percent) {
       return Math.round((subtotalAllSessions * rule.percent) / 100);
@@ -228,33 +228,23 @@ export function usePodcastBooking(
     setStep((s) => (s > 1 ? ((s - 1) as PodcastBookingStep) : 1));
   };
 
-  const applyPromo = (code: string) => {
+  const applyPromo = async (code: string) => {
     setPromoError(null);
     const trimmed = code.trim().toUpperCase();
     if (!trimmed) {
       setPromoError("Please enter a promo code.");
       return;
     }
-    if (PODCAST_PROMO_CODES[trimmed]) {
+    try {
+      const rule = await resolvePodcastPromoRule(trimmed);
+      if (!rule) {
+        setPromoError("Invalid or expired promo code.");
+        return;
+      }
+      setDbPromoRules((prev) => ({ ...prev, [trimmed]: { percent: rule.percent, flat: rule.flat } }));
       setAppliedPromo(trimmed);
       setContact((prev) => ({ ...prev, promoCode: trimmed }));
-      return;
-    }
-    if (typeof resolvePodcastPromoRule === "function") {
-      resolvePodcastPromoRule(trimmed)
-        .then((rule) => {
-          if (rule) {
-            setDbPromoRules((prev) => ({ ...prev, [trimmed]: { percent: rule.percent, flat: rule.flat } }));
-            setAppliedPromo(trimmed);
-            setContact((prev) => ({ ...prev, promoCode: trimmed }));
-          } else {
-            setPromoError("Invalid or expired promo code.");
-          }
-        })
-        .catch(() => {
-          setPromoError("Invalid or expired promo code.");
-        });
-    } else {
+    } catch {
       setPromoError("Invalid or expired promo code.");
     }
   };

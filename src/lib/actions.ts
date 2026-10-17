@@ -7,7 +7,7 @@ import { generateBookingReference } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import { eq, and, inArray, or, isNull } from "drizzle-orm";
+import { eq, and, inArray, or, isNull, sql } from "drizzle-orm";
 import { checkRateLimit, checkIdempotency, getClientIdentifier } from "@/lib/rate-limit";
 import { sendBookingConfirmationNotification, sendInquiryNotification } from "@/lib/notifications";
 import {
@@ -132,17 +132,20 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
         try {
           const cleanCode = data.promoCode.trim().toUpperCase();
           const promoRow = await db.query.promoCodes.findFirst({
-            where: eq(promoCodes.code, cleanCode),
+            where: sql`lower(${promoCodes.code}) = ${cleanCode.toLowerCase()}`,
           });
-          if (promoRow && promoRow.isActive !== false && (!promoRow.expiresAt || new Date(promoRow.expiresAt).getTime() > Date.now())) {
+          if (promoRow) {
+            const allowed = promoRow.isActive !== false &&
+              (!promoRow.expiresAt || new Date(promoRow.expiresAt).getTime() > Date.now()) &&
+              !promoRow.eligibleOfferIds?.length;
             wizardCatalog = {
               ...(wizardCatalog || {}),
               promoRules: {
                 ...(wizardCatalog?.promoRules || {}),
-                [cleanCode]: {
+                [cleanCode]: allowed ? {
                   discountPercent: promoRow.discountPercent ?? undefined,
                   discountFlat: promoRow.discountAmount ? Number(promoRow.discountAmount) : undefined,
-                },
+                } : null,
               },
             };
           }

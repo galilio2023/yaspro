@@ -85,6 +85,7 @@ export async function getBookingOffers(): Promise<CmsOfferItem[]> {
           image: row.image || "/images/offers/5-hour-bundles.webp",
           features: (row.features as string[]) || [],
           featuresAr: (row.featuresAr as string[]) || [],
+          studioId: row.studioId ?? undefined,
           restrictedDays: (row.restrictedDays as number[]) ?? undefined,
           restrictedHours: (row.restrictedHours as { start: string; end: string; slots: string[] }) ?? staticBase?.restrictedHours,
           restrictionNoteEn: row.restrictionNoteEn ?? undefined,
@@ -191,7 +192,10 @@ export async function upsertCmsOffer(input: CmsOfferInput): Promise<CmsResponse<
 
     const insert = db.insert(offers).values({ ...payload, createdAt: new Date() });
     if (input.id?.trim()) {
-      await insert.onConflictDoUpdate({ target: offers.id, set: payload });
+      await insert.onConflictDoUpdate({
+        target: offers.id,
+        set: { ...payload, studioId: input.studioId === undefined ? undefined : payload.studioId },
+      });
     } else {
       // A generated slug must never turn a create request into an update.
       if (OFFERS_AND_BUNDLES.some((item) => item.id === id)) {

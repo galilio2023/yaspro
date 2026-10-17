@@ -38,7 +38,8 @@ const TIER_MATRIX_COLUMN: Record<string, "raw" | "live" | "edit"> = {
 export function Step3Service({ session, onChange, services = PODCAST_SERVICES }: Step3ServiceProps) {
   const [showMatrix, setShowMatrix] = useState(false);
   const activeServices = services.filter((s) => s.isActive !== false);
-  const canShowMatrix = activeServices.length > 0;
+  const matrixServices = activeServices.filter((service) => Object.hasOwn(TIER_MATRIX_COLUMN, service.key));
+  const canShowMatrix = matrixServices.length > 0;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -163,7 +164,7 @@ export function Step3Service({ session, onChange, services = PODCAST_SERVICES }:
                     <thead>
                       <tr className="border-b border-white/[0.08] text-[11px] font-mono uppercase tracking-wider text-zinc-400">
                         <th className="py-2.5 pr-4 font-bold">Studio Capability</th>
-                        {activeServices.map((service) => (
+                        {matrixServices.map((service) => (
                           <th
                             key={service.key}
                             className={cn(
@@ -182,14 +183,8 @@ export function Step3Service({ session, onChange, services = PODCAST_SERVICES }:
                           <td className="py-2.5 pr-4 text-zinc-300 font-medium">
                             {row.feature}
                           </td>
-                          {activeServices.map((service) => {
-                            const colKey =
-                              TIER_MATRIX_COLUMN[service.key] ??
-                              (service.best || service.price >= 1400
-                                ? "edit"
-                                : service.price >= 650
-                                  ? "live"
-                                  : "raw");
+                          {matrixServices.map((service) => {
+                            const colKey = TIER_MATRIX_COLUMN[service.key];
                             const cellValue = row[colKey];
                             return (
                               <td

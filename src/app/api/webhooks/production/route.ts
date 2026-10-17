@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { bookings, platformSettings } from "@/db/schema";
+import { bookings } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { sendBookingConfirmationNotification } from "@/lib/notifications";
 import { revalidatePath, updateTag } from "next/cache";
@@ -120,49 +120,34 @@ export async function POST(request: Request) {
         );
       }
 
-      // Idempotency: this intent was already applied.
-      if (
-        bookingRecord.paymentReference === intentId &&
-        (bookingRecord.paymentStatus === "paid" || bookingRecord.paymentStatus === "deposit_paid") &&
-        bookingRecord.status === "confirmed"
-      ) {
-        return NextResponse.json({
-          success: true,
-          event,
-          bookingReference: bookingRecord.referenceCode,
-          status: "already_reconciled",
-        });
-      }
-
-      // Resolve configured depositPercent from platform_settings (fallback 50%)
-      let depositPercent = 50;
-      try {
-        if (platformSettings && typeof db.query?.platformSettings?.findFirst === "function") {
-          const settingRow = await db.query.platformSettings.findFirst({
-            where: eq(platformSettings.key, "payment_config"),
-          });
-          const cfgDeposit = Number((settingRow?.value as { depositPercent?: number } | undefined)?.depositPercent);
-          if (Number.isFinite(cfgDeposit) && cfgDeposit >= 10 && cfgDeposit <= 100) {
-            depositPercent = cfgDeposit;
-          }
-        }
-      } catch {
-        // Fallback to 50% if platform_settings lookup is unavailable
+      const intent = bookingRecord.paymentIntent;
+      if (!intent || !Number.isFinite(intent.depositPercent) ||
+          intent.depositPercent < 10 || intent.depositPercent > 100 ||
+          !Number.isSafeInteger(intent.amountFils) || intent.amountFils <= 0) {
+        return NextResponse.json(
+          { success: false, error: "Stored payment intent terms are unavailable" },
+          { status: 422 }
+        );
       }
 
       // Amount validation in fils against what this booking can legitimately be charged.
       const totalAed = Math.round(Number(bookingRecord.totalAmount));
       const totalFils = totalAed * 100;
-      const depositFils = Math.round((totalAed * depositPercent) / 100) * 100;
+      const depositFils = Math.round((totalAed * intent.depositPercent) / 100) * 100;
       const paidAmount = Number(data.amount);
       let targetPaymentStatus: "paid" | "deposit_paid" | null = null;
 
-      if (bookingRecord.paymentStatus === "deposit_paid") {
-        if (paidAmount === totalFils - depositFils) targetPaymentStatus = "paid";
-      } else if (paidAmount === totalFils) {
-        targetPaymentStatus = "paid";
-      } else if (paidAmount === depositFils) {
-        targetPaymentStatus = "deposit_paid";
+      const expectedAmount = intent.targetStatus === "deposit_paid"
+        ? depositFils
+        : bookingRecord.paymentStatus === "deposit_paid" ? totalFils - depositFils : totalFils;
+      const alreadyReconciled = bookingRecord.paymentStatus === intent.targetStatus &&
+        bookingRecord.status === "confirmed";
+
+      if (Number.isFinite(totalAed) && totalAed > 0 &&
+          (intent.targetStatus === "paid" || intent.targetStatus === "deposit_paid") &&
+          paidAmount === intent.amountFils &&
+          (alreadyReconciled || paidAmount === expectedAmount)) {
+        targetPaymentStatus = intent.targetStatus;
       }
 
       if (!targetPaymentStatus || (data.currency_code && data.currency_code !== "AED")) {
@@ -174,6 +159,15 @@ export async function POST(request: Request) {
           { success: false, error: "Payment amount does not match booking" },
           { status: 422 }
         );
+      }
+
+      if (alreadyReconciled) {
+        return NextResponse.json({
+          success: true,
+          event,
+          bookingReference: bookingRecord.referenceCode,
+          status: "already_reconciled",
+        });
       }
 
       await db

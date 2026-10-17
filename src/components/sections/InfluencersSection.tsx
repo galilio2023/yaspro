@@ -18,8 +18,10 @@ interface InfluencersSectionProps {
 export default function InfluencersSection({ initialInfluencers }: InfluencersSectionProps = {}) {
   const { t, isArabic } = useLanguage();
   const sourceInfluencers =
-    initialInfluencers && initialInfluencers.length > 0 ? initialInfluencers : INFLUENCERS_DATA;
+    initialInfluencers ?? INFLUENCERS_DATA;
   const featuredInfluencers = sourceInfluencers.slice(0, 8);
+
+  if (sourceInfluencers.length === 0) return null;
 
   return (
     <Section

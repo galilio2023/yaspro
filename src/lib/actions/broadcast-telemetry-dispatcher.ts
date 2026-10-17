@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { platformSettings } from "@/db/schema";
 import { isDbAvailable, requireAdmin, type CmsResponse } from "./shared";
@@ -183,25 +183,27 @@ const DEFAULT_FLEET_STATUS: Record<string, BroadcastFleetUnitState> = {
   },
 };
 
+async function readBroadcastFleetStatusStrict(): Promise<Record<string, BroadcastFleetUnitState>> {
+  const [row] = await db
+    .select()
+    .from(platformSettings)
+    .where(eq(platformSettings.key, BROADCAST_FLEET_KEY))
+    .limit(1);
+  if (!row) return { ...DEFAULT_FLEET_STATUS };
+  if (!row.value || typeof row.value !== "object" || Array.isArray(row.value)) {
+    throw new Error("Stored broadcast fleet status is invalid.");
+  }
+  return { ...DEFAULT_FLEET_STATUS, ...(row.value as Record<string, BroadcastFleetUnitState>) };
+}
+
 export async function getBroadcastFleetStatus(): Promise<Record<string, BroadcastFleetUnitState>> {
   await requireAdmin();
   if (!isDbAvailable() || !platformSettings) return { ...DEFAULT_FLEET_STATUS };
   try {
-    const [row] = await db
-      .select()
-      .from(platformSettings)
-      .where(eq(platformSettings.key, BROADCAST_FLEET_KEY))
-      .limit(1);
-    if (row?.value && typeof row.value === "object" && !Array.isArray(row.value)) {
-      return {
-        ...DEFAULT_FLEET_STATUS,
-        ...(row.value as Record<string, BroadcastFleetUnitState>),
-      };
-    }
+    return await readBroadcastFleetStatusStrict();
   } catch {
-    // Fallback safely to default fleet status
+    return { ...DEFAULT_FLEET_STATUS };
   }
-  return { ...DEFAULT_FLEET_STATUS };
 }
 
 export async function updateBroadcastFleetUnitStatus(
@@ -214,7 +216,7 @@ export async function updateBroadcastFleetUnitStatus(
     if (!isDbAvailable() || !platformSettings) {
       return { success: false, error: "Database is not connected." };
     }
-    const current = await getBroadcastFleetStatus();
+    const current = await readBroadcastFleetStatusStrict();
     const existing = current[unitId] || {
       id: unitId,
       name: unitId,
@@ -230,7 +232,7 @@ export async function updateBroadcastFleetUnitStatus(
         location: location?.trim() || existing.location,
       },
     };
-    await db
+    const [saved] = await db
       .insert(platformSettings)
       .values({
         key: BROADCAST_FLEET_KEY,
@@ -240,14 +242,16 @@ export async function updateBroadcastFleetUnitStatus(
       .onConflictDoUpdate({
         target: platformSettings.key,
         set: {
-          value: updated,
+          // Update only this unit against the current row, preserving concurrent unit changes.
+          value: sql`jsonb_set(${platformSettings.value}, ARRAY[${unitId}]::text[], ${JSON.stringify(updated[unitId])}::jsonb, true)`,
           updatedAt: new Date(),
         },
-      });
+      })
+      .returning({ value: platformSettings.value });
     revalidatePath("/admin/broadcast");
     return {
       success: true,
-      data: updated,
+      data: { ...DEFAULT_FLEET_STATUS, ...(saved.value as Record<string, BroadcastFleetUnitState>) },
       message: `${unitId} status updated to ${status}.`,
     };
   } catch (error) {

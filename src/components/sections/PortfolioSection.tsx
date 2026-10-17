@@ -29,7 +29,7 @@ export function PortfolioSection({ limit = 9, initialProjects }: PortfolioSectio
   const [selectedSpotlightId, setSelectedSpotlightId] = useState<string | null>(null);
 
   const sourceProjects = useMemo(
-    () => (initialProjects && initialProjects.length > 0 ? initialProjects : PROJECTS_DATA),
+    () => initialProjects ?? PROJECTS_DATA,
     [initialProjects]
   );
 
@@ -63,6 +63,8 @@ export function PortfolioSection({ limit = 9, initialProjects }: PortfolioSectio
   }, [spotlightProject]);
 
   const hasSpotlightVideo = Boolean(spotlightProject?.vimeoId || spotlightProject?.videoUrl);
+
+  if (initialProjects?.length === 0) return null;
 
   return (
     <Section

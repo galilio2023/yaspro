@@ -48,6 +48,7 @@ function OfferFormContent({
     featuresAr: initialOffer?.featuresAr || [],
     restrictedDays: initialOffer?.restrictedDays ?? null,
     restrictedHours: initialOffer?.restrictedHours ?? null,
+    studioId: initialOffer?.studioId,
     restrictionNoteEn: initialOffer?.restrictionNoteEn || "",
     restrictionNoteAr: initialOffer?.restrictionNoteAr || "",
     isActive: initialOffer?.isActive ?? true,
@@ -60,7 +61,7 @@ function OfferFormContent({
   const isEdit = Boolean(initialOffer?.id);
 
   const toggleAllowedDay = (dayIdx: number) => {
-    const current = form.restrictedDays || [];
+    const current = form.restrictedDays ?? [0, 1, 2, 3, 4, 5, 6];
     const next = current.includes(dayIdx)
       ? current.filter((d) => d !== dayIdx)
       : [...current, dayIdx].sort((a, b) => a - b);

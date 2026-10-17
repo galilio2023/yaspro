@@ -202,6 +202,11 @@ export const bookings = pgTable(
     currency: text("currency").notNull().default("AED"),
     paymentStatus: text("payment_status").notNull().default("unpaid"),
     paymentReference: text("payment_reference"),
+    paymentIntent: jsonb("payment_intent").$type<{
+      amountFils: number;
+      depositPercent: number;
+      targetStatus: "deposit_paid" | "paid";
+    }>(),
     promoCode: text("promo_code"),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),

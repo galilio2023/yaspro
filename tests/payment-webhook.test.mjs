@@ -37,6 +37,7 @@ test('POST /api/webhooks/production handles payment.completed and reconciles boo
           paymentStatus: 'unpaid',
           status: 'pending',
           paymentReference: 'intent-777',
+          paymentIntent: { depositPercent: 50, amountFils: 240000, targetStatus: 'paid' },
           currency: 'AED',
           scheduledAt: new Date('2026-10-01T10:00:00Z'),
           durationHours: 3,
@@ -147,7 +148,7 @@ test('POST /api/webhooks/production does NOT confirm when the paid amount mismat
   const mockDb = {
     query: { bookings: { findFirst: async () => ({
       id: 'b1', referenceCode: 'YAS-X', totalAmount: '2400.00', paymentStatus: 'unpaid', status: 'pending',
-      paymentReference: 'intent-1', user: { email: 'a@b.c' },
+      paymentReference: 'intent-1', paymentIntent: { depositPercent: 50, amountFils: 240000, targetStatus: 'paid' }, user: { email: 'a@b.c' },
     }) } },
     update: () => { updated = true; return { set: () => ({ where: () => Promise.resolve() }) }; },
   };
@@ -199,3 +200,40 @@ test('webhook metadata cannot reconcile an intent absent from stored paymentRefe
   assert.equal(response.status, 404);
   assert.deepEqual(query, { column: 'paymentReference', value: 'unrelated-intent' });
 });
+
+
+for (const [status, targetStatus, amount, expectedStatus] of [
+  ['unpaid', 'deposit_paid', 60000, 200],
+  ['unpaid', 'deposit_paid', 120000, 422],
+  ['deposit_paid', 'paid', 180000, 200],
+  ['deposit_paid', 'paid', 120000, 422],
+  ['unpaid', 'paid', 240000, 200],
+]) {
+  test(`webhook honors stored 25% terms after settings change: ${status} ${amount}`, async () => {
+    const row = { id: 'booking', referenceCode: 'REF', totalAmount: '2400', status: 'confirmed',
+      paymentStatus: status, paymentReference: 'intent', user: null,
+      paymentIntent: { depositPercent: 25, targetStatus, amountFils: targetStatus === 'deposit_paid' ? 60000 : status === 'deposit_paid' ? 180000 : 240000 },
+    };
+    let writes = 0;
+    const { POST } = loadSource('src/app/api/webhooks/production/route.ts', {
+      '@/db': { db: {
+        query: { bookings: { findFirst: async () => row }, platformSettings: { findFirst: () => assert.fail('Current settings must not be read') } },
+        update: () => ({ set: (values) => ({ where: async () => { writes++; Object.assign(row, values); } }) }),
+      } },
+      '@/db/schema': { bookings: { id: 'id', paymentReference: 'reference' } },
+      'next/cache': { revalidatePath() {}, updateTag() {} },
+      'next/server': { NextResponse: { json: (body, init) => ({ body, status: init?.status || 200 }) } },
+      '@/lib/notifications': { sendBookingConfirmationNotification() {} },
+    });
+    const request = { headers: { get: () => null }, text: async () => JSON.stringify({
+      event: 'payment_intent.status.updated', data: { id: 'intent', status: 'completed', currency_code: 'AED', amount },
+    }) };
+    assert.equal((await POST(request)).status, expectedStatus);
+    assert.equal(writes, expectedStatus === 200 ? 1 : 0);
+    if (expectedStatus === 200) {
+      assert.equal(row.paymentStatus, targetStatus);
+      assert.equal((await POST(request)).body.status, 'already_reconciled');
+      assert.equal(writes, 1);
+    }
+  });
+}

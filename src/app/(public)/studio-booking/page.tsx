@@ -1,3 +1,4 @@
+import { getStudioPromoRules } from "@/lib/queries/studio-promo-rules";
 import { getCachedStudios } from "@/lib/cached-queries";
 import { Suspense } from "react";
 import type { Metadata } from "next";
@@ -89,31 +90,11 @@ function BookingWizardLoading() {
 
 export default async function StudioBookingPage() {
   const { getStudioWizardCatalog } = await import("@/lib/actions/studio-wizard-catalog-operations");
-  const [cmsStudios, wizardCatalog] = await Promise.all([
+  const [cmsStudios, wizardCatalog, promoRules] = await Promise.all([
     getCachedStudios(),
     getStudioWizardCatalog(),
+    getStudioPromoRules(),
   ]);
-
-  let promoRules: Record<string, { discountPercent?: number; discountFlat?: number }> | undefined;
-  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
-    try {
-      const { db } = await import("@/db");
-      const { promoCodes } = await import("@/db/schema");
-      const rows = await db.select().from(promoCodes);
-      const map: Record<string, { discountPercent?: number; discountFlat?: number }> = {};
-      for (const r of rows) {
-        if (r.isActive !== false && (!r.expiresAt || new Date(r.expiresAt).getTime() > Date.now())) {
-          map[r.code.toUpperCase()] = {
-            discountPercent: r.discountPercent ?? undefined,
-            discountFlat: r.discountAmount ? Number(r.discountAmount) : undefined,
-          };
-        }
-      }
-      if (Object.keys(map).length > 0) promoRules = map;
-    } catch {
-      // Fall back to static promo codes
-    }
-  }
 
   const studios = cmsStudios.filter((studio) => studio.isActive).map((studio) => ({
     id: studio.id,
