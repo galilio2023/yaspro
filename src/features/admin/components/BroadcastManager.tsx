@@ -11,7 +11,12 @@ import {
   Activity,
   Layers,
 } from "lucide-react";
-import { dispatchTelemetryEvent } from "@/lib/actions/broadcast-telemetry-dispatcher";
+import {
+  dispatchTelemetryEvent,
+  updateBroadcastFleetUnitStatus,
+  type BroadcastFleetUnitState,
+  type FleetUnitStatus,
+} from "@/lib/actions/broadcast-telemetry-dispatcher";
 import { useFeedbackAlert } from "@/hooks/useFeedbackAlert";
 import { AdminPageHeader, AdminStatsGrid } from "@/components/admin";
 
@@ -69,14 +74,47 @@ import Link from "next/link";
 import { resolveInquiryCategory } from "./InquiriesManager";
 import { ExternalLink, ArrowRight } from "lucide-react";
 
+const DEFAULT_FLEET_UNITS: Record<string, BroadcastFleetUnitState> = {
+  "OB-VAN MERCEDES 01": {
+    id: "OB-VAN MERCEDES 01",
+    name: "OB-VAN MERCEDES 01",
+    location: "Riyadh Boulevard Stage",
+    status: "Active Deployment",
+    uplink: "1.2 Gbps Starlink + Ka-Band",
+  },
+  "OB-VAN MERCEDES 02": {
+    id: "OB-VAN MERCEDES 02",
+    name: "OB-VAN MERCEDES 02",
+    location: "Dubai Business Bay Hub",
+    status: "Standby Ready",
+    uplink: "SMPTE ST-2110 Fiber Ready",
+  },
+  "DUBAI STAGE A": {
+    id: "DUBAI STAGE A",
+    name: "DUBAI STAGE A",
+    location: "Studio City Soundstage",
+    status: "Active Deployment",
+    uplink: "10GbE Redundant Fiber",
+  },
+  "CAIRO STAGE B": {
+    id: "CAIRO STAGE B",
+    name: "CAIRO STAGE B",
+    location: "Cairo Media City",
+    status: "Standby Ready",
+    uplink: "SRT Regional Relay",
+  },
+};
+
 export interface BroadcastManagerProps {
   initialBroadcastInquiries?: Inquiry[];
   initialTelemetryFeed?: TelemetryEventItem[];
+  initialFleetStatus?: Record<string, BroadcastFleetUnitState>;
 }
 
 export function BroadcastManager({
   initialBroadcastInquiries = [],
   initialTelemetryFeed,
+  initialFleetStatus,
 }: BroadcastManagerProps) {
   const activeInquiries = initialBroadcastInquiries.filter((inq) => !inq.isResolved);
   const [source, setSource] = useState("OB-VAN MERCEDES 01");
@@ -113,6 +151,9 @@ export function BroadcastManager({
     }
     return INITIAL_DISPATCHED_FEED;
   });
+  const [fleetStatus, setFleetStatus] = useState<Record<string, BroadcastFleetUnitState>>(
+    () => initialFleetStatus || DEFAULT_FLEET_UNITS
+  );
   const isLoadedRef = useRef(false);
 
   useEffect(() => {
@@ -130,6 +171,31 @@ export function BroadcastManager({
   }, [dispatchedFeed]);
 
   const { feedback, showFeedback, clearFeedback } = useFeedbackAlert(3500);
+
+  const handleFleetStatusChange = async (unitId: string, nextStatus: FleetUnitStatus) => {
+    const previous = fleetStatus;
+    setFleetStatus((prev) => ({
+      ...prev,
+      [unitId]: {
+        ...(prev[unitId] || DEFAULT_FLEET_UNITS[unitId]),
+        status: nextStatus,
+      },
+    }));
+    try {
+      if (typeof updateBroadcastFleetUnitStatus === "function") {
+        const res = await updateBroadcastFleetUnitStatus(unitId, nextStatus);
+        if (res && !res.success) {
+          setFleetStatus(previous);
+          setErrorMessage(res.error || "Failed to update fleet unit status.");
+        } else {
+          showFeedback(`${unitId} status updated to ${nextStatus}`);
+        }
+      }
+    } catch (err) {
+      setFleetStatus(previous);
+      setErrorMessage((err as Error).message || "Failed to update fleet unit status.");
+    }
+  };
 
   const handleDispatch = async (eventData: {
     source: string;
@@ -290,6 +356,49 @@ export function BroadcastManager({
           </div>
         </div>
       )}
+
+      {/* OB-Van & Soundstage Fleet Operational Status Matrix */}
+      <div className="space-y-2">
+        <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block">
+          OB-Van &amp; Soundstage Fleet Readiness (Persisted to DB)
+        </span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {Object.values(fleetStatus).map((unit) => (
+            <div
+              key={unit.id}
+              className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-2.5"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-bold text-white text-xs truncate">{unit.name}</span>
+                <span
+                  className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${
+                    unit.status === "Active Deployment"
+                      ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                      : unit.status === "Standby Ready"
+                      ? "bg-brand-violet/20 text-brand-lavender border-brand-mauve/30"
+                      : "bg-rose-500/15 text-rose-300 border-rose-500/30"
+                  }`}
+                >
+                  {unit.status}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 font-mono truncate">{unit.location}</p>
+              <select
+                aria-label={`${unit.name} Status`}
+                value={unit.status}
+                onChange={(e) =>
+                  handleFleetStatusChange(unit.id, e.target.value as FleetUnitStatus)
+                }
+                className="w-full px-2.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-white text-[11px] focus:outline-none focus:border-brand-mauve"
+              >
+                <option value="Active Deployment">Active Deployment</option>
+                <option value="Standby Ready">Standby Ready</option>
+                <option value="Maintenance">Maintenance</option>
+              </select>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Quick Preset Dispatch Buttons */}
       <div className="space-y-2">

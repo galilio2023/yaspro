@@ -42,6 +42,8 @@ export interface CmsOfferInput {
   features: string[];
   featuresAr?: string[];
   restrictedDays?: number[] | null;
+  restrictedHours?: { start: string; end: string; slots: string[] } | null;
+  studioId?: string | null;
   restrictionNoteEn?: string | null;
   restrictionNoteAr?: string | null;
   isActive?: boolean;
@@ -62,8 +64,9 @@ export async function getBookingOffers(): Promise<CmsOfferItem[]> {
 
       for (const row of rows) {
         dbIds.add(row.id);
+        const staticBase = OFFERS_AND_BUNDLES.find((item) => item.id === row.id);
         result.push({
-          ...OFFERS_AND_BUNDLES.find((item) => item.id === row.id),
+          ...staticBase,
           id: row.id,
           category: row.category as "bundle" | "offer",
           name: row.name,
@@ -83,6 +86,7 @@ export async function getBookingOffers(): Promise<CmsOfferItem[]> {
           features: (row.features as string[]) || [],
           featuresAr: (row.featuresAr as string[]) || [],
           restrictedDays: (row.restrictedDays as number[]) ?? undefined,
+          restrictedHours: (row.restrictedHours as { start: string; end: string; slots: string[] }) ?? staticBase?.restrictedHours,
           restrictionNoteEn: row.restrictionNoteEn ?? undefined,
           restrictionNoteAr: row.restrictionNoteAr ?? undefined,
           isActive: row.isActive,
@@ -176,6 +180,8 @@ export async function upsertCmsOffer(input: CmsOfferInput): Promise<CmsResponse<
       features: input.features.filter((f) => f && f.trim().length > 0),
       featuresAr: (input.featuresAr || []).filter((f) => f && f.trim().length > 0),
       restrictedDays: input.restrictedDays || null,
+      restrictedHours: input.restrictedHours || null,
+      studioId: input.studioId || null,
       restrictionNoteEn: input.restrictionNoteEn?.trim() || null,
       restrictionNoteAr: input.restrictionNoteAr?.trim() || null,
       isActive: input.isActive ?? true,
@@ -252,6 +258,7 @@ export async function toggleOfferStatus(id: string, isActive: boolean): Promise<
         features: staticItem.features,
         featuresAr: staticItem.featuresAr,
         restrictedDays: staticItem.restrictedDays || null,
+        restrictedHours: staticItem.restrictedHours || null,
         restrictionNoteEn: staticItem.restrictionNoteEn || null,
         restrictionNoteAr: staticItem.restrictionNoteAr || null,
         isActive,

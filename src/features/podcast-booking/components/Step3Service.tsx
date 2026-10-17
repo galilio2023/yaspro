@@ -38,8 +38,7 @@ const TIER_MATRIX_COLUMN: Record<string, "raw" | "live" | "edit"> = {
 export function Step3Service({ session, onChange, services = PODCAST_SERVICES }: Step3ServiceProps) {
   const [showMatrix, setShowMatrix] = useState(false);
   const activeServices = services.filter((s) => s.isActive !== false);
-  const canShowMatrix =
-    activeServices.length > 0 && activeServices.every((s) => s.key in TIER_MATRIX_COLUMN);
+  const canShowMatrix = activeServices.length > 0;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -184,7 +183,13 @@ export function Step3Service({ session, onChange, services = PODCAST_SERVICES }:
                             {row.feature}
                           </td>
                           {activeServices.map((service) => {
-                            const colKey = TIER_MATRIX_COLUMN[service.key];
+                            const colKey =
+                              TIER_MATRIX_COLUMN[service.key] ??
+                              (service.best || service.price >= 1400
+                                ? "edit"
+                                : service.price >= 650
+                                  ? "live"
+                                  : "raw");
                             const cellValue = row[colKey];
                             return (
                               <td

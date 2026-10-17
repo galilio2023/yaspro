@@ -29,8 +29,14 @@ export async function getCmsProjects(): Promise<Project[]> {
     title: p.title,
     arabicTitle: p.arabicTitle || null,
     description: p.description || null,
+    arabicDescription: p.arabicDescription || null,
     category:
-      p.category === "government" || p.category === "commercial" || p.category === "shows"
+      p.category === "government" ||
+      p.category === "commercial" ||
+      p.category === "shows" ||
+      p.category === "documentary" ||
+      p.category === "event" ||
+      p.category === "influencer"
         ? p.category
         : "commercial",
     client: p.client || null,
@@ -66,6 +72,7 @@ export async function upsertCmsProject(data: Partial<Project> & { title: string;
       slug: data.slug,
       arabicTitle: data.arabicTitle || null,
       description: data.description || null,
+      arabicDescription: data.arabicDescription || null,
       category: data.category || "commercial",
       client: data.client || null,
       coverImageUrl: data.coverImageUrl || null,
@@ -88,6 +95,7 @@ export async function upsertCmsProject(data: Partial<Project> & { title: string;
       });
     }
 
+    revalidatePath("/");
     revalidatePath("/projects");
     revalidatePath("/admin/projects");
     updateTag("projects");
@@ -113,6 +121,7 @@ export async function deleteCmsProject(id: string): Promise<CmsResponse> {
         isUuid(id) ? eq(projects.id, id) : eq(projects.slug, id)
       );
     }
+    revalidatePath("/");
     revalidatePath("/projects");
     revalidatePath("/admin/projects");
     updateTag("projects");

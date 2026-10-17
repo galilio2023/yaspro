@@ -2,7 +2,7 @@
 
 import { issueBookingPaymentCapability } from "@/lib/booking-payment-capability";
 import { db } from "@/db";
-import { bookings, bookingSessions, inquiries, users, studios, studioBlackouts, platformSettings, type SessionType, type InquiryType } from "@/db/schema";
+import { bookings, bookingSessions, inquiries, users, studios, studioBlackouts, platformSettings, promoCodes, type SessionType, type InquiryType } from "@/db/schema";
 import { generateBookingReference } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -125,6 +125,29 @@ export async function createBooking(rawInput: unknown): Promise<ActionResponse<{
             success: false,
             message: "Unable to verify current studio catalog pricing. Please try again in a moment.",
           };
+        }
+      }
+
+      if (data.promoCode && promoCodes && typeof db.query?.promoCodes?.findFirst === "function") {
+        try {
+          const cleanCode = data.promoCode.trim().toUpperCase();
+          const promoRow = await db.query.promoCodes.findFirst({
+            where: eq(promoCodes.code, cleanCode),
+          });
+          if (promoRow && promoRow.isActive !== false && (!promoRow.expiresAt || new Date(promoRow.expiresAt).getTime() > Date.now())) {
+            wizardCatalog = {
+              ...(wizardCatalog || {}),
+              promoRules: {
+                ...(wizardCatalog?.promoRules || {}),
+                [cleanCode]: {
+                  discountPercent: promoRow.discountPercent ?? undefined,
+                  discountFlat: promoRow.discountAmount ? Number(promoRow.discountAmount) : undefined,
+                },
+              },
+            };
+          }
+        } catch {
+          // Fallback to static PROMO_CODES
         }
       }
 

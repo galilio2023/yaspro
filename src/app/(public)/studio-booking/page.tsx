@@ -93,13 +93,40 @@ export default async function StudioBookingPage() {
     getCachedStudios(),
     getStudioWizardCatalog(),
   ]);
+
+  let promoRules: Record<string, { discountPercent?: number; discountFlat?: number }> | undefined;
+  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("ep-xxx")) {
+    try {
+      const { db } = await import("@/db");
+      const { promoCodes } = await import("@/db/schema");
+      const rows = await db.select().from(promoCodes);
+      const map: Record<string, { discountPercent?: number; discountFlat?: number }> = {};
+      for (const r of rows) {
+        if (r.isActive !== false && (!r.expiresAt || new Date(r.expiresAt).getTime() > Date.now())) {
+          map[r.code.toUpperCase()] = {
+            discountPercent: r.discountPercent ?? undefined,
+            discountFlat: r.discountAmount ? Number(r.discountAmount) : undefined,
+          };
+        }
+      }
+      if (Object.keys(map).length > 0) promoRules = map;
+    } catch {
+      // Fall back to static promo codes
+    }
+  }
+
   const studios = cmsStudios.filter((studio) => studio.isActive).map((studio) => ({
     id: studio.id,
     slug: studio.slug,
     name: studio.name,
     desc: studio.description || "",
+    description: studio.description || "",
     rate: Number(studio.hourlyRate),
+    capacity: studio.capacity,
+    features: studio.amenities && studio.amenities.length > 0 ? studio.amenities : undefined,
+    galleryImages: studio.gallery && studio.gallery.length > 0 ? studio.gallery : undefined,
     image: studio.imageUrl || undefined,
+    imageUrl: studio.imageUrl || undefined,
     isActive: studio.isActive,
   }));
   return (
@@ -109,7 +136,7 @@ export default async function StudioBookingPage() {
         <StudioBookingPageHeader />
 
         <Suspense fallback={<BookingWizardLoading />}>
-          <BookingWizard studios={studios} wizardCatalog={wizardCatalog} />
+          <BookingWizard studios={studios} wizardCatalog={{ ...wizardCatalog, promoRules }} />
         </Suspense>
       </Container>
     </Section>

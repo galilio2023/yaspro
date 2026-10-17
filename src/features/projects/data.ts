@@ -165,4 +165,7 @@ export const PROJECT_CATEGORIES: { id: ProjectCategory; label: string; arabicLab
   { id: "government", label: "Government & National", arabicLabel: "حكومي ووطني" },
   { id: "commercial", label: "TV Commercials & Brands", arabicLabel: "إعلانات وتجاري" },
   { id: "shows", label: "Shows & Events", arabicLabel: "برامج وفعاليات" },
+  { id: "documentary", label: "Documentaries", arabicLabel: "أفلام وثائقية" },
+  { id: "event", label: "Live Broadcasts", arabicLabel: "تغطيات وبث مباشر" },
+  { id: "influencer", label: "Creator Campaigns", arabicLabel: "حملات المؤثرين" },
 ];

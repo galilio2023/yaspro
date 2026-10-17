@@ -76,6 +76,7 @@ async function getFullEquipmentCatalog(): Promise<Equipment[]> {
       isPopular: !!g.isPopular,
       isKit: !!g.isKit,
       includedInKit: g.includedInKit || [],
+      totalQuantity: 1,
       isAvailable: true,
       createdAt: new Date(),
     }));
@@ -179,6 +180,7 @@ export async function upsertCmsEquipment(data: Partial<Equipment> & { name: stri
       isPopular: data.isPopular ?? false,
       isKit: data.isKit ?? false,
       includedInKit: data.includedInKit || [],
+      totalQuantity: Math.max(1, Number(data.totalQuantity || 1)),
       isAvailable: data.isAvailable ?? true,
     };
 

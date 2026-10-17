@@ -89,6 +89,7 @@ export async function upsertCmsInfluencer(data: Partial<Influencer> & { name: st
       });
     }
 
+    revalidatePath("/");
     revalidatePath("/influencers");
     revalidatePath("/admin/influencers");
     updateTag("influencers");
@@ -115,6 +116,7 @@ export async function deleteCmsInfluencer(id: string): Promise<CmsResponse> {
         await db.delete(influencers).where(eq(influencers.slug, id));
       }
     }
+    revalidatePath("/");
     revalidatePath("/influencers");
     revalidatePath("/admin/influencers");
     updateTag("influencers");

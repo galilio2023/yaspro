@@ -139,3 +139,118 @@ export async function dispatchTelemetryEvent(event: {
     return { success: false, error: (error as Error).message || "Failed to persist broadcast telemetry event." };
   }
 }
+
+const BROADCAST_FLEET_KEY = "broadcast_fleet_status";
+
+export type FleetUnitStatus = "Active Deployment" | "Standby Ready" | "Maintenance";
+
+export interface BroadcastFleetUnitState {
+  id: string;
+  name: string;
+  location: string;
+  status: FleetUnitStatus;
+  uplink: string;
+}
+
+const DEFAULT_FLEET_STATUS: Record<string, BroadcastFleetUnitState> = {
+  "OB-VAN MERCEDES 01": {
+    id: "OB-VAN MERCEDES 01",
+    name: "OB-VAN MERCEDES 01",
+    location: "Riyadh Boulevard Stage",
+    status: "Active Deployment",
+    uplink: "1.2 Gbps Starlink + Ka-Band",
+  },
+  "OB-VAN MERCEDES 02": {
+    id: "OB-VAN MERCEDES 02",
+    name: "OB-VAN MERCEDES 02",
+    location: "Dubai Business Bay Hub",
+    status: "Standby Ready",
+    uplink: "SMPTE ST-2110 Fiber Ready",
+  },
+  "DUBAI STAGE A": {
+    id: "DUBAI STAGE A",
+    name: "DUBAI STAGE A",
+    location: "Studio City Soundstage",
+    status: "Active Deployment",
+    uplink: "10GbE Redundant Fiber",
+  },
+  "CAIRO STAGE B": {
+    id: "CAIRO STAGE B",
+    name: "CAIRO STAGE B",
+    location: "Cairo Media City",
+    status: "Standby Ready",
+    uplink: "SRT Regional Relay",
+  },
+};
+
+export async function getBroadcastFleetStatus(): Promise<Record<string, BroadcastFleetUnitState>> {
+  await requireAdmin();
+  if (!isDbAvailable() || !platformSettings) return { ...DEFAULT_FLEET_STATUS };
+  try {
+    const [row] = await db
+      .select()
+      .from(platformSettings)
+      .where(eq(platformSettings.key, BROADCAST_FLEET_KEY))
+      .limit(1);
+    if (row?.value && typeof row.value === "object" && !Array.isArray(row.value)) {
+      return {
+        ...DEFAULT_FLEET_STATUS,
+        ...(row.value as Record<string, BroadcastFleetUnitState>),
+      };
+    }
+  } catch {
+    // Fallback safely to default fleet status
+  }
+  return { ...DEFAULT_FLEET_STATUS };
+}
+
+export async function updateBroadcastFleetUnitStatus(
+  unitId: string,
+  status: FleetUnitStatus,
+  location?: string
+): Promise<CmsResponse<Record<string, BroadcastFleetUnitState>>> {
+  try {
+    await requireAdmin();
+    if (!isDbAvailable() || !platformSettings) {
+      return { success: false, error: "Database is not connected." };
+    }
+    const current = await getBroadcastFleetStatus();
+    const existing = current[unitId] || {
+      id: unitId,
+      name: unitId,
+      location: location || "Dubai Hub",
+      status,
+      uplink: "SMPTE ST-2110",
+    };
+    const updated: Record<string, BroadcastFleetUnitState> = {
+      ...current,
+      [unitId]: {
+        ...existing,
+        status,
+        location: location?.trim() || existing.location,
+      },
+    };
+    await db
+      .insert(platformSettings)
+      .values({
+        key: BROADCAST_FLEET_KEY,
+        value: updated,
+        updatedAt: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: platformSettings.key,
+        set: {
+          value: updated,
+          updatedAt: new Date(),
+        },
+      });
+    revalidatePath("/admin/broadcast");
+    return {
+      success: true,
+      data: updated,
+      message: `${unitId} status updated to ${status}.`,
+    };
+  } catch (error) {
+    return { success: false, error: (error as Error).message || "Failed to update fleet unit status." };
+  }
+}

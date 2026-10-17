@@ -200,13 +200,23 @@ function ProjectFormContent({
         />
       </div>
 
-      <AdminTextarea
-        label="Project Synopsis / Description"
-        rows={3}
-        placeholder="Brief narrative of production challenges, technical approach, and results..."
-        value={formData.description || ""}
-        onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-      />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <AdminTextarea
+          label="Project Synopsis / Description (English)"
+          rows={3}
+          placeholder="Brief narrative of production challenges, technical approach, and results..."
+          value={formData.description || ""}
+          onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+        />
+        <AdminTextarea
+          label="Project Synopsis (Arabic - وصف المشروع بالعربي)"
+          dir="rtl"
+          rows={3}
+          placeholder="وصف مختصر للمشروع والتقنيات السينمائية المستخدمة..."
+          value={formData.arabicDescription || ""}
+          onChange={(e) => setFormData((prev) => ({ ...prev, arabicDescription: e.target.value }))}
+        />
+      </div>
 
       <AdminTagsInput
         label="Key Deliverables (Public Checkmarks)"

@@ -264,7 +264,7 @@ export function StepDatetime({ state, update }: WizardStepProps) {
           </Panel>
 
           {/* Time */}
-          <Panel icon={Clock} title="Call time" description="Studio hours 9 AM – 8 PM">
+          <Panel icon={Clock} title="Call time" description="Studio window 9 AM – 9 PM">
             {blackoutReason && (
               <div className="mb-2.5 px-3 py-2 rounded-xl bg-rose-500/10 border border-rose-500/25 text-[11px] text-rose-300">
                 Schedule Notice: {blackoutReason}
@@ -272,16 +272,25 @@ export function StepDatetime({ state, update }: WizardStepProps) {
             )}
             <div className="grid grid-cols-4 sm:grid-cols-4 xl:grid-cols-3 gap-1.5">
               {TIME_SLOTS.map((slot) => {
-                const isBooked = unavailableSlots.includes(slot);
+                const match = slot.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+                let slotHour = 9;
+                if (match) {
+                  slotHour = parseInt(match[1], 10);
+                  const period = match[3].toUpperCase();
+                  if (period === "PM" && slotHour < 12) slotHour += 12;
+                  if (period === "AM" && slotHour === 12) slotHour = 0;
+                }
+                const exceedsWindow = slotHour + duration > 21;
+                const isBooked = unavailableSlots.includes(slot) || exceedsWindow;
                 return (
                   <ChoiceChip
                     key={slot}
-                    selected={selectedTime === slot}
+                    selected={selectedTime === slot && !exceedsWindow}
                     disabled={isBooked}
                     onClick={() => !isBooked && update({ time: slot })}
                     className="text-[10px] sm:text-[11px] min-h-[36px] sm:min-h-[40px] px-1"
                   >
-                    {isBooked ? `${slot} · Booked` : slot}
+                    {unavailableSlots.includes(slot) ? `${slot} · Booked` : slot}
                   </ChoiceChip>
                 );
               })}

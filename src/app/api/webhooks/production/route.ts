@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { bookings } from "@/db/schema";
+import { bookings, platformSettings } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { sendBookingConfirmationNotification } from "@/lib/notifications";
 import { revalidatePath, updateTag } from "next/cache";
@@ -134,9 +134,26 @@ export async function POST(request: Request) {
         });
       }
 
+      // Resolve configured depositPercent from platform_settings (fallback 50%)
+      let depositPercent = 50;
+      try {
+        if (platformSettings && typeof db.query?.platformSettings?.findFirst === "function") {
+          const settingRow = await db.query.platformSettings.findFirst({
+            where: eq(platformSettings.key, "payment_config"),
+          });
+          const cfgDeposit = Number((settingRow?.value as { depositPercent?: number } | undefined)?.depositPercent);
+          if (Number.isFinite(cfgDeposit) && cfgDeposit >= 10 && cfgDeposit <= 100) {
+            depositPercent = cfgDeposit;
+          }
+        }
+      } catch {
+        // Fallback to 50% if platform_settings lookup is unavailable
+      }
+
       // Amount validation in fils against what this booking can legitimately be charged.
-      const totalFils = Math.round(Number(bookingRecord.totalAmount)) * 100;
-      const depositFils = Math.round(Math.round(Number(bookingRecord.totalAmount)) * 0.5) * 100;
+      const totalAed = Math.round(Number(bookingRecord.totalAmount));
+      const totalFils = totalAed * 100;
+      const depositFils = Math.round((totalAed * depositPercent) / 100) * 100;
       const paidAmount = Number(data.amount);
       let targetPaymentStatus: "paid" | "deposit_paid" | null = null;
 

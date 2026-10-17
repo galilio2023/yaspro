@@ -163,6 +163,7 @@ export function BookingWizard({
                     state={state}
                     update={update}
                     studio={studio}
+                    sessionType={sessionTypeObj}
                     breakdown={breakdown}
                     selectedCrewItems={selectedCrewItems}
                     selectedPropItems={selectedPropItems}

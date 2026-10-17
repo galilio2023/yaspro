@@ -47,6 +47,7 @@ function OfferFormContent({
     features: initialOffer?.features || [],
     featuresAr: initialOffer?.featuresAr || [],
     restrictedDays: initialOffer?.restrictedDays ?? null,
+    restrictedHours: initialOffer?.restrictedHours ?? null,
     restrictionNoteEn: initialOffer?.restrictionNoteEn || "",
     restrictionNoteAr: initialOffer?.restrictionNoteAr || "",
     isActive: initialOffer?.isActive ?? true,
@@ -57,6 +58,14 @@ function OfferFormContent({
   const [featuresArText, setFeaturesArText] = useState((initialOffer?.featuresAr || []).join("\n"));
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const isEdit = Boolean(initialOffer?.id);
+
+  const toggleAllowedDay = (dayIdx: number) => {
+    const current = form.restrictedDays || [];
+    const next = current.includes(dayIdx)
+      ? current.filter((d) => d !== dayIdx)
+      : [...current, dayIdx].sort((a, b) => a - b);
+    setForm({ ...form, restrictedDays: next.length > 0 && next.length < 7 ? next : null });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,6 +100,16 @@ function OfferFormContent({
       featuresAr: parsedFeaturesAr,
     });
   };
+
+  const WEEKDAYS = [
+    { idx: 0, label: "Sun" },
+    { idx: 1, label: "Mon" },
+    { idx: 2, label: "Tue" },
+    { idx: 3, label: "Wed" },
+    { idx: 4, label: "Thu" },
+    { idx: 5, label: "Fri" },
+    { idx: 6, label: "Sat" },
+  ];
 
   return (
     <AdminModal
@@ -286,6 +305,43 @@ function OfferFormContent({
               dir="rtl"
               className="w-full rounded-xl bg-white/[0.04] border border-white/10 text-white text-xs p-3 font-arabic focus:outline-none focus:border-brand-mauve"
             />
+          </div>
+        </div>
+
+        {/* Allowed Days of Week (Step 2 Schedule Restriction) */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-semibold text-slate-300">
+              Allowed Days of Week (Step 2 Calendar Filter)
+            </label>
+            {form.restrictedDays && form.restrictedDays.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setForm({ ...form, restrictedDays: null })}
+                className="text-[11px] text-brand-mauve hover:underline"
+              >
+                Allow all days
+              </button>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {WEEKDAYS.map((day) => {
+              const isSelected = form.restrictedDays ? form.restrictedDays.includes(day.idx) : true;
+              return (
+                <button
+                  key={day.idx}
+                  type="button"
+                  onClick={() => toggleAllowedDay(day.idx)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-all ${
+                    isSelected
+                      ? "bg-brand-violet/25 border-brand-mauve text-white"
+                      : "bg-white/[0.02] border-white/10 text-slate-500"
+                  }`}
+                >
+                  {day.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 

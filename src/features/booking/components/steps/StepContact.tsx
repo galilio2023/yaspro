@@ -1,15 +1,16 @@
 "use client";
 
-import React from "react";
-import type { WizardStepProps, StudioItem } from "../../types";
+import React, { useState } from "react";
+import type { WizardStepProps, StudioItem, SessionTypeItem } from "../../types";
 import { SESSION_TYPES, type BookingPricingBreakdown } from "../../constants";
-import { Lock, UserRound, ReceiptText, CreditCard, Loader2 } from "lucide-react";
+import { Lock, UserRound, ReceiptText, CreditCard, Loader2, Tag } from "lucide-react";
 import { motion } from "framer-motion";
 import { Field, Panel, StepIntro, fieldClass, formatAED, studioSprings } from "../ui/BookingKit";
 import { QuoteBreakdown } from "../StudioQuoteRail";
 
 interface StepContactProps extends WizardStepProps {
   studio?: StudioItem;
+  sessionType?: SessionTypeItem;
   breakdown: BookingPricingBreakdown;
   selectedCrewItems: Array<{ id: string; title: string; price: number; priceType: string }>;
   selectedPropItems: Array<{ id: string; title: string; price: number; priceType: string }>;
@@ -24,6 +25,7 @@ interface StepContactProps extends WizardStepProps {
 export function StepContact({
   state,
   update,
+  sessionType,
   breakdown,
   selectedCrewItems,
   selectedPropItems,
@@ -34,7 +36,8 @@ export function StepContact({
   onSubmit,
   isSubmitting,
 }: StepContactProps) {
-  const sessionItem = SESSION_TYPES.find((s) => s.id === state.sessionType) || SESSION_TYPES[0];
+  const [promoDraft, setPromoDraft] = useState(state.promoCode || "");
+  const sessionItem = sessionType || SESSION_TYPES.find((s) => s.id === state.sessionType) || SESSION_TYPES[0];
 
   return (
     <div>
@@ -113,6 +116,43 @@ export function StepContact({
               />
             </Field>
           </div>
+        </Panel>
+
+        {/* Promo Code */}
+        <Panel icon={Tag} title="Voucher or Promo Code" description="Have a promotional code? Enter it below">
+          <div className="flex items-center gap-2 max-w-md">
+            <input
+              type="text"
+              value={promoDraft}
+              onChange={(e) => setPromoDraft(e.target.value.toUpperCase())}
+              placeholder="e.g. YAS10"
+              className={`${fieldClass} font-mono uppercase`}
+            />
+            <button
+              type="button"
+              onClick={() => update({ promoCode: promoDraft.trim().toUpperCase() })}
+              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-brand-violet text-white transition cursor-pointer shrink-0"
+            >
+              Apply
+            </button>
+            {state.promoCode && (
+              <button
+                type="button"
+                onClick={() => {
+                  setPromoDraft("");
+                  update({ promoCode: "" });
+                }}
+                className="px-3 py-2.5 rounded-xl text-xs font-medium text-rose-400 hover:bg-rose-500/10 transition cursor-pointer shrink-0"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+          {breakdown.discount > 0 && state.promoCode && (
+            <p className="text-xs text-emerald-400 font-medium mt-2">
+              Promo {state.promoCode} applied (−{formatAED(breakdown.discount)})
+            </p>
+          )}
         </Panel>
 
         {/* Summary — desktop shows this in the side rail */}

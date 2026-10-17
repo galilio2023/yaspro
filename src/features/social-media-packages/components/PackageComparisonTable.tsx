@@ -182,9 +182,50 @@ const COMPARISON_SECTIONS: FeatureSection[] = [
   },
 ];
 
-export function PackageComparisonTable() {
+import type { SocialMediaPackage } from "../data/packages";
+
+export interface PackageComparisonTableProps {
+  packages?: SocialMediaPackage[];
+}
+
+export function PackageComparisonTable({ packages }: PackageComparisonTableProps = {}) {
   const { isArabic } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
+
+  const pkgById = new Map<string, SocialMediaPackage>(
+    (packages || []).map((p) => [p.id, p])
+  );
+  const starterPkg = pkgById.get("starter");
+  const growthPkg = pkgById.get("growth");
+  const premiumPkg = pkgById.get("premium");
+  const enterprisePkg = pkgById.get("enterprise");
+
+  const getHeaderLabel = (pkg: SocialMediaPackage | undefined, fallbackEn: string, fallbackAr: string, star = false) => {
+    const label = pkg ? (isArabic ? pkg.nameAr || pkg.nameEn : pkg.nameEn) : (isArabic ? fallbackAr : fallbackEn);
+    return star || pkg?.isPopular ? `${label} ★` : label;
+  };
+
+  const resolveFeatureValue = (
+    feature: FeatureRow,
+    tierKey: "starter" | "growth" | "premium" | "enterprise",
+    pkg: SocialMediaPackage | undefined
+  ): string | boolean => {
+    if (pkg?.specsHighlights) {
+      if (feature.nameEn.startsWith("4K Vertical Reels") && pkg.specsHighlights.reels) {
+        return pkg.specsHighlights.reels;
+      }
+      if (feature.nameEn.startsWith("Carousel & Editorial") && pkg.specsHighlights.posts) {
+        return pkg.specsHighlights.posts;
+      }
+      if (feature.nameEn.startsWith("Monthly Interactive Stories") && pkg.specsHighlights.stories) {
+        return pkg.specsHighlights.stories;
+      }
+      if (feature.nameEn.startsWith("Production Filming Visits") && pkg.specsHighlights.filming) {
+        return pkg.specsHighlights.filming;
+      }
+    }
+    return feature[tierKey];
+  };
 
   const renderCellContent = (value: string | boolean) => {
     if (typeof value === "boolean") {
@@ -241,16 +282,16 @@ export function PackageComparisonTable() {
                 {isArabic ? "الميزة / الخدمة" : "Feature / Deliverable"}
               </th>
               <th className="p-4 sm:p-5 text-xs font-bold uppercase tracking-wider text-center text-white">
-                {isArabic ? "البداية (Starter)" : "Starter"}
+                {getHeaderLabel(starterPkg, "Starter", "البداية (Starter)")}
               </th>
               <th className="p-4 sm:p-5 text-xs font-bold uppercase tracking-wider text-center text-brand-mauve bg-brand-violet/[0.15] border-x border-brand-mauve/30">
-                {isArabic ? "النمو (Growth) ★" : "Growth ★"}
+                {getHeaderLabel(growthPkg, "Growth", "النمو (Growth)", true)}
               </th>
               <th className="p-4 sm:p-5 text-xs font-bold uppercase tracking-wider text-center text-white">
-                {isArabic ? "المتميزة (Premium)" : "Premium"}
+                {getHeaderLabel(premiumPkg, "Premium", "المتميزة (Premium)")}
               </th>
               <th className="p-4 sm:p-5 text-xs font-bold uppercase tracking-wider text-center text-zinc-300">
-                {isArabic ? "الشركات (Enterprise)" : "Enterprise"}
+                {getHeaderLabel(enterprisePkg, "Enterprise", "الشركات (Enterprise)")}
               </th>
             </tr>
           </thead>
@@ -277,16 +318,16 @@ export function PackageComparisonTable() {
                       {isArabic ? feature.nameAr : feature.nameEn}
                     </td>
                     <td className="p-4 sm:p-5 text-center">
-                      {renderCellContent(feature.starter)}
+                      {renderCellContent(resolveFeatureValue(feature, "starter", starterPkg))}
                     </td>
                     <td className="p-4 sm:p-5 text-center bg-brand-violet/[0.08] border-x border-brand-mauve/15">
-                      {renderCellContent(feature.growth)}
+                      {renderCellContent(resolveFeatureValue(feature, "growth", growthPkg))}
                     </td>
                     <td className="p-4 sm:p-5 text-center">
-                      {renderCellContent(feature.premium)}
+                      {renderCellContent(resolveFeatureValue(feature, "premium", premiumPkg))}
                     </td>
                     <td className="p-4 sm:p-5 text-center">
-                      {renderCellContent(feature.enterprise)}
+                      {renderCellContent(resolveFeatureValue(feature, "enterprise", enterprisePkg))}
                     </td>
                   </tr>
                 ))}

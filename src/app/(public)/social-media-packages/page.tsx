@@ -126,7 +126,7 @@ export default async function SocialMediaPackagesPage() {
         <SocialMediaDeliverablesShowcase />
 
         {/* Comprehensive Comparison Matrix */}
-        <PackageComparisonTable />
+        <PackageComparisonTable packages={socialPackages} />
 
         {/* Frequently Asked Questions */}
         <PackageFaqSection />
